@@ -3,7 +3,7 @@ grammar PlanningService extends ConcreteBT {
 
   abstract PService extends Service = name:Name planner:Name@Planner;
 
-  PDDLPlannerService extends PService = "PDDLPlanning" "Service" name:Name planner:Name@Planner ;
+  PDDLPlannerService extends PService = "PDDLPlanning" "Service" name:Name planner:Name@PDDLPlanner ;
   
   // 2. Planner hierarchy
   abstract symbol Planner = name:Name;
