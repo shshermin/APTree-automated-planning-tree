@@ -1,28 +1,30 @@
+
+
 BehaviorTree APTree {
-    root FlowNode mainnode {
+    Root FlowNode mainnode {
         ALL
         ALLFLOW 
-        Nodegraph firstgraph {    
+        NodeGraph FirstGraph {    
             FlowNode plateseq {
-                Service mypddlplanner1
+                PDDLPlanning Service mypddlplanner1 ENHSP
                 ALL
                 ALLACTION
-                Nodegraph mypddlplanner1result {
-                    Action PickUpHL pickup1 (beam1 pos1 robot1) { 
+                NodeGraph mypddlplanner1result {
+                    Action PickUpHL pickup1 (lp1 fp1 r1) @PickUpMLSubtree {
                        --[MEETS]--> placeBeam1;
                     }
-                    Action PlaceHL placeBeam1 (beam1 target1 robot1) 
+                    Action PlaceHL placeBeam1 (lp1 pr1 r1) @PlaceMLSubtree
                 }
             } 
             FlowNode bemasseq {
-                Service mypddlplanner1
+                PDDLPlanning Service mypddlplanner1 ENHSP
                 ANY
                 ALLACTION
-                Nodegraph secondnodegraph{
-                            Action PickUpHL pickuphl2 (beam2 position3 robot1) { 
+                NodeGraph secondnodegraph{
+                            Action PickUpHL pickuphl2 (beam1 position3 robot1) { 
                                 --[MEETS]--> placeBeam1;
                             }
-                            Action PlaceHL placehl3 (beam2 pr1 robot1) 
+                            Action PlaceHL placehl3 (beam1 pr1 robot1) 
                             Action PickUpHL pickuphl3 (beam2 fp3 robot1) { 
                                 --[MEETS]--> placehl3;
                             }
@@ -35,4 +37,4 @@ BehaviorTree APTree {
 }
 
 
-   
+

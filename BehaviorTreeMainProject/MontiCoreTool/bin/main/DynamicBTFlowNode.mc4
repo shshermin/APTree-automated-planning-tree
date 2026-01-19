@@ -2,8 +2,8 @@ grammar DynamicBTFlowNode extends PlanningService {
 
  //????????????? Override is not the best thing to do here. but if I extend, would it add a separate property for root? or it replaces the existing one
 
-@Override
-  BehaviorTree = "BehaviorTree" name:Name "{" "Root" root:DynamicFlowNode "}";
+
+  APTree extends BehaviorTree = "BehaviorTree" name:Name "{" "Root" root:FlowNode "}";
     // Dynamic BTflow node definition - separate node type with different keyword
     DynamicFlowNode extends FlowNode = 
       "FlowNode" name:Name "{" 
@@ -20,7 +20,7 @@ grammar DynamicBTFlowNode extends PlanningService {
     
 
     // NodeGraph definition - separate top-level production
-    NodeGraph = "Nodegraph" name:Name "{"
+    NodeGraph = "NodeGraph" name:Name "{"
     (nodes:GraphNode)*
     "}";
 
