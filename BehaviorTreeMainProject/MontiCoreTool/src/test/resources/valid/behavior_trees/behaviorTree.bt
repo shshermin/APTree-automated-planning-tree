@@ -1,19 +1,19 @@
 BehaviorTree MyRobotTree {
   root Sequence  {    
     Sequence {
-      Action pickupPlate1 
-      Action placePlate1
+      Action PickUpPlate1 
+      Action PlacePlate1
     }   
     Parallel {
       Sequence {
-        Action pickupbeam1 {
+        Action PickUpBeam1 {
           Decorator GripperEmpty
         }
-        Action placeBeam1
+        Action PlaceBeam1
       }
       Sequence {
-        Action pickupBeam2 
-        Action placeBeam2 
+        Action PickUpBeam2 
+        Action PlaceBeam2 
       }
     }
   }
