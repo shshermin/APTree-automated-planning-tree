@@ -19,24 +19,12 @@ import { createBehaviorNode } from "./components/editor/flowNodeFactory";
 import { reconcileInstanceValues } from "./components/sidebar/utils/helpers";
 import {
   ACTION_INSTANCES_KEY,
-  BEHAVIOR_NODE_OPTION_MAP,
   BT_NODES_KEY,
 } from "./components/sidebar/utils/constants";
-import { PredicateInstanceModal } from "./components/sidebar/modals/InstanceModal";
 import ActionParameterDetailsModal from "./components/editor/modals/ActionParameterDetailsModal.tsx";
-import ActionPredicateManagerModal from "./components/editor/modals/ActionPredicateManagerModal.tsx";
-import {
-  clonePredicateInstance,
-  createEmptyPredicateInstance,
-} from "./components/sidebar/utils/helpers";
+import AptreeValidateModal from "./components/aptree/AptreeValidateModal";
 import { FLOW_SUCCESS_TYPES } from "./components/sidebar/utils/types";
-import type {
-  ActionInstance,
-  BehaviorNodeOption,
-  PredicateInstance,
-} from "./components/sidebar/utils/types";
-import { PREDICATE_TYPE_CATALOG } from "./constants/predicateCatalog";
-import { PREDICATE_INSTANCES_KEY } from "./components/sidebar/utils/constants";
+import type { ActionInstance, BehaviorNodeOption } from "./components/sidebar/utils/types";
 
 type ThemeMode = "light" | "dark";
 
@@ -61,59 +49,6 @@ type ExportedCanvasGraphsV1 = {
 };
 
 const STORAGE_KEY = "aptree-preferred-theme";
-
-type ActionPredicateCollection = "precondition" | "effect";
-type PredicateCollectionKey = "preconditions" | "effects";
-
-const COLLECTION_KEY_MAP: Record<
-  ActionPredicateCollection,
-  PredicateCollectionKey
-> = {
-  precondition: "preconditions",
-  effect: "effects",
-};
-
-interface ActionPredicateModalState {
-  isOpen: boolean;
-  mode: "add" | "edit";
-  level: CanvasLevel | null;
-  nodeId: string | null;
-  collection: ActionPredicateCollection | null;
-  initialValue: PredicateInstance;
-  revision: number;
-}
-
-interface ActionPredicateManagerState {
-  isOpen: boolean;
-  level: CanvasLevel | null;
-  nodeId: string | null;
-  collection: ActionPredicateCollection | null;
-  revision: number;
-}
-
-type PendingManagerReopen = {
-  level: CanvasLevel;
-  nodeId: string;
-  collection: ActionPredicateCollection;
-} | null;
-
-const createInitialPredicateModalState = (): ActionPredicateModalState => ({
-  isOpen: false,
-  mode: "add",
-  level: null,
-  nodeId: null,
-  collection: null,
-  initialValue: createEmptyPredicateInstance(),
-  revision: 0,
-});
-
-const createInitialPredicateManagerState = (): ActionPredicateManagerState => ({
-  isOpen: false,
-  level: null,
-  nodeId: null,
-  collection: null,
-  revision: 0,
-});
 
 /**
  * retrieves the initial theme mode based on user preference or system settings.
@@ -155,17 +90,11 @@ function App() {
     mid: { nodes: [], connections: [] },
     low: { nodes: [], connections: [] },
   }));
-  const [predicateModalState, setPredicateModalState] =
-    useState<ActionPredicateModalState>(createInitialPredicateModalState);
-  const [predicateManagerState, setPredicateManagerState] =
-    useState<ActionPredicateManagerState>(createInitialPredicateManagerState);
-  const [, setPendingManagerReopen] = useState<PendingManagerReopen>(null);
   const [parameterDetail, setParameterDetail] =
     useState<ActionParameterDetail | null>(null);
+  const [isValidateOpen, setIsValidateOpen] = useState(false);
   const sidebarManager = useSidebarManager();
   const {
-    importParameterInstancesFromText,
-    importPredicateInstancesFromText,
     importActionInstancesFromText,
     actionTypes,
     getItemsForCategory,
@@ -177,10 +106,18 @@ function App() {
     [getItemsForCategory]
   );
 
-  const predicateInstances = useMemo(
-    () => getItemsForCategory(PREDICATE_INSTANCES_KEY) as PredicateInstance[],
-    [getItemsForCategory]
-  );
+  const behaviorNodeOptionMap = useMemo(() => {
+    const options: BehaviorNodeOption[] = [
+      ...sidebarManager.flowNodeOptions,
+      ...sidebarManager.decoratorNodeOptions,
+      ...sidebarManager.serviceNodeOptions,
+    ];
+    return new Map(options.map((option) => [option.id, option] as const));
+  }, [
+    sidebarManager.flowNodeOptions,
+    sidebarManager.decoratorNodeOptions,
+    sidebarManager.serviceNodeOptions,
+  ]);
 
   const actionInstances = useMemo(() => {
     if (!rawActionInstances.length) {
@@ -231,94 +168,6 @@ function App() {
 
     return hasChanges ? reconciled : rawActionInstances;
   }, [rawActionInstances, actionTypes]);
-
-  /**
-   * resets the predicate modal state to its initial configuration.
-   */
-  const resetPredicateModalState = useCallback(() => {
-    setPredicateModalState((prev) => ({
-      ...createInitialPredicateModalState(),
-      revision: prev.revision + 1,
-    }));
-  }, []);
-
-  /**
-   * closes the action predicate modal.
-   */
-  const closeActionPredicateModal = useCallback(() => {
-    resetPredicateModalState();
-    setPendingManagerReopen((prev) => {
-      if (!prev) {
-        return null;
-      }
-      setPredicateManagerState((managerPrev) => ({
-        isOpen: true,
-        level: prev.level,
-        nodeId: prev.nodeId,
-        collection: prev.collection,
-        revision: managerPrev.revision + 1,
-      }));
-      return null;
-    });
-  }, [resetPredicateModalState]);
-
-  /**
-   * closes the action predicate manager modal.
-   */
-  const closeActionPredicateManager = useCallback(() => {
-    setPredicateManagerState((prev) => ({
-      ...createInitialPredicateManagerState(),
-      revision: prev.revision + 1,
-    }));
-  }, []);
-
-  /**
-   * opens the action predicate modal with the provided configuration.
-   * @param config modal configuration
-   */
-  const openActionPredicateModal = useCallback(
-    (config: {
-      mode: "add" | "edit";
-      level: CanvasLevel;
-      nodeId: string;
-      collection: ActionPredicateCollection;
-      predicate?: PredicateInstance;
-    }) => {
-      setPredicateModalState((prev) => ({
-        isOpen: true,
-        mode: config.mode,
-        level: config.level,
-        nodeId: config.nodeId,
-        collection: config.collection,
-        initialValue: config.predicate
-          ? clonePredicateInstance(config.predicate)
-          : createEmptyPredicateInstance(),
-        revision: prev.revision + 1,
-      }));
-    },
-    []
-  );
-
-  /**
-   * opens the action predicate manager modal with the provided configuration.
-   * @param config modal configuration
-   */
-  const openActionPredicateManager = useCallback(
-    (config: {
-      level: CanvasLevel;
-      nodeId: string;
-      collection: ActionPredicateCollection;
-    }) => {
-      setPredicateManagerState((prev) => ({
-        isOpen: true,
-        level: config.level,
-        nodeId: config.nodeId,
-        collection: config.collection,
-        revision: prev.revision + 1,
-      }));
-    },
-    []
-  );
 
   /**
    * shows the action parameter detail modal with the provided detail.
@@ -422,29 +271,6 @@ function App() {
       reader.readAsText(file);
     },
     []
-  );
-
-  /**
-   * handles importing parameter instances from a file.
-   */
-  const handleImportParameterInstancesFile = useCallback(
-    (file: File) =>
-      handleImportFromFile(
-        file,
-        importParameterInstancesFromText,
-        "Parameter Instances"
-      ),
-    [handleImportFromFile, importParameterInstancesFromText]
-  );
-
-  const handleImportPredicateInstancesFile = useCallback(
-    (file: File) =>
-      handleImportFromFile(
-        file,
-        importPredicateInstancesFromText,
-        "Predicate Instances"
-      ),
-    [handleImportFromFile, importPredicateInstancesFromText]
   );
 
   const handleImportActionInstancesFile = useCallback(
@@ -562,8 +388,6 @@ function App() {
         }
 
         setParameterDetail(null);
-        setPredicateModalState(createInitialPredicateModalState());
-        setPredicateManagerState(createInitialPredicateManagerState());
       } catch (error) {
         window.alert(
           `Import failed: ${error instanceof Error ? error.message : "Unknown error"}`
@@ -611,7 +435,7 @@ function App() {
   const handleDropOnCanvas = useCallback(
     (item: DraggedSidebarItem, position: { x: number; y: number }) => {
       if (item.category === BT_NODES_KEY) {
-        const option = BEHAVIOR_NODE_OPTION_MAP.get(item.id);
+        const option = behaviorNodeOptionMap.get(item.id);
 
         if (option) {
           setGraphs((prev) => {
@@ -655,7 +479,7 @@ function App() {
         };
       });
     },
-    [activeLevel]
+    [activeLevel, behaviorNodeOptionMap]
   );
 
   /**
@@ -794,340 +618,6 @@ function App() {
   }, [activeLevel]);
 
   /**
-   * handles adding a precondition to an action node.
-   */
-  const handleManageActionPredicates = useCallback(
-    (nodeId: string, collection: ActionPredicateCollection) => {
-      openActionPredicateManager({ level: activeLevel, nodeId, collection });
-    },
-    [activeLevel, openActionPredicateManager]
-  );
-
-  /**
-   * opens the predicate modal in edit mode for the requested predicate.
-   */
-  const handleEditActionPredicate = useCallback(
-    (
-      nodeId: string,
-      predicateId: string,
-      collection: ActionPredicateCollection
-    ) => {
-      const node = graphs[activeLevel].nodes.find((entry) => entry.id === nodeId);
-      if (!node) {
-        console.warn("Unable to edit predicate; node not found", nodeId);
-        return;
-      }
-
-      const collectionKey = COLLECTION_KEY_MAP[collection];
-      const predicateList = node[collectionKey] ?? [];
-      const predicate = predicateList.find((entry) => entry.id === predicateId);
-
-      if (!predicate) {
-        console.warn(
-          "Unable to edit predicate; predicate not found",
-          predicateId
-        );
-        return;
-      }
-
-      openActionPredicateModal({
-        mode: "edit",
-        level: activeLevel,
-        nodeId,
-        collection,
-        predicate,
-      });
-    },
-    [activeLevel, graphs, openActionPredicateModal]
-  );
-
-  /**
-   * removes the given predicate from the specified collection on a node.
-   */
-  const handleRemoveActionPredicate = useCallback(
-    (
-      nodeId: string,
-      predicateId: string,
-      collection: ActionPredicateCollection
-    ) => {
-      setGraphs((prev) => {
-        const graph = prev[activeLevel];
-        return {
-          ...prev,
-          [activeLevel]: {
-            ...graph,
-            nodes: graph.nodes.map((node) => {
-              if (node.id !== nodeId) {
-                return node;
-              }
-
-              const collectionKey = COLLECTION_KEY_MAP[collection];
-              const predicateList = node[collectionKey] ?? [];
-              if (!predicateList.some((entry) => entry.id === predicateId)) {
-                return node;
-              }
-
-              return {
-                ...node,
-                [collectionKey]: predicateList.filter(
-                  (entry) => entry.id !== predicateId
-                ),
-              };
-            }),
-          },
-        };
-      });
-    },
-    [activeLevel]
-  );
-
-  /**
-   * persists predicate changes emitted from the modal into the owning node.
-   */
-  const handleSaveActionPredicate = useCallback(
-    (value: PredicateInstance) => {
-      if (
-        !predicateModalState.nodeId ||
-        !predicateModalState.collection ||
-        !predicateModalState.level
-      ) {
-        resetPredicateModalState();
-        return;
-      }
-
-      const collectionKey = COLLECTION_KEY_MAP[predicateModalState.collection];
-      const sanitizedValue = clonePredicateInstance(value);
-
-      setGraphs((prev) => {
-        const level = predicateModalState.level as CanvasLevel;
-        const graph = prev[level];
-        return {
-          ...prev,
-          [level]: {
-            ...graph,
-            nodes: graph.nodes.map((node) => {
-              if (node.id !== predicateModalState.nodeId) {
-                return node;
-              }
-
-              const predicateList = node[collectionKey] ?? [];
-              if (predicateModalState.mode === "edit") {
-                if (!predicateList.some((entry) => entry.id === sanitizedValue.id)) {
-                  return node;
-                }
-
-                return {
-                  ...node,
-                  [collectionKey]: predicateList.map((entry) =>
-                    entry.id === sanitizedValue.id ? sanitizedValue : entry
-                  ),
-                };
-              }
-
-              return {
-                ...node,
-                [collectionKey]: [...predicateList, sanitizedValue],
-              };
-            }),
-          },
-        };
-      });
-
-      resetPredicateModalState();
-      setPendingManagerReopen((prev) => {
-        if (!prev) {
-          return null;
-        }
-        setPredicateManagerState((managerPrev) => ({
-          isOpen: true,
-          level: prev.level,
-          nodeId: prev.nodeId,
-          collection: prev.collection,
-          revision: managerPrev.revision + 1,
-        }));
-        return null;
-      });
-    },
-    [predicateModalState, resetPredicateModalState]
-  );
-
-  const handleCreateNewPredicateFromManager = useCallback(() => {
-    if (
-      !predicateManagerState.nodeId ||
-      !predicateManagerState.collection ||
-      !predicateManagerState.level
-    ) {
-      return;
-    }
-
-    setPendingManagerReopen({
-      level: predicateManagerState.level,
-      nodeId: predicateManagerState.nodeId,
-      collection: predicateManagerState.collection,
-    });
-    closeActionPredicateManager();
-    openActionPredicateModal({
-      mode: "add",
-      level: predicateManagerState.level,
-      nodeId: predicateManagerState.nodeId,
-      collection: predicateManagerState.collection,
-    });
-  }, [
-    closeActionPredicateManager,
-    openActionPredicateModal,
-    predicateManagerState.collection,
-    predicateManagerState.level,
-    predicateManagerState.nodeId,
-  ]);
-
-  const handleAttachExistingPredicate = useCallback(
-    (predicateId: string) => {
-      if (
-        !predicateManagerState.nodeId ||
-        !predicateManagerState.collection ||
-        !predicateManagerState.level
-      ) {
-        return;
-      }
-
-      const selected = predicateInstances.find((p) => p.id === predicateId);
-      if (!selected) {
-        console.warn("Unable to attach predicate; instance not found", predicateId);
-        return;
-      }
-
-      const collectionKey = COLLECTION_KEY_MAP[predicateManagerState.collection];
-      const payload = clonePredicateInstance(selected);
-
-      setGraphs((prev) => {
-        const level = predicateManagerState.level as CanvasLevel;
-        const graph = prev[level];
-        return {
-          ...prev,
-          [level]: {
-            ...graph,
-            nodes: graph.nodes.map((node) => {
-              if (node.id !== predicateManagerState.nodeId) {
-                return node;
-              }
-
-              const predicateList = node[collectionKey] ?? [];
-              if (predicateList.some((entry) => entry.id === payload.id)) {
-                return node;
-              }
-
-              return {
-                ...node,
-                [collectionKey]: [...predicateList, payload],
-              };
-            }),
-          },
-        };
-      });
-    },
-    [
-      predicateInstances,
-      predicateManagerState.collection,
-      predicateManagerState.level,
-      predicateManagerState.nodeId,
-    ]
-  );
-
-  const handleRemovePredicateFromManager = useCallback(
-    (predicateId: string) => {
-      if (
-        !predicateManagerState.nodeId ||
-        !predicateManagerState.collection ||
-        !predicateManagerState.level
-      ) {
-        return;
-      }
-
-      const level = predicateManagerState.level;
-      const collection = predicateManagerState.collection;
-      const nodeId = predicateManagerState.nodeId;
-      const collectionKey = COLLECTION_KEY_MAP[collection];
-
-      setGraphs((prev) => {
-        const graph = prev[level];
-        return {
-          ...prev,
-          [level]: {
-            ...graph,
-            nodes: graph.nodes.map((node) => {
-              if (node.id !== nodeId) {
-                return node;
-              }
-
-              const predicateList = node[collectionKey] ?? [];
-              if (!predicateList.some((entry) => entry.id === predicateId)) {
-                return node;
-              }
-
-              return {
-                ...node,
-                [collectionKey]: predicateList.filter(
-                  (entry) => entry.id !== predicateId
-                ),
-              };
-            }),
-          },
-        };
-      });
-    },
-    [predicateManagerState.collection, predicateManagerState.level, predicateManagerState.nodeId]
-  );
-
-  const handleEditPredicateFromManager = useCallback(
-    (predicateId: string) => {
-      if (
-        !predicateManagerState.nodeId ||
-        !predicateManagerState.collection ||
-        !predicateManagerState.level
-      ) {
-        return;
-      }
-
-      const level = predicateManagerState.level;
-      const nodeId = predicateManagerState.nodeId;
-      const collection = predicateManagerState.collection;
-
-      const node = graphs[level].nodes.find((entry) => entry.id === nodeId);
-      if (!node) {
-        console.warn("Unable to edit predicate; node not found", nodeId);
-        return;
-      }
-
-      const collectionKey = COLLECTION_KEY_MAP[collection];
-      const predicateList = node[collectionKey] ?? [];
-      const predicate = predicateList.find((entry) => entry.id === predicateId);
-
-      if (!predicate) {
-        console.warn(
-          "Unable to edit predicate; predicate not found",
-          predicateId
-        );
-        return;
-      }
-
-      openActionPredicateModal({
-        mode: "edit",
-        level,
-        nodeId,
-        collection,
-        predicate,
-      });
-    },
-    [
-      graphs,
-      openActionPredicateModal,
-      predicateManagerState.collection,
-      predicateManagerState.level,
-      predicateManagerState.nodeId,
-    ]
-  );
-
-  /**
    * handles cycling the flow success type for a flow node.
    */
   const handleCycleFlowSuccessType = useCallback((nodeId: string) => {
@@ -1182,63 +672,6 @@ function App() {
     });
   }, [activeLevel]);
 
-  const activePredicateNode = useMemo(() => {
-    if (!predicateModalState.nodeId || !predicateModalState.level) {
-      return null;
-    }
-    return (
-      graphs[predicateModalState.level].nodes.find(
-        (node) => node.id === predicateModalState.nodeId
-      ) ?? null
-    );
-  }, [graphs, predicateModalState.level, predicateModalState.nodeId]);
-
-  const activePredicateManagerNode = useMemo(() => {
-    if (!predicateManagerState.nodeId || !predicateManagerState.level) {
-      return null;
-    }
-    return (
-      graphs[predicateManagerState.level].nodes.find(
-        (node) => node.id === predicateManagerState.nodeId
-      ) ?? null
-    );
-  }, [graphs, predicateManagerState.level, predicateManagerState.nodeId]);
-
-  const managerAssignedList = useMemo(() => {
-    if (!activePredicateManagerNode || !predicateManagerState.collection) {
-      return [] as PredicateInstance[];
-    }
-    const collectionKey = COLLECTION_KEY_MAP[predicateManagerState.collection];
-    return (activePredicateManagerNode[collectionKey] ?? []) as PredicateInstance[];
-  }, [activePredicateManagerNode, predicateManagerState.collection]);
-
-  const managerAvailableList = useMemo(() => {
-    if (!predicateManagerState.collection) {
-      return predicateInstances;
-    }
-
-    const assignedIds = new Set(managerAssignedList.map((p) => p.id));
-    return predicateInstances.filter((p) => !assignedIds.has(p.id));
-  }, [managerAssignedList, predicateInstances, predicateManagerState.collection]);
-
-  const predicateModalTitle = useMemo(() => {
-    if (!predicateModalState.isOpen) {
-      return "Manage Predicate";
-    }
-
-    const verb = predicateModalState.mode === "add" ? "Add" : "Edit";
-    const scope =
-      predicateModalState.collection === "effect"
-        ? "Effect"
-        : predicateModalState.collection === "precondition"
-        ? "Precondition"
-        : "Predicate";
-    const suffix = activePredicateNode
-      ? ` for ${activePredicateNode.name}`
-      : "";
-    return `${verb} ${scope}${suffix}`;
-  }, [predicateModalState, activePredicateNode]);
-
   return (
     <>
       <div className="app-container">
@@ -1250,11 +683,10 @@ function App() {
           <Header
             theme={theme}
             onToggleTheme={handleToggleTheme}
-            onImportParameterInstances={handleImportParameterInstancesFile}
-            onImportPredicateInstances={handleImportPredicateInstancesFile}
             onImportActionInstances={handleImportActionInstancesFile}
             onExportCanvasGraph={handleExportCanvasGraph}
             onImportCanvasGraph={handleImportCanvasGraphFile}
+            onOpenValidate={() => setIsValidateOpen(true)}
           />
           <div className="editor" role="main">
             <div className="level-tabs" role="tablist" aria-label="Canvas Level">
@@ -1286,11 +718,7 @@ function App() {
                 onAddConnection={handleAddConnection}
                 onRemoveConnection={handleRemoveConnection}
                 onShowActionParameterDetail={handleShowActionParameterDetail}
-                onManageActionPredicates={handleManageActionPredicates}
-                onEditActionPredicate={handleEditActionPredicate}
-                onRemoveActionPredicate={handleRemoveActionPredicate}
                 onCycleFlowSuccessType={handleCycleFlowSuccessType}
-                predicateTypes={PREDICATE_TYPE_CATALOG}
                 actionTypes={actionTypes}
                 actionInstances={actionInstances}
               />
@@ -1299,36 +727,14 @@ function App() {
         </div>
       </div>
 
-      <PredicateInstanceModal
-        key={`${predicateModalState.revision}-${predicateModalState.initialValue.id}`}
-        isOpen={predicateModalState.isOpen}
-        mode={predicateModalState.mode}
-        title={predicateModalTitle}
-        initialValue={predicateModalState.initialValue}
-        typeDefinitions={PREDICATE_TYPE_CATALOG}
-        onClose={closeActionPredicateModal}
-        onSave={handleSaveActionPredicate}
-      />
-
-      <ActionPredicateManagerModal
-        key={`${predicateManagerState.revision}-${predicateManagerState.nodeId}-${predicateManagerState.collection}`}
-        isOpen={predicateManagerState.isOpen}
-        nodeName={activePredicateManagerNode?.name ?? "Action"}
-        nodeTypeLabel={activePredicateManagerNode?.typeLabel ?? ""}
-        collection={predicateManagerState.collection ?? "precondition"}
-        assigned={managerAssignedList}
-        available={managerAvailableList}
-        predicateTypeMap={sidebarManager.predicateTypeMap}
-        onClose={closeActionPredicateManager}
-        onAdd={handleAttachExistingPredicate}
-        onRemove={handleRemovePredicateFromManager}
-        onEdit={handleEditPredicateFromManager}
-        onCreateNew={handleCreateNewPredicateFromManager}
-      />
-
       <ActionParameterDetailsModal
         detail={parameterDetail}
         onClose={handleCloseActionParameterDetail}
+      />
+
+      <AptreeValidateModal
+        isOpen={isValidateOpen}
+        onClose={() => setIsValidateOpen(false)}
       />
     </>
   );

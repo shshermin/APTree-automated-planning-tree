@@ -3,30 +3,12 @@ import { createId } from "../../../utils/id";
 import type {
   ActionInstance,
   ActionInstanceModalProps,
-  ParameterInstance,
-  ParameterInstanceModalProps,
-  PredicateInstance,
-  PredicateInstanceModalProps,
+  TypedInstance,
   TypedInstanceModalProps,
 } from "../utils/types";
 
-const IDENTIFIER_PATTERN = /^[A-Za-z_][A-Za-z0-9_]*$/;
-const ATTRIBUTE_PATTERN = /^[A-Za-z_][A-Za-z0-9_]*\.[A-Za-z_][A-Za-z0-9_]*$/;
-
-const isValidPredicateArgument = (value: string): boolean => {
-  if (value === "true" || value === "false") {
-    return true;
-  }
-
-  return (
-    IDENTIFIER_PATTERN.test(value) || ATTRIBUTE_PATTERN.test(value)
-  );
-};
-
-type AnyInstance = ParameterInstance | PredicateInstance | ActionInstance;
-
 /** shared modal rendering logic used by all typed instance modals. */
-function BaseInstanceModal<TInstance extends AnyInstance>(
+function BaseInstanceModal<TInstance extends TypedInstance>(
   props: TypedInstanceModalProps<TInstance>
 ) {
   const {
@@ -46,8 +28,6 @@ function BaseInstanceModal<TInstance extends AnyInstance>(
     createButtonLabel = "Create Instance",
     saveButtonLabel = "Save Changes",
     baseTypePrefixLabel = "Base type",
-    enableNegationToggle = false,
-    negationLabel = "Negate",
     validatePropertyValue,
     propertyValidationHint,
   } = props;
@@ -63,12 +43,6 @@ function BaseInstanceModal<TInstance extends AnyInstance>(
     () => initialValue.id || createId("instance"),
     [initialValue.id]
   );
-  const [isNegated, setIsNegated] = useState(() => {
-    if (enableNegationToggle && "isNegated" in initialValue) {
-      return Boolean(initialValue.isNegated);
-    }
-    return false;
-  });
   const [showValidation, setShowValidation] = useState(false);
 
   /**
@@ -96,12 +70,9 @@ function BaseInstanceModal<TInstance extends AnyInstance>(
       setPropertyValues(nextValues);
     }
 
-    if (enableNegationToggle && "isNegated" in initialValue) {
-      setIsNegated(Boolean(initialValue.isNegated));
-    }
     setShowValidation(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initialValue, typeDefinitions, enableNegationToggle]);
+  }, [initialValue, typeDefinitions]);
 
   useEffect(() => {
     if (!isOpen && showValidation) {
@@ -219,20 +190,14 @@ function BaseInstanceModal<TInstance extends AnyInstance>(
       return acc;
     }, {});
 
-    const payload: AnyInstance = {
-      ...initialValue,
+    onSave({
+      ...(initialValue as TInstance),
       id: instanceId,
       name: trimmedName,
       type: selectedType.name,
       typeId: selectedType.id,
       propertyValues: sanitizedValues,
-    };
-
-    if (enableNegationToggle) {
-      (payload as PredicateInstance).isNegated = isNegated;
-    }
-
-    onSave(payload as TInstance);
+    });
   };
 
   return (
@@ -289,19 +254,6 @@ function BaseInstanceModal<TInstance extends AnyInstance>(
               </p>
             )}
           </div>
-
-          {enableNegationToggle && (
-            <div className="form-group">
-              <label className="modal-checkbox">
-                <input
-                  type="checkbox"
-                  checked={isNegated}
-                  onChange={(event) => setIsNegated(event.target.checked)}
-                />
-                {negationLabel}
-              </label>
-            </div>
-          )}
 
           <div className="form-group">
             <span className="modal-label">{propertyValuesLabel}</span>
@@ -366,49 +318,6 @@ function BaseInstanceModal<TInstance extends AnyInstance>(
         </form>
       </div>
     </div>
-  );
-}
-
-/**
- * default export remains for backward compatibility when only parameter instances are required.
- */
-export default function ParameterInstanceModal(
-  props: ParameterInstanceModalProps
-) {
-  return <BaseInstanceModal<ParameterInstance> {...props} />;
-}
-
-/** predicate instance modal with negation toggle enabled. */
-export function PredicateInstanceModal(props: PredicateInstanceModalProps) {
-  return (
-    <BaseInstanceModal<PredicateInstance>
-      {...props}
-      enableNegationToggle
-      nameLabel={props.nameLabel ?? "Predicate Instance Name"}
-      namePlaceholder={
-        props.namePlaceholder ?? "e.g., target_location_is_visible"
-      }
-      typeLabel={props.typeLabel ?? "Predicate Type"}
-      negationLabel={props.negationLabel ?? "isNegated"}
-      typePlaceholder={props.typePlaceholder ?? "Select a predicate type..."}
-      propertyEmptyMessage={
-        props.propertyEmptyMessage ??
-        "This predicate type does not define any properties."
-      }
-      propertyValuesLabel={props.propertyValuesLabel ?? "Predicate Arguments"}
-      baseTypePrefixLabel={props.baseTypePrefixLabel ?? "Predicate base type"}
-      createButtonLabel={
-        props.createButtonLabel ?? "Create Predicate Instance"
-      }
-      saveButtonLabel={props.saveButtonLabel ?? "Save Predicate Instance"}
-      validatePropertyValue={
-        props.validatePropertyValue ?? isValidPredicateArgument
-      }
-      propertyValidationHint={
-        props.propertyValidationHint ??
-        "Use identifiers (e.g., target), attribute access (entity.location), or boolean literals true/false."
-      }
-    />
   );
 }
 

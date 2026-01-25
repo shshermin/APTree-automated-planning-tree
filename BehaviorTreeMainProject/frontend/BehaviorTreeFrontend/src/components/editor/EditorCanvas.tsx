@@ -41,7 +41,6 @@ import {
 import type {
   ActionInstance,
   ActionType,
-  PredicateType,
 } from "../sidebar/utils/types";
 import {
   DECORATOR_NODES_KEY,
@@ -67,26 +66,11 @@ const resolveNumericOffset = (value: string | number | undefined): number => {
 
 interface BehaviorNodeData {
   node: CanvasNode;
-  predicateTypeMap: Map<string, PredicateType>;
   actionTypeMap: Map<string, ActionType>;
   actionInstanceMap: Map<string, ActionInstance>;
   onRemoveNode?: (nodeId: string) => void;
   onEditNode?: (nodeId: string) => void;
   onCycleFlowSuccessType?: (nodeId: string) => void;
-  onManageActionPredicates?: (
-    nodeId: string,
-    collection: "precondition" | "effect"
-  ) => void;
-  onEditActionPredicate?: (
-    nodeId: string,
-    predicateId: string,
-    collection: "precondition" | "effect"
-  ) => void;
-  onRemoveActionPredicate?: (
-    nodeId: string,
-    predicateId: string,
-    collection: "precondition" | "effect"
-  ) => void;
   onResizeNode?: (nodeId: string, size: { width: number; height: number }) => void;
   onMoveNode?: (nodeId: string, position: { x: number; y: number }) => void;
   onShowActionParameterDetail?: (detail: ActionParameterDetail) => void;
@@ -158,21 +142,6 @@ function resolvePortFromHandle(
 }
 
 /**
- * creates a map of predicate type ID to predicate type for easy lookup.
- * @param predicateTypes optional array of predicate types 
- * @returns map of predicate type ID to predicate type 
- */
-function createPredicateTypeMap(predicateTypes?: PredicateType[]) {
-  return new Map(predicateTypes?.map((type) => [type.id, type]) ?? []);
-}
-
-/**
- * formats a predicate instance into a summary string for display.
- * @param predicate the predicate instance to format 
- * @param predicateTypeMap map of predicate type ID to predicate type 
- * @returns formatted summary string 
- */
-/**
  * checks if a canvas node is an action node.
  * @param node the canvas node to check 
  * @returns true if the node is an action node, false otherwise 
@@ -189,8 +158,6 @@ function isActionNode(node: CanvasNode) {
 function BehaviorTreeNode({ id, data, selected }: NodeProps<BehaviorNodeData>) {
   const updateNodeInternals = useUpdateNodeInternals();
   const { node } = data;
-  const preconditions = node.preconditions ?? [];
-  const effects = node.effects ?? [];
 
   const isFlowNode = node.category === FLOW_NODES_KEY;
 
@@ -436,38 +403,7 @@ function BehaviorTreeNode({ id, data, selected }: NodeProps<BehaviorNodeData>) {
       ) : null}
 
       {isAction ? (
-        <div className="canvas-node-state">
-          {data.onManageActionPredicates && (
-            <div className="canvas-node-actions">
-              <button
-                type="button"
-                className="canvas-node-action-btn"
-                onMouseDown={(event) => event.stopPropagation()}
-                onClick={(event) => {
-                  event.stopPropagation();
-                  data.onManageActionPredicates?.(id, "precondition");
-                }}
-                title="Manage preconditions"
-                aria-label="Manage preconditions"
-              >
-                Preconditions ({preconditions.length})
-              </button>
-              <button
-                type="button"
-                className="canvas-node-action-btn"
-                onMouseDown={(event) => event.stopPropagation()}
-                onClick={(event) => {
-                  event.stopPropagation();
-                  data.onManageActionPredicates?.(id, "effect");
-                }}
-                title="Manage effects"
-                aria-label="Manage effects"
-              >
-                Effects ({effects.length})
-              </button>
-            </div>
-          )}
-        </div>
+        <div className="canvas-node-state" />
       ) : null}
 
       {(Object.keys(portPositions) as PortSide[]).map((side) => (
@@ -607,11 +543,7 @@ function EditorCanvasInner(props: EditorCanvasProps) {
     onEditNode,
     onAddConnection,
     onRemoveConnection,
-    onManageActionPredicates,
     onCycleFlowSuccessType,
-    onEditActionPredicate,
-    onRemoveActionPredicate,
-    predicateTypes,
     actionTypes,
     actionInstances,
     onShowActionParameterDetail,
@@ -621,11 +553,6 @@ function EditorCanvasInner(props: EditorCanvasProps) {
   const { project } = useReactFlow();
   const [isActive, setIsActive] = useState(false);
   const [hoveredEdgeId, setHoveredEdgeId] = useState<string | null>(null);
-
-  const predicateTypeMap = useMemo(
-    () => createPredicateTypeMap(predicateTypes),
-    [predicateTypes]
-  );
 
   const actionTypeMap = useMemo(() => {
     const entries = actionTypes ?? [];
@@ -649,15 +576,11 @@ function EditorCanvasInner(props: EditorCanvasProps) {
           position: { x: node.x - width / 2, y: node.y - height / 2 },
           data: {
             node,
-            predicateTypeMap,
             actionTypeMap,
             actionInstanceMap,
             onRemoveNode,
             onEditNode,
             onCycleFlowSuccessType,
-            onManageActionPredicates,
-            onEditActionPredicate,
-            onRemoveActionPredicate,
             onResizeNode,
             onMoveNode,
             onShowActionParameterDetail,
@@ -668,15 +591,11 @@ function EditorCanvasInner(props: EditorCanvasProps) {
       }),
     [
       nodes,
-      predicateTypeMap,
       actionTypeMap,
       actionInstanceMap,
       onRemoveNode,
       onEditNode,
       onCycleFlowSuccessType,
-      onManageActionPredicates,
-      onEditActionPredicate,
-      onRemoveActionPredicate,
       onResizeNode,
       onMoveNode,
       onShowActionParameterDetail,

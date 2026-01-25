@@ -1,11 +1,10 @@
 export interface HeaderProps {
   theme: "light" | "dark";
   onToggleTheme: () => void;
-  onImportParameterInstances: (file: File) => void;
-  onImportPredicateInstances: (file: File) => void;
   onImportActionInstances: (file: File) => void;
   onExportCanvasGraph: () => void;
   onImportCanvasGraph: (file: File) => void;
+  onOpenValidate: () => void;
 }
 
 export interface DropdownActionItem {

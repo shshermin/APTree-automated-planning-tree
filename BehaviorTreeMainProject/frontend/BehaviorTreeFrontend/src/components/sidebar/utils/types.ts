@@ -30,8 +30,8 @@ export interface ParameterType extends StructuredItem {
   properties: TypeProperty[];
 }
 
-/** represents a concrete parameter instance populated by users. */
-export interface ParameterInstance extends StructuredItem {
+/** represents a concrete typed instance populated by users (used for action instances). */
+export interface TypedInstance extends StructuredItem {
   typeId: string;
   propertyValues: Record<string, string>;
 }
@@ -39,16 +39,11 @@ export interface ParameterInstance extends StructuredItem {
 /** extends parameter-type declarations for predicate definitions. */
 export type PredicateType = ParameterType;
 
-/** concrete predicate instance including negation flag. */
-export interface PredicateInstance extends ParameterInstance {
-  isNegated: boolean;
-}
-
 /** extends parameter-type declarations for action definitions. */
 export type ActionType = ParameterType;
 
 /** concrete action instance referencing an action type. */
-export type ActionInstance = ParameterInstance;
+export type ActionInstance = TypedInstance;
 
 export type DataCategory = string;
 
@@ -123,28 +118,10 @@ export interface TypeModalState {
   revision: number;
 }
 
-/** modal state governing the parameter-instance modal. */
-export interface ParameterInstanceModalState {
-  isOpen: boolean;
-  mode: "add" | "edit";
-  index: number | null;
-  initialValue: ParameterInstance;
-  revision: number;
-}
-
 /** modal state governing predicate-type editing. */
 export type PredicateTypeModalState = Omit<TypeModalState, "initialValue"> & {
   initialValue: PredicateType;
 };
-
-/** modal state governing predicate-instance editing. */
-export interface PredicateInstanceModalState {
-  isOpen: boolean;
-  mode: "add" | "edit";
-  index: number | null;
-  initialValue: PredicateInstance;
-  revision: number;
-}
 
 /** modal state governing action-type editing. */
 export type ActionTypeModalState = Omit<TypeModalState, "initialValue"> & {
@@ -165,7 +142,7 @@ export type SearchQueries = Record<DataCategory, string>;
 
 /** props consumed by the generic instance modal component. */
 export interface TypedInstanceModalProps<
-  TInstance extends ParameterInstance = ParameterInstance
+  TInstance extends TypedInstance = TypedInstance
 > {
   isOpen: boolean;
   mode: "add" | "edit";
@@ -183,18 +160,12 @@ export interface TypedInstanceModalProps<
   createButtonLabel?: string;
   saveButtonLabel?: string;
   baseTypePrefixLabel?: string;
-  enableNegationToggle?: boolean;
-  negationLabel?: string;
   validatePropertyValue?: (
     value: string,
     property: TypeProperty
   ) => boolean;
   propertyValidationHint?: string;
 }
-
-export type ParameterInstanceModalProps = TypedInstanceModalProps<ParameterInstance>;
-
-export type PredicateInstanceModalProps = TypedInstanceModalProps<PredicateInstance>;
 
 export type ActionInstanceModalProps = TypedInstanceModalProps<ActionInstance>;
 
@@ -226,8 +197,6 @@ export interface SidebarManager {
   categoryOrder: string[];
   categoryTitles: Record<string, string>;
   closeCategoryModal: () => void;
-  closeParameterInstanceModal: () => void;
-  closePredicateInstanceModal: () => void;
   closeActionInstanceModal: () => void;
   closeModal: () => void;
   closeParameterTypeModal: () => void;
@@ -238,15 +207,11 @@ export interface SidebarManager {
   handleDeleteItem: (category: DataCategory, index: number) => void;
   handleSaveCategory: (value: StructuredItem) => void;
   handleSaveFromModal: (value: StructuredItem) => void;
-  handleSaveParameterInstance: (value: ParameterInstance) => void;
-  handleSavePredicateInstance: (value: PredicateInstance) => void;
   handleSaveActionInstance: (value: ActionInstance) => void;
   handleSaveParameterType: (value: ParameterType) => void;
   handleSavePredicateType: (value: PredicateType) => void;
   handleSaveActionType: (value: ActionType) => void;
   handleSearchChange: (category: DataCategory, value: string) => void;
-  parameterInstanceModalState: ParameterInstanceModalState;
-  predicateInstanceModalState: PredicateInstanceModalState;
   actionInstanceModalState: ActionInstanceModalState;
   modalState: ModalState;
   openAddModal: (category: DataCategory) => void;
@@ -263,14 +228,13 @@ export interface SidebarManager {
   predicateTypes: PredicateType[];
   actionTypeMap: Map<string, ActionType>;
   actionTypes: ActionType[];
+  flowNodeOptions: FlowNodeOption[];
   decoratorNodeOptions: DecoratorNodeOption[];
   serviceNodeOptions: ServiceNodeOption[];
   searchQueries: SearchQueries;
   parameterTypeModalState: TypeModalState;
   predicateTypeModalState: PredicateTypeModalState;
   actionTypeModalState: ActionTypeModalState;
-  importParameterInstancesFromText: (text: string) => ImportReport;
-  importPredicateInstancesFromText: (text: string) => ImportReport;
   importActionInstancesFromText: (text: string) => ImportReport;
 }
 
@@ -278,10 +242,6 @@ export interface SidebarManager {
 export interface CategoryItemListProps {
   category: DataCategory;
   items: StructuredItem[];
-  parameterTypes: ParameterType[];
-  parameterTypeMap: Map<string, ParameterType>;
-  predicateTypes: PredicateType[];
-  predicateTypeMap: Map<string, PredicateType>;
   actionTypes: ActionType[];
   actionTypeMap: Map<string, ActionType>;
   searchQuery: string;
@@ -296,7 +256,7 @@ export interface CategoryItemListProps {
 
 export type BehaviorNodeKind = "flow" | "decorator" | "service";
 
-/** describes a selectable behavior-tree node template surfaced in the sidebar. */
+/** describes a selectable behavior-tree node option surfaced in the sidebar. */
 export interface BehaviorNodeOption {
   id: string;
   label: string;

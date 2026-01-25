@@ -138,11 +138,10 @@ function Dropdown({ title, items }: DropdownProps) {
 export default function Header({
   theme,
   onToggleTheme,
-  onImportParameterInstances,
-  onImportPredicateInstances,
   onImportActionInstances,
   onExportCanvasGraph,
   onImportCanvasGraph,
+  onOpenValidate,
 }: HeaderProps) {
   const isDarkMode = theme === "dark";
   const fileMenuItems: DropdownProps["items"] = [
@@ -167,20 +166,6 @@ export default function Header({
     { kind: "label", label: "Instances" },
     {
       kind: "file",
-      label: "Import Parameter Instances",
-      hint: "TXT upload (.txt)",
-      accept: ".txt",
-      onFileSelect: onImportParameterInstances,
-    },
-    {
-      kind: "file",
-      label: "Import Predicate Instances",
-      hint: "TXT upload (.txt)",
-      accept: ".txt",
-      onFileSelect: onImportPredicateInstances,
-    },
-    {
-      kind: "file",
       label: "Import Action Instances",
       hint: "TXT upload (.txt)",
       accept: ".txt",
@@ -200,6 +185,16 @@ export default function Header({
           <Dropdown
             title="View"
             items={["Zoom In", "Zoom Out", "Reset Zoom", "Toggle Grid"]}
+          />
+          <Dropdown
+            title="Tools"
+            items={[
+              {
+                kind: "action",
+                label: "Validate (MontiCore)",
+                onSelect: onOpenValidate,
+              },
+            ]}
           />
         </nav>
 

@@ -393,23 +393,13 @@
   outline-offset: 2px;
 }
 
-
 .canvas-node-parameterType {
   border-color: color-mix(in srgb, var(--accent) 85%, transparent);
   background: color-mix(in srgb, var(--accent-soft) 60%, var(--surface-panel) 40%);
 }
 
-.canvas-node-parameterInstance {
-  border-color: color-mix(in srgb, var(--accent-secondary, var(--accent)) 80%, transparent);
-}
-
 .canvas-node-predicateType {
   border-color: color-mix(in srgb, var(--accent-purple, var(--accent)) 80%, transparent);
-}
-
-.canvas-node-predicateInstance {
-  border-color: color-mix(in srgb, var(--accent-purple, var(--accent)) 70%, transparent);
-  background: color-mix(in srgb, var(--accent-purple, var(--accent)) 12%, var(--surface-panel-alt) 88%);
 }
 
 .canvas-node-actionType {
