@@ -8,7 +8,7 @@ grammar PlanningService extends ConcreteBT {
   // 2. Planner hierarchy
   abstract symbol Planner = name:Name;
 
-  symbol PDDLPlanner extends Planner = "PDDLPlanner" name:Name ("domain" domain:Name@Domain)?   ("problem" problem:Name)?;
+ symbol PDDLPlanner extends Planner = "PDDLPlanner" name:Name ("domain" domain:Name@Domain)?   ("problem" problem:Name)?;
 
   symbol Domain = "domain" name:Name "Level" actLev:ActionLevel;
 
