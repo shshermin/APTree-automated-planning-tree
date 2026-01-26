@@ -7,48 +7,42 @@ grammar CRFTypeDef extends BehaviorTree, de.monticore.types.MCBasicTypes {
  World = (PropertyTypeDefinition | Property | PredicateTypeDefinition | ActionTypeDefinition)*;
 
 // 2. The Type System (The "Types") including all the allowed types
-  interface PropertyType ;
 
-  /////??????????????? This is not correct.
-  MCPrimitiveType implements PropertyType  ;
-  abstract CustomProperty implements PropertyType ;
+interface CustomProperty = name:Name;
 
   
-symbol Layer    extends CustomProperty = "Layer" name:Name;
-symbol Module   extends CustomProperty = "Module" name:Name ;
+symbol Layer    implements CustomProperty = "Layer" name:Name;
+symbol Module   implements CustomProperty = "Module" name:Name ;
   
-abstract symbol  Location extends CustomProperty = name:Name;
-abstract symbol  Element  extends CustomProperty = name:Name;
-abstract symbol Tool     extends CustomProperty = name:Name ;
-abstract symbol  Agent    extends CustomProperty = name:Name;
+abstract symbol  Location implements CustomProperty = name:Name;
+abstract symbol  Element  implements CustomProperty = name:Name;
+abstract symbol Tool     implements CustomProperty = name:Name ;
+abstract symbol  Agent    implements CustomProperty = name:Name;
 
-  // definition of a property - accepts any Name as type (validated by CoCo if needed)
-  //////???????????? can I have the type as type:Name@PropertyType   if the property type becomes a symbol? I wanna make sure the type is always one of the defined names or nonterminals implementing PropertyType
+  // definition of a property - accepts any Name as type (validated by CoCos)
      Property = name:Name ":" type:Name ;
  
   // 5. The Dynamic Definition rule
-PropertyTypeDefinition = "define" name:Name "as" superType:Name "{" (Property)* "}";
+     PropertyTypeDefinition = "define" name:Name "as" superType:Name "{" (Property)* "}";
 
 
 //////// predicate definition
 
-
 // Predicate type definition
-PredicateTypeDefinition = "define" "predicatetype" name:Name  "{" (Property)* "}";
+      PredicateTypeDefinition = "define" "predicatetype" name:Name  "{" (Property)* "}";
 //predicateType
 ////???????????????????? how can I use "!" in the concrete syntax?
-abstract symbol Predicate = ["not"]? name:Name;
+      abstract symbol Predicate = ["not"] name:Name;
+
 // predicate Instances
 //////???????????? this is a dummy predicate because the Grammar does not allow abstract nonterminals without implementation if it is not a component grammar
-IsAt extends Predicate = "IsAt" name:Name;
+      IsAt extends Predicate = "dummy" name:Name;
 
 // Action type definition
 
 abstract PActionNode extends ActionNode = 
     name:Name 
     actLevel: ActionLevel
-    precondition:Predicate*
-    effect:Predicate*
     ("@" subtreeAnnotation:Name@BehaviorTree)? 
     ("{" (Decorator | Service)* "}")?
     ;

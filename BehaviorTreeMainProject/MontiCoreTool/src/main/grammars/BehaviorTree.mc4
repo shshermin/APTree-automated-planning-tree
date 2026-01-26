@@ -15,6 +15,7 @@
   // action nodes
   abstract  ActionNode extends BTNode = "Action" name:Name ("{" (Decorator | Service)* "}")? ;
   PickUp extends ActionNode = "Action" name:Name ("{" (Decorator | Service)* "}")?;
+  Place extends ActionNode = "Action" name:Name ("{" (Decorator | Service)* "}")?;
  
  
  // services and decorators
