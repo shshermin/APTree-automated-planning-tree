@@ -4,9 +4,7 @@ import type {
   ActionType,
   CategoryItemListProps,
   DataCategory,
-  ParameterInstance,
   ParameterType,
-  PredicateInstance,
   PredicateType,
   StructuredItem,
 } from "../utils/types";
@@ -14,9 +12,7 @@ import {
   ACTION_INSTANCES_KEY,
   ACTION_TYPES_KEY,
   BT_NODES_KEY,
-  PARAM_INSTANCES_KEY,
   PARAM_TYPES_KEY,
-  PREDICATE_INSTANCES_KEY,
   PREDICATE_TYPES_KEY,
   DRAGGABLE_NODE_CATEGORIES,
 } from "../utils/constants";
@@ -26,11 +22,7 @@ import {
   type DraggedSidebarItem,
 } from "../../editor/dragTypes";
 
-const NEGATION_TERMS = ["negated", "not", "!"];
-
 type TypeLookup = {
-  parameterTypeMap: Map<string, ParameterType>;
-  predicateTypeMap: Map<string, PredicateType>;
   actionTypeMap: Map<string, ActionType>;
 };
 
@@ -61,61 +53,6 @@ const collectPropertyStrings = (
     const value = propertyValues[property.id] ?? "";
     return `${label} ${value}`.trim();
   });
-};
-
-/**
- * matches a parameter instance against the search query.
- * @param instance 
- * @param query 
- * @param parameterTypeMap 
- * @returns true when a match is found
- */
-const matchesParameterInstance = (
-  instance: ParameterInstance,
-  query: string,
-  parameterTypeMap: Map<string, ParameterType>
-) => {
-  const linkedType = parameterTypeMap.get(instance.typeId);
-  const typeName = (linkedType?.name ?? instance.type).toLowerCase();
-  if (typeName.includes(query)) {
-    return true;
-  }
-
-  return collectPropertyStrings(linkedType, instance.propertyValues).some((entry) =>
-    includesQuery(entry, query)
-  );
-};
-
-/**
- * matches a predicate instance against the search query.
- * @param instance 
- * @param query 
- * @param predicateTypeMap 
- * @returns true when a match is found
- */
-const matchesPredicateInstance = (
-  instance: PredicateInstance,
-  query: string,
-  predicateTypeMap: Map<string, PredicateType>
-) => {
-  const linkedType = predicateTypeMap.get(instance.typeId);
-  const typeName = (linkedType?.name ?? instance.type).toLowerCase();
-  if (typeName.includes(query)) {
-    return true;
-  }
-
-  if (
-    instance.isNegated &&
-    NEGATION_TERMS.some(
-      (term) => term.includes(query) || query.includes(term)
-    )
-  ) {
-    return true;
-  }
-
-  return collectPropertyStrings(linkedType, instance.propertyValues).some((entry) =>
-    includesQuery(entry, query)
-  );
 };
 
 /**
@@ -170,18 +107,6 @@ const matchesSearch = (
     case PREDICATE_TYPES_KEY:
     case ACTION_TYPES_KEY:
       return matchesTypeDefinition(item as ParameterType, lowerQuery);
-    case PARAM_INSTANCES_KEY:
-      return matchesParameterInstance(
-        item as ParameterInstance,
-        lowerQuery,
-        lookups.parameterTypeMap
-      );
-    case PREDICATE_INSTANCES_KEY:
-      return matchesPredicateInstance(
-        item as PredicateInstance,
-        lowerQuery,
-        lookups.predicateTypeMap
-      );
     case ACTION_INSTANCES_KEY:
       return matchesActionInstance(
         item as ActionInstance,
@@ -212,27 +137,6 @@ const resolveItemPresentation = (
   item: StructuredItem,
   lookups: TypeLookup
 ): ItemPresentation => {
-  if (category === PARAM_INSTANCES_KEY) {
-    const instance = item as ParameterInstance;
-    const linkedType = lookups.parameterTypeMap.get(instance.typeId);
-    return {
-      badgeLabel: linkedType?.name ?? item.type,
-      dragTypeId: instance.typeId,
-    };
-  }
-
-  if (category === PREDICATE_INSTANCES_KEY) {
-    const instance = item as PredicateInstance;
-    const linkedType = lookups.predicateTypeMap.get(instance.typeId);
-    const typeName = linkedType?.name ?? item.type;
-    const badgeLabel = instance.isNegated ? `NOT ${typeName}` : typeName;
-    return {
-      badgeLabel,
-      dragTypeId: instance.typeId,
-      dragIsNegated: instance.isNegated,
-    };
-  }
-
   if (category === ACTION_INSTANCES_KEY) {
     const instance = item as ActionInstance;
     const linkedType = lookups.actionTypeMap.get(instance.typeId);
@@ -294,22 +198,12 @@ const buildDragPayload = (
 const resolveEmptyStateMessage = (
   category: DataCategory,
   trimmedQuery: string,
-  parameterTypes: ParameterType[],
-  predicateTypes: PredicateType[],
   actionTypes: ActionType[],
   isActionCategory: boolean,
   isBehaviorNodeCategory: boolean
 ) => {
   if (trimmedQuery) {
     return "No matching items.";
-  }
-
-  if (category === PARAM_INSTANCES_KEY && parameterTypes.length === 0) {
-    return "Create a parameter type before adding instances.";
-  }
-
-  if (category === PREDICATE_INSTANCES_KEY && predicateTypes.length === 0) {
-    return "Create a predicate type before adding instances.";
   }
 
   if (category === ACTION_INSTANCES_KEY && actionTypes.length === 0) {
@@ -321,7 +215,7 @@ const resolveEmptyStateMessage = (
   }
 
   if (isBehaviorNodeCategory) {
-    return "Use the Add Behavior Node wizard to create new flow, decorator, or service templates.";
+    return "Use the Add Behavior Node wizard to create new flow, decorator, or service nodes.";
   }
 
   return "No items defined.";
@@ -335,10 +229,6 @@ const resolveEmptyStateMessage = (
 export function CategoryItemList({
   category,
   items,
-  parameterTypes,
-  parameterTypeMap,
-  predicateTypes,
-  predicateTypeMap,
   actionTypes,
   actionTypeMap,
   searchQuery,
@@ -353,8 +243,6 @@ export function CategoryItemList({
   const isBehaviorNodeCategory = category === BT_NODES_KEY;
   const isDraggableCategory = DRAGGABLE_NODE_CATEGORIES.includes(category);
   const lookups: TypeLookup = {
-    parameterTypeMap,
-    predicateTypeMap,
     actionTypeMap,
   };
 
@@ -456,8 +344,6 @@ export function CategoryItemList({
           {resolveEmptyStateMessage(
             category,
             trimmedQuery,
-            parameterTypes,
-            predicateTypes,
             actionTypes,
             isActionCategory,
             isBehaviorNodeCategory

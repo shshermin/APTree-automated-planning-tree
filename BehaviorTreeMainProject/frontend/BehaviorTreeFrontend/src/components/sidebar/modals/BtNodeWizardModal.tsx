@@ -124,7 +124,7 @@ export default function BtNodeWizardModal({
               >
                 <span className="wizard-card-title">Create Action Type</span>
                 <span className="wizard-card-copy">
-                  Describe a reusable action template with its parameters.
+                  Describe a reusable action definition with its parameters.
                 </span>
               </button>
               <button

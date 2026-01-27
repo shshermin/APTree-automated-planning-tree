@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ADD_LABELS,
   DEFAULT_DATA,
@@ -7,26 +7,21 @@ import {
   DECORATOR_NODES_KEY,
   ACTION_INSTANCES_KEY,
   ACTION_TYPES_KEY,
-  DECORATOR_NODE_OPTIONS,
-  PARAM_INSTANCES_KEY,
+  FALLBACK_FLOW_NODE_OPTIONS,
+  FALLBACK_DECORATOR_NODE_OPTIONS,
   PARAM_TYPES_KEY,
-  PREDICATE_INSTANCES_KEY,
   PREDICATE_TYPES_KEY,
   SERVICE_NODES_KEY,
-  SERVICE_NODE_OPTIONS,
+  FALLBACK_SERVICE_NODE_OPTIONS,
 } from "./utils/constants";
 import {
   cloneActionInstance,
   cloneActionType,
-  cloneParameterInstance,
   cloneParameterType,
-  clonePredicateInstance,
   clonePredicateType,
   createEmptyActionInstance,
   createEmptyActionType,
-  createEmptyParameterInstance,
   createEmptyParameterType,
-  createEmptyPredicateInstance,
   createEmptyPredicateType,
   createEmptyStructuredItem,
   generateItemId,
@@ -40,9 +35,8 @@ import type {
   CategoryModalState,
   DataCategory,
   ModalState,
-  ParameterInstance,
+  FlowNodeOption,
   ParameterType,
-  PredicateInstance,
   PredicateType,
   SearchQueries,
   SidebarManager,
@@ -105,6 +99,7 @@ export const useSidebarManager = (): SidebarManager => {
   const [searchQueries, setSearchQueries] = useState<SearchQueries>(
     createInitialSearchQueries
   );
+  const [flowCatalog, setFlowCatalog] = useState<StructuredItem[] | null>(null);
 
   const [categoryModalState, setCategoryModalState] =
     useState<CategoryModalState>({
@@ -123,13 +118,6 @@ export const useSidebarManager = (): SidebarManager => {
   const actionTypeModal = useModalController<ActionType>(
     createEmptyActionType
   );
-
-  const parameterInstanceModal = useModalController<ParameterInstance>(
-    createEmptyParameterInstance
-  );
-  const predicateInstanceModal = useModalController<PredicateInstance>(
-    createEmptyPredicateInstance
-  );
   const actionInstanceModal = useModalController<ActionInstance>(
     createEmptyActionInstance
   );
@@ -137,8 +125,6 @@ export const useSidebarManager = (): SidebarManager => {
   const parameterTypeModalState = parameterTypeModal.state;
   const predicateTypeModalState = predicateTypeModal.state;
   const actionTypeModalState = actionTypeModal.state;
-  const parameterInstanceModalState = parameterInstanceModal.state;
-  const predicateInstanceModalState = predicateInstanceModal.state;
   const actionInstanceModalState = actionInstanceModal.state;
 
   const [modalState, setModalState] = useState<ModalState>(() => ({
@@ -188,22 +174,6 @@ export const useSidebarManager = (): SidebarManager => {
     return map;
   }, [actionTypes]);
 
-  const parameterTypeNameMap = useMemo(() => {
-    const map = new Map<string, ParameterType>();
-    parameterTypes.forEach((entry) => {
-      map.set(entry.name.trim().toLowerCase(), entry);
-    });
-    return map;
-  }, [parameterTypes]);
-
-  const predicateTypeNameMap = useMemo(() => {
-    const map = new Map<string, PredicateType>();
-    predicateTypes.forEach((entry) => {
-      map.set(entry.name.trim().toLowerCase(), entry);
-    });
-    return map;
-  }, [predicateTypes]);
-
   const actionTypeNameMap = useMemo(() => {
     const map = new Map<string, ActionType>();
     actionTypes.forEach((entry) => {
@@ -212,11 +182,174 @@ export const useSidebarManager = (): SidebarManager => {
     return map;
   }, [actionTypes]);
 
+  const needsDecoratorCatalog = useMemo(() => {
+    const entries = data[DECORATOR_NODES_KEY] as StructuredItem[] | undefined;
+    return !entries || entries.length === 0;
+  }, [data]);
+
+  const needsServiceCatalog = useMemo(() => {
+    const entries = data[SERVICE_NODES_KEY] as StructuredItem[] | undefined;
+    return !entries || entries.length === 0;
+  }, [data]);
+
+  useEffect(() => {
+    if (!needsDecoratorCatalog && !needsServiceCatalog) {
+      return;
+    }
+
+    const controller = new AbortController();
+
+    const toStructuredItems = (entries: Array<{ id: string; label: string; typeLabel?: string | null; description?: string | null }>): StructuredItem[] =>
+      entries.map((entry) => ({
+        id: entry.id,
+        name: entry.label,
+        type: entry.typeLabel ?? "",
+        description: entry.description ?? "",
+      }));
+
+    const load = async () => {
+      try {
+        const [decorators, services] = await Promise.all([
+          needsDecoratorCatalog
+            ? fetch("/api/catalog/decorators", { signal: controller.signal }).then((res) => {
+                if (!res.ok) {
+                  throw new Error(`Decorator catalog request failed (${res.status})`);
+                }
+                return res.json() as Promise<
+                  Array<{ id: string; label: string; typeLabel?: string | null; kind?: string; description?: string | null }>
+                >;
+              })
+            : Promise.resolve(null),
+          needsServiceCatalog
+            ? fetch("/api/catalog/services", { signal: controller.signal }).then((res) => {
+                if (!res.ok) {
+                  throw new Error(`Service catalog request failed (${res.status})`);
+                }
+                return res.json() as Promise<
+                  Array<{ id: string; label: string; typeLabel?: string | null; kind?: string; description?: string | null }>
+                >;
+              })
+            : Promise.resolve(null),
+        ]);
+
+        setData((prev) => {
+          const next = { ...prev };
+
+          const existingDecorators = next[DECORATOR_NODES_KEY] as StructuredItem[] | undefined;
+          if (needsDecoratorCatalog && (!existingDecorators || existingDecorators.length === 0)) {
+            next[DECORATOR_NODES_KEY] = decorators
+              ? toStructuredItems(decorators)
+              : FALLBACK_DECORATOR_NODE_OPTIONS.map((option) => ({
+                  id: option.id,
+                  name: option.label,
+                  type: option.typeLabel,
+                  description: option.description ?? "",
+                }));
+          }
+
+          const existingServices = next[SERVICE_NODES_KEY] as StructuredItem[] | undefined;
+          if (needsServiceCatalog && (!existingServices || existingServices.length === 0)) {
+            next[SERVICE_NODES_KEY] = services
+              ? toStructuredItems(services)
+              : FALLBACK_SERVICE_NODE_OPTIONS.map((option) => ({
+                  id: option.id,
+                  name: option.label,
+                  type: option.typeLabel,
+                  description: option.description ?? "",
+                }));
+          }
+
+          return next;
+        });
+      } catch (error) {
+        if (controller.signal.aborted) {
+          return;
+        }
+        console.warn("Failed to load backend node catalogs; using frontend defaults.", error);
+        setData((prev) => {
+          const next = { ...prev };
+          const existingDecorators = next[DECORATOR_NODES_KEY] as StructuredItem[] | undefined;
+          const existingServices = next[SERVICE_NODES_KEY] as StructuredItem[] | undefined;
+
+          if (needsDecoratorCatalog && (!existingDecorators || existingDecorators.length === 0)) {
+            next[DECORATOR_NODES_KEY] = FALLBACK_DECORATOR_NODE_OPTIONS.map((option) => ({
+              id: option.id,
+              name: option.label,
+              type: option.typeLabel,
+              description: option.description ?? "",
+            }));
+          }
+
+          if (needsServiceCatalog && (!existingServices || existingServices.length === 0)) {
+            next[SERVICE_NODES_KEY] = FALLBACK_SERVICE_NODE_OPTIONS.map((option) => ({
+              id: option.id,
+              name: option.label,
+              type: option.typeLabel,
+              description: option.description ?? "",
+            }));
+          }
+
+          return next;
+        });
+      }
+    };
+
+    void load();
+
+    return () => controller.abort();
+  }, [needsDecoratorCatalog, needsServiceCatalog]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    const toStructuredItems = (
+      entries: Array<{ id: string; label: string; typeLabel?: string | null; description?: string | null }>
+    ): StructuredItem[] =>
+      entries.map((entry) => ({
+        id: entry.id,
+        name: entry.label,
+        type: entry.typeLabel ?? "",
+        description: entry.description ?? "",
+      }));
+
+    const load = async () => {
+      try {
+        const flows = await fetch("/api/catalog/flows", { signal: controller.signal }).then((res) => {
+          if (!res.ok) {
+            throw new Error(`Flow catalog request failed (${res.status})`);
+          }
+          return res.json() as Promise<
+            Array<{ id: string; label: string; typeLabel?: string | null; kind?: string; description?: string | null }>
+          >;
+        });
+
+        setFlowCatalog(toStructuredItems(flows));
+      } catch (error) {
+        if (controller.signal.aborted) {
+          return;
+        }
+
+        console.warn("Failed to load backend flow catalog; using frontend defaults.", error);
+        setFlowCatalog(
+          FALLBACK_FLOW_NODE_OPTIONS.map((option) => ({
+            id: option.id,
+            name: option.label,
+            type: option.typeLabel,
+            description: option.description ?? "",
+          }))
+        );
+      }
+    };
+
+    void load();
+    return () => controller.abort();
+  }, []);
+
   const decoratorNodeOptions = useMemo<DecoratorNodeOption[]>(() => {
     const entries = data[DECORATOR_NODES_KEY] as StructuredItem[] | undefined;
     const source =
       entries ??
-      DECORATOR_NODE_OPTIONS.map((option) => ({
+      FALLBACK_DECORATOR_NODE_OPTIONS.map((option) => ({
         id: option.id,
         name: option.label,
         type: option.typeLabel,
@@ -236,7 +369,7 @@ export const useSidebarManager = (): SidebarManager => {
     const entries = data[SERVICE_NODES_KEY] as StructuredItem[] | undefined;
     const source =
       entries ??
-      SERVICE_NODE_OPTIONS.map((option) => ({
+      FALLBACK_SERVICE_NODE_OPTIONS.map((option) => ({
         id: option.id,
         name: option.label,
         type: option.typeLabel,
@@ -251,6 +384,26 @@ export const useSidebarManager = (): SidebarManager => {
       kind: "service",
     }));
   }, [data]);
+
+  const flowNodeOptions = useMemo<FlowNodeOption[]>(() => {
+    const source =
+      flowCatalog ??
+      FALLBACK_FLOW_NODE_OPTIONS.map((option) => ({
+        id: option.id,
+        name: option.label,
+        type: option.typeLabel,
+        description: option.description ?? "",
+      }));
+
+    return source.map((item) => ({
+      id: item.id,
+      label: item.name,
+      typeLabel: item.type || "Flow",
+      description: item.description || undefined,
+      kind: "flow",
+      defaultSuccessType: "ALL",
+    }));
+  }, [flowCatalog]);
 
   /**
    * Opens the "add item" modal for the given category.
@@ -290,26 +443,6 @@ export const useSidebarManager = (): SidebarManager => {
 
     if (category === ACTION_TYPES_KEY) {
       actionTypeModal.openAdd();
-      return;
-    }
-
-    if (category === PARAM_INSTANCES_KEY) {
-      openInstanceModalWithDefault(
-        parameterTypes,
-        createEmptyParameterInstance,
-        parameterInstanceModal.openAdd,
-        "Create a parameter type before adding instances."
-      );
-      return;
-    }
-
-    if (category === PREDICATE_INSTANCES_KEY) {
-      openInstanceModalWithDefault(
-        predicateTypes,
-        createEmptyPredicateInstance,
-        predicateInstanceModal.openAdd,
-        "Create a predicate type before adding instances."
-      );
       return;
     }
 
@@ -385,52 +518,6 @@ export const useSidebarManager = (): SidebarManager => {
   };
 
   /**
-   * opens the parameter instance modal in edit mode with reconciled values.
-   * @param index index of the parameter instance within the list
-   * @param currentValue instance currently selected for editing
-   */
-  const openEditParameterInstance = (
-    index: number,
-    currentValue: ParameterInstance
-  ) => {
-    const parameterType = parameterTypeMap.get(currentValue.typeId);
-    const initialEntry = cloneParameterInstance(currentValue);
-
-    if (parameterType) {
-      initialEntry.type = parameterType.name;
-      initialEntry.propertyValues = reconcileInstanceValues(
-        parameterType,
-        currentValue.propertyValues
-      );
-    }
-
-    parameterInstanceModal.openEdit(index, initialEntry);
-  };
-
-  /**
-   * opens the predicate instance modal in edit mode with reconciled values.
-   * @param index index of the predicate instance within the list
-   * @param currentValue instance currently selected for editing
-   */
-  const openEditPredicateInstance = (
-    index: number,
-    currentValue: PredicateInstance
-  ) => {
-    const predicateType = predicateTypeMap.get(currentValue.typeId);
-    const initialEntry = clonePredicateInstance(currentValue);
-
-    if (predicateType) {
-      initialEntry.type = predicateType.name;
-      initialEntry.propertyValues = reconcileInstanceValues(
-        predicateType,
-        currentValue.propertyValues
-      );
-    }
-
-    predicateInstanceModal.openEdit(index, initialEntry);
-  };
-
-  /**
    * opens the action instance modal in edit mode with reconciled values.
    * @param index index of the action instance within the list
    * @param currentValue instance currently selected for editing
@@ -474,16 +561,6 @@ export const useSidebarManager = (): SidebarManager => {
 
     if (category === ACTION_TYPES_KEY) {
       openEditActionType(index, currentValue as ActionType);
-      return;
-    }
-
-    if (category === PARAM_INSTANCES_KEY) {
-      openEditParameterInstance(index, currentValue as ParameterInstance);
-      return;
-    }
-
-    if (category === PREDICATE_INSTANCES_KEY) {
-      openEditPredicateInstance(index, currentValue as PredicateInstance);
       return;
     }
 
@@ -569,20 +646,6 @@ export const useSidebarManager = (): SidebarManager => {
   };
 
   /**
-   * closes the parameter instance modal and restores its default state.
-   */
-  const closeParameterInstanceModal = () => {
-    parameterInstanceModal.close();
-  };
-
-  /**
-   * closes the predicate instance modal and restores its default state.
-   */
-  const closePredicateInstanceModal = () => {
-    predicateInstanceModal.close();
-  };
-
-  /**
    * closes the action instance modal and restores its default state.
    */
   const closeActionInstanceModal = () => {
@@ -610,27 +673,9 @@ export const useSidebarManager = (): SidebarManager => {
         nextTypes[parameterTypeModalState.index] = normalized;
       }
 
-      const existingInstances =
-        (prev[PARAM_INSTANCES_KEY] as ParameterInstance[] | undefined) ?? [];
-      const nextInstances = existingInstances.map((instance) => {
-        if (instance.typeId !== normalized.id) {
-          return instance;
-        }
-
-        return {
-          ...instance,
-          type: normalized.name,
-          propertyValues: reconcileInstanceValues(
-            normalized,
-            instance.propertyValues
-          ),
-        };
-      });
-
       return {
         ...prev,
         [PARAM_TYPES_KEY]: nextTypes,
-        [PARAM_INSTANCES_KEY]: nextInstances,
       };
     });
 
@@ -661,28 +706,9 @@ export const useSidebarManager = (): SidebarManager => {
         nextTypes[predicateTypeModalState.index] = normalized;
       }
 
-      const existingInstances =
-        (prev[PREDICATE_INSTANCES_KEY] as PredicateInstance[] | undefined) ??
-        [];
-      const nextInstances = existingInstances.map((instance) => {
-        if (instance.typeId !== normalized.id) {
-          return instance;
-        }
-
-        return {
-          ...instance,
-          type: normalized.name,
-          propertyValues: reconcileInstanceValues(
-            normalized,
-            instance.propertyValues
-          ),
-        };
-      });
-
       return {
         ...prev,
         [PREDICATE_TYPES_KEY]: nextTypes,
-        [PREDICATE_INSTANCES_KEY]: nextInstances,
       };
     });
 
@@ -738,110 +764,6 @@ export const useSidebarManager = (): SidebarManager => {
     });
 
     closeActionTypeModal();
-  };
-
-  /**
-   * stores the provided parameter instance after validating its type binding.
-   * @param value parameter instance captured from the modal form
-   */
-  const handleSaveParameterInstance = (value: ParameterInstance) => {
-    const parameterType = parameterTypeMap.get(value.typeId);
-    if (!parameterType) {
-      window.alert("Select a valid parameter type.");
-      return;
-    }
-
-    const sanitizedValues = parameterType.properties.reduce<
-      Record<string, string>
-    >((acc, property) => {
-      const rawValue = value.propertyValues?.[property.id] ?? "";
-      acc[property.id] = rawValue.trim();
-      return acc;
-    }, {});
-
-    const normalized: ParameterInstance = {
-      ...value,
-      id: value.id || createEmptyParameterInstance().id,
-      name: value.name.trim(),
-      type: parameterType.name,
-      typeId: parameterType.id,
-      propertyValues: sanitizedValues,
-    };
-
-    setData((prev) => {
-      const existing =
-        (prev[PARAM_INSTANCES_KEY] as ParameterInstance[] | undefined) ?? [];
-      const next = [...existing];
-
-      if (parameterInstanceModalState.mode === "add") {
-        next.push(normalized);
-      } else if (
-        parameterInstanceModalState.mode === "edit" &&
-        parameterInstanceModalState.index !== null
-      ) {
-        next[parameterInstanceModalState.index] = normalized;
-      }
-
-      return {
-        ...prev,
-        [PARAM_INSTANCES_KEY]: next,
-      };
-    });
-
-    closeParameterInstanceModal();
-  };
-
-  /**
-   * stores the provided predicate instance after validating its type binding.
-   * @param value predicate instance captured from the modal form
-   */
-  const handleSavePredicateInstance = (value: PredicateInstance) => {
-    const predicateType = predicateTypeMap.get(value.typeId);
-    if (!predicateType) {
-      window.alert("Select a valid predicate type.");
-      return;
-    }
-
-    const sanitizedValues = predicateType.properties.reduce<
-      Record<string, string>
-    >((acc, property) => {
-      const rawValue = value.propertyValues?.[property.id] ?? "";
-      acc[property.id] = rawValue.trim();
-      return acc;
-    }, {});
-
-    const normalized: PredicateInstance = {
-      ...value,
-      id: value.id || createEmptyPredicateInstance().id,
-      name: value.name.trim(),
-      type: predicateType.name,
-      typeId: predicateType.id,
-      propertyValues: sanitizedValues,
-      isNegated: value.isNegated ?? false,
-    };
-
-    setData((prev) => {
-      const existing =
-        (prev[PREDICATE_INSTANCES_KEY] as PredicateInstance[] | undefined) ??
-        [];
-      const next = [...existing];
-
-      if (predicateInstanceModalState.mode === "add") {
-        next.push(normalized);
-      } else if (
-        predicateInstanceModalState.mode === "edit" &&
-        predicateInstanceModalState.index !== null
-      ) {
-        next[predicateInstanceModalState.index] = normalized;
-      }
-
-      return {
-        ...prev,
-        [PREDICATE_INSTANCES_KEY]: next,
-      };
-    });
-
-    closePredicateInstanceModal();
   };
 
   /**
@@ -912,25 +834,6 @@ export const useSidebarManager = (): SidebarManager => {
       const nextItems = existingItems.filter((_, i) => i !== index);
       const nextData: AppData = { ...prev, [category]: nextItems };
 
-      if (category === PARAM_TYPES_KEY && removedEntry) {
-        const removedType = removedEntry as ParameterType;
-        const existingInstances =
-          (prev[PARAM_INSTANCES_KEY] as ParameterInstance[] | undefined) ?? [];
-        nextData[PARAM_INSTANCES_KEY] = existingInstances.filter(
-          (instance) => instance.typeId !== removedType.id
-        );
-      }
-
-      if (category === PREDICATE_TYPES_KEY && removedEntry) {
-        const removedType = removedEntry as PredicateType;
-        const existingInstances =
-          (prev[PREDICATE_INSTANCES_KEY] as PredicateInstance[] | undefined) ??
-          [];
-        nextData[PREDICATE_INSTANCES_KEY] = existingInstances.filter(
-          (instance) => instance.typeId !== removedType.id
-        );
-      }
-
       if (category === ACTION_TYPES_KEY && removedEntry) {
         const removedType = removedEntry as ActionType;
         const existingInstances =
@@ -970,16 +873,6 @@ export const useSidebarManager = (): SidebarManager => {
     };
 
     closeModalEditingIndex(
-      PARAM_INSTANCES_KEY,
-      parameterInstanceModalState,
-      closeParameterInstanceModal
-    );
-    closeModalEditingIndex(
-      PREDICATE_INSTANCES_KEY,
-      predicateInstanceModalState,
-      closePredicateInstanceModal
-    );
-    closeModalEditingIndex(
       ACTION_INSTANCES_KEY,
       actionInstanceModalState,
       closeActionInstanceModal
@@ -1000,18 +893,6 @@ export const useSidebarManager = (): SidebarManager => {
       closeActionTypeModal
     );
 
-    closeInstanceModalIfOrphaned(
-      PARAM_TYPES_KEY,
-      removedEntry,
-      parameterInstanceModalState,
-      closeParameterInstanceModal
-    );
-    closeInstanceModalIfOrphaned(
-      PREDICATE_TYPES_KEY,
-      removedEntry,
-      predicateInstanceModalState,
-      closePredicateInstanceModal
-    );
     closeInstanceModalIfOrphaned(
       ACTION_TYPES_KEY,
       removedEntry,
@@ -1167,14 +1048,6 @@ export const useSidebarManager = (): SidebarManager => {
       closeActionTypeModal();
     }
 
-    if (categoryKey === PARAM_INSTANCES_KEY) {
-      closeParameterInstanceModal();
-    }
-
-    if (categoryKey === PREDICATE_INSTANCES_KEY) {
-      closePredicateInstanceModal();
-    }
-
     if (categoryKey === ACTION_INSTANCES_KEY) {
       closeActionInstanceModal();
     }
@@ -1202,150 +1075,6 @@ export const useSidebarManager = (): SidebarManager => {
   const handleSearchChange = (category: DataCategory, value: string) => {
     setSearchQueries((prev) => ({ ...prev, [category]: value }));
   };
-
-  /**
-   * Imports parameter instances from the provided raw text input.
-   * @param rawText multiline string containing parameter instance definitions
-   * @returns summary report of the import operation
-   */
-  const importParameterInstancesFromText = useCallback(
-    (rawText: string): ImportReport => {
-      const lines = rawText.split(/\r?\n/);
-      const created: ParameterInstance[] = [];
-      const errors: string[] = [];
-      let processed = 0;
-
-      lines.forEach((line, index) => {
-        const trimmed = line.trim();
-        if (!trimmed || trimmed.startsWith("#")) {
-          return;
-        }
-
-        if (!trimmed.toLowerCase().startsWith("parameterinstance")) {
-          return;
-        }
-
-        processed += 1;
-        const match = trimmed.match(
-          /^ParameterInstance:\s*([^\s{]+)\s*\{([^}]*)\}/i
-        );
-        if (!match) {
-          errors.push(
-            `Zeile ${index + 1}: Ungültiges ParameterInstance-Format.`
-          );
-          return;
-        }
-
-        const typeName = match[1].trim();
-        const definition = parameterTypeNameMap.get(typeName.toLowerCase());
-        if (!definition) {
-          errors.push(
-            `Zeile ${index + 1}: Unbekannter Parametertyp "${typeName}".`
-          );
-          return;
-        }
-
-        const assignments = parseAssignmentBlock(match[2].trim());
-        const instance = createEmptyParameterInstance(definition);
-        instance.name = pickInstanceDisplayName(definition.name, assignments);
-        instance.propertyValues = buildPropertyValuesFromAssignments(
-          definition,
-          assignments
-        );
-        created.push(instance);
-      });
-
-      if (created.length > 0) {
-        setData((prev) => {
-          const existing =
-            (prev[PARAM_INSTANCES_KEY] as ParameterInstance[] | undefined) ?? [];
-          return {
-            ...prev,
-            [PARAM_INSTANCES_KEY]: [...existing, ...created],
-          };
-        });
-      }
-
-      return summarizeImport(processed, created.length, errors);
-    },
-    [parameterTypeNameMap, setData]
-  );
-
-  /**
-   * Imports predicate instances from the provided raw text input.
-   * @param rawText multiline string containing predicate instance definitions
-   * @returns summary report of the import operation
-   */
-  const importPredicateInstancesFromText = useCallback(
-    (rawText: string): ImportReport => {
-      const lines = rawText.split(/\r?\n/);
-      const created: PredicateInstance[] = [];
-      const errors: string[] = [];
-      let processed = 0;
-
-      lines.forEach((line, index) => {
-        const trimmed = line.trim();
-        if (!trimmed || trimmed.startsWith("#")) {
-          return;
-        }
-
-        if (!trimmed.toLowerCase().startsWith("predicateinstance")) {
-          return;
-        }
-
-        processed += 1;
-        const match = trimmed.match(
-          /^PredicateInstance:\s*([^\s(]+)\s*\(([^)]*)\)/i
-        );
-        if (!match) {
-          errors.push(
-            `Zeile ${index + 1}: Ungültiges PredicateInstance-Format.`
-          );
-          return;
-        }
-
-        const typeName = match[1].trim();
-        const definition = predicateTypeNameMap.get(typeName.toLowerCase());
-        if (!definition) {
-          errors.push(
-            `Zeile ${index + 1}: Unbekannter Prädikatstyp "${typeName}".`
-          );
-          return;
-        }
-
-        const assignments = parseAssignmentBlock(match[2].trim());
-        let isNegated = false;
-        const negationToken = assignments.named["isnegated"];
-        if (negationToken !== undefined) {
-          isNegated = /true/i.test(negationToken);
-          delete assignments.named["isnegated"];
-        }
-
-        const instance = createEmptyPredicateInstance(definition);
-        instance.name = pickInstanceDisplayName(definition.name, assignments);
-        instance.isNegated = isNegated;
-        instance.propertyValues = buildPropertyValuesFromAssignments(
-          definition,
-          assignments
-        );
-        created.push(instance);
-      });
-
-      if (created.length > 0) {
-        setData((prev) => {
-          const existing =
-            (prev[PREDICATE_INSTANCES_KEY] as PredicateInstance[] | undefined) ?? [];
-          return {
-            ...prev,
-            [PREDICATE_INSTANCES_KEY]: [...existing, ...created],
-          };
-        });
-      }
-
-      return summarizeImport(processed, created.length, errors);
-    },
-    [predicateTypeNameMap, setData]
-  );
 
   /**
    * Imports action instances from the provided raw text input.
@@ -1429,8 +1158,6 @@ export const useSidebarManager = (): SidebarManager => {
     categoryOrder,
     categoryTitles,
     closeCategoryModal,
-    closeParameterInstanceModal,
-    closePredicateInstanceModal,
     closeActionInstanceModal,
     closeModal,
     closeParameterTypeModal,
@@ -1441,15 +1168,11 @@ export const useSidebarManager = (): SidebarManager => {
     handleDeleteItem,
     handleSaveCategory,
     handleSaveFromModal,
-    handleSaveParameterInstance,
-    handleSavePredicateInstance,
     handleSaveActionInstance,
     handleSaveParameterType,
     handleSavePredicateType,
     handleSaveActionType,
     handleSearchChange,
-    parameterInstanceModalState,
-    predicateInstanceModalState,
     actionInstanceModalState,
     modalState,
     openAddModal,
@@ -1462,14 +1185,13 @@ export const useSidebarManager = (): SidebarManager => {
     predicateTypes,
     actionTypeMap,
     actionTypes,
+    flowNodeOptions,
     decoratorNodeOptions,
     serviceNodeOptions,
     searchQueries,
     parameterTypeModalState,
     predicateTypeModalState,
     actionTypeModalState,
-    importParameterInstancesFromText,
-    importPredicateInstancesFromText,
     importActionInstancesFromText,
   };
 };

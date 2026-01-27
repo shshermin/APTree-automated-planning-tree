@@ -1,9 +1,6 @@
 import { useState } from "react";
 import EditModal from "./modals/EditModal";
-import ParameterInstanceModal, {
-  ActionInstanceModal,
-  PredicateInstanceModal,
-} from "./modals/InstanceModal";
+import { ActionInstanceModal } from "./modals/InstanceModal";
 import TypeDefinitionModal from "./modals/TypeDefinitionModal";
 import BtNodeWizardModal, { type WizardStage } from "./modals/BtNodeWizardModal";
 import "./Sidebar.css";
@@ -15,7 +12,6 @@ import {
   BLACKBOARD_KEY,
   BT_NODES_KEY,
   DECORATOR_NODES_KEY,
-  FLOW_NODE_OPTIONS,
   SERVICE_NODES_KEY,
 } from "./utils/constants";
 import type { BehaviorNodeOption, SidebarManager, StructuredItem } from "./utils/types";
@@ -36,8 +32,6 @@ export default function Sidebar({ manager, onCreateBehaviorNode }: SidebarProps)
     categoryOrder,
     categoryTitles,
     closeCategoryModal,
-    closeParameterInstanceModal,
-    closePredicateInstanceModal,
     closeActionInstanceModal,
     closeModal,
     closeParameterTypeModal,
@@ -48,24 +42,16 @@ export default function Sidebar({ manager, onCreateBehaviorNode }: SidebarProps)
     handleDeleteItem,
     handleSaveCategory,
     handleSaveFromModal,
-    handleSaveParameterInstance,
-    handleSavePredicateInstance,
     handleSaveActionInstance,
     handleSaveParameterType,
     handleSavePredicateType,
     handleSaveActionType,
     handleSearchChange,
-    parameterInstanceModalState,
-    predicateInstanceModalState,
     actionInstanceModalState,
     modalState,
     openAddModal,
     openEditModal,
     openRenameCategoryModal,
-    parameterTypeMap,
-    parameterTypes,
-    predicateTypeMap,
-    predicateTypes,
     actionTypeMap,
     actionTypes,
     searchQueries,
@@ -74,39 +60,40 @@ export default function Sidebar({ manager, onCreateBehaviorNode }: SidebarProps)
     actionTypeModalState,
     decoratorNodeOptions,
     serviceNodeOptions,
+    flowNodeOptions,
   } = manager;
 
   const [isBtNodeWizardOpen, setBtNodeWizardOpen] = useState(false);
   const [wizardHighlightStage, setWizardHighlightStage] = useState<WizardStage | null>(null);
-  const flowOptions = FLOW_NODE_OPTIONS;
+  const flowOptions = flowNodeOptions;
   const decoratorOptions = decoratorNodeOptions;
   const serviceOptions = serviceNodeOptions;
   const visibleCategories = categoryOrder.filter(
     (key) => key !== ACTION_INSTANCES_KEY
   );
-  const isBehaviorTemplateModal =
+  const isBehaviorNodeModal =
     modalState.category === DECORATOR_NODES_KEY ||
     modalState.category === SERVICE_NODES_KEY;
-  const behaviorTemplateNameLabel =
+  const behaviorNodeNameLabel =
     modalState.category === DECORATOR_NODES_KEY
       ? "Decorator Name"
       : modalState.category === SERVICE_NODES_KEY
       ? "Service Name"
       : "Display Name";
-  const behaviorTemplatePlaceholder =
+  const behaviorNodePlaceholder =
     modalState.category === DECORATOR_NODES_KEY
       ? "e.g., cooldown"
       : modalState.category === SERVICE_NODES_KEY
       ? "e.g., sensing_service"
       : "e.g., target_entity";
-  const behaviorTemplateModalTitle = isBehaviorTemplateModal
+  const behaviorNodeModalTitle = isBehaviorNodeModal
     ? modalState.mode === "add"
       ? modalState.category === DECORATOR_NODES_KEY
-        ? "Add Decorator Template"
-        : "Add Service Template"
+        ? "Add Decorator Node"
+        : "Add Service Node"
       : modalState.category === DECORATOR_NODES_KEY
-      ? "Edit Decorator Template"
-      : "Edit Service Template"
+      ? "Edit Decorator Node"
+      : "Edit Service Node"
     : modalState.mode === "add"
     ? "Add Item"
     : "Edit Item";
@@ -260,54 +247,6 @@ export default function Sidebar({ manager, onCreateBehaviorNode }: SidebarProps)
         fixedBaseTypeValue="GenericBTAction"
       />
 
-      <ParameterInstanceModal
-        key={buildStatefulModalKey(
-          parameterInstanceModalState.mode,
-          parameterInstanceModalState.index,
-          parameterInstanceModalState.initialValue.id,
-          parameterInstanceModalState.revision
-        )}
-        isOpen={parameterInstanceModalState.isOpen}
-        mode={parameterInstanceModalState.mode}
-        title={
-          parameterInstanceModalState.mode === "add"
-            ? "Add Parameter Instance"
-            : "Edit Parameter Instance"
-        }
-        initialValue={parameterInstanceModalState.initialValue}
-        typeDefinitions={parameterTypes}
-        onClose={closeParameterInstanceModal}
-        onSave={handleSaveParameterInstance}
-        namePlaceholder="e.g., selected_tool"
-        typeLabel="Parameter Type"
-        typePlaceholder="Select a parameter type..."
-        propertyValuesLabel="Property Values"
-        propertyEmptyMessage="Define a parameter type to provide property values."
-        baseTypePrefixLabel="Base type"
-        createButtonLabel="Create Instance"
-        saveButtonLabel="Save Changes"
-      />
-
-      <PredicateInstanceModal
-        key={buildStatefulModalKey(
-          predicateInstanceModalState.mode,
-          predicateInstanceModalState.index,
-          predicateInstanceModalState.initialValue.id,
-          predicateInstanceModalState.revision
-        )}
-        isOpen={predicateInstanceModalState.isOpen}
-        mode={predicateInstanceModalState.mode}
-        title={
-          predicateInstanceModalState.mode === "add"
-            ? "Add Predicate Instance"
-            : "Edit Predicate Instance"
-        }
-        initialValue={predicateInstanceModalState.initialValue}
-        typeDefinitions={predicateTypes}
-        onClose={closePredicateInstanceModal}
-        onSave={handleSavePredicateInstance}
-      />
-
       <ActionInstanceModal
         key={buildStatefulModalKey(
           actionInstanceModalState.mode,
@@ -331,14 +270,14 @@ export default function Sidebar({ manager, onCreateBehaviorNode }: SidebarProps)
       <EditModal
         key={`${modalState.mode}-${modalState.index}`}
         isOpen={modalState.isOpen}
-        title={behaviorTemplateModalTitle}
+        title={behaviorNodeModalTitle}
         initialValue={modalState.initialValue}
         onClose={closeModal}
         onSave={handleSaveFromModal}
-        hideTypeField={isBehaviorTemplateModal}
-        nameLabel={behaviorTemplateNameLabel}
-        namePlaceholder={behaviorTemplatePlaceholder}
-        enableDescriptionField={isBehaviorTemplateModal}
+        hideTypeField={isBehaviorNodeModal}
+        nameLabel={behaviorNodeNameLabel}
+        namePlaceholder={behaviorNodePlaceholder}
+        enableDescriptionField={isBehaviorNodeModal}
         descriptionPlaceholder="Summarize how this node behaves..."
       />
 
@@ -417,10 +356,6 @@ export default function Sidebar({ manager, onCreateBehaviorNode }: SidebarProps)
             <CategoryItemList
               category={categoryKey}
               items={items}
-              parameterTypes={parameterTypes}
-              parameterTypeMap={parameterTypeMap}
-              predicateTypes={predicateTypes}
-              predicateTypeMap={predicateTypeMap}
               actionTypes={actionTypes}
               actionTypeMap={actionTypeMap}
               searchQuery={searchQuery}
@@ -434,10 +369,6 @@ export default function Sidebar({ manager, onCreateBehaviorNode }: SidebarProps)
                 <CategoryItemList
                   category={ACTION_INSTANCES_KEY}
                   items={actionInstanceItems}
-                  parameterTypes={parameterTypes}
-                  parameterTypeMap={parameterTypeMap}
-                  predicateTypes={predicateTypes}
-                  predicateTypeMap={predicateTypeMap}
                   actionTypes={actionTypes}
                   actionTypeMap={actionTypeMap}
                   searchQuery={searchQuery}
