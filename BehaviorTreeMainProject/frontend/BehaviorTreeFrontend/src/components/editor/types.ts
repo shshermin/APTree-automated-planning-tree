@@ -3,8 +3,6 @@ import type {
   ActionType,
   DataCategory,
   FlowSuccessType,
-  PredicateInstance,
-  PredicateType,
 } from "../sidebar/utils/types";
 import type { DragEntityKind } from "./dragTypes";
 import type { DraggedSidebarItem } from "./dragTypes";
@@ -23,8 +21,6 @@ export interface CanvasNode {
   height?: number;
   isNegated?: boolean;
   successType?: FlowSuccessType;
-  preconditions?: PredicateInstance[];
-  effects?: PredicateInstance[];
   typeId?: string;
 }
 
@@ -77,22 +73,7 @@ export interface EditorCanvasProps {
   ) => void;
   onRemoveConnection?: (connectionId: string) => void;
   onShowActionParameterDetail?: (detail: ActionParameterDetail) => void;
-  onManageActionPredicates?: (
-    nodeId: string,
-    collection: "precondition" | "effect"
-  ) => void;
   onCycleFlowSuccessType?: (nodeId: string) => void;
-  onEditActionPredicate?: (
-    nodeId: string,
-    predicateId: string,
-    collection: "precondition" | "effect"
-  ) => void;
-  onRemoveActionPredicate?: (
-    nodeId: string,
-    predicateId: string,
-    collection: "precondition" | "effect"
-  ) => void;
-  predicateTypes?: PredicateType[];
   actionTypes?: ActionType[];
   actionInstances?: ActionInstance[];
 }

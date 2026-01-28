@@ -2,9 +2,7 @@ import { createId } from "../../../utils/id";
 import type {
   ActionInstance,
   ActionType,
-  ParameterInstance,
   ParameterType,
-  PredicateInstance,
   PredicateType,
   StructuredItem,
 } from "./types";
@@ -90,53 +88,6 @@ export const cloneActionType = (entry: ActionType): ActionType => ({
 });
 
 /**
- * creates an empty parameter instance optionally seeded from a parameter type.
- * @param parameterType optional type whose schema populates the instance
- * @returns blank parameter instance structure
- */
-export const createEmptyParameterInstance = (
-  parameterType?: ParameterType
-): ParameterInstance => ({
-  ...createEmptyStructuredItem(),
-  id: createId("param-instance"),
-  type: parameterType?.name ?? "",
-  typeId: parameterType?.id ?? "",
-  propertyValues: parameterType
-    ? parameterType.properties.reduce<Record<string, string>>(
-        (acc, property) => {
-          acc[property.id] = "";
-          return acc;
-        },
-        {}
-      )
-    : {},
-});
-
-/**
- * creates an empty predicate instance optionally seeded from a predicate type.
- * @param predicateType optional type describing the expected predicate structure
- * @returns blank predicate instance structure
- */
-export const createEmptyPredicateInstance = (
-  predicateType?: PredicateType
-): PredicateInstance => ({
-  ...createEmptyStructuredItem(),
-  id: createId("predicate-instance"),
-  type: predicateType?.name ?? "",
-  typeId: predicateType?.id ?? "",
-  propertyValues: predicateType
-    ? predicateType.properties.reduce<Record<string, string>>(
-        (acc, property) => {
-          acc[property.id] = "";
-          return acc;
-        },
-        {}
-      )
-    : {},
-  isNegated: false,
-});
-
-/**
  * creates an empty action instance optionally seeded from an action type.
  * @param actionType optional type describing the expected action structure
  * @returns blank action instance structure
@@ -160,31 +111,6 @@ export const createEmptyActionInstance = (
 });
 
 /**
- * deep clones a parameter instance including its property values map.
- * @param entry parameter instance to clone
- * @returns cloned parameter instance
- */
-export const cloneParameterInstance = (
-  entry: ParameterInstance
-): ParameterInstance => ({
-  ...entry,
-  propertyValues: { ...entry.propertyValues },
-});
-
-/**
- * deep clones a predicate instance including its property values map.
- * @param entry predicate instance to clone
- * @returns cloned predicate instance
- */
-export const clonePredicateInstance = (
-  entry: PredicateInstance
-): PredicateInstance => ({
-  ...entry,
-  propertyValues: { ...entry.propertyValues },
-  isNegated: entry.isNegated,
-});
-
-/**
  * deep clones an action instance including its property values map.
  * @param entry action instance to clone
  * @returns cloned action instance
@@ -195,8 +121,8 @@ export const cloneActionInstance = (entry: ActionInstance): ActionInstance => ({
 });
 
 /**
- * aligns stored parameter-instance values with the latest parameter-type schema.
- * @param parameterType parameter type describing the expected property ids
+ * aligns stored typed-instance values with the latest type schema.
+ * @param definition type describing the expected property ids
  * @param currentValues map containing the current property values
  * @returns reconciled property value map containing all expected keys
  */

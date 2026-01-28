@@ -2,9 +2,7 @@ import {
   ACTION_INSTANCES_KEY,
   ACTION_TYPES_KEY,
   BT_NODES_KEY,
-  PARAM_INSTANCES_KEY,
   PARAM_TYPES_KEY,
-  PREDICATE_INSTANCES_KEY,
   PREDICATE_TYPES_KEY,
 } from "../sidebar/utils/constants";
 import type { DataCategory } from "../sidebar/utils/types";
@@ -14,9 +12,7 @@ export const DRAG_DATA_FORMAT = "application/x-aptree-sidebar-item" as const;
 // defines the various kinds of entities that can be dragged from the sidebar
 export type DragEntityKind =
   | "parameterType"
-  | "parameterInstance"
   | "predicateType"
-  | "predicateInstance"
   | "actionType"
   | "actionInstance"
   | "behaviorNode"
@@ -46,10 +42,6 @@ export function resolveDragEntityKind(category: DataCategory): DragEntityKind {
       return "predicateType";
     case ACTION_TYPES_KEY:
       return "actionType";
-    case PARAM_INSTANCES_KEY:
-      return "parameterInstance";
-    case PREDICATE_INSTANCES_KEY:
-      return "predicateInstance";
     case ACTION_INSTANCES_KEY:
       return "actionInstance";
     case BT_NODES_KEY:

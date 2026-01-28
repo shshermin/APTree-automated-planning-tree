@@ -1,46 +1,40 @@
 import type {
   AppData,
-  BehaviorNodeOption,
   CategoryConfig,
   DataCategory,
   DecoratorNodeOption,
   FlowNodeOption,
   ServiceNodeOption,
-  StructuredItem,
 } from "./types";
 
-/** canonical flow-node definitions displayed in the BT node wizard. */
-export const FLOW_NODE_OPTIONS: FlowNodeOption[] = [
+/**
+ * fallback flow-node definitions.
+ * Used only when the backend catalog endpoint is unavailable.
+ */
+export const FALLBACK_FLOW_NODE_OPTIONS: FlowNodeOption[] = [
   {
-    id: "sequence",
-    label: "Sequence",
-    typeLabel: "Flow Node",
-    description:
-      "Execute children in order and fail on the first child that fails.",
+    id: "BTFlowNode_Composite",
+    label: "Composite Flow Node",
+    typeLabel: "Flow",
+    description: "A composite flow node that can contain action and flow children.",
     kind: "flow",
     defaultSuccessType: "ALL",
   },
   {
-    id: "selector",
-    label: "Selector",
-    typeLabel: "Flow Node",
-    description:
-      "Pick the first child that succeeds, falling back to the next on failure.",
-    kind: "flow",
-    defaultSuccessType: "ANY",
-  },
-  {
-    id: "parallel",
-    label: "Parallel",
-    typeLabel: "Flow Node",
-    description: "Run all children simultaneously and gather their results.",
+    id: "BTFlowNode_Dynamic",
+    label: "Dynamic Flow Node",
+    typeLabel: "Flow",
+    description: "A dynamic flow node that builds its graph at runtime.",
     kind: "flow",
     defaultSuccessType: "ALL",
   },
 ];
 
-/** canonical decorator-node definitions made available to users. */
-export const DECORATOR_NODE_OPTIONS: DecoratorNodeOption[] = [
+/**
+ * fallback decorator-node definitions.
+ * Used only when the backend catalog endpoint is unavailable.
+ */
+export const FALLBACK_DECORATOR_NODE_OPTIONS: DecoratorNodeOption[] = [
   {
     id: "inverter",
     label: "Inverter",
@@ -67,8 +61,11 @@ export const DECORATOR_NODE_OPTIONS: DecoratorNodeOption[] = [
   },
 ];
 
-/** canonical service-node definitions exposed in the sidebar. */
-export const SERVICE_NODE_OPTIONS: ServiceNodeOption[] = [
+/**
+ * fallback service-node definitions.
+ * Used only when the backend catalog endpoint is unavailable.
+ */
+export const FALLBACK_SERVICE_NODE_OPTIONS: ServiceNodeOption[] = [
   {
     id: "sensing-service",
     label: "Sensing Service",
@@ -87,31 +84,10 @@ export const SERVICE_NODE_OPTIONS: ServiceNodeOption[] = [
   },
 ];
 
-/** combined behavior-node catalog leveraged by the sidebar and canvas. */
-export const BEHAVIOR_NODE_OPTIONS: BehaviorNodeOption[] = [
-  ...FLOW_NODE_OPTIONS,
-  ...DECORATOR_NODE_OPTIONS,
-  ...SERVICE_NODE_OPTIONS,
-];
-
-/** constant-time lookup table for behavior node templates by id. */
-export const BEHAVIOR_NODE_OPTION_MAP = new Map<string, BehaviorNodeOption>(
-  BEHAVIOR_NODE_OPTIONS.map((option) => [option.id, option])
-);
-
 export const BLACKBOARD_KEY: DataCategory = "variables";
 export const BT_NODES_KEY: DataCategory = "nodes";
 export const DECORATOR_NODES_KEY: DataCategory = "decorators";
 export const SERVICE_NODES_KEY: DataCategory = "services";
-
-const mapBehaviorOptionToItem = (
-  option: BehaviorNodeOption
-): StructuredItem => ({
-  id: option.id,
-  name: option.label,
-  type: option.typeLabel,
-  description: option.description ?? "",
-});
 
 /**
  * central configuration describing each sidebar category including labels and defaults.
@@ -133,42 +109,20 @@ export const CATEGORY_CONFIG: CategoryConfig[] = [
     addLabel: "Add Behavior Node",
   },
   {
-    key: DECORATOR_NODES_KEY,
-    title: "Decorator Templates",
-    addLabel: "Add Decorator",
-    defaultItems: DECORATOR_NODE_OPTIONS.map(mapBehaviorOptionToItem),
-  },
-  {
-    key: SERVICE_NODES_KEY,
-    title: "Service Templates",
-    addLabel: "Add Service",
-    defaultItems: SERVICE_NODE_OPTIONS.map(mapBehaviorOptionToItem),
-  },
-  {
     key: "paramTypes",
     title: "Parameter Types",
     addLabel: "Add Parameter Type",
-  },
-  {
-    key: "paramInstances",
-    title: "Parameter Instances",
-    addLabel: "Add Parameter Instance",
   },
   {
     key: "predTypes",
     title: "Predicate Types",
     addLabel: "Add Predicate Type",
   },
-  {
-    key: "predInstances",
-    title: "Predicate Instances",
-    addLabel: "Add Predicate Instance",
-  },
   { key: "actions", title: "Action Types", addLabel: "Add Action Type" },
 ];
 
 /**
- * provides default data entries mapped by category, cloning template defaults where available.
+ * provides default data entries mapped by category, cloning default items where available.
  * @returns hydrated data map keyed by category identifiers
  */
 export const DEFAULT_DATA: AppData = CATEGORY_CONFIG.reduce<AppData>(
@@ -211,9 +165,7 @@ export const ADD_LABELS = CATEGORY_CONFIG.reduce<Record<string, string>>(
 export const DEFAULT_ORDER = CATEGORY_CONFIG.map((section) => section.key);
 
 export const PARAM_TYPES_KEY: DataCategory = "paramTypes";
-export const PARAM_INSTANCES_KEY: DataCategory = "paramInstances";
 export const PREDICATE_TYPES_KEY: DataCategory = "predTypes";
-export const PREDICATE_INSTANCES_KEY: DataCategory = "predInstances";
 export const ACTION_TYPES_KEY: DataCategory = "actions";
 export const ACTION_INSTANCES_KEY: DataCategory = "actionInstances";
 export const FLOW_NODES_KEY: DataCategory = "flowNodes";
