@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import CoCos.ConcreteBT.ElementExistsCoCo;
-import concretebt.ConcreteBTMill;
-import concretebt._ast.ASTPickUpHL;
-import concretebt._ast.ASTPlaceHL;
-import concretebt._ast.ASTWorld;
-import concretebt._parser.ConcreteBTParser;
-import concretebt._visitor.ConcreteBTVisitor2;
-import crftypedef._symboltable.ElementSymbol;
+import CoCos.CRFTypesCon.ElementExistsCoCo;
+import crftypescon.CRFTypesConMill;
+import crftypescon._ast.ASTPickUpHL;
+import crftypescon._ast.ASTPlaceHL;
+import crftypescon._ast.ASTWorld;
+import crftypescon._parser.CRFTypesConParser;
+import crftypescon._visitor.CRFTypesConVisitor2;
+import crftypesdef._symboltable.ElementSymbol;
 import de.se_rwth.commons.logging.Log;
 import dynamicbtflownode.DynamicBTFlowNodeMill;
 import dynamicbtflownode._ast.ASTAPTree;
@@ -98,8 +98,8 @@ public class APTreeJsonCli {
       // CoCos
       DynamicBTFlowNodeCoCoChecker checker = new DynamicBTFlowNodeCoCoChecker();
       ElementExistsCoCo elementCheck = new ElementExistsCoCo();
-      checker.addCoCo((concretebt._cocos.ConcreteBTASTPickUpHLCoCo) elementCheck);
-      checker.addCoCo((concretebt._cocos.ConcreteBTASTPlaceHLCoCo) elementCheck);
+      checker.addCoCo((crftypescon._cocos.CRFTypesConASTPickUpHLCoCo) elementCheck);
+      checker.addCoCo((crftypescon._cocos.CRFTypesConASTPlaceHLCoCo) elementCheck);
       checker.checkAll((ASTDynamicBTFlowNodeNode) ast);
 
       List<String> findings = collectFindings();
@@ -113,9 +113,9 @@ public class APTreeJsonCli {
 
   private void loadConcreteInstancesIntoGlobalScope(String instancesFile) {
     try {
-      ConcreteBTMill.init();
+      CRFTypesConMill.init();
 
-      ConcreteBTParser parser = new ConcreteBTParser();
+      CRFTypesConParser parser = new CRFTypesConParser();
       Optional<ASTWorld> result = parser.parse(instancesFile);
 
       if (result.isEmpty()) {
@@ -123,7 +123,7 @@ public class APTreeJsonCli {
         return;
       }
 
-      var instanceScope = ConcreteBTMill.scopesGenitorDelegator().createFromAST(result.get());
+      var instanceScope = CRFTypesConMill.scopesGenitorDelegator().createFromAST(result.get());
 
       for (var beamSymbol : instanceScope.getLocalBeamSymbols()) {
         DynamicBTFlowNodeMill.globalScope().add(beamSymbol);
@@ -149,7 +149,7 @@ public class APTreeJsonCli {
 
     var traverser = DynamicBTFlowNodeMill.traverser();
 
-    traverser.add4ConcreteBT(new ConcreteBTVisitor2() {
+    traverser.add4CRFTypesCon(new CRFTypesConVisitor2() {
       @Override
       public void visit(ASTPickUpHL node) {
         String elementName = node.getObj();
