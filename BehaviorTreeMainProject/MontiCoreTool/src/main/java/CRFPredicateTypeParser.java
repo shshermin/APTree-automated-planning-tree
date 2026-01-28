@@ -1,8 +1,8 @@
-import crftypedef._parser.CRFTypeDefParser;
-import crftypedef._ast.ASTWorld;
-import crftypedef._ast.ASTPredicateTypeDefinition;
-import crftypedef._ast.ASTProperty;
-import crftypedef.CRFTypeDefMill;
+import crftypesdef._parser.CRFTypesDefParser;
+import crftypesdef._ast.ASTWorld;
+import crftypesdef._ast.ASTPredicateTypeDefinition;
+import crftypesdef._ast.ASTProperty;
+import crftypesdef.CRFTypesDefMill;
 import de.se_rwth.commons.logging.Log;
 
 import java.io.*;
@@ -37,7 +37,7 @@ public class CRFPredicateTypeParser {
             System.out.println("Generating predicate grammar rules from CRFTypes model...\n");
             
             // Initialize MontiCore mill
-            CRFTypeDefMill.init();
+            CRFTypesDefMill.init();
             
             // Parse the CRFTypes model
             String modelPath = args.length > 0 ? args[0] : CRFTYPES_PATH;
@@ -79,7 +79,7 @@ public class CRFPredicateTypeParser {
     }
     
     // 2. Create parser and parse
-    CRFTypeDefParser parser = new CRFTypeDefParser();
+    CRFTypesDefParser parser = new CRFTypesDefParser();
     Optional<ASTWorld> result = parser.parse(modelPath);
     
     if (!result.isPresent()) {

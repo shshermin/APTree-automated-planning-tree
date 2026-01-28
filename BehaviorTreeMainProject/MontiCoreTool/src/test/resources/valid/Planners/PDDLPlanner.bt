@@ -1,5 +1,2 @@
-PDDLPlanner {
-    domain robotdomain
-    problem pickandplace
-    planner fastdownward
-}
+PDDLPlanner Enhsp  domain robotdomain  problem pickandplace
+Domain PickAndPlaceHL  LanguageVersion PDDL2.1  Level HIGHLEVEL

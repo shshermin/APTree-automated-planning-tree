@@ -78,7 +78,10 @@ java {
   withJavadocJar() // Also publish a variant consisting of the JavaDocs
 }
 
-sourcesJar.dependsOn project.collect { it.tasks.withType(MCGenTask) }
+sourcesJar {
+  dependsOn project.collect { it.tasks.withType(MCGenTask) }
+  duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
 
 // generated java doc contains errors, disable for now
 javadoc.failOnError = false
@@ -187,12 +190,6 @@ task runPDDLPlannerParser(type: JavaExec) {
     workingDir = projectDir
 }
 
-task runMotionPlannerParser(type: JavaExec) {
-    dependsOn 'compileJava'
-    classpath = sourceSets.main.runtimeClasspath
-    mainClass = 'URMotionPlannerTest'
-    workingDir = projectDir
-}
 
 task runCRFPropertyTypeParser(type: JavaExec) {
     dependsOn 'compileJava'

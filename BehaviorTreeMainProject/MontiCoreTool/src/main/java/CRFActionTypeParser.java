@@ -1,10 +1,10 @@
-import crftypedef._parser.CRFTypeDefParser;
-import crftypedef._ast.ASTWorld;
-import crftypedef._ast.ASTActionTypeDefinition;
-import crftypedef._ast.ASTProperty;
-import crftypedef._ast.ASTPredicateRef;
-import crftypedef._ast.ASTActionLevel;
-import crftypedef.CRFTypeDefMill;
+import crftypesdef._parser.CRFTypesDefParser;
+import crftypesdef._ast.ASTWorld;
+import crftypesdef._ast.ASTActionTypeDefinition;
+import crftypesdef._ast.ASTProperty;
+import crftypesdef._ast.ASTPredicateRef;
+import crftypesdef._ast.ASTActionLevel;
+import crftypesdef.CRFTypesDefMill;
 
 import java.io.*;
 import java.nio.file.*;
@@ -45,7 +45,7 @@ public class CRFActionTypeParser {
             System.out.println("Generating action grammar rules from CRFActionTypes model...\n");
             
             // Initialize MontiCore mill
-            CRFTypeDefMill.init();
+            CRFTypesDefMill.init();
             
             // Parse the CRFActionTypes model
             String modelPath = args.length > 0 ? args[0] : CRFTYPES_PATH;
@@ -88,7 +88,7 @@ public class CRFActionTypeParser {
         }
         
         // Create parser and parse
-        CRFTypeDefParser parser = new CRFTypeDefParser();
+        CRFTypesDefParser parser = new CRFTypesDefParser();
         Optional<ASTWorld> result = parser.parse(modelPath);
         
         if (!result.isPresent()) {

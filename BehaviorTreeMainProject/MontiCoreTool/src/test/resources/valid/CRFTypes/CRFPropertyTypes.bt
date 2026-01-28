@@ -1,16 +1,5 @@
-define Beam as Element {
-  lenght: int
-  color: String
-}
-
-define Plate as Element {
-  Roughness: DOUBLE_VALUE
-}
-
-define FirstPosition as Location {
-  id: NUMBER
-}
-
-define Robot as Agnt {
-  id: NUMBER
-}
+define Beam as Element 
+define Plate as Element 
+define FirstPos as Location 
+define Robot as Agent { tool: Tool }
+define VaccumGripper as Tool { isActive: boolean}

@@ -1,13 +1,11 @@
-import behaviortree._parser.BehaviorTreeParser;
+import java.io.File;
+import java.util.Optional;
+
+import behaviortree.BehaviorTreeMill;
+import behaviortree._ast.ASTBTNode;
 import behaviortree._ast.ASTBehaviorTree;
 import behaviortree._ast.ASTFlowNode;
-import behaviortree._ast.ASTActionNode;
-import behaviortree._ast.ASTService;
-import behaviortree._ast.ASTDecorator;
-import behaviortree._ast.ASTBTNode;
-import behaviortree.BehaviorTreeMill;
-import java.util.Optional;
-import java.io.*;
+import behaviortree._parser.BehaviorTreeParser;
 
 public class BehaviorTreeParserTest {
     

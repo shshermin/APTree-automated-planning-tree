@@ -1,4 +1,4 @@
-grammar ConcreteBT extends CRFTypeDef {
+grammar CRFTypesCon extends CRFTypesDef {
 
 ////////// ?????? I am not sure why do we get errors if we dont include this world thing!
 @Override
@@ -20,10 +20,10 @@ AtPlace extends Predicate = "AtPlace" name:Name "(" item:Name@Element loc:Name@L
 
 // === GENERATED ACTION RULES (DO NOT EDIT BELOW) ===
 PickUpHL extends PActionNode = "Action" "PickUpHL" name:Name "(" obj:Name@Element grabPos:Name@Location client:Name@Robot ")" ("{" (Decorator | Service)* "}")?  ("@" subtreeAnnotation:Name@BehaviorTree)?;
-astrule PickUpHL = method public crftypedef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=crftypedef._ast.ASTActionLevel.HIGHLEVEL; } return actLevel; } ;
+astrule PickUpHL = method public crftypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=crftypesdef._ast.ASTActionLevel.HIGHLEVEL; } return actLevel; } ;
 
 PlaceHL extends PActionNode = "Action" "PlaceHL" name:Name "(" obj:Name@Element targetPos:Name@Location client:Name@Robot ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name@BehaviorTree)? ;
-astrule PlaceHL = method public crftypedef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=crftypedef._ast.ASTActionLevel.HIGHLEVEL; } return actLevel; } ;
+astrule PlaceHL = method public crftypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=crftypesdef._ast.ASTActionLevel.HIGHLEVEL; } return actLevel; } ;
 
 // === END GENERATED ACTION RULES ===
 }

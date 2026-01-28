@@ -1,10 +1,10 @@
-import concretebt._parser.ConcreteBTParser;
-import concretebt._ast.ASTWorld;
-import concretebt._symboltable.ConcreteBTArtifactScope;
-import concretebt._symboltable.IConcreteBTArtifactScope;
-import concretebt._symboltable.ConcreteBTSymbols2Json;
-import crftypedef._symboltable.ElementSymbol;
-import concretebt.ConcreteBTMill;
+import crftypescon._parser.CRFTypesConParser;
+import crftypescon._ast.ASTWorld;
+import crftypescon._symboltable.CRFTypesConArtifactScope;
+import crftypescon._symboltable.ICRFTypesConArtifactScope;
+import crftypescon._symboltable.CRFTypesConSymbols2Json;
+import crftypesdef._symboltable.ElementSymbol;
+import crftypescon.CRFTypesConMill;
 import de.se_rwth.commons.logging.Log;
 
 import java.io.File;
@@ -40,7 +40,7 @@ public class InstanceSymbolsGenerator {
             System.out.println("Input model: " + input);
             System.out.println("Output dir:  " + outDir);
 
-            ConcreteBTMill.init();
+            CRFTypesConMill.init();
 
             // Ensure output directory exists
             Path outPath = Paths.get(outDir);
@@ -54,7 +54,7 @@ public class InstanceSymbolsGenerator {
             }
 
             // Build initial artifact scope from AST
-            IConcreteBTArtifactScope initial = ConcreteBTMill.scopesGenitorDelegator().createFromAST(world);
+            ICRFTypesConArtifactScope initial = CRFTypesConMill.scopesGenitorDelegator().createFromAST(world);
 
             // Collect all Element symbols (covers Beam/Plate/Robot/FirstPosition)
             Collection<ElementSymbol> elements = initial.getElementSymbols().values();
@@ -66,11 +66,11 @@ public class InstanceSymbolsGenerator {
             int count = 0;
             for (ElementSymbol el : elements) {
                 String name = el.getName();
-                ConcreteBTArtifactScope single = new ConcreteBTArtifactScope();
+                CRFTypesConArtifactScope single = new CRFTypesConArtifactScope();
                 single.setName(name); // ensures loader searches <name>.sym
                 single.add(el);       // add as ElementSymbol
 
-                String json = new ConcreteBTSymbols2Json().serialize(single);
+                String json = new CRFTypesConSymbols2Json().serialize(single);
                 Path symPath = outPath.resolve(name + ".sym");
                 try (FileWriter fw = new FileWriter(symPath.toFile())) {
                     fw.write(json);
@@ -93,7 +93,7 @@ public class InstanceSymbolsGenerator {
             System.err.println("  CWD: " + System.getProperty("user.dir"));
             return null;
         }
-        ConcreteBTParser parser = new ConcreteBTParser();
+        CRFTypesConParser parser = new CRFTypesConParser();
         Optional<ASTWorld> res = parser.parse(modelPath);
         if (res.isEmpty()) {
             Log.getFindings().forEach(f -> System.err.println("  " + f.buildMsg()));

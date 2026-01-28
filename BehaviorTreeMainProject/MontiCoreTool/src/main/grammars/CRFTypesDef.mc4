@@ -1,5 +1,5 @@
 
-grammar CRFTypeDef extends BehaviorTree, de.monticore.types.MCBasicTypes {
+grammar CRFTypesDef extends BehaviorTree, de.monticore.types.MCBasicTypes {
 
 //////////property definition
 // Parameter Type definition
@@ -23,13 +23,13 @@ abstract symbol  Agent    implements CustomProperty = name:Name;
      Property = name:Name ":" type:Name ;
  
   // 5. The Dynamic Definition rule
-     PropertyTypeDefinition = "define" name:Name "as" superType:Name "{" (Property)* "}";
+     PropertyTypeDefinition = "Define" name:Name "as" superType:Name ("{" (Property)* "}")?;
 
 
 //////// predicate definition
 
 // Predicate type definition
-      PredicateTypeDefinition = "define" "predicatetype" name:Name  "{" (Property)* "}";
+      PredicateTypeDefinition = "Define" "Predicate" name:Name  "{" (Property)* "}";
 //predicateType
 ////???????????????????? how can I use "!" in the concrete syntax?
       abstract symbol Predicate = ["not"] name:Name;
@@ -51,11 +51,11 @@ abstract PActionNode extends ActionNode =
 enum ActionLevel = "HIGHLEVEL" | "MIDLEVEL" | "LOWLEVEL";
 
     ActionTypeDefinition = 
-    "Action" typeName:Name "{"
-        "acttype:" actLevel:ActionLevel
-        "properties" "{" Property* "}"
-        "preconditions" "{" preconditions:PredicateRef* "}"
-        "effects" "{" effects:PredicateRef* "}"
+    "Define" "Action" typeName:Name "{"
+        "ActType:" actLevel:ActionLevel
+        "Properties" "{" Property* "}"
+        "Preconditions" "{" preconditions:PredicateRef* "}"
+        "Effects" "{" effects:PredicateRef* "}"
     "}";
 
 // Simple predicate reference with Name arguments (comma-separated)

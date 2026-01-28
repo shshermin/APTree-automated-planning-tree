@@ -1,12 +1,12 @@
-package CoCos.ConcreteBT;
+package CoCos.CRFTypesCon;
 
-import concretebt._ast.ASTPickUpHL;
-import concretebt._ast.ASTPlaceHL;
-import concretebt._cocos.ConcreteBTASTPickUpHLCoCo;
-import concretebt._cocos.ConcreteBTASTPlaceHLCoCo;
+import crftypescon._ast.ASTPickUpHL;
+import crftypescon._ast.ASTPlaceHL;
+import crftypescon._cocos.CRFTypesConASTPickUpHLCoCo;
+import crftypescon._cocos.CRFTypesConASTPlaceHLCoCo;
 import de.se_rwth.commons.logging.Log;
 
-public class ElementExistsCoCo implements ConcreteBTASTPickUpHLCoCo, ConcreteBTASTPlaceHLCoCo {
+public class ElementExistsCoCo implements CRFTypesConASTPickUpHLCoCo, CRFTypesConASTPlaceHLCoCo {
 
 @Override
 public void check(ASTPickUpHL node) {

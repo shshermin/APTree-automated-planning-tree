@@ -1,4 +1,4 @@
-grammar PlanningService extends ConcreteBT {
+grammar PlanningService extends CRFTypesCon {
 
 
   abstract PService extends Service = name:Name planner:Name@Planner;
@@ -8,9 +8,10 @@ grammar PlanningService extends ConcreteBT {
   // 2. Planner hierarchy
   abstract symbol Planner = name:Name;
 
- symbol PDDLPlanner extends Planner = "PDDLPlanner" name:Name ("domain" domain:Name@Domain)?   ("problem" problem:Name)?;
+abstract symbol PDDLPlanner extends Planner = "PddlPlanner" name:Name "Domain" domain:Name@Domain   ("Problem" problem:Name)?;
+ENHSP extends PDDLPlanner = "PddlPlanner" "Enhsp" name:Name "Domain" domain:Name@Domain   ("Problem" problem:Name)?;
 
-  symbol Domain = "domain" name:Name "Level" actLev:ActionLevel;
+symbol Domain = "Domain" name:Name  "LanguageVersion" language:Name "Level" actLev:ActionLevel;
 
 
 }

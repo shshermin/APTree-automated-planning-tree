@@ -1,7 +1,7 @@
-import concretebt._parser.ConcreteBTParser;
-import concretebt._ast.ASTWorld;
-import crftypedef._ast.ASTProperty;
-import concretebt.ConcreteBTMill;
+import crftypescon._parser.CRFTypesConParser;
+import crftypescon._ast.ASTWorld;
+import crftypesdef._ast.ASTProperty;
+import crftypescon.CRFTypesConMill;
 import de.se_rwth.commons.logging.Log;
 
 import java.io.*;
@@ -27,7 +27,7 @@ public class ConcreteBTInstanceParser {
             System.out.println("Parsing CRF Concrete Instances model...\n");
             
             // Initialize MontiCore mill for the grammar
-            ConcreteBTMill.init();
+            CRFTypesConMill.init();
             
             // Get model path from args or use default
             String modelPath = args.length > 0 ? args[0] : DEFAULT_MODEL_PATH;
@@ -68,7 +68,7 @@ public class ConcreteBTInstanceParser {
         System.out.println("Reading file: " + modelPath);
         
         // Create parser instance
-        ConcreteBTParser parser = new ConcreteBTParser();
+        CRFTypesConParser parser = new CRFTypesConParser();
         
         // Parse the file - ConcreteBT extends CRFTypeDef which has World as root
         Optional<ASTWorld> result = parser.parse(modelPath);
