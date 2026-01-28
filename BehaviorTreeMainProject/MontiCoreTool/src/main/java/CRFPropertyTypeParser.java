@@ -1,15 +1,17 @@
-import crftypedef._parser.CRFTypeDefParser;
-import crftypedef._ast.ASTWorld;
-import crftypedef._ast.ASTPropertyTypeDefinition;
-import crftypedef._ast.ASTProperty;
-import crftypedef.CRFTypeDefMill;
-import crftypedef._cocos.CRFTypeDefCoCoChecker;
-import CoCos.CRFTypeDef.NewTypesInheritFromCustomTypes;
+import crftypesdef._parser.CRFTypesDefParser;
+import crftypesdef._ast.ASTWorld;
+import crftypesdef._ast.ASTPropertyTypeDefinition;
+import crftypesdef._ast.ASTProperty;
+import crftypesdef.CRFTypesDefMill;
+import crftypesdef._cocos.CRFTypesDefCoCoChecker;
 import de.se_rwth.commons.logging.Log;
 
 import java.io.*;
 import java.nio.file.*;
 import java.util.Optional;
+
+import CoCos.CRFTypesDef.NewTypesInheritFromCustomTypes;
+
 import java.util.List;
 import java.util.ArrayList;
 
@@ -36,7 +38,7 @@ public class CRFPropertyTypeParser {
             System.out.println("Generating grammar rules from CRFTypes model...\n");
             
             // Initialize MontiCore mill
-            CRFTypeDefMill.init();
+            CRFTypesDefMill.init();
             
             // Parse the CRFTypes model and validate COCOs
             String modelPath = args.length > 0 ? args[0] : CRFTYPES_PATH;
@@ -83,7 +85,7 @@ public class CRFPropertyTypeParser {
         }
         
         // Create parser and parse
-        CRFTypeDefParser parser = new CRFTypeDefParser();
+        CRFTypesDefParser parser = new CRFTypesDefParser();
         Optional<ASTWorld> result = parser.parse(modelPath);
         
         if (!result.isPresent()) {
@@ -95,7 +97,7 @@ public class CRFPropertyTypeParser {
         
         // === START CONTEXT CONDITION CHECKING ===
         // Create the COCO checker
-        CRFTypeDefCoCoChecker checker = new CRFTypeDefCoCoChecker();
+        CRFTypesDefCoCoChecker checker = new CRFTypesDefCoCoChecker();
         
         // Register your custom rule
         checker.addCoCo(new NewTypesInheritFromCustomTypes());

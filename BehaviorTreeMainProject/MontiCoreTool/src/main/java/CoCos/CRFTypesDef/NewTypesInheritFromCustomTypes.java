@@ -1,12 +1,12 @@
-package CoCos.CRFTypeDef;
+package CoCos.CRFTypesDef;
 
 import java.util.Set;
 
-import crftypedef._ast.ASTPropertyTypeDefinition;
-import crftypedef._cocos.CRFTypeDefASTPropertyTypeDefinitionCoCo;
+import crftypesdef._ast.ASTPropertyTypeDefinition;
+import crftypesdef._cocos.CRFTypesDefASTPropertyTypeDefinitionCoCo;
 import de.se_rwth.commons.logging.Log;
 
-public class NewTypesInheritFromCustomTypes implements CRFTypeDefASTPropertyTypeDefinitionCoCo{
+public class NewTypesInheritFromCustomTypes implements CRFTypesDefASTPropertyTypeDefinitionCoCo{
 
  
  // Define the whitelist of allowed supertypes

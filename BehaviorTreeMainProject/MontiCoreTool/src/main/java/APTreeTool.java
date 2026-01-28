@@ -3,14 +3,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import CoCos.ConcreteBT.ElementExistsCoCo;
-import concretebt.ConcreteBTMill;
-import concretebt._ast.ASTPickUpHL;
-import concretebt._ast.ASTPlaceHL;
-import concretebt._ast.ASTWorld;
-import concretebt._parser.ConcreteBTParser;
-import concretebt._visitor.ConcreteBTVisitor2;
-import crftypedef._symboltable.ElementSymbol;
+import CoCos.CRFTypesCon.ElementExistsCoCo;
+import crftypescon._ast.ASTPickUpHL;
+import crftypescon._ast.ASTPlaceHL;
+import crftypescon._ast.ASTWorld;
+import crftypescon._cocos.CRFTypesConASTPickUpHLCoCo;
+import crftypescon._cocos.CRFTypesConASTPlaceHLCoCo;
+import crftypescon._parser.CRFTypesConParser;
+import crftypescon._visitor.CRFTypesConVisitor2;
+import crftypesdef._symboltable.ElementSymbol;
 import de.se_rwth.commons.logging.Log;
 import dynamicbtflownode.DynamicBTFlowNodeMill;
 import dynamicbtflownode._ast.ASTAPTree; 
@@ -53,12 +54,12 @@ public class APTreeTool {
         ASTAPTree ast = DynamicBTFlowNodeMill.parser().parseAPTree(modelFile)
              .orElseThrow(() -> new RuntimeException("Parsing failed for file: " + modelFile));
              
-        System.out.println("✓ SUCCESS: Syntactically parsed '" + ast.getName() + "'");
+        System.out.println("[OK] SUCCESS: Syntactically parsed '" + ast.getName() + "'");
     
         // 4.5. PRE-VALIDATION: Check all element references BEFORE symbol table creation
         List<String> validationErrors = validateElementReferences(ast);
         if (!validationErrors.isEmpty()) {
-            System.err.println("\n❌ VALIDATION FAILED: Found undefined element references:");
+            System.err.println("\n[X] VALIDATION FAILED: Found undefined element references:");
             System.err.println("Available elements: beam1, beam2, lp1, plate1, r1, FP1\n");
             for (String error : validationErrors) {
                 System.err.println("  " + error);
@@ -66,7 +67,7 @@ public class APTreeTool {
             System.err.println("\nPlease fix these references in your behavior tree file.");
             return;
         }
-        System.out.println("✓ Pre-validation passed: All element references are defined");
+        System.out.println("[OK] Pre-validation passed: All element references are defined");
     
         // 5. Create Symbol Table
         IDynamicBTFlowNodeGlobalScope gs = DynamicBTFlowNodeMill.globalScope();
@@ -79,13 +80,13 @@ public class APTreeTool {
         DynamicBTFlowNodeCoCoChecker checker = new DynamicBTFlowNodeCoCoChecker();
         // Add custom checks (must register for each node type explicitly to avoid ambiguity)
         ElementExistsCoCo elementCheck = new ElementExistsCoCo();
-        checker.addCoCo((concretebt._cocos.ConcreteBTASTPickUpHLCoCo) elementCheck);
-        checker.addCoCo((concretebt._cocos.ConcreteBTASTPlaceHLCoCo) elementCheck);
+        checker.addCoCo((CRFTypesConASTPickUpHLCoCo) elementCheck);
+        checker.addCoCo((CRFTypesConASTPlaceHLCoCo) elementCheck);
         
         // Add default CoCos here if any exist in the language definition
         checker.checkAll((ASTDynamicBTFlowNodeNode) ast);
     
-        System.out.println("✓ SUCCESS: Model parsed and symbols checked successfully!");
+        System.out.println("[OK] SUCCESS: Model parsed and symbols checked successfully!");
 
     } catch (Exception e) {
         System.err.println("tool run failed: " + e.getMessage());
@@ -103,23 +104,23 @@ public class APTreeTool {
     System.out.println("Loading concrete instances from: " + instancesFile);
     
     try {
-      // Initialize ConcreteBT mill (separate from DynamicBTFlowNode)
-      ConcreteBTMill.init();
+      // Initialize CRFTypesCon mill (separate from DynamicBTFlowNode)
+      crftypescon.CRFTypesConMill.init();
       
       // Parse the concrete instances model
-      ConcreteBTParser parser = new ConcreteBTParser();
+      CRFTypesConParser parser = crftypescon.CRFTypesConMill.parser();
       Optional<ASTWorld> result = parser.parse(instancesFile);
       
       if (result.isEmpty()) {
-        System.err.println("⚠️  Failed to parse instances file: " + instancesFile);
+        System.err.println("[!] Failed to parse instances file: " + instancesFile);
         return;
       }
       
       ASTWorld world = result.get();
-      System.out.println("✓ Parsed instances: " + instancesFile);
+      System.out.println("[OK] Parsed instances: " + instancesFile);
       
       // Create symbol table from instances AST
-      var instanceScope = ConcreteBTMill.scopesGenitorDelegator().createFromAST(world);
+      var instanceScope = crftypescon.CRFTypesConMill.scopesGenitorDelegator().createFromAST(world);
       
       // Beam, Plate, Robot, FirstPosition all extend Element
       // Get symbols for each concrete type
@@ -153,10 +154,10 @@ public class APTreeTool {
         count++;
       }
       
-      System.out.println("✓ Loaded " + count + " element instances into global scope!");
+      System.out.println("[OK] Loaded " + count + " element instances into global scope!");
       
     } catch (Exception e) {
-      System.err.println("✗ ERROR loading instances: " + e.getMessage());
+      System.err.println("[X] ERROR loading instances: " + e.getMessage());
       e.printStackTrace();
     }
   }
@@ -175,7 +176,7 @@ public class APTreeTool {
     // Create a traverser for the full language hierarchy
     var traverser = DynamicBTFlowNodeMill.traverser();
     
-    traverser.add4ConcreteBT(new ConcreteBTVisitor2() {
+    traverser.add4CRFTypesCon(new CRFTypesConVisitor2() {
       @Override
       public void visit(ASTPickUpHL node) {
         String elementName = node.getObj();
