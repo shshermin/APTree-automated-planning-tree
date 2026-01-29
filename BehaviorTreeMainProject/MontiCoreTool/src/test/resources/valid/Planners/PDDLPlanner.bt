@@ -1,2 +1,10 @@
-PDDLPlanner Enhsp  domain robotdomain  problem pickandplace
-Domain PickAndPlaceHL  LanguageVersion PDDL2.1  Level HIGHLEVEL
+
+
+
+PddlPlanner Enhsp Enhsp1 Domain:PickAndPlaceHL Problem:PlacePlate1
+Domain PickAndPlaceHL LanguageVersion:2.1  Level:HighLevel
+Problem PlacePlate1
+
+
+PlanningService MyPlanneSrv Enhsp1
+

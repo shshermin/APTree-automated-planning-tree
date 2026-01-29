@@ -8,7 +8,7 @@ using BehaviorTreeMainProject.Log.Services;
 public class BTDecorator_DynamicPlanningComplete : BTDecoratorBase
 {
     public override bool CanPostProcessTickResult => true;
-    public override EBTNodeResult PostProcessTickResult(EBTNodeResult InResult) => InResult;
+    public override BTNodeResult PostProcessTickResult(BTNodeResult InResult) => InResult;
     public BTDecorator_DynamicPlanningComplete() : base(false)
     {
 
@@ -97,7 +97,7 @@ public class BTDecorator_DynamicPlanningComplete : BTDecoratorBase
                 if (cassetteNode != null)
                 {
                     // Check if the cassette node status is successful
-                    if (cassetteNode.LastStatus == EBTNodeResult.Succeeded)
+                    if (cassetteNode.status == BTNodeResult.Succeeded)
                     {
                         // Get the cassette index (cassette1=0, cassette2=1, cassette3=2, cassette4=3)
                         int cassetteIndex = Array.IndexOf(cassetteNames, cassetteName);
@@ -109,7 +109,7 @@ public class BTDecorator_DynamicPlanningComplete : BTDecoratorBase
                     }
                     else
                     {
-                        LoggingService.LogInfo($"ℹ️ Cassette {cassetteName} status is {cassetteNode.LastStatus} - no action taken");
+                        LoggingService.LogInfo($"ℹ️ Cassette {cassetteName} status is {cassetteNode.status} - no action taken");
                     }
                 }
                 else

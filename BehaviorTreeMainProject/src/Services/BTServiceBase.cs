@@ -21,7 +21,7 @@ public abstract class BTServiceBase
     {
         this.OwningTree = InOwningTree;
     }
-    public Blackboard<FastName> LinkedBlackboard => OwningTree.LinkedBlackboard;
+    public Blackboard<FastName> linkedBlackboard => OwningTree.linkedBlackboard;
 
     public void SetOwiningTree(IBehaviorTree InOwningtree)
     {

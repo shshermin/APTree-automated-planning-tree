@@ -19,14 +19,14 @@ public class CallGOAPPlanner : BTServicePlanner
     public CallGOAPPlanner(BehaviorTree InOwningTree, GOAPPlanningRequest InPlanningRequest) 
         : base(InOwningTree, new RestPlannerCommunicator("http://localhost:5002"), InPlanningRequest) // Different port for GOAP planner
     {
-        this.blackboard = InOwningTree.LinkedBlackboard;
+        this.blackboard = InOwningTree.linkedBlackboard;
         this.actionFactory = FactoryAction.Instance;
     }
     
     public CallGOAPPlanner(BehaviorTree InOwningTree, IPlannerCommunicator customCommunicator, GOAPPlanningRequest InPlanningRequest) 
         : base(InOwningTree, customCommunicator, InPlanningRequest)
     {
-        this.blackboard = InOwningTree.LinkedBlackboard;
+        this.blackboard = InOwningTree.linkedBlackboard;
         this.actionFactory = FactoryAction.Instance;
     }
 

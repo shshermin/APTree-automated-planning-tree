@@ -9,7 +9,7 @@ public class BTDecorator_PlanningComplete : BTDecoratorBase
 {
 
     public override bool CanPostProcessTickResult => false;
-    public override EBTNodeResult PostProcessTickResult(EBTNodeResult InResult) => InResult;
+    public override BTNodeResult PostProcessTickResult(BTNodeResult InResult) => InResult;
     
     public BTDecorator_PlanningComplete() : base(false)
     {

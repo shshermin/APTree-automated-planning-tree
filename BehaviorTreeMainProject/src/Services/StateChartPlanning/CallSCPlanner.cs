@@ -19,14 +19,14 @@ public class CallSCPlanner : BTServicePlanner
     public CallSCPlanner(BehaviorTree InOwningTree, StateChartPlanningRequest InPlanningRequest) 
         : base(InOwningTree, new RestPlannerCommunicator("http://localhost:5001"), InPlanningRequest) // Different port for SC planner
     {
-        this.blackboard = InOwningTree.LinkedBlackboard;
+        this.blackboard = InOwningTree.linkedBlackboard;
         this.actionFactory = FactoryAction.Instance;
     }
     
     public CallSCPlanner(BehaviorTree InOwningTree, IPlannerCommunicator customCommunicator, StateChartPlanningRequest InPlanningRequest) 
         : base(InOwningTree, customCommunicator, InPlanningRequest)
     {
-        this.blackboard = InOwningTree.LinkedBlackboard;
+        this.blackboard = InOwningTree.linkedBlackboard;
         this.actionFactory = FactoryAction.Instance;
     }
 

@@ -32,7 +32,7 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
         public CallPDDLPlanner(BehaviorTree InOwningTree, PDDLPlanningRequest InPlanningRequest)
             : base(InOwningTree, new RestPlannerCommunicator("http://localhost:5000"), InPlanningRequest)
         {
-            this.blackboard = InOwningTree.LinkedBlackboard;
+            this.blackboard = InOwningTree.linkedBlackboard;
             this.actionFactory = FactoryAction.Instance;
             this.PlanningRequest = InPlanningRequest;
         }

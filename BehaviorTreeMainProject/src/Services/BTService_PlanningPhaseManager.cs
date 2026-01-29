@@ -31,7 +31,7 @@ public class BTService_PlanningPhaseManager : BTServiceBase
     /// </summary>
     private void CheckAndSwitchToExecutionPhase()
     {
-        if (!LinkedBlackboard.PlanningPhase)
+        if (!linkedBlackboard.PlanningPhase)
         {
             return; // Already in execution phase
         }
@@ -43,13 +43,13 @@ public class BTService_PlanningPhaseManager : BTServiceBase
         {
             LoggingService.LogSuccess("🎉 All planning completed! Switching to execution phase...");
             ExecutionFlowLogger.LogPlanningEvent("PHASE_COMPLETE", "All planning services finished");
-            LinkedBlackboard.PlanningPhase = false;
+            linkedBlackboard.PlanningPhase = false;
             
             // Track planning phase transition for execution summary
             ExecutionSummaryLogger.TrackPlanningPhaseTransition(false);
             
             // Track final actions remaining at the end of planning phase
-            var finalActionCount = LinkedBlackboard.GetAllActions().Count;
+            var finalActionCount = linkedBlackboard.GetAllActions().Count;
             BehaviorTreeComponentLogger.TrackFinalActionsRemaining(finalActionCount, "End of planning phase - all planning completed");
             
             LoggingService.LogWarning("🚨 WARNING: PlanningPhase has been set to FALSE - dynamic planning phase manager can now start checking!");

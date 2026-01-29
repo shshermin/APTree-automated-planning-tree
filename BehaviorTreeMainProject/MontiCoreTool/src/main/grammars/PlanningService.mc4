@@ -1,17 +1,19 @@
 grammar PlanningService extends CRFTypesCon {
 
-
-  abstract PService extends Service = name:Name planner:Name@Planner;
-
-  PDDLPlannerService extends PService = "PDDLPlanning" "Service" name:Name planner:Name@PDDLPlanner ;
   
-  // 2. Planner hierarchy
-  abstract symbol Planner = name:Name;
+ PWorld = (Problem| PDDLPlannerService | ENHSP | Domain )*;
+//planning service
+abstract PService extends Service = name:Name planner:Name@Planner;
+PDDLPlannerService extends PService = "PlanningService" name:Name planner:Name@PDDLPlanner ;
+  
+// 2. Planners
+abstract symbol Planner = name:Name;
 
-abstract symbol PDDLPlanner extends Planner = "PddlPlanner" name:Name "Domain" domain:Name@Domain   ("Problem" problem:Name)?;
-ENHSP extends PDDLPlanner = "PddlPlanner" "Enhsp" name:Name "Domain" domain:Name@Domain   ("Problem" problem:Name)?;
+abstract symbol PDDLPlanner extends Planner = "PddlPlanner" name:Name "Domain" ":" domain:Name@Domain   ("Problem" ":" problem:Name@Problem)?;
+symbol ENHSP extends PDDLPlanner = "PddlPlanner" "Enhsp" name:Name "Domain" ":" domain:Name@Domain   ("Problem" ":" problem:Name@Problem)?;
 
-symbol Domain = "Domain" name:Name  "LanguageVersion" language:Name "Level" actLev:ActionLevel;
+symbol Domain = "Domain" name:Name  "LanguageVersion" ":" language:Double "Level" ":" actLev:ActionLevel;
+symbol Problem = "Problem" name:Name;
 
 
 }

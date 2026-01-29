@@ -148,7 +148,7 @@ public class APTreeTool {
       }
       
       // Get FirstPosition symbols
-      for (var fpSymbol : instanceScope.getLocalFirstPositionSymbols()) {
+      for (var fpSymbol : instanceScope.getLocalFirstPosSymbols()) {
         System.out.println("  - Adding FirstPosition: " + fpSymbol.getName());
         DynamicBTFlowNodeMill.globalScope().add(fpSymbol);
         count++;

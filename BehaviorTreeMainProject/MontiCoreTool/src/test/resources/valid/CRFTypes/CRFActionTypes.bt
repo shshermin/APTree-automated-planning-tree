@@ -1,32 +1,32 @@
 // 5. Action Type Definition (General Template)
-Action PickUpHL {
-    acttype: HIGHLEVEL
-    parameters {
-        obj: Element
-        grabPos: Location
+Define Action PickUpHL {
+    ActLevel: HighLevel
+    Properties {
+        objToPick: Element
+        objLoc: Location
         client: Robot
     }
-    preconditions {
-        atplace(obj, grabPos)
-        holding(client, obj)   
+    Preconditions {
+        atplace(objToPick, objLoc)
+        !holding(client, objToPick)   
     }    
-    effects {
-        holding(client, obj)
+    Effects {
+        holding(client, objToPick)
     }   
 }
 
-Action PlaceHL {
-    acttype: HIGHLEVEL
-    parameters {
-        obj: Element
-        targetPos: Location
+Define Action PlaceHL {
+    ActLevel: HighLevel
+    Properties {
+        objToPlace: Element
+        objLoc: Location
         client: Robot
     }
-    preconditions {
-        holding(client, obj)
+    Preconditions {
+        Holding(client, objToPlace)
     }    
-    effects {
-        atplace(obj, targetPos)
-        holding(client, obj)
+    Effects {
+        AtPlace(objToPlace, objLoc)
+        !Holding(client, objToPlace) 
     }   
 }

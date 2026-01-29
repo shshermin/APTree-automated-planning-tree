@@ -148,33 +148,33 @@ public class BTFlowNode_Composite : BTFlowNodeBase
         if (currentChildIndex < allChildren.Count)
         {
             var currentChild = allChildren[currentChildIndex];
-            var previousStatus = currentChild.LastStatus;
+            var previousStatus = currentChild.status;
             
             LoggingService.LogInfo($"🎯 CompositeFlow: Ticking child {currentChildIndex + 1}/{allChildren.Count}: {currentChild.DebugDisplayName}");
             
             // Tick the current child
             currentChild.Tick(inDeltaTime);
             
-            LoggingService.LogInfo($"📊 CompositeFlow: Child {currentChild.DebugDisplayName}: {previousStatus} → {currentChild.LastStatus}");
+            LoggingService.LogInfo($"📊 CompositeFlow: Child {currentChild.DebugDisplayName}: {previousStatus} → {currentChild.status}");
             
             // If child completed (Succeeded or failed), move to next child
-            if (currentChild.LastStatus == EBTNodeResult.Succeeded || currentChild.LastStatus == EBTNodeResult.failed)
+            if (currentChild.status == BTNodeResult.Succeeded || currentChild.status == BTNodeResult.failed)
             {
                 currentChildIndex++;
             }
             
             // Continue ticking until all children are processed
-            LastStatus = EBTNodeResult.InProgress;
+            status = BTNodeResult.InProgress;
             return true;
         }
         
         // All children have been processed once in this pass
         // If any child is still running (neither succeeded nor failed), keep the composite running
-        bool anyRunning = allChildren.Any(node => node.LastStatus != EBTNodeResult.Succeeded && node.LastStatus != EBTNodeResult.failed);
+        bool anyRunning = allChildren.Any(node => node.status != BTNodeResult.Succeeded && node.status != BTNodeResult.failed);
         if (anyRunning)
         {
             currentChildIndex = 0; // wrap to first child for the next pass
-            LastStatus = EBTNodeResult.InProgress;
+            status = BTNodeResult.InProgress;
             LoggingService.LogInfo($"⏳ CompositeFlow: Some children still running, continuing next pass");
             return true;
         }
@@ -186,7 +186,7 @@ public class BTFlowNode_Composite : BTFlowNodeBase
         bool criteriaAchieved = EvaluateSuccessCriteria(allChildren);
         if (criteriaAchieved)
         {
-            LastStatus = EBTNodeResult.Succeeded;
+            status = BTNodeResult.Succeeded;
             LoggingService.LogSuccess($"✅ CompositeFlow: Success criteria achieved on attempt {currentAttempt}");
             return true;
         }
@@ -205,7 +205,7 @@ public class BTFlowNode_Composite : BTFlowNodeBase
             // Reset failed children and try again
             ResetFailedChildren(allChildren);
             currentChildIndex = 0;
-            LastStatus = EBTNodeResult.InProgress;
+            status = BTNodeResult.InProgress;
             LoggingService.LogInfo($"🔄 CompositeFlow: Retrying - attempt {currentAttempt}, continuing execution");
             return true;
         }
@@ -218,7 +218,7 @@ public class BTFlowNode_Composite : BTFlowNodeBase
     {
         if (children.Count == 0) return false;
         
-        int successCount = children.Count(node => node.LastStatus == EBTNodeResult.Succeeded);
+        int successCount = children.Count(node => node.status == BTNodeResult.Succeeded);
         int totalCount = children.Count;
         
         LoggingService.LogInfo($"📊 CompositeFlow: Success evaluation - {successCount}/{totalCount} children succeeded");
@@ -241,7 +241,7 @@ public class BTFlowNode_Composite : BTFlowNodeBase
         return TerminationPolicy switch
         {
             CompositeTerminationPolicy.StopOnFirstFailure => 
-                children.Any(node => node.LastStatus == EBTNodeResult.failed),
+                children.Any(node => node.status == BTNodeResult.failed),
                 
             CompositeTerminationPolicy.StopWhenCriteriaImpossible => 
                 IsCriteriaImpossible(children),
@@ -261,8 +261,8 @@ public class BTFlowNode_Composite : BTFlowNodeBase
     /// </summary>
     private bool IsCriteriaImpossible(List<IBTNode> children)
     {
-        int successCount = children.Count(node => node.LastStatus == EBTNodeResult.Succeeded);
-        int failedCount = children.Count(node => node.LastStatus == EBTNodeResult.failed);
+        int successCount = children.Count(node => node.status == BTNodeResult.Succeeded);
+        int failedCount = children.Count(node => node.status == BTNodeResult.failed);
         int remainingCount = children.Count - successCount - failedCount;
         int maxPossibleSuccess = successCount + remainingCount;
         
@@ -284,7 +284,7 @@ public class BTFlowNode_Composite : BTFlowNodeBase
         int resetCount = 0;
         foreach (var child in children)
         {
-            if (child.LastStatus == EBTNodeResult.failed)
+            if (child.status == BTNodeResult.failed)
             {
                 child.Reset();
                 resetCount++;

@@ -198,7 +198,7 @@ public class NodeGraph
         {
             LoggingService.LogInfo($"   🔍 NodeGraph: ===== Checking node {node.ActionNode.InstanceName.ToString()} =====");
             LoggingService.LogInfo($"   🔍 NodeGraph: Node completed: {node.IsCompleted}, executing: {node.IsExecuting}");
-            LoggingService.LogInfo($"   🔍 NodeGraph: Node LastStatus: {node.ActionNode.LastStatus}");
+            LoggingService.LogInfo($"   🔍 NodeGraph: Node LastStatus: {node.ActionNode.status}");
             LoggingService.LogInfo($"   🔍 NodeGraph: Has predecessors: {node.Predecessors.Any()}");
             LoggingService.LogInfo($"   🔍 NodeGraph: Has successors: {node.Successors.Any()}");
             
@@ -209,7 +209,7 @@ public class NodeGraph
                 foreach (var predRelation in node.Predecessors)
                 {
                     var pred = predRelation.From;
-                    LoggingService.LogInfo($"     - {pred.ActionNode.InstanceName.ToString()}: IsCompleted={pred.IsCompleted}, IsExecuting={pred.IsExecuting}, LastStatus={pred.ActionNode.LastStatus}");
+                    LoggingService.LogInfo($"     - {pred.ActionNode.InstanceName.ToString()}: IsCompleted={pred.IsCompleted}, IsExecuting={pred.IsExecuting}, LastStatus={pred.ActionNode.status}");
                 }
             }
             
@@ -219,7 +219,7 @@ public class NodeGraph
                 foreach (var succRelation in node.Successors)
                 {
                     var succ = succRelation.To;
-                    LoggingService.LogInfo($"     - {succ.ActionNode.InstanceName.ToString()}: IsCompleted={succ.IsCompleted}, IsExecuting={succ.IsExecuting}, LastStatus={succ.ActionNode.LastStatus}");
+                    LoggingService.LogInfo($"     - {succ.ActionNode.InstanceName.ToString()}: IsCompleted={succ.IsCompleted}, IsExecuting={succ.IsExecuting}, LastStatus={succ.ActionNode.status}");
                 }
             }
             
@@ -441,7 +441,7 @@ public class NodeGraph
     public void MarkNodeCompleted(ActionNode actionNode)
     {
         LoggingService.LogInfo($"🔍 DEBUG: MarkNodeCompleted called for {actionNode.InstanceName.ToString()}");
-        LoggingService.LogInfo($"🔍 DEBUG: Node status before marking: {actionNode.LastStatus}");
+        LoggingService.LogInfo($"🔍 DEBUG: Node status before marking: {actionNode.status}");
         
         if (nodeMap.TryGetValue(actionNode, out var graphNode))
         {

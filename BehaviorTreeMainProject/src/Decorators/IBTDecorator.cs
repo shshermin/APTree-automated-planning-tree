@@ -5,7 +5,7 @@ public interface IBTDecorator
     IBehaviorTree OwningTree { get; }
     Blackboard<FastName> LinkedBlackboard{ get; }
     bool CanPostProcessTickResult { get; }
-    EBTNodeResult PostProcessTickResult(EBTNodeResult InResult);
+    BTNodeResult PostProcessTickResult(BTNodeResult InResult);
 
      void SetOwiningTree(IBehaviorTree InOwningtree);
     // it returns a bool that will let us know if we can continue running

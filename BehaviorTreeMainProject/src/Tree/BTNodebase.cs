@@ -23,9 +23,9 @@ public abstract class BTNodeBase : IBTNode
         LoggingService.LogInfo($"🔧 BTNodeBase: {DebugDisplayName} - Parent reference set to: {parent?.DebugDisplayName ?? "null"}");
     }
 
-    public Blackboard<FastName> LinkedBlackboard => OwningTree.LinkedBlackboard;
+    public Blackboard<FastName> LinkedBlackboard => OwningTree.linkedBlackboard;
     // to keep track of the last status of the node
-    public EBTNodeResult LastStatus { get; protected set; } = EBTNodeResult.Uninitialized;
+    public BTNodeResult status { get; protected set; } = BTNodeResult.Uninitialized;
     // to keep track of the tick phase of each node
     protected EBTNodeTickPhase CurrentTickPhase { get; set; } = EBTNodeTickPhase.WaitingForNextTick;
     // to store the list of services of this node
@@ -35,7 +35,7 @@ public abstract class BTNodeBase : IBTNode
     protected List<IBTDecorator>? Decorators;
     
 // to know if a know has finished or not. (succeeded or failed)
-    public bool HasFinished => (LastStatus == EBTNodeResult.Succeeded || LastStatus == EBTNodeResult.failed);
+    public bool HasFinished => (status == BTNodeResult.Success || status == BTNodeResult.Failure);
     // to store if all the decorators allow for running this node
 
     protected bool bDecoratorsAllowRunning = true;
@@ -177,7 +177,7 @@ public abstract class BTNodeBase : IBTNode
 
     public virtual void Reset()
     {
-        LastStatus = EBTNodeResult.readyToTick;
+        status = BTNodeResult.ReadyToTick;
         
        
     }
@@ -240,7 +240,7 @@ public abstract class BTNodeBase : IBTNode
 /// </summary>
 /// <param name="InDeltaTime"></param>
 /// <returns></returns>
-    public EBTNodeResult Tick(float InDeltaTime)
+    public BTNodeResult Tick(float InDeltaTime)
     {
         // Initialize timing tracking
         tickStartTime = DateTime.Now;
@@ -250,7 +250,7 @@ public abstract class BTNodeBase : IBTNode
         LogTickStart();
 
         // First time running, reset the node
-        if (LastStatus == EBTNodeResult.Uninitialized)
+        if (status == BTNodeResult.Uninitialized)
         {
             // sets the status to ready to tick
             Reset();
@@ -260,9 +260,9 @@ public abstract class BTNodeBase : IBTNode
         CurrentTickPhase = EBTNodeTickPhase.AlwaysOnServices;
         if (!OnTick_AlwaysOnServices(InDeltaTime))
         {
-            LastStatus = EBTNodeResult.failed;
+            status = BTNodeResult.Failure;
             LogPhaseFailure("AlwaysOnServices");
-            return OnTickReturn(LastStatus);
+            return OnTickReturn(status);
         }
         LogPhaseSuccess("AlwaysOnServices");
 
@@ -270,9 +270,9 @@ public abstract class BTNodeBase : IBTNode
         CurrentTickPhase = EBTNodeTickPhase.GeneralServices;
         if (!OnTick_GeneralServices(InDeltaTime))
         {
-            LastStatus = EBTNodeResult.failed;
+            status = BTNodeResult.Failure;
             LogPhaseFailure("GeneralServices");
-            return OnTickReturn(LastStatus);
+            return OnTickReturn(status);
         }
         LogPhaseSuccess("GeneralServices");
         servicesEndTime = DateTime.Now;
@@ -281,12 +281,12 @@ public abstract class BTNodeBase : IBTNode
         CurrentTickPhase = EBTNodeTickPhase.Decorators;
         if (!OnTick_Decorators(InDeltaTime))
         {
-            LastStatus = EBTNodeResult.failed;
+            status = BTNodeResult.Failure;
             if (bDecoratorsAllowRunning && bCanSendExitNotification)
                 OnExit();
             bDecoratorsAllowRunning = false;
             LogDecoratorBlocked();
-            return OnTickReturn(LastStatus);
+            return OnTickReturn(status);
         }
         LogPhaseSuccess("Decorators");
         decoratorsEndTime = DateTime.Now;
@@ -301,15 +301,15 @@ public abstract class BTNodeBase : IBTNode
         // Check if node has already finished
         if (HasFinished)
         {
-            return OnTickReturn(LastStatus);
+            return OnTickReturn(status);
         }
 
         // Call OnEnter if needed
-        if (LastStatus == EBTNodeResult.readyToTick)
+        if (status == BTNodeResult.ReadyToTick)
         {
             OnEnter();
             if (HasFinished)
-                return OnTickReturn(LastStatus);
+                return OnTickReturn(status);
         }
 
 
@@ -319,7 +319,7 @@ public abstract class BTNodeBase : IBTNode
             CurrentTickPhase = EBTNodeTickPhase.Children;
             if (!OnTick_Children(InDeltaTime))
             {
-                return OnTickReturn(LastStatus);
+                return OnTickReturn(status);
             }
             LogPhaseSuccess("Children");
         }
@@ -329,9 +329,9 @@ public abstract class BTNodeBase : IBTNode
         CurrentTickPhase = EBTNodeTickPhase.NodeLogic;
         if (!OnTick_NodeLogic(InDeltaTime))
         {
-            LastStatus = EBTNodeResult.failed;
+            status = BTNodeResult.Failure;
             LogPhaseFailure("NodeLogic");
-            return OnTickReturn(LastStatus);
+            return OnTickReturn(status);
         }
         LogPhaseSuccess("NodeLogic");
         nodeLogicEndTime = DateTime.Now;
@@ -341,7 +341,7 @@ public abstract class BTNodeBase : IBTNode
         HasCompletedFullTick = true;
         LogTickCompletion();
 
-        return OnTickReturn(LastStatus);
+        return OnTickReturn(status);
     }
 
     /// <summary>
@@ -359,7 +359,7 @@ public abstract class BTNodeBase : IBTNode
             BehaviorTreeComponentLogger.TrackActionTick("GenericBTAction");
         }
         
-        ExecutionFlowLogger.LogNodeTick(DebugDisplayName, GetType().Name, "START", LastStatus.ToString());
+        ExecutionFlowLogger.LogNodeTick(DebugDisplayName, GetType().Name, "START", status.ToString());
         LoggingService.LogInfo($"🔄 BTNodeBase: {DebugDisplayName} - Tick started");
     }
 
@@ -404,16 +404,16 @@ public abstract class BTNodeBase : IBTNode
     {
         LoggingService.LogInfo($"⏱️ BTNodeBase: {DebugDisplayName} - Tick timing: Services={ServicesDuration.TotalMilliseconds:F2}ms, Decorators={DecoratorsDuration.TotalMilliseconds:F2}ms, NodeLogic={NodeLogicDuration.TotalMilliseconds:F2}ms, Children={ChildrenDuration.TotalMilliseconds:F2}ms, Total={TotalTickDuration.TotalMilliseconds:F2}ms");
         TickTimingLogger.TrackTickTiming(this);
-        LoggingService.LogInfo($"✅ BTNodeBase: {DebugDisplayName} - Tick method completed successfully, returning {LastStatus}");
+        LoggingService.LogInfo($"✅ BTNodeBase: {DebugDisplayName} - Tick method completed successfully, returning {status}");
     }
     /// <summary>
     ///  
     /// </summary>
     /// <param name="InProvisionalResult"></param>
     /// <returns></returns>
-    protected virtual EBTNodeResult OnTickReturn(EBTNodeResult InProvisionalResult)
+    protected virtual BTNodeResult OnTickReturn(BTNodeResult InProvisionalResult)
     {
-        EBTNodeResult FinalResult = InProvisionalResult;
+        BTNodeResult FinalResult = InProvisionalResult;
         CurrentTickPhase = EBTNodeTickPhase.WaitingForNextTick;
         // if(Decorators != null)
         // {
@@ -426,7 +426,7 @@ public abstract class BTNodeBase : IBTNode
         // }
         
         // Track success and failure counts
-        if (FinalResult == EBTNodeResult.Succeeded)
+        if (FinalResult == BTNodeResult.Success)
         {
             successCount++;
             // Track flow node success if this is a flow node
@@ -441,7 +441,7 @@ public abstract class BTNodeBase : IBTNode
             }
             // Simplified tracking - detailed node success tracking removed
         }
-        else if (FinalResult == EBTNodeResult.failed)
+        else if (FinalResult == BTNodeResult.Failure)
         {
             failureCount++;
             // Track flow node failure if this is a flow node

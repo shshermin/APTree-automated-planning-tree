@@ -6,6 +6,6 @@ FlowNode {
     Nodegraph mygraph {
         Action PickUpHL mypickup (beam1 position1 robot1)
         Action PickUpHL mypickups (beam1 position1 robot1)
-        relation mypickup --[BEFORE]--> mypickups;
+        relation mypickup --[MEETS]--> mypickups;
     }
 }

@@ -134,7 +134,7 @@ public class APTreeJsonCli {
       for (var robotSymbol : instanceScope.getLocalRobotSymbols()) {
         DynamicBTFlowNodeMill.globalScope().add(robotSymbol);
       }
-      for (var fpSymbol : instanceScope.getLocalFirstPositionSymbols()) {
+      for (var fpSymbol : instanceScope.getLocalFirstPosSymbols()) {
         DynamicBTFlowNodeMill.globalScope().add(fpSymbol);
       }
 

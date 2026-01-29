@@ -244,7 +244,7 @@ public abstract class BTServicePlanner : BTServiceBase
             ExecutionSummaryLogger.TrackPlanningService(plannerType, plannerType, StartTime, true, actionsGenerated, PlannerEndTime, EndTime);
             
             // Track final actions remaining after successful planning
-            var finalActionCount = LinkedBlackboard.GetAllActions().Count;
+            var finalActionCount = linkedBlackboard.GetAllActions().Count;
             BehaviorTreeComponentLogger.TrackFinalActionsRemaining(finalActionCount, $"After successful {plannerType} planning");
 
             LoggingService.LogSuccess($"✅ {GetType().Name}: Planning process completed successfully at {EndTime:HH:mm:ss.fff}");
@@ -304,7 +304,7 @@ public abstract class BTServicePlanner : BTServiceBase
             var nodeGraphKey = new FastName(nodeGraphName);
             
             // Store in blackboard
-            LinkedBlackboard.SetNodeGraph(nodeGraphKey, generatedNodeGraph);
+            linkedBlackboard.SetNodeGraph(nodeGraphKey, generatedNodeGraph);
             
             LoggingService.LogSuccess($"✅ BTServicePlanner: Stored NodeGraph '{nodeGraphName}' in blackboard");
             LoggingService.LogInfo($"   📊 NodeGraph contains {generatedNodeGraph.GetAllActionNodes().Count} actions");
@@ -466,7 +466,7 @@ public abstract class BTServicePlanner : BTServiceBase
             var fastNameKey = new FastName(subtreeKey);
             
             // Add the subtree to the blackboard's injected subtrees
-            LinkedBlackboard.SetInjectedSubtree(fastNameKey, OwningFlowNode as BTFlowNode_Dynamic);
+            linkedBlackboard.SetInjectedSubtree(fastNameKey, OwningFlowNode as BTFlowNode_Dynamic);
             
             LoggingService.LogSuccess($"✅ BTServicePlanner: Added subtree '{OwningFlowNode.DebugDisplayName}' to blackboard after successful planning");
             LoggingService.LogInfo($"   📝 Subtree key: {subtreeKey}");

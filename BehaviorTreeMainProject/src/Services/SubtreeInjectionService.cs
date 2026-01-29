@@ -116,19 +116,19 @@ namespace BehaviorTreeMainProject
            // parameterInstances.Clear();
 
             // Reset the DynamicPlanningComplete flag on blackboard
-            if (LinkedBlackboard != null)
+            if (linkedBlackboard != null)
             {
                 LogMessage($"🔄 SubtreeInjectionService: Resetting CassetteSubtreeCompleted flags on blackboard");
 
                 // Loop through the array and set each item to false
-                if (LinkedBlackboard.CassetteSubtreeCompleted != null)
+                if (linkedBlackboard.CassetteSubtreeCompleted != null)
                 {
-                    for (int i = 0; i < LinkedBlackboard.CassetteSubtreeCompleted.Length; i++)
+                    for (int i = 0; i < linkedBlackboard.CassetteSubtreeCompleted.Length; i++)
                     {
-                        LinkedBlackboard.CassetteSubtreeCompleted[i] = false;
+                        linkedBlackboard.CassetteSubtreeCompleted[i] = false;
                         LogMessage($"🔄 SubtreeInjectionService: Set cassette{i + 1} subtree completion flag to false");
                     }
-                    LogMessage($"✅ SubtreeInjectionService: Successfully reset all {LinkedBlackboard.CassetteSubtreeCompleted.Length} cassette subtree completion flags");
+                    LogMessage($"✅ SubtreeInjectionService: Successfully reset all {linkedBlackboard.CassetteSubtreeCompleted.Length} cassette subtree completion flags");
                 }
                 else
                 {
@@ -302,7 +302,7 @@ namespace BehaviorTreeMainProject
                 LogMessage($"🔧 SubtreeInjectionService: Action type: {actionType}, Action full name: {actionFullName}");
                 
                 // Check if LinkedBlackboard is null
-                if (LinkedBlackboard == null)
+                if (linkedBlackboard == null)
                 {
                     LogMessage($"❌ SubtreeInjectionService: LinkedBlackboard is null!");
                     throw new InvalidOperationException("LinkedBlackboard is null");
@@ -310,7 +310,7 @@ namespace BehaviorTreeMainProject
                 
                 // 1. Retrieve predicates from blackboard
                 LogMessage($"🔧 SubtreeInjectionService: About to call LinkedBlackboard.GetAllPredicates()");
-                var initialstatepredicates = LinkedBlackboard.GetTruePredicates();
+                var initialstatepredicates = linkedBlackboard.GetTruePredicates();
                 LogMessage($"🔧 SubtreeInjectionService: Retrieved {initialstatepredicates?.Count ?? 0} initial state predicates");
                 
                 if (initialstatepredicates == null)
@@ -488,14 +488,14 @@ namespace BehaviorTreeMainProject
             try
             {
                 // Check both cassette1 and cassette2 flow nodes from blackboard
-                if (LinkedBlackboard != null)
+                if (linkedBlackboard != null)
                 {
                     if (pendingAction != null)
                     {
                         string pendingActionName = pendingAction.InstanceName.ToString();
                         
                         // Check cassette1
-                        var cassette1Node = LinkedBlackboard.GetFlowNode(new FastName("cassette1")) as BTFlowNode_Dynamic;
+                        var cassette1Node = linkedBlackboard.GetFlowNode(new FastName("cassette1")) as BTFlowNode_Dynamic;
                         if (cassette1Node != null)
                         {
                             List<PActionNode> cassette1Actions = cassette1Node.GetActionGraph().GetAllActionNodes();
@@ -510,7 +510,7 @@ namespace BehaviorTreeMainProject
                         }
                         
                         // Check cassette2
-                        var cassette2Node = LinkedBlackboard.GetFlowNode(new FastName("cassette2")) as BTFlowNode_Dynamic;
+                        var cassette2Node = linkedBlackboard.GetFlowNode(new FastName("cassette2")) as BTFlowNode_Dynamic;
                         if (cassette2Node != null)
                         {
                             List<PActionNode> cassette2Actions = cassette2Node.GetActionGraph().GetAllActionNodes();
@@ -758,7 +758,7 @@ namespace BehaviorTreeMainProject
         /// </summary>
         private void SetCassetteSubtreeCompletedFlag(PActionNode action)
         {
-            if (LinkedBlackboard == null)
+            if (linkedBlackboard == null)
             {
                 LogMessage($"⚠️ Error: SubtreeInjectionService: LinkedBlackboard is null, cannot set cassette flag");
                 return;
@@ -767,9 +767,9 @@ namespace BehaviorTreeMainProject
             // Find which cassette flow node contains this action by traversing the tree
             int cassetteIndex = FindCassetteIndexForAction(action);
             
-            if (cassetteIndex >= 0 && cassetteIndex < LinkedBlackboard.CassetteSubtreeCompleted.Length)
+            if (cassetteIndex >= 0 && cassetteIndex < linkedBlackboard.CassetteSubtreeCompleted.Length)
             {
-                LinkedBlackboard.CassetteSubtreeCompleted[cassetteIndex] = true;
+                linkedBlackboard.CassetteSubtreeCompleted[cassetteIndex] = true;
                 LogMessage($"✅ SubtreeInjectionService: Set cassette{cassetteIndex + 1} subtree completion flag to true");
             }
             else
@@ -804,8 +804,8 @@ namespace BehaviorTreeMainProject
         /// </summary>
         public void ClearInjectedSubtreesTracking()
         {
-            var currentCount = LinkedBlackboard.GetAllInjectedSubtrees().Count;
-            LinkedBlackboard.ClearInjectedSubtrees();
+            var currentCount = linkedBlackboard.GetAllInjectedSubtrees().Count;
+            linkedBlackboard.ClearInjectedSubtrees();
             LogMessage("🧹 SubtreeInjectionService: Cleared injected subtrees tracking from blackboard");
             
             // Track subtree clearing
@@ -838,7 +838,7 @@ namespace BehaviorTreeMainProject
         {
             try
             {
-                var allInjectedSubtrees = LinkedBlackboard.GetAllInjectedSubtrees();
+                var allInjectedSubtrees = linkedBlackboard.GetAllInjectedSubtrees();
                 LogMessage($"🔄 SubtreeInjectionService: Starting NodeGraph cleanup for {allInjectedSubtrees.Count} injected subtrees");
                 
                 foreach (var subtree in allInjectedSubtrees)
@@ -846,7 +846,7 @@ namespace BehaviorTreeMainProject
                     if (subtree == null) continue;
                     
                     // Check if this subtree was successful
-                    bool isSuccessful = subtree.LastStatus == EBTNodeResult.Succeeded;
+                    bool isSuccessful = subtree.status == BTNodeResult.Succeeded;
                     
                     if (isSuccessful)
                     {
@@ -872,13 +872,13 @@ namespace BehaviorTreeMainProject
                     }
                     
                     // Note: NodeGraph clearing is handled by ResetForNextRound() -> ClearActionGraph() -> actionGraph.Clear()
-                    LogMessage($"🧹 SubtreeInjectionService: NodeGraph clearing handled by ResetForNextRound() for subtree '{subtree.DebugDisplayName}' (status: {subtree.LastStatus})");
+                    LogMessage($"🧹 SubtreeInjectionService: NodeGraph clearing handled by ResetForNextRound() for subtree '{subtree.DebugDisplayName}' (status: {subtree.status})");
                 }
                 
                 // NEW: Clear all injected subtrees from blackboard to start fresh
                 // This ensures only currently active subtrees are tracked
                 LogMessage($"🧹 SubtreeInjectionService: Clearing all injected subtrees from blackboard to start fresh");
-                LinkedBlackboard.ClearInjectedSubtrees();
+                linkedBlackboard.ClearInjectedSubtrees();
                 LogMessage($"✅ SubtreeInjectionService: Cleared {allInjectedSubtrees.Count} injected subtrees from blackboard");
                 
                 // Track subtree clearing
@@ -980,7 +980,7 @@ namespace BehaviorTreeMainProject
         private BTFlowNode_Dynamic CreateFFSubtree(SubtreeConfiguration config, string instanceName, Dictionary<string, object> customParameters)
         {
             var subtreeTree = new BehaviorTree();
-            subtreeTree.Initialise(LinkedBlackboard, $"{config.Name}_Subtree_{instanceName}");
+            subtreeTree.Initialise(linkedBlackboard, $"{config.Name}_Subtree_{instanceName}");
 
             var dynamicFlowNode = new BTFlowNode_Dynamic(
                 new FastName($"{config.Name}_DynamicFlow_{instanceName}"),
@@ -1011,7 +1011,7 @@ namespace BehaviorTreeMainProject
             ffPlanner.ExecutionMode = (CallPDDLPlanner.ParallelExecutionMode)parameters["executionMode"];
 
             dynamicFlowNode.SetPlanningService(ffPlanner);
-            subtreeTree.RootNode = dynamicFlowNode;
+            subtreeTree.root = dynamicFlowNode;
 
             return dynamicFlowNode;
         }
@@ -1022,7 +1022,7 @@ namespace BehaviorTreeMainProject
         private BTFlowNode_Dynamic CreateENHSPSubtree(SubtreeConfiguration config, string instanceName, Dictionary<string, object> customParameters)
         {
             var subtreeTree = new BehaviorTree();
-            subtreeTree.Initialise(LinkedBlackboard, $"{config.Name}_Subtree_{instanceName}");
+            subtreeTree.Initialise(linkedBlackboard, $"{config.Name}_Subtree_{instanceName}");
 
             var dynamicFlowNode = new BTFlowNode_Dynamic(
                 new FastName($"{config.Name}_DynamicFlow_{instanceName}"),
@@ -1052,7 +1052,7 @@ namespace BehaviorTreeMainProject
             enhspPlanner.ExecutionMode = (CallPDDLPlanner.ParallelExecutionMode)parameters["executionMode"];
 
             dynamicFlowNode.SetPlanningService(enhspPlanner);
-            subtreeTree.RootNode = dynamicFlowNode;
+            subtreeTree.root = dynamicFlowNode;
 
             return dynamicFlowNode;
         }
@@ -1063,7 +1063,7 @@ namespace BehaviorTreeMainProject
         private BTFlowNode_Dynamic CreateLamaFirstSubtree(SubtreeConfiguration config, string instanceName, Dictionary<string, object> customParameters)
         {
             var subtreeTree = new BehaviorTree();
-            subtreeTree.Initialise(LinkedBlackboard, $"{config.Name}_Subtree_{instanceName}");
+            subtreeTree.Initialise(linkedBlackboard, $"{config.Name}_Subtree_{instanceName}");
 
             var dynamicFlowNode = new BTFlowNode_Dynamic(
                 new FastName($"{config.Name}_DynamicFlow_{instanceName}"),
@@ -1094,7 +1094,7 @@ namespace BehaviorTreeMainProject
             lamaFirstPlanner.ExecutionMode = (CallPDDLPlanner.ParallelExecutionMode)parameters["executionMode"];
 
             dynamicFlowNode.SetPlanningService(lamaFirstPlanner);
-            subtreeTree.RootNode = dynamicFlowNode;
+            subtreeTree.root = dynamicFlowNode;
 
             return dynamicFlowNode;
         }
@@ -1105,7 +1105,7 @@ namespace BehaviorTreeMainProject
         private BTFlowNode_Dynamic CreateGOAPSubtree(SubtreeConfiguration config, string instanceName, Dictionary<string, object> customParameters)
         {
             var subtreeTree = new BehaviorTree();
-            subtreeTree.Initialise(LinkedBlackboard, $"{config.Name}_Subtree_{instanceName}");
+            subtreeTree.Initialise(linkedBlackboard, $"{config.Name}_Subtree_{instanceName}");
 
             var dynamicFlowNode = new BTFlowNode_Dynamic(
                 new FastName($"{config.Name}_DynamicFlow_{instanceName}"),
@@ -1159,7 +1159,7 @@ namespace BehaviorTreeMainProject
             var goapPlanner = new CallGOAPPlanner(subtreeTree, goapRequest);
 
             dynamicFlowNode.SetPlanningService(goapPlanner);
-            subtreeTree.RootNode = dynamicFlowNode;
+            subtreeTree.root = dynamicFlowNode;
 
             return dynamicFlowNode;
         }
@@ -1199,7 +1199,7 @@ namespace BehaviorTreeMainProject
         private BTFlowNode_Dynamic CreateStateChartSubtree(SubtreeConfiguration config, string instanceName, Dictionary<string, object> customParameters)
         {
             var subtreeTree = new BehaviorTree();
-            subtreeTree.Initialise(LinkedBlackboard, $"{config.Name}_Subtree_{instanceName}");
+            subtreeTree.Initialise(linkedBlackboard, $"{config.Name}_Subtree_{instanceName}");
 
             var dynamicFlowNode = new BTFlowNode_Dynamic(
                 new FastName($"{config.Name}_DynamicFlow_{instanceName}"),
@@ -1221,7 +1221,7 @@ namespace BehaviorTreeMainProject
             var stateChartPlanner = new CallSCPlanner(subtreeTree, stateChartRequest);
 
             dynamicFlowNode.SetPlanningService(stateChartPlanner);
-            subtreeTree.RootNode = dynamicFlowNode;
+            subtreeTree.root = dynamicFlowNode;
 
             return dynamicFlowNode;
         }
@@ -1233,7 +1233,7 @@ namespace BehaviorTreeMainProject
         /// <returns>The cassette index (0-3) or -1 if not found</returns>
         private int FindCassetteIndexForAction(PActionNode action)
         {
-            if (OwningTree?.RootNode == null)
+            if (OwningTree?.root == null)
             {
                 LogMessage($"⚠️ SubtreeInjectionService: Cannot traverse tree - OwningTree or RootNode is null");
                 return -1;
@@ -1242,7 +1242,7 @@ namespace BehaviorTreeMainProject
             LogMessage($"🔍 SubtreeInjectionService: Searching for action '{action.InstanceName.ToString()}' in tree structure");
             
             // Start traversal from the root node
-            var cassetteIndex = TraverseTreeForAction(OwningTree.RootNode, action);
+            var cassetteIndex = TraverseTreeForAction(OwningTree.root, action);
             
             if (cassetteIndex >= 0)
             {

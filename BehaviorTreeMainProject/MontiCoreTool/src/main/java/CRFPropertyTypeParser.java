@@ -155,7 +155,7 @@ public class CRFPropertyTypeParser {
         for (int i = 0; i < properties.size(); i++) {
             ASTProperty prop = properties.get(i);
             String propName = prop.getName();
-            String propType = prop.getType();
+            String propType = prop.getType().getName();
             
             rule.append(" ")
                 .append(propName)

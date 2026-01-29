@@ -1,9 +1,9 @@
-public enum EBTNodeResult
+public enum BTNodeResult
 {
     Uninitialized,
-    readyToTick,
+    ReadyToTick,
     InProgress,
-    Succeeded,
-    failed
+    Success,
+    Failure
 
 }
