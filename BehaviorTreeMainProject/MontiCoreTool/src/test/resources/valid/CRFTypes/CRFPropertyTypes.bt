@@ -1,5 +1,5 @@
-define Beam as Element 
-define Plate as Element 
-define FirstPos as Location 
-define Robot as Agent { tool: Tool }
-define VaccumGripper as Tool { isActive: boolean}
+Define Beam as Element {loc: Location}
+Define Plate as Element {loc: Location}
+Define FirstPos as Location 
+Define Robot as Agent {tool: Tool loc: Location}
+Define VacGripper as Tool {isActive:Boolean loc:Location}

@@ -2,28 +2,27 @@ grammar CRFTypesCon extends CRFTypesDef {
 
 ////////// ?????? I am not sure why do we get errors if we dont include this world thing!
 @Override
-World = (PropertyTypeDefinition | Property | PredicateTypeDefinition | ActionTypeDefinition | Beam | Plate | FirstPosition | Robot)*;
+World = (PropertyTypeDefinition | Property | PredicateTypeDefinition | ActionTypeDefinition | Beam | Plate | FirstPos | Robot | VaccumGripper | Holding | AtPlace)*;
 
 // === GENERATED RULES (DO NOT EDIT BELOW) ===
-symbol Beam extends Element = "Beam" name:Name "(" lenght:DOUBLE_VALUE color:Name ")";
-symbol Plate extends Element = "Plate" name:Name "(" Roughness:DOUBLE_VALUE ")";
-symbol FirstPosition extends Location = "FirstPosition" name:Name "(" id:NUMBER ")";
-symbol Robot extends Agent = "Robot" name:Name "(" id:NUMBER ")";
+symbol Beam extends Element = "Beam" name:Name "(" loc:Name@Location ")";
+symbol Plate extends Element = "Plate" name:Name "(" loc:Name@Location ")";
+symbol FirstPos extends Location = "FirstPos" name:Name "(" ")";
+symbol Robot extends Agent = "Robot" name:Name "(" loc:Name@Location mType:Name ")";
+symbol VaccumGripper extends Tool = "VaccumGripper" name:Name "(" loc:Name@Location isActive:Boolean ")";
 // === END GENERATED RULES ===
 
 
 // === GENERATED PREDICATE RULES (DO NOT EDIT BELOW) ===
-Holding extends Predicate = "Holding" name:Name "(" item:Name@Element agent:Name@Agent ")";
-AtPlace extends Predicate = "AtPlace" name:Name "(" item:Name@Element loc:Name@Location ")";
+Holding extends Predicate = "!"? "Holding" "(" item:Name@Element agent:Name@Agent ")";
+AtPlace extends Predicate = "!"? "AtPlace" "(" item:Name@Element loc:Name@Location ")";
 // === END GENERATED PREDICATE RULES ===
 
 
 // === GENERATED ACTION RULES (DO NOT EDIT BELOW) ===
-PickUpHL extends PActionNode = "Action" "PickUpHL" name:Name "(" obj:Name@Element grabPos:Name@Location client:Name@Robot ")" ("{" (Decorator | Service)* "}")?  ("@" subtreeAnnotation:Name@BehaviorTree)?;
-astrule PickUpHL = method public crftypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=crftypesdef._ast.ASTActionLevel.HIGHLEVEL; } return actLevel; } ;
+  PickUpHL extends PActionNode = "Action" "PickUpHL" name:Name "(" obj:Name@Element grabPos:Name@Location client:Name@Robot ")" ("{" (Decorator | Service)* "}")?  ("@" subtreeAnnotation:Name@BehaviorTree)?;
+  astrule PickUpHL = method public crftypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=crftypesdef._ast.ASTActionLevel.HIGHLEVEL; } return actLevel; } ;
 
-PlaceHL extends PActionNode = "Action" "PlaceHL" name:Name "(" obj:Name@Element targetPos:Name@Location client:Name@Robot ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name@BehaviorTree)? ;
-astrule PlaceHL = method public crftypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=crftypesdef._ast.ASTActionLevel.HIGHLEVEL; } return actLevel; } ;
-
-// === END GENERATED ACTION RULES ===
+  PlaceHL extends PActionNode = "Action" "PlaceHL" name:Name "(" obj:Name@Element targetPos:Name@Location client:Name@Robot ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name@BehaviorTree)? ;
+  astrule PlaceHL = method public crftypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=crftypesdef._ast.ASTActionLevel.HIGHLEVEL; } return actLevel; } ;
 }

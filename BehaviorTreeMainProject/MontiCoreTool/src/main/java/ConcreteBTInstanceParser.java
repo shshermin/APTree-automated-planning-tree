@@ -108,7 +108,7 @@ public class ConcreteBTInstanceParser {
         if (world.getPropertyList() != null) {
             System.out.println("Properties: " + world.getPropertyList().size());
             for (ASTProperty prop : world.getPropertyList()) {
-                System.out.println("  - " + prop.getName() + " : " + prop.getType());
+                System.out.println("  - " + prop.getName() + " : " + prop.getType().getName());
             }
         }
         

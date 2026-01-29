@@ -1,10 +1,10 @@
-import planningservice._parser.PlanningServiceParser;
-import planningservice._ast.ASTWorld;
-import planningservice._ast.ASTPDDLPlannerService;
-import planningservice.PlanningServiceMill;
-
+import java.io.File;
 import java.util.Optional;
-import java.io.*;
+
+import planningservice.PlanningServiceMill;
+import planningservice._ast.ASTPDDLPlannerService;
+import planningservice._ast.ASTPWorld;
+import planningservice._parser.PlanningServiceParser;
 
 /**
  * PDDLPlannerParserTest - Parses and displays PDDLPlannerService models
@@ -35,11 +35,11 @@ public class PDDLPlannerParserTest {
             // Create parser instance
             PlanningServiceParser parser = new PlanningServiceParser();
             
-            // Parse the file as World
-            Optional<ASTWorld> result = parser.parse(filePath);
+            // Parse the file as PWorld
+            Optional<ASTPWorld> result = parser.parsePWorld(filePath);
             
             if (result.isPresent()) {
-                ASTWorld ast = result.get();
+                ASTPWorld ast = result.get();
                 System.out.println("✓ SUCCESS: Parsed file: " + filePath + "\n");
                 
                 // Display the parsed model

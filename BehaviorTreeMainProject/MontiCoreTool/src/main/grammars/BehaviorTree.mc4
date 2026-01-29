@@ -26,16 +26,18 @@
   CalcDist extends Service = "Service" name:Name;
 
 // tokens definition
+   BasicType = Name | Integer | Double | Boolean;
 
-  token PDDL_START = LOWER_CASE_LETTER;
-  token PDDL_CHAR = LETTER | NUMBER | '-' | '_';
+   token PDDL_START = LOWER_CASE_LETTER;
+   token PDDL_CHAR = LETTER | NUMBER | '-' | '_';
    token LOWER_CASE_LETTER = 'a'..'z';  
    token LETTER = 'a'..'z' | 'A'..'Z';
    token NUMBER = '0'..'9';
    token FILEPATH = LETTER | NUMBER | '_'  | '.' | '/' | '\\' | '-' ;
 
-    token STRING_VALUE = '"' (STRING_CHAR)* '"';
-  token DOUBLE_VALUE = NUMBER+ '.' NUMBER+;
+    token Boolean = "true" | "false";
+    token Double = NUMBER+ '.' NUMBER+;
+    token Integer = '-'? NUMBER+;
     token STRING_CHAR = LETTER | NUMBER | '_'  | '.' | '/' | '\\' | '-' ;
 }
 
@@ -44,7 +46,6 @@
 
 
 //  token STRING_VALUE = '"' (STRING_CHAR)* '"';
-//  token DOUBLE_VALUE = NUMBER+ '.' NUMBER+;
 //  token STRING_CHAR = LETTER | NUMBER | '_'  | '.' | '/' | '\\' | '-' ;
 
 

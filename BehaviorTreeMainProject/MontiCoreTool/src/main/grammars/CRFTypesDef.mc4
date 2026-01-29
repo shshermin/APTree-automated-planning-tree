@@ -16,12 +16,12 @@ symbol Module   implements CustomProperty = "Module" name:Name ;
 symbol Text     implements CustomProperty = "Text" name:Name;
   
 abstract symbol  Location implements CustomProperty = name:Name;
-abstract symbol  Element  implements CustomProperty = name:Name loc:Location;
-abstract symbol Tool     implements CustomProperty = name:Name loc:Location;
-abstract symbol  Agent    implements CustomProperty = name:Name loc:Location;
+abstract symbol  Element  implements CustomProperty = name:Name ;
+abstract symbol Tool     implements CustomProperty = name:Name  ;
+abstract symbol  Agent    implements CustomProperty = name:Name ;
 
   // definition of a property - accepts any Name as type (validated by CoCos)
-     Property = name:Name ":" type:Name ;
+     Property = name:Name ":" type:BasicType ;
  
   // 5. The Dynamic Definition rule
      PropertyTypeDefinition = "Define" name:Name "as" superType:Name ("{" (Property)* "}")?;
@@ -49,18 +49,18 @@ abstract PActionNode extends ActionNode =
     ;
 
 
-enum ActionLevel = "HIGHLEVEL" | "MIDLEVEL" | "LOWLEVEL";
+enum ActionLevel = "HighLevel" | "MidLevel" | "LowLevel";
 
     ActionTypeDefinition = 
-    "Define" "Action" typeName:Name "{"
-        "ActType:" actLevel:ActionLevel
+    "Define" "Action" name:Name "{"
+        "ActLevel:" actLevel:ActionLevel
         "Properties" "{" Property* "}"
-        "Preconditions" "{" preconditions:PredicateRef* "}"
+        "Preconditions" "{" precons:PredicateRef* "}"
         "Effects" "{" effects:PredicateRef* "}"
     "}";
 
 // Simple predicate reference with Name arguments (comma-separated)
-PredicateRef = name:Name@Predicate "(" (args:Name ("," args:Name)*)? ")";
+PredicateRef = "!"? name:Name@Predicate  "(" (args:Name ("," args:Name)*)? ")";
 
 
  PlaceTimber extends PActionNode = "placetimber";

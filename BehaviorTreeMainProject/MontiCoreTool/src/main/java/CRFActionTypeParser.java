@@ -132,7 +132,7 @@ public class CRFActionTypeParser {
      *   astrule PickUpHL = method public crftypedef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=crftypedef._ast.ASTActionLevel.HIGHLEVEL; } return actLevel; } ;
      */
     public static String generateGrammarRule(ASTActionTypeDefinition actionDef) {
-        String typeName = actionDef.getTypeName();
+        String typeName = actionDef.getName();
         String capitalizedName = capitalize(typeName);
         ASTActionLevel actionLevel = actionDef.getActLevel();
         List<ASTProperty> parameters = actionDef.getPropertyList();
@@ -149,7 +149,7 @@ public class CRFActionTypeParser {
         for (int i = 0; i < parameters.size(); i++) {
             ASTProperty param = parameters.get(i);
             String paramName = param.getName();
-            String paramType = param.getType();
+            String paramType = param.getType().getName();
             
             rule.append(" ")
                 .append(paramName)

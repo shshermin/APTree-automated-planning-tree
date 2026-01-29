@@ -208,17 +208,35 @@ task runCRFPredicateTypeParser(type: JavaExec) {
     workingDir = projectDir
 }
 
-task runCRFActionTypesParser(type: JavaExec) {
-    dependsOn 'compileJava'
-    classpath = sourceSets.main.runtimeClasspath
-    mainClass = 'CRFActionTypesParserTest'
-    workingDir = projectDir
-}
 
 task runCRFActionTypeParser(type: JavaExec) {
     dependsOn 'compileJava'
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'CRFActionTypeParser'
+    workingDir = projectDir
+}
+
+task generateCRFPropertyTypeRules(type: JavaExec) {
+    description = 'Generates grammar rules for CRFTypesCon.mc4 from CRFPropertyTypes.bt'
+    dependsOn 'compileJava'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'CRFPropertyTypeRuleGenerator'
+    workingDir = projectDir
+}
+
+task generateCRFActionTypeRules(type: JavaExec) {
+   description = 'Generates action type grammar rules for CRFTypesCon.mc4 from CRFActionTypes.bt'
+   dependsOn 'compileJava'
+   classpath = sourceSets.main.runtimeClasspath
+   mainClass = 'CRFActionTypeRuleGenerator'
+   workingDir = projectDir
+}
+
+task generateCRFPredicateTypeRules(type: JavaExec) {
+    description = 'Generates predicate grammar rules for CRFTypesCon.mc4 from CRFPredicateTypes.bt'
+    dependsOn 'compileJava'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'CRFPredicateTypeRuleGenerator'
     workingDir = projectDir
 }
 
