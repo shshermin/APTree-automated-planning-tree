@@ -187,7 +187,7 @@ task runCRFTypesParser(type: JavaExec) {
 task runPDDLPlannerParser(type: JavaExec) {
     dependsOn 'compileJava'
     classpath = sourceSets.main.runtimeClasspath
-    mainClass = 'PDDLPlannerTest'
+    mainClass = 'PDDLPlannerParserTest'
     workingDir = projectDir
 }
 

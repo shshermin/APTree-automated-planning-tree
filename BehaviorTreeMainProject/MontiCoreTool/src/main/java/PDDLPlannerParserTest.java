@@ -1,4 +1,5 @@
 import planningservice._parser.PlanningServiceParser;
+import planningservice._ast.ASTWorld;
 import planningservice._ast.ASTPDDLPlannerService;
 import planningservice.PlanningServiceMill;
 
@@ -34,15 +35,15 @@ public class PDDLPlannerParserTest {
             // Create parser instance
             PlanningServiceParser parser = new PlanningServiceParser();
             
-            // Parse the file as PDDLPlannerService
-            Optional<ASTPDDLPlannerService> result = parser.parsePDDLPlannerService(filePath);
+            // Parse the file as World
+            Optional<ASTWorld> result = parser.parse(filePath);
             
             if (result.isPresent()) {
-                ASTPDDLPlannerService plannerService = result.get();
+                ASTWorld ast = result.get();
                 System.out.println("✓ SUCCESS: Parsed file: " + filePath + "\n");
                 
                 // Display the parsed model
-                displayPlannerService(plannerService);
+                // displayPlannerService(plannerService);
                 
                 System.out.println("\n✓ PARSING COMPLETED SUCCESSFULLY");
             } else {

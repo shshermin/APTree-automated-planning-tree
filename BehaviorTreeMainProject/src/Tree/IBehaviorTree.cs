@@ -2,8 +2,8 @@
 public interface IBehaviorTree
 {
    
-    Blackboard<FastName> LinkedBlackboard{ get; }
-    BTFlowNodeBase RootNode{ get; }
+    Blackboard<FastName> linkedBlackboard{ get; }
+    BTFlowNodeBase root{ get; }
 
     // function for initializing a tree
     void Initialise( Blackboard<FastName> InBlackboard, string InRootNodeName = "Root");
@@ -14,7 +14,7 @@ public interface IBehaviorTree
     // to interrupt and reset the behavior tree
     void Reset();
 
-    EBTNodeResult Tick(float Indeltatime);
+    BTNodeResult Tick(float Indeltatime);
 
 
 }

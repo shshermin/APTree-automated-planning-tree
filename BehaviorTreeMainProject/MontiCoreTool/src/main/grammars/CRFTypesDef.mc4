@@ -13,11 +13,12 @@ interface CustomProperty = name:Name;
   
 symbol Layer    implements CustomProperty = "Layer" name:Name;
 symbol Module   implements CustomProperty = "Module" name:Name ;
+symbol Text     implements CustomProperty = "Text" name:Name;
   
 abstract symbol  Location implements CustomProperty = name:Name;
-abstract symbol  Element  implements CustomProperty = name:Name;
-abstract symbol Tool     implements CustomProperty = name:Name ;
-abstract symbol  Agent    implements CustomProperty = name:Name;
+abstract symbol  Element  implements CustomProperty = name:Name loc:Location;
+abstract symbol Tool     implements CustomProperty = name:Name loc:Location;
+abstract symbol  Agent    implements CustomProperty = name:Name loc:Location;
 
   // definition of a property - accepts any Name as type (validated by CoCos)
      Property = name:Name ":" type:Name ;

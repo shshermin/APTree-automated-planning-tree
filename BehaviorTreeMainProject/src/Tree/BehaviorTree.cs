@@ -2,15 +2,15 @@ public class BehaviorTree : IBehaviorTree
 {
     public string DebugDisplayName { get; set; } = "Behavior Tree";
 
-    public Blackboard<FastName> LinkedBlackboard { get; protected set; }
+    public Blackboard<FastName> linkedBlackboard { get; protected set; }
 
-    public BTFlowNodeBase RootNode { get;  set; }
+    public BTFlowNodeBase root { get;  set; }
 
     public BehaviorTree()
     {
         DebugDisplayName = "Default Tree";
-        LinkedBlackboard = null;
-        RootNode = null;
+        linkedBlackboard = null;
+        root = null;
     }
 
    
@@ -18,11 +18,11 @@ public class BehaviorTree : IBehaviorTree
     {
         if (!string.IsNullOrEmpty(InRootNodeName))
             DebugDisplayName = InRootNodeName;
-        LinkedBlackboard = InBlackboard;
+        linkedBlackboard = InBlackboard;
        
         // Use composite flow node as root to support hierarchical structure
-        RootNode = new BTFlowNode_Composite(new FastName(InRootNodeName), this);
-        RootNode.SetOwiningTree(this);
+        root = new BTFlowNode_Composite(new FastName(InRootNodeName), this);
+        root.SetOwiningTree(this);
     }
 
      public IBTNode AddChildToRootNode<NodeType>(IBTNode InNode) 
@@ -38,22 +38,22 @@ public class BehaviorTree : IBehaviorTree
             action.SetTreeForSubtreeInjectionService(this);
         }
         
-        return (RootNode as BTFlowNode_Composite).AddChild(InNode);
+        return (root as BTFlowNode_Composite).AddChild(InNode);
         
     }
 
      public bool HasFinished()
     {
-        return RootNode?.HasFinished ?? true;
+        return root?.HasFinished ?? true;
     }
 
     public void Reset()
     {
-        RootNode.Reset();
+        root.Reset();
     }
 
-    public EBTNodeResult Tick(float InDeltaTime)
+    public BTNodeResult Tick(float InDeltaTime)
     {
-       return RootNode.Tick(InDeltaTime);
+       return root.Tick(InDeltaTime);
     }
 }

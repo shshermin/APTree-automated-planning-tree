@@ -28,7 +28,7 @@ public abstract class BTBrainBase : IBTBrain
     {
         OnPreTickBrain(InDeltaTime);
         var Result = LinkedBehaviourTree.Tick(InDeltaTime);
-        if(Result == EBTNodeResult.Succeeded)
+        if(Result == BTNodeResult.Success)
         {
             ResetBehaviorTree();
             OnBehaviorTreeCompleted_Failed();

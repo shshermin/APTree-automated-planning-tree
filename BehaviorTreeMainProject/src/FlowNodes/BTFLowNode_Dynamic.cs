@@ -61,7 +61,7 @@ public class BTFlowNode_Dynamic : BTFlowNodeBase
     protected override bool OnTick_NodeLogic(float inDeltaTime)
     {
         LoggingService.LogInfo($"🚨 DEBUG: BTFlowNode_Dynamic.OnTick_NodeLogic called for {DebugDisplayName}");
-        LoggingService.LogInfo($"🔍 FlowNode: Current LastStatus: {LastStatus}");
+        LoggingService.LogInfo($"🔍 FlowNode: Current LastStatus: {status}");
         LoggingService.LogInfo($"🔍 FlowNode: HasChildren: {HasChildren}");
 
         // Track child count for average branching factor calculation
@@ -70,7 +70,7 @@ public class BTFlowNode_Dynamic : BTFlowNodeBase
         // Decorators handle all planning phase logic (PlanningPhase and PlanningPhaseDynamic flags)
         // This method only needs to set status for execution phase
         LoggingService.LogInfo($"   📋 FlowNode: Decorators handle planning phase, setting InProgress for execution");
-        LastStatus = EBTNodeResult.InProgress;
+        status = BTNodeResult.InProgress;
         LoggingService.LogInfo($"   🔄 FlowNode: Setting status to InProgress (OnTick_Children will handle execution)");
         LoggingService.LogInfo($"   🔄 FlowNode: Returning true to continue ticking (OnTick_Children will handle execution)");
 
@@ -90,7 +90,7 @@ public class BTFlowNode_Dynamic : BTFlowNodeBase
 
     public override void Reset()
     {
-        bool wasUninitialized = (LastStatus == EBTNodeResult.Uninitialized);
+        bool wasUninitialized = (status == BTNodeResult.Uninitialized);
         base.Reset();
 
         // Don't reset planning service during initialization if other planning is in progress
@@ -164,7 +164,7 @@ public class BTFlowNode_Dynamic : BTFlowNodeBase
         {
             LoggingService.LogInfo($"🔄 FlowNode: Resetting parent action {parentAction.InstanceName.ToString()}");
             parentAction.Reset();
-            LoggingService.LogInfo($"🔄 FlowNode: Parent action reset complete - LastStatus: {parentAction.LastStatus}");
+            LoggingService.LogInfo($"🔄 FlowNode: Parent action reset complete - LastStatus: {parentAction.status}");
         }
         else
         {
@@ -175,7 +175,7 @@ public class BTFlowNode_Dynamic : BTFlowNodeBase
         planningCompleted = false;
         
         // Reset the node status to allow it to continue ticking
-        LastStatus = EBTNodeResult.readyToTick;
+        status = BTNodeResult.readyToTick;
         
         // Reset the tick counter for the next round
         tickCount = 0;
@@ -230,32 +230,32 @@ public class BTFlowNode_Dynamic : BTFlowNodeBase
         {
             LoggingService.LogInfo($"   ⚡ Executing node: {node.InstanceName.ToString()}");
             LoggingService.LogInfo($"   🔍 Node type: {node.GetType().Name}");
-            LoggingService.LogInfo($"   🔍 Node status before tick: {node.LastStatus}");
+            LoggingService.LogInfo($"   🔍 Node status before tick: {node.status}");
             LoggingService.LogInfo($"   🔍 Node cost: {node.cost}");
 
             // Mark node as started if it's the first time executing
-            if (node.LastStatus == EBTNodeResult.readyToTick)
+            if (node.status == BTNodeResult.readyToTick)
             {
                 actionGraph.MarkNodeStarted(node);
                 LoggingService.LogInfo($"   🚀 Marked {node.InstanceName.ToString()} as started");
             }
 
-            var previousStatus = node.LastStatus;
+            var previousStatus = node.status;
             LoggingService.LogInfo($"   🔄 Calling node.Tick() for {node.InstanceName.ToString()}");
             LoggingService.LogInfo($"   🔄 About to tick node with status: {previousStatus}");
             node.Tick(inDeltaTime);
-            LoggingService.LogInfo($"   📊 Node {node.InstanceName.ToString()}: {previousStatus} → {node.LastStatus}");
-            LoggingService.LogInfo($"   📊 Node tick result: {node.LastStatus}");
+            LoggingService.LogInfo($"   📊 Node {node.InstanceName.ToString()}: {previousStatus} → {node.status}");
+            LoggingService.LogInfo($"   📊 Node tick result: {node.status}");
 
             // MODIFIED: Fail immediately if any child fails
-            if (node.LastStatus == EBTNodeResult.failed)
+            if (node.status == BTNodeResult.failed)
             {
                 LoggingService.LogError($"   ❌ FlowNode: Action {node.InstanceName.ToString()} failed, failing immediately");
-                LastStatus = EBTNodeResult.failed;
+                status = BTNodeResult.failed;
                 
                 // Track completion of this flow node
                 LoggingService.TrackNodeCompletion(DebugDisplayName, System.DateTime.Now, false);
-                LoggingService.LogInfo($"   📊 FlowNode: Final status set to {LastStatus}");
+                LoggingService.LogInfo($"   📊 FlowNode: Final status set to {status}");
                 
                 
                 // Return false to stop the parent from ticking this node again
@@ -264,18 +264,18 @@ public class BTFlowNode_Dynamic : BTFlowNodeBase
             }
 
             // Mark completed nodes and track completion
-            if (node.LastStatus == EBTNodeResult.Succeeded)
+            if (node.status == BTNodeResult.Succeeded)
             {
                 actionGraph.MarkNodeCompleted(node);
                 LoggingService.LogInfo($"   ✅ Marked {node.InstanceName.ToString()} as completed");
-                LoggingService.LogInfo($"   ✅ DEBUG: Node {node.InstanceName.ToString()} is now COMPLETED with status: {node.LastStatus}");
+                LoggingService.LogInfo($"   ✅ DEBUG: Node {node.InstanceName.ToString()} is now COMPLETED with status: {node.status}");
 
                 // Track node completion
                 LoggingService.TrackNodeCompletion(node.InstanceName.ToString(), System.DateTime.Now, true);
             }
             else
             {
-                LoggingService.LogInfo($"   ⏳ Node {node.InstanceName.ToString()} not completed yet (status: {node.LastStatus})");
+                LoggingService.LogInfo($"   ⏳ Node {node.InstanceName.ToString()} not completed yet (status: {node.status})");
                 LoggingService.LogInfo($"   ⏳ DEBUG: Node {node.InstanceName.ToString()} is still IN PROGRESS - will continue ticking");
             }
         }
@@ -285,7 +285,7 @@ public class BTFlowNode_Dynamic : BTFlowNodeBase
         // Step 3: Check if all nodes are completed
         var allNodes = actionGraph.GetAllActionNodes();
         bool allNodesProcessed = allNodes.All(node =>
-            node.LastStatus == EBTNodeResult.Succeeded); // MODIFIED: Only succeeded nodes, failed nodes cause immediate failure
+            node.status == BTNodeResult.Succeeded); // MODIFIED: Only succeeded nodes, failed nodes cause immediate failure
 
         LoggingService.LogInfo($"   🔍 FlowNode: All nodes processed: {allNodesProcessed}");
         LoggingService.LogInfo($"   🔍 DEBUG: Total nodes in ActionGraph: {allNodes.Count}");
@@ -294,29 +294,29 @@ public class BTFlowNode_Dynamic : BTFlowNodeBase
         LoggingService.LogInfo($"   🔍 DEBUG: Status of all nodes:");
         foreach (var node in allNodes)
         {
-            LoggingService.LogInfo($"      - {node.InstanceName}: {node.LastStatus}");
+            LoggingService.LogInfo($"      - {node.InstanceName}: {node.status}");
         }
 
         if (allNodesProcessed && allNodes.Count > 0)
         {
             // MODIFIED: Since we fail immediately on any failure, if we reach here all nodes must have succeeded
             LoggingService.LogInfo($"   🎯 FlowNode: All nodes processed successfully, setting status to Succeeded");
-            LastStatus = EBTNodeResult.Succeeded;
+            status = BTNodeResult.Succeeded;
             LoggingService.LogSuccess($"   ✅ FlowNode: Setting status to Succeeded (all nodes completed successfully)");
 
             // Track completion of this flow node
             LoggingService.TrackNodeCompletion(DebugDisplayName, System.DateTime.Now, true);
-            LoggingService.LogInfo($"   📊 FlowNode: Final status set to {LastStatus}");
+            LoggingService.LogInfo($"   📊 FlowNode: Final status set to {status}");
 
 
             // Return true to continue ticking so the dynamic planning phase manager can detect completion
-            LoggingService.LogInfo($"   🔄 FlowNode: OnTick_Children completed with final status {LastStatus}, returning true to allow manager to detect completion");
+            LoggingService.LogInfo($"   🔄 FlowNode: OnTick_Children completed with final status {status}, returning true to allow manager to detect completion");
             return true; // Continue ticking so manager can detect completion and trigger reset
         }
         else
         {
             // Still processing nodes - keep in progress
-            LastStatus = EBTNodeResult.InProgress;
+            status = BTNodeResult.InProgress;
             LoggingService.LogInfo($"   🔄 FlowNode: Still processing nodes, keeping status as InProgress (tick #{tickCount})");
             LoggingService.LogInfo($"   🔄 DEBUG: FlowNode will continue ticking because not all nodes are processed yet");
         }
@@ -376,10 +376,10 @@ public class BTFlowNode_Dynamic : BTFlowNodeBase
             return "No Actions";
         }
         
-        var completedActions = allActions.Count(a => a.LastStatus == EBTNodeResult.Succeeded);
-        var failedActions = allActions.Count(a => a.LastStatus == EBTNodeResult.failed);
-        var inProgressActions = allActions.Count(a => a.LastStatus == EBTNodeResult.InProgress);
-        var readyActions = allActions.Count(a => a.LastStatus == EBTNodeResult.readyToTick);
+        var completedActions = allActions.Count(a => a.status == BTNodeResult.Succeeded);
+        var failedActions = allActions.Count(a => a.status == BTNodeResult.failed);
+        var inProgressActions = allActions.Count(a => a.status == BTNodeResult.InProgress);
+        var readyActions = allActions.Count(a => a.status == BTNodeResult.readyToTick);
         
         return $"Completed: {completedActions}, Failed: {failedActions}, InProgress: {inProgressActions}, Ready: {readyActions}";
     }
@@ -428,7 +428,7 @@ public class BTFlowNode_Dynamic : BTFlowNodeBase
                 var currentStatus = action.GetCurrentStatus();
                 
                 // Only reset failed nodes, leave successful ones alone
-                if (currentStatus == EBTNodeResult.failed)
+                if (currentStatus == BTNodeResult.failed)
                 {
                     action.Reset();
                     resetCount++;

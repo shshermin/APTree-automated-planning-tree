@@ -11,7 +11,7 @@ public interface IBTNode
     
     Blackboard<FastName> LinkedBlackboard { get; }  //= new();
     // what is the current state of this node
-    EBTNodeResult LastStatus{ get; }
+    BTNodeResult status{ get; }
     // is the node already finished?
     bool HasFinished { get; }
     bool HasChildren{ get; }
@@ -21,7 +21,7 @@ public interface IBTNode
     void SetTreeForAllServices(IBehaviorTree InOwningtree);
 bool DoDecoratorsNowPermitRunning(float InDeltaTime);
     void Reset();
-    EBTNodeResult Tick(float InDeltaTime);
+    BTNodeResult Tick(float InDeltaTime);
     IBTNode AddService(BTServiceBase InService, bool InIsAlwaysOn = false);
     IBTNode AddDecorator(IBTDecorator InDecorator);
 

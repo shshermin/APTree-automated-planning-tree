@@ -3,7 +3,7 @@
   symbol BehaviorTree = "BehaviorTree" name:Name "{" "Root" root:FlowNode "}";
 
   // abstract node class
-  abstract symbol BTNode = name:Name (Decorator | Service)*; 
+  abstract symbol BTNode = name:Name (decorators:Decorator | services:Service)*; 
 
   // flow nodes
   abstract  FlowNode extends BTNode = name:Name  (Service | Decorator | children:BTNode)* ;

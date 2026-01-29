@@ -8,11 +8,11 @@ public abstract class BTDecoratorBase : IBTDecorator
 
     public IBehaviorTree OwningTree { get;  protected set;} = null!;
 
-    public Blackboard<FastName> LinkedBlackboard => OwningTree.LinkedBlackboard;
+    public Blackboard<FastName> LinkedBlackboard => OwningTree.linkedBlackboard;
     public PActionNode? AttachedAction { get; protected set; }
     public BTFlowNode_Dynamic? AttachedNode { get; protected set; }
     public abstract bool CanPostProcessTickResult { get; }
-    public abstract EBTNodeResult PostProcessTickResult(EBTNodeResult InResult);
+    public abstract BTNodeResult PostProcessTickResult(BTNodeResult InResult);
   
     public bool bIsInverted { get; protected set; } = false;
     protected bool? bLastResult;

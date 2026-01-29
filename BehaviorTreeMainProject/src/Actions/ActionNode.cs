@@ -27,13 +27,13 @@ public abstract class ActionNode :BTNodeBase
     {
         return false;
     }
-    protected bool SetStatusAndCalculateReturnvalue(EBTNodeResult InResult, bool? bOverrideReturnValue = null)
+    protected bool SetStatusAndCalculateReturnvalue(BTNodeResult InResult, bool? bOverrideReturnValue = null)
     {
-        LastStatus = InResult;
+        status = InResult;
         if (bOverrideReturnValue.HasValue)
             return bOverrideReturnValue.Value;
 
-        return InResult != EBTNodeResult.failed;
+        return InResult != BTNodeResult.failed;
     }
 
 }

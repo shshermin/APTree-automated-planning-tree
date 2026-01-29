@@ -10,7 +10,7 @@ using BehaviorTreeMainProject.Log.Services;
 public class BTDecorator_LowestCostExecution : BTDecoratorBase
 {
     public override bool CanPostProcessTickResult => false;
-    public override EBTNodeResult PostProcessTickResult(EBTNodeResult InResult) => InResult;
+    public override BTNodeResult PostProcessTickResult(BTNodeResult InResult) => InResult;
     public int lowestCost;
 
     private FastName nodeName;
