@@ -53,6 +53,125 @@ type ExportedCanvasGraphV2 = {
   separators: CanvasSeparator[];
 };
 
+type PortValue = "top" | "right" | "bottom" | "left";
+
+const isPortValue = (value: unknown): value is PortValue =>
+  value === "top" || value === "right" || value === "bottom" || value === "left";
+
+function normalizeImportedCanvasGraph(value: CanvasGraph): CanvasGraph {
+  const seenNodeIds = new Set<string>();
+  const normalizedNodes: CanvasNode[] = [];
+
+  for (const raw of value.nodes) {
+    if (!raw || typeof raw !== "object") {
+      continue;
+    }
+
+    const node = raw as Partial<CanvasNode>;
+    const id = typeof node.id === "string" ? node.id : "";
+    if (!id || seenNodeIds.has(id)) {
+      continue;
+    }
+
+    const sourceId = typeof node.sourceId === "string" ? node.sourceId : "";
+    const name = typeof node.name === "string" ? node.name : "";
+    const typeLabel = typeof node.typeLabel === "string" ? node.typeLabel : "";
+    const category = typeof node.category === "string" ? node.category : "nodes";
+    const kind = typeof node.kind === "string" ? node.kind : "generic";
+
+    if (!sourceId || !name || !typeLabel) {
+      continue;
+    }
+
+    const x = typeof node.x === "number" && Number.isFinite(node.x) ? node.x : 0;
+    const y = typeof node.y === "number" && Number.isFinite(node.y) ? node.y : 0;
+    const width =
+      typeof node.width === "number" && Number.isFinite(node.width) && node.width > 0
+        ? node.width
+        : DEFAULT_CANVAS_NODE_WIDTH;
+    const height =
+      typeof node.height === "number" && Number.isFinite(node.height) && node.height > 0
+        ? node.height
+        : DEFAULT_CANVAS_NODE_HEIGHT;
+
+    normalizedNodes.push({
+      id,
+      sourceId,
+      name,
+      typeLabel,
+      category: category as CanvasNode["category"],
+      kind: kind as CanvasNode["kind"],
+      x,
+      y,
+      width,
+      height,
+      isNegated: node.isNegated,
+      successType: node.successType,
+      typeId: node.typeId,
+    });
+    seenNodeIds.add(id);
+  }
+
+  const nodeIdSet = new Set(normalizedNodes.map((n) => n.id));
+  const seenConnIds = new Set<string>();
+  const normalizedConnections: NodeConnection[] = [];
+
+  for (const raw of value.connections) {
+    if (!raw || typeof raw !== "object") {
+      continue;
+    }
+
+    const conn = raw as Partial<NodeConnection>;
+    const id = typeof conn.id === "string" ? conn.id : "";
+    const sourceNodeId = typeof conn.sourceNodeId === "string" ? conn.sourceNodeId : "";
+    const targetNodeId = typeof conn.targetNodeId === "string" ? conn.targetNodeId : "";
+
+    if (!id || seenConnIds.has(id) || !sourceNodeId || !targetNodeId) {
+      continue;
+    }
+
+    if (!nodeIdSet.has(sourceNodeId) || !nodeIdSet.has(targetNodeId)) {
+      continue;
+    }
+
+    const sourcePort = isPortValue(conn.sourcePort) ? conn.sourcePort : undefined;
+    const targetPort = isPortValue(conn.targetPort) ? conn.targetPort : undefined;
+
+    normalizedConnections.push({
+      id,
+      sourceNodeId,
+      targetNodeId,
+      sourcePort,
+      targetPort,
+    });
+    seenConnIds.add(id);
+  }
+
+  return { nodes: normalizedNodes, connections: normalizedConnections };
+}
+
+function normalizeImportedSeparators(value: CanvasSeparator[]): CanvasSeparator[] {
+  const seen = new Set<string>();
+  const normalized: CanvasSeparator[] = [];
+
+  for (const raw of value) {
+    if (!raw || typeof raw !== "object") {
+      continue;
+    }
+
+    const sep = raw as Partial<CanvasSeparator>;
+    const id = typeof sep.id === "string" ? sep.id : "";
+    const y = typeof sep.y === "number" && Number.isFinite(sep.y) ? sep.y : null;
+    if (!id || y === null || seen.has(id)) {
+      continue;
+    }
+    normalized.push({ id, y });
+    seen.add(id);
+  }
+
+  return normalized;
+}
+
 const STORAGE_KEY = "aptree-preferred-theme";
 
 /**
@@ -457,16 +576,16 @@ function App() {
         };
 
         if (isV2(parsed)) {
-          setGraph(parsed.graph);
-          setSeparators(parsed.separators);
+          setGraph(normalizeImportedCanvasGraph(parsed.graph));
+          setSeparators(normalizeImportedSeparators(parsed.separators));
           setParameterDetail(null);
           return;
         }
 
         if (isV1(parsed)) {
           const migrated = migrateV1GraphsToV2(parsed.graphs);
-          setGraph(migrated.graph);
-          setSeparators(migrated.separators);
+          setGraph(normalizeImportedCanvasGraph(migrated.graph));
+          setSeparators(normalizeImportedSeparators(migrated.separators));
           setParameterDetail(null);
           return;
         }
@@ -482,8 +601,8 @@ function App() {
                 ? (obj.separators as CanvasSeparator[])
                 : [];
 
-            setGraph(candidateGraph as CanvasGraph);
-            setSeparators(candidateSeparators);
+            setGraph(normalizeImportedCanvasGraph(candidateGraph as CanvasGraph));
+            setSeparators(normalizeImportedSeparators(candidateSeparators));
             setParameterDetail(null);
             return;
           }
