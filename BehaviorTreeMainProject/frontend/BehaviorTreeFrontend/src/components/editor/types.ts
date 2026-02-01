@@ -36,6 +36,13 @@ export interface NodeConnection {
   targetPort?: 'top' | 'right' | 'bottom' | 'left';
 }
 
+/** represents a visual separator line inside the canvas (used to split hierarchy levels). */
+export interface CanvasSeparator {
+  id: string;
+  /** y-position in react-flow coordinates (top-left of the separator node). */
+  y: number;
+}
+
 /** details surfaced when inspecting an action parameter from the canvas. */
 export interface ActionParameterDetail {
   nodeId: string;
@@ -50,20 +57,24 @@ export interface ActionParameterDetail {
 /** contract for the editor canvas so the parent app can control interactions. */
 export interface EditorCanvasProps {
   nodes: CanvasNode[];
+  separators?: CanvasSeparator[];
   connections?: NodeConnection[];
   onDropNode: (
     item: DraggedSidebarItem,
     position: { x: number; y: number }
   ) => void;
+  onDropSeparator?: (position: { x: number; y: number }) => void;
   onMoveNode?: (
     nodeId: string,
     position: { x: number; y: number }
   ) => void;
+  onMoveSeparator?: (separatorId: string, y: number) => void;
   onResizeNode?: (
     nodeId: string,
     size: { width: number; height: number }
   ) => void;
   onRemoveNode?: (nodeId: string) => void;
+  onRemoveSeparator?: (separatorId: string) => void;
   onEditNode?: (nodeId: string) => void;
   onAddConnection?: (
     sourceNodeId: string,

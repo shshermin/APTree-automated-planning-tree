@@ -6,6 +6,7 @@ import { useSidebarManager } from "./components/sidebar/useSidebarLogic";
 import EditorCanvas from "./components/editor/EditorCanvas.tsx";
 import type {
   ActionParameterDetail,
+  CanvasSeparator,
   CanvasNode,
   NodeConnection,
 } from "./components/editor/types";
@@ -21,6 +22,10 @@ import {
   ACTION_INSTANCES_KEY,
   BT_NODES_KEY,
 } from "./components/sidebar/utils/constants";
+import {
+  aptreeGraphToCanvasGraph,
+  normalizeAptreeValidateResponse,
+} from "./utils/aptreeImport";
 import ActionParameterDetailsModal from "./components/editor/modals/ActionParameterDetailsModal.tsx";
 import AptreeValidateModal from "./components/aptree/AptreeValidateModal";
 import { FLOW_SUCCESS_TYPES } from "./components/sidebar/utils/types";
@@ -28,24 +33,24 @@ import type { ActionInstance, BehaviorNodeOption } from "./components/sidebar/ut
 
 type ThemeMode = "light" | "dark";
 
-type CanvasLevel = "high" | "mid" | "low";
-
-const CANVAS_LEVELS: Array<{ key: CanvasLevel; label: string }> = [
-  { key: "high", label: "High" },
-  { key: "mid", label: "Mid" },
-  { key: "low", label: "Low" },
-];
-
 type CanvasGraph = {
   nodes: CanvasNode[];
   connections: NodeConnection[];
 };
 
+// legacy export/import format used when the editor had multiple level tabs.
 type ExportedCanvasGraphsV1 = {
   version: 1;
   exportedAt: string;
-  activeLevel: CanvasLevel;
-  graphs: Record<CanvasLevel, CanvasGraph>;
+  activeLevel: "high" | "mid" | "low";
+  graphs: Record<"high" | "mid" | "low", CanvasGraph>;
+};
+
+type ExportedCanvasGraphV2 = {
+  version: 2;
+  exportedAt: string;
+  graph: CanvasGraph;
+  separators: CanvasSeparator[];
 };
 
 const STORAGE_KEY = "aptree-preferred-theme";
@@ -84,12 +89,11 @@ function App() {
     const savedTheme = window.localStorage.getItem(STORAGE_KEY);
     return savedTheme === "light" || savedTheme === "dark";
   });
-  const [activeLevel, setActiveLevel] = useState<CanvasLevel>("high");
-  const [graphs, setGraphs] = useState<Record<CanvasLevel, CanvasGraph>>(() => ({
-    high: { nodes: [], connections: [] },
-    mid: { nodes: [], connections: [] },
-    low: { nodes: [], connections: [] },
+  const [graph, setGraph] = useState<CanvasGraph>(() => ({
+    nodes: [],
+    connections: [],
   }));
+  const [separators, setSeparators] = useState<CanvasSeparator[]>([]);
   const [parameterDetail, setParameterDetail] =
     useState<ActionParameterDetail | null>(null);
   const [isValidateOpen, setIsValidateOpen] = useState(false);
@@ -284,11 +288,11 @@ function App() {
   );
 
   const handleExportCanvasGraph = useCallback(() => {
-    const payload: ExportedCanvasGraphsV1 = {
-      version: 1,
+    const payload: ExportedCanvasGraphV2 = {
+      version: 2,
       exportedAt: new Date().toISOString(),
-      activeLevel,
-      graphs,
+      graph,
+      separators,
     };
 
     const json = JSON.stringify(payload, null, 2);
@@ -297,22 +301,19 @@ function App() {
 
     const anchor = document.createElement("a");
     anchor.href = url;
-    anchor.download = "aptree-canvas-graphs.json";
+    anchor.download = "aptree-canvas.json";
     document.body.appendChild(anchor);
     anchor.click();
     anchor.remove();
 
     URL.revokeObjectURL(url);
-  }, [activeLevel, graphs]);
+  }, [graph, separators]);
 
   const handleImportCanvasGraphFile = useCallback(
     async (file: File) => {
       try {
         const text = await file.text();
         const parsed: unknown = JSON.parse(text);
-
-        const isCanvasLevel = (value: unknown): value is CanvasLevel =>
-          value === "high" || value === "mid" || value === "low";
 
         const isCanvasGraph = (value: unknown): value is CanvasGraph => {
           if (!value || typeof value !== "object") {
@@ -321,6 +322,40 @@ function App() {
 
           const graph = value as CanvasGraph;
           return Array.isArray(graph.nodes) && Array.isArray(graph.connections);
+        };
+
+        const isCanvasSeparator = (value: unknown): value is CanvasSeparator => {
+          if (!value || typeof value !== "object") {
+            return false;
+          }
+
+          const obj = value as Partial<CanvasSeparator>;
+          return (
+            typeof obj.id === "string" &&
+            typeof obj.y === "number" &&
+            Number.isFinite(obj.y)
+          );
+        };
+
+        const isV2 = (value: unknown): value is ExportedCanvasGraphV2 => {
+          if (!value || typeof value !== "object") {
+            return false;
+          }
+
+          const obj = value as Partial<ExportedCanvasGraphV2>;
+          if (obj.version !== 2) {
+            return false;
+          }
+
+          if (!isCanvasGraph(obj.graph)) {
+            return false;
+          }
+
+          if (!Array.isArray(obj.separators)) {
+            return false;
+          }
+
+          return obj.separators.every(isCanvasSeparator);
         };
 
         const isV1 = (value: unknown): value is ExportedCanvasGraphsV1 => {
@@ -332,6 +367,10 @@ function App() {
           if (obj.version !== 1) {
             return false;
           }
+
+          const isCanvasLevel = (lvl: unknown): lvl is "high" | "mid" | "low" =>
+            lvl === "high" || lvl === "mid" || lvl === "low";
+
           if (!isCanvasLevel(obj.activeLevel)) {
             return false;
           }
@@ -347,47 +386,112 @@ function App() {
           );
         };
 
-        let nextGraphs: Record<CanvasLevel, CanvasGraph> | null = null;
-        let nextLevel: CanvasLevel | null = null;
+        const migrateV1GraphsToV2 = (
+          graphs: Record<"high" | "mid" | "low", CanvasGraph>
+        ): { graph: CanvasGraph; separators: CanvasSeparator[] } => {
+          const levels: Array<"high" | "mid" | "low"> = ["high", "mid", "low"];
 
-        if (isV1(parsed)) {
-          nextGraphs = parsed.graphs;
-          nextLevel = parsed.activeLevel;
-        } else if (parsed && typeof parsed === "object") {
-          // lenient fallback: allow importing a raw graphs object
-          const obj = parsed as Record<string, unknown>;
-          const candidateGraphs = obj.graphs && typeof obj.graphs === "object" ? (obj.graphs as Record<string, unknown>) : obj;
+          const nextNodes: CanvasNode[] = [];
+          const nextConnections: NodeConnection[] = [];
+          const nextSeparators: CanvasSeparator[] = [];
 
-          if (
-            isCanvasGraph(candidateGraphs.high) &&
-            isCanvasGraph(candidateGraphs.mid) &&
-            isCanvasGraph(candidateGraphs.low)
-          ) {
-            nextGraphs = {
-              high: candidateGraphs.high as CanvasGraph,
-              mid: candidateGraphs.mid as CanvasGraph,
-              low: candidateGraphs.low as CanvasGraph,
-            };
+          let cursorY = 0;
+          const betweenLevelGap = 220;
+          const topPadding = 120;
+          const headerOffset = 60;
+
+          for (const level of levels) {
+            const levelGraph = graphs[level];
+            if (!levelGraph.nodes.length && !levelGraph.connections.length) {
+              continue;
+            }
+
+            const nodes = levelGraph.nodes;
+
+            // compute vertical bounds in the original coordinate space
+            let minY = 0;
+            let maxY = 0;
+            if (nodes.length) {
+              minY = Infinity;
+              maxY = -Infinity;
+              for (const node of nodes) {
+                const h = node.height ?? DEFAULT_CANVAS_NODE_HEIGHT;
+                minY = Math.min(minY, node.y - h / 2);
+                maxY = Math.max(maxY, node.y + h / 2);
+              }
+            }
+
+            if (!Number.isFinite(minY) || !Number.isFinite(maxY)) {
+              minY = 0;
+              maxY = 0;
+            }
+
+            const shiftY = cursorY - minY + topPadding;
+            const separatorY = cursorY + topPadding - headerOffset;
+            nextSeparators.push({ id: createId("separator"), y: separatorY });
+
+            nextNodes.push(
+              ...nodes.map((node) => ({
+                ...node,
+                y: node.y + shiftY,
+              }))
+            );
+
+            nextConnections.push(
+              ...levelGraph.connections.map((conn) => ({
+                ...conn,
+                id: `${level}-${conn.id}`,
+              }))
+            );
+
+            cursorY = maxY + shiftY + betweenLevelGap;
           }
 
-          if (isCanvasLevel(obj.activeLevel)) {
-            nextLevel = obj.activeLevel;
-          }
-        }
+          return {
+            graph: {
+              nodes: nextNodes,
+              connections: nextConnections,
+            },
+            separators: nextSeparators,
+          };
+        };
 
-        if (!nextGraphs) {
-          window.alert(
-            "Import failed: JSON did not match the expected canvas graph format."
-          );
+        if (isV2(parsed)) {
+          setGraph(parsed.graph);
+          setSeparators(parsed.separators);
+          setParameterDetail(null);
           return;
         }
 
-        setGraphs(nextGraphs);
-        if (nextLevel) {
-          setActiveLevel(nextLevel);
+        if (isV1(parsed)) {
+          const migrated = migrateV1GraphsToV2(parsed.graphs);
+          setGraph(migrated.graph);
+          setSeparators(migrated.separators);
+          setParameterDetail(null);
+          return;
         }
 
-        setParameterDetail(null);
+        // lenient fallback: allow importing a raw v2-like object
+        if (parsed && typeof parsed === "object") {
+          const obj = parsed as Record<string, unknown>;
+          const candidateGraph = obj.graph && typeof obj.graph === "object" ? obj.graph : obj;
+
+          if (isCanvasGraph(candidateGraph)) {
+            const candidateSeparators =
+              Array.isArray(obj.separators) && obj.separators.every(isCanvasSeparator)
+                ? (obj.separators as CanvasSeparator[])
+                : [];
+
+            setGraph(candidateGraph as CanvasGraph);
+            setSeparators(candidateSeparators);
+            setParameterDetail(null);
+            return;
+          }
+        }
+
+        window.alert(
+          "Import failed: JSON did not match the expected canvas format (v2 graph + separators, or legacy v1 graphs)."
+        );
       } catch (error) {
         window.alert(
           `Import failed: ${error instanceof Error ? error.message : "Unknown error"}`
@@ -397,12 +501,71 @@ function App() {
     []
   );
 
+  const handleImportAptreeModelFile = useCallback(
+    async (file: File) => {
+      try {
+        const modelText = await file.text();
+
+        const response = await fetch("/api/aptree/validate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ modelText, instancesText: null, jarPath: null }),
+        });
+
+        const responseText = await response.text();
+        const json: unknown = (() => {
+          try {
+            return JSON.parse(responseText);
+          } catch {
+            return null;
+          }
+        })();
+
+        const parsed = normalizeAptreeValidateResponse(json);
+
+        if (!response.ok) {
+          const errors = parsed.errors?.length
+            ? parsed.errors
+            : [`HTTP ${response.status}`];
+          window.alert(`APTree import failed:\n- ${errors.join("\n- ")}`);
+          return;
+        }
+
+        if (parsed.ok === false) {
+          const errors = parsed.errors?.length
+            ? parsed.errors
+            : ["Model validation failed"];
+          window.alert(`APTree validation failed:\n- ${errors.join("\n- ")}`);
+          return;
+        }
+
+        if (!parsed.graph || parsed.graph.nodes.length === 0) {
+          window.alert(
+            "APTree import succeeded, but no graph data was returned by the tool. Build the MontiCore tool jar with: (cd MontiCoreTool && gradle shadowJar)."
+          );
+          return;
+        }
+
+        const canvasGraph = aptreeGraphToCanvasGraph(parsed.graph, actionTypes ?? []);
+
+        setGraph(canvasGraph);
+        setSeparators([]);
+        setParameterDetail(null);
+      } catch (error) {
+        window.alert(
+          `APTree import failed: ${error instanceof Error ? error.message : "Unknown error"}`
+        );
+      }
+    },
+    [actionTypes]
+  );
+
   /**
    * opens the appropriate sidebar edit modal for the node's source item, if available.
    */
   const handleEditNodeFromCanvas = useCallback(
     (nodeId: string) => {
-      const node = graphs[activeLevel].nodes.find((entry) => entry.id === nodeId);
+      const node = graph.nodes.find((entry) => entry.id === nodeId);
       if (!node) {
         console.warn("Unable to edit node; node not found", nodeId);
         return;
@@ -426,7 +589,7 @@ function App() {
       const item = items[index];
       openEditModal(category, index, item);
     },
-    [activeLevel, getItemsForCategory, graphs, openEditModal]
+    [getItemsForCategory, graph.nodes, openEditModal]
   );
 
   /**
@@ -438,75 +601,82 @@ function App() {
         const option = behaviorNodeOptionMap.get(item.id);
 
         if (option) {
-          setGraphs((prev) => {
-            const graph = prev[activeLevel];
-            return {
-              ...prev,
-              [activeLevel]: {
-                ...graph,
-                nodes: [...graph.nodes, createBehaviorNode({ option, position })],
-              },
-            };
-          });
+          setGraph((prev) => ({
+            ...prev,
+            nodes: [...prev.nodes, createBehaviorNode({ option, position })],
+          }));
           return;
         }
       }
 
-      setGraphs((prev) => {
-        const graph = prev[activeLevel];
-        return {
-          ...prev,
-          [activeLevel]: {
-            ...graph,
-            nodes: [
-              ...graph.nodes,
-              {
-                id: createId("canvas-node"),
-                sourceId: item.id,
-                name: item.name,
-                typeLabel: item.type,
-                category: item.category,
-                kind: item.kind,
-                x: position.x,
-                y: position.y,
-                width: DEFAULT_CANVAS_NODE_WIDTH,
-                height: DEFAULT_CANVAS_NODE_HEIGHT,
-                isNegated: item.isNegated,
-                typeId: item.typeId,
-              },
-            ],
+      setGraph((prev) => ({
+        ...prev,
+        nodes: [
+          ...prev.nodes,
+          {
+            id: createId("canvas-node"),
+            sourceId: item.id,
+            name: item.name,
+            typeLabel: item.type,
+            category: item.category,
+            kind: item.kind,
+            x: position.x,
+            y: position.y,
+            width: DEFAULT_CANVAS_NODE_WIDTH,
+            height: DEFAULT_CANVAS_NODE_HEIGHT,
+            isNegated: item.isNegated,
+            typeId: item.typeId,
           },
-        };
-      });
+        ],
+      }));
     },
-    [activeLevel, behaviorNodeOptionMap]
+    [behaviorNodeOptionMap]
   );
+
+  const handleDropSeparator = useCallback(
+    (position: { x: number; y: number }) => {
+      setSeparators((prev) => [
+        ...prev,
+        {
+          id: createId("separator"),
+          y: position.y,
+        },
+      ]);
+    },
+    []
+  );
+
+  const handleMoveSeparator = useCallback((separatorId: string, y: number) => {
+    setSeparators((prev) =>
+      prev.map((separator) =>
+        separator.id === separatorId ? { ...separator, y } : separator
+      )
+    );
+  }, []);
+
+  const handleRemoveSeparator = useCallback((separatorId: string) => {
+    setSeparators((prev) => prev.filter((separator) => separator.id !== separatorId));
+  }, []);
 
   /**
    * handles moving an existing node within the editor canvas.
    */
   const handleMoveNode = useCallback(
     (nodeId: string, position: { x: number; y: number }) => {
-      setGraphs((prev) => {
-        const graph = prev[activeLevel];
-        return {
-          ...prev,
-          [activeLevel]: {
-            ...graph,
-            nodes: graph.nodes.map((node) =>
-              node.id === nodeId
-                ? {
-                    ...node,
-                    x: position.x,
-                    y: position.y,
-                  }
-                : node
-            ),
-          },
-        };
-      });
+      setGraph((prev) => ({
+        ...prev,
+        nodes: prev.nodes.map((node) =>
+          node.id === nodeId
+            ? {
+                ...node,
+                x: position.x,
+                y: position.y,
+              }
+            : node
+        ),
+      }));
     },
-    [activeLevel]
+    []
   );
 
   /**
@@ -514,46 +684,33 @@ function App() {
    */
   const handleResizeNode = useCallback(
     (nodeId: string, size: { width: number; height: number }) => {
-      setGraphs((prev) => {
-        const graph = prev[activeLevel];
-        return {
-          ...prev,
-          [activeLevel]: {
-            ...graph,
-            nodes: graph.nodes.map((node) =>
-              node.id === nodeId
-                ? {
-                    ...node,
-                    width: Math.max(120, size.width),
-                    height: Math.max(100, size.height),
-                  }
-                : node
-            ),
-          },
-        };
-      });
+      setGraph((prev) => ({
+        ...prev,
+        nodes: prev.nodes.map((node) =>
+          node.id === nodeId
+            ? {
+                ...node,
+                width: Math.max(120, size.width),
+                height: Math.max(100, size.height),
+              }
+            : node
+        ),
+      }));
     },
-    [activeLevel]
+    []
   );
 
   /**
    * handles removing a node from the editor canvas.
    */
   const handleRemoveNode = useCallback((nodeId: string) => {
-    setGraphs((prev) => {
-      const graph = prev[activeLevel];
-      return {
-        ...prev,
-        [activeLevel]: {
-          nodes: graph.nodes.filter((node) => node.id !== nodeId),
-          connections: graph.connections.filter(
-            (conn) =>
-              conn.sourceNodeId !== nodeId && conn.targetNodeId !== nodeId
-          ),
-        },
-      };
-    });
-  }, [activeLevel]);
+    setGraph((prev) => ({
+      nodes: prev.nodes.filter((node) => node.id !== nodeId),
+      connections: prev.connections.filter(
+        (conn) => conn.sourceNodeId !== nodeId && conn.targetNodeId !== nodeId
+      ),
+    }));
+  }, []);
 
   /**
    * handles adding a connection between two nodes.
@@ -566,9 +723,8 @@ function App() {
       targetPort: "top" | "right" | "bottom" | "left"
     ) => {
       // Check if connection already exists
-      setGraphs((prev) => {
-        const graph = prev[activeLevel];
-        const exists = graph.connections.some(
+      setGraph((prev) => {
+        const exists = prev.connections.some(
           (conn) =>
             conn.sourceNodeId === sourceNodeId &&
             conn.targetNodeId === targetNodeId &&
@@ -582,80 +738,61 @@ function App() {
 
         return {
           ...prev,
-          [activeLevel]: {
-            ...graph,
-            connections: [
-              ...graph.connections,
-              {
-                id: createId("connection"),
-                sourceNodeId,
-                targetNodeId,
-                sourcePort,
-                targetPort,
-              },
-            ],
-          },
+          connections: [
+            ...prev.connections,
+            {
+              id: createId("connection"),
+              sourceNodeId,
+              targetNodeId,
+              sourcePort,
+              targetPort,
+            },
+          ],
         };
       });
     },
-    [activeLevel]
+    []
   );
 
   /**
    * handles removing a connection between nodes.
    */
   const handleRemoveConnection = useCallback((connectionId: string) => {
-    setGraphs((prev) => {
-      const graph = prev[activeLevel];
-      return {
-        ...prev,
-        [activeLevel]: {
-          ...graph,
-          connections: graph.connections.filter((conn) => conn.id !== connectionId),
-        },
-      };
-    });
-  }, [activeLevel]);
+    setGraph((prev) => ({
+      ...prev,
+      connections: prev.connections.filter((conn) => conn.id !== connectionId),
+    }));
+  }, []);
 
   /**
    * handles cycling the flow success type for a flow node.
    */
   const handleCycleFlowSuccessType = useCallback((nodeId: string) => {
-    setGraphs((prev) => {
-      const graph = prev[activeLevel];
-      return {
-        ...prev,
-        [activeLevel]: {
-          ...graph,
-          nodes: graph.nodes.map((node) => {
-            if (node.id !== nodeId || !node.successType) {
-              return node;
-            }
+    setGraph((prev) => ({
+      ...prev,
+      nodes: prev.nodes.map((node) => {
+        if (node.id !== nodeId || !node.successType) {
+          return node;
+        }
 
-            const currentIndex = Math.max(
-              0,
-              FLOW_SUCCESS_TYPES.indexOf(node.successType)
-            );
-            const nextType =
-              FLOW_SUCCESS_TYPES[(currentIndex + 1) % FLOW_SUCCESS_TYPES.length];
+        const currentIndex = Math.max(0, FLOW_SUCCESS_TYPES.indexOf(node.successType));
+        const nextType =
+          FLOW_SUCCESS_TYPES[(currentIndex + 1) % FLOW_SUCCESS_TYPES.length];
 
-            return {
-              ...node,
-              successType: nextType,
-            };
-          }),
-        },
-      };
-    });
-  }, [activeLevel]);
+        return {
+          ...node,
+          successType: nextType,
+        };
+      }),
+    }));
+  }, []);
 
   /**
    * handles creating a new behavior node on the canvas.
    */
   const handleCreateBehaviorNode = useCallback((option: BehaviorNodeOption) => {
-    setGraphs((prev) => {
-      const graph = prev[activeLevel];
-      const nextIndex = graph.nodes.length;
+    setGraph((prev) => {
+      const nextIndex = prev.nodes.length;
       const offset = 140;
       const position = {
         x: 140 + (nextIndex % 3) * offset,
@@ -664,13 +801,10 @@ function App() {
 
       return {
         ...prev,
-        [activeLevel]: {
-          ...graph,
-          nodes: [...graph.nodes, createBehaviorNode({ option, position })],
-        },
+        nodes: [...prev.nodes, createBehaviorNode({ option, position })],
       };
     });
-  }, [activeLevel]);
+  }, []);
 
   return (
     <>
@@ -686,34 +820,22 @@ function App() {
             onImportActionInstances={handleImportActionInstancesFile}
             onExportCanvasGraph={handleExportCanvasGraph}
             onImportCanvasGraph={handleImportCanvasGraphFile}
+            onImportAptreeModel={handleImportAptreeModelFile}
             onOpenValidate={() => setIsValidateOpen(true)}
           />
           <div className="editor" role="main">
-            <div className="level-tabs" role="tablist" aria-label="Canvas Level">
-              {CANVAS_LEVELS.map((level) => (
-                <button
-                  key={level.key}
-                  type="button"
-                  className={`level-tab${
-                    activeLevel === level.key ? " is-active" : ""
-                  }`}
-                  role="tab"
-                  aria-selected={activeLevel === level.key}
-                  onClick={() => setActiveLevel(level.key)}
-                >
-                  {level.label}
-                </button>
-              ))}
-            </div>
-
             <div className="editor-canvas-wrap">
               <EditorCanvas
-                nodes={graphs[activeLevel].nodes}
-                connections={graphs[activeLevel].connections}
+                nodes={graph.nodes}
+                separators={separators}
+                connections={graph.connections}
                 onDropNode={handleDropOnCanvas}
+                onDropSeparator={handleDropSeparator}
                 onMoveNode={handleMoveNode}
+                onMoveSeparator={handleMoveSeparator}
                 onResizeNode={handleResizeNode}
                 onRemoveNode={handleRemoveNode}
+                onRemoveSeparator={handleRemoveSeparator}
                 onEditNode={handleEditNodeFromCanvas}
                 onAddConnection={handleAddConnection}
                 onRemoveConnection={handleRemoveConnection}

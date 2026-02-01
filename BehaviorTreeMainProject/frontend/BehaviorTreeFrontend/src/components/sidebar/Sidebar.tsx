@@ -7,6 +7,10 @@ import "./Sidebar.css";
 import { CategoryItemList } from "./components/CategoryItemList";
 import SidebarSection from "./components/SidebarSection";
 import {
+  CANVAS_TOOL_DRAG_DATA_FORMAT,
+  type DraggedCanvasTool,
+} from "../editor/dragTypes";
+import {
   ACTION_INSTANCES_KEY,
   ACTION_TYPES_KEY,
   BLACKBOARD_KEY,
@@ -152,6 +156,37 @@ export default function Sidebar({ manager, onCreateBehaviorNode }: SidebarProps)
       <div className="sidebar-title">
         <span className="sidebar-title-text">AI Planner</span>
       </div>
+
+      <SidebarSection title="Canvas Tools" iconLabel="T" isOpen={false}>
+        <div className="canvas-tools">
+          <div
+            className="canvas-tool-item"
+            draggable
+            role="button"
+            tabIndex={0}
+            aria-label="Separator Line"
+            onDragStart={(event) => {
+              const payload: DraggedCanvasTool = { tool: "separatorLine" };
+              event.dataTransfer.setData(
+                CANVAS_TOOL_DRAG_DATA_FORMAT,
+                JSON.stringify(payload)
+              );
+              event.dataTransfer.effectAllowed = "copy";
+            }}
+            onKeyDown={(event) => {
+              // Drag & drop is mouse-driven; keep keyboard focusable without action.
+              if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+              }
+            }}
+          >
+            <div className="canvas-tool-separator-preview">
+              <span className="canvas-tool-separator-line" aria-hidden />
+              <span className="canvas-tool-separator-label">Separator Line</span>
+            </div>
+          </div>
+        </div>
+      </SidebarSection>
 
       <BtNodeWizardModal
         isOpen={isBtNodeWizardOpen}

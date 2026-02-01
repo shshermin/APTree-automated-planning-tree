@@ -9,6 +9,9 @@ import type { DataCategory } from "../sidebar/utils/types";
 
 export const DRAG_DATA_FORMAT = "application/x-aptree-sidebar-item" as const;
 
+export const CANVAS_TOOL_DRAG_DATA_FORMAT =
+  "application/x-aptree-canvas-tool" as const;
+
 // defines the various kinds of entities that can be dragged from the sidebar
 export type DragEntityKind =
   | "parameterType"
@@ -17,6 +20,12 @@ export type DragEntityKind =
   | "actionInstance"
   | "behaviorNode"
   | "generic";
+
+export type CanvasToolKind = "separatorLine";
+
+export interface DraggedCanvasTool {
+  tool: CanvasToolKind;
+}
 
 // defines the structure of the data payload when dragging an item from the sidebar
 export interface DraggedSidebarItem {
@@ -65,6 +74,25 @@ export function isSidebarDrag(
 
   if ("contains" in types) {
     return (types as DOMStringList).contains(DRAG_DATA_FORMAT);
+  }
+
+  return false;
+}
+
+/**
+ * checks whether the current drag operation originated from the canvas tools palette.
+ * @param types list of mime types announced by the drag event
+ * @returns true when the canvas tool drag payload type is included
+ */
+export function isCanvasToolDrag(
+  types: DOMStringList | readonly string[]
+): boolean {
+  if (Array.isArray(types)) {
+    return types.includes(CANVAS_TOOL_DRAG_DATA_FORMAT);
+  }
+
+  if ("contains" in types) {
+    return (types as DOMStringList).contains(CANVAS_TOOL_DRAG_DATA_FORMAT);
   }
 
   return false;

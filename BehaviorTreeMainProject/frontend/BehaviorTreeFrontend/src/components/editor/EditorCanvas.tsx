@@ -21,12 +21,16 @@ import {
   type NodeTypes,
   Position,
   useReactFlow,
+  useStore,
   useUpdateNodeInternals,
 } from "reactflow";
 import "reactflow/dist/style.css";
 import {
+  CANVAS_TOOL_DRAG_DATA_FORMAT,
   DRAG_DATA_FORMAT,
+  isCanvasToolDrag,
   isSidebarDrag,
+  type DraggedCanvasTool,
   type DraggedSidebarItem,
 } from "./dragTypes";
 import type {
@@ -78,6 +82,12 @@ interface BehaviorNodeData {
 
 interface BehaviorEdgeData {
   onRemoveConnection?: (connectionId: string) => void;
+  isHovered?: boolean;
+}
+
+interface SeparatorNodeData {
+  label: string;
+  onRemoveSeparator?: (separatorId: string) => void;
   isHovered?: boolean;
 }
 
@@ -524,7 +534,38 @@ function BehaviorEdge({
   );
 }
 
-const nodeTypes: NodeTypes = { btNode: BehaviorTreeNode };
+function SeparatorNode({ id, data, selected }: NodeProps<SeparatorNodeData>) {
+  return (
+    <div className="canvas-separator" role="separator" aria-label={data.label}>
+      <span className="canvas-separator-label">{data.label}</span>
+      <span className="canvas-separator-line" aria-hidden="true" />
+
+      {data.onRemoveSeparator ? (
+        <span
+          className={`canvas-separator-remove-wrap${
+            data.isHovered || selected ? " is-visible" : ""
+          }`}
+        >
+          <button
+            type="button"
+            className="canvas-separator-remove-btn"
+            onMouseDown={(event) => event.stopPropagation()}
+            onClick={(event) => {
+              event.stopPropagation();
+              data.onRemoveSeparator?.(id);
+            }}
+            aria-label="Remove separator"
+            tabIndex={data.isHovered || selected ? 0 : -1}
+          >
+            ×
+          </button>
+        </span>
+      ) : null}
+    </div>
+  );
+}
+
+const nodeTypes: NodeTypes = { btNode: BehaviorTreeNode, separator: SeparatorNode };
 const edgeTypes: EdgeTypes = { btEdge: BehaviorEdge };
 
 /**
@@ -535,11 +576,15 @@ const edgeTypes: EdgeTypes = { btEdge: BehaviorEdge };
 function EditorCanvasInner(props: EditorCanvasProps) {
   const {
     nodes,
+    separators = [],
     connections = [],
     onDropNode,
+    onDropSeparator,
     onMoveNode,
+    onMoveSeparator,
     onResizeNode,
     onRemoveNode,
+    onRemoveSeparator,
     onEditNode,
     onAddConnection,
     onRemoveConnection,
@@ -551,8 +596,13 @@ function EditorCanvasInner(props: EditorCanvasProps) {
 
   const wrapperRef = useRef<HTMLDivElement>(null);
   const { project } = useReactFlow();
+  const viewportTransform = useStore((state) => state.transform);
+  const viewportWidth = useStore((state) => state.width);
   const [isActive, setIsActive] = useState(false);
   const [hoveredEdgeId, setHoveredEdgeId] = useState<string | null>(null);
+  const [hoveredSeparatorId, setHoveredSeparatorId] = useState<string | null>(
+    null
+  );
 
   const actionTypeMap = useMemo(() => {
     const entries = actionTypes ?? [];
@@ -564,7 +614,49 @@ function EditorCanvasInner(props: EditorCanvasProps) {
     return new Map(entries.map((instance) => [instance.id, instance] as const));
   }, [actionInstances]);
 
-  const flowNodes = useMemo<FlowNode<BehaviorNodeData>[]>(
+  const separatorFlowNodes = useMemo<FlowNode<SeparatorNodeData>[]>(() => {
+    if (!separators.length) {
+      return [];
+    }
+
+    const sorted = [...separators].sort((a, b) => a.y - b.y);
+
+    const transformX = viewportTransform[0];
+    const zoom = viewportTransform[2];
+    const safeZoom = Number.isFinite(zoom) && zoom > 0 ? zoom : 1;
+    const hasViewportSize = Number.isFinite(viewportWidth) && viewportWidth > 0;
+    const viewportLeftX = -transformX / safeZoom;
+    const viewportSpanWidth = hasViewportSize
+      ? viewportWidth / safeZoom
+      : CANVAS_EXTENT[1][0] - CANVAS_EXTENT[0][0];
+
+    return sorted.map((separator, index) => {
+      const label = `Level ${index + 1}`;
+      const separatorHeight = 44;
+      return {
+        id: separator.id,
+        type: "separator" as const,
+        position: { x: viewportLeftX, y: separator.y },
+        data: {
+          label,
+          onRemoveSeparator,
+          isHovered: hoveredSeparatorId === separator.id,
+        },
+        draggable: true,
+        selectable: true,
+        focusable: true,
+        connectable: false,
+        width: viewportSpanWidth,
+        height: separatorHeight,
+        style: {
+          width: `${viewportSpanWidth}px`,
+          height: `${separatorHeight}px`,
+        },
+      } satisfies FlowNode<SeparatorNodeData>;
+    });
+  }, [hoveredSeparatorId, onRemoveSeparator, separators, viewportTransform, viewportWidth]);
+
+  const behaviorFlowNodes = useMemo<FlowNode<BehaviorNodeData>[]>(
     () =>
       nodes.map((node) => {
         const width = node.width ?? DEFAULT_CANVAS_NODE_WIDTH;
@@ -601,6 +693,14 @@ function EditorCanvasInner(props: EditorCanvasProps) {
       onShowActionParameterDetail,
     ]
   );
+
+  const flowNodes = useMemo(() => {
+    if (!separatorFlowNodes.length) {
+      return behaviorFlowNodes;
+    }
+
+    return [...separatorFlowNodes, ...behaviorFlowNodes];
+  }, [behaviorFlowNodes, separatorFlowNodes]);
 
   /**
    * maps canvas connections to react-flow edges.
@@ -640,7 +740,10 @@ function EditorCanvasInner(props: EditorCanvasProps) {
    */
   const handleDragOver: React.DragEventHandler<HTMLDivElement> = useCallback(
     (event) => {
-      if (!isSidebarDrag(event.dataTransfer.types)) {
+      if (
+        !isSidebarDrag(event.dataTransfer.types) &&
+        !isCanvasToolDrag(event.dataTransfer.types)
+      ) {
         return;
       }
 
@@ -676,20 +779,18 @@ function EditorCanvasInner(props: EditorCanvasProps) {
    */
   const handleDrop: React.DragEventHandler<HTMLDivElement> = useCallback(
     (event) => {
-      if (!isSidebarDrag(event.dataTransfer.types)) {
+      const types = event.dataTransfer.types;
+      const hasSidebarPayload = isSidebarDrag(types);
+      const hasToolPayload = isCanvasToolDrag(types);
+
+      if (!hasSidebarPayload && !hasToolPayload) {
         return;
       }
 
       event.preventDefault();
       setIsActive(false);
 
-      const rawPayload = event.dataTransfer.getData(DRAG_DATA_FORMAT);
-      if (!rawPayload) {
-        return;
-      }
-
       try {
-        const payload = JSON.parse(rawPayload) as DraggedSidebarItem;
         const bounds = wrapperRef.current?.getBoundingClientRect();
         if (!bounds) {
           return;
@@ -700,12 +801,35 @@ function EditorCanvasInner(props: EditorCanvasProps) {
           y: event.clientY - bounds.top,
         });
 
-        onDropNode(payload, position);
+        if (hasSidebarPayload) {
+          const rawPayload = event.dataTransfer.getData(DRAG_DATA_FORMAT);
+          if (!rawPayload) {
+            return;
+          }
+
+          const payload = JSON.parse(rawPayload) as DraggedSidebarItem;
+          onDropNode(payload, position);
+          return;
+        }
+
+        if (hasToolPayload) {
+          const rawPayload = event.dataTransfer.getData(
+            CANVAS_TOOL_DRAG_DATA_FORMAT
+          );
+          if (!rawPayload) {
+            return;
+          }
+
+          const payload = JSON.parse(rawPayload) as DraggedCanvasTool;
+          if (payload.tool === "separatorLine") {
+            onDropSeparator?.(position);
+          }
+        }
       } catch (error) {
         console.error("Failed to parse sidebar drag payload", error);
       }
     },
-    [onDropNode, project]
+    [onDropNode, onDropSeparator, project]
   );
 
   /**
@@ -775,7 +899,12 @@ function EditorCanvasInner(props: EditorCanvasProps) {
    * @param node dragged node data
    */
   const handleNodeDrag = useCallback(
-    (_event: React.MouseEvent, node: FlowNode<BehaviorNodeData>) => {
+    (_event: React.MouseEvent, node: FlowNode) => {
+      if (node.type === "separator") {
+        onMoveSeparator?.(node.id, node.position.y);
+        return;
+      }
+
       const width = node.width ?? DEFAULT_CANVAS_NODE_WIDTH;
       const height = node.height ?? DEFAULT_CANVAS_NODE_HEIGHT;
       onMoveNode?.(node.id, {
@@ -783,7 +912,7 @@ function EditorCanvasInner(props: EditorCanvasProps) {
         y: node.position.y + height / 2,
       });
     },
-    [onMoveNode]
+    [onMoveNode, onMoveSeparator]
   );
 
   /**
@@ -792,7 +921,12 @@ function EditorCanvasInner(props: EditorCanvasProps) {
    * @param node dragged node data
    */
   const handleNodeDragStop = useCallback(
-    (_event: React.MouseEvent, node: FlowNode<BehaviorNodeData>) => {
+    (_event: React.MouseEvent, node: FlowNode) => {
+      if (node.type === "separator") {
+        onMoveSeparator?.(node.id, node.position.y);
+        return;
+      }
+
       const width = node.width ?? DEFAULT_CANVAS_NODE_WIDTH;
       const height = node.height ?? DEFAULT_CANVAS_NODE_HEIGHT;
       onMoveNode?.(node.id, {
@@ -800,7 +934,29 @@ function EditorCanvasInner(props: EditorCanvasProps) {
         y: node.position.y + height / 2,
       });
     },
-    [onMoveNode]
+    [onMoveNode, onMoveSeparator]
+  );
+
+  const handleNodeMouseEnter = useCallback(
+    (_event: React.MouseEvent, node: FlowNode) => {
+      if (node.type !== "separator") {
+        return;
+      }
+
+      setHoveredSeparatorId(node.id);
+    },
+    []
+  );
+
+  const handleNodeMouseLeave = useCallback(
+    (_event: React.MouseEvent, node: FlowNode) => {
+      if (node.type !== "separator") {
+        return;
+      }
+
+      setHoveredSeparatorId((current) => (current === node.id ? null : current));
+    },
+    []
   );
 
   return (
@@ -821,6 +977,8 @@ function EditorCanvasInner(props: EditorCanvasProps) {
         onConnect={handleConnect}
         onEdgeMouseEnter={handleEdgeMouseEnter}
         onEdgeMouseLeave={handleEdgeMouseLeave}
+        onNodeMouseEnter={handleNodeMouseEnter}
+        onNodeMouseLeave={handleNodeMouseLeave}
         onNodeDrag={handleNodeDrag}
         onNodeDragStop={handleNodeDragStop}
         connectionLineType={ConnectionLineType.SmoothStep}
