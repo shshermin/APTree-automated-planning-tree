@@ -57,9 +57,9 @@ public abstract class BTFlowNodeBase : BTNodeBase, IEnumerable
         if (actionNodes.Count == 0) return false;
 
         // Check if all actions have succeeded
-        var succeededActions = actionNodes.Where(node => node.status == BTNodeResult.Succeeded).ToList();
-        var failedActions = actionNodes.Where(node => node.status == BTNodeResult.failed).ToList();
-        var inProgressActions = actionNodes.Where(node => node.status != BTNodeResult.Succeeded && node.status != BTNodeResult.failed).ToList();
+        var succeededActions = actionNodes.Where(node => node.status == BTNodeResult.Success).ToList();
+        var failedActions = actionNodes.Where(node => node.status == BTNodeResult.Failure).ToList();
+        var inProgressActions = actionNodes.Where(node => node.status != BTNodeResult.Success && node.status != BTNodeResult.Failure).ToList();
 
         LoggingService.LogInfo($"🔍 FlowNode: ALL criteria check - Total: {actionNodes.Count}, Succeeded: {succeededActions.Count}, InProgress: {inProgressActions.Count}, Failed: {failedActions.Count}");
 
@@ -106,8 +106,8 @@ public abstract class BTFlowNodeBase : BTNodeBase, IEnumerable
         var actionNodes = actionGraph.GetAllActionNodes();
         if (actionNodes.Count == 0) return false;
 
-        int successCount = actionNodes.Count(node => node.status == BTNodeResult.Succeeded);
-        int failedCount = actionNodes.Count(node => node.status == BTNodeResult.failed);
+        int successCount = actionNodes.Count(node => node.status == BTNodeResult.Success);
+        int failedCount = actionNodes.Count(node => node.status == BTNodeResult.Failure);
         int totalCount = actionNodes.Count;
         int inProgressCount = totalCount - successCount - failedCount;
 

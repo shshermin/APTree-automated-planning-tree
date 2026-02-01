@@ -846,7 +846,7 @@ namespace BehaviorTreeMainProject
                     if (subtree == null) continue;
                     
                     // Check if this subtree was successful
-                    bool isSuccessful = subtree.status == BTNodeResult.Succeeded;
+                    bool isSuccessful = subtree.status == BTNodeResult.Success;
                     
                     if (isSuccessful)
                     {

@@ -44,3 +44,29 @@ Troubleshooting
 ---------------
 - If you update dependencies or switch Node versions, delete `node_modules` and rerun `npm install`.
 - Should the dev server fail to start, ensure no other process is using port 5173 or set a custom port via `npm run dev -- --port 3000`.
+
+Import APTree (.bt)
+-------------------
+The UI supports importing MontiCore APTree models (`.bt`) and visualizing them as a graph.
+
+Prerequisites:
+- Java runtime available on your machine (`java` on PATH)
+- MontiCore tool jar built (`MontiCoreTool/target/libs/*-tool.jar`)
+- Backend running (Vite proxies `/api/*` to `http://localhost:5254`)
+
+Build the tool jar (once after changes):
+```bash
+cd MontiCoreTool
+gradle shadowJar
+```
+
+Run backend + frontend:
+```bash
+# backend (repo root)
+dotnet run --project BehaviorTreeMainProject.csproj --urls http://localhost:5254
+
+# frontend (this folder)
+npm run dev
+```
+
+Then in the UI use the header menu item: **Import APTree (.bt)**.

@@ -4,6 +4,7 @@ export interface HeaderProps {
   onImportActionInstances: (file: File) => void;
   onExportCanvasGraph: () => void;
   onImportCanvasGraph: (file: File) => void;
+  onImportAptreeModel: (file: File) => void;
   onOpenValidate: () => void;
 }
 

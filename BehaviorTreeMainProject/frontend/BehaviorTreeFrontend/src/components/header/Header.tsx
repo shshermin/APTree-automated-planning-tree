@@ -141,6 +141,7 @@ export default function Header({
   onImportActionInstances,
   onExportCanvasGraph,
   onImportCanvasGraph,
+  onImportAptreeModel,
   onOpenValidate,
 }: HeaderProps) {
   const isDarkMode = theme === "dark";
@@ -149,6 +150,15 @@ export default function Header({
     { label: "Open..." },
     { label: "Save" },
     { label: "Save As..." },
+    { kind: "divider" },
+    { kind: "label", label: "Model" },
+    {
+      kind: "file",
+      label: "Import APTree (.bt)",
+      hint: "BT upload (.bt)",
+      accept: ".bt,text/plain",
+      onFileSelect: (file) => onImportAptreeModel(file),
+    },
     { kind: "divider" },
     { kind: "label", label: "Graph" },
     {

@@ -241,7 +241,7 @@ public abstract class PActionNode : ActionNode
                 LoggingService.LogInfo($"📊 GenericBTAction: Subtree result: {subtreeResult}, Status: {status}");
 
                 // Return true to continue ticking if subtree is in progress, false if it failed
-                if (subtreeResult == BTNodeResult.failed)
+                if (subtreeResult == BTNodeResult.Failure)
                 {
                     // Log high-level action failure
                     ActionExecutionLogger.Instance.LogActionFailed(actionName, instanceName, "Subtree execution failed");
@@ -250,7 +250,7 @@ public abstract class PActionNode : ActionNode
                     // Let the base class handle failure tracking through OnTickReturn
                     return false;
                 }
-                else if (subtreeResult == BTNodeResult.Succeeded)
+                else if (subtreeResult == BTNodeResult.Success)
                 {
                     // Log high-level action completion
                     ActionExecutionLogger.Instance.LogActionCompleted(actionName, instanceName, "Subtree execution completed successfully");
@@ -313,7 +313,7 @@ public abstract class PActionNode : ActionNode
             
             
 
-            return SetStatusAndCalculateReturnvalue(BTNodeResult.Succeeded);
+            return SetStatusAndCalculateReturnvalue(BTNodeResult.Success);
         }
         catch (Exception ex)
         {
@@ -321,7 +321,7 @@ public abstract class PActionNode : ActionNode
             ActionExecutionLogger.Instance.LogActionFailed(actionName, instanceName, $"Exception: {ex.Message}");
             
             LoggingService.LogError($"❌ GenericBTAction: {InstanceName.ToString()} ExecuteActionLogic failed: {ex.Message}");
-            return SetStatusAndCalculateReturnvalue(BTNodeResult.failed);
+            return SetStatusAndCalculateReturnvalue(BTNodeResult.Failure);
         }
     }
 

@@ -97,7 +97,7 @@ public class BTDecorator_DynamicPlanningComplete : BTDecoratorBase
                 if (cassetteNode != null)
                 {
                     // Check if the cassette node status is successful
-                    if (cassetteNode.status == BTNodeResult.Succeeded)
+                    if (cassetteNode.status == BTNodeResult.Success)
                     {
                         // Get the cassette index (cassette1=0, cassette2=1, cassette3=2, cassette4=3)
                         int cassetteIndex = Array.IndexOf(cassetteNames, cassetteName);
