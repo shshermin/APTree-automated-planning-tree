@@ -11,13 +11,13 @@ grammar DynamicBTFlowNode extends PlanningService {
       "}";
 
     //enums
-    enum SuccessCriteria = "ALL" | "ANY" | "COUNT" | "PERCENTAGE" | "SIGNAL";
-    enum TemporalType = "MEETS" | "BEFORE" | "AFTER" | "OVERLAPS" | "DURING";
-    enum ChildType = "ALLACTION" | "ALLFLOW"; 
+    enum SuccessCriteria = "All" | "Any" | "Count" | "Percentage" | "Signal";
+    enum TemporalType = "Meets" | "Precedes" | "Overlaps" | "During" | "Starts" | "Finishes" | "Contains" | "Equals";
+    enum ChildType = "AllAction" | "AllFlow"; 
     
 
     // NodeGraph definition - separate top-level production
-    NodeGraph = "NodeGraph" name:Name "{"
+    NodeGraph = "NodeGraph" "{"
     (nodes:GraphNode)*
     "}";
 

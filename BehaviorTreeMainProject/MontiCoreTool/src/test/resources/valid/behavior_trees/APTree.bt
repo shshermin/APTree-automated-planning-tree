@@ -1,40 +1,35 @@
 
 
+
+
+
 BehaviorTree APTree {
-    Root FlowNode mainnode {
-        ALL
-        ALLFLOW 
-        NodeGraph FirstGraph {    
-            FlowNode plateseq {
-                PDDLPlanning Service mypddlplanner1 ENHSP
-                ALL
-                ALLACTION
-                NodeGraph mypddlplanner1result {
-                    Action PickUpHL pickup1 (lp1 fp1 r1) @PickUpMLSubtree {
-                       --[MEETS]--> placeBeam1;
+    Root FlowNode Main {
+        All
+        AllFlow
+        NodeGraph {    
+            FlowNode  HandlePlate {
+                PlanningService mypddlplanner1 Enhsp1
+                All
+                AllAction
+                NodeGraph {
+                    Action PickUpHL pickup1 (plate1 r1) @PickUpMLSubtree {
+                       --[Meets]--> placeBeam1;
                     }
-                    Action PlaceHL placeBeam1 (lp1 pr1 r1) @PlaceMLSubtree
+                    Action PlaceHL placeBeam1 (plate1 pr1 r1) { Action PlaceML placeBeam1  }
                 }
             } 
-            FlowNode bemasseq {
-                PDDLPlanning Service mypddlplanner1 ENHSP
-                ANY
-                ALLACTION
-                NodeGraph secondnodegraph{
+            FlowNode BeamPlacement {
+                PlanningService mypddlplanner1 Enhsp2
+                All
+                AllAction
+                NodeGraph {
                             Action PickUpHL pickuphl2 (beam1 position3 robot1) { 
-                                --[MEETS]--> placeBeam1;
+                                --[Meets]--> placeBeam1;
                             }
                             Action PlaceHL placehl3 (beam1 pr1 robot1) 
                             Action PickUpHL pickuphl3 (beam2 fp3 robot1) { 
-                                --[MEETS]--> placehl3;
+                                --[Meets]--> placehl3;
                             }
                             Action PlaceHL placehl3 (beam2 pr2 robot1) 
-                }
-                        
-            } 
-        }
-    }
-}
-
-
-
+                }}}}} 

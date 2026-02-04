@@ -20,9 +20,9 @@ AtPlace extends Predicate = "!"? "AtPlace" "(" item:Name@Element loc:Name@Locati
 
 
 // === GENERATED ACTION RULES (DO NOT EDIT BELOW) ===
-  PickUpHL extends PActionNode = "Action" "PickUpHL" name:Name "(" obj:Name@Element grabPos:Name@Location client:Name@Robot ")" ("{" (Decorator | Service)* "}")?  ("@" subtreeAnnotation:Name@BehaviorTree)?;
+  PickUpHL extends PActionNode = "Action" "PickUpHL" name:Name "(" obj:Name@Element grabPos:Name@Location client:Name@Robot ")" ("{" (Decorator | Service)* "}")?  ("@" subtreeAnnotation:Name)?;
   astrule PickUpHL = method public crftypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=crftypesdef._ast.ASTActionLevel.HIGHLEVEL; } return actLevel; } ;
 
-  PlaceHL extends PActionNode = "Action" "PlaceHL" name:Name "(" obj:Name@Element targetPos:Name@Location client:Name@Robot ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name@BehaviorTree)? ;
+  PlaceHL extends PActionNode = "Action" "PlaceHL" name:Name "(" obj:Name@Element targetPos:Name@Location client:Name@Robot ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
   astrule PlaceHL = method public crftypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=crftypesdef._ast.ASTActionLevel.HIGHLEVEL; } return actLevel; } ;
 }

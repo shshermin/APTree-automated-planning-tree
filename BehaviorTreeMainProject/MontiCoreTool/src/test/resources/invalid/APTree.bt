@@ -1,0 +1,44 @@
+
+
+BehaviorTree APTree {
+    root FlowNode Main { // EID13 // EID15
+        All
+        AllFlow
+        NodeGraph {    
+            FlowNode  HandlePlate {
+                // EID3
+                Decorator duplicatedecorator // EID5
+                ALL // EID14 
+                AllAction
+                
+                NodeGraph { 
+
+                    Action PlaceHL placeplate1 (plate1 r1) // EID20 // EID2
+                    Action PickUpHL pickupplate1 (fp1 plate1 r1)  { // EID12
+                       --[Meets]--> place;
+                    }
+                   
+                    Action PickUpHL pickupplate2 (plate1 r1) // EID16 // EID19
+                }
+            } 
+            FlowNode BeamPlacement {
+                PlanningService mypddlplanner1 enhsp2 // EID17 // EID18
+                Decorator duplicatedecorator // EID5
+                All
+                AllAction               
+                NodeGraph {
+                            Action PickUpHL pickupbeam1 (vg1 position3 robot1) {  // EID8 // EID16
+                                --[Meets]--> placebeam1 // EID11
+                            }
+                            Action PlaceH placebeam1 (beam3 pr1 robot1)  // EID6 // EID10 // EID9
+                            Action PickUpHL pickupbeam2 (beam2 fp3 robot1) { 
+                                --[Meets]--> placebeam2;
+                            }
+                            Action PlaceHL placebeam2 (beam2 pr2 robot1) {Action Pass ()}   // EID1
+                }}}}} 
+
+
+
+
+
+

@@ -30,7 +30,8 @@ public class APTreeTool {
     Log.enableFailQuick(false);
     
     APTreeTool tool = new APTreeTool();
-    String filePath = args.length > 0 ? args[0] : "src/test/resources/valid/behavior_trees/APTree.bt";
+    // If an argument is given, use it as a file; otherwise, default to valid/behavior_trees/APTreeLiveMat.bt
+    String filePath = args.length > 0 ? args[0] : "src/test/resources/valid/behavior_trees/APTreeLiveMat.bt";
     tool.run(filePath);
   }
 

@@ -15,5 +15,8 @@ symbol ENHSP extends PDDLPlanner = "PddlPlanner" "Enhsp" name:Name "Domain" ":" 
 symbol Domain = "Domain" name:Name  "LanguageVersion" ":" language:Double "Level" ":" actLev:ActionLevel;
 symbol Problem = "Problem" name:Name;
 
+PSubTree = name: name  sc: SuccessCriteria planServ:PService
 
 }
+
+// add a list of supported action names to the domain
