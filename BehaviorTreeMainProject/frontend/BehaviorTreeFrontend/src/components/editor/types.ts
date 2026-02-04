@@ -22,6 +22,8 @@ export interface CanvasNode {
   isNegated?: boolean;
   successType?: FlowSuccessType;
   typeId?: string;
+  /** True when the node has any outgoing connections (used for rendering ports/handles). */
+  hasOutgoing?: boolean;
 }
 
 export const DEFAULT_CANVAS_NODE_WIDTH = 240;
@@ -59,6 +61,8 @@ export interface EditorCanvasProps {
   nodes: CanvasNode[];
   separators?: CanvasSeparator[];
   connections?: NodeConnection[];
+  /** Canvas node id of the current root node (Flow node), or null when unset. */
+  rootNodeId?: string | null;
   onDropNode: (
     item: DraggedSidebarItem,
     position: { x: number; y: number }
@@ -85,6 +89,8 @@ export interface EditorCanvasProps {
   onRemoveConnection?: (connectionId: string) => void;
   onShowActionParameterDetail?: (detail: ActionParameterDetail) => void;
   onCycleFlowSuccessType?: (nodeId: string) => void;
+  /** Sets the provided node id as the single Flow root node. */
+  onSetRootNode?: (nodeId: string) => void;
   actionTypes?: ActionType[];
   actionInstances?: ActionInstance[];
 }

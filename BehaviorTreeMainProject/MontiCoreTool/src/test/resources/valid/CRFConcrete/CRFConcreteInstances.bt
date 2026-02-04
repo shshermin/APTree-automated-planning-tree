@@ -1,11 +1,19 @@
+// Concrete instance model for CRFTypesCon.
+// Note: CRFTypesCon currently models locations via the "FirstPos" symbol only.
 
+FirstPos fp1 ()
+FirstPos fp3 ()
+FirstPos pr1 ()
+FirstPos pr2 ()
+FirstPos position3 ()
 
-Plate lp1 (5.0)
-Beam beam1 (35.0 red)
-Beam beam2 (3.0 blue)
-Plate plate1 (20.0)
-Robot r1 (1)
-FirstPosition FP1 (4)
+Plate lp1 (fp1)
+Plate plate1 (pr1)
+
+Beam beam1 (position3)
+Beam beam2 (fp3)
+
+Robot r1 (fp1 ur5)
 
 
 

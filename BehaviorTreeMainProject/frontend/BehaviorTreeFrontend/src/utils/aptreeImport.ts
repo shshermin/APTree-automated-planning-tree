@@ -5,11 +5,16 @@ import {
 } from "../components/editor/types";
 import {
   ACTION_TYPES_KEY,
+  BT_NODES_KEY,
   DECORATOR_NODES_KEY,
   FLOW_NODES_KEY,
   SERVICE_NODES_KEY,
 } from "../components/sidebar/utils/constants";
-import type { ActionType } from "../components/sidebar/utils/types";
+import {
+  FLOW_SUCCESS_TYPES,
+  type ActionType,
+  type FlowSuccessType,
+} from "../components/sidebar/utils/types";
 
 export type AptreeValidateResponse = {
   ok?: boolean;
@@ -32,6 +37,7 @@ export type AptreeGraphNode = {
   name?: string;
   astType?: string;
   line?: number;
+  successType?: string;
 };
 
 export type AptreeGraphEdge = {
@@ -80,6 +86,8 @@ function normalizeGraph(value: Record<string, unknown>): AptreeGraph | undefined
         name: typeof node.name === "string" ? node.name : undefined,
         astType: typeof node.astType === "string" ? node.astType : undefined,
         line: typeof node.line === "number" ? node.line : undefined,
+        successType:
+          typeof node.successType === "string" ? node.successType : undefined,
       })) as AptreeGraphNode[])
     : [];
 
@@ -103,6 +111,7 @@ function normalizeGraph(value: Record<string, unknown>): AptreeGraph | undefined
 type CanvasGraph = {
   nodes: CanvasNode[];
   connections: NodeConnection[];
+  rootNodeId: string | null;
 };
 
 export function aptreeGraphToCanvasGraph(
@@ -171,6 +180,9 @@ export function aptreeGraphToCanvasGraph(
     actionTypes.map((t) => [t.name.trim().toLowerCase(), t] as const)
   );
 
+  const isValidFlowSuccessType = (value: string | undefined): value is FlowSuccessType =>
+    !!value && (FLOW_SUCCESS_TYPES as readonly string[]).includes(value);
+
   const canvasNodes: CanvasNode[] = graph.nodes.map((n) => {
     const lvl = levelByNode.get(n.id) ?? 0;
     const idx = orderInLevel.get(n.id) ?? 0;
@@ -182,6 +194,8 @@ export function aptreeGraphToCanvasGraph(
       x: 120 + idx * spacingX,
       y: 80 + lvl * spacingY,
     };
+
+    const hasOutgoing = (outgoing.get(n.id) ?? []).length > 0;
 
     const normalizedAst = n.astType?.replace(/^AST/, "") ?? "";
 
@@ -201,6 +215,7 @@ export function aptreeGraphToCanvasGraph(
         y: position.y,
         width: DEFAULT_CANVAS_NODE_WIDTH,
         height: DEFAULT_CANVAS_NODE_HEIGHT,
+        hasOutgoing,
       };
     }
 
@@ -216,6 +231,7 @@ export function aptreeGraphToCanvasGraph(
         y: position.y,
         width: DEFAULT_CANVAS_NODE_WIDTH,
         height: DEFAULT_CANVAS_NODE_HEIGHT,
+        hasOutgoing,
       };
     }
 
@@ -231,26 +247,60 @@ export function aptreeGraphToCanvasGraph(
         y: position.y,
         width: DEFAULT_CANVAS_NODE_WIDTH,
         height: DEFAULT_CANVAS_NODE_HEIGHT,
+        hasOutgoing,
       };
     }
 
-    // default: flow / btNode / nodeGraph
+    if (n.kind === "flow") {
+      const successType = isValidFlowSuccessType(n.successType)
+        ? n.successType
+        : undefined;
+
+      return {
+        id: `bt-import-${n.id}`,
+        sourceId: n.name ?? n.id,
+        name: n.name ?? n.label,
+        typeLabel: "Flow",
+        category: FLOW_NODES_KEY,
+        kind: "behaviorNode",
+        x: position.x,
+        y: position.y,
+        width: DEFAULT_CANVAS_NODE_WIDTH,
+        height: DEFAULT_CANVAS_NODE_HEIGHT,
+        successType,
+        hasOutgoing,
+      };
+    }
+
+    if (n.kind === "nodeGraph") {
+      return {
+        id: `bt-import-${n.id}`,
+        sourceId: n.name ?? n.id,
+        name: n.name ?? n.label,
+        typeLabel: "NodeGraph",
+        category: BT_NODES_KEY,
+        kind: "behaviorNode",
+        x: position.x,
+        y: position.y,
+        width: DEFAULT_CANVAS_NODE_WIDTH,
+        height: DEFAULT_CANVAS_NODE_HEIGHT,
+        hasOutgoing,
+      };
+    }
+
+    // default: btNode / unknown
     return {
       id: `bt-import-${n.id}`,
       sourceId: n.name ?? n.id,
       name: n.name ?? n.label,
-      typeLabel:
-        n.kind === "nodeGraph"
-          ? "NodeGraph"
-          : n.kind === "flow"
-          ? "Flow"
-          : "Node",
-      category: FLOW_NODES_KEY,
+      typeLabel: "Node",
+      category: BT_NODES_KEY,
       kind: "behaviorNode",
       x: position.x,
       y: position.y,
       width: DEFAULT_CANVAS_NODE_WIDTH,
       height: DEFAULT_CANVAS_NODE_HEIGHT,
+      hasOutgoing,
     };
   });
 
@@ -258,6 +308,11 @@ export function aptreeGraphToCanvasGraph(
   for (const n of graph.nodes) {
     canvasNodeIdByGraphId.set(n.id, `bt-import-${n.id}`);
   }
+
+  const rootNodeId =
+    graph.rootId && canvasNodeIdByGraphId.has(graph.rootId)
+      ? (canvasNodeIdByGraphId.get(graph.rootId) as string)
+      : null;
 
   const connections = graph.edges
     .map((e): NodeConnection | null => {
@@ -275,5 +330,5 @@ export function aptreeGraphToCanvasGraph(
     })
     .filter((x): x is NodeConnection => x !== null);
 
-  return { nodes: canvasNodes, connections };
+  return { nodes: canvasNodes, connections, rootNodeId };
 }

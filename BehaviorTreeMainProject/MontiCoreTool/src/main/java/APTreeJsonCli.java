@@ -56,8 +56,18 @@ public class APTreeJsonCli {
       return;
     }
 
-    APTreeJsonCli cli = new APTreeJsonCli();
-    System.out.print(cli.run(modelFile, instancesFile));
+    // Keep stdout JSON-only: MontiCore's Log may write to System.out during parsing/validation.
+    // Route any such console output to stderr and restore stdout only for the final JSON print.
+    java.io.PrintStream jsonOut = System.out;
+    try {
+      System.setOut(System.err);
+      APTreeJsonCli cli = new APTreeJsonCli();
+      String json = cli.run(modelFile, instancesFile);
+      System.setOut(jsonOut);
+      jsonOut.print(json);
+    } finally {
+      System.setOut(jsonOut);
+    }
   }
 
   public String run(String modelFile, String instancesFile) {
@@ -71,6 +81,11 @@ public class APTreeJsonCli {
 
       // Load concrete instances into the global scope first
       loadConcreteInstancesIntoGlobalScope(instancesFile);
+
+      // Instance parsing may add global Log errors/findings. Some MontiCore parsers return Optional.empty
+      // when the global Log already contains errors (even if the model itself is valid).
+      // Reset the Log state so parsing depends on the model file, not on instance-file noise.
+      resetLogStateAfterInstanceLoad();
 
       // Configure symbol path (for persisted symbols if used)
       DynamicBTFlowNodeMill.globalScope().setSymbolPath(
@@ -142,6 +157,29 @@ public class APTreeJsonCli {
 
     } catch (Exception ignored) {
       // Surface via generic error finding if present; otherwise keep CLI stable
+    }
+  }
+
+  private static void resetLogStateAfterInstanceLoad() {
+    // Best-effort: different Log versions expose different reset/clear APIs.
+    try { Log.getFindings().clear(); } catch (Exception ignored) { }
+
+    try {
+      java.lang.reflect.Method m = Log.class.getMethod("clearFindings");
+      m.invoke(null);
+    } catch (Exception ignored) { }
+
+    try {
+      java.lang.reflect.Method m = Log.class.getMethod("clear");
+      m.invoke(null);
+    } catch (Exception ignored) { }
+
+    // Fallback: re-init logging to reset global counters.
+    try {
+      Log.init();
+      Log.enableFailQuick(false);
+    } catch (Exception ignored) {
+      // keep CLI stable
     }
   }
 
@@ -229,14 +267,16 @@ public class APTreeJsonCli {
       final String name;
       final String astType;
       final Integer line;
+      final String successType;
 
-      Node(String id, String kind, String label, String name, String astType, Integer line) {
+      Node(String id, String kind, String label, String name, String astType, Integer line, String successType) {
         this.id = id;
         this.kind = kind;
         this.label = label;
         this.name = name;
         this.astType = astType;
         this.line = line;
+        this.successType = successType;
       }
     }
 
@@ -296,6 +336,7 @@ public class APTreeJsonCli {
         if (n.name != null) sb.append(",\"name\":\"").append(escape(n.name)).append("\"");
         if (n.astType != null) sb.append(",\"astType\":\"").append(escape(n.astType)).append("\"");
         if (n.line != null) sb.append(",\"line\":").append(n.line);
+        if (n.successType != null) sb.append(",\"successType\":\"").append(escape(n.successType)).append("\"");
         sb.append("}");
       }
       sb.append("],\"edges\":[");
@@ -338,7 +379,8 @@ public class APTreeJsonCli {
         String name = tryGetName(astNode);
         String label = buildLabel(astNode, name);
         Integer line = tryGetLine(astNode);
-        nodes.add(new Node(id, kind, label, name, astType, line));
+        String successType = tryGetSuccessType(astNode);
+        nodes.add(new Node(id, kind, label, name, astType, line, successType));
         return id;
       }
 
@@ -453,6 +495,26 @@ public class APTreeJsonCli {
           // best-effort
         }
         return null;
+      }
+
+      static String tryGetSuccessType(Object node) {
+        if (!(node instanceof behaviortree._ast.ASTFlowNode)) {
+          return null;
+        }
+
+        // Most flow node variants expose a succri (success criteria) enum.
+        // We use reflection to avoid depending on a specific subtype.
+        try {
+          java.lang.reflect.Method getter = node.getClass().getMethod("getSuccri");
+          Object value = getter.invoke(node);
+          if (value == null) return null;
+          if (value instanceof Enum) {
+            return ((Enum<?>) value).name();
+          }
+          return String.valueOf(value);
+        } catch (Exception ignored) {
+          return null;
+        }
       }
 
       static Integer tryGetLine(Object node) {

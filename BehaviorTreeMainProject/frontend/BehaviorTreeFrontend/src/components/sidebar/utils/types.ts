@@ -231,6 +231,7 @@ export interface SidebarManager {
   flowNodeOptions: FlowNodeOption[];
   decoratorNodeOptions: DecoratorNodeOption[];
   serviceNodeOptions: ServiceNodeOption[];
+  nodeGraphNodeOptions: NodeGraphNodeOption[];
   searchQueries: SearchQueries;
   parameterTypeModalState: TypeModalState;
   predicateTypeModalState: PredicateTypeModalState;
@@ -254,7 +255,7 @@ export interface CategoryItemListProps {
   readOnly?: boolean;
 }
 
-export type BehaviorNodeKind = "flow" | "decorator" | "service";
+export type BehaviorNodeKind = "flow" | "decorator" | "service" | "nodeGraph";
 
 /** describes a selectable behavior-tree node option surfaced in the sidebar. */
 export interface BehaviorNodeOption {
@@ -270,3 +271,4 @@ export interface BehaviorNodeOption {
 export type FlowNodeOption = BehaviorNodeOption & { kind: "flow" };
 export type DecoratorNodeOption = BehaviorNodeOption & { kind: "decorator" };
 export type ServiceNodeOption = BehaviorNodeOption & { kind: "service" };
+export type NodeGraphNodeOption = BehaviorNodeOption & { kind: "nodeGraph" };

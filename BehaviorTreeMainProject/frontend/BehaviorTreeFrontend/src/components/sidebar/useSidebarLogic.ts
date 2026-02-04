@@ -9,6 +9,7 @@ import {
   ACTION_TYPES_KEY,
   FALLBACK_FLOW_NODE_OPTIONS,
   FALLBACK_DECORATOR_NODE_OPTIONS,
+  FALLBACK_NODEGRAPH_NODE_OPTIONS,
   PARAM_TYPES_KEY,
   PREDICATE_TYPES_KEY,
   SERVICE_NODES_KEY,
@@ -36,6 +37,7 @@ import type {
   DataCategory,
   ModalState,
   FlowNodeOption,
+  NodeGraphNodeOption,
   ParameterType,
   PredicateType,
   SearchQueries,
@@ -404,6 +406,11 @@ export const useSidebarManager = (): SidebarManager => {
       defaultSuccessType: "ALL",
     }));
   }, [flowCatalog]);
+
+  const nodeGraphNodeOptions = useMemo<NodeGraphNodeOption[]>(
+    () => FALLBACK_NODEGRAPH_NODE_OPTIONS.map((option) => ({ ...option })),
+    []
+  );
 
   /**
    * Opens the "add item" modal for the given category.
@@ -1188,6 +1195,7 @@ export const useSidebarManager = (): SidebarManager => {
     flowNodeOptions,
     decoratorNodeOptions,
     serviceNodeOptions,
+    nodeGraphNodeOptions,
     searchQueries,
     parameterTypeModalState,
     predicateTypeModalState,

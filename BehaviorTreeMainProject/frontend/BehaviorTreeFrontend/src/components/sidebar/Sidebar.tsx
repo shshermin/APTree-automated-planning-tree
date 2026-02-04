@@ -65,6 +65,7 @@ export default function Sidebar({ manager, onCreateBehaviorNode }: SidebarProps)
     decoratorNodeOptions,
     serviceNodeOptions,
     flowNodeOptions,
+    nodeGraphNodeOptions,
   } = manager;
 
   const [isBtNodeWizardOpen, setBtNodeWizardOpen] = useState(false);
@@ -72,6 +73,7 @@ export default function Sidebar({ manager, onCreateBehaviorNode }: SidebarProps)
   const flowOptions = flowNodeOptions;
   const decoratorOptions = decoratorNodeOptions;
   const serviceOptions = serviceNodeOptions;
+  const nodeGraphOptions = nodeGraphNodeOptions;
   const visibleCategories = categoryOrder.filter(
     (key) => key !== ACTION_INSTANCES_KEY
   );
@@ -193,6 +195,7 @@ export default function Sidebar({ manager, onCreateBehaviorNode }: SidebarProps)
         flowOptions={flowOptions}
         decoratorOptions={decoratorOptions}
         serviceOptions={serviceOptions}
+        nodeGraphOptions={nodeGraphOptions}
         onClose={closeBtNodeWizard}
         onSelectActionType={() => openAddModal(ACTION_TYPES_KEY)}
         onSelectActionInstance={() => openAddModal(ACTION_INSTANCES_KEY)}

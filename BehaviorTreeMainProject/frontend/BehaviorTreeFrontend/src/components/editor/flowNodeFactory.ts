@@ -4,6 +4,7 @@ import type { BehaviorNodeOption } from "../sidebar/utils/types";
 import { FLOW_SUCCESS_TYPES } from "../sidebar/utils/types";
 import { createId } from "../../utils/id";
 import {
+  BT_NODES_KEY,
   DECORATOR_NODES_KEY,
   FLOW_NODES_KEY,
   SERVICE_NODES_KEY,
@@ -14,6 +15,7 @@ const categoryByKind = {
   flow: FLOW_NODES_KEY,
   decorator: DECORATOR_NODES_KEY,
   service: SERVICE_NODES_KEY,
+  nodeGraph: BT_NODES_KEY,
 } as const;
 
 /** defines input data required to instantiate a behavior node on the canvas. */

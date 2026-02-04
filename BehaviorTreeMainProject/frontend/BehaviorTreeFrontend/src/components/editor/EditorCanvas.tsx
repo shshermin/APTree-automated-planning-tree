@@ -70,11 +70,13 @@ const resolveNumericOffset = (value: string | number | undefined): number => {
 
 interface BehaviorNodeData {
   node: CanvasNode;
+  rootNodeId?: string | null;
   actionTypeMap: Map<string, ActionType>;
   actionInstanceMap: Map<string, ActionInstance>;
   onRemoveNode?: (nodeId: string) => void;
   onEditNode?: (nodeId: string) => void;
   onCycleFlowSuccessType?: (nodeId: string) => void;
+  onSetRootNode?: (nodeId: string) => void;
   onResizeNode?: (nodeId: string, size: { width: number; height: number }) => void;
   onMoveNode?: (nodeId: string, position: { x: number; y: number }) => void;
   onShowActionParameterDetail?: (detail: ActionParameterDetail) => void;
@@ -171,6 +173,14 @@ function BehaviorTreeNode({ id, data, selected }: NodeProps<BehaviorNodeData>) {
 
   const isFlowNode = node.category === FLOW_NODES_KEY;
 
+  const isNodeGraph = node.typeLabel === "NodeGraph";
+
+  const shouldRenderSourceHandles =
+    isFlowNode ||
+    isNodeGraph ||
+    isActionNode(node) ||
+    !!node.hasOutgoing;
+
   const isAction = isActionNode(node);
   const actionInstance =
     isAction && node.kind === "actionInstance"
@@ -232,6 +242,21 @@ function BehaviorTreeNode({ id, data, selected }: NodeProps<BehaviorNodeData>) {
   }, [id, paramClearance, showActionParams, updateNodeInternals]);
 
   const nodeClasses = ["canvas-node", `canvas-node-${node.kind}`];
+
+  const isRootNode = !!data.rootNodeId && data.rootNodeId === id;
+  if (isRootNode) {
+    nodeClasses.push("canvas-node-rooted");
+  }
+
+  const shouldRenderRootAction =
+    node.category === FLOW_NODES_KEY && !!data.onSetRootNode;
+  const shouldRenderActions =
+    !!data.onEditNode || !!data.onRemoveNode || shouldRenderRootAction;
+  const shouldRenderActionRow = !!data.onEditNode || !!data.onRemoveNode;
+
+  if (node.typeLabel === "NodeGraph") {
+    nodeClasses.push("canvas-node-nodegraph");
+  }
 
   if (node.category === FLOW_NODES_KEY) {
     nodeClasses.push("canvas-node-flow");
@@ -352,56 +377,88 @@ function BehaviorTreeNode({ id, data, selected }: NodeProps<BehaviorNodeData>) {
       ) : null}
 
       {node.successType ? (
-        data.onCycleFlowSuccessType ? (
-          <button
-            type="button"
-            className="canvas-node-success"
-            onMouseDown={(event) => event.stopPropagation()}
-            onClick={(event) => {
-              event.stopPropagation();
-              data.onCycleFlowSuccessType?.(id);
-            }}
-            title="Click to cycle success type"
-            aria-label={`Success type ${node.successType}. Click to cycle.`}
-          >
-            {node.successType}
-          </button>
-        ) : (
-          <span className="canvas-node-success" aria-hidden="true">
-            {node.successType}
-          </span>
-        )
+        <div className="canvas-node-success-row">
+          {data.onCycleFlowSuccessType ? (
+            <button
+              type="button"
+              className="canvas-node-success"
+              onMouseDown={(event) => event.stopPropagation()}
+              onClick={(event) => {
+                event.stopPropagation();
+                data.onCycleFlowSuccessType?.(id);
+              }}
+              title="Click to cycle success type"
+              aria-label={`Success type ${node.successType}. Click to cycle.`}
+            >
+              {node.successType}
+            </button>
+          ) : (
+            <span className="canvas-node-success" aria-hidden="true">
+              {node.successType}
+            </span>
+          )}
+          {isRootNode ? (
+            <span className="canvas-node-root-pill" aria-label="Root node">
+              ROOT
+            </span>
+          ) : null}
+        </div>
       ) : null}
 
-      {data.onEditNode ? (
-        <button
-          type="button"
-          className="canvas-node-edit"
-          onMouseDown={(event) => event.stopPropagation()}
-          onClick={(event) => {
-            event.stopPropagation();
-            data.onEditNode?.(id);
-          }}
-          aria-label={`Edit ${node.name}`}
-          title="Edit"
-        >
-          ✎
-        </button>
-      ) : null}
+      {shouldRenderActions ? (
+        <div className="canvas-node-actions" aria-label="Node actions">
+          {shouldRenderActionRow ? (
+            <div className="canvas-node-actions-row">
+              {data.onEditNode ? (
+                <button
+                  type="button"
+                  className="canvas-node-edit"
+                  onMouseDown={(event) => event.stopPropagation()}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    data.onEditNode?.(id);
+                  }}
+                  aria-label={`Edit ${node.name}`}
+                  title="Edit"
+                >
+                  ✎
+                </button>
+              ) : null}
 
-      {data.onRemoveNode ? (
-        <button
-          type="button"
-          className="canvas-node-remove"
-          onMouseDown={(event) => event.stopPropagation()}
-          onClick={(event) => {
-            event.stopPropagation();
-            data.onRemoveNode?.(id);
-          }}
-          aria-label={`Remove ${node.name}`}
-        >
-          ×
-        </button>
+              {data.onRemoveNode ? (
+                <button
+                  type="button"
+                  className="canvas-node-remove"
+                  onMouseDown={(event) => event.stopPropagation()}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    data.onRemoveNode?.(id);
+                  }}
+                  aria-label={`Remove ${node.name}`}
+                  title="Remove"
+                >
+                  ×
+                </button>
+              ) : null}
+            </div>
+          ) : null}
+
+          {shouldRenderRootAction ? (
+            <button
+              type="button"
+              className={`canvas-node-root${isRootNode ? " canvas-node-root--active" : ""}`}
+              onMouseDown={(event) => event.stopPropagation()}
+              onClick={(event) => {
+                event.stopPropagation();
+                data.onSetRootNode?.(id);
+              }}
+              aria-label={isRootNode ? `Unset root for ${node.name}` : `Set ${node.name} as root`}
+              title={isRootNode ? "Unset Root" : "Set as Root"}
+            >
+              ♛
+            </button>
+          ) : null}
+        </div>
       ) : null}
 
       <span className="canvas-node-label">{node.name}</span>
@@ -441,7 +498,7 @@ function BehaviorTreeNode({ id, data, selected }: NodeProps<BehaviorNodeData>) {
           ))
         : null}
 
-      {(isFlowNode || isAction) &&
+      {shouldRenderSourceHandles &&
         (Object.keys(portPositions) as PortSide[]).map((side) => (
           <Handle
             key={`source-${side}`}
@@ -578,6 +635,7 @@ function EditorCanvasInner(props: EditorCanvasProps) {
     nodes,
     separators = [],
     connections = [],
+    rootNodeId = null,
     onDropNode,
     onDropSeparator,
     onMoveNode,
@@ -589,6 +647,7 @@ function EditorCanvasInner(props: EditorCanvasProps) {
     onAddConnection,
     onRemoveConnection,
     onCycleFlowSuccessType,
+    onSetRootNode,
     actionTypes,
     actionInstances,
     onShowActionParameterDetail,
@@ -668,11 +727,13 @@ function EditorCanvasInner(props: EditorCanvasProps) {
           position: { x: node.x - width / 2, y: node.y - height / 2 },
           data: {
             node,
+            rootNodeId,
             actionTypeMap,
             actionInstanceMap,
             onRemoveNode,
             onEditNode,
             onCycleFlowSuccessType,
+            onSetRootNode,
             onResizeNode,
             onMoveNode,
             onShowActionParameterDetail,
@@ -683,11 +744,13 @@ function EditorCanvasInner(props: EditorCanvasProps) {
       }),
     [
       nodes,
+      rootNodeId,
       actionTypeMap,
       actionInstanceMap,
       onRemoveNode,
       onEditNode,
       onCycleFlowSuccessType,
+      onSetRootNode,
       onResizeNode,
       onMoveNode,
       onShowActionParameterDetail,
@@ -848,6 +911,7 @@ function EditorCanvasInner(props: EditorCanvasProps) {
       const isAction = (node: CanvasNode) =>
         node.kind === "actionType" || node.kind === "actionInstance";
       const isFlow = (node: CanvasNode) => node.category === FLOW_NODES_KEY;
+      const isNodeGraph = (node: CanvasNode) => node.typeLabel === "NodeGraph";
 
       // Rules:
       // - Flow -> (Action/Service/Decorator/anything non-flow) is allowed (structure).
@@ -866,6 +930,8 @@ function EditorCanvasInner(props: EditorCanvasProps) {
         // allow Flow -> non-flow
       } else if (isAction(sourceNode) && isAction(targetNode)) {
         // allow Action -> Action (plan graph)
+      } else if (isNodeGraph(sourceNode) && isAction(targetNode)) {
+        // allow NodeGraph -> Action (membership / plan graph membership)
       } else {
         return;
       }

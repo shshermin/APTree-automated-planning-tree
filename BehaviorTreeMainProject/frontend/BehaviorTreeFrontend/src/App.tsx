@@ -21,6 +21,7 @@ import { reconcileInstanceValues } from "./components/sidebar/utils/helpers";
 import {
   ACTION_INSTANCES_KEY,
   BT_NODES_KEY,
+  FLOW_NODES_KEY,
 } from "./components/sidebar/utils/constants";
 import {
   aptreeGraphToCanvasGraph,
@@ -36,6 +37,7 @@ type ThemeMode = "light" | "dark";
 type CanvasGraph = {
   nodes: CanvasNode[];
   connections: NodeConnection[];
+  rootNodeId: string | null;
 };
 
 // legacy export/import format used when the editor had multiple level tabs.
@@ -113,6 +115,10 @@ function normalizeImportedCanvasGraph(value: CanvasGraph): CanvasGraph {
   }
 
   const nodeIdSet = new Set(normalizedNodes.map((n) => n.id));
+  const normalizedRootNodeId =
+    typeof value.rootNodeId === "string" && nodeIdSet.has(value.rootNodeId)
+      ? value.rootNodeId
+      : null;
   const seenConnIds = new Set<string>();
   const normalizedConnections: NodeConnection[] = [];
 
@@ -147,7 +153,11 @@ function normalizeImportedCanvasGraph(value: CanvasGraph): CanvasGraph {
     seenConnIds.add(id);
   }
 
-  return { nodes: normalizedNodes, connections: normalizedConnections };
+  return {
+    nodes: normalizedNodes,
+    connections: normalizedConnections,
+    rootNodeId: normalizedRootNodeId,
+  };
 }
 
 function normalizeImportedSeparators(value: CanvasSeparator[]): CanvasSeparator[] {
@@ -211,6 +221,7 @@ function App() {
   const [graph, setGraph] = useState<CanvasGraph>(() => ({
     nodes: [],
     connections: [],
+    rootNodeId: null,
   }));
   const [separators, setSeparators] = useState<CanvasSeparator[]>([]);
   const [parameterDetail, setParameterDetail] =
@@ -234,12 +245,14 @@ function App() {
       ...sidebarManager.flowNodeOptions,
       ...sidebarManager.decoratorNodeOptions,
       ...sidebarManager.serviceNodeOptions,
+      ...sidebarManager.nodeGraphNodeOptions,
     ];
     return new Map(options.map((option) => [option.id, option] as const));
   }, [
     sidebarManager.flowNodeOptions,
     sidebarManager.decoratorNodeOptions,
     sidebarManager.serviceNodeOptions,
+    sidebarManager.nodeGraphNodeOptions,
   ]);
 
   const actionInstances = useMemo(() => {
@@ -570,6 +583,7 @@ function App() {
             graph: {
               nodes: nextNodes,
               connections: nextConnections,
+              rootNodeId: null,
             },
             separators: nextSeparators,
           };
@@ -752,6 +766,29 @@ function App() {
     [behaviorNodeOptionMap]
   );
 
+  /**
+   * Sets a flow node as the single root node.
+   */
+  const handleSetRootNode = useCallback((nodeId: string) => {
+    setGraph((prev) => {
+      if (prev.rootNodeId === nodeId) {
+        return { ...prev, rootNodeId: null };
+      }
+
+      const node = prev.nodes.find((entry) => entry.id === nodeId);
+      if (!node) {
+        return prev;
+      }
+
+      if (node.category !== FLOW_NODES_KEY) {
+        window.alert("Only Flow nodes can be set as the root.");
+        return prev;
+      }
+
+      return { ...prev, rootNodeId: nodeId };
+    });
+  }, []);
+
   const handleDropSeparator = useCallback(
     (position: { x: number; y: number }) => {
       setSeparators((prev) => [
@@ -824,10 +861,12 @@ function App() {
    */
   const handleRemoveNode = useCallback((nodeId: string) => {
     setGraph((prev) => ({
+      ...prev,
       nodes: prev.nodes.filter((node) => node.id !== nodeId),
       connections: prev.connections.filter(
         (conn) => conn.sourceNodeId !== nodeId && conn.targetNodeId !== nodeId
       ),
+      rootNodeId: prev.rootNodeId === nodeId ? null : prev.rootNodeId,
     }));
   }, []);
 
@@ -948,6 +987,7 @@ function App() {
                 nodes={graph.nodes}
                 separators={separators}
                 connections={graph.connections}
+                rootNodeId={graph.rootNodeId}
                 onDropNode={handleDropOnCanvas}
                 onDropSeparator={handleDropSeparator}
                 onMoveNode={handleMoveNode}
@@ -960,6 +1000,7 @@ function App() {
                 onRemoveConnection={handleRemoveConnection}
                 onShowActionParameterDetail={handleShowActionParameterDetail}
                 onCycleFlowSuccessType={handleCycleFlowSuccessType}
+                onSetRootNode={handleSetRootNode}
                 actionTypes={actionTypes}
                 actionInstances={actionInstances}
               />
