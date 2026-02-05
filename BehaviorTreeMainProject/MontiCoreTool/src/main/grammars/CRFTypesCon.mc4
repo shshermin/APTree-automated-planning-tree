@@ -1,15 +1,15 @@
-grammar CRFTypesCon extends CRFTypesDef {
+grammar CRFTypesCon extends CRFTypesDef, de.monticore.MCBasics {
 
 ////////// ?????? I am not sure why do we get errors if we dont include this world thing!
 @Override
-World = (PropertyTypeDefinition | Property | PredicateTypeDefinition | ActionTypeDefinition | Beam | Plate | FirstPos | Robot | VaccumGripper | Holding | AtPlace)*;
+World = (PropertyTypeDefinition | Property | PredicateTypeDefinition | ActionTypeDefinition | Beam | Plate | FirstPos | Robot | VacGripper | Holding | AtPlace)*;
 
 // === GENERATED RULES (DO NOT EDIT BELOW) ===
 symbol Beam extends Element = "Beam" name:Name "(" loc:Name@Location ")";
 symbol Plate extends Element = "Plate" name:Name "(" loc:Name@Location ")";
 symbol FirstPos extends Location = "FirstPos" name:Name "(" ")";
 symbol Robot extends Agent = "Robot" name:Name "(" loc:Name@Location mType:Name ")";
-symbol VaccumGripper extends Tool = "VaccumGripper" name:Name "(" loc:Name@Location isActive:Boolean ")";
+symbol VacGripper extends Tool = "VaccumGripper" name:Name "(" loc:Name@Location isActive:Boolean ")";
 // === END GENERATED RULES ===
 
 

@@ -41,7 +41,7 @@ abstract symbol  Agent    implements CustomProperty = name:Name ;
 
 // Action type definition
 
-abstract PActionNode extends ActionNode = 
+abstract symbol PActionNode extends ActionNode = 
     name:Name 
     actLevel: ActionLevel
     ("@" subtreeAnnotation:Name@BehaviorTree)? 

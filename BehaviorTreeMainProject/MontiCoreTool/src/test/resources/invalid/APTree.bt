@@ -7,34 +7,33 @@ BehaviorTree APTree {
         NodeGraph {    
             FlowNode  HandlePlate {
                 // EID3
-                Decorator duplicatedecorator // EID5
+                Decorator DuplicateDecorator // EID5
                 ALL // EID14 
                 AllAction
                 
                 NodeGraph { 
-
-                    Action PlaceHL placeplate1 (plate1 r1) // EID20 // EID2
-                    Action PickUpHL pickupplate1 (fp1 plate1 r1)  { // EID12
-                       --[Meets]--> place;
+                          
+                          Action PlaceHL PickUpPlate1 (plate1 lp1)  {   // EID2
+                            --[Meets]--> PickUpPlate2; // EID16 
                     }
-                   
-                    Action PickUpHL pickupplate2 (plate1 r1) // EID16 // EID19
+                          Action PickUpHL PickUpPlate2 (plate2 r1 fp5) {PlanningService MyPddlPlanner2 Enhsp1 } //EID4 //EID6 // EID12
+                    
                 }
             } 
             FlowNode BeamPlacement {
-                PlanningService mypddlplanner1 enhsp2 // EID17 // EID18
-                Decorator duplicatedecorator // EID5
+                PlanningService MyPddlPlanner1 Enhsp2 // EID17 // EID18
+                Decorator DuplicateDecorator // EID5
                 All
                 AllAction               
                 NodeGraph {
-                            Action PickUpHL pickupbeam1 (vg1 position3 robot1) {  // EID8 // EID16
-                                --[Meets]--> placebeam1 // EID11
+                            Action PlaceHL PlaceBeam1 (vg1 pr2 r1) {  // EID8 // EID16 //EID18
+                                --[Meets]--> PickUpBeam1 // EID11  //EID19
                             }
-                            Action PlaceH placebeam1 (beam3 pr1 robot1)  // EID6 // EID10 // EID9
-                            Action PickUpHL pickupbeam2 (beam2 fp3 robot1) { 
-                                --[Meets]--> placebeam2;
+                            Action PickUpHL PickUpBeam1 (column1 fp2 r1)   // EID10 
+                            Action PickUpHL PickupBeam2 (beam2 fp3 r1) { //EID18
+                                --[Meets]--> PlaceBeam2;
                             }
-                            Action PlaceHL placebeam2 (beam2 pr2 robot1) {Action Pass ()}   // EID1
+                            Action PlaceHL PlaceBeam2 (beam2 pr3 r1) {Action Pass()}  // EID1 // EID9
                 }}}}} 
 
 

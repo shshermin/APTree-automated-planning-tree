@@ -12,6 +12,7 @@ Define Action PickUpHL {
     }    
     Effects {
         holding(client, objToPick)
+        !atplace(objToPick, objLoc)
     }   
 }
 
@@ -23,10 +24,10 @@ Define Action PlaceHL {
         client: Robot
     }
     Preconditions {
-        Holding(client, objToPlace)
+        holding(client, objToPlace)
     }    
     Effects {
-        AtPlace(objToPlace, objLoc)
-        !Holding(client, objToPlace) 
+        atplace(objToPlace, objLoc)
+        !holding(client, objToPlace)
     }   
 }

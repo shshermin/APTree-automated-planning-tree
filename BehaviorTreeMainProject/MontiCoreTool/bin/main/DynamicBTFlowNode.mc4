@@ -25,9 +25,6 @@ GraphNode = node:BTNode ("{"
     (successors:Relation)+
 "}")?;
 
-
 Relation = "--[" temptype:TemporalType "]-->" target:Name@BTNode ";";
     
-
-
 }

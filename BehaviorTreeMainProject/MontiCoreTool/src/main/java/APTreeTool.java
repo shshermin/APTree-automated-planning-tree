@@ -11,6 +11,7 @@ import crftypescon._cocos.CRFTypesConASTPickUpHLCoCo;
 import crftypescon._cocos.CRFTypesConASTPlaceHLCoCo;
 import crftypescon._parser.CRFTypesConParser;
 import crftypescon._visitor.CRFTypesConVisitor2;
+import crftypesdef._cocos.CRFTypesDefASTPActionNodeCoCo;
 import crftypesdef._symboltable.ElementSymbol;
 import de.se_rwth.commons.logging.Log;
 import dynamicbtflownode.DynamicBTFlowNodeMill;
@@ -19,6 +20,19 @@ import dynamicbtflownode._ast.ASTDynamicBTFlowNodeNode;
 import dynamicbtflownode._cocos.DynamicBTFlowNodeCoCoChecker;
 import dynamicbtflownode._symboltable.IDynamicBTFlowNodeArtifactScope;
 import dynamicbtflownode._symboltable.IDynamicBTFlowNodeGlobalScope;
+import behaviortree._cocos.BehaviorTreeASTDecoratorCoCo;
+import behaviortree._cocos.BehaviorTreeASTServiceCoCo;
+import dynamicbtflownode._cocos.DynamicBTFlowNodeASTGraphNodeCoCo;
+import dynamicbtflownode._visitor.DynamicBTFlowNodeTraverser;
+import dynamicbtflownode._visitor.DynamicBTFlowNodeVisitor2;
+import dynamicbtflownode._ast.ASTGraphNode;
+import behaviortree._ast.ASTActionNode;
+import CoCos.DynamicBTFlowNode.MustHavePlanningService;
+import CoCos.DynamicBTFlowNode.ActionNodesCannotHavePlanningService;
+import CoCos.DynamicBTFlowNode.UniquenessOfNames;
+import CoCos.DynamicBTFlowNode.CausalLinkValidator;
+import CoCos.DynamicBTFlowNode.PlanningServiceActionsCoverageCoCo;
+import CoCos.DynamicBTFlowNode.SharedResourceConflictCoCo;
 
 public class APTreeTool {
 
@@ -30,8 +44,8 @@ public class APTreeTool {
     Log.enableFailQuick(false);
     
     APTreeTool tool = new APTreeTool();
-    // If an argument is given, use it as a file; otherwise, default to valid/behavior_trees/APTreeLiveMat.bt
-    String filePath = args.length > 0 ? args[0] : "src/test/resources/valid/behavior_trees/APTreeLiveMat.bt";
+    // If an argument is given, use it as a file; otherwise, default to valid/behavior_trees
+    String filePath = args.length > 0 ? args[0] : "src/test/resources/valid/behavior_trees/APTree.bt";
     tool.run(filePath);
   }
 
@@ -60,16 +74,15 @@ public class APTreeTool {
         // 4.5. PRE-VALIDATION: Check all element references BEFORE symbol table creation
         List<String> validationErrors = validateElementReferences(ast);
         if (!validationErrors.isEmpty()) {
-            System.err.println("\n[X] VALIDATION FAILED: Found undefined element references:");
-            System.err.println("Available elements: beam1, beam2, lp1, plate1, r1, FP1\n");
+            System.err.println("\n[!] PRE-VALIDATION WARNINGS: Found undefined element references:");
+            System.err.println("Available elements: beam1, beam2, lp1, plate1, r1, fp1, fp2, fp3, rp1\n");
             for (String error : validationErrors) {
                 System.err.println("  " + error);
             }
-            System.err.println("\nPlease fix these references in your behavior tree file.");
-            return;
+        } else {
+            System.out.println("[OK] Pre-validation passed: All element references are defined");
         }
-        System.out.println("[OK] Pre-validation passed: All element references are defined");
-    
+        
         // 5. Create Symbol Table
         IDynamicBTFlowNodeGlobalScope gs = DynamicBTFlowNodeMill.globalScope();
         IDynamicBTFlowNodeArtifactScope as;
@@ -83,10 +96,47 @@ public class APTreeTool {
         ElementExistsCoCo elementCheck = new ElementExistsCoCo();
         checker.addCoCo((CRFTypesConASTPickUpHLCoCo) elementCheck);
         checker.addCoCo((CRFTypesConASTPlaceHLCoCo) elementCheck);
+        // New: Every FlowNode must have at least one PlanningService
+        MustHavePlanningService planningServiceCheck = new MustHavePlanningService();
+        checker.addCoCo(planningServiceCheck);
+        // New: Action nodes cannot have PlanningService (generic, works with all ASTPActionNode subclasses)
+        ActionNodesCannotHavePlanningService actionNodeCheck = new ActionNodesCannotHavePlanningService();
+        checker.addCoCo((CRFTypesDefASTPActionNodeCoCo) actionNodeCheck);
+        // New: Decorator and service names must be unique
+        UniquenessOfNames uniquenessCheck = new UniquenessOfNames();
+        checker.addCoCo((BehaviorTreeASTDecoratorCoCo) uniquenessCheck);
+        checker.addCoCo((BehaviorTreeASTServiceCoCo) uniquenessCheck);
+        // New: Validate causal links between connected actions
+        CausalLinkValidator causalValidator = new CausalLinkValidator();
+        checker.addCoCo((DynamicBTFlowNodeASTGraphNodeCoCo) causalValidator);
         
+        // New: Check that all actions in behavior tree are defined in planning service domain
+        PlanningServiceActionsCoverageCoCo actionsCoverageCheck = new PlanningServiceActionsCoverageCoCo();
+        checker.addCoCo(actionsCoverageCheck);
+        // New: Detect shared resources between parallel action sequences
+        SharedResourceConflictCoCo sharedResourceCheck = new SharedResourceConflictCoCo();
+        checker.addCoCo(sharedResourceCheck);
+        
+        // Register all action instances to build type mapping
+        registerActionInstances(ast, causalValidator);
+        
+        System.out.println("[DEBUG] Running CoCo checks on AST...");
         // Add default CoCos here if any exist in the language definition
         checker.checkAll((ASTDynamicBTFlowNodeNode) ast);
-    
+        
+        // Report all collected errors (pre-validation + CoCos)
+        if (!validationErrors.isEmpty() || Log.getErrorCount() > 0) {
+            System.err.println("\n[X] VALIDATION FAILED: Found " + (validationErrors.size() + Log.getErrorCount()) + " error(s).");
+            if (!validationErrors.isEmpty()) {
+                System.err.println("\nPre-validation errors:");
+                for (String error : validationErrors) {
+                    System.err.println("  " + error);
+                }
+            }
+            System.err.println("\nPlease fix these issues in your behavior tree file.");
+            return;
+        }
+        
         System.out.println("[OK] SUCCESS: Model parsed and symbols checked successfully!");
 
     } catch (Exception e) {
@@ -161,6 +211,49 @@ public class APTreeTool {
       System.err.println("[X] ERROR loading instances: " + e.getMessage());
       e.printStackTrace();
     }
+  }
+
+  /**
+   * Register all action instances in the behavior tree with the CausalLinkValidator.
+   * This traverses the AST to extract action instance names and their types.
+   * 
+   * @param ast The parsed behavior tree AST
+   * @param validator The CausalLinkValidator to register instances with
+   */
+  private void registerActionInstances(ASTAPTree ast, CausalLinkValidator validator) {
+    var traverser = DynamicBTFlowNodeMill.traverser();
+    
+    traverser.add4DynamicBTFlowNode(new dynamicbtflownode._visitor.DynamicBTFlowNodeVisitor2() {
+      @Override
+      public void visit(ASTGraphNode node) {
+        if (node.getNode() instanceof ASTActionNode) {
+          ASTActionNode actionNode = (ASTActionNode) node.getNode();
+          String instanceName = actionNode.getName();
+          // Extract action type from class name (ASTPickUpHL -> PickUpHL)
+          String actionType = extractActionType(actionNode);
+          validator.registerActionInstance(instanceName, actionType);
+          System.out.println("[DEBUG] Registered action: " + instanceName + " (type: " + actionType + ")");
+        }
+      }
+    });
+    
+    ast.accept(traverser);
+  }
+
+  /**
+   * Extract action type name from an ASTActionNode.
+   * Maps ASTPic kUpHL class name to PickUpHL type name.
+   * 
+   * @param actionNode The action node
+   * @return The action type name (e.g., "PickUpHL")
+   */
+  private String extractActionType(ASTActionNode actionNode) {
+    String className = actionNode.getClass().getSimpleName();
+    // ASTPickUpHL -> PickUpHL, ASTPlaceHL -> PlaceHL
+    if (className.startsWith("AST")) {
+      return className.substring(3); // Remove "AST" prefix
+    }
+    return className;
   }
 
   /**

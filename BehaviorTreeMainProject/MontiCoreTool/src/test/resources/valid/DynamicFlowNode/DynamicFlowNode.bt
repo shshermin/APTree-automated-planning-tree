@@ -1,8 +1,6 @@
-FlowNode {
-    Service myservice
-    Service anotherservice
-    ALL
-    ALLACTION
+DynamicFlowNode MyFlowNode {
+    PlanningService myservice
+    CompositionOperator ALL
     Nodegraph mygraph {
         Action PickUpHL mypickup (beam1 position1 robot1)
         Action PickUpHL mypickups (beam1 position1 robot1)

@@ -3,7 +3,7 @@
   symbol BehaviorTree = "BehaviorTree" name:Name "{" "Root" root:FlowNode "}";
 
   // abstract node class
-  abstract symbol BTNode = name:Name (decorators:Decorator | services:Service)*; 
+  abstract symbol BTNode = name:Name (Decorator | Service)*; 
 
   // flow nodes
   abstract  FlowNode extends BTNode = name:Name  (Service | Decorator | children:BTNode)* ;
@@ -26,7 +26,7 @@
   CalcDist extends Service = "Service" name:Name;
 
 // tokens definition
-   BasicType = Name | Integer | Double | Boolean;
+   BasicType = Name | Integer | Double ;
 
    token PDDL_START = LOWER_CASE_LETTER;
    token PDDL_CHAR = LETTER | NUMBER | '-' | '_';
@@ -35,7 +35,7 @@
    token NUMBER = '0'..'9';
    token FILEPATH = LETTER | NUMBER | '_'  | '.' | '/' | '\\' | '-' ;
 
-    token Boolean = "true" | "false";
+    enum Boolean = "True" | "False";
     token Double = NUMBER+ '.' NUMBER+;
     token Integer = '-'? NUMBER+;
     token STRING_CHAR = LETTER | NUMBER | '_'  | '.' | '/' | '\\' | '-' ;

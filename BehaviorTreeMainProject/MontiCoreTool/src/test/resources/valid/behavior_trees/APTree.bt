@@ -1,35 +1,31 @@
 
-
-
-
-
 BehaviorTree APTree {
     Root FlowNode Main {
         All
         AllFlow
         NodeGraph {    
             FlowNode  HandlePlate {
-                PlanningService mypddlplanner1 Enhsp1
+                PlanningService MyPlannerSrv1 Enhsp1 
                 All
                 AllAction
                 NodeGraph {
-                    Action PickUpHL pickup1 (plate1 r1) @PickUpMLSubtree {
-                       --[Meets]--> placeBeam1;
+                    Action PickUpHL PickUpPlate1 (plate1 fp1 r1) @PickUpMLSubtree {
+                       --[Meets]--> PlacePlate1;
                     }
-                    Action PlaceHL placeBeam1 (plate1 pr1 r1) { Action PlaceML placeBeam1  }
+                    Action PlaceHL PlacePlate1 (plate1 pr1 r1) 
                 }
             } 
             FlowNode BeamPlacement {
-                PlanningService mypddlplanner1 Enhsp2
+                PlanningService MyPlannerSrv2 Enhsp1 
                 All
                 AllAction
                 NodeGraph {
-                            Action PickUpHL pickuphl2 (beam1 position3 robot1) { 
-                                --[Meets]--> placeBeam1;
+                            Action PickUpHL PickUpBeam1 (beam1 fp2 robot1) { 
+                                --[Meets]--> PlaceBeam1;
                             }
-                            Action PlaceHL placehl3 (beam1 pr1 robot1) 
-                            Action PickUpHL pickuphl3 (beam2 fp3 robot1) { 
-                                --[Meets]--> placehl3;
+                            Action PlaceHL PlaceBeam1 (beam1 pr2 r1) 
+                            Action PickUpHL PickUpBeam2 (beam2 fp3 r1) { 
+                                --[Meets]--> PlaceBeam2;
                             }
-                            Action PlaceHL placehl3 (beam2 pr2 robot1) 
+                            Action PlaceHL PlaceBeam2 (beam2 pr3 r1) 
                 }}}}} 

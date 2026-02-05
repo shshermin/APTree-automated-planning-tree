@@ -7,6 +7,7 @@ FirstPos fp1 ()
 FirstPos fp2 ()
 FirstPos fp3 ()
 FirstPos rp1 ()
+VaccumGripper vg1 (fp1 True)
 
 
 
