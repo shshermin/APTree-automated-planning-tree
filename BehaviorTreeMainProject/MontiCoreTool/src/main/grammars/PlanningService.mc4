@@ -4,7 +4,7 @@ grammar PlanningService extends CRFTypesCon {
  PWorld = (Problem| PDDLPlannerService | ENHSP | Domain )*;
 //planning service
 abstract PService extends Service = name:Name planner:Name@Planner;
-PDDLPlannerService extends PService = "PlanningService" name:Name planner:Name@PDDLPlanner ;
+PDDLPlannerService extends PService = ("PlanningService" | "PDDLPlanning" "Service") name:Name planner:Name@PDDLPlanner ;
   
 // 2. Planners
 abstract symbol Planner = name:Name;

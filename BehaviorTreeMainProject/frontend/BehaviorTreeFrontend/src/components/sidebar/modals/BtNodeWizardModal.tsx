@@ -3,10 +3,11 @@ import type {
   BehaviorNodeOption,
   DecoratorNodeOption,
   FlowNodeOption,
+  NodeGraphNodeOption,
   ServiceNodeOption,
 } from "../utils/types";
 
-export type WizardStage = "root" | "action" | "flow" | "decorator" | "service";
+export type WizardStage = "root" | "action" | "flow" | "decorator" | "service" | "nodeGraph";
 
 type HighlightableStage = Exclude<WizardStage, "root">;
 
@@ -15,6 +16,7 @@ interface BtNodeWizardModalProps {
   flowOptions: FlowNodeOption[];
   decoratorOptions: DecoratorNodeOption[];
   serviceOptions: ServiceNodeOption[];
+  nodeGraphOptions: NodeGraphNodeOption[];
   onClose: () => void;
   onSelectActionType: () => void;
   onSelectActionInstance: () => void;
@@ -27,6 +29,7 @@ export default function BtNodeWizardModal({
   flowOptions,
   decoratorOptions,
   serviceOptions,
+  nodeGraphOptions,
   onClose,
   onSelectActionType,
   onSelectActionInstance,
@@ -107,6 +110,17 @@ export default function BtNodeWizardModal({
                 <span className="wizard-card-title">Service Node</span>
                 <span className="wizard-card-copy">
                   Attach background logic such as sensors or blackboard updates to a branch.
+                </span>
+              </button>
+
+              <button
+                type="button"
+                className={`wizard-card${highlightedStage === "nodeGraph" ? " wizard-card--highlighted" : ""}`}
+                onClick={() => setStage("nodeGraph")}
+              >
+                <span className="wizard-card-title">NodeGraph</span>
+                <span className="wizard-card-copy">
+                  Add a plan subgraph container (members + temporal relations). Typically used inside Dynamic Flow Nodes.
                 </span>
               </button>
             </div>
@@ -205,6 +219,28 @@ export default function BtNodeWizardModal({
               ))}
               {serviceOptions.length === 0 ? (
                 <p className="wizard-empty">No service nodes defined.</p>
+              ) : null}
+            </div>
+          ) : null}
+
+          {stage === "nodeGraph" ? (
+            <div className="wizard-step-grid">
+              {nodeGraphOptions.map((option) => (
+                <button
+                  key={option.id}
+                  type="button"
+                  className="wizard-card"
+                  onClick={() => {
+                    onSelectBehaviorOption(option);
+                    handleClose();
+                  }}
+                >
+                  <span className="wizard-card-title">{option.label}</span>
+                  <span className="wizard-card-copy">{option.description ?? "Add this node graph to the canvas."}</span>
+                </button>
+              ))}
+              {nodeGraphOptions.length === 0 ? (
+                <p className="wizard-empty">No node graphs defined.</p>
               ) : null}
             </div>
           ) : null}

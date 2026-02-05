@@ -71,7 +71,7 @@ app.MapPost("/api/aptree/validate", async (AptreeValidateRequest request, IWebHo
     {
         return Results.Problem(
             title: "MontiCore tool jar not found",
-            detail: $"Expected jar at: {jarPath}. Build it via: (cd MontiCoreTool && ./gradlew shadowJar)");
+            detail: $"Expected jar at: {jarPath}. Build it via: (cd MontiCoreTool && gradle shadowJar)");
     }
 
     Directory.CreateDirectory(Path.Combine(montiCoreDir, "target", "tmp"));

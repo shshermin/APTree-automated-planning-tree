@@ -4,6 +4,7 @@ import type {
   DataCategory,
   DecoratorNodeOption,
   FlowNodeOption,
+  NodeGraphNodeOption,
   ServiceNodeOption,
 } from "./types";
 
@@ -81,6 +82,21 @@ export const FALLBACK_SERVICE_NODE_OPTIONS: ServiceNodeOption[] = [
     description:
       "Continuously synchronize key values into the blackboard while active.",
     kind: "service",
+  },
+];
+
+/**
+ * fallback node-graph definitions.
+ * NodeGraphs are structural container nodes holding a plan subgraph.
+ */
+export const FALLBACK_NODEGRAPH_NODE_OPTIONS: NodeGraphNodeOption[] = [
+  {
+    id: "BTNodeGraph",
+    label: "NodeGraph",
+    typeLabel: "NodeGraph",
+    description:
+      "Container node that owns a plan subgraph (members + temporal relations).",
+    kind: "nodeGraph",
   },
 ];
 

@@ -158,7 +158,7 @@ public class BTFlowNode_Composite : BTFlowNodeBase
             LoggingService.LogInfo($"📊 CompositeFlow: Child {currentChild.DebugDisplayName}: {previousStatus} → {currentChild.status}");
             
             // If child completed (Succeeded or failed), move to next child
-            if (currentChild.status == BTNodeResult.Succeeded || currentChild.status == BTNodeResult.failed)
+            if (currentChild.status == BTNodeResult.Success || currentChild.status == BTNodeResult.Failure)
             {
                 currentChildIndex++;
             }
@@ -170,7 +170,7 @@ public class BTFlowNode_Composite : BTFlowNodeBase
         
         // All children have been processed once in this pass
         // If any child is still running (neither succeeded nor failed), keep the composite running
-        bool anyRunning = allChildren.Any(node => node.status != BTNodeResult.Succeeded && node.status != BTNodeResult.failed);
+        bool anyRunning = allChildren.Any(node => node.status != BTNodeResult.Success && node.status != BTNodeResult.Failure);
         if (anyRunning)
         {
             currentChildIndex = 0; // wrap to first child for the next pass
@@ -186,7 +186,7 @@ public class BTFlowNode_Composite : BTFlowNodeBase
         bool criteriaAchieved = EvaluateSuccessCriteria(allChildren);
         if (criteriaAchieved)
         {
-            status = BTNodeResult.Succeeded;
+            status = BTNodeResult.Success;
             LoggingService.LogSuccess($"✅ CompositeFlow: Success criteria achieved on attempt {currentAttempt}");
             return true;
         }
@@ -218,7 +218,7 @@ public class BTFlowNode_Composite : BTFlowNodeBase
     {
         if (children.Count == 0) return false;
         
-        int successCount = children.Count(node => node.status == BTNodeResult.Succeeded);
+        int successCount = children.Count(node => node.status == BTNodeResult.Success);
         int totalCount = children.Count;
         
         LoggingService.LogInfo($"📊 CompositeFlow: Success evaluation - {successCount}/{totalCount} children succeeded");
@@ -241,7 +241,7 @@ public class BTFlowNode_Composite : BTFlowNodeBase
         return TerminationPolicy switch
         {
             CompositeTerminationPolicy.StopOnFirstFailure => 
-                children.Any(node => node.status == BTNodeResult.failed),
+                children.Any(node => node.status == BTNodeResult.Failure),
                 
             CompositeTerminationPolicy.StopWhenCriteriaImpossible => 
                 IsCriteriaImpossible(children),
@@ -261,8 +261,8 @@ public class BTFlowNode_Composite : BTFlowNodeBase
     /// </summary>
     private bool IsCriteriaImpossible(List<IBTNode> children)
     {
-        int successCount = children.Count(node => node.status == BTNodeResult.Succeeded);
-        int failedCount = children.Count(node => node.status == BTNodeResult.failed);
+        int successCount = children.Count(node => node.status == BTNodeResult.Success);
+        int failedCount = children.Count(node => node.status == BTNodeResult.Failure);
         int remainingCount = children.Count - successCount - failedCount;
         int maxPossibleSuccess = successCount + remainingCount;
         
@@ -284,7 +284,7 @@ public class BTFlowNode_Composite : BTFlowNodeBase
         int resetCount = 0;
         foreach (var child in children)
         {
-            if (child.status == BTNodeResult.failed)
+            if (child.status == BTNodeResult.Failure)
             {
                 child.Reset();
                 resetCount++;

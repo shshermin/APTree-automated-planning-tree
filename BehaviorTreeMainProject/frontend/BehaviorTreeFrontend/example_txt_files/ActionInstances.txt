@@ -1,2 +1,0 @@
-ActionInstance: pickUp(pickedObject = b1, rob = r1, loc = fp1, robTool = vg1)
-ActionInstance: place(obj = b3, placePos = fp3, client = r1)

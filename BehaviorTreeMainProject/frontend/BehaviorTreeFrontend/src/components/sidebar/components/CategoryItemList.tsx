@@ -215,7 +215,7 @@ const resolveEmptyStateMessage = (
   }
 
   if (isBehaviorNodeCategory) {
-    return "Use the Add Behavior Node wizard to create new flow, decorator, or service nodes.";
+    return "Use the Add Behavior Node wizard to create new flow, decorator, service, or node graph entries.";
   }
 
   return "No items defined.";

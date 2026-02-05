@@ -20,6 +20,15 @@ dotnet run --project BehaviorTreeMainProject.csproj --urls http://localhost:5254
     - http://localhost:5254/api/catalog/flows
 
 
+# MontiCore APTree tool (for .bt import/validation)
+
+The backend endpoint `/api/aptree/validate` executes the MontiCore tool jar.
+
+Build/update the jar:
+cd MontiCoreTool
+gradle shadowJar
+
+
     source pddl_env/bin/activate
 
        python pddl_planning_service.py

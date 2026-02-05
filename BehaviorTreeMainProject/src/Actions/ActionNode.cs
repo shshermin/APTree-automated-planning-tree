@@ -33,7 +33,7 @@ public abstract class ActionNode :BTNodeBase
         if (bOverrideReturnValue.HasValue)
             return bOverrideReturnValue.Value;
 
-        return InResult != BTNodeResult.failed;
+        return InResult != BTNodeResult.Failure;
     }
 
 }

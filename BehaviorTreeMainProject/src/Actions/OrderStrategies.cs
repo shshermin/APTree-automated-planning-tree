@@ -8,8 +8,8 @@ public class TotalOrder : IOrderStrategy
     public bool CanExecute(BTNodeResult currentState, BTNodeResult nextState, float elapsedTime, float delay)
     {
          // Next action can only start when current action is completely finished
-        return currentState == BTNodeResult.Succeeded || 
-               currentState == BTNodeResult.failed;
+        return currentState == BTNodeResult.Success || 
+               currentState == BTNodeResult.Failure;
     }
 }
 
