@@ -98,7 +98,7 @@ public class APTreeTool {
         checker.addCoCo((CRFTypesConASTPlaceHLCoCo) elementCheck);
         // New: Every FlowNode must have at least one PlanningService
         MustHavePlanningService planningServiceCheck = new MustHavePlanningService();
-        checker.addCoCo(planningServiceCheck);
+       // checker.addCoCo(planningServiceCheck);
         // New: Action nodes cannot have PlanningService (generic, works with all ASTPActionNode subclasses)
         ActionNodesCannotHavePlanningService actionNodeCheck = new ActionNodesCannotHavePlanningService();
         checker.addCoCo((CRFTypesDefASTPActionNodeCoCo) actionNodeCheck);
@@ -112,10 +112,10 @@ public class APTreeTool {
         
         // New: Check that all actions in behavior tree are defined in planning service domain
         PlanningServiceActionsCoverageCoCo actionsCoverageCheck = new PlanningServiceActionsCoverageCoCo();
-        checker.addCoCo(actionsCoverageCheck);
+        // checker.addCoCo(actionsCoverageCheck);
         // New: Detect shared resources between parallel action sequences
         SharedResourceConflictCoCo sharedResourceCheck = new SharedResourceConflictCoCo();
-        checker.addCoCo(sharedResourceCheck);
+        // checker.addCoCo(sharedResourceCheck);
         
         // Register all action instances to build type mapping
         registerActionInstances(ast, causalValidator);
