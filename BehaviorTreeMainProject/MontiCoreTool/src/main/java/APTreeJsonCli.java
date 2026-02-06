@@ -488,9 +488,6 @@ public class APTreeJsonCli {
           if (node instanceof behaviortree._ast.ASTDecorator) {
             return ((behaviortree._ast.ASTDecorator) node).getName();
           }
-          if (node instanceof dynamicbtflownode._ast.ASTNodeGraph) {
-            return ((dynamicbtflownode._ast.ASTNodeGraph) node).getName();
-          }
         } catch (Exception ignored) {
           // best-effort
         }
