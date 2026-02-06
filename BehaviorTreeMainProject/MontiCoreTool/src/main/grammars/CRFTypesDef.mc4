@@ -33,7 +33,7 @@ abstract symbol  Agent    implements CustomProperty = name:Name ;
       PredicateTypeDefinition = "Define" "Predicate" name:Name  "{" (Property)* "}";
 //predicateType
 ////???????????????????? how can I use "!" in the concrete syntax?
-      abstract symbol Predicate = ["not"] name:Name;
+      abstract Predicate = ["not"];
 
 // predicate Instances
 //////???????????? this is a dummy predicate because the Grammar does not allow abstract nonterminals without implementation if it is not a component grammar
@@ -60,7 +60,7 @@ enum ActionLevel = "HighLevel" | "MidLevel" | "LowLevel";
     "}";
 
 // Simple predicate reference with Name arguments (comma-separated)
-PredicateRef = "!"? name:Name@Predicate  "(" (args:Name ("," args:Name)*)? ")";
+PredicateRef = "!"? name:Name  "(" (args:Name ("," args:Name)*)? ")";
 
 
  PlaceTimber extends PActionNode = "placetimber";
