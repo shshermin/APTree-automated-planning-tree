@@ -1,4 +1,0 @@
-concrete_bt_flow_node ExampleTask {
-  PickUpHL(beam3)
-  PlaceHL(beam2)
-}
