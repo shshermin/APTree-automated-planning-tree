@@ -2,14 +2,21 @@ grammar CRFTypesCon extends CRFTypesDef, de.monticore.MCBasics {
 
 ////////// ?????? I am not sure why do we get errors if we dont include this world thing!
 @Override
-World = (PropertyTypeDefinition | Property | PredicateTypeDefinition | ActionTypeDefinition | Beam | Plate | FirstPos | Robot | VacGripper | Holding | AtPlace)*;
+World = (PropertyTypeDefinition | Property | PredicateTypeDefinition | ActionTypeDefinition | Beam | Plate | FirstPos | Robot | VacGripper | Holding | AtPlace | NailGripper | GlueGun | Stack | Cassette | PositionOnRail | Equipposition | Stackposition)*;
 
 // === GENERATED RULES (DO NOT EDIT BELOW) ===
-symbol Beam extends Element = "Beam" name:Name "(" loc:Name@Location ")";
-symbol Plate extends Element = "Plate" name:Name "(" loc:Name@Location ")";
+symbol Beam extends Element = "Beam" name:Name "(" loc:Location ")";
+symbol Plate extends Element = "Plate" name:Name "(" loc:Location ")";
+symbol Robot extends Agent = "Robot" name:Name "(" loc:Location mType:Name ")";
+symbol VacGripper extends Tool = "VacGripper" name:Name "(" loc:Location isActive:Boolean ")";
 symbol FirstPos extends Location = "FirstPos" name:Name "(" ")";
-symbol Robot extends Agent = "Robot" name:Name "(" loc:Name@Location mType:Name ")";
-symbol VacGripper extends Tool = "VaccumGripper" name:Name "(" loc:Name@Location isActive:Boolean ")";
+symbol NailGripper extends Tool = "NailGripper" name:Name "(" isOn:Boolean ")";
+symbol GlueGun extends Tool = "GlueGun" name:Name "(" isOn:Boolean ")";
+symbol Stack extends Layer = "Stack" name:Name "(" level:Integer belongsToModule:Module ")";
+symbol Cassette extends Module = "Cassette" name:Name "(" layers:Layer+ ")";
+symbol PositionOnRail extends Location = "PositionOnRail" name:Name "(" ")";
+symbol Equipposition extends Location = "Equipposition" name:Name "(" ")";
+symbol Stackposition extends Location = "Stackposition" name:Name "(" ")";
 // === END GENERATED RULES ===
 
 

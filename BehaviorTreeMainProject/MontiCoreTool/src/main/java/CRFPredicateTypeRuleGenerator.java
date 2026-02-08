@@ -133,6 +133,10 @@ public class CRFPredicateTypeRuleGenerator {
                 rule.append(pName)
                     .append(":Name@")
                     .append(pType);
+
+                if (prop.isIsList()) {
+                    rule.append("+");
+                }
             }
 
             rule.append(" \")\";");

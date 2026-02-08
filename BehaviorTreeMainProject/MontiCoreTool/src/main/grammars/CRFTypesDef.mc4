@@ -11,17 +11,17 @@ grammar CRFTypesDef extends BehaviorTree, de.monticore.types.MCBasicTypes {
 interface CustomProperty = name:Name;
 
   
-symbol Layer    implements CustomProperty = "Layer" name:Name;
-symbol Module   implements CustomProperty = "Module" name:Name ;
-symbol Text     implements CustomProperty = "Text" name:Name;
+ abstract symbol Layer    implements CustomProperty = name:Name;
+abstract  symbol Module   implements CustomProperty = name:Name ;
+ abstract symbol Text     implements CustomProperty = name:Name;
   
 abstract symbol  Location implements CustomProperty = name:Name;
 abstract symbol  Element  implements CustomProperty = name:Name ;
-abstract symbol Tool     implements CustomProperty = name:Name  ;
+abstract symbol  Tool     implements CustomProperty = name:Name  ;
 abstract symbol  Agent    implements CustomProperty = name:Name ;
 
   // definition of a property - accepts any Name as type (validated by CoCos)
-     Property = name:Name ":" type:BasicType ;
+     Property = name:Name ":" type:BasicType isList:["+"]? ;
  
   // 5. The Dynamic Definition rule
      PropertyTypeDefinition = "Define" name:Name "as" superType:Name ("{" (Property)* "}")?;

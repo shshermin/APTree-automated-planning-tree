@@ -141,6 +141,11 @@ public class CRFPropertyTypeRuleGenerator {
 
                // rule: name:Type
                rule.append(pName).append(":").append(pType);
+               
+               // Check if it's a list (marked by + in the model)
+               if (prop.isIsList()) {
+                   rule.append("+");
+               }
             }
             
             rule.append(" \")\";");
