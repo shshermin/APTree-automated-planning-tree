@@ -199,6 +199,13 @@ task runCRFPropertyTypeParser(type: JavaExec) {
     workingDir = projectDir
 }
 
+task generateCSharpPropertyTypes(type: JavaExec) {
+    dependsOn 'compileJava'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'CSharopCodeGenerator'
+    workingDir = projectDir
+}
+
 
 
 task runCRFPredicateTypeParser(type: JavaExec) {

@@ -37,7 +37,7 @@ abstract symbol  Agent    implements CustomProperty = name:Name ;
 
 // predicate Instances
 //////???????????? this is a dummy predicate because the Grammar does not allow abstract nonterminals without implementation if it is not a component grammar
-      IsAt extends Predicate = "dummy" name:Name;
+      Dummy extends Predicate = "Dummy" name:Name;
 
 // Action type definition
 

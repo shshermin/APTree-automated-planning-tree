@@ -2,7 +2,7 @@ grammar CRFTypesCon extends CRFTypesDef, de.monticore.MCBasics {
 
 ////////// ?????? I am not sure why do we get errors if we dont include this world thing!
 @Override
-World = (PropertyTypeDefinition | Property | PredicateTypeDefinition | ActionTypeDefinition | Beam | Plate | FirstPos | Robot | VacGripper | Holding | AtPlace | NailGripper | GlueGun | Stack | Cassette | PositionOnRail | Equipposition | Stackposition)*;
+World = (PropertyTypeDefinition | Property | PredicateTypeDefinition | ActionTypeDefinition | Beam | Plate | FirstPos | Robot | VacGripper | Holding | AtPlace | NailGripper | GlueGun | Stack | Cassette | PositionOnRail | Equipposition | Stackposition | IsAt | AtAgent | HasTool | Clear | OnTop | AllSet | BelongsToLayer | BelongsToModule | PositionFree | Stacked | Glued | Nailed)*;
 
 // === GENERATED RULES (DO NOT EDIT BELOW) ===
 symbol Beam extends Element = "Beam" name:Name "(" loc:Location ")";
@@ -23,6 +23,18 @@ symbol Stackposition extends Location = "Stackposition" name:Name "(" ")";
 // === GENERATED PREDICATE RULES (DO NOT EDIT BELOW) ===
 Holding extends Predicate = "!"? "Holding" "(" item:Name@Element agent:Name@Agent ")";
 AtPlace extends Predicate = "!"? "AtPlace" "(" item:Name@Element loc:Name@Location ")";
+IsAt extends Predicate = "!"? "IsAt" "(" myObject:Name@Element location:Name@Location ")";
+AtAgent extends Predicate = "!"? "AtAgent" "(" agent:Name@Agent location:Name@Location ")";
+HasTool extends Predicate = "!"? "HasTool" "(" agent:Name@Agent tool:Name@Tool ")";
+Clear extends Predicate = "!"? "Clear" "(" myObject:Name@Element ")";
+OnTop extends Predicate = "!"? "OnTop" "(" myObject1:Name@Element myObject2:Name@Element ")";
+AllSet extends Predicate = "!"? "AllSet" "(" lay:Name@Layer mod:Name@Module ")";
+BelongsToLayer extends Predicate = "!"? "BelongsToLayer" "(" myObject:Name@Element lay:Name@Layer ")";
+BelongsToModule extends Predicate = "!"? "BelongsToModule" "(" myObject:Name@Element mod:Name@Module ")";
+PositionFree extends Predicate = "!"? "PositionFree" "(" pos:Name@Location ")";
+Stacked extends Predicate = "!"? "Stacked" "(" myObject:Name@Element ")";
+Glued extends Predicate = "!"? "Glued" "(" myObject:Name@Element ")";
+Nailed extends Predicate = "!"? "Nailed" "(" myObject:Name@Element ")";
 // === END GENERATED PREDICATE RULES ===
 
 
