@@ -1,0 +1,8 @@
+// Empty behavior trees referenced by actions
+BehaviorTree PickupSubtree {
+    Root FlowNode emptyNode {
+        All
+        AllFlow
+        NodeGraph {}
+    }
+}

@@ -89,16 +89,7 @@ export const FALLBACK_SERVICE_NODE_OPTIONS: ServiceNodeOption[] = [
  * fallback node-graph definitions.
  * NodeGraphs are structural container nodes holding a plan subgraph.
  */
-export const FALLBACK_NODEGRAPH_NODE_OPTIONS: NodeGraphNodeOption[] = [
-  {
-    id: "BTNodeGraph",
-    label: "NodeGraph",
-    typeLabel: "NodeGraph",
-    description:
-      "Container node that owns a plan subgraph (members + temporal relations).",
-    kind: "nodeGraph",
-  },
-];
+export const FALLBACK_NODEGRAPH_NODE_OPTIONS: NodeGraphNodeOption[] = [];
 
 export const BLACKBOARD_KEY: DataCategory = "variables";
 export const BT_NODES_KEY: DataCategory = "nodes";

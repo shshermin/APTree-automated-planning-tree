@@ -1152,6 +1152,62 @@ export const useSidebarManager = (): SidebarManager => {
   );
 
   /**
+   * Adds new action types (skipping any that already exist by name).
+   * @param newTypes array of action types to add
+   */
+  const addActionTypes = useCallback(
+    (newTypes: ActionType[]) => {
+      if (!newTypes.length) return;
+
+      setData((prev) => {
+        const existingTypes =
+          (prev[ACTION_TYPES_KEY] as ActionType[] | undefined) ?? [];
+        const existingNames = new Set(
+          existingTypes.map((t) => t.name.trim().toLowerCase())
+        );
+
+        const toAdd = newTypes.filter(
+          (t) => !existingNames.has(t.name.trim().toLowerCase())
+        );
+
+        if (!toAdd.length) return prev;
+
+        return {
+          ...prev,
+          [ACTION_TYPES_KEY]: [...existingTypes, ...toAdd],
+        };
+      });
+    },
+    [setData]
+  );
+
+  /**
+   * Adds new action instances (skipping any that already exist by id).
+   * @param newInstances array of action instances to add
+   */
+  const addActionInstances = useCallback(
+    (newInstances: ActionInstance[]) => {
+      if (!newInstances.length) return;
+
+      setData((prev) => {
+        const existingInstances =
+          (prev[ACTION_INSTANCES_KEY] as ActionInstance[] | undefined) ?? [];
+        const existingIds = new Set(existingInstances.map((i) => i.id));
+
+        const toAdd = newInstances.filter((i) => !existingIds.has(i.id));
+
+        if (!toAdd.length) return prev;
+
+        return {
+          ...prev,
+          [ACTION_INSTANCES_KEY]: [...existingInstances, ...toAdd],
+        };
+      });
+    },
+    [setData]
+  );
+
+  /**
    * resolves the localized add button label for the supplied category key.
    * @param category category key whose label should be retrieved
    * @returns translated add button label
@@ -1201,5 +1257,7 @@ export const useSidebarManager = (): SidebarManager => {
     predicateTypeModalState,
     actionTypeModalState,
     importActionInstancesFromText,
+    addActionTypes,
+    addActionInstances,
   };
 };

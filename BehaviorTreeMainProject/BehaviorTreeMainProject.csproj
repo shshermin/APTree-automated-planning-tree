@@ -25,4 +25,13 @@
     <Compile Remove="src/Tests/**" />
   </ItemGroup>
 
+  <!-- Exclude MontiCore generated C# artifacts from the backend build.
+       They currently introduce a top-level namespace `BehaviorTree` (e.g. `BehaviorTree.Types`)
+       which conflicts with the backend's `BehaviorTree` type in the global namespace. -->
+  <ItemGroup>
+    <Compile Remove="MontiCoreTool/generated_csharp/**" />
+    <EmbeddedResource Remove="MontiCoreTool/generated_csharp/**" />
+    <Content Remove="MontiCoreTool/generated_csharp/**" />
+  </ItemGroup>
+
 </Project>

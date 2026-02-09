@@ -1,14 +1,21 @@
 // Concrete instance model for CRFTypesCon.
-// Note: CRFTypesCon currently models locations via the "FirstPos" symbol only.
+// IMPORTANT: For CRFTypesCon, element definitions embed a concrete Location,
+// i.e. use `FirstPos fp1 ()` (or similar) instead of just `fp1`.
 
-Plate plate1 (fp1)
-Beam beam1 (fp2)
-Beam beam2 (fp3)
-Robot r1 (rp1 ur10)
-FirstPos fp1 ()
-FirstPos fp2 ()
-FirstPos fp3 ()
-VaccumGripper vg1 (fp1 True)
+// Elements
+Plate plate1 (FirstPos fp1 ())
+Beam beam1 (FirstPos fp2 ())
+Beam beam2 (FirstPos fp3 ())
+
+// Locations referenced by actions in behavior trees
+PositionOnRail pr1 ()
+PositionOnRail pr2 ()
+PositionOnRail pr3 ()
+
+// Agents / tools
+Robot r1 (PositionOnRail rp1 () ur10)
+Robot robot1 (PositionOnRail rp1b () ur10)
+VacGripper vg1 (FirstPos fp1vg () True)
 
 
 
