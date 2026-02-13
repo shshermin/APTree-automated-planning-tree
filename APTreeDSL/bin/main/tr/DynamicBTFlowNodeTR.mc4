@@ -1,0 +1,300 @@
+package tr;grammar DynamicBTFlowNodeTR extends.tr.PlanningServiceTR {
+
+  DynamicBTFlowNodeTFRule =
+    TFRule ;
+
+
+  Relation_Rep implements ITFRelation , IDynamicBTFlowNodeTFPart astimplements de.monticore.tf.ast.IReplacement =
+    ("[[" lhs:ITFRelation ? ReplacementOp rhs:ITFRelation ? "]]");
+
+
+  Relation_Pat implements ITFRelation , IDynamicBTFlowNodeTFPart astimplements de.monticore.tf.ast.IPattern =
+    "Relation" schemaVarName:Name | "--[" temptype:ITFTemporalType "]-->" target:TfIdentifierName ";" |(("Relation" ? schemaVarName:Name|"Relation" schemaVarName:Name ?)"[["("--[" temptype:ITFTemporalType "]-->" target:TfIdentifierName ";")"]]");
+
+
+  Relation_Neg implements ITFRelation , IDynamicBTFlowNodeTFPart astimplements de.monticore.tf.ast.INegation =
+    "not" "[[" relation:ITFRelation "]]" ;
+
+
+  Relation_Opt implements ITFRelation , IDynamicBTFlowNodeTFPart astimplements de.monticore.tf.ast.IOptional =
+    "opt" "[[" relation:ITFRelation "]]" ;
+
+
+  Relation_List implements ITFRelation , IDynamicBTFlowNodeTFPart astimplements de.monticore.tf.ast.IList =
+    "list" "<Relation>" ? schemaVarName:Name ? "[[" relation:Relation_Pat "]]" ;
+
+
+  GraphNode_Rep implements ITFGraphNode , IDynamicBTFlowNodeTFPart astimplements de.monticore.tf.ast.IReplacement =
+    ("[[" lhs:ITFGraphNode ? ReplacementOp rhs:ITFGraphNode ? "]]");
+
+
+  GraphNode_Pat implements ITFGraphNode , IDynamicBTFlowNodeTFPart astimplements de.monticore.tf.ast.IPattern =
+    "GraphNode" schemaVarName:Name | node:ITFBTNode("{"(successors:ITFRelation)+"}")? |(("GraphNode" ? schemaVarName:Name|"GraphNode" schemaVarName:Name ?)"[["(node:ITFBTNode("{"(successors:ITFRelation)+"}")?)"]]");
+
+
+  GraphNode_Neg implements ITFGraphNode , IDynamicBTFlowNodeTFPart astimplements de.monticore.tf.ast.INegation =
+    "not" "[[" graphNode:ITFGraphNode "]]" ;
+
+
+  GraphNode_Opt implements ITFGraphNode , IDynamicBTFlowNodeTFPart astimplements de.monticore.tf.ast.IOptional =
+    "opt" "[[" graphNode:ITFGraphNode "]]" ;
+
+
+  GraphNode_List implements ITFGraphNode , IDynamicBTFlowNodeTFPart astimplements de.monticore.tf.ast.IList =
+    "list" "<GraphNode>" ? schemaVarName:Name ? "[[" graphNode:GraphNode_Pat "]]" ;
+
+
+  NodeGraph_Rep implements ITFNodeGraph , IDynamicBTFlowNodeTFPart astimplements de.monticore.tf.ast.IReplacement =
+    ("[[" lhs:ITFNodeGraph ? ReplacementOp rhs:ITFNodeGraph ? "]]");
+
+
+  NodeGraph_Pat implements ITFNodeGraph , IDynamicBTFlowNodeTFPart astimplements de.monticore.tf.ast.IPattern =
+    "NodeGraph" schemaVarName:Name | "NodeGraph" "{"(nodes:ITFGraphNode)*"}" |(("NodeGraph" ? schemaVarName:Name|"NodeGraph" schemaVarName:Name ?)"[["("NodeGraph" "{"(nodes:ITFGraphNode)*"}")"]]");
+
+
+  NodeGraph_Neg implements ITFNodeGraph , IDynamicBTFlowNodeTFPart astimplements de.monticore.tf.ast.INegation =
+    "not" "[[" nodeGraph:ITFNodeGraph "]]" ;
+
+
+  NodeGraph_Opt implements ITFNodeGraph , IDynamicBTFlowNodeTFPart astimplements de.monticore.tf.ast.IOptional =
+    "opt" "[[" nodeGraph:ITFNodeGraph "]]" ;
+
+
+  NodeGraph_List implements ITFNodeGraph , IDynamicBTFlowNodeTFPart astimplements de.monticore.tf.ast.IList =
+    "list" "<NodeGraph>" ? schemaVarName:Name ? "[[" nodeGraph:NodeGraph_Pat "]]" ;
+
+
+  DynamicFlowNode_Rep implements ITFDynamicFlowNode , IDynamicBTFlowNodeTFPart , ITFFlowNode astimplements de.monticore.tf.ast.IReplacement =
+    ("[[" lhs:ITFDynamicFlowNode ? ReplacementOp rhs:ITFDynamicFlowNode ? "]]");
+
+
+  DynamicFlowNode_Pat implements ITFDynamicFlowNode , ITFFlowNode , IDynamicBTFlowNodeTFPart astimplements de.monticore.tf.ast.IPattern =
+    "DynamicFlowNode" schemaVarName:Name | "FlowNode" name:TfIdentifierName "{"(decorator:ITFDecorator|service:ITFService)*succri:ITFSuccessCriteria childType:ITFChildType nodeGraph:ITFNodeGraph "}" |(("DynamicFlowNode" ? schemaVarName:Name|"DynamicFlowNode" schemaVarName:Name ?)"[["("FlowNode" name:TfIdentifierName "{"(decorator:ITFDecorator|service:ITFService)*succri:ITFSuccessCriteria childType:ITFChildType nodeGraph:ITFNodeGraph "}")"]]");
+
+
+  DynamicFlowNode_Neg implements ITFDynamicFlowNode , IDynamicBTFlowNodeTFPart , ITFFlowNode astimplements de.monticore.tf.ast.INegation =
+    "not" "[[" dynamicFlowNode:ITFDynamicFlowNode "]]" ;
+
+
+  DynamicFlowNode_Opt implements ITFDynamicFlowNode , IDynamicBTFlowNodeTFPart , ITFFlowNode astimplements de.monticore.tf.ast.IOptional =
+    "opt" "[[" dynamicFlowNode:ITFDynamicFlowNode "]]" ;
+
+
+  DynamicFlowNode_List implements ITFDynamicFlowNode , IDynamicBTFlowNodeTFPart , ITFFlowNode astimplements de.monticore.tf.ast.IList =
+    "list" "<DynamicFlowNode>" ? schemaVarName:Name ? "[[" dynamicFlowNode:DynamicFlowNode_Pat "]]" ;
+
+
+  APTree_Rep implements ITFAPTree , IDynamicBTFlowNodeTFPart , ITFBehaviorTree astimplements de.monticore.tf.ast.IReplacement =
+    ("[[" lhs:ITFAPTree ? ReplacementOp rhs:ITFAPTree ? "]]");
+
+
+  APTree_Pat implements ITFAPTree , ITFBehaviorTree , IDynamicBTFlowNodeTFPart astimplements de.monticore.tf.ast.IPattern =
+    "APTree" schemaVarName:Name | "BehaviorTree" name:TfIdentifierName "{" "Root" root:ITFFlowNode "}" |(("APTree" ? schemaVarName:Name|"APTree" schemaVarName:Name ?)"[["("BehaviorTree" name:TfIdentifierName "{" "Root" root:ITFFlowNode "}")"]]");
+
+
+  APTree_Neg implements ITFAPTree , IDynamicBTFlowNodeTFPart , ITFBehaviorTree astimplements de.monticore.tf.ast.INegation =
+    "not" "[[" aPTree:ITFAPTree "]]" ;
+
+
+  APTree_Opt implements ITFAPTree , IDynamicBTFlowNodeTFPart , ITFBehaviorTree astimplements de.monticore.tf.ast.IOptional =
+    "opt" "[[" aPTree:ITFAPTree "]]" ;
+
+
+  APTree_List implements ITFAPTree , IDynamicBTFlowNodeTFPart , ITFBehaviorTree astimplements de.monticore.tf.ast.IList =
+    "list" "<APTree>" ? schemaVarName:Name ? "[[" aPTree:APTree_Pat "]]" ;
+
+  enum ITFSuccessCriteria="All"|"Any"|"Count"|"Percentage"|"Signal";
+  enum ITFTemporalType="Meets"|"Precedes"|"Overlaps"|"During"|"Starts"|"Finishes"|"Contains"|"Equals";
+  enum ITFChildType="AllAction"|"AllFlow";
+  interface ITFAPTree extends ITFBehaviorTree astextends de.monticore.tf.ast.ITFElement ;
+  interface ITFDynamicFlowNode extends ITFFlowNode astextends de.monticore.tf.ast.ITFElement ;
+  interface ITFNodeGraph astextends de.monticore.tf.ast.ITFElement ;
+  interface ITFGraphNode astextends de.monticore.tf.ast.ITFElement ;
+  interface ITFRelation astextends de.monticore.tf.ast.ITFElement ;
+  interface IDynamicBTFlowNodeTFPart extends ITFPart ;
+  astrule APTree_List = method public Class _getTFElementType(){ 
+    return dynamicbtflownode._ast.ASTAPTree.class;
+
+  } 
+   method public ASTITFAPTree getTFElement(){ 
+    return getAPTree();
+
+  } 
+  ;
+  astrule APTree_Neg = method public Class _getTFElementType(){ 
+    return dynamicbtflownode._ast.ASTAPTree.class;
+
+  } 
+   method public ASTITFAPTree getTFElement(){ 
+    return getAPTree();
+
+  } 
+  ;
+  astrule APTree_Pat = method public Class _getTFElementType(){ 
+    return dynamicbtflownode._ast.ASTAPTree.class;
+
+  } 
+  ;
+  astrule APTree_Opt = method public Class _getTFElementType(){ 
+    return dynamicbtflownode._ast.ASTAPTree.class;
+
+  } 
+   method public ASTITFAPTree getTFElement(){ 
+    return getAPTree();
+
+  } 
+  ;
+  astrule APTree_Rep = method public Class _getTFElementType(){ 
+    return dynamicbtflownode._ast.ASTAPTree.class;
+
+  } 
+  ;
+  astrule DynamicFlowNode_List = method public Class _getTFElementType(){ 
+    return dynamicbtflownode._ast.ASTDynamicFlowNode.class;
+
+  } 
+   method public ASTITFDynamicFlowNode getTFElement(){ 
+    return getDynamicFlowNode();
+
+  } 
+  ;
+  astrule DynamicFlowNode_Neg = method public Class _getTFElementType(){ 
+    return dynamicbtflownode._ast.ASTDynamicFlowNode.class;
+
+  } 
+   method public ASTITFDynamicFlowNode getTFElement(){ 
+    return getDynamicFlowNode();
+
+  } 
+  ;
+  astrule DynamicFlowNode_Pat = method public Class _getTFElementType(){ 
+    return dynamicbtflownode._ast.ASTDynamicFlowNode.class;
+
+  } 
+  ;
+  astrule DynamicFlowNode_Opt = method public Class _getTFElementType(){ 
+    return dynamicbtflownode._ast.ASTDynamicFlowNode.class;
+
+  } 
+   method public ASTITFDynamicFlowNode getTFElement(){ 
+    return getDynamicFlowNode();
+
+  } 
+  ;
+  astrule DynamicFlowNode_Rep = method public Class _getTFElementType(){ 
+    return dynamicbtflownode._ast.ASTDynamicFlowNode.class;
+
+  } 
+  ;
+  astrule NodeGraph_List = method public Class _getTFElementType(){ 
+    return dynamicbtflownode._ast.ASTNodeGraph.class;
+
+  } 
+   method public ASTITFNodeGraph getTFElement(){ 
+    return getNodeGraph();
+
+  } 
+  ;
+  astrule NodeGraph_Neg = method public Class _getTFElementType(){ 
+    return dynamicbtflownode._ast.ASTNodeGraph.class;
+
+  } 
+   method public ASTITFNodeGraph getTFElement(){ 
+    return getNodeGraph();
+
+  } 
+  ;
+  astrule NodeGraph_Pat = method public Class _getTFElementType(){ 
+    return dynamicbtflownode._ast.ASTNodeGraph.class;
+
+  } 
+  ;
+  astrule NodeGraph_Opt = method public Class _getTFElementType(){ 
+    return dynamicbtflownode._ast.ASTNodeGraph.class;
+
+  } 
+   method public ASTITFNodeGraph getTFElement(){ 
+    return getNodeGraph();
+
+  } 
+  ;
+  astrule NodeGraph_Rep = method public Class _getTFElementType(){ 
+    return dynamicbtflownode._ast.ASTNodeGraph.class;
+
+  } 
+  ;
+  astrule GraphNode_List = method public Class _getTFElementType(){ 
+    return dynamicbtflownode._ast.ASTGraphNode.class;
+
+  } 
+   method public ASTITFGraphNode getTFElement(){ 
+    return getGraphNode();
+
+  } 
+  ;
+  astrule GraphNode_Neg = method public Class _getTFElementType(){ 
+    return dynamicbtflownode._ast.ASTGraphNode.class;
+
+  } 
+   method public ASTITFGraphNode getTFElement(){ 
+    return getGraphNode();
+
+  } 
+  ;
+  astrule GraphNode_Pat = method public Class _getTFElementType(){ 
+    return dynamicbtflownode._ast.ASTGraphNode.class;
+
+  } 
+  ;
+  astrule GraphNode_Opt = method public Class _getTFElementType(){ 
+    return dynamicbtflownode._ast.ASTGraphNode.class;
+
+  } 
+   method public ASTITFGraphNode getTFElement(){ 
+    return getGraphNode();
+
+  } 
+  ;
+  astrule GraphNode_Rep = method public Class _getTFElementType(){ 
+    return dynamicbtflownode._ast.ASTGraphNode.class;
+
+  } 
+  ;
+  astrule Relation_List = method public Class _getTFElementType(){ 
+    return dynamicbtflownode._ast.ASTRelation.class;
+
+  } 
+   method public ASTITFRelation getTFElement(){ 
+    return getRelation();
+
+  } 
+  ;
+  astrule Relation_Neg = method public Class _getTFElementType(){ 
+    return dynamicbtflownode._ast.ASTRelation.class;
+
+  } 
+   method public ASTITFRelation getTFElement(){ 
+    return getRelation();
+
+  } 
+  ;
+  astrule Relation_Pat = method public Class _getTFElementType(){ 
+    return dynamicbtflownode._ast.ASTRelation.class;
+
+  } 
+  ;
+  astrule Relation_Opt = method public Class _getTFElementType(){ 
+    return dynamicbtflownode._ast.ASTRelation.class;
+
+  } 
+   method public ASTITFRelation getTFElement(){ 
+    return getRelation();
+
+  } 
+  ;
+  astrule Relation_Rep = method public Class _getTFElementType(){ 
+    return dynamicbtflownode._ast.ASTRelation.class;
+
+  } 
+  ;
+}

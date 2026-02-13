@@ -1,0 +1,12 @@
+// example of motion planning input
+URMotionPlanner myPlanner {
+  files {
+    collada = "./Plannerinputs/model.dae";
+    stl = "./Plannerinputs/mesh.stl";
+    workspace = "./Plannerinputs/ws"; 
+  }
+  settings {
+    plannerName = ompl;
+    urType = ure;
+  }
+}

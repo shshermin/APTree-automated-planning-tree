@@ -1,0 +1,50 @@
+grammar CRFTypesCon extends CRFTypesDef, de.monticore.MCBasics {
+
+////////// ?????? I am not sure why do we get errors if we dont include this world thing!
+@Override
+World = (PropertyTypeDefinition | Property | PredicateTypeDefinition | ActionTypeDefinition | Beam | Plate | FirstPos | Robot | VacGripper | Holding | AtPlace | NailGripper | GlueGun | Stack | Cassette | PositionOnRail | EquipPosition | StackPosition | IsAt | AtAgent | HasTool | Clear | OnTop | AllSet | BelongsToLayer | BelongsToModule | PositionFree | Stacked | Glued | Nailed | VgEmpty)*;
+
+// === GENERATED RULES (DO NOT EDIT BELOW) ===
+symbol Beam extends Element = "Beam" name:Name "(" loc:Name@Location ")";
+symbol Plate extends Element = "Plate" name:Name "(" loc:Name@Location ")";
+symbol Robot extends Agent = "Robot" name:Name "(" loc:Name@Location mType:Name ")";
+symbol VacGripper extends Tool = "VacGripper" name:Name "(" loc:Name@Location isActive:Boolean ")";
+symbol FirstPos extends Location = "FirstPos" name:Name "(" ")";
+symbol NailGripper extends Tool = "NailGripper" name:Name "(" loc:Name@Location isActive:Boolean ")";
+symbol GlueGun extends Tool = "GlueGun" name:Name "(" loc:Name@Location isActive:Boolean")";
+symbol Stack extends Layer = "Stack" name:Name "(" level:Integer belongsToModule:Name@Module ")";
+symbol Cassette extends Module = "Cassette" name:Name "(" layers:Name@Layer+ ")";
+symbol PositionOnRail extends Location = "PositionOnRail" name:Name "(" ")";
+symbol EquipPosition extends Location = "EquipPosition" name:Name "(" ")";
+symbol StackPosition extends Location = "StackPosition" name:Name "(" ")";
+// === END GENERATED RULES ===
+
+
+// === GENERATED PREDICATE RULES (DO NOT EDIT BELOW) ===
+Holding extends Predicate = not:["!"]? "Holding" "(" item:Name@Element agent:Name@Agent ")";
+AtPlace extends Predicate = not:["!"]? "AtPlace" "(" item:Name@Element loc:Name@Location ")";
+IsAt extends Predicate = not:["!"]? "IsAt" "(" myObject:Name@Element location:Name@Location ")";
+AtAgent extends Predicate = not:["!"]? "AtAgent" "(" agent:Name@Agent location:Name@Location ")";
+HasTool extends Predicate = not:["!"]? "HasTool" "(" agent:Name@Agent tool:Name@Tool ")";
+Clear extends Predicate = not:["!"]? "Clear" "(" myObject:Name@Element ")";
+OnTop extends Predicate = not:["!"]? "OnTop" "(" myObject1:Name@Element myObject2:Name@Element ")";
+AllSet extends Predicate = not:["!"]? "AllSet" "(" lay:Name@Layer mod:Name@Module ")";
+BelongsToLayer extends Predicate = not:["!"]? "BelongsToLayer" "(" myObject:Name@Element lay:Name@Layer ")";
+BelongsToModule extends Predicate = not:["!"]? "BelongsToModule" "(" myObject:Name@Element mod:Name@Module ")";
+PositionFree extends Predicate = not:["!"]? "PositionFree" "(" pos:Name@Location ")";
+Stacked extends Predicate = not:["!"]? "Stacked" "(" myObject:Name@Element ")";
+Glued extends Predicate = not:["!"]? "Glued" "(" myObject:Name@Element ")";
+Nailed extends Predicate = not:["!"]? "Nailed" "(" myObject:Name@Element ")";
+VgEmpty extends Predicate = not:["!"]? "VgEmpty" "(" client:Name@Agent ")";
+// === END GENERATED PREDICATE RULES ===
+
+
+// === GENERATED ACTION RULES (DO NOT EDIT BELOW) ===
+ PickUpHL extends PActionNode = "Action" "PickUpHL" name:Name "(" obj:Name@Element grabPos:Name@Location client:Name@Robot ")" ("{" (Decorator | Service)* "}")?  ("@" subtreeAnnotation:Name)?;
+  astrule PickUpHL = method public crftypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=crftypesdef._ast.ASTActionLevel.HIGHLEVEL; } return actLevel; } ;
+
+  PlaceHL extends PActionNode = "Action" "PlaceHL" name:Name "(" obj:Name@Element targetPos:Name@Location client:Name@Robot ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
+  astrule PlaceHL = method public crftypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=crftypesdef._ast.ASTActionLevel.HIGHLEVEL; } return actLevel; } ;
+// === END GENERATED ACTION RULES ===
+
+}

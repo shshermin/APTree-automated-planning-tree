@@ -1,0 +1,11 @@
+grammar BehaviorTreeTagSchema extends de.monticore.tagging.TagSchema ,de.monticore.types.MCBasicTypesTagSchema {
+   BehaviorTreeSchemaIdentifier implements ScopeIdentifier  = "BehaviorTree" ;
+   SequenceSchemaIdentifier implements ScopeIdentifier  = "Sequence" ;
+   ParallelSchemaIdentifier implements ScopeIdentifier  = "Parallel" ;
+   PickUpSchemaIdentifier implements ScopeIdentifier  = "PickUp" ;
+   PlaceSchemaIdentifier implements ScopeIdentifier  = "Place" ;
+   GripperEmptySchemaIdentifier implements ScopeIdentifier  = "GripperEmpty" ;
+   CalcDistSchemaIdentifier implements ScopeIdentifier  = "CalcDist" ;
+   BasicTypeSchemaIdentifier implements ScopeIdentifier  = "BasicType" ;
+  start TagSchema;
+}

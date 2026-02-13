@@ -1,0 +1,1766 @@
+package tr;grammar CRFTypesConTR extends.tr.CRFTypesDefTR ,de.monticore.MCBasics {
+
+  CRFTypesConTFRule =
+    TFRule ;
+
+
+  PlaceHL_Rep implements ITFPlaceHL , ICRFTypesConTFPart , ITFPActionNode astimplements de.monticore.tf.ast.IReplacement =
+    ("[[" lhs:ITFPlaceHL ? ReplacementOp rhs:ITFPlaceHL ? "]]");
+
+
+  PlaceHL_Pat implements ITFPlaceHL , ITFPActionNode , ICRFTypesConTFPart astimplements de.monticore.tf.ast.IPattern =
+    "PlaceHL" schemaVarName:Name | "Action" "PlaceHL" name:TfIdentifierName "(" obj:TfIdentifierName targetPos:TfIdentifierName client:TfIdentifierName ")"("{"(decorator:ITFDecorator|service:ITFService)*"}")?("@" subtreeAnnotation:TfIdentifierName)? |(("PlaceHL" ? schemaVarName:Name|"PlaceHL" schemaVarName:Name ?)"[["("Action" "PlaceHL" name:TfIdentifierName "(" obj:TfIdentifierName targetPos:TfIdentifierName client:TfIdentifierName ")"("{"(decorator:ITFDecorator|service:ITFService)*"}")?("@" subtreeAnnotation:TfIdentifierName)?)"]]");
+
+
+  PlaceHL_Neg implements ITFPlaceHL , ICRFTypesConTFPart , ITFPActionNode astimplements de.monticore.tf.ast.INegation =
+    "not" "[[" placeHL:ITFPlaceHL "]]" ;
+
+
+  PlaceHL_Opt implements ITFPlaceHL , ICRFTypesConTFPart , ITFPActionNode astimplements de.monticore.tf.ast.IOptional =
+    "opt" "[[" placeHL:ITFPlaceHL "]]" ;
+
+
+  PlaceHL_List implements ITFPlaceHL , ICRFTypesConTFPart , ITFPActionNode astimplements de.monticore.tf.ast.IList =
+    "list" "<PlaceHL>" ? schemaVarName:Name ? "[[" placeHL:PlaceHL_Pat "]]" ;
+
+
+  PickUpHL_Rep implements ITFPickUpHL , ICRFTypesConTFPart , ITFPActionNode astimplements de.monticore.tf.ast.IReplacement =
+    ("[[" lhs:ITFPickUpHL ? ReplacementOp rhs:ITFPickUpHL ? "]]");
+
+
+  PickUpHL_Pat implements ITFPickUpHL , ITFPActionNode , ICRFTypesConTFPart astimplements de.monticore.tf.ast.IPattern =
+    "PickUpHL" schemaVarName:Name | "Action" "PickUpHL" name:TfIdentifierName "(" obj:TfIdentifierName grabPos:TfIdentifierName client:TfIdentifierName ")"("{"(decorator:ITFDecorator|service:ITFService)*"}")?("@" subtreeAnnotation:TfIdentifierName)? |(("PickUpHL" ? schemaVarName:Name|"PickUpHL" schemaVarName:Name ?)"[["("Action" "PickUpHL" name:TfIdentifierName "(" obj:TfIdentifierName grabPos:TfIdentifierName client:TfIdentifierName ")"("{"(decorator:ITFDecorator|service:ITFService)*"}")?("@" subtreeAnnotation:TfIdentifierName)?)"]]");
+
+
+  PickUpHL_Neg implements ITFPickUpHL , ICRFTypesConTFPart , ITFPActionNode astimplements de.monticore.tf.ast.INegation =
+    "not" "[[" pickUpHL:ITFPickUpHL "]]" ;
+
+
+  PickUpHL_Opt implements ITFPickUpHL , ICRFTypesConTFPart , ITFPActionNode astimplements de.monticore.tf.ast.IOptional =
+    "opt" "[[" pickUpHL:ITFPickUpHL "]]" ;
+
+
+  PickUpHL_List implements ITFPickUpHL , ICRFTypesConTFPart , ITFPActionNode astimplements de.monticore.tf.ast.IList =
+    "list" "<PickUpHL>" ? schemaVarName:Name ? "[[" pickUpHL:PickUpHL_Pat "]]" ;
+
+
+  VgEmpty_Rep implements ITFVgEmpty , ICRFTypesConTFPart , ITFPredicate astimplements de.monticore.tf.ast.IReplacement =
+    ("[[" lhs:ITFVgEmpty ? ReplacementOp rhs:ITFVgEmpty ? "]]");
+
+
+  VgEmpty_Pat implements ITFVgEmpty , ITFPredicate , ICRFTypesConTFPart astimplements de.monticore.tf.ast.IPattern =
+    "VgEmpty" schemaVarName:Name | not:ITFCRFTypesCon_Not_Constant "VgEmpty" "(" client:TfIdentifierName ")" |(("VgEmpty" ? schemaVarName:Name|"VgEmpty" schemaVarName:Name ?)"[["(not:ITFCRFTypesCon_Not_Constant "VgEmpty" "(" client:TfIdentifierName ")")"]]");
+
+
+  VgEmpty_Neg implements ITFVgEmpty , ICRFTypesConTFPart , ITFPredicate astimplements de.monticore.tf.ast.INegation =
+    "not" "[[" vgEmpty:ITFVgEmpty "]]" ;
+
+
+  VgEmpty_Opt implements ITFVgEmpty , ICRFTypesConTFPart , ITFPredicate astimplements de.monticore.tf.ast.IOptional =
+    "opt" "[[" vgEmpty:ITFVgEmpty "]]" ;
+
+
+  VgEmpty_List implements ITFVgEmpty , ICRFTypesConTFPart , ITFPredicate astimplements de.monticore.tf.ast.IList =
+    "list" "<VgEmpty>" ? schemaVarName:Name ? "[[" vgEmpty:VgEmpty_Pat "]]" ;
+
+
+  Nailed_Rep implements ITFNailed , ICRFTypesConTFPart , ITFPredicate astimplements de.monticore.tf.ast.IReplacement =
+    ("[[" lhs:ITFNailed ? ReplacementOp rhs:ITFNailed ? "]]");
+
+
+  Nailed_Pat implements ITFNailed , ITFPredicate , ICRFTypesConTFPart astimplements de.monticore.tf.ast.IPattern =
+    "Nailed" schemaVarName:Name | not:ITFCRFTypesCon_Not_Constant "Nailed" "(" myObject:TfIdentifierName ")" |(("Nailed" ? schemaVarName:Name|"Nailed" schemaVarName:Name ?)"[["(not:ITFCRFTypesCon_Not_Constant "Nailed" "(" myObject:TfIdentifierName ")")"]]");
+
+
+  Nailed_Neg implements ITFNailed , ICRFTypesConTFPart , ITFPredicate astimplements de.monticore.tf.ast.INegation =
+    "not" "[[" nailed:ITFNailed "]]" ;
+
+
+  Nailed_Opt implements ITFNailed , ICRFTypesConTFPart , ITFPredicate astimplements de.monticore.tf.ast.IOptional =
+    "opt" "[[" nailed:ITFNailed "]]" ;
+
+
+  Nailed_List implements ITFNailed , ICRFTypesConTFPart , ITFPredicate astimplements de.monticore.tf.ast.IList =
+    "list" "<Nailed>" ? schemaVarName:Name ? "[[" nailed:Nailed_Pat "]]" ;
+
+
+  Glued_Rep implements ITFGlued , ICRFTypesConTFPart , ITFPredicate astimplements de.monticore.tf.ast.IReplacement =
+    ("[[" lhs:ITFGlued ? ReplacementOp rhs:ITFGlued ? "]]");
+
+
+  Glued_Pat implements ITFGlued , ITFPredicate , ICRFTypesConTFPart astimplements de.monticore.tf.ast.IPattern =
+    "Glued" schemaVarName:Name | not:ITFCRFTypesCon_Not_Constant "Glued" "(" myObject:TfIdentifierName ")" |(("Glued" ? schemaVarName:Name|"Glued" schemaVarName:Name ?)"[["(not:ITFCRFTypesCon_Not_Constant "Glued" "(" myObject:TfIdentifierName ")")"]]");
+
+
+  Glued_Neg implements ITFGlued , ICRFTypesConTFPart , ITFPredicate astimplements de.monticore.tf.ast.INegation =
+    "not" "[[" glued:ITFGlued "]]" ;
+
+
+  Glued_Opt implements ITFGlued , ICRFTypesConTFPart , ITFPredicate astimplements de.monticore.tf.ast.IOptional =
+    "opt" "[[" glued:ITFGlued "]]" ;
+
+
+  Glued_List implements ITFGlued , ICRFTypesConTFPart , ITFPredicate astimplements de.monticore.tf.ast.IList =
+    "list" "<Glued>" ? schemaVarName:Name ? "[[" glued:Glued_Pat "]]" ;
+
+
+  Stacked_Rep implements ITFStacked , ICRFTypesConTFPart , ITFPredicate astimplements de.monticore.tf.ast.IReplacement =
+    ("[[" lhs:ITFStacked ? ReplacementOp rhs:ITFStacked ? "]]");
+
+
+  Stacked_Pat implements ITFStacked , ITFPredicate , ICRFTypesConTFPart astimplements de.monticore.tf.ast.IPattern =
+    "Stacked" schemaVarName:Name | not:ITFCRFTypesCon_Not_Constant "Stacked" "(" myObject:TfIdentifierName ")" |(("Stacked" ? schemaVarName:Name|"Stacked" schemaVarName:Name ?)"[["(not:ITFCRFTypesCon_Not_Constant "Stacked" "(" myObject:TfIdentifierName ")")"]]");
+
+
+  Stacked_Neg implements ITFStacked , ICRFTypesConTFPart , ITFPredicate astimplements de.monticore.tf.ast.INegation =
+    "not" "[[" stacked:ITFStacked "]]" ;
+
+
+  Stacked_Opt implements ITFStacked , ICRFTypesConTFPart , ITFPredicate astimplements de.monticore.tf.ast.IOptional =
+    "opt" "[[" stacked:ITFStacked "]]" ;
+
+
+  Stacked_List implements ITFStacked , ICRFTypesConTFPart , ITFPredicate astimplements de.monticore.tf.ast.IList =
+    "list" "<Stacked>" ? schemaVarName:Name ? "[[" stacked:Stacked_Pat "]]" ;
+
+
+  PositionFree_Rep implements ITFPositionFree , ICRFTypesConTFPart , ITFPredicate astimplements de.monticore.tf.ast.IReplacement =
+    ("[[" lhs:ITFPositionFree ? ReplacementOp rhs:ITFPositionFree ? "]]");
+
+
+  PositionFree_Pat implements ITFPositionFree , ITFPredicate , ICRFTypesConTFPart astimplements de.monticore.tf.ast.IPattern =
+    "PositionFree" schemaVarName:Name | not:ITFCRFTypesCon_Not_Constant "PositionFree" "(" pos:TfIdentifierName ")" |(("PositionFree" ? schemaVarName:Name|"PositionFree" schemaVarName:Name ?)"[["(not:ITFCRFTypesCon_Not_Constant "PositionFree" "(" pos:TfIdentifierName ")")"]]");
+
+
+  PositionFree_Neg implements ITFPositionFree , ICRFTypesConTFPart , ITFPredicate astimplements de.monticore.tf.ast.INegation =
+    "not" "[[" positionFree:ITFPositionFree "]]" ;
+
+
+  PositionFree_Opt implements ITFPositionFree , ICRFTypesConTFPart , ITFPredicate astimplements de.monticore.tf.ast.IOptional =
+    "opt" "[[" positionFree:ITFPositionFree "]]" ;
+
+
+  PositionFree_List implements ITFPositionFree , ICRFTypesConTFPart , ITFPredicate astimplements de.monticore.tf.ast.IList =
+    "list" "<PositionFree>" ? schemaVarName:Name ? "[[" positionFree:PositionFree_Pat "]]" ;
+
+
+  BelongsToModule_Rep implements ITFBelongsToModule , ICRFTypesConTFPart , ITFPredicate astimplements de.monticore.tf.ast.IReplacement =
+    ("[[" lhs:ITFBelongsToModule ? ReplacementOp rhs:ITFBelongsToModule ? "]]");
+
+
+  BelongsToModule_Pat implements ITFBelongsToModule , ITFPredicate , ICRFTypesConTFPart astimplements de.monticore.tf.ast.IPattern =
+    "BelongsToModule" schemaVarName:Name | not:ITFCRFTypesCon_Not_Constant "BelongsToModule" "(" myObject:TfIdentifierName mod:TfIdentifierName ")" |(("BelongsToModule" ? schemaVarName:Name|"BelongsToModule" schemaVarName:Name ?)"[["(not:ITFCRFTypesCon_Not_Constant "BelongsToModule" "(" myObject:TfIdentifierName mod:TfIdentifierName ")")"]]");
+
+
+  BelongsToModule_Neg implements ITFBelongsToModule , ICRFTypesConTFPart , ITFPredicate astimplements de.monticore.tf.ast.INegation =
+    "not" "[[" belongsToModule:ITFBelongsToModule "]]" ;
+
+
+  BelongsToModule_Opt implements ITFBelongsToModule , ICRFTypesConTFPart , ITFPredicate astimplements de.monticore.tf.ast.IOptional =
+    "opt" "[[" belongsToModule:ITFBelongsToModule "]]" ;
+
+
+  BelongsToModule_List implements ITFBelongsToModule , ICRFTypesConTFPart , ITFPredicate astimplements de.monticore.tf.ast.IList =
+    "list" "<BelongsToModule>" ? schemaVarName:Name ? "[[" belongsToModule:BelongsToModule_Pat "]]" ;
+
+
+  BelongsToLayer_Rep implements ITFBelongsToLayer , ICRFTypesConTFPart , ITFPredicate astimplements de.monticore.tf.ast.IReplacement =
+    ("[[" lhs:ITFBelongsToLayer ? ReplacementOp rhs:ITFBelongsToLayer ? "]]");
+
+
+  BelongsToLayer_Pat implements ITFBelongsToLayer , ITFPredicate , ICRFTypesConTFPart astimplements de.monticore.tf.ast.IPattern =
+    "BelongsToLayer" schemaVarName:Name | not:ITFCRFTypesCon_Not_Constant "BelongsToLayer" "(" myObject:TfIdentifierName lay:TfIdentifierName ")" |(("BelongsToLayer" ? schemaVarName:Name|"BelongsToLayer" schemaVarName:Name ?)"[["(not:ITFCRFTypesCon_Not_Constant "BelongsToLayer" "(" myObject:TfIdentifierName lay:TfIdentifierName ")")"]]");
+
+
+  BelongsToLayer_Neg implements ITFBelongsToLayer , ICRFTypesConTFPart , ITFPredicate astimplements de.monticore.tf.ast.INegation =
+    "not" "[[" belongsToLayer:ITFBelongsToLayer "]]" ;
+
+
+  BelongsToLayer_Opt implements ITFBelongsToLayer , ICRFTypesConTFPart , ITFPredicate astimplements de.monticore.tf.ast.IOptional =
+    "opt" "[[" belongsToLayer:ITFBelongsToLayer "]]" ;
+
+
+  BelongsToLayer_List implements ITFBelongsToLayer , ICRFTypesConTFPart , ITFPredicate astimplements de.monticore.tf.ast.IList =
+    "list" "<BelongsToLayer>" ? schemaVarName:Name ? "[[" belongsToLayer:BelongsToLayer_Pat "]]" ;
+
+
+  AllSet_Rep implements ITFAllSet , ICRFTypesConTFPart , ITFPredicate astimplements de.monticore.tf.ast.IReplacement =
+    ("[[" lhs:ITFAllSet ? ReplacementOp rhs:ITFAllSet ? "]]");
+
+
+  AllSet_Pat implements ITFAllSet , ITFPredicate , ICRFTypesConTFPart astimplements de.monticore.tf.ast.IPattern =
+    "AllSet" schemaVarName:Name | not:ITFCRFTypesCon_Not_Constant "AllSet" "(" lay:TfIdentifierName mod:TfIdentifierName ")" |(("AllSet" ? schemaVarName:Name|"AllSet" schemaVarName:Name ?)"[["(not:ITFCRFTypesCon_Not_Constant "AllSet" "(" lay:TfIdentifierName mod:TfIdentifierName ")")"]]");
+
+
+  AllSet_Neg implements ITFAllSet , ICRFTypesConTFPart , ITFPredicate astimplements de.monticore.tf.ast.INegation =
+    "not" "[[" allSet:ITFAllSet "]]" ;
+
+
+  AllSet_Opt implements ITFAllSet , ICRFTypesConTFPart , ITFPredicate astimplements de.monticore.tf.ast.IOptional =
+    "opt" "[[" allSet:ITFAllSet "]]" ;
+
+
+  AllSet_List implements ITFAllSet , ICRFTypesConTFPart , ITFPredicate astimplements de.monticore.tf.ast.IList =
+    "list" "<AllSet>" ? schemaVarName:Name ? "[[" allSet:AllSet_Pat "]]" ;
+
+
+  OnTop_Rep implements ITFOnTop , ICRFTypesConTFPart , ITFPredicate astimplements de.monticore.tf.ast.IReplacement =
+    ("[[" lhs:ITFOnTop ? ReplacementOp rhs:ITFOnTop ? "]]");
+
+
+  OnTop_Pat implements ITFOnTop , ITFPredicate , ICRFTypesConTFPart astimplements de.monticore.tf.ast.IPattern =
+    "OnTop" schemaVarName:Name | not:ITFCRFTypesCon_Not_Constant "OnTop" "(" myObject1:TfIdentifierName myObject2:TfIdentifierName ")" |(("OnTop" ? schemaVarName:Name|"OnTop" schemaVarName:Name ?)"[["(not:ITFCRFTypesCon_Not_Constant "OnTop" "(" myObject1:TfIdentifierName myObject2:TfIdentifierName ")")"]]");
+
+
+  OnTop_Neg implements ITFOnTop , ICRFTypesConTFPart , ITFPredicate astimplements de.monticore.tf.ast.INegation =
+    "not" "[[" onTop:ITFOnTop "]]" ;
+
+
+  OnTop_Opt implements ITFOnTop , ICRFTypesConTFPart , ITFPredicate astimplements de.monticore.tf.ast.IOptional =
+    "opt" "[[" onTop:ITFOnTop "]]" ;
+
+
+  OnTop_List implements ITFOnTop , ICRFTypesConTFPart , ITFPredicate astimplements de.monticore.tf.ast.IList =
+    "list" "<OnTop>" ? schemaVarName:Name ? "[[" onTop:OnTop_Pat "]]" ;
+
+
+  Clear_Rep implements ITFClear , ICRFTypesConTFPart , ITFPredicate astimplements de.monticore.tf.ast.IReplacement =
+    ("[[" lhs:ITFClear ? ReplacementOp rhs:ITFClear ? "]]");
+
+
+  Clear_Pat implements ITFClear , ITFPredicate , ICRFTypesConTFPart astimplements de.monticore.tf.ast.IPattern =
+    "Clear" schemaVarName:Name | not:ITFCRFTypesCon_Not_Constant "Clear" "(" myObject:TfIdentifierName ")" |(("Clear" ? schemaVarName:Name|"Clear" schemaVarName:Name ?)"[["(not:ITFCRFTypesCon_Not_Constant "Clear" "(" myObject:TfIdentifierName ")")"]]");
+
+
+  Clear_Neg implements ITFClear , ICRFTypesConTFPart , ITFPredicate astimplements de.monticore.tf.ast.INegation =
+    "not" "[[" clear:ITFClear "]]" ;
+
+
+  Clear_Opt implements ITFClear , ICRFTypesConTFPart , ITFPredicate astimplements de.monticore.tf.ast.IOptional =
+    "opt" "[[" clear:ITFClear "]]" ;
+
+
+  Clear_List implements ITFClear , ICRFTypesConTFPart , ITFPredicate astimplements de.monticore.tf.ast.IList =
+    "list" "<Clear>" ? schemaVarName:Name ? "[[" clear:Clear_Pat "]]" ;
+
+
+  HasTool_Rep implements ITFHasTool , ICRFTypesConTFPart , ITFPredicate astimplements de.monticore.tf.ast.IReplacement =
+    ("[[" lhs:ITFHasTool ? ReplacementOp rhs:ITFHasTool ? "]]");
+
+
+  HasTool_Pat implements ITFHasTool , ITFPredicate , ICRFTypesConTFPart astimplements de.monticore.tf.ast.IPattern =
+    "HasTool" schemaVarName:Name | not:ITFCRFTypesCon_Not_Constant "HasTool" "(" agent:TfIdentifierName tool:TfIdentifierName ")" |(("HasTool" ? schemaVarName:Name|"HasTool" schemaVarName:Name ?)"[["(not:ITFCRFTypesCon_Not_Constant "HasTool" "(" agent:TfIdentifierName tool:TfIdentifierName ")")"]]");
+
+
+  HasTool_Neg implements ITFHasTool , ICRFTypesConTFPart , ITFPredicate astimplements de.monticore.tf.ast.INegation =
+    "not" "[[" hasTool:ITFHasTool "]]" ;
+
+
+  HasTool_Opt implements ITFHasTool , ICRFTypesConTFPart , ITFPredicate astimplements de.monticore.tf.ast.IOptional =
+    "opt" "[[" hasTool:ITFHasTool "]]" ;
+
+
+  HasTool_List implements ITFHasTool , ICRFTypesConTFPart , ITFPredicate astimplements de.monticore.tf.ast.IList =
+    "list" "<HasTool>" ? schemaVarName:Name ? "[[" hasTool:HasTool_Pat "]]" ;
+
+
+  AtAgent_Rep implements ITFAtAgent , ICRFTypesConTFPart , ITFPredicate astimplements de.monticore.tf.ast.IReplacement =
+    ("[[" lhs:ITFAtAgent ? ReplacementOp rhs:ITFAtAgent ? "]]");
+
+
+  AtAgent_Pat implements ITFAtAgent , ITFPredicate , ICRFTypesConTFPart astimplements de.monticore.tf.ast.IPattern =
+    "AtAgent" schemaVarName:Name | not:ITFCRFTypesCon_Not_Constant "AtAgent" "(" agent:TfIdentifierName location:TfIdentifierName ")" |(("AtAgent" ? schemaVarName:Name|"AtAgent" schemaVarName:Name ?)"[["(not:ITFCRFTypesCon_Not_Constant "AtAgent" "(" agent:TfIdentifierName location:TfIdentifierName ")")"]]");
+
+
+  AtAgent_Neg implements ITFAtAgent , ICRFTypesConTFPart , ITFPredicate astimplements de.monticore.tf.ast.INegation =
+    "not" "[[" atAgent:ITFAtAgent "]]" ;
+
+
+  AtAgent_Opt implements ITFAtAgent , ICRFTypesConTFPart , ITFPredicate astimplements de.monticore.tf.ast.IOptional =
+    "opt" "[[" atAgent:ITFAtAgent "]]" ;
+
+
+  AtAgent_List implements ITFAtAgent , ICRFTypesConTFPart , ITFPredicate astimplements de.monticore.tf.ast.IList =
+    "list" "<AtAgent>" ? schemaVarName:Name ? "[[" atAgent:AtAgent_Pat "]]" ;
+
+
+  IsAt_Rep implements ITFIsAt , ICRFTypesConTFPart , ITFPredicate astimplements de.monticore.tf.ast.IReplacement =
+    ("[[" lhs:ITFIsAt ? ReplacementOp rhs:ITFIsAt ? "]]");
+
+
+  IsAt_Pat implements ITFIsAt , ITFPredicate , ICRFTypesConTFPart astimplements de.monticore.tf.ast.IPattern =
+    "IsAt" schemaVarName:Name | not:ITFCRFTypesCon_Not_Constant "IsAt" "(" myObject:TfIdentifierName location:TfIdentifierName ")" |(("IsAt" ? schemaVarName:Name|"IsAt" schemaVarName:Name ?)"[["(not:ITFCRFTypesCon_Not_Constant "IsAt" "(" myObject:TfIdentifierName location:TfIdentifierName ")")"]]");
+
+
+  IsAt_Neg implements ITFIsAt , ICRFTypesConTFPart , ITFPredicate astimplements de.monticore.tf.ast.INegation =
+    "not" "[[" isAt:ITFIsAt "]]" ;
+
+
+  IsAt_Opt implements ITFIsAt , ICRFTypesConTFPart , ITFPredicate astimplements de.monticore.tf.ast.IOptional =
+    "opt" "[[" isAt:ITFIsAt "]]" ;
+
+
+  IsAt_List implements ITFIsAt , ICRFTypesConTFPart , ITFPredicate astimplements de.monticore.tf.ast.IList =
+    "list" "<IsAt>" ? schemaVarName:Name ? "[[" isAt:IsAt_Pat "]]" ;
+
+
+  AtPlace_Rep implements ITFAtPlace , ICRFTypesConTFPart , ITFPredicate astimplements de.monticore.tf.ast.IReplacement =
+    ("[[" lhs:ITFAtPlace ? ReplacementOp rhs:ITFAtPlace ? "]]");
+
+
+  AtPlace_Pat implements ITFAtPlace , ITFPredicate , ICRFTypesConTFPart astimplements de.monticore.tf.ast.IPattern =
+    "AtPlace" schemaVarName:Name | not:ITFCRFTypesCon_Not_Constant "AtPlace" "(" item:TfIdentifierName loc:TfIdentifierName ")" |(("AtPlace" ? schemaVarName:Name|"AtPlace" schemaVarName:Name ?)"[["(not:ITFCRFTypesCon_Not_Constant "AtPlace" "(" item:TfIdentifierName loc:TfIdentifierName ")")"]]");
+
+
+  AtPlace_Neg implements ITFAtPlace , ICRFTypesConTFPart , ITFPredicate astimplements de.monticore.tf.ast.INegation =
+    "not" "[[" atPlace:ITFAtPlace "]]" ;
+
+
+  AtPlace_Opt implements ITFAtPlace , ICRFTypesConTFPart , ITFPredicate astimplements de.monticore.tf.ast.IOptional =
+    "opt" "[[" atPlace:ITFAtPlace "]]" ;
+
+
+  AtPlace_List implements ITFAtPlace , ICRFTypesConTFPart , ITFPredicate astimplements de.monticore.tf.ast.IList =
+    "list" "<AtPlace>" ? schemaVarName:Name ? "[[" atPlace:AtPlace_Pat "]]" ;
+
+
+  Holding_Rep implements ITFHolding , ICRFTypesConTFPart , ITFPredicate astimplements de.monticore.tf.ast.IReplacement =
+    ("[[" lhs:ITFHolding ? ReplacementOp rhs:ITFHolding ? "]]");
+
+
+  Holding_Pat implements ITFHolding , ITFPredicate , ICRFTypesConTFPart astimplements de.monticore.tf.ast.IPattern =
+    "Holding" schemaVarName:Name | not:ITFCRFTypesCon_Not_Constant "Holding" "(" item:TfIdentifierName agent:TfIdentifierName ")" |(("Holding" ? schemaVarName:Name|"Holding" schemaVarName:Name ?)"[["(not:ITFCRFTypesCon_Not_Constant "Holding" "(" item:TfIdentifierName agent:TfIdentifierName ")")"]]");
+
+
+  Holding_Neg implements ITFHolding , ICRFTypesConTFPart , ITFPredicate astimplements de.monticore.tf.ast.INegation =
+    "not" "[[" holding:ITFHolding "]]" ;
+
+
+  Holding_Opt implements ITFHolding , ICRFTypesConTFPart , ITFPredicate astimplements de.monticore.tf.ast.IOptional =
+    "opt" "[[" holding:ITFHolding "]]" ;
+
+
+  Holding_List implements ITFHolding , ICRFTypesConTFPart , ITFPredicate astimplements de.monticore.tf.ast.IList =
+    "list" "<Holding>" ? schemaVarName:Name ? "[[" holding:Holding_Pat "]]" ;
+
+
+  StackPosition_Rep implements ITFStackPosition , ICRFTypesConTFPart , ITFLocation astimplements de.monticore.tf.ast.IReplacement =
+    ("[[" lhs:ITFStackPosition ? ReplacementOp rhs:ITFStackPosition ? "]]");
+
+
+  StackPosition_Pat implements ITFStackPosition , ITFLocation , ICRFTypesConTFPart astimplements de.monticore.tf.ast.IPattern =
+    "StackPosition" schemaVarName:Name | "StackPosition" name:TfIdentifierName "(" ")" |(("StackPosition" ? schemaVarName:Name|"StackPosition" schemaVarName:Name ?)"[["("StackPosition" name:TfIdentifierName "(" ")")"]]");
+
+
+  StackPosition_Neg implements ITFStackPosition , ICRFTypesConTFPart , ITFLocation astimplements de.monticore.tf.ast.INegation =
+    "not" "[[" stackPosition:ITFStackPosition "]]" ;
+
+
+  StackPosition_Opt implements ITFStackPosition , ICRFTypesConTFPart , ITFLocation astimplements de.monticore.tf.ast.IOptional =
+    "opt" "[[" stackPosition:ITFStackPosition "]]" ;
+
+
+  StackPosition_List implements ITFStackPosition , ICRFTypesConTFPart , ITFLocation astimplements de.monticore.tf.ast.IList =
+    "list" "<StackPosition>" ? schemaVarName:Name ? "[[" stackPosition:StackPosition_Pat "]]" ;
+
+
+  EquipPosition_Rep implements ITFEquipPosition , ICRFTypesConTFPart , ITFLocation astimplements de.monticore.tf.ast.IReplacement =
+    ("[[" lhs:ITFEquipPosition ? ReplacementOp rhs:ITFEquipPosition ? "]]");
+
+
+  EquipPosition_Pat implements ITFEquipPosition , ITFLocation , ICRFTypesConTFPart astimplements de.monticore.tf.ast.IPattern =
+    "EquipPosition" schemaVarName:Name | "EquipPosition" name:TfIdentifierName "(" ")" |(("EquipPosition" ? schemaVarName:Name|"EquipPosition" schemaVarName:Name ?)"[["("EquipPosition" name:TfIdentifierName "(" ")")"]]");
+
+
+  EquipPosition_Neg implements ITFEquipPosition , ICRFTypesConTFPart , ITFLocation astimplements de.monticore.tf.ast.INegation =
+    "not" "[[" equipPosition:ITFEquipPosition "]]" ;
+
+
+  EquipPosition_Opt implements ITFEquipPosition , ICRFTypesConTFPart , ITFLocation astimplements de.monticore.tf.ast.IOptional =
+    "opt" "[[" equipPosition:ITFEquipPosition "]]" ;
+
+
+  EquipPosition_List implements ITFEquipPosition , ICRFTypesConTFPart , ITFLocation astimplements de.monticore.tf.ast.IList =
+    "list" "<EquipPosition>" ? schemaVarName:Name ? "[[" equipPosition:EquipPosition_Pat "]]" ;
+
+
+  PositionOnRail_Rep implements ITFPositionOnRail , ICRFTypesConTFPart , ITFLocation astimplements de.monticore.tf.ast.IReplacement =
+    ("[[" lhs:ITFPositionOnRail ? ReplacementOp rhs:ITFPositionOnRail ? "]]");
+
+
+  PositionOnRail_Pat implements ITFPositionOnRail , ITFLocation , ICRFTypesConTFPart astimplements de.monticore.tf.ast.IPattern =
+    "PositionOnRail" schemaVarName:Name | "PositionOnRail" name:TfIdentifierName "(" ")" |(("PositionOnRail" ? schemaVarName:Name|"PositionOnRail" schemaVarName:Name ?)"[["("PositionOnRail" name:TfIdentifierName "(" ")")"]]");
+
+
+  PositionOnRail_Neg implements ITFPositionOnRail , ICRFTypesConTFPart , ITFLocation astimplements de.monticore.tf.ast.INegation =
+    "not" "[[" positionOnRail:ITFPositionOnRail "]]" ;
+
+
+  PositionOnRail_Opt implements ITFPositionOnRail , ICRFTypesConTFPart , ITFLocation astimplements de.monticore.tf.ast.IOptional =
+    "opt" "[[" positionOnRail:ITFPositionOnRail "]]" ;
+
+
+  PositionOnRail_List implements ITFPositionOnRail , ICRFTypesConTFPart , ITFLocation astimplements de.monticore.tf.ast.IList =
+    "list" "<PositionOnRail>" ? schemaVarName:Name ? "[[" positionOnRail:PositionOnRail_Pat "]]" ;
+
+
+  Cassette_Rep implements ITFCassette , ICRFTypesConTFPart , ITFModule astimplements de.monticore.tf.ast.IReplacement =
+    ("[[" lhs:ITFCassette ? ReplacementOp rhs:ITFCassette ? "]]");
+
+
+  Cassette_Pat implements ITFCassette , ITFModule , ICRFTypesConTFPart astimplements de.monticore.tf.ast.IPattern =
+    "Cassette" schemaVarName:Name | "Cassette" name:TfIdentifierName "(" layers:TfIdentifierName+")" |(("Cassette" ? schemaVarName:Name|"Cassette" schemaVarName:Name ?)"[["("Cassette" name:TfIdentifierName "(" layers:TfIdentifierName+")")"]]");
+
+
+  Cassette_Neg implements ITFCassette , ICRFTypesConTFPart , ITFModule astimplements de.monticore.tf.ast.INegation =
+    "not" "[[" cassette:ITFCassette "]]" ;
+
+
+  Cassette_Opt implements ITFCassette , ICRFTypesConTFPart , ITFModule astimplements de.monticore.tf.ast.IOptional =
+    "opt" "[[" cassette:ITFCassette "]]" ;
+
+
+  Cassette_List implements ITFCassette , ICRFTypesConTFPart , ITFModule astimplements de.monticore.tf.ast.IList =
+    "list" "<Cassette>" ? schemaVarName:Name ? "[[" cassette:Cassette_Pat "]]" ;
+
+
+  Stack_Rep implements ITFStack , ICRFTypesConTFPart , ITFLayer astimplements de.monticore.tf.ast.IReplacement =
+    ("[[" lhs:ITFStack ? ReplacementOp rhs:ITFStack ? "]]");
+
+
+  Stack_Pat implements ITFStack , ITFLayer , ICRFTypesConTFPart astimplements de.monticore.tf.ast.IPattern =
+    "Stack" schemaVarName:Name | "Stack" name:TfIdentifierName "(" level:TfIdentifierInteger belongsToModule:TfIdentifierName ")" |(("Stack" ? schemaVarName:Name|"Stack" schemaVarName:Name ?)"[["("Stack" name:TfIdentifierName "(" level:TfIdentifierInteger belongsToModule:TfIdentifierName ")")"]]");
+
+
+  Stack_Neg implements ITFStack , ICRFTypesConTFPart , ITFLayer astimplements de.monticore.tf.ast.INegation =
+    "not" "[[" stack:ITFStack "]]" ;
+
+
+  Stack_Opt implements ITFStack , ICRFTypesConTFPart , ITFLayer astimplements de.monticore.tf.ast.IOptional =
+    "opt" "[[" stack:ITFStack "]]" ;
+
+
+  Stack_List implements ITFStack , ICRFTypesConTFPart , ITFLayer astimplements de.monticore.tf.ast.IList =
+    "list" "<Stack>" ? schemaVarName:Name ? "[[" stack:Stack_Pat "]]" ;
+
+
+  GlueGun_Rep implements ITFGlueGun , ICRFTypesConTFPart , ITFTool astimplements de.monticore.tf.ast.IReplacement =
+    ("[[" lhs:ITFGlueGun ? ReplacementOp rhs:ITFGlueGun ? "]]");
+
+
+  GlueGun_Pat implements ITFGlueGun , ITFTool , ICRFTypesConTFPart astimplements de.monticore.tf.ast.IPattern =
+    "GlueGun" schemaVarName:Name | "GlueGun" name:TfIdentifierName "(" loc:TfIdentifierName isActive:ITFBoolean ")" |(("GlueGun" ? schemaVarName:Name|"GlueGun" schemaVarName:Name ?)"[["("GlueGun" name:TfIdentifierName "(" loc:TfIdentifierName isActive:ITFBoolean ")")"]]");
+
+
+  GlueGun_Neg implements ITFGlueGun , ICRFTypesConTFPart , ITFTool astimplements de.monticore.tf.ast.INegation =
+    "not" "[[" glueGun:ITFGlueGun "]]" ;
+
+
+  GlueGun_Opt implements ITFGlueGun , ICRFTypesConTFPart , ITFTool astimplements de.monticore.tf.ast.IOptional =
+    "opt" "[[" glueGun:ITFGlueGun "]]" ;
+
+
+  GlueGun_List implements ITFGlueGun , ICRFTypesConTFPart , ITFTool astimplements de.monticore.tf.ast.IList =
+    "list" "<GlueGun>" ? schemaVarName:Name ? "[[" glueGun:GlueGun_Pat "]]" ;
+
+
+  NailGripper_Rep implements ITFNailGripper , ICRFTypesConTFPart , ITFTool astimplements de.monticore.tf.ast.IReplacement =
+    ("[[" lhs:ITFNailGripper ? ReplacementOp rhs:ITFNailGripper ? "]]");
+
+
+  NailGripper_Pat implements ITFNailGripper , ITFTool , ICRFTypesConTFPart astimplements de.monticore.tf.ast.IPattern =
+    "NailGripper" schemaVarName:Name | "NailGripper" name:TfIdentifierName "(" loc:TfIdentifierName isActive:ITFBoolean ")" |(("NailGripper" ? schemaVarName:Name|"NailGripper" schemaVarName:Name ?)"[["("NailGripper" name:TfIdentifierName "(" loc:TfIdentifierName isActive:ITFBoolean ")")"]]");
+
+
+  NailGripper_Neg implements ITFNailGripper , ICRFTypesConTFPart , ITFTool astimplements de.monticore.tf.ast.INegation =
+    "not" "[[" nailGripper:ITFNailGripper "]]" ;
+
+
+  NailGripper_Opt implements ITFNailGripper , ICRFTypesConTFPart , ITFTool astimplements de.monticore.tf.ast.IOptional =
+    "opt" "[[" nailGripper:ITFNailGripper "]]" ;
+
+
+  NailGripper_List implements ITFNailGripper , ICRFTypesConTFPart , ITFTool astimplements de.monticore.tf.ast.IList =
+    "list" "<NailGripper>" ? schemaVarName:Name ? "[[" nailGripper:NailGripper_Pat "]]" ;
+
+
+  FirstPos_Rep implements ITFFirstPos , ICRFTypesConTFPart , ITFLocation astimplements de.monticore.tf.ast.IReplacement =
+    ("[[" lhs:ITFFirstPos ? ReplacementOp rhs:ITFFirstPos ? "]]");
+
+
+  FirstPos_Pat implements ITFFirstPos , ITFLocation , ICRFTypesConTFPart astimplements de.monticore.tf.ast.IPattern =
+    "FirstPos" schemaVarName:Name | "FirstPos" name:TfIdentifierName "(" ")" |(("FirstPos" ? schemaVarName:Name|"FirstPos" schemaVarName:Name ?)"[["("FirstPos" name:TfIdentifierName "(" ")")"]]");
+
+
+  FirstPos_Neg implements ITFFirstPos , ICRFTypesConTFPart , ITFLocation astimplements de.monticore.tf.ast.INegation =
+    "not" "[[" firstPos:ITFFirstPos "]]" ;
+
+
+  FirstPos_Opt implements ITFFirstPos , ICRFTypesConTFPart , ITFLocation astimplements de.monticore.tf.ast.IOptional =
+    "opt" "[[" firstPos:ITFFirstPos "]]" ;
+
+
+  FirstPos_List implements ITFFirstPos , ICRFTypesConTFPart , ITFLocation astimplements de.monticore.tf.ast.IList =
+    "list" "<FirstPos>" ? schemaVarName:Name ? "[[" firstPos:FirstPos_Pat "]]" ;
+
+
+  VacGripper_Rep implements ITFVacGripper , ICRFTypesConTFPart , ITFTool astimplements de.monticore.tf.ast.IReplacement =
+    ("[[" lhs:ITFVacGripper ? ReplacementOp rhs:ITFVacGripper ? "]]");
+
+
+  VacGripper_Pat implements ITFVacGripper , ITFTool , ICRFTypesConTFPart astimplements de.monticore.tf.ast.IPattern =
+    "VacGripper" schemaVarName:Name | "VacGripper" name:TfIdentifierName "(" loc:TfIdentifierName isActive:ITFBoolean ")" |(("VacGripper" ? schemaVarName:Name|"VacGripper" schemaVarName:Name ?)"[["("VacGripper" name:TfIdentifierName "(" loc:TfIdentifierName isActive:ITFBoolean ")")"]]");
+
+
+  VacGripper_Neg implements ITFVacGripper , ICRFTypesConTFPart , ITFTool astimplements de.monticore.tf.ast.INegation =
+    "not" "[[" vacGripper:ITFVacGripper "]]" ;
+
+
+  VacGripper_Opt implements ITFVacGripper , ICRFTypesConTFPart , ITFTool astimplements de.monticore.tf.ast.IOptional =
+    "opt" "[[" vacGripper:ITFVacGripper "]]" ;
+
+
+  VacGripper_List implements ITFVacGripper , ICRFTypesConTFPart , ITFTool astimplements de.monticore.tf.ast.IList =
+    "list" "<VacGripper>" ? schemaVarName:Name ? "[[" vacGripper:VacGripper_Pat "]]" ;
+
+
+  Robot_Rep implements ITFRobot , ICRFTypesConTFPart , ITFAgent astimplements de.monticore.tf.ast.IReplacement =
+    ("[[" lhs:ITFRobot ? ReplacementOp rhs:ITFRobot ? "]]");
+
+
+  Robot_Pat implements ITFRobot , ITFAgent , ICRFTypesConTFPart astimplements de.monticore.tf.ast.IPattern =
+    "Robot" schemaVarName:Name | "Robot" name:TfIdentifierName "(" loc:TfIdentifierName mType:TfIdentifierName ")" |(("Robot" ? schemaVarName:Name|"Robot" schemaVarName:Name ?)"[["("Robot" name:TfIdentifierName "(" loc:TfIdentifierName mType:TfIdentifierName ")")"]]");
+
+
+  Robot_Neg implements ITFRobot , ICRFTypesConTFPart , ITFAgent astimplements de.monticore.tf.ast.INegation =
+    "not" "[[" robot:ITFRobot "]]" ;
+
+
+  Robot_Opt implements ITFRobot , ICRFTypesConTFPart , ITFAgent astimplements de.monticore.tf.ast.IOptional =
+    "opt" "[[" robot:ITFRobot "]]" ;
+
+
+  Robot_List implements ITFRobot , ICRFTypesConTFPart , ITFAgent astimplements de.monticore.tf.ast.IList =
+    "list" "<Robot>" ? schemaVarName:Name ? "[[" robot:Robot_Pat "]]" ;
+
+
+  Plate_Rep implements ITFPlate , ICRFTypesConTFPart , ITFElement astimplements de.monticore.tf.ast.IReplacement =
+    ("[[" lhs:ITFPlate ? ReplacementOp rhs:ITFPlate ? "]]");
+
+
+  Plate_Pat implements ITFPlate , ITFElement , ICRFTypesConTFPart astimplements de.monticore.tf.ast.IPattern =
+    "Plate" schemaVarName:Name | "Plate" name:TfIdentifierName "(" loc:TfIdentifierName ")" |(("Plate" ? schemaVarName:Name|"Plate" schemaVarName:Name ?)"[["("Plate" name:TfIdentifierName "(" loc:TfIdentifierName ")")"]]");
+
+
+  Plate_Neg implements ITFPlate , ICRFTypesConTFPart , ITFElement astimplements de.monticore.tf.ast.INegation =
+    "not" "[[" plate:ITFPlate "]]" ;
+
+
+  Plate_Opt implements ITFPlate , ICRFTypesConTFPart , ITFElement astimplements de.monticore.tf.ast.IOptional =
+    "opt" "[[" plate:ITFPlate "]]" ;
+
+
+  Plate_List implements ITFPlate , ICRFTypesConTFPart , ITFElement astimplements de.monticore.tf.ast.IList =
+    "list" "<Plate>" ? schemaVarName:Name ? "[[" plate:Plate_Pat "]]" ;
+
+
+  Beam_Rep implements ITFBeam , ICRFTypesConTFPart , ITFElement astimplements de.monticore.tf.ast.IReplacement =
+    ("[[" lhs:ITFBeam ? ReplacementOp rhs:ITFBeam ? "]]");
+
+
+  Beam_Pat implements ITFBeam , ITFElement , ICRFTypesConTFPart astimplements de.monticore.tf.ast.IPattern =
+    "Beam" schemaVarName:Name | "Beam" name:TfIdentifierName "(" loc:TfIdentifierName ")" |(("Beam" ? schemaVarName:Name|"Beam" schemaVarName:Name ?)"[["("Beam" name:TfIdentifierName "(" loc:TfIdentifierName ")")"]]");
+
+
+  Beam_Neg implements ITFBeam , ICRFTypesConTFPart , ITFElement astimplements de.monticore.tf.ast.INegation =
+    "not" "[[" beam:ITFBeam "]]" ;
+
+
+  Beam_Opt implements ITFBeam , ICRFTypesConTFPart , ITFElement astimplements de.monticore.tf.ast.IOptional =
+    "opt" "[[" beam:ITFBeam "]]" ;
+
+
+  Beam_List implements ITFBeam , ICRFTypesConTFPart , ITFElement astimplements de.monticore.tf.ast.IList =
+    "list" "<Beam>" ? schemaVarName:Name ? "[[" beam:Beam_Pat "]]" ;
+
+   /*Skipping supers due to empty prod  */ 
+  @Override 
+  World_Rep implements ITFWorld , ICRFTypesConTFPart astimplements de.monticore.tf.ast.IReplacement =
+    ("[[" lhs:ITFWorld ? ReplacementOp rhs:ITFWorld ? "]]");
+
+  /* No I?TFPart supers due to emptiness */
+  @Override 
+  World_Pat implements ITFWorld astimplements de.monticore.tf.ast.IPattern =
+    "World" schemaVarName:Name |(propertyTypeDefinition:ITFPropertyTypeDefinition|property:ITFProperty|predicateTypeDefinition:ITFPredicateTypeDefinition|actionTypeDefinition:ITFActionTypeDefinition|beam:ITFBeam|plate:ITFPlate|firstPos:ITFFirstPos|robot:ITFRobot|vacGripper:ITFVacGripper|holding:ITFHolding|atPlace:ITFAtPlace|nailGripper:ITFNailGripper|glueGun:ITFGlueGun|stack:ITFStack|cassette:ITFCassette|positionOnRail:ITFPositionOnRail|equipPosition:ITFEquipPosition|stackPosition:ITFStackPosition|isAt:ITFIsAt|atAgent:ITFAtAgent|hasTool:ITFHasTool|clear:ITFClear|onTop:ITFOnTop|allSet:ITFAllSet|belongsToLayer:ITFBelongsToLayer|belongsToModule:ITFBelongsToModule|positionFree:ITFPositionFree|stacked:ITFStacked|glued:ITFGlued|nailed:ITFNailed|vgEmpty:ITFVgEmpty)*|(("World" ? schemaVarName:Name|"World" schemaVarName:Name ?)"[["((propertyTypeDefinition:ITFPropertyTypeDefinition|property:ITFProperty|predicateTypeDefinition:ITFPredicateTypeDefinition|actionTypeDefinition:ITFActionTypeDefinition|beam:ITFBeam|plate:ITFPlate|firstPos:ITFFirstPos|robot:ITFRobot|vacGripper:ITFVacGripper|holding:ITFHolding|atPlace:ITFAtPlace|nailGripper:ITFNailGripper|glueGun:ITFGlueGun|stack:ITFStack|cassette:ITFCassette|positionOnRail:ITFPositionOnRail|equipPosition:ITFEquipPosition|stackPosition:ITFStackPosition|isAt:ITFIsAt|atAgent:ITFAtAgent|hasTool:ITFHasTool|clear:ITFClear|onTop:ITFOnTop|allSet:ITFAllSet|belongsToLayer:ITFBelongsToLayer|belongsToModule:ITFBelongsToModule|positionFree:ITFPositionFree|stacked:ITFStacked|glued:ITFGlued|nailed:ITFNailed|vgEmpty:ITFVgEmpty)*)"]]");
+
+   /*Skipping supers due to empty prod  */ 
+  @Override 
+  World_Neg implements ITFWorld , ICRFTypesConTFPart astimplements de.monticore.tf.ast.INegation =
+    "not" "[[" world:ITFWorld "]]" ;
+
+   /*Skipping supers due to empty prod  */ 
+  @Override 
+  World_Opt implements ITFWorld , ICRFTypesConTFPart astimplements de.monticore.tf.ast.IOptional =
+    "opt" "[[" world:ITFWorld "]]" ;
+
+   /*Skipping supers due to empty prod*/ 
+  @Override 
+  World_List implements ITFWorld , ICRFTypesConTFPart astimplements de.monticore.tf.ast.IList =
+    "list" "<World>" ? schemaVarName:Name ? "[[" world:World_Pat "]]" ;
+
+
+  CRFTypesCon_Not_Constant_Pat implements ITFCRFTypesCon_Not_Constant astimplements de.monticore.tf.ast.IAttributePattern =
+    Not:["!"];
+
+
+  CRFTypesCon_Not_Constant_Rep implements ITFCRFTypesCon_Not_Constant astimplements de.monticore.tf.ast.IAttributeReplacement =
+    "[[" lhs:CRFTypesCon_Not_Constant_Pat ":-" "]]" | "[[" ":-" rhs:CRFTypesCon_Not_Constant_Pat "]]" ;
+
+
+  CRFTypesCon_Not_Constant_Neg implements ITFCRFTypesCon_Not_Constant astimplements de.monticore.tf.ast.IAttributeNegation =
+    "not" "[[" CRFTypesCon_Not_Constant_Pat "]]" ;
+
+
+  CRFTypesCon_Not_Constant_Opt implements ITFCRFTypesCon_Not_Constant astimplements de.monticore.tf.ast.IAttributeOptional =
+    "opt" "[[" CRFTypesCon_Not_Constant_Pat "]]" ;
+
+  interface ITFBeam extends ITFElement astextends de.monticore.tf.ast.ITFElement ;
+  interface ITFPlate extends ITFElement astextends de.monticore.tf.ast.ITFElement ;
+  interface ITFRobot extends ITFAgent astextends de.monticore.tf.ast.ITFElement ;
+  interface ITFVacGripper extends ITFTool astextends de.monticore.tf.ast.ITFElement ;
+  interface ITFFirstPos extends ITFLocation astextends de.monticore.tf.ast.ITFElement ;
+  interface ITFNailGripper extends ITFTool astextends de.monticore.tf.ast.ITFElement ;
+  interface ITFGlueGun extends ITFTool astextends de.monticore.tf.ast.ITFElement ;
+  interface ITFStack extends ITFLayer astextends de.monticore.tf.ast.ITFElement ;
+  interface ITFCassette extends ITFModule astextends de.monticore.tf.ast.ITFElement ;
+  interface ITFPositionOnRail extends ITFLocation astextends de.monticore.tf.ast.ITFElement ;
+  interface ITFEquipPosition extends ITFLocation astextends de.monticore.tf.ast.ITFElement ;
+  interface ITFStackPosition extends ITFLocation astextends de.monticore.tf.ast.ITFElement ;
+  interface ITFHolding extends ITFPredicate astextends de.monticore.tf.ast.ITFElement ;
+  interface ITFCRFTypesCon_Not_Constant ;
+  interface ITFAtPlace extends ITFPredicate astextends de.monticore.tf.ast.ITFElement ;
+  interface ITFIsAt extends ITFPredicate astextends de.monticore.tf.ast.ITFElement ;
+  interface ITFAtAgent extends ITFPredicate astextends de.monticore.tf.ast.ITFElement ;
+  interface ITFHasTool extends ITFPredicate astextends de.monticore.tf.ast.ITFElement ;
+  interface ITFClear extends ITFPredicate astextends de.monticore.tf.ast.ITFElement ;
+  interface ITFOnTop extends ITFPredicate astextends de.monticore.tf.ast.ITFElement ;
+  interface ITFAllSet extends ITFPredicate astextends de.monticore.tf.ast.ITFElement ;
+  interface ITFBelongsToLayer extends ITFPredicate astextends de.monticore.tf.ast.ITFElement ;
+  interface ITFBelongsToModule extends ITFPredicate astextends de.monticore.tf.ast.ITFElement ;
+  interface ITFPositionFree extends ITFPredicate astextends de.monticore.tf.ast.ITFElement ;
+  interface ITFStacked extends ITFPredicate astextends de.monticore.tf.ast.ITFElement ;
+  interface ITFGlued extends ITFPredicate astextends de.monticore.tf.ast.ITFElement ;
+  interface ITFNailed extends ITFPredicate astextends de.monticore.tf.ast.ITFElement ;
+  interface ITFVgEmpty extends ITFPredicate astextends de.monticore.tf.ast.ITFElement ;
+  interface ITFPickUpHL extends ITFPActionNode astextends de.monticore.tf.ast.ITFElement ;
+  interface ITFPlaceHL extends ITFPActionNode astextends de.monticore.tf.ast.ITFElement ;
+  interface ICRFTypesConTFPart extends ITFPart ;
+  astrule World_List = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTWorld.class;
+
+  } 
+  ;
+  astrule World_Neg = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTWorld.class;
+
+  } 
+  ;
+  astrule World_Pat = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTWorld.class;
+
+  } 
+  ;
+  astrule World_Opt = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTWorld.class;
+
+  } 
+  ;
+  astrule World_Rep = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTWorld.class;
+
+  } 
+  ;
+  astrule Beam_List = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTBeam.class;
+
+  } 
+   method public ASTITFBeam getTFElement(){ 
+    return getBeam();
+
+  } 
+  ;
+  astrule Beam_Neg = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTBeam.class;
+
+  } 
+   method public ASTITFBeam getTFElement(){ 
+    return getBeam();
+
+  } 
+  ;
+  astrule Beam_Pat = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTBeam.class;
+
+  } 
+  ;
+  astrule Beam_Opt = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTBeam.class;
+
+  } 
+   method public ASTITFBeam getTFElement(){ 
+    return getBeam();
+
+  } 
+  ;
+  astrule Beam_Rep = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTBeam.class;
+
+  } 
+  ;
+  astrule Plate_List = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTPlate.class;
+
+  } 
+   method public ASTITFPlate getTFElement(){ 
+    return getPlate();
+
+  } 
+  ;
+  astrule Plate_Neg = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTPlate.class;
+
+  } 
+   method public ASTITFPlate getTFElement(){ 
+    return getPlate();
+
+  } 
+  ;
+  astrule Plate_Pat = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTPlate.class;
+
+  } 
+  ;
+  astrule Plate_Opt = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTPlate.class;
+
+  } 
+   method public ASTITFPlate getTFElement(){ 
+    return getPlate();
+
+  } 
+  ;
+  astrule Plate_Rep = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTPlate.class;
+
+  } 
+  ;
+  astrule Robot_List = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTRobot.class;
+
+  } 
+   method public ASTITFRobot getTFElement(){ 
+    return getRobot();
+
+  } 
+  ;
+  astrule Robot_Neg = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTRobot.class;
+
+  } 
+   method public ASTITFRobot getTFElement(){ 
+    return getRobot();
+
+  } 
+  ;
+  astrule Robot_Pat = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTRobot.class;
+
+  } 
+  ;
+  astrule Robot_Opt = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTRobot.class;
+
+  } 
+   method public ASTITFRobot getTFElement(){ 
+    return getRobot();
+
+  } 
+  ;
+  astrule Robot_Rep = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTRobot.class;
+
+  } 
+  ;
+  astrule VacGripper_List = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTVacGripper.class;
+
+  } 
+   method public ASTITFVacGripper getTFElement(){ 
+    return getVacGripper();
+
+  } 
+  ;
+  astrule VacGripper_Neg = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTVacGripper.class;
+
+  } 
+   method public ASTITFVacGripper getTFElement(){ 
+    return getVacGripper();
+
+  } 
+  ;
+  astrule VacGripper_Pat = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTVacGripper.class;
+
+  } 
+  ;
+  astrule VacGripper_Opt = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTVacGripper.class;
+
+  } 
+   method public ASTITFVacGripper getTFElement(){ 
+    return getVacGripper();
+
+  } 
+  ;
+  astrule VacGripper_Rep = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTVacGripper.class;
+
+  } 
+  ;
+  astrule FirstPos_List = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTFirstPos.class;
+
+  } 
+   method public ASTITFFirstPos getTFElement(){ 
+    return getFirstPos();
+
+  } 
+  ;
+  astrule FirstPos_Neg = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTFirstPos.class;
+
+  } 
+   method public ASTITFFirstPos getTFElement(){ 
+    return getFirstPos();
+
+  } 
+  ;
+  astrule FirstPos_Pat = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTFirstPos.class;
+
+  } 
+  ;
+  astrule FirstPos_Opt = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTFirstPos.class;
+
+  } 
+   method public ASTITFFirstPos getTFElement(){ 
+    return getFirstPos();
+
+  } 
+  ;
+  astrule FirstPos_Rep = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTFirstPos.class;
+
+  } 
+  ;
+  astrule NailGripper_List = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTNailGripper.class;
+
+  } 
+   method public ASTITFNailGripper getTFElement(){ 
+    return getNailGripper();
+
+  } 
+  ;
+  astrule NailGripper_Neg = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTNailGripper.class;
+
+  } 
+   method public ASTITFNailGripper getTFElement(){ 
+    return getNailGripper();
+
+  } 
+  ;
+  astrule NailGripper_Pat = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTNailGripper.class;
+
+  } 
+  ;
+  astrule NailGripper_Opt = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTNailGripper.class;
+
+  } 
+   method public ASTITFNailGripper getTFElement(){ 
+    return getNailGripper();
+
+  } 
+  ;
+  astrule NailGripper_Rep = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTNailGripper.class;
+
+  } 
+  ;
+  astrule GlueGun_List = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTGlueGun.class;
+
+  } 
+   method public ASTITFGlueGun getTFElement(){ 
+    return getGlueGun();
+
+  } 
+  ;
+  astrule GlueGun_Neg = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTGlueGun.class;
+
+  } 
+   method public ASTITFGlueGun getTFElement(){ 
+    return getGlueGun();
+
+  } 
+  ;
+  astrule GlueGun_Pat = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTGlueGun.class;
+
+  } 
+  ;
+  astrule GlueGun_Opt = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTGlueGun.class;
+
+  } 
+   method public ASTITFGlueGun getTFElement(){ 
+    return getGlueGun();
+
+  } 
+  ;
+  astrule GlueGun_Rep = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTGlueGun.class;
+
+  } 
+  ;
+  astrule Stack_List = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTStack.class;
+
+  } 
+   method public ASTITFStack getTFElement(){ 
+    return getStack();
+
+  } 
+  ;
+  astrule Stack_Neg = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTStack.class;
+
+  } 
+   method public ASTITFStack getTFElement(){ 
+    return getStack();
+
+  } 
+  ;
+  astrule Stack_Pat = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTStack.class;
+
+  } 
+  ;
+  astrule Stack_Opt = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTStack.class;
+
+  } 
+   method public ASTITFStack getTFElement(){ 
+    return getStack();
+
+  } 
+  ;
+  astrule Stack_Rep = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTStack.class;
+
+  } 
+  ;
+  astrule Cassette_List = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTCassette.class;
+
+  } 
+   method public ASTITFCassette getTFElement(){ 
+    return getCassette();
+
+  } 
+  ;
+  astrule Cassette_Neg = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTCassette.class;
+
+  } 
+   method public ASTITFCassette getTFElement(){ 
+    return getCassette();
+
+  } 
+  ;
+  astrule Cassette_Pat = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTCassette.class;
+
+  } 
+  ;
+  astrule Cassette_Opt = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTCassette.class;
+
+  } 
+   method public ASTITFCassette getTFElement(){ 
+    return getCassette();
+
+  } 
+  ;
+  astrule Cassette_Rep = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTCassette.class;
+
+  } 
+  ;
+  astrule PositionOnRail_List = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTPositionOnRail.class;
+
+  } 
+   method public ASTITFPositionOnRail getTFElement(){ 
+    return getPositionOnRail();
+
+  } 
+  ;
+  astrule PositionOnRail_Neg = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTPositionOnRail.class;
+
+  } 
+   method public ASTITFPositionOnRail getTFElement(){ 
+    return getPositionOnRail();
+
+  } 
+  ;
+  astrule PositionOnRail_Pat = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTPositionOnRail.class;
+
+  } 
+  ;
+  astrule PositionOnRail_Opt = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTPositionOnRail.class;
+
+  } 
+   method public ASTITFPositionOnRail getTFElement(){ 
+    return getPositionOnRail();
+
+  } 
+  ;
+  astrule PositionOnRail_Rep = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTPositionOnRail.class;
+
+  } 
+  ;
+  astrule EquipPosition_List = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTEquipPosition.class;
+
+  } 
+   method public ASTITFEquipPosition getTFElement(){ 
+    return getEquipPosition();
+
+  } 
+  ;
+  astrule EquipPosition_Neg = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTEquipPosition.class;
+
+  } 
+   method public ASTITFEquipPosition getTFElement(){ 
+    return getEquipPosition();
+
+  } 
+  ;
+  astrule EquipPosition_Pat = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTEquipPosition.class;
+
+  } 
+  ;
+  astrule EquipPosition_Opt = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTEquipPosition.class;
+
+  } 
+   method public ASTITFEquipPosition getTFElement(){ 
+    return getEquipPosition();
+
+  } 
+  ;
+  astrule EquipPosition_Rep = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTEquipPosition.class;
+
+  } 
+  ;
+  astrule StackPosition_List = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTStackPosition.class;
+
+  } 
+   method public ASTITFStackPosition getTFElement(){ 
+    return getStackPosition();
+
+  } 
+  ;
+  astrule StackPosition_Neg = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTStackPosition.class;
+
+  } 
+   method public ASTITFStackPosition getTFElement(){ 
+    return getStackPosition();
+
+  } 
+  ;
+  astrule StackPosition_Pat = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTStackPosition.class;
+
+  } 
+  ;
+  astrule StackPosition_Opt = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTStackPosition.class;
+
+  } 
+   method public ASTITFStackPosition getTFElement(){ 
+    return getStackPosition();
+
+  } 
+  ;
+  astrule StackPosition_Rep = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTStackPosition.class;
+
+  } 
+  ;
+  astrule Holding_List = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTHolding.class;
+
+  } 
+   method public ASTITFHolding getTFElement(){ 
+    return getHolding();
+
+  } 
+  ;
+  astrule Holding_Neg = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTHolding.class;
+
+  } 
+   method public ASTITFHolding getTFElement(){ 
+    return getHolding();
+
+  } 
+  ;
+  astrule Holding_Pat = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTHolding.class;
+
+  } 
+  ;
+  astrule Holding_Opt = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTHolding.class;
+
+  } 
+   method public ASTITFHolding getTFElement(){ 
+    return getHolding();
+
+  } 
+  ;
+  astrule Holding_Rep = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTHolding.class;
+
+  } 
+  ;
+  astrule CRFTypesCon_Not_Constant_Neg = method public ASTCRFTypesCon_Not_Constant_Pat getTFElement(){ 
+    return getCRFTypesCon_Not_Constant_Pat();
+
+  } 
+  ;
+  astrule CRFTypesCon_Not_Constant_Opt = method public ASTCRFTypesCon_Not_Constant_Pat getTFElement(){ 
+    return getCRFTypesCon_Not_Constant_Pat();
+
+  } 
+  ;
+  astrule AtPlace_List = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTAtPlace.class;
+
+  } 
+   method public ASTITFAtPlace getTFElement(){ 
+    return getAtPlace();
+
+  } 
+  ;
+  astrule AtPlace_Neg = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTAtPlace.class;
+
+  } 
+   method public ASTITFAtPlace getTFElement(){ 
+    return getAtPlace();
+
+  } 
+  ;
+  astrule AtPlace_Pat = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTAtPlace.class;
+
+  } 
+  ;
+  astrule AtPlace_Opt = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTAtPlace.class;
+
+  } 
+   method public ASTITFAtPlace getTFElement(){ 
+    return getAtPlace();
+
+  } 
+  ;
+  astrule AtPlace_Rep = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTAtPlace.class;
+
+  } 
+  ;
+  astrule IsAt_List = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTIsAt.class;
+
+  } 
+   method public ASTITFIsAt getTFElement(){ 
+    return getIsAt();
+
+  } 
+  ;
+  astrule IsAt_Neg = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTIsAt.class;
+
+  } 
+   method public ASTITFIsAt getTFElement(){ 
+    return getIsAt();
+
+  } 
+  ;
+  astrule IsAt_Pat = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTIsAt.class;
+
+  } 
+  ;
+  astrule IsAt_Opt = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTIsAt.class;
+
+  } 
+   method public ASTITFIsAt getTFElement(){ 
+    return getIsAt();
+
+  } 
+  ;
+  astrule IsAt_Rep = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTIsAt.class;
+
+  } 
+  ;
+  astrule AtAgent_List = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTAtAgent.class;
+
+  } 
+   method public ASTITFAtAgent getTFElement(){ 
+    return getAtAgent();
+
+  } 
+  ;
+  astrule AtAgent_Neg = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTAtAgent.class;
+
+  } 
+   method public ASTITFAtAgent getTFElement(){ 
+    return getAtAgent();
+
+  } 
+  ;
+  astrule AtAgent_Pat = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTAtAgent.class;
+
+  } 
+  ;
+  astrule AtAgent_Opt = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTAtAgent.class;
+
+  } 
+   method public ASTITFAtAgent getTFElement(){ 
+    return getAtAgent();
+
+  } 
+  ;
+  astrule AtAgent_Rep = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTAtAgent.class;
+
+  } 
+  ;
+  astrule HasTool_List = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTHasTool.class;
+
+  } 
+   method public ASTITFHasTool getTFElement(){ 
+    return getHasTool();
+
+  } 
+  ;
+  astrule HasTool_Neg = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTHasTool.class;
+
+  } 
+   method public ASTITFHasTool getTFElement(){ 
+    return getHasTool();
+
+  } 
+  ;
+  astrule HasTool_Pat = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTHasTool.class;
+
+  } 
+  ;
+  astrule HasTool_Opt = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTHasTool.class;
+
+  } 
+   method public ASTITFHasTool getTFElement(){ 
+    return getHasTool();
+
+  } 
+  ;
+  astrule HasTool_Rep = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTHasTool.class;
+
+  } 
+  ;
+  astrule Clear_List = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTClear.class;
+
+  } 
+   method public ASTITFClear getTFElement(){ 
+    return getClear();
+
+  } 
+  ;
+  astrule Clear_Neg = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTClear.class;
+
+  } 
+   method public ASTITFClear getTFElement(){ 
+    return getClear();
+
+  } 
+  ;
+  astrule Clear_Pat = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTClear.class;
+
+  } 
+  ;
+  astrule Clear_Opt = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTClear.class;
+
+  } 
+   method public ASTITFClear getTFElement(){ 
+    return getClear();
+
+  } 
+  ;
+  astrule Clear_Rep = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTClear.class;
+
+  } 
+  ;
+  astrule OnTop_List = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTOnTop.class;
+
+  } 
+   method public ASTITFOnTop getTFElement(){ 
+    return getOnTop();
+
+  } 
+  ;
+  astrule OnTop_Neg = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTOnTop.class;
+
+  } 
+   method public ASTITFOnTop getTFElement(){ 
+    return getOnTop();
+
+  } 
+  ;
+  astrule OnTop_Pat = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTOnTop.class;
+
+  } 
+  ;
+  astrule OnTop_Opt = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTOnTop.class;
+
+  } 
+   method public ASTITFOnTop getTFElement(){ 
+    return getOnTop();
+
+  } 
+  ;
+  astrule OnTop_Rep = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTOnTop.class;
+
+  } 
+  ;
+  astrule AllSet_List = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTAllSet.class;
+
+  } 
+   method public ASTITFAllSet getTFElement(){ 
+    return getAllSet();
+
+  } 
+  ;
+  astrule AllSet_Neg = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTAllSet.class;
+
+  } 
+   method public ASTITFAllSet getTFElement(){ 
+    return getAllSet();
+
+  } 
+  ;
+  astrule AllSet_Pat = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTAllSet.class;
+
+  } 
+  ;
+  astrule AllSet_Opt = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTAllSet.class;
+
+  } 
+   method public ASTITFAllSet getTFElement(){ 
+    return getAllSet();
+
+  } 
+  ;
+  astrule AllSet_Rep = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTAllSet.class;
+
+  } 
+  ;
+  astrule BelongsToLayer_List = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTBelongsToLayer.class;
+
+  } 
+   method public ASTITFBelongsToLayer getTFElement(){ 
+    return getBelongsToLayer();
+
+  } 
+  ;
+  astrule BelongsToLayer_Neg = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTBelongsToLayer.class;
+
+  } 
+   method public ASTITFBelongsToLayer getTFElement(){ 
+    return getBelongsToLayer();
+
+  } 
+  ;
+  astrule BelongsToLayer_Pat = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTBelongsToLayer.class;
+
+  } 
+  ;
+  astrule BelongsToLayer_Opt = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTBelongsToLayer.class;
+
+  } 
+   method public ASTITFBelongsToLayer getTFElement(){ 
+    return getBelongsToLayer();
+
+  } 
+  ;
+  astrule BelongsToLayer_Rep = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTBelongsToLayer.class;
+
+  } 
+  ;
+  astrule BelongsToModule_List = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTBelongsToModule.class;
+
+  } 
+   method public ASTITFBelongsToModule getTFElement(){ 
+    return getBelongsToModule();
+
+  } 
+  ;
+  astrule BelongsToModule_Neg = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTBelongsToModule.class;
+
+  } 
+   method public ASTITFBelongsToModule getTFElement(){ 
+    return getBelongsToModule();
+
+  } 
+  ;
+  astrule BelongsToModule_Pat = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTBelongsToModule.class;
+
+  } 
+  ;
+  astrule BelongsToModule_Opt = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTBelongsToModule.class;
+
+  } 
+   method public ASTITFBelongsToModule getTFElement(){ 
+    return getBelongsToModule();
+
+  } 
+  ;
+  astrule BelongsToModule_Rep = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTBelongsToModule.class;
+
+  } 
+  ;
+  astrule PositionFree_List = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTPositionFree.class;
+
+  } 
+   method public ASTITFPositionFree getTFElement(){ 
+    return getPositionFree();
+
+  } 
+  ;
+  astrule PositionFree_Neg = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTPositionFree.class;
+
+  } 
+   method public ASTITFPositionFree getTFElement(){ 
+    return getPositionFree();
+
+  } 
+  ;
+  astrule PositionFree_Pat = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTPositionFree.class;
+
+  } 
+  ;
+  astrule PositionFree_Opt = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTPositionFree.class;
+
+  } 
+   method public ASTITFPositionFree getTFElement(){ 
+    return getPositionFree();
+
+  } 
+  ;
+  astrule PositionFree_Rep = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTPositionFree.class;
+
+  } 
+  ;
+  astrule Stacked_List = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTStacked.class;
+
+  } 
+   method public ASTITFStacked getTFElement(){ 
+    return getStacked();
+
+  } 
+  ;
+  astrule Stacked_Neg = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTStacked.class;
+
+  } 
+   method public ASTITFStacked getTFElement(){ 
+    return getStacked();
+
+  } 
+  ;
+  astrule Stacked_Pat = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTStacked.class;
+
+  } 
+  ;
+  astrule Stacked_Opt = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTStacked.class;
+
+  } 
+   method public ASTITFStacked getTFElement(){ 
+    return getStacked();
+
+  } 
+  ;
+  astrule Stacked_Rep = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTStacked.class;
+
+  } 
+  ;
+  astrule Glued_List = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTGlued.class;
+
+  } 
+   method public ASTITFGlued getTFElement(){ 
+    return getGlued();
+
+  } 
+  ;
+  astrule Glued_Neg = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTGlued.class;
+
+  } 
+   method public ASTITFGlued getTFElement(){ 
+    return getGlued();
+
+  } 
+  ;
+  astrule Glued_Pat = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTGlued.class;
+
+  } 
+  ;
+  astrule Glued_Opt = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTGlued.class;
+
+  } 
+   method public ASTITFGlued getTFElement(){ 
+    return getGlued();
+
+  } 
+  ;
+  astrule Glued_Rep = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTGlued.class;
+
+  } 
+  ;
+  astrule Nailed_List = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTNailed.class;
+
+  } 
+   method public ASTITFNailed getTFElement(){ 
+    return getNailed();
+
+  } 
+  ;
+  astrule Nailed_Neg = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTNailed.class;
+
+  } 
+   method public ASTITFNailed getTFElement(){ 
+    return getNailed();
+
+  } 
+  ;
+  astrule Nailed_Pat = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTNailed.class;
+
+  } 
+  ;
+  astrule Nailed_Opt = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTNailed.class;
+
+  } 
+   method public ASTITFNailed getTFElement(){ 
+    return getNailed();
+
+  } 
+  ;
+  astrule Nailed_Rep = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTNailed.class;
+
+  } 
+  ;
+  astrule VgEmpty_List = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTVgEmpty.class;
+
+  } 
+   method public ASTITFVgEmpty getTFElement(){ 
+    return getVgEmpty();
+
+  } 
+  ;
+  astrule VgEmpty_Neg = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTVgEmpty.class;
+
+  } 
+   method public ASTITFVgEmpty getTFElement(){ 
+    return getVgEmpty();
+
+  } 
+  ;
+  astrule VgEmpty_Pat = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTVgEmpty.class;
+
+  } 
+  ;
+  astrule VgEmpty_Opt = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTVgEmpty.class;
+
+  } 
+   method public ASTITFVgEmpty getTFElement(){ 
+    return getVgEmpty();
+
+  } 
+  ;
+  astrule VgEmpty_Rep = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTVgEmpty.class;
+
+  } 
+  ;
+  astrule PickUpHL_List = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTPickUpHL.class;
+
+  } 
+   method public ASTITFPickUpHL getTFElement(){ 
+    return getPickUpHL();
+
+  } 
+  ;
+  astrule PickUpHL_Neg = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTPickUpHL.class;
+
+  } 
+   method public ASTITFPickUpHL getTFElement(){ 
+    return getPickUpHL();
+
+  } 
+  ;
+  astrule PickUpHL_Pat = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTPickUpHL.class;
+
+  } 
+  ;
+  astrule PickUpHL_Opt = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTPickUpHL.class;
+
+  } 
+   method public ASTITFPickUpHL getTFElement(){ 
+    return getPickUpHL();
+
+  } 
+  ;
+  astrule PickUpHL_Rep = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTPickUpHL.class;
+
+  } 
+  ;
+  astrule PlaceHL_List = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTPlaceHL.class;
+
+  } 
+   method public ASTITFPlaceHL getTFElement(){ 
+    return getPlaceHL();
+
+  } 
+  ;
+  astrule PlaceHL_Neg = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTPlaceHL.class;
+
+  } 
+   method public ASTITFPlaceHL getTFElement(){ 
+    return getPlaceHL();
+
+  } 
+  ;
+  astrule PlaceHL_Pat = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTPlaceHL.class;
+
+  } 
+  ;
+  astrule PlaceHL_Opt = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTPlaceHL.class;
+
+  } 
+   method public ASTITFPlaceHL getTFElement(){ 
+    return getPlaceHL();
+
+  } 
+  ;
+  astrule PlaceHL_Rep = method public Class _getTFElementType(){ 
+    return crftypescon._ast.ASTPlaceHL.class;
+
+  } 
+  ;
+}

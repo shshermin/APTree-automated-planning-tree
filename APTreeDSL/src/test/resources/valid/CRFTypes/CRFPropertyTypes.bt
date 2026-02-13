@@ -1,0 +1,5 @@
+Define Beam as Element {loc: Location}
+Define Plate as Element {loc: Location}
+Define FirstPos as Location 
+Define Robot as Agent { loc: Location mType: String}
+Define VacGripper as Tool {loc:Location isActive:Boolean}

@@ -1,0 +1,38 @@
+grammar DynamicBTFlowNodeTagDefinition extends DynamicBTFlowNode ,de.monticore.tagging.Tags ,PlanningServiceTagDefinition {
+  /* DefaultIdent (using the Name) works too */
+   APTreeIdentifier implements ModelElementIdentifier  = "[" identifiesElement:APTree "]" ;
+  /* DefaultIdent (using the Name) works too */
+   DynamicFlowNodeIdentifier implements ModelElementIdentifier  = "[" identifiesElement:DynamicFlowNode "]" ;
+  /* DefaultIdent (using the Name) works too */
+   NodeGraphIdentifier implements ModelElementIdentifier  = "[" identifiesElement:NodeGraph "]" ;
+  /* DefaultIdent (using the Name) works too */
+   GraphNodeIdentifier implements ModelElementIdentifier  = "[" identifiesElement:GraphNode "]" ;
+  /* DefaultIdent (using the Name) works too */
+   RelationIdentifier implements ModelElementIdentifier  = "[" identifiesElement:Relation "]" ;
+  astrule APTreeIdentifier = method public String getIdentifies(){ 
+    return "APTree";
+
+  } 
+  ;
+  astrule DynamicFlowNodeIdentifier = method public String getIdentifies(){ 
+    return "DynamicFlowNode";
+
+  } 
+  ;
+  astrule NodeGraphIdentifier = method public String getIdentifies(){ 
+    return "NodeGraph";
+
+  } 
+  ;
+  astrule GraphNodeIdentifier = method public String getIdentifies(){ 
+    return "GraphNode";
+
+  } 
+  ;
+  astrule RelationIdentifier = method public String getIdentifies(){ 
+    return "Relation";
+
+  } 
+  ;
+  start TagUnit;
+}

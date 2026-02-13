@@ -1,0 +1,33 @@
+grammar CRFTypesConTagSchema extends de.monticore.tagging.TagSchema ,CRFTypesDefTagSchema ,de.monticore.MCBasicsTagSchema {
+   WorldSchemaIdentifier implements ScopeIdentifier  = "World" ;
+   BeamSchemaIdentifier implements ScopeIdentifier  = "Beam" ;
+   PlateSchemaIdentifier implements ScopeIdentifier  = "Plate" ;
+   RobotSchemaIdentifier implements ScopeIdentifier  = "Robot" ;
+   VacGripperSchemaIdentifier implements ScopeIdentifier  = "VacGripper" ;
+   FirstPosSchemaIdentifier implements ScopeIdentifier  = "FirstPos" ;
+   NailGripperSchemaIdentifier implements ScopeIdentifier  = "NailGripper" ;
+   GlueGunSchemaIdentifier implements ScopeIdentifier  = "GlueGun" ;
+   StackSchemaIdentifier implements ScopeIdentifier  = "Stack" ;
+   CassetteSchemaIdentifier implements ScopeIdentifier  = "Cassette" ;
+   PositionOnRailSchemaIdentifier implements ScopeIdentifier  = "PositionOnRail" ;
+   EquipPositionSchemaIdentifier implements ScopeIdentifier  = "EquipPosition" ;
+   StackPositionSchemaIdentifier implements ScopeIdentifier  = "StackPosition" ;
+   HoldingSchemaIdentifier implements ScopeIdentifier  = "Holding" ;
+   AtPlaceSchemaIdentifier implements ScopeIdentifier  = "AtPlace" ;
+   IsAtSchemaIdentifier implements ScopeIdentifier  = "IsAt" ;
+   AtAgentSchemaIdentifier implements ScopeIdentifier  = "AtAgent" ;
+   HasToolSchemaIdentifier implements ScopeIdentifier  = "HasTool" ;
+   ClearSchemaIdentifier implements ScopeIdentifier  = "Clear" ;
+   OnTopSchemaIdentifier implements ScopeIdentifier  = "OnTop" ;
+   AllSetSchemaIdentifier implements ScopeIdentifier  = "AllSet" ;
+   BelongsToLayerSchemaIdentifier implements ScopeIdentifier  = "BelongsToLayer" ;
+   BelongsToModuleSchemaIdentifier implements ScopeIdentifier  = "BelongsToModule" ;
+   PositionFreeSchemaIdentifier implements ScopeIdentifier  = "PositionFree" ;
+   StackedSchemaIdentifier implements ScopeIdentifier  = "Stacked" ;
+   GluedSchemaIdentifier implements ScopeIdentifier  = "Glued" ;
+   NailedSchemaIdentifier implements ScopeIdentifier  = "Nailed" ;
+   VgEmptySchemaIdentifier implements ScopeIdentifier  = "VgEmpty" ;
+   PickUpHLSchemaIdentifier implements ScopeIdentifier  = "PickUpHL" ;
+   PlaceHLSchemaIdentifier implements ScopeIdentifier  = "PlaceHL" ;
+  start TagSchema;
+}

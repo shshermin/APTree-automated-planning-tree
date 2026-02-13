@@ -1,0 +1,16 @@
+BehaviorTree MyRobotTree {
+  Root Sequence Main {    
+    Sequence HandlePlate {
+      Action PickUpPlate1 
+      Action PlacePlate1
+    }   
+    Sequence BeamPlacement {
+      Sequence HandleBeam1 {
+        Action PickUpBeam1 {
+          Decorator GripperEmpty}
+        Action PlaceBeam1
+      }
+      Sequence HandleBeam2 {
+        Action PickUpBeam2 
+        Action PlaceBeam2 
+      }}}}

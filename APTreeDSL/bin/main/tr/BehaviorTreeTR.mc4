@@ -1,0 +1,875 @@
+package tr;grammar BehaviorTreeTR extends de.monticore.types.tr.MCBasicTypesTR {
+  fragment 
+  // abstract node class
+  // flow nodes
+  //concrete flownodes
+  // action nodes
+  // services and decorators
+  //concrete examples of services
+  // Fragment definitions (must come before token definitions that use them)
+  token LexTFDIGIT
+    ='0'..'9' ;
+
+  fragment token LexTFLOWER
+    ='a'..'z' ;
+
+  fragment token LexTFUPPER
+    ='A'..'Z' ;
+
+  fragment token LexTFALPHA
+    ='a'..'z' |'A'..'Z' ;
+
+  fragment token LexTFSYMBOL
+    ='-' |'_' |'.' |'/' |'\\' ;
+
+  // Token definitions
+  token LexTFDouble
+    =('-')? LexTFDIGIT+'.' LexTFDIGIT+;
+
+  token LexTFInteger
+    =('-')? LexTFDIGIT+;
+
+  token LexTFFILEPATH
+    =(LexTFALPHA|LexTFDIGIT|LexTFSYMBOL)+;
+
+  /* Leaving this lexical productions name intact , as it (most likely) is overriding another one (or this grammar is a supergrammar of TFCommons) */
+  token String
+    ='"'((~('"'|'\\'|'\r'|'\n'))|('\\'.))*'"' ;
+
+
+  BehaviorTreeTFRule =
+    TFRule ;
+
+
+  BasicType_Rep implements ITFBasicType , IBehaviorTreeTFPart astimplements de.monticore.tf.ast.IReplacement =
+    ("[[" lhs:ITFBasicType ? ReplacementOp rhs:ITFBasicType ? "]]");
+
+
+  BasicType_Pat implements ITFBasicType , IBehaviorTreeTFPart astimplements de.monticore.tf.ast.IPattern =
+    "BasicType" schemaVarName:Name | integer:TfIdentifierInteger | double:TfIdentifierDouble | fILEPATH:TfIdentifierFILEPATH | string:TfIdentifierString | boolean:ITFBoolean | name:TfIdentifierName |(("BasicType" ? schemaVarName:Name|"BasicType" schemaVarName:Name ?)"[["(integer:TfIdentifierInteger|double:TfIdentifierDouble|fILEPATH:TfIdentifierFILEPATH|string:TfIdentifierString|boolean:ITFBoolean|name:TfIdentifierName)"]]");
+
+
+  BasicType_Neg implements ITFBasicType , IBehaviorTreeTFPart astimplements de.monticore.tf.ast.INegation =
+    "not" "[[" basicType:ITFBasicType "]]" ;
+
+
+  BasicType_Opt implements ITFBasicType , IBehaviorTreeTFPart astimplements de.monticore.tf.ast.IOptional =
+    "opt" "[[" basicType:ITFBasicType "]]" ;
+
+
+  BasicType_List implements ITFBasicType , IBehaviorTreeTFPart astimplements de.monticore.tf.ast.IList =
+    "list" "<BasicType>" ? schemaVarName:Name ? "[[" basicType:BasicType_Pat "]]" ;
+
+
+  CalcDist_Rep implements ITFCalcDist , IBehaviorTreeTFPart , ITFService astimplements de.monticore.tf.ast.IReplacement =
+    ("[[" lhs:ITFCalcDist ? ReplacementOp rhs:ITFCalcDist ? "]]");
+
+
+  CalcDist_Pat implements ITFCalcDist , ITFService , IBehaviorTreeTFPart astimplements de.monticore.tf.ast.IPattern =
+    "CalcDist" schemaVarName:Name | "Service" name:TfIdentifierName |(("CalcDist" ? schemaVarName:Name|"CalcDist" schemaVarName:Name ?)"[["("Service" name:TfIdentifierName)"]]");
+
+
+  CalcDist_Neg implements ITFCalcDist , IBehaviorTreeTFPart , ITFService astimplements de.monticore.tf.ast.INegation =
+    "not" "[[" calcDist:ITFCalcDist "]]" ;
+
+
+  CalcDist_Opt implements ITFCalcDist , IBehaviorTreeTFPart , ITFService astimplements de.monticore.tf.ast.IOptional =
+    "opt" "[[" calcDist:ITFCalcDist "]]" ;
+
+
+  CalcDist_List implements ITFCalcDist , IBehaviorTreeTFPart , ITFService astimplements de.monticore.tf.ast.IList =
+    "list" "<CalcDist>" ? schemaVarName:Name ? "[[" calcDist:CalcDist_Pat "]]" ;
+
+
+  GripperEmpty_Rep implements ITFGripperEmpty , IBehaviorTreeTFPart , ITFDecorator astimplements de.monticore.tf.ast.IReplacement =
+    ("[[" lhs:ITFGripperEmpty ? ReplacementOp rhs:ITFGripperEmpty ? "]]");
+
+
+  GripperEmpty_Pat implements ITFGripperEmpty , ITFDecorator , IBehaviorTreeTFPart astimplements de.monticore.tf.ast.IPattern =
+    "GripperEmpty" schemaVarName:Name | "Decorator" name:TfIdentifierName |(("GripperEmpty" ? schemaVarName:Name|"GripperEmpty" schemaVarName:Name ?)"[["("Decorator" name:TfIdentifierName)"]]");
+
+
+  GripperEmpty_Neg implements ITFGripperEmpty , IBehaviorTreeTFPart , ITFDecorator astimplements de.monticore.tf.ast.INegation =
+    "not" "[[" gripperEmpty:ITFGripperEmpty "]]" ;
+
+
+  GripperEmpty_Opt implements ITFGripperEmpty , IBehaviorTreeTFPart , ITFDecorator astimplements de.monticore.tf.ast.IOptional =
+    "opt" "[[" gripperEmpty:ITFGripperEmpty "]]" ;
+
+
+  GripperEmpty_List implements ITFGripperEmpty , IBehaviorTreeTFPart , ITFDecorator astimplements de.monticore.tf.ast.IList =
+    "list" "<GripperEmpty>" ? schemaVarName:Name ? "[[" gripperEmpty:GripperEmpty_Pat "]]" ;
+
+
+  Place_Rep implements ITFPlace , IBehaviorTreeTFPart , ITFActionNode astimplements de.monticore.tf.ast.IReplacement =
+    ("[[" lhs:ITFPlace ? ReplacementOp rhs:ITFPlace ? "]]");
+
+
+  Place_Pat implements ITFPlace , ITFActionNode , IBehaviorTreeTFPart astimplements de.monticore.tf.ast.IPattern =
+    "Place" schemaVarName:Name | "Action" name:TfIdentifierName("{"(decorator:ITFDecorator|service:ITFService)*"}")? |(("Place" ? schemaVarName:Name|"Place" schemaVarName:Name ?)"[["("Action" name:TfIdentifierName("{"(decorator:ITFDecorator|service:ITFService)*"}")?)"]]");
+
+
+  Place_Neg implements ITFPlace , IBehaviorTreeTFPart , ITFActionNode astimplements de.monticore.tf.ast.INegation =
+    "not" "[[" place:ITFPlace "]]" ;
+
+
+  Place_Opt implements ITFPlace , IBehaviorTreeTFPart , ITFActionNode astimplements de.monticore.tf.ast.IOptional =
+    "opt" "[[" place:ITFPlace "]]" ;
+
+
+  Place_List implements ITFPlace , IBehaviorTreeTFPart , ITFActionNode astimplements de.monticore.tf.ast.IList =
+    "list" "<Place>" ? schemaVarName:Name ? "[[" place:Place_Pat "]]" ;
+
+
+  PickUp_Rep implements ITFPickUp , IBehaviorTreeTFPart , ITFActionNode astimplements de.monticore.tf.ast.IReplacement =
+    ("[[" lhs:ITFPickUp ? ReplacementOp rhs:ITFPickUp ? "]]");
+
+
+  PickUp_Pat implements ITFPickUp , ITFActionNode , IBehaviorTreeTFPart astimplements de.monticore.tf.ast.IPattern =
+    "PickUp" schemaVarName:Name | "Action" name:TfIdentifierName("{"(decorator:ITFDecorator|service:ITFService)*"}")? |(("PickUp" ? schemaVarName:Name|"PickUp" schemaVarName:Name ?)"[["("Action" name:TfIdentifierName("{"(decorator:ITFDecorator|service:ITFService)*"}")?)"]]");
+
+
+  PickUp_Neg implements ITFPickUp , IBehaviorTreeTFPart , ITFActionNode astimplements de.monticore.tf.ast.INegation =
+    "not" "[[" pickUp:ITFPickUp "]]" ;
+
+
+  PickUp_Opt implements ITFPickUp , IBehaviorTreeTFPart , ITFActionNode astimplements de.monticore.tf.ast.IOptional =
+    "opt" "[[" pickUp:ITFPickUp "]]" ;
+
+
+  PickUp_List implements ITFPickUp , IBehaviorTreeTFPart , ITFActionNode astimplements de.monticore.tf.ast.IList =
+    "list" "<PickUp>" ? schemaVarName:Name ? "[[" pickUp:PickUp_Pat "]]" ;
+
+
+  Parallel_Rep implements ITFParallel , IBehaviorTreeTFPart , ITFFlowNode astimplements de.monticore.tf.ast.IReplacement =
+    ("[[" lhs:ITFParallel ? ReplacementOp rhs:ITFParallel ? "]]");
+
+
+  Parallel_Pat implements ITFParallel , ITFFlowNode , IBehaviorTreeTFPart astimplements de.monticore.tf.ast.IPattern =
+    "Parallel" schemaVarName:Name | "Parallel" name:TfIdentifierName "{"(service:ITFService|decorator:ITFDecorator|children:ITFBTNode)*"}" |(("Parallel" ? schemaVarName:Name|"Parallel" schemaVarName:Name ?)"[["("Parallel" name:TfIdentifierName "{"(service:ITFService|decorator:ITFDecorator|children:ITFBTNode)*"}")"]]");
+
+
+  Parallel_Neg implements ITFParallel , IBehaviorTreeTFPart , ITFFlowNode astimplements de.monticore.tf.ast.INegation =
+    "not" "[[" parallel:ITFParallel "]]" ;
+
+
+  Parallel_Opt implements ITFParallel , IBehaviorTreeTFPart , ITFFlowNode astimplements de.monticore.tf.ast.IOptional =
+    "opt" "[[" parallel:ITFParallel "]]" ;
+
+
+  Parallel_List implements ITFParallel , IBehaviorTreeTFPart , ITFFlowNode astimplements de.monticore.tf.ast.IList =
+    "list" "<Parallel>" ? schemaVarName:Name ? "[[" parallel:Parallel_Pat "]]" ;
+
+
+  Sequence_Rep implements ITFSequence , IBehaviorTreeTFPart , ITFFlowNode astimplements de.monticore.tf.ast.IReplacement =
+    ("[[" lhs:ITFSequence ? ReplacementOp rhs:ITFSequence ? "]]");
+
+
+  Sequence_Pat implements ITFSequence , ITFFlowNode , IBehaviorTreeTFPart astimplements de.monticore.tf.ast.IPattern =
+    "Sequence" schemaVarName:Name | "Sequence" name:TfIdentifierName "{"(service:ITFService|decorator:ITFDecorator|children:ITFBTNode)*"}" |(("Sequence" ? schemaVarName:Name|"Sequence" schemaVarName:Name ?)"[["("Sequence" name:TfIdentifierName "{"(service:ITFService|decorator:ITFDecorator|children:ITFBTNode)*"}")"]]");
+
+
+  Sequence_Neg implements ITFSequence , IBehaviorTreeTFPart , ITFFlowNode astimplements de.monticore.tf.ast.INegation =
+    "not" "[[" sequence:ITFSequence "]]" ;
+
+
+  Sequence_Opt implements ITFSequence , IBehaviorTreeTFPart , ITFFlowNode astimplements de.monticore.tf.ast.IOptional =
+    "opt" "[[" sequence:ITFSequence "]]" ;
+
+
+  Sequence_List implements ITFSequence , IBehaviorTreeTFPart , ITFFlowNode astimplements de.monticore.tf.ast.IList =
+    "list" "<Sequence>" ? schemaVarName:Name ? "[[" sequence:Sequence_Pat "]]" ;
+
+
+  BehaviorTree_Rep implements ITFBehaviorTree , IBehaviorTreeTFPart astimplements de.monticore.tf.ast.IReplacement =
+    ("[[" lhs:ITFBehaviorTree ? ReplacementOp rhs:ITFBehaviorTree ? "]]");
+
+
+  BehaviorTree_Pat implements ITFBehaviorTree , IBehaviorTreeTFPart astimplements de.monticore.tf.ast.IPattern =
+    "BehaviorTree" schemaVarName:Name | "BehaviorTree" name:TfIdentifierName "{" "Root" root:ITFFlowNode "}" |(("BehaviorTree" ? schemaVarName:Name|"BehaviorTree" schemaVarName:Name ?)"[["("BehaviorTree" name:TfIdentifierName "{" "Root" root:ITFFlowNode "}")"]]");
+
+
+  BehaviorTree_Neg implements ITFBehaviorTree , IBehaviorTreeTFPart astimplements de.monticore.tf.ast.INegation =
+    "not" "[[" behaviorTree:ITFBehaviorTree "]]" ;
+
+
+  BehaviorTree_Opt implements ITFBehaviorTree , IBehaviorTreeTFPart astimplements de.monticore.tf.ast.IOptional =
+    "opt" "[[" behaviorTree:ITFBehaviorTree "]]" ;
+
+
+  BehaviorTree_List implements ITFBehaviorTree , IBehaviorTreeTFPart astimplements de.monticore.tf.ast.IList =
+    "list" "<BehaviorTree>" ? schemaVarName:Name ? "[[" behaviorTree:BehaviorTree_Pat "]]" ;
+
+
+  TfIdentifierDIGIT implements TfIdentifier =
+    identifierToken:LexTFDIGIT | "[[" identifierToken:LexTFDIGIT ":-"(newIdentifierSchema:TFSchema|newIdentifierToken:LexTFDIGIT)? "]]" | "[["(identifierSchema:TFSchema|identifierToken:LexTFDIGIT)? ":-" newIdentifierToken:LexTFDIGIT "]]" | "DIGIT" identifierSchema:TFSchema ";" ;
+
+
+  TfIdentifierLOWER implements TfIdentifier =
+    identifierToken:LexTFLOWER | "[[" identifierToken:LexTFLOWER ":-"(newIdentifierSchema:TFSchema|newIdentifierToken:LexTFLOWER)? "]]" | "[["(identifierSchema:TFSchema|identifierToken:LexTFLOWER)? ":-" newIdentifierToken:LexTFLOWER "]]" | "LOWER" identifierSchema:TFSchema ";" ;
+
+
+  TfIdentifierUPPER implements TfIdentifier =
+    identifierToken:LexTFUPPER | "[[" identifierToken:LexTFUPPER ":-"(newIdentifierSchema:TFSchema|newIdentifierToken:LexTFUPPER)? "]]" | "[["(identifierSchema:TFSchema|identifierToken:LexTFUPPER)? ":-" newIdentifierToken:LexTFUPPER "]]" | "UPPER" identifierSchema:TFSchema ";" ;
+
+
+  TfIdentifierALPHA implements TfIdentifier =
+    identifierToken:LexTFALPHA | "[[" identifierToken:LexTFALPHA ":-"(newIdentifierSchema:TFSchema|newIdentifierToken:LexTFALPHA)? "]]" | "[["(identifierSchema:TFSchema|identifierToken:LexTFALPHA)? ":-" newIdentifierToken:LexTFALPHA "]]" | "ALPHA" identifierSchema:TFSchema ";" ;
+
+
+  TfIdentifierSYMBOL implements TfIdentifier =
+    identifierToken:LexTFSYMBOL | "[[" identifierToken:LexTFSYMBOL ":-"(newIdentifierSchema:TFSchema|newIdentifierToken:LexTFSYMBOL)? "]]" | "[["(identifierSchema:TFSchema|identifierToken:LexTFSYMBOL)? ":-" newIdentifierToken:LexTFSYMBOL "]]" | "SYMBOL" identifierSchema:TFSchema ";" ;
+
+
+  TfIdentifierDouble implements TfIdentifier =
+    identifierToken:LexTFDouble | "[[" identifierToken:LexTFDouble ":-"(newIdentifierSchema:TFSchema|newIdentifierToken:LexTFDouble)? "]]" | "[["(identifierSchema:TFSchema|identifierToken:LexTFDouble)? ":-" newIdentifierToken:LexTFDouble "]]" | "Double" identifierSchema:TFSchema ";" ;
+
+
+  TfIdentifierInteger implements TfIdentifier =
+    identifierToken:LexTFInteger | "[[" identifierToken:LexTFInteger ":-"(newIdentifierSchema:TFSchema|newIdentifierToken:LexTFInteger)? "]]" | "[["(identifierSchema:TFSchema|identifierToken:LexTFInteger)? ":-" newIdentifierToken:LexTFInteger "]]" | "Integer" identifierSchema:TFSchema ";" ;
+
+
+  TfIdentifierFILEPATH implements TfIdentifier =
+    identifierToken:LexTFFILEPATH | "[[" identifierToken:LexTFFILEPATH ":-"(newIdentifierSchema:TFSchema|newIdentifierToken:LexTFFILEPATH)? "]]" | "[["(identifierSchema:TFSchema|identifierToken:LexTFFILEPATH)? ":-" newIdentifierToken:LexTFFILEPATH "]]" | "FILEPATH" identifierSchema:TFSchema ";" ;
+
+
+  TfIdentifierString implements TfIdentifier =
+    identifierToken:String | "[[" identifierToken:String ":-"(newIdentifierSchema:TFSchema|newIdentifierToken:String)? "]]" | "[["(identifierSchema:TFSchema|identifierToken:String)? ":-" newIdentifierToken:String "]]" | "String" identifierSchema:TFSchema ";" ;
+
+
+  BTNode_Pat implements ITFBTNode , IBehaviorTreeTFPart astimplements de.monticore.tf.ast.IPattern =
+    "BTNode" schemaVarName:Name | "BTNode" schemaVarName:Name ? "[[" bTNode:ITFBTNode "]]" ;
+
+
+  BTNode_Rep implements ITFBTNode , IBehaviorTreeTFPart astimplements de.monticore.tf.ast.IReplacement =
+    ("[[" lhs:ITFBTNode ? ReplacementOp rhs:ITFBTNode ? "]]");
+
+
+  BTNode_Neg implements ITFBTNode , IBehaviorTreeTFPart astimplements de.monticore.tf.ast.INegation =
+    "not" "[[" bTNode:ITFBTNode "]]" ;
+
+
+  BTNode_List implements ITFBTNode , IBehaviorTreeTFPart astimplements de.monticore.tf.ast.IList =
+    "list" "<BTNode>" ? schemaVarName:Name ? "[[" bTNode:BTNode_Pat "]]" ;
+
+
+  BTNode_Opt implements ITFBTNode , IBehaviorTreeTFPart astimplements de.monticore.tf.ast.IOptional =
+    "opt" "[[" bTNode:ITFBTNode "]]" ;
+
+
+  FlowNode_Pat implements ITFFlowNode , IBehaviorTreeTFPart astimplements de.monticore.tf.ast.IPattern =
+    "FlowNode" schemaVarName:Name | "FlowNode" schemaVarName:Name ? "[[" flowNode:ITFFlowNode "]]" ;
+
+
+  FlowNode_Rep implements ITFFlowNode , IBehaviorTreeTFPart astimplements de.monticore.tf.ast.IReplacement =
+    ("[[" lhs:ITFFlowNode ? ReplacementOp rhs:ITFFlowNode ? "]]");
+
+
+  FlowNode_Neg implements ITFFlowNode , IBehaviorTreeTFPart astimplements de.monticore.tf.ast.INegation =
+    "not" "[[" flowNode:ITFFlowNode "]]" ;
+
+
+  FlowNode_List implements ITFFlowNode , IBehaviorTreeTFPart astimplements de.monticore.tf.ast.IList =
+    "list" "<FlowNode>" ? schemaVarName:Name ? "[[" flowNode:FlowNode_Pat "]]" ;
+
+
+  FlowNode_Opt implements ITFFlowNode , IBehaviorTreeTFPart astimplements de.monticore.tf.ast.IOptional =
+    "opt" "[[" flowNode:ITFFlowNode "]]" ;
+
+
+  ActionNode_Pat implements ITFActionNode , IBehaviorTreeTFPart astimplements de.monticore.tf.ast.IPattern =
+    "ActionNode" schemaVarName:Name | "ActionNode" schemaVarName:Name ? "[[" actionNode:ITFActionNode "]]" ;
+
+
+  ActionNode_Rep implements ITFActionNode , IBehaviorTreeTFPart astimplements de.monticore.tf.ast.IReplacement =
+    ("[[" lhs:ITFActionNode ? ReplacementOp rhs:ITFActionNode ? "]]");
+
+
+  ActionNode_Neg implements ITFActionNode , IBehaviorTreeTFPart astimplements de.monticore.tf.ast.INegation =
+    "not" "[[" actionNode:ITFActionNode "]]" ;
+
+
+  ActionNode_List implements ITFActionNode , IBehaviorTreeTFPart astimplements de.monticore.tf.ast.IList =
+    "list" "<ActionNode>" ? schemaVarName:Name ? "[[" actionNode:ActionNode_Pat "]]" ;
+
+
+  ActionNode_Opt implements ITFActionNode , IBehaviorTreeTFPart astimplements de.monticore.tf.ast.IOptional =
+    "opt" "[[" actionNode:ITFActionNode "]]" ;
+
+
+  Service_Pat implements ITFService , IBehaviorTreeTFPart astimplements de.monticore.tf.ast.IPattern =
+    "Service" schemaVarName:Name | "Service" schemaVarName:Name ? "[[" service:ITFService "]]" ;
+
+
+  Service_Rep implements ITFService , IBehaviorTreeTFPart astimplements de.monticore.tf.ast.IReplacement =
+    ("[[" lhs:ITFService ? ReplacementOp rhs:ITFService ? "]]");
+
+
+  Service_Neg implements ITFService , IBehaviorTreeTFPart astimplements de.monticore.tf.ast.INegation =
+    "not" "[[" service:ITFService "]]" ;
+
+
+  Service_List implements ITFService , IBehaviorTreeTFPart astimplements de.monticore.tf.ast.IList =
+    "list" "<Service>" ? schemaVarName:Name ? "[[" service:Service_Pat "]]" ;
+
+
+  Service_Opt implements ITFService , IBehaviorTreeTFPart astimplements de.monticore.tf.ast.IOptional =
+    "opt" "[[" service:ITFService "]]" ;
+
+
+  Decorator_Pat implements ITFDecorator , IBehaviorTreeTFPart astimplements de.monticore.tf.ast.IPattern =
+    "Decorator" schemaVarName:Name | "Decorator" schemaVarName:Name ? "[[" decorator:ITFDecorator "]]" ;
+
+
+  Decorator_Rep implements ITFDecorator , IBehaviorTreeTFPart astimplements de.monticore.tf.ast.IReplacement =
+    ("[[" lhs:ITFDecorator ? ReplacementOp rhs:ITFDecorator ? "]]");
+
+
+  Decorator_Neg implements ITFDecorator , IBehaviorTreeTFPart astimplements de.monticore.tf.ast.INegation =
+    "not" "[[" decorator:ITFDecorator "]]" ;
+
+
+  Decorator_List implements ITFDecorator , IBehaviorTreeTFPart astimplements de.monticore.tf.ast.IList =
+    "list" "<Decorator>" ? schemaVarName:Name ? "[[" decorator:Decorator_Pat "]]" ;
+
+
+  Decorator_Opt implements ITFDecorator , IBehaviorTreeTFPart astimplements de.monticore.tf.ast.IOptional =
+    "opt" "[[" decorator:ITFDecorator "]]" ;
+
+  enum ITFBoolean="True"|"False";
+  interface ITFBehaviorTree astextends de.monticore.tf.ast.ITFElement ;
+  interface ITFSequence extends ITFFlowNode astextends de.monticore.tf.ast.ITFElement ;
+  interface ITFParallel extends ITFFlowNode astextends de.monticore.tf.ast.ITFElement ;
+  interface ITFPickUp extends ITFActionNode astextends de.monticore.tf.ast.ITFElement ;
+  interface ITFPlace extends ITFActionNode astextends de.monticore.tf.ast.ITFElement ;
+  interface ITFGripperEmpty extends ITFDecorator astextends de.monticore.tf.ast.ITFElement ;
+  interface ITFCalcDist extends ITFService astextends de.monticore.tf.ast.ITFElement ;
+  interface ITFBasicType astextends de.monticore.tf.ast.ITFElement ;
+  interface ITFBTNode astextends de.monticore.tf.ast.ITFElement ;
+  interface ITFFlowNode astextends de.monticore.tf.ast.ITFElement ;
+  interface ITFActionNode astextends de.monticore.tf.ast.ITFElement ;
+  interface ITFService astextends de.monticore.tf.ast.ITFElement ;
+  interface ITFDecorator astextends de.monticore.tf.ast.ITFElement ;
+  interface IBehaviorTreeTFPart extends ITFPart ;
+  astrule BehaviorTree_List = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTBehaviorTree.class;
+
+  } 
+   method public ASTITFBehaviorTree getTFElement(){ 
+    return getBehaviorTree();
+
+  } 
+  ;
+  astrule BehaviorTree_Neg = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTBehaviorTree.class;
+
+  } 
+   method public ASTITFBehaviorTree getTFElement(){ 
+    return getBehaviorTree();
+
+  } 
+  ;
+  astrule BehaviorTree_Pat = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTBehaviorTree.class;
+
+  } 
+  ;
+  astrule BehaviorTree_Opt = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTBehaviorTree.class;
+
+  } 
+   method public ASTITFBehaviorTree getTFElement(){ 
+    return getBehaviorTree();
+
+  } 
+  ;
+  astrule BehaviorTree_Rep = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTBehaviorTree.class;
+
+  } 
+  ;
+  astrule Sequence_List = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTSequence.class;
+
+  } 
+   method public ASTITFSequence getTFElement(){ 
+    return getSequence();
+
+  } 
+  ;
+  astrule Sequence_Neg = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTSequence.class;
+
+  } 
+   method public ASTITFSequence getTFElement(){ 
+    return getSequence();
+
+  } 
+  ;
+  astrule Sequence_Pat = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTSequence.class;
+
+  } 
+  ;
+  astrule Sequence_Opt = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTSequence.class;
+
+  } 
+   method public ASTITFSequence getTFElement(){ 
+    return getSequence();
+
+  } 
+  ;
+  astrule Sequence_Rep = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTSequence.class;
+
+  } 
+  ;
+  astrule Parallel_List = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTParallel.class;
+
+  } 
+   method public ASTITFParallel getTFElement(){ 
+    return getParallel();
+
+  } 
+  ;
+  astrule Parallel_Neg = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTParallel.class;
+
+  } 
+   method public ASTITFParallel getTFElement(){ 
+    return getParallel();
+
+  } 
+  ;
+  astrule Parallel_Pat = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTParallel.class;
+
+  } 
+  ;
+  astrule Parallel_Opt = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTParallel.class;
+
+  } 
+   method public ASTITFParallel getTFElement(){ 
+    return getParallel();
+
+  } 
+  ;
+  astrule Parallel_Rep = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTParallel.class;
+
+  } 
+  ;
+  astrule PickUp_List = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTPickUp.class;
+
+  } 
+   method public ASTITFPickUp getTFElement(){ 
+    return getPickUp();
+
+  } 
+  ;
+  astrule PickUp_Neg = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTPickUp.class;
+
+  } 
+   method public ASTITFPickUp getTFElement(){ 
+    return getPickUp();
+
+  } 
+  ;
+  astrule PickUp_Pat = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTPickUp.class;
+
+  } 
+  ;
+  astrule PickUp_Opt = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTPickUp.class;
+
+  } 
+   method public ASTITFPickUp getTFElement(){ 
+    return getPickUp();
+
+  } 
+  ;
+  astrule PickUp_Rep = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTPickUp.class;
+
+  } 
+  ;
+  astrule Place_List = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTPlace.class;
+
+  } 
+   method public ASTITFPlace getTFElement(){ 
+    return getPlace();
+
+  } 
+  ;
+  astrule Place_Neg = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTPlace.class;
+
+  } 
+   method public ASTITFPlace getTFElement(){ 
+    return getPlace();
+
+  } 
+  ;
+  astrule Place_Pat = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTPlace.class;
+
+  } 
+  ;
+  astrule Place_Opt = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTPlace.class;
+
+  } 
+   method public ASTITFPlace getTFElement(){ 
+    return getPlace();
+
+  } 
+  ;
+  astrule Place_Rep = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTPlace.class;
+
+  } 
+  ;
+  astrule GripperEmpty_List = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTGripperEmpty.class;
+
+  } 
+   method public ASTITFGripperEmpty getTFElement(){ 
+    return getGripperEmpty();
+
+  } 
+  ;
+  astrule GripperEmpty_Neg = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTGripperEmpty.class;
+
+  } 
+   method public ASTITFGripperEmpty getTFElement(){ 
+    return getGripperEmpty();
+
+  } 
+  ;
+  astrule GripperEmpty_Pat = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTGripperEmpty.class;
+
+  } 
+  ;
+  astrule GripperEmpty_Opt = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTGripperEmpty.class;
+
+  } 
+   method public ASTITFGripperEmpty getTFElement(){ 
+    return getGripperEmpty();
+
+  } 
+  ;
+  astrule GripperEmpty_Rep = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTGripperEmpty.class;
+
+  } 
+  ;
+  astrule CalcDist_List = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTCalcDist.class;
+
+  } 
+   method public ASTITFCalcDist getTFElement(){ 
+    return getCalcDist();
+
+  } 
+  ;
+  astrule CalcDist_Neg = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTCalcDist.class;
+
+  } 
+   method public ASTITFCalcDist getTFElement(){ 
+    return getCalcDist();
+
+  } 
+  ;
+  astrule CalcDist_Pat = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTCalcDist.class;
+
+  } 
+  ;
+  astrule CalcDist_Opt = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTCalcDist.class;
+
+  } 
+   method public ASTITFCalcDist getTFElement(){ 
+    return getCalcDist();
+
+  } 
+  ;
+  astrule CalcDist_Rep = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTCalcDist.class;
+
+  } 
+  ;
+  astrule BasicType_List = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTBasicType.class;
+
+  } 
+   method public ASTITFBasicType getTFElement(){ 
+    return getBasicType();
+
+  } 
+  ;
+  astrule BasicType_Neg = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTBasicType.class;
+
+  } 
+   method public ASTITFBasicType getTFElement(){ 
+    return getBasicType();
+
+  } 
+  ;
+  astrule BasicType_Pat = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTBasicType.class;
+
+  } 
+  ;
+  astrule BasicType_Opt = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTBasicType.class;
+
+  } 
+   method public ASTITFBasicType getTFElement(){ 
+    return getBasicType();
+
+  } 
+  ;
+  astrule BasicType_Rep = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTBasicType.class;
+
+  } 
+  ;
+  astrule BTNode_List = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTBTNode.class;
+
+  } 
+   method public ASTITFBTNode getTFElement(){ 
+    return getBTNode();
+
+  } 
+  ;
+  astrule BTNode_Neg = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTBTNode.class;
+
+  } 
+   method public ASTITFBTNode getTFElement(){ 
+    return getBTNode();
+
+  } 
+  ;
+  astrule BTNode_Pat = method public ASTBTNode_Pat getRhs(){ 
+    return this;
+
+  } 
+   method public ASTBTNode_Pat getLhs(){ 
+    return this;
+
+  } 
+   method public Class _getTFElementType(){ 
+    return ASTBTNode.class;
+
+  } 
+  ;
+  astrule BTNode_Opt = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTBTNode.class;
+
+  } 
+   method public ASTITFBTNode getTFElement(){ 
+    return getBTNode();
+
+  } 
+  ;
+  astrule BTNode_Rep = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTBTNode.class;
+
+  } 
+  ;
+  astrule FlowNode_List = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTFlowNode.class;
+
+  } 
+   method public ASTITFFlowNode getTFElement(){ 
+    return getFlowNode();
+
+  } 
+  ;
+  astrule FlowNode_Neg = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTFlowNode.class;
+
+  } 
+   method public ASTITFFlowNode getTFElement(){ 
+    return getFlowNode();
+
+  } 
+  ;
+  astrule FlowNode_Pat = method public ASTFlowNode_Pat getRhs(){ 
+    return this;
+
+  } 
+   method public ASTFlowNode_Pat getLhs(){ 
+    return this;
+
+  } 
+   method public Class _getTFElementType(){ 
+    return ASTFlowNode.class;
+
+  } 
+  ;
+  astrule FlowNode_Opt = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTFlowNode.class;
+
+  } 
+   method public ASTITFFlowNode getTFElement(){ 
+    return getFlowNode();
+
+  } 
+  ;
+  astrule FlowNode_Rep = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTFlowNode.class;
+
+  } 
+  ;
+  astrule ActionNode_List = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTActionNode.class;
+
+  } 
+   method public ASTITFActionNode getTFElement(){ 
+    return getActionNode();
+
+  } 
+  ;
+  astrule ActionNode_Neg = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTActionNode.class;
+
+  } 
+   method public ASTITFActionNode getTFElement(){ 
+    return getActionNode();
+
+  } 
+  ;
+  astrule ActionNode_Pat = method public ASTActionNode_Pat getRhs(){ 
+    return this;
+
+  } 
+   method public ASTActionNode_Pat getLhs(){ 
+    return this;
+
+  } 
+   method public Class _getTFElementType(){ 
+    return ASTActionNode.class;
+
+  } 
+  ;
+  astrule ActionNode_Opt = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTActionNode.class;
+
+  } 
+   method public ASTITFActionNode getTFElement(){ 
+    return getActionNode();
+
+  } 
+  ;
+  astrule ActionNode_Rep = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTActionNode.class;
+
+  } 
+  ;
+  astrule Service_List = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTService.class;
+
+  } 
+   method public ASTITFService getTFElement(){ 
+    return getService();
+
+  } 
+  ;
+  astrule Service_Neg = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTService.class;
+
+  } 
+   method public ASTITFService getTFElement(){ 
+    return getService();
+
+  } 
+  ;
+  astrule Service_Pat = method public ASTService_Pat getRhs(){ 
+    return this;
+
+  } 
+   method public ASTService_Pat getLhs(){ 
+    return this;
+
+  } 
+   method public Class _getTFElementType(){ 
+    return ASTService.class;
+
+  } 
+  ;
+  astrule Service_Opt = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTService.class;
+
+  } 
+   method public ASTITFService getTFElement(){ 
+    return getService();
+
+  } 
+  ;
+  astrule Service_Rep = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTService.class;
+
+  } 
+  ;
+  astrule Decorator_List = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTDecorator.class;
+
+  } 
+   method public ASTITFDecorator getTFElement(){ 
+    return getDecorator();
+
+  } 
+  ;
+  astrule Decorator_Neg = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTDecorator.class;
+
+  } 
+   method public ASTITFDecorator getTFElement(){ 
+    return getDecorator();
+
+  } 
+  ;
+  astrule Decorator_Pat = method public ASTDecorator_Pat getRhs(){ 
+    return this;
+
+  } 
+   method public ASTDecorator_Pat getLhs(){ 
+    return this;
+
+  } 
+   method public Class _getTFElementType(){ 
+    return ASTDecorator.class;
+
+  } 
+  ;
+  astrule Decorator_Opt = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTDecorator.class;
+
+  } 
+   method public ASTITFDecorator getTFElement(){ 
+    return getDecorator();
+
+  } 
+  ;
+  astrule Decorator_Rep = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTDecorator.class;
+
+  } 
+  ;
+}

@@ -1,0 +1,36 @@
+BehaviorTree APTree {
+    root FlowNode mainnode {
+        ALL
+        ALLFLOW 
+        Nodegraph firstgraph {    
+            FlowNode plateseq {
+                ALL
+                ALLACTION
+                Nodegraph mypddlplanner1result {
+                    Action PickUpHL pickup1 (beam1 pos1 robot1) { 
+                       --[MEETS]--> placeBeam1;
+                    }
+                    Action PlaceHL placeBeam1 (beam1 target1 robot1) 
+                }
+            } 
+            FlowNode bemasseq {
+                ANY
+                ALLACTION
+                Nodegraph secondnodegraph{
+                            Action PickUpHL pickuphl2 (beam2 position3 robot1) { 
+                                --[MEETS]--> placeBeam1;
+                            }
+                            Action PlaceHL placehl3 (beam2 pr1 robot1) 
+                            Action PickUpHL pickuphl3 (beam2 fp3 robot1) { 
+                                --[MEETS]--> placehl3;
+                            }
+                            Action PlaceHL placehl3 (beam2 pr2 robot1) 
+                }
+                        
+            } 
+        }
+    }
+}
+
+
+   

@@ -1,0 +1,11 @@
+PDDLPlanner callpddlplanner1 {
+  files {
+    domain = "./Plannerinputs/domain.pddl";
+    problem = "./Plannerinputs/problemC1.pddl";
+    planner = "/home/shermin/ENHSP-Public/enhsp.jar";
+  }
+  settings {
+    configuration = pt-blind;
+    plannerName = enhsp;
+  }
+}

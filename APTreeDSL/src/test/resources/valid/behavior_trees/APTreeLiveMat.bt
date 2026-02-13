@@ -1,0 +1,38 @@
+
+
+BehaviorTree LiveMat {
+    Root FlowNode Main {
+        All
+        AllFlow
+        NodeGraph {    
+            FlowNode  HandleCassette1{
+                PlanningService mypddlplanner1 Enhsp1
+                All
+                AllAction
+                NodeGraph { }
+            } 
+            FlowNode  HandleCassette2 {
+                PlanningService mypddlplanner2 Enhsp2
+                All
+                AllAction
+                NodeGraph { }
+            }
+            FlowNode  HandleCassette3 {
+                PlanningService mypddlplanner3 Enhsp3
+                All
+                AllAction
+                NodeGraph { }
+            }
+            FlowNode  HandleCassette4 {
+                PlanningService mypddlplanner4 Enhsp4
+                All
+                AllAction
+                NodeGraph { }
+            }               
+            }}} 
+
+
+
+          
+
+

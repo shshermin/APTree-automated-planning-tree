@@ -1,0 +1,58 @@
+grammar BehaviorTreeTagDefinition extends BehaviorTree ,de.monticore.tagging.Tags ,de.monticore.types.MCBasicTypesTagDefinition {
+  /* DefaultIdent (using the Name) works too */
+   BehaviorTreeIdentifier implements ModelElementIdentifier  = "[" identifiesElement:BehaviorTree "]" ;
+  /* DefaultIdent (using the Name) works too */
+   SequenceIdentifier implements ModelElementIdentifier  = "[" identifiesElement:Sequence "]" ;
+  /* DefaultIdent (using the Name) works too */
+   ParallelIdentifier implements ModelElementIdentifier  = "[" identifiesElement:Parallel "]" ;
+  /* DefaultIdent (using the Name) works too */
+   PickUpIdentifier implements ModelElementIdentifier  = "[" identifiesElement:PickUp "]" ;
+  /* DefaultIdent (using the Name) works too */
+   PlaceIdentifier implements ModelElementIdentifier  = "[" identifiesElement:Place "]" ;
+  /* DefaultIdent (using the Name) works too */
+   GripperEmptyIdentifier implements ModelElementIdentifier  = "[" identifiesElement:GripperEmpty "]" ;
+  /* DefaultIdent (using the Name) works too */
+   CalcDistIdentifier implements ModelElementIdentifier  = "[" identifiesElement:CalcDist "]" ;
+   BasicTypeIdentifier implements ModelElementIdentifier  = "[" identifiesElement:BasicType "]" ;
+  astrule BehaviorTreeIdentifier = method public String getIdentifies(){ 
+    return "BehaviorTree";
+
+  } 
+  ;
+  astrule SequenceIdentifier = method public String getIdentifies(){ 
+    return "Sequence";
+
+  } 
+  ;
+  astrule ParallelIdentifier = method public String getIdentifies(){ 
+    return "Parallel";
+
+  } 
+  ;
+  astrule PickUpIdentifier = method public String getIdentifies(){ 
+    return "PickUp";
+
+  } 
+  ;
+  astrule PlaceIdentifier = method public String getIdentifies(){ 
+    return "Place";
+
+  } 
+  ;
+  astrule GripperEmptyIdentifier = method public String getIdentifies(){ 
+    return "GripperEmpty";
+
+  } 
+  ;
+  astrule CalcDistIdentifier = method public String getIdentifies(){ 
+    return "CalcDist";
+
+  } 
+  ;
+  astrule BasicTypeIdentifier = method public String getIdentifies(){ 
+    return "BasicType";
+
+  } 
+  ;
+  start TagUnit;
+}
