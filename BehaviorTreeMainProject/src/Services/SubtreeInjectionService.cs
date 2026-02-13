@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using PlanningDataStructures;
 using AIPlanning;
 using BehaviorTreeMainProject.Services.AIPlanning;
@@ -99,7 +100,7 @@ namespace BehaviorTreeMainProject
             {
                 try
                 {
-                    File.WriteAllText(LogFilePath, $"=== SubtreeInjectionService Debug Log - Started at {DateTime.Now} ==={Environment.NewLine}");
+                    File.WriteAllText(LogFilePath, $"=== SubtreeInjectionService Debug Log - Started at {DateTime.Now} ==={Environment.NewLine}", Encoding.UTF8);
                     Console.WriteLine($"✅ Log file cleared: {LogFilePath}");
                 }
                 catch (Exception ex)
@@ -350,7 +351,7 @@ namespace BehaviorTreeMainProject
                 
                 // 4. Write to file
                 LogMessage($"🔧 SubtreeInjectionService: About to write file to: {problemFilePath}");
-                File.WriteAllText(problemFilePath, pddlContent);
+                File.WriteAllText(problemFilePath, pddlContent, Encoding.UTF8);
                 LogMessage($"🔧 SubtreeInjectionService: File written successfully");
                 
                 // 5. Verify file was created and contains content
@@ -979,7 +980,7 @@ namespace BehaviorTreeMainProject
         /// </summary>
         private BTFlowNode_Dynamic CreateFFSubtree(SubtreeConfiguration config, string instanceName, Dictionary<string, object> customParameters)
         {
-            var subtreeTree = new BehaviorTree();
+            var subtreeTree = new BehaviorTreeInstance();
             subtreeTree.Initialise(linkedBlackboard, $"{config.Name}_Subtree_{instanceName}");
 
             var dynamicFlowNode = new BTFlowNode_Dynamic(
@@ -1021,7 +1022,7 @@ namespace BehaviorTreeMainProject
         /// </summary>
         private BTFlowNode_Dynamic CreateENHSPSubtree(SubtreeConfiguration config, string instanceName, Dictionary<string, object> customParameters)
         {
-            var subtreeTree = new BehaviorTree();
+            var subtreeTree = new BehaviorTreeInstance();
             subtreeTree.Initialise(linkedBlackboard, $"{config.Name}_Subtree_{instanceName}");
 
             var dynamicFlowNode = new BTFlowNode_Dynamic(
@@ -1062,7 +1063,7 @@ namespace BehaviorTreeMainProject
         /// </summary>
         private BTFlowNode_Dynamic CreateLamaFirstSubtree(SubtreeConfiguration config, string instanceName, Dictionary<string, object> customParameters)
         {
-            var subtreeTree = new BehaviorTree();
+            var subtreeTree = new BehaviorTreeInstance();
             subtreeTree.Initialise(linkedBlackboard, $"{config.Name}_Subtree_{instanceName}");
 
             var dynamicFlowNode = new BTFlowNode_Dynamic(
@@ -1104,7 +1105,7 @@ namespace BehaviorTreeMainProject
         /// </summary>
         private BTFlowNode_Dynamic CreateGOAPSubtree(SubtreeConfiguration config, string instanceName, Dictionary<string, object> customParameters)
         {
-            var subtreeTree = new BehaviorTree();
+            var subtreeTree = new BehaviorTreeInstance();
             subtreeTree.Initialise(linkedBlackboard, $"{config.Name}_Subtree_{instanceName}");
 
             var dynamicFlowNode = new BTFlowNode_Dynamic(
@@ -1198,7 +1199,7 @@ namespace BehaviorTreeMainProject
         /// </summary>
         private BTFlowNode_Dynamic CreateStateChartSubtree(SubtreeConfiguration config, string instanceName, Dictionary<string, object> customParameters)
         {
-            var subtreeTree = new BehaviorTree();
+            var subtreeTree = new BehaviorTreeInstance();
             subtreeTree.Initialise(linkedBlackboard, $"{config.Name}_Subtree_{instanceName}");
 
             var dynamicFlowNode = new BTFlowNode_Dynamic(

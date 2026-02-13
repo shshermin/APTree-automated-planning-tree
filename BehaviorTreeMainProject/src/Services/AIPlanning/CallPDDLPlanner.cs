@@ -29,7 +29,7 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
         
         public ParallelExecutionMode ExecutionMode { get; set; } = ParallelExecutionMode.Sequential;
 
-        public CallPDDLPlanner(BehaviorTree InOwningTree, PDDLPlanningRequest InPlanningRequest)
+        public CallPDDLPlanner(BehaviorTreeInstance InOwningTree, PDDLPlanningRequest InPlanningRequest)
             : base(InOwningTree, new RestPlannerCommunicator("http://localhost:5000"), InPlanningRequest)
         {
             this.blackboard = InOwningTree.linkedBlackboard;

@@ -21,8 +21,10 @@
 
   <!-- The src/Tests folder contains ad-hoc runner code (not a separate test project).
        Exclude it from compilation so the web backend can build/run reliably. -->
+  <!-- TEMPORARILY ENABLED TO RUN FULLTREETEST
   <ItemGroup>
     <Compile Remove="src/Tests/**" />
   </ItemGroup>
+  -->
 
 </Project>

@@ -3,7 +3,7 @@ using System.Security.Cryptography.X509Certificates;
 public abstract class BTBrainBase : IBTBrain
 {
     public Blackboard<FastName> LinkedBlackboard { get; protected set; }
-    public IBehaviorTree LinkedBehaviourTree { get; protected set; } = new BehaviorTree();
+    public IBehaviorTree LinkedBehaviourTree { get; protected set; } = new BehaviorTreeInstance();
     private DateTime lastUpdateTime = DateTime.Now;
    
     public Entity self { get; protected set; }

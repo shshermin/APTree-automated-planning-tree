@@ -1,10 +1,4 @@
 
-import crftypesdef.CRFTypesDefMill;
-import crftypesdef._ast.ASTProperty;
-import crftypesdef._ast.ASTWorld;
-import crftypesdef._parser.CRFTypesDefParser;
-import de.se_rwth.commons.logging.Log;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -16,12 +10,18 @@ import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
+import crftypesdef.CRFTypesDefMill;
+import crftypesdef._ast.ASTProperty;
+import crftypesdef._ast.ASTWorld;
+import crftypesdef._parser.CRFTypesDefParser;
+import de.se_rwth.commons.logging.Log;
+
 /**
  * CRFPredicateTypeRuleGenerator - Reads CRFPredicateTypes model and generates grammar rules for CRFTypesCon.mc4
  */
 public class CRFPredicateTypeRuleGenerator {
 
-    private static final String DEFAULT_INPUT_PATH = "src/test/resources/valid/CRFTypes/CRFPredicateTypes.bt";
+    private static final String DEFAULT_INPUT_PATH = "src/test/resources/valid/CRFTypes/LiveMatPredicaetTypes.bt";
     private static final String DEFAULT_OUTPUT_PATH = "src/main/grammars/CRFTypesCon.mc4";
 
     // Markers to identify the generated section in the target grammar file
@@ -117,7 +117,7 @@ public class CRFPredicateTypeRuleGenerator {
             // Example: Holding extends Predicate = "!"? "Holding" "(" item:Name@Element agent:Name@Agent ")";
             
             rule.append(predName)
-                .append(" extends Predicate = \"!\"? \"")
+                .append(" extends Predicate = not:[\"!\"]? \"")
                 .append(predName)
                 .append("\" \"(\"");
 

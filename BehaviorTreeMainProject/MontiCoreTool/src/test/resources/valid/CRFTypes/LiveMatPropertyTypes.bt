@@ -25,8 +25,8 @@ Define Cassette as Module {
 
 Define PositionOnRail as Location
 
-Define Equipposition as Location
+Define EquipPosition as Location
 
 
 
-Define Stackposition as Location
+Define StackPosition as Location

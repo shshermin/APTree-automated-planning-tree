@@ -577,7 +577,7 @@ public List<PActionNode> GetAllActionInstances()
         LoggingService.LogInfo($"🔧 BLACKBOARD: SetPredicate called with key: {key}");
         LoggingService.LogInfo($"🔧 BLACKBOARD: Predicate type: {predicate.GetType().Name}");
         LoggingService.LogInfo($"🔧 BLACKBOARD: Predicate.PredicateName: {predicate.PredicateName}");
-        LoggingService.LogInfo($"🔧 BLACKBOARD: Predicate.isNegated: {predicate.isNegated}");
+        LoggingService.LogInfo($"🔧 BLACKBOARD: Predicate.isNegated: {predicate.not}");
         
         if (_envGraph == null)
         {
@@ -596,12 +596,12 @@ public List<PActionNode> GetAllActionInstances()
         LoggingService.LogInfo($"   Key: {key}");
         LoggingService.LogInfo($"   Type: {predicate.GetType().Name}");
         LoggingService.LogInfo($"   PredicateName: {predicate.PredicateName}");
-        LoggingService.LogInfo($"   isNegated: {predicate.isNegated}");
+        LoggingService.LogInfo($"   isNegated: {predicate.not}");
         LoggingService.LogInfo($"   Current total predicates: {PredicateValues.Count}");
         LoggingService.LogInfo("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
         
         // NEW: Clean up conflicting atAgent predicates when updating location
-        if (predicate.GetPredicateType() == "atAgent" && !predicate.isNegated)
+        if (predicate.GetPredicateType() == "atAgent" && !predicate.not)
         {
             CleanupConflictingAtAgentPredicates(predicate);
         }
@@ -610,14 +610,14 @@ public List<PActionNode> GetAllActionInstances()
         {
             var existingPredicate = PredicateValues[key];
             LoggingService.LogWarning($"⚠️ PREDICATE_UPDATE: Key '{key}' already exists - updating negation");
-            LoggingService.LogInfo($"   Old isNegated: {existingPredicate.isNegated} → New isNegated: {predicate.isNegated}");
+            LoggingService.LogInfo($"   Old isNegated: {existingPredicate.not} → New isNegated: {predicate.not}");
 
             // Update the isNegated property of the existing predicate
-            var oldNegationValue = existingPredicate.isNegated;
-            existingPredicate.isNegated = predicate.isNegated;
+            var oldNegationValue = existingPredicate.not;
+            existingPredicate.not = predicate.not;
 
             // Log predicate negation change
-            BlackboardTrackingLogger.LogPredicateNegation(key.ToString(), oldNegationValue, predicate.isNegated, "Blackboard", "Updated existing predicate negation");
+            BlackboardTrackingLogger.LogPredicateNegation(key.ToString(), oldNegationValue, predicate.not, "Blackboard", "Updated existing predicate negation");
 
             LoggingService.LogSuccess($"✅ PREDICATE_UPDATE: Successfully updated negation for key: {key}");
             return;
@@ -831,7 +831,7 @@ public List<PActionNode> GetAllActionInstances()
 
         foreach (var predicate in PredicateValues.Values)
         {
-            if (!predicate.isNegated)
+            if (!predicate.not)
             {
                 truePredicates.Add(predicate);
             }

@@ -10,7 +10,7 @@ using BehaviorTreeMainProject.Log.Services;
 /// </summary>
 public abstract class Predicate
 {
-    public bool isNegated { get; set; }
+    public bool not { get; set; }
     public FastName PredicateName { get; protected set; }
     
     // The type of the predicate (e.g., "IsAtLocation", "IsHolding", etc.)
@@ -25,13 +25,13 @@ public abstract class Predicate
     // Method to negate the predicate
     public void Negate()
     {
-        isNegated = !isNegated;
+        not = !not;
     }
 
     // Override ToString for better debugging
     public override string ToString()
     {
-        return $"{(isNegated ? "NOT " : "")}{PredicateType}";
+        return $"{(not ? "NOT " : "")}{PredicateType}";
     }
 
     // Add this method to expose parameters
@@ -39,7 +39,7 @@ public abstract class Predicate
 
     public Predicate(bool isNegated)
     {
-        this.isNegated = isNegated;
+        this.not = isNegated;
         
         
     }

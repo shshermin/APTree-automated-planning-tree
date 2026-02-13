@@ -20,12 +20,12 @@ import de.se_rwth.commons.logging.Log;
  * 
  * Usage: Provide input model path and output grammar path as arguments.
  * Defaults:
- *  - Input: src/test/resources/valid/CRFTypes/CRFPropertyTypes.bt
+ *  - Input: src/test/resources/valid/CRFTypes/LiveMatPropertyTypes.bt
  *  - Output: src/main/grammars/CRFTypesCon.mc4
  */
 public class CRFPropertyTypeRuleGenerator {
 
-    private static final String DEFAULT_INPUT_PATH = "src/test/resources/valid/CRFTypes/CRFPropertyTypes.bt";
+    private static final String DEFAULT_INPUT_PATH = "src/test/resources/valid/CRFTypes/LiveMatPropertyTypes.bt";
     private static final String DEFAULT_OUTPUT_PATH = "src/main/grammars/CRFTypesCon.mc4";
     
     // Markers to identify the generated section in the target grammar file
@@ -139,8 +139,17 @@ public class CRFPropertyTypeRuleGenerator {
                    pType = "Boolean";
                }
 
-               // rule: name:Type
-               rule.append(pName).append(":").append(pType);
+               // Determine if this is a primitive type or a reference type
+               boolean isPrimitive = isPrimitiveType(pType);
+               
+               // For reference types (Element, Location, Agent, etc.), use Name@Type format
+               // For primitives (Boolean, Integer, Name), use Type format
+               if (isPrimitive) {
+                   rule.append(pName).append(":").append(pType);
+               } else {
+                   // Reference type - use symbol reference format
+                   rule.append(pName).append(":Name@").append(pType);
+               }
                
                // Check if it's a list (marked by + in the model)
                if (prop.isIsList()) {
@@ -153,6 +162,17 @@ public class CRFPropertyTypeRuleGenerator {
         });
         
         return rules;
+    }
+    
+    /**
+     * Determine if a type is a primitive type (Boolean, Integer, Name) or a reference type (Element, Location, etc.)
+     * Primitive types are used directly, while reference types use Name@Type format for symbol references.
+     */
+    private static boolean isPrimitiveType(String typeName) {
+        return typeName.equals("Boolean") || 
+               typeName.equals("Integer") || 
+               typeName.equals("Name") ||
+               typeName.equals("String");
     }
     
     private static void updateGrammarFile(String grammarPath, List<String> newRules, List<String> typeNames) throws IOException {

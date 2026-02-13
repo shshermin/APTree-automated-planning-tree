@@ -341,7 +341,7 @@ public static class Parser
             string pddlFormat = $"({predicateName} {string.Join(" ", parameterValues)})";
             
             // Handle negation
-            if (predicate.isNegated)
+            if (predicate.not)
             {
                 pddlFormat = $"(not {pddlFormat})";
             }

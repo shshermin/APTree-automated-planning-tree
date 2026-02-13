@@ -33,7 +33,7 @@ abstract symbol  Agent    implements CustomProperty = name:Name ;
       PredicateTypeDefinition = "Define" "Predicate" name:Name  "{" (Property)* "}";
 //predicateType
 ////???????????????????? how can I use "!" in the concrete syntax?
-      abstract Predicate = ["not"];
+      abstract Predicate = not:["!"]?;
 
 // predicate Instances
 //////???????????? this is a dummy predicate because the Grammar does not allow abstract nonterminals without implementation if it is not a component grammar

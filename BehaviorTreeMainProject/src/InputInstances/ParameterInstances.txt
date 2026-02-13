@@ -33,10 +33,10 @@ ParameterInstance: firstPosition {fp31}
 ParameterInstance: firstPosition {fp32}
 
 # Location - positionOnRail instances
-#ParameterInstance: positionOnRail {pr1}
-#ParameterInstance: positionOnRail {pr2}
-#ParameterInstance: positionOnRail {pr3}
-#ParameterInstance: positionOnRail {pr4}
+ParameterInstance: positionOnRail {pr1}
+ParameterInstance: positionOnRail {pr2}
+ParameterInstance: positionOnRail {pr3}
+ParameterInstance: positionOnRail {pr4}
 
 
 # Location - equipposition instances

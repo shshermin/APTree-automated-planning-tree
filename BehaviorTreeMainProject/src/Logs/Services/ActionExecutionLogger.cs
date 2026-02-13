@@ -252,7 +252,7 @@ namespace BehaviorTreeMainProject.Log.Services
                 // Ensure directory exists
                 Directory.CreateDirectory("WrittenLogs");
                 
-                File.WriteAllText(csvFilePath, csvContent);
+                File.WriteAllText(csvFilePath, csvContent, Encoding.UTF8);
                 WriteLog($"📄 CSV file written to: {csvFilePath}");
             }
             catch (Exception ex)

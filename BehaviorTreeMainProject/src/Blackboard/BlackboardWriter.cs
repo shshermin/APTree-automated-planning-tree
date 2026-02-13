@@ -249,8 +249,8 @@ public class BlackboardWriter
     public void RegisterAllInstances(string actionInstancesFile)
     {
         // Use default file paths for parameters and predicates
-        string parameterInstancesFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "src", "InputInstances", "parameterinstancesfile.txt");
-        string predicateInstancesFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "src", "InputInstances", "predicateinstancesfile.txt");
+        string parameterInstancesFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "src", "InputInstances", "ParameterInstances.txt");
+        string predicateInstancesFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "src", "InputInstances", "PredicateInstances.txt");
         
         RegisterAllInstances(parameterInstancesFile, predicateInstancesFile, actionInstancesFile);
     }
@@ -900,7 +900,7 @@ public class BlackboardWriter
             Console.WriteLine($"  📋 Predicates in blackboard:");
             foreach (var pred in allPredicates)
             {
-                Console.WriteLine($"    - {pred.PredicateName} ({pred.GetType().Name}) - isNegated: {pred.isNegated}");
+                Console.WriteLine($"    - {pred.PredicateName} ({pred.GetType().Name}) - isNegated: {pred.not}");
             }
         }
         else

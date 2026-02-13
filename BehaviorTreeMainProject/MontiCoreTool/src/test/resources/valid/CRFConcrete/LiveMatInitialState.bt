@@ -1,186 +1,190 @@
 # Predicate instances in CRF format
-# Format: PredicateInstance: predicateName(parameterName = value, isNegated = false/true)
+# Format: PredicateName(arg1, arg2)
 
-# atplace predicates
-PredicateInstance: atplace(myObject = lp1, place = fp1, isNegated = false)
-PredicateInstance: atplace(myObject = tp1, place = fp5, isNegated = false)
-PredicateInstance: atplace(myObject = b1, place = fp2, isNegated = false)
-PredicateInstance: atplace(myObject = b2, place = fp3, isNegated = false)
-PredicateInstance: atplace(myObject = b3, place = fp4, isNegated = false)
-PredicateInstance: atplace(myObject = b4, place = fp6, isNegated = false)
-PredicateInstance: atplace(myObject = b5, place = fp7, isNegated = false)
-PredicateInstance: atplace(myObject = b6, place = fp8, isNegated = false)
+# AtPlace predicates
+AtPlace(lp1, fp1)
+AtPlace(tp1, fp5)
+AtPlace(b1, fp2)
+AtPlace(b2, fp3)
+AtPlace(b3, fp4)
+AtPlace(b4, fp6)
+AtPlace(b5, fp7)
+AtPlace(b6, fp8)
 
-# positionfree predicates (using positionOnRail instances)
-PredicateInstance: positionfree(pos = pr1, isNegated = false)
-PredicateInstance: positionfree(pos = pr2, isNegated = false)
-PredicateInstance: positionfree(pos = pr3, isNegated = false)
-PredicateInstance: positionfree(pos = pr4, isNegated = false)
+# PositionFree predicates (using positionOnRail instances)
+PositionFree(pr1)
+PositionFree(pr2)
+PositionFree(pr3)
+PositionFree(pr4)
 
 
 
-# clear predicates
-PredicateInstance: clear(myObject = lp1, isNegated = false)
-PredicateInstance: clear(myObject = tp1, isNegated = false)
-PredicateInstance: clear(myObject = b1, isNegated = false)
-PredicateInstance: clear(myObject = b2, isNegated = false)
-PredicateInstance: clear(myObject = b3, isNegated = false)
-PredicateInstance: clear(myObject = b4, isNegated = false)
-PredicateInstance: clear(myObject = b5, isNegated = false)
-PredicateInstance: clear(myObject = b6, isNegated = false)
+# Clear predicates
+Clear(lp1)
+Clear(tp1)
+Clear(b1)
+Clear(b2)
+Clear(b3)
+Clear(b4)
+Clear(b5)
+Clear(b6)
 
-# belongstolayer predicates
-PredicateInstance: belongstolayer(myObject = b1, lay = lay1, isNegated = false)
-PredicateInstance: belongstolayer(myObject = b2, lay = lay1, isNegated = false)
-PredicateInstance: belongstolayer(myObject = b3, lay = lay1, isNegated = false)
-PredicateInstance: belongstolayer(myObject = b4, lay = lay1, isNegated = false)
-PredicateInstance: belongstolayer(myObject = b5, lay = lay1, isNegated = false)
-PredicateInstance: belongstolayer(myObject = b6, lay = lay1, isNegated = false)
+# BelongsToLayer predicates
+BelongsToLayer(b1, lay1)
+BelongsToLayer(b2, lay1)
+BelongsToLayer(b3, lay1)
+BelongsToLayer(b4, lay1)
+BelongsToLayer(b5, lay1)
+BelongsToLayer(b6, lay1)
 
-# belongstomodule predicates
-PredicateInstance: belongstomodule(myObject = b1, mod = m1, isNegated = false)
-PredicateInstance: belongstomodule(myObject = b2, mod = m1, isNegated = false)
-PredicateInstance: belongstomodule(myObject = b3, mod = m1, isNegated = false)
-PredicateInstance: belongstomodule(myObject = b4, mod = m1, isNegated = false)
-PredicateInstance: belongstomodule(myObject = b5, mod = m1, isNegated = false)
-PredicateInstance: belongstomodule(myObject = b6, mod = m1, isNegated = false) 
-PredicateInstance: belongstomodule(myObject = lp1, mod = m1, isNegated = false) 
-PredicateInstance: belongstomodule(myObject = tp1, mod = m1, isNegated = false)
+# BelongsToModule predicates
+BelongsToModule(b1, m1)
+BelongsToModule(b2, m1)
+BelongsToModule(b3, m1)
+BelongsToModule(b4, m1)
+BelongsToModule(b5, m1)
+BelongsToModule(b6, m1)
+BelongsToModule(lp1, m1)
+BelongsToModule(tp1, m1)
 
 
 
 # Additional predicates from problemC2.pddl :init section
-# atplace predicates for problemC2 objects
-PredicateInstance: atplace(myObject = lp2, place = fp9, isNegated = false)
-PredicateInstance: atplace(myObject = tp2, place = fp13, isNegated = false)
-PredicateInstance: atplace(myObject = b7, place = fp10, isNegated = false)
-PredicateInstance: atplace(myObject = b8, place = fp11, isNegated = false)
-PredicateInstance: atplace(myObject = b9, place = fp12, isNegated = false)
-PredicateInstance: atplace(myObject = b10, place = fp14, isNegated = false)
-PredicateInstance: atplace(myObject = b11, place = fp15, isNegated = false)
-PredicateInstance: atplace(myObject = b12, place = fp16, isNegated = false)
+# AtPlace predicates for problemC2 objects
+AtPlace(lp2, fp9)
+AtPlace(tp2, fp13)
+AtPlace(b7, fp10)
+AtPlace(b8, fp11)
+AtPlace(b9, fp12)
+AtPlace(b10, fp14)
+AtPlace(b11, fp15)
+AtPlace(b12, fp16)
 
-# positionfree predicate for problemC2 (updated to use pr2)
-PredicateInstance: positionfree(pos = pr2, isNegated = false)
+# PositionFree predicate for problemC2 (updated to use pr2)
+PositionFree(pr2)
 
-# clear predicates for problemC2 objects
-PredicateInstance: clear(myObject = lp2, isNegated = false)
-PredicateInstance: clear(myObject = tp2, isNegated = false)
-PredicateInstance: clear(myObject = b7, isNegated = false)
-PredicateInstance: clear(myObject = b8, isNegated = false)
-PredicateInstance: clear(myObject = b9, isNegated = false)
-PredicateInstance: clear(myObject = b10, isNegated = false)
-PredicateInstance: clear(myObject = b11, isNegated = false)
-PredicateInstance: clear(myObject = b12, isNegated = false)
+# Clear predicates for problemC2 objects
+Clear(lp2)
+Clear(tp2)
+Clear(b7)
+Clear(b8)
+Clear(b9)
+Clear(b10)
+Clear(b11)
+Clear(b12)
 
-# belongstolayer predicates for problemC2 objects
-PredicateInstance: belongstolayer(myObject = b7, lay = lay2, isNegated = false)
-PredicateInstance: belongstolayer(myObject = b8, lay = lay2, isNegated = false)
-PredicateInstance: belongstolayer(myObject = b9, lay = lay2, isNegated = false)
-PredicateInstance: belongstolayer(myObject = b10, lay = lay2, isNegated = false)
-PredicateInstance: belongstolayer(myObject = b11, lay = lay2, isNegated = false)
-PredicateInstance: belongstolayer(myObject = b12, lay = lay2, isNegated = false)
+# BelongsToLayer predicates for problemC2 objects
+BelongsToLayer(b7, lay2)
+BelongsToLayer(b8, lay2)
+BelongsToLayer(b9, lay2)
+BelongsToLayer(b10, lay2)
+BelongsToLayer(b11, lay2)
+BelongsToLayer(b12, lay2)
 
-# belongstomodule predicates for problemC2 objects
-PredicateInstance: belongstomodule(myObject = b7, mod = m2, isNegated = false)
-PredicateInstance: belongstomodule(myObject = b8, mod = m2, isNegated = false)
-PredicateInstance: belongstomodule(myObject = b9, mod = m2, isNegated = false)
-PredicateInstance: belongstomodule(myObject = b10, mod = m2, isNegated = false)
-PredicateInstance: belongstomodule(myObject = b11, mod = m2, isNegated = false)
-PredicateInstance: belongstomodule(myObject = b12, mod = m2, isNegated = false)
-PredicateInstance: belongstomodule(myObject = lp2, mod = m2, isNegated = false) 
-PredicateInstance: belongstomodule(myObject = tp2, mod = m2, isNegated = false)
+# BelongsToModule predicates for problemC2 objects
+BelongsToModule(b7, m2)
+BelongsToModule(b8, m2)
+BelongsToModule(b9, m2)
+BelongsToModule(b10, m2)
+BelongsToModule(b11, m2)
+BelongsToModule(b12, m2)
+BelongsToModule(lp2, m2)
+BelongsToModule(tp2, m2)
 
 # Additional predicates from problemC3.pddl :init section
-# atplace predicates for problemC3 objects
-PredicateInstance: atplace(myObject = lp3, place = fp17, isNegated = false)
-PredicateInstance: atplace(myObject = tp3, place = fp21, isNegated = false)
-PredicateInstance: atplace(myObject = b13, place = fp18, isNegated = false)
-PredicateInstance: atplace(myObject = b14, place = fp19, isNegated = false)
-PredicateInstance: atplace(myObject = b15, place = fp20, isNegated = false)
-PredicateInstance: atplace(myObject = b16, place = fp22, isNegated = false)
-PredicateInstance: atplace(myObject = b17, place = fp23, isNegated = false)
-PredicateInstance: atplace(myObject = b18, place = fp24, isNegated = false)
+# AtPlace predicates for problemC3 objects
+AtPlace(lp3, fp17)
+AtPlace(tp3, fp21)
+AtPlace(b13, fp18)
+AtPlace(b14, fp19)
+AtPlace(b15, fp20)
+AtPlace(b16, fp22)
+AtPlace(b17, fp23)
+AtPlace(b18, fp24)
 
-# positionfree predicate for problemC3 (updated to use pr3)
-PredicateInstance: positionfree(pos = pr3, isNegated = false)
+# PositionFree predicate for problemC3 (updated to use pr3)
+PositionFree(pr3)
 
-# clear predicates for problemC3 objects
-PredicateInstance: clear(myObject = lp3, isNegated = false)
-PredicateInstance: clear(myObject = tp3, isNegated = false)
-PredicateInstance: clear(myObject = b13, isNegated = false)
-PredicateInstance: clear(myObject = b14, isNegated = false)
-PredicateInstance: clear(myObject = b15, isNegated = false)
-PredicateInstance: clear(myObject = b16, isNegated = false)
-PredicateInstance: clear(myObject = b17, isNegated = false)
-PredicateInstance: clear(myObject = b18, isNegated = false)
+# Clear predicates for problemC3 objects
+Clear(lp3)
+Clear(tp3)
+Clear(b13)
+Clear(b14)
+Clear(b15)
+Clear(b16)
+Clear(b17)
+Clear(b18)
 
-# belongstolayer predicates for problemC3 objects
-PredicateInstance: belongstolayer(myObject = b13, lay = lay3, isNegated = false)
-PredicateInstance: belongstolayer(myObject = b14, lay = lay3, isNegated = false)
-PredicateInstance: belongstolayer(myObject = b15, lay = lay3, isNegated = false)
-PredicateInstance: belongstolayer(myObject = b16, lay = lay3, isNegated = false)
-PredicateInstance: belongstolayer(myObject = b17, lay = lay3, isNegated = false)
-PredicateInstance: belongstolayer(myObject = b18, lay = lay3, isNegated = false)
+# BelongsToLayer predicates for problemC3 objects
+BelongsToLayer(b13, lay3)
+BelongsToLayer(b14, lay3)
+BelongsToLayer(b15, lay3)
+BelongsToLayer(b16, lay3)
+BelongsToLayer(b17, lay3)
+BelongsToLayer(b18, lay3)
 
-# belongstomodule predicates for problemC3 objects
-PredicateInstance: belongstomodule(myObject = b13, mod = m3, isNegated = false)
-PredicateInstance: belongstomodule(myObject = b14, mod = m3, isNegated = false)
-PredicateInstance: belongstomodule(myObject = b15, mod = m3, isNegated = false)
-PredicateInstance: belongstomodule(myObject = b16, mod = m3, isNegated = false)
-PredicateInstance: belongstomodule(myObject = b17, mod = m3, isNegated = false)
-PredicateInstance: belongstomodule(myObject = b18, mod = m3, isNegated = false)
-PredicateInstance: belongstomodule(myObject = lp3, mod = m3, isNegated = false) 
-PredicateInstance: belongstomodule(myObject = tp3, mod = m3, isNegated = false)
+# BelongsToModule predicates for problemC3 objects
+BelongsToModule(b13, m3)
+BelongsToModule(b14, m3)
+BelongsToModule(b15, m3)
+BelongsToModule(b16, m3)
+BelongsToModule(b17, m3)
+BelongsToModule(b18, m3)
+BelongsToModule(lp3, m3)
+BelongsToModule(tp3, m3)
 
 # Additional predicates from problemC4.pddl :init section
-# atplace predicates for problemC4 objects
-PredicateInstance: atplace(myObject = lp4, place = fp25, isNegated = false)
-PredicateInstance: atplace(myObject = tp4, place = fp29, isNegated = false)
-PredicateInstance: atplace(myObject = b19, place = fp26, isNegated = false)
-PredicateInstance: atplace(myObject = b20, place = fp27, isNegated = false)
-PredicateInstance: atplace(myObject = b21, place = fp28, isNegated = false)
-PredicateInstance: atplace(myObject = b22, place = fp30, isNegated = false)
-PredicateInstance: atplace(myObject = b23, place = fp31, isNegated = false)
-PredicateInstance: atplace(myObject = b24, place = fp32, isNegated = false)
+# AtPlace predicates for problemC4 objects
+AtPlace(lp4, fp25)
+AtPlace(tp4, fp29)
+AtPlace(b19, fp26)
+AtPlace(b20, fp27)
+AtPlace(b21, fp28)
+AtPlace(b22, fp30)
+AtPlace(b23, fp31)
+AtPlace(b24, fp32)
 
-# positionfree predicate for problemC4 (using pr4)
-PredicateInstance: positionfree(pos = pr4, isNegated = false)
+# PositionFree predicate for problemC4 (using pr4)
+PositionFree(pr4)
 
-# clear predicates for problemC4 objects
-PredicateInstance: clear(myObject = lp4, isNegated = false)
-PredicateInstance: clear(myObject = tp4, isNegated = false)
-PredicateInstance: clear(myObject = b19, isNegated = false)
-PredicateInstance: clear(myObject = b20, isNegated = false)
-PredicateInstance: clear(myObject = b21, isNegated = false)
-PredicateInstance: clear(myObject = b22, isNegated = false)
-PredicateInstance: clear(myObject = b23, isNegated = false)
-PredicateInstance: clear(myObject = b24, isNegated = false)
+# Clear predicates for problemC4 objects
+Clear(lp4)
+Clear(tp4)
+Clear(b19)
+Clear(b20)
+Clear(b21)
+Clear(b22)
+Clear(b23)
+Clear(b24)
 
-# belongstolayer predicates for problemC4 objects
-PredicateInstance: belongstolayer(myObject = b19, lay = lay4, isNegated = false)
-PredicateInstance: belongstolayer(myObject = b20, lay = lay4, isNegated = false)
-PredicateInstance: belongstolayer(myObject = b21, lay = lay4, isNegated = false)
-PredicateInstance: belongstolayer(myObject = b22, lay = lay4, isNegated = false)
-PredicateInstance: belongstolayer(myObject = b23, lay = lay4, isNegated = false)
-PredicateInstance: belongstolayer(myObject = b24, lay = lay4, isNegated = false)
+# BelongsToLayer predicates for problemC4 objects
+BelongsToLayer(b19, lay4)
+BelongsToLayer(b20, lay4)
+BelongsToLayer(b21, lay4)
+BelongsToLayer(b22, lay4)
+BelongsToLayer(b23, lay4)
+BelongsToLayer(b24, lay4)
 
-# belongstomodule predicates for problemC4 objects
-PredicateInstance: belongstomodule(myObject = b19, mod = m4, isNegated = false)
-PredicateInstance: belongstomodule(myObject = b20, mod = m4, isNegated = false)
-PredicateInstance: belongstomodule(myObject = b21, mod = m4, isNegated = false)
-PredicateInstance: belongstomodule(myObject = b22, mod = m4, isNegated = false)
-PredicateInstance: belongstomodule(myObject = b23, mod = m4, isNegated = false)
-PredicateInstance: belongstomodule(myObject = b24, mod = m4, isNegated = false)
-PredicateInstance: belongstomodule(myObject = lp4, mod = m4, isNegated = false) 
-PredicateInstance: belongstomodule(myObject = tp4, mod = m4, isNegated = false)
-
-
-PredicateInstance: attool(tool = vg1, loc = ep1, isNegated = false)
-PredicateInstance: attool(tool = gg1, loc = ep2, isNegated = false)
-PredicateInstance: attool(tool = ng1, loc = ep3, isNegated = false)
-
-PredicateInstance: atagent(agent = r1, location = pr2, isNegated = false)
+# BelongsToModule predicates for problemC4 objects
+BelongsToModule(b19, m4)
+BelongsToModule(b20, m4)
+BelongsToModule(b21, m4)
+BelongsToModule(b22, m4)
+BelongsToModule(b23, m4)
+BelongsToModule(b24, m4)
+BelongsToModule(lp4, m4)
+BelongsToModule(tp4, m4)
 
 
-PredicateInstance: vgempty(client = r1, isNegated = false)
+IsAt(vg1, ep1)
+IsAt(gg1, ep2)
+IsAt(ng1, ep3)
+
+AtAgent(r1, pr2)
+
+
+VgEmpty(r1)
+
+
+
+#Attoll was replaced by isat. pls double chek

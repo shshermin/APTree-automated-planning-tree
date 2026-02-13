@@ -940,7 +940,7 @@ namespace BehaviorTreeMainProject.Log.Services
                 var timestamp = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
                 var csvFilePath = $"WrittenLogs/BehaviorTreeComponentSummary_{timestamp}.csv";
                 
-                System.IO.File.WriteAllText(csvFilePath, csvContent);
+                System.IO.File.WriteAllText(csvFilePath, csvContent, Encoding.UTF8);
                 WriteLog($"📄 CSV summary written to: {csvFilePath}");
             }
             catch (Exception ex)

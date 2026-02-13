@@ -2,7 +2,12 @@
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using BehaviorTreeMainProject;
 
+// Run the behavior tree test
+await FullTreeTest.RunTest();
+
+/* WEB API CODE - COMMENTED OUT FOR NOW
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
@@ -123,6 +128,7 @@ app.MapPost("/api/aptree/validate", async (AptreeValidateRequest request, IWebHo
 ;
 
 app.Run();
+*/
 
 static IReadOnlyList<NodeCatalogEntry> BuildNodeCatalog(Type baseType, string kind, string typeLabel)
 {

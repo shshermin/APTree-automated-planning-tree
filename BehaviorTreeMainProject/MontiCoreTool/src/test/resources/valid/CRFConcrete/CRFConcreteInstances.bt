@@ -8,7 +8,7 @@ Robot r1 (rp1 ur10)
 FirstPos fp1 ()
 FirstPos fp2 ()
 FirstPos fp3 ()
-VaccumGripper vg1 (fp1 True)
+VacGripper vg1 (fp1 True)
 
 
 

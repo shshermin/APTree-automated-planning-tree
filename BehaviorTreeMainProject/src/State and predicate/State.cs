@@ -88,7 +88,7 @@ public class State
 public IEnumerable<Predicate> GetTruePredicates()
 {
     return predicates.Values
-        .Where(p => !p.isNegated);
+        .Where(p => !p.not);
 }
 
     }

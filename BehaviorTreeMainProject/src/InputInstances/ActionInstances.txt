@@ -1,0 +1,3 @@
+# Action Instances
+# Actions are generated dynamically by planners from PDDL problem files
+# This file can be used to pre-register known action instances if needed

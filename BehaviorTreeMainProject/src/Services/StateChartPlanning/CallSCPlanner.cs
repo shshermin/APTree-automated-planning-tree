@@ -16,14 +16,14 @@ public class CallSCPlanner : BTServicePlanner
   
     public FastName PlannerName = new FastName("StateChartPlanner");
 
-    public CallSCPlanner(BehaviorTree InOwningTree, StateChartPlanningRequest InPlanningRequest) 
+    public CallSCPlanner(BehaviorTreeInstance InOwningTree, StateChartPlanningRequest InPlanningRequest) 
         : base(InOwningTree, new RestPlannerCommunicator("http://localhost:5001"), InPlanningRequest) // Different port for SC planner
     {
         this.blackboard = InOwningTree.linkedBlackboard;
         this.actionFactory = FactoryAction.Instance;
     }
     
-    public CallSCPlanner(BehaviorTree InOwningTree, IPlannerCommunicator customCommunicator, StateChartPlanningRequest InPlanningRequest) 
+    public CallSCPlanner(BehaviorTreeInstance InOwningTree, IPlannerCommunicator customCommunicator, StateChartPlanningRequest InPlanningRequest) 
         : base(InOwningTree, customCommunicator, InPlanningRequest)
     {
         this.blackboard = InOwningTree.linkedBlackboard;

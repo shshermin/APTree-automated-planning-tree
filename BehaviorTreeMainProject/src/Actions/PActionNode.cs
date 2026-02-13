@@ -125,7 +125,7 @@ public abstract class PActionNode : ActionNode
                 LoggingService.LogInfo($"🔧 APPLY_EFFECTS: Processing predicate #{predicates.IndexOf(predicate) + 1} of {predicates.Count}");
                 LoggingService.LogInfo($"🔧 APPLY_EFFECTS: Predicate type: {predicate.GetType().Name}");
                 LoggingService.LogInfo($"🔧 APPLY_EFFECTS: Predicate.PredicateName (unique key): {predicate.PredicateName}");
-                LoggingService.LogInfo($"🔧 APPLY_EFFECTS: Predicate.isNegated: {predicate.isNegated}");
+                LoggingService.LogInfo($"🔧 APPLY_EFFECTS: Predicate.isNegated: {predicate.not}");
                 
                 // Log predicate parameters if available
                 try
@@ -159,7 +159,7 @@ public abstract class PActionNode : ActionNode
                 if (storedPredicate != null)
                 {
                     LoggingService.LogSuccess($"🔧 APPLY_EFFECTS: ✅ VERIFIED: Predicate stored successfully in blackboard");
-                    LoggingService.LogInfo($"🔧 APPLY_EFFECTS: Stored predicate.isNegated: {storedPredicate.isNegated}");
+                    LoggingService.LogInfo($"🔧 APPLY_EFFECTS: Stored predicate.isNegated: {storedPredicate.not}");
                 }
                 else
                 {
@@ -177,7 +177,7 @@ public abstract class PActionNode : ActionNode
             var finalPredicates = blackboard.GetAllPredicates();
             foreach (var pred in finalPredicates)
             {
-                LoggingService.LogInfo($"   📋 {pred.PredicateName}: {pred.GetType().Name} (isNegated: {pred.isNegated})");
+                LoggingService.LogInfo($"   📋 {pred.PredicateName}: {pred.GetType().Name} (isNegated: {pred.not})");
             }
         }
         else

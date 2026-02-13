@@ -199,7 +199,7 @@ namespace BehaviorTreeMainProject.Log.Services
                 
                 // Count predicate instances (overall counts only)
                 var predicateInstances = blackboard.GetAllPredicates();
-                var totalNegationCount = predicateInstances.Count(p => p.isNegated);
+                var totalNegationCount = predicateInstances.Count(p => p.not);
                 
                 // Keep overall counts for backward compatibility
                 beforeTickingCounts["PredicateInstances"] = predicateInstances.Count;
@@ -420,7 +420,7 @@ namespace BehaviorTreeMainProject.Log.Services
                 var timestamp = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
                 var csvFilePath = $"WrittenLogs/BlackboardSummary_{timestamp}.csv";
                 
-                System.IO.File.WriteAllText(csvFilePath, csvContent);
+                System.IO.File.WriteAllText(csvFilePath, csvContent, Encoding.UTF8);
                 WriteLog($"📄 CSV summary written to: {csvFilePath}");
             }
             catch (Exception ex)

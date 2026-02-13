@@ -1,110 +1,113 @@
-# Location - firstPosition instances
-ParameterInstance: firstPosition {fp1}
-ParameterInstance: firstPosition {fp2}
-ParameterInstance: firstPosition {fp3}
-ParameterInstance: firstPosition {fp4}
-ParameterInstance: firstPosition {fp5}
-ParameterInstance: firstPosition {fp6}
-ParameterInstance: firstPosition {fp7}
-ParameterInstance: firstPosition {fp8}
-ParameterInstance: firstPosition {fp9}
-ParameterInstance: firstPosition {fp10}
-ParameterInstance: firstPosition {fp11}
-ParameterInstance: firstPosition {fp12}
-ParameterInstance: firstPosition {fp13}
-ParameterInstance: firstPosition {fp14}
-ParameterInstance: firstPosition {fp15}
-ParameterInstance: firstPosition {fp16}
-ParameterInstance: firstPosition {fp17}
-ParameterInstance: firstPosition {fp18}
-ParameterInstance: firstPosition {fp19}
-ParameterInstance: firstPosition {fp20}
-ParameterInstance: firstPosition {fp21}
-ParameterInstance: firstPosition {fp22}
-ParameterInstance: firstPosition {fp23}
-ParameterInstance: firstPosition {fp24}
-ParameterInstance: firstPosition {fp25}
-ParameterInstance: firstPosition {fp26}
-ParameterInstance: firstPosition {fp27}
-ParameterInstance: firstPosition {fp28}
-ParameterInstance: firstPosition {fp29}
-ParameterInstance: firstPosition {fp30}
-ParameterInstance: firstPosition {fp31}
-ParameterInstance: firstPosition {fp32}
+// LiveMatSetupObjects - Parameter instances for LivingMat project
+// Concrete instance model for CRFTypesCon following APTreeDSL grammar
+// Format: TypeName instanceName (properties)
 
-# Location - positionOnRail instances
-#ParameterInstance: positionOnRail {pr1}
-#ParameterInstance: positionOnRail {pr2}
-#ParameterInstance: positionOnRail {pr3}
-#ParameterInstance: positionOnRail {pr4}
+// Location - FirstPos instances (32 firstPosition locations)
+FirstPos fp1 ()
+FirstPos fp2 ()
+FirstPos fp3 ()
+FirstPos fp4 ()
+FirstPos fp5 ()
+FirstPos fp5 ()
+FirstPos fp6 ()
+FirstPos fp7 ()
+FirstPos fp8 ()
+FirstPos fp9 ()
+FirstPos fp10 ()
+FirstPos fp11 ()
+FirstPos fp12 ()
+FirstPos fp13 ()
+FirstPos fp14 ()
+FirstPos fp15 ()
+FirstPos fp16 ()
+FirstPos fp17 ()
+FirstPos fp18 ()
+FirstPos fp19 ()
+FirstPos fp20 ()
+FirstPos fp21 ()
+FirstPos fp22 ()
+FirstPos fp23 ()
+FirstPos fp24 ()
+FirstPos fp25 ()
+FirstPos fp26 ()
+FirstPos fp27 ()
+FirstPos fp28 ()
+FirstPos fp29 ()
+FirstPos fp30 ()
+FirstPos fp31 ()
+FirstPos fp32 ()
 
+// Location - PositionOnRail instances 
+ PositionOnRail pr1 ()
+ PositionOnRail pr2 ()
+ PositionOnRail pr3 ()
+ PositionOnRail pr4 ()
 
-# Location - equipposition instances
-ParameterInstance: equipposition {ep1}
-ParameterInstance: equipposition  {ep2}
-ParameterInstance: equipposition  {ep3}
-ParameterInstance: equipposition  {ep4}
+// Location - EquipPosition instances
+EquipPosition ep1 ()
+EquipPosition ep2 ()
+EquipPosition ep3 ()
+EquipPosition ep4 ()
 
-# Location - stackPosition instances
-ParameterInstance: stackPosition {sp1}
+// Location - StackPosition instances
+StackPosition sp1 ()
 
-# Agent - robot instances
-ParameterInstance: robot {r1}
+// Agent - Robot instances
+Robot r1 (pr2 ur10)
 
+// Element - Beam instances (24 beams)
+Beam b1 (fp1)
+Beam b2 (fp2)
+Beam b3 (fp3)
+Beam b4 (fp4)
+Beam b5 (fp5)
+Beam b6 (fp6)
+Beam b7 (fp7)
+Beam b8 (fp8)
+Beam b9 (fp9)
+Beam b10 (fp10)
+Beam b11 (fp11)
+Beam b12 (fp12)
+Beam b13 (fp13)
+Beam b14 (fp14)
+Beam b15 (fp15)
+Beam b16 (fp16)
+Beam b17 (fp17)
+Beam b18 (fp18)
+Beam b19 (fp19)
+Beam b20 (fp20)
+Beam b21 (fp21)
+Beam b22 (fp22)
+Beam b23 (fp23)
+Beam b24 (fp24)
 
-# Element - beam instances
-ParameterInstance: beam {b1}
-ParameterInstance: beam {b2}
-ParameterInstance: beam {b3}
-ParameterInstance: beam {b4}
-ParameterInstance: beam {b5}
-ParameterInstance: beam {b6}
-ParameterInstance: beam {b7}
-ParameterInstance: beam {b8}
-ParameterInstance: beam {b9}
-ParameterInstance: beam {b10}
-ParameterInstance: beam {b11}
-ParameterInstance: beam {b12}
-ParameterInstance: beam {b13}
-ParameterInstance: beam {b14}
-ParameterInstance: beam {b15}
-ParameterInstance: beam {b16}
-ParameterInstance: beam {b17}
-ParameterInstance: beam {b18}
-ParameterInstance: beam {b19}
-ParameterInstance: beam {b20}
-ParameterInstance: beam {b21}
-ParameterInstance: beam {b22}
-ParameterInstance: beam {b23}
-ParameterInstance: beam {b24}
+// Element - Plate instances (8 plates)
+Plate lp1 (fp25)
+Plate lp2 (fp26)
+Plate lp3 (fp27)
+Plate lp4 (fp28)
+Plate tp1 (fp29)
+Plate tp2 (fp30)
+Plate tp3 (fp31)
+Plate tp4 (fp32)
 
-# Element - plate instances
-ParameterInstance: plate {lp1}
-ParameterInstance: plate {lp2}
-ParameterInstance: plate {lp3}
-ParameterInstance: plate {lp4}
-ParameterInstance: plate {tp1}
-ParameterInstance: plate {tp2}
-ParameterInstance: plate {tp3}
-ParameterInstance: plate {tp4}
+// Tool - VacuumGripper instance
+VacGripper vg1 (ep1 False)
 
-# Tool - vacuumGripper instances
-ParameterInstance: vacuumGripper {vg1}
+// Tool - NailGripper instance
+NailGripper ng1 (ep2 False)
 
-# Tool - nailGripper instances
-ParameterInstance: nailGripper {ng1}
+// Tool - GlueGun instance
+GlueGun gg1 (ep3 False)
 
-# Tool - glueGun instances
-ParameterInstance: glueGun {gg1}
+// Tool - Cassette instances (4 cassettes)
+Cassette m1 (lay1)
+Cassette m2 (lay1)
+Cassette m3 (lay1)
+Cassette m4 (lay1)
 
-# Module - cassette instances
-ParameterInstance: cassette {m1}
-ParameterInstance: cassette {m2}
-ParameterInstance: cassette {m3}
-ParameterInstance: cassette {m4}
-
-# Layer - stack instances
-ParameterInstance: stack {lay1}
-ParameterInstance: stack {lay2}
-ParameterInstance: stack {lay3}
-ParameterInstance: stack {lay4}
+// Tool - Stack instances (4 stacks)
+Stack lay1 (1 m1)
+Stack lay2 (2 m1)
+Stack lay3 (3 m1)
+Stack lay4 (4 m1)

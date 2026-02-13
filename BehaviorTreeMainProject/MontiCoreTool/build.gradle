@@ -49,6 +49,7 @@ dependencies {
   implementation group: 'com.google.guava', name: 'guava', version: guava_version
   implementation group: 'de.monticore.lang', name: 'cd4analysis', version: mc_version
   implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.11'
+  implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
 
   // And dependencies for the test source set
   testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_version"
@@ -155,12 +156,7 @@ task generateCSharpPredicates(type: JavaExec) {
     workingDir = projectDir
 }
 
-// Custom task to run C# action type generator
-task generateCSharpActionTypes(type: JavaExec) {
-    classpath = sourceSets.main.runtimeClasspath
-    mainClass = 'CSharpActionTypeGenerator'
-    workingDir = projectDir
-}
+
 
 
 task runBehaviorTreeParser(type: JavaExec) {
@@ -203,6 +199,20 @@ task generateCSharpPropertyTypes(type: JavaExec) {
     dependsOn 'compileJava'
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'CSharopCodeGenerator'
+    workingDir = projectDir
+}
+
+task generateCSharpPredicateTypes(type: JavaExec) {
+    dependsOn 'compileJava'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'CSharpPredicateGenerator'
+    workingDir = projectDir
+}
+
+task generateCSharpActionTypes(type: JavaExec) {
+    dependsOn 'compileJava'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'CSharpActionGenerator'
     workingDir = projectDir
 }
 
@@ -276,6 +286,14 @@ task generateInstanceSymbols(type: JavaExec) {
   classpath = sourceSets.main.runtimeClasspath
   mainClass = 'InstanceSymbolsGenerator'
   workingDir = projectDir
+}
+
+task runLiveMatSetupObjectsGenerator(type: JavaExec) {
+    description = 'Parses LiveMatSetupObjects.bt and generates JSON file with parameter instances'
+    dependsOn 'compileJava'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'LiveMatSetupObjectsGenerator'
+    workingDir = projectDir
 }
 
 // Task to generate Class Diagram from grammar (shows AST structure)
