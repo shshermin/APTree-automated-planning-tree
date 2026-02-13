@@ -1,4 +1,4 @@
-# Behavior Tree Main Project
+# APTree
 
 This project contains the core components for behavior tree design and execution using the APTree domain specific language.
 
