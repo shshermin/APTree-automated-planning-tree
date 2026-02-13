@@ -193,6 +193,7 @@ task runCRFPropertyTypeParser(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'CRFPropertyTypeParser'
     workingDir = projectDir
+    args = [project.properties.get('modelName', 'CRFPropertyTypes.bt')]
 }
 
 task generateCSharpPropertyTypes(type: JavaExec) {
@@ -262,6 +263,34 @@ task runDynamicFlowNodeParser(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'DynamicFlowNodeParserTest'
     workingDir = projectDir
+}
+
+task runCRFConPropertyParser(type: JavaExec) {
+    description = 'Parses concrete property instances (CRFTypesCon grammar)'
+    dependsOn 'compileJava'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'CRFConPropertyParser'
+    workingDir = projectDir
+    args = [project.properties.get('modelName', 'LiveMatSetupObjects.bt')]
+}
+
+task runCRFConPredicateParser(type: JavaExec) {
+    description = 'Parses predicate models (CRFTypesCon grammar)'
+    dependsOn 'compileJava'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'CRFConPredicateParser'
+    workingDir = projectDir
+    args = [project.properties.get('modelName', 'LiveMatInitialState.bt')]
+}
+
+task runInitialStateJsonGenerator(type: JavaExec) {
+  description = 'Parses predicate model and exports JSON'
+  dependsOn 'compileJava'
+  classpath = sourceSets.main.runtimeClasspath
+  mainClass = 'InitialStateJsonGenerator'
+  workingDir = projectDir
+  args = [project.properties.get('modelName', 'LiveMatInitialState.bt'),
+      project.properties.get('outputName', 'target/InitialStatePredicates.json')]
 }
 
 task runAPTreeTool(type: JavaExec) {

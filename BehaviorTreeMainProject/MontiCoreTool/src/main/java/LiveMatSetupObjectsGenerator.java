@@ -30,10 +30,18 @@ public class LiveMatSetupObjectsGenerator {
   private static class ParameterInstance {
     String name;
     String type;
+    String extendsType;
+    java.util.Map<String, Object> properties;
     
-    ParameterInstance(String type, String name) {
+    ParameterInstance(String type, String name, String extendsType) {
       this.type = type;
       this.name = name;
+      this.extendsType = extendsType;
+      this.properties = new java.util.HashMap<>();
+    }
+    
+    void addProperty(String propName, Object propValue) {
+      this.properties.put(propName, propValue);
     }
   }
 
@@ -143,8 +151,13 @@ public class LiveMatSetupObjectsGenerator {
                       type = type.substring(0, type.length() - 6);
                     }
                     
-                    System.out.println("  - Found: " + type + " {" + name + "}");
-                    instances.add(new ParameterInstance(type, name));
+                    // Dynamically extract the extends type from the class hierarchy
+                    String extendsType = extractSupertypeFromClass(obj);
+                    
+                    System.out.println("  - Found: " + type + " {" + name + "} extends " + extendsType);
+                    ParameterInstance inst = new ParameterInstance(type, name, extendsType);
+                    extractSymbolProperties(obj, inst);
+                    instances.add(inst);
                     
                   } catch (Exception e) {
                     // Skip if can't extract
@@ -180,6 +193,25 @@ public class LiveMatSetupObjectsGenerator {
         JSONObject instObj = new JSONObject();
         instObj.put("name", inst.name);
         instObj.put("type", inst.type);
+        instObj.put("extends", inst.extendsType);
+        
+        // Add properties if any
+        if (!inst.properties.isEmpty()) {
+          JSONObject propsObj = new JSONObject();
+          for (java.util.Map.Entry<String, Object> entry : inst.properties.entrySet()) {
+            // Additional safety check - only add truly serializable values
+            Object val = entry.getValue();
+            if (val instanceof String || val instanceof Number || val instanceof Boolean) {
+              propsObj.put(entry.getKey(), val);
+            } else if (val != null) {
+              // For other types, convert to string representation
+              propsObj.put(entry.getKey(), val.toString());
+            }
+          }
+          if (!propsObj.isEmpty()) {
+            instObj.put("properties", propsObj);
+          }
+        }
 
         instancesArray.add(instObj);
       }
@@ -274,6 +306,214 @@ public class LiveMatSetupObjectsGenerator {
   private void appendIndent(StringBuilder sb, int level) {
     for (int i = 0; i < level * 2; i++) {
       sb.append(' ');
+    }
+  }
+
+  /**
+   * Extract the supertype from an AST symbol by examining its class hierarchy
+   * 
+   * @param symbol The symbol object
+   * @return The supertype name or "Unknown"
+   */
+  private static String extractSupertypeFromClass(Object symbol) {
+    try {
+      // Get the AST node from the symbol
+      Object astNode = null;
+      try {
+        java.lang.reflect.Method getAstNodeMethod = symbol.getClass().getMethod("getAstNode");
+        astNode = getAstNodeMethod.invoke(symbol);
+      } catch (Exception e) {
+        // No AST node, try using symbol directly
+        astNode = symbol;
+      }
+      
+      if (astNode == null) {
+        return "Unknown";
+      }
+      
+      Class<?> clazz = astNode.getClass();
+      
+      // Check interfaces for type information
+      Class<?>[] interfaces = clazz.getInterfaces();
+      for (Class<?> iface : interfaces) {
+        String ifaceName = iface.getSimpleName();
+        // Look for IAST interfaces that are not the node itself
+        if (ifaceName.startsWith("IAST") && !ifaceName.equals("IASTNode")) {
+          // Extract the type name from IAST prefix
+          String typeName = ifaceName.substring(4); // Remove "IAST" prefix
+          if (!typeName.isEmpty()) {
+            return typeName;
+          }
+        }
+      }
+      
+      // Check superclass (but skip Object and other framework classes)
+      Class<?> superClass = clazz.getSuperclass();
+      if (superClass != null && !superClass.equals(Object.class)) {
+        String superName = superClass.getSimpleName();
+        if (superName.startsWith("AST")) {
+          // Remove "AST" prefix
+          return superName.substring(3);
+        }
+        if (superName.startsWith("Abstract")) {
+          return superName.substring(8);
+        }
+      }
+      
+      return "Unknown";
+    } catch (Exception e) {
+      return "Unknown";
+    }
+  }
+
+  /**
+   * Extract properties from a symbol using reflection.
+   * Attempts to get the AST node from the symbol and extract its properties.
+   * 
+   * @param symbol The symbol object to extract properties from
+   * @param instance The ParameterInstance to store the extracted properties
+   */
+  private static void extractSymbolProperties(Object symbol, ParameterInstance instance) {
+    try {
+      // Try to get the AST node from the symbol
+      Object astNode = null;
+      try {
+        java.lang.reflect.Method getAstNodeMethod = symbol.getClass().getMethod("getAstNode");
+        astNode = getAstNodeMethod.invoke(symbol);
+      } catch (Exception e) {
+        // Symbol doesn't have an AST node - that's ok
+      }
+      
+      // Extract properties from the AST node if available
+      if (astNode != null) {
+        extractPropertiesFromObject(astNode, instance);
+      }
+      
+      // Also try to extract from the symbol itself (in case it has useful properties)
+      extractPropertiesFromObject(symbol, instance);
+      
+    } catch (Exception e) {
+      System.err.println("[X] Error extracting properties: " + e.getMessage());
+    }
+  }
+
+  /**
+   * Extract properties from an object using reflection.
+   * Only extracts simple, semantic properties that are JSON-serializable.
+   * 
+   * @param obj The object to extract properties from
+   * @param instance The ParameterInstance to store the extracted properties
+   */
+  private static void extractPropertiesFromObject(Object obj, ParameterInstance instance) {
+    if (obj == null) return;
+    
+    try {
+      java.lang.reflect.Method[] methods = obj.getClass().getMethods();
+      
+      for (java.lang.reflect.Method method : methods) {
+        String methodName = method.getName();
+        
+        // Look for getter methods (getXxx)
+        if (methodName.startsWith("get") && 
+            methodName.length() > 3 &&
+            method.getParameterCount() == 0) {
+          
+          // Skip these methods
+          if (methodName.equals("getName") || methodName.equals("getClass") ||
+              methodName.equals("getFullName") || methodName.equals("getPackageName") ||
+              methodName.equals("getAstNode") || methodName.equals("getEnclosingScope")) {
+            continue;
+          }
+          
+          try {
+            Object value = method.invoke(obj);
+            String propName = methodName.substring(3);
+            propName = propName.substring(0, 1).toLowerCase() + propName.substring(1);
+            
+            if (value != null) {
+              // Skip internal framework properties (start with underscore or specific framework names)
+              if (propName.startsWith("_") || 
+                  propName.startsWith("Pre") ||
+                  propName.startsWith("Post") ||
+                  propName.equals("stereoinfo") ||
+                  propName.equals("sourcePosition") ||
+                  propName.equals("locDefinition") ||
+                  propName.equals("accessModifier")) {
+                continue;
+              }
+              
+              // Only serialize simple, JSON-friendly types
+              if (isJsonSerializable(value)) {
+                // Special handling for objects with 'name' - extract the name instead of toString()
+                if (hasNameMethod(value)) {
+                  try {
+                    Object nameValue = value.getClass().getMethod("getName").invoke(value);
+                    if (nameValue != null) {
+                      instance.addProperty(propName, nameValue.toString());
+                    }
+                  } catch (Exception e) {
+                    // Skip if we can't extract the name
+                  }
+                } else {
+                  instance.addProperty(propName, value);
+                }
+              }
+            }
+          } catch (Exception e) {
+            // Skip properties that can't be read
+          }
+        }
+      }
+    } catch (Exception e) {
+      System.err.println("[X] Error extracting properties from object: " + e.getMessage());
+    }
+  }
+
+  /**
+   * Check if an object is JSON-serializable (primitive wrapper, String, etc.)
+   * 
+   * @param value The value to check
+   * @return true if the value can be safely serialized to JSON
+   */
+  private static boolean isJsonSerializable(Object value) {
+    if (value == null) return false;
+    
+    Class<?> clazz = value.getClass();
+    
+    // Primitive wrappers and String
+    if (clazz == String.class ||
+        clazz == Integer.class || clazz == Long.class ||
+        clazz == Float.class || clazz == Double.class ||
+        clazz == Boolean.class || clazz == Byte.class) {
+      return true;
+    }
+    
+    // Collections (but they should be empty/simple)
+    if (value instanceof java.util.Collection) {
+      java.util.Collection<?> col = (java.util.Collection<?>) value;
+      return col.isEmpty();  // Only serialize empty collections
+    }
+    
+    if (value instanceof java.util.Map) {
+      java.util.Map<?, ?> map = (java.util.Map<?, ?>) value;
+      return map.isEmpty();  // Only serialize empty maps
+    }
+    
+    return false;
+  }
+
+  /**
+   * Check if an object has a getName() method.
+   * 
+   * @param value The object to check
+   * @return true if the object has a public getName() method
+   */
+  private static boolean hasNameMethod(Object value) {
+    try {
+      value.getClass().getMethod("getName");
+      return true;
+    } catch (NoSuchMethodException e) {
+      return false;
     }
   }
 }

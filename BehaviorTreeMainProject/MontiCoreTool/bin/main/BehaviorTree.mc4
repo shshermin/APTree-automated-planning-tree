@@ -1,5 +1,7 @@
  grammar BehaviorTree extends  de.monticore.types.MCBasicTypes {
 
+
+
   symbol BehaviorTree = "BehaviorTree" name:Name "{" "Root" root:FlowNode "}";
 
   // abstract node class
@@ -18,35 +20,38 @@
   Place extends ActionNode = "Action" name:Name ("{" (Decorator | Service)* "}")?;
  
  
- // services and decorators
+  // services and decorators
   abstract Service = "Service" name:Name;
   abstract Decorator = "Decorator" name:Name;
   //concrete examples of services
   GripperEmpty extends Decorator = "Decorator" name:Name;
   CalcDist extends Service = "Service" name:Name;
 
-// tokens definition
-   BasicType = Name | Integer | Double ;
 
-   token PDDL_START = LOWER_CASE_LETTER;
-   token PDDL_CHAR = LETTER | NUMBER | '-' | '_';
-   token LOWER_CASE_LETTER = 'a'..'z';  
-   token LETTER = 'a'..'z' | 'A'..'Z';
-   token NUMBER = '0'..'9';
-   token FILEPATH = LETTER | NUMBER | '_'  | '.' | '/' | '\\' | '-' ;
+    // Fragment definitions (must come before token definitions that use them)
+  fragment token DIGIT  = '0'..'9';
+  fragment token LOWER  = 'a'..'z';
+  fragment token UPPER  = 'A'..'Z';
+  fragment token ALPHA  = 'a'..'z' | 'A'..'Z';
+  fragment token SYMBOL = '-' | '_' | '.' | '/' | '\\';
 
-    enum Boolean = "True" | "False";
-    token Double = NUMBER+ '.' NUMBER+;
-    token Integer = '-'? NUMBER+;
-    token STRING_CHAR = LETTER | NUMBER | '_'  | '.' | '/' | '\\' | '-' ;
+  // Token definitions
+  token Double  = ('-')? DIGIT+ '.' DIGIT+;
+  token Integer = ('-')?  DIGIT+;
+  token FILEPATH = (ALPHA | DIGIT | SYMBOL)+;
+  token String = '"' ( (~('"' | '\\' | '\r' | '\n')) | ('\\' .) )* '"';
+
+  // Type definitions
+  BasicType = Integer | Double | FILEPATH | String | Boolean |Name;
+
+  enum Boolean = "True" | "False";
+
 }
 
 
 
 
 
-//  token STRING_VALUE = '"' (STRING_CHAR)* '"';
-//  token STRING_CHAR = LETTER | NUMBER | '_'  | '.' | '/' | '\\' | '-' ;
 
 
 

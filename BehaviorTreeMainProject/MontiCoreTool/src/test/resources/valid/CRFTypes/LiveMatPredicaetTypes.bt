@@ -66,3 +66,5 @@ Define Predicate Glued {
 Define Predicate Nailed {
     myObject : Element
 }
+
+Define Predicate VGEmpty { client: Name@Agent}
