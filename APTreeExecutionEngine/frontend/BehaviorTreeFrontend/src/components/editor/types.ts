@@ -22,6 +22,12 @@ export interface CanvasNode {
   isNegated?: boolean;
   successType?: FlowSuccessType;
   typeId?: string;
+  /** Optional action arguments (e.g. beam1 fp2 r1) shown on the node card. */
+  args?: string[];
+  /** Render this node as a dashed subtree/container (used for NodeGraphs). */
+  renderAsSubtree?: boolean;
+  /** Optional title shown in the subtree container header. */
+  subtreeTitle?: string;
   /** True when the node has any outgoing connections (used for rendering ports/handles). */
   hasOutgoing?: boolean;
 }
@@ -36,6 +42,10 @@ export interface NodeConnection {
   targetNodeId: string;
   sourcePort?: 'top' | 'right' | 'bottom' | 'left';
   targetPort?: 'top' | 'right' | 'bottom' | 'left';
+  /** Connection kind from APTree export (e.g. child/service/member/relation). */
+  kind?: string;
+  /** Optional label from APTree export (e.g. Meets). */
+  label?: string;
 }
 
 /** represents a visual separator line inside the canvas (used to split hierarchy levels). */

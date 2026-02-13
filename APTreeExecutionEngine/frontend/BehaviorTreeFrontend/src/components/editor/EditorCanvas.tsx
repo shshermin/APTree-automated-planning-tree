@@ -85,12 +85,18 @@ interface BehaviorNodeData {
 interface BehaviorEdgeData {
   onRemoveConnection?: (connectionId: string) => void;
   isHovered?: boolean;
+  kind?: string;
+  label?: string;
 }
 
 interface SeparatorNodeData {
   label: string;
   onRemoveSeparator?: (separatorId: string) => void;
   isHovered?: boolean;
+}
+
+interface SubtreeNodeData {
+  node: CanvasNode;
 }
 
 const portPositions: Record<PortSide, Position> = {
@@ -173,11 +179,8 @@ function BehaviorTreeNode({ id, data, selected }: NodeProps<BehaviorNodeData>) {
 
   const isFlowNode = node.category === FLOW_NODES_KEY;
 
-  const isNodeGraph = node.typeLabel === "NodeGraph";
-
   const shouldRenderSourceHandles =
     isFlowNode ||
-    isNodeGraph ||
     isActionNode(node) ||
     !!node.hasOutgoing;
 
@@ -247,11 +250,8 @@ function BehaviorTreeNode({ id, data, selected }: NodeProps<BehaviorNodeData>) {
   if (isRootNode) {
     nodeClasses.push("canvas-node-rooted");
   }
-
-  const shouldRenderRootAction =
-    node.category === FLOW_NODES_KEY && !!data.onSetRootNode;
   const shouldRenderActions =
-    !!data.onEditNode || !!data.onRemoveNode || shouldRenderRootAction;
+    !!data.onEditNode || !!data.onRemoveNode;
   const shouldRenderActionRow = !!data.onEditNode || !!data.onRemoveNode;
 
   if (node.typeLabel === "NodeGraph") {
@@ -275,7 +275,7 @@ function BehaviorTreeNode({ id, data, selected }: NodeProps<BehaviorNodeData>) {
   const targetHandleOverrides: Partial<Record<PortSide, CSSProperties>> = {};
 
   if (node.category === FLOW_NODES_KEY) {
-    const offset = "3.75%";
+    const offset = "-2%";
 
     portStyleOverrides.left = { left: offset };
     portStyleOverrides.right = { right: offset };
@@ -288,7 +288,7 @@ function BehaviorTreeNode({ id, data, selected }: NodeProps<BehaviorNodeData>) {
   }
 
   const successBadgeClearance = node.successType ? SUCCESS_BADGE_CLEARANCE : 0;
-  const topClearance = (isAction ? paramClearance : 0) + successBadgeClearance;
+  const topClearance = isFlowNode ? 0 : successBadgeClearance;
 
   if (topClearance > 0) {
     const basePortTop = resolveNumericOffset(PORT_STYLES.top.top);
@@ -349,13 +349,82 @@ function BehaviorTreeNode({ id, data, selected }: NodeProps<BehaviorNodeData>) {
         lineClassName="canvas-node-resizer-line"
       />
 
-      {showActionParams ? (
-        <div className="canvas-node-params" aria-label="Action parameters">
-          {actionParameterSummaries.map((entry) => (
+      {node.successType && !isFlowNode ? (
+        <div className="canvas-node-success-row nodrag">
+          {data.onCycleFlowSuccessType ? (
+            <button
+              type="button"
+              className="canvas-node-success nodrag"
+              onMouseDown={(event) => event.stopPropagation()}
+              onClick={(event) => {
+                event.stopPropagation();
+                data.onCycleFlowSuccessType?.(id);
+              }}
+              title="Click to cycle success type"
+              aria-label={`Success type ${node.successType}. Click to cycle.`}
+            >
+              {node.successType}
+            </button>
+          ) : (
+            <span className="canvas-node-success" aria-hidden="true">
+              {node.successType}
+            </span>
+          )}
+        </div>
+      ) : null}
+
+      {shouldRenderActions ? (
+        <div className="canvas-node-actions nodrag" aria-label="Node actions">
+          {shouldRenderActionRow ? (
+            <div className="canvas-node-actions-row">
+              {data.onEditNode ? (
+                <button
+                  type="button"
+                  className="canvas-node-edit nodrag"
+                  onMouseDown={(event) => event.stopPropagation()}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    data.onEditNode?.(id);
+                  }}
+                  aria-label={`Edit ${node.name}`}
+                  title="Edit"
+                >
+                  ✎
+                </button>
+              ) : null}
+
+              {data.onRemoveNode ? (
+                <button
+                  type="button"
+                  className="canvas-node-remove nodrag"
+                  onMouseDown={(event) => event.stopPropagation()}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    data.onRemoveNode?.(id);
+                  }}
+                  aria-label={`Remove ${node.name}`}
+                  title="Remove"
+                >
+                  ×
+                </button>
+              ) : null}
+            </div>
+          ) : null}
+        </div>
+      ) : null}
+
+      {isFlowNode ? (
+        <div className="canvas-node-arrow" aria-hidden="true" />
+      ) : null}
+
+      {isAction && actionParameterSummaries.length > 0 ? (
+        <div className="canvas-node-action-args nodrag" aria-label="Action properties">
+          {actionParameterSummaries.slice(0, 2).map((entry) => (
             <button
               key={entry.id}
               type="button"
-              className="canvas-node-params-chip"
+              className="canvas-node-action-arg nodrag"
+              onPointerDown={(event) => event.stopPropagation()}
               onMouseDown={(event) => event.stopPropagation()}
               onClick={(event) => {
                 event.stopPropagation();
@@ -373,90 +442,13 @@ function BehaviorTreeNode({ id, data, selected }: NodeProps<BehaviorNodeData>) {
               {entry.name}
             </button>
           ))}
-        </div>
-      ) : null}
-
-      {node.successType ? (
-        <div className="canvas-node-success-row">
-          {data.onCycleFlowSuccessType ? (
-            <button
-              type="button"
-              className="canvas-node-success"
-              onMouseDown={(event) => event.stopPropagation()}
-              onClick={(event) => {
-                event.stopPropagation();
-                data.onCycleFlowSuccessType?.(id);
-              }}
-              title="Click to cycle success type"
-              aria-label={`Success type ${node.successType}. Click to cycle.`}
+          {actionParameterSummaries.length > 2 ? (
+            <span
+              className="canvas-node-action-arg canvas-node-action-arg-ellipsis nodrag"
+              aria-hidden="true"
             >
-              {node.successType}
-            </button>
-          ) : (
-            <span className="canvas-node-success" aria-hidden="true">
-              {node.successType}
+              ...
             </span>
-          )}
-          {isRootNode ? (
-            <span className="canvas-node-root-pill" aria-label="Root node">
-              ROOT
-            </span>
-          ) : null}
-        </div>
-      ) : null}
-
-      {shouldRenderActions ? (
-        <div className="canvas-node-actions" aria-label="Node actions">
-          {shouldRenderActionRow ? (
-            <div className="canvas-node-actions-row">
-              {data.onEditNode ? (
-                <button
-                  type="button"
-                  className="canvas-node-edit"
-                  onMouseDown={(event) => event.stopPropagation()}
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    data.onEditNode?.(id);
-                  }}
-                  aria-label={`Edit ${node.name}`}
-                  title="Edit"
-                >
-                  ✎
-                </button>
-              ) : null}
-
-              {data.onRemoveNode ? (
-                <button
-                  type="button"
-                  className="canvas-node-remove"
-                  onMouseDown={(event) => event.stopPropagation()}
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    data.onRemoveNode?.(id);
-                  }}
-                  aria-label={`Remove ${node.name}`}
-                  title="Remove"
-                >
-                  ×
-                </button>
-              ) : null}
-            </div>
-          ) : null}
-
-          {shouldRenderRootAction ? (
-            <button
-              type="button"
-              className={`canvas-node-root${isRootNode ? " canvas-node-root--active" : ""}`}
-              onMouseDown={(event) => event.stopPropagation()}
-              onClick={(event) => {
-                event.stopPropagation();
-                data.onSetRootNode?.(id);
-              }}
-              aria-label={isRootNode ? `Unset root for ${node.name}` : `Set ${node.name} as root`}
-              title={isRootNode ? "Unset Root" : "Set as Root"}
-            >
-              ♛
-            </button>
           ) : null}
         </div>
       ) : null}
@@ -470,7 +462,10 @@ function BehaviorTreeNode({ id, data, selected }: NodeProps<BehaviorNodeData>) {
       ) : null}
 
       {isAction ? (
-        <div className="canvas-node-state" />
+        <div className="canvas-node-pre-eff" aria-label="Preconditions and Effects">
+          <span className="canvas-node-pre-eff-box">Pre</span>
+          <span className="canvas-node-pre-eff-box">Eff</span>
+        </div>
       ) : null}
 
       {(Object.keys(portPositions) as PortSide[]).map((side) => (
@@ -545,6 +540,13 @@ function BehaviorEdge({
     targetPosition,
   });
 
+  const isMeetsEdge =
+    data?.kind === "relation" &&
+    typeof data?.label === "string" &&
+    data.label.toLowerCase().includes("meet");
+
+  const edgeLabel = isMeetsEdge ? "MEET" : null;
+
   return (
     <>
       <BaseEdge
@@ -553,11 +555,30 @@ function BehaviorEdge({
         markerEnd={markerEnd}
         interactionWidth={20} 
         style={{
-          stroke: "#fff",
+          stroke: "var(--text-primary)",
           strokeWidth: 2,
+          strokeDasharray: isMeetsEdge ? "6 6" : undefined,
           ...style,
         }}
       />
+
+      {edgeLabel ? (
+        <EdgeLabelRenderer>
+          <div
+            className="canvas-edge-label"
+            style={{
+              position: "absolute",
+              left: midX,
+              top: midY,
+              transform: "translate(-50%, -50%)",
+              pointerEvents: "none",
+            }}
+          >
+            {edgeLabel}
+          </div>
+        </EdgeLabelRenderer>
+      ) : null}
+
       {data?.onRemoveConnection ? (
         <EdgeLabelRenderer>
           <div
@@ -622,7 +643,44 @@ function SeparatorNode({ id, data, selected }: NodeProps<SeparatorNodeData>) {
   );
 }
 
-const nodeTypes: NodeTypes = { btNode: BehaviorTreeNode, separator: SeparatorNode };
+function SubtreeNode({ data }: NodeProps<SubtreeNodeData>) {
+  const title = data.node.subtreeTitle ?? "";
+  const isPlanningService = title === "Planning Service";
+  
+  return (
+    <div className={`canvas-subtree${isPlanningService ? " canvas-subtree-service" : ""}`} aria-label="Subtree">
+      {/* Invisible handle at top center for flow node connections */}
+      <Handle
+        type="target"
+        position={Position.Top}
+        id="target-top"
+        className="canvas-subtree-handle"
+        style={{
+          top: 0,
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          opacity: 0,
+          width: 20,
+          height: 20,
+          background: "transparent",
+          border: "none",
+        }}
+      />
+      {title ? (
+        <div className="canvas-subtree-title">
+          {title}
+          {isPlanningService ? <span className="canvas-subtree-plus" aria-hidden="true">⊕</span> : null}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+const nodeTypes: NodeTypes = {
+  btNode: BehaviorTreeNode,
+  separator: SeparatorNode,
+  subtree: SubtreeNode,
+};
 const edgeTypes: EdgeTypes = { btEdge: BehaviorEdge };
 
 /**
@@ -715,11 +773,38 @@ function EditorCanvasInner(props: EditorCanvasProps) {
     });
   }, [hoveredSeparatorId, onRemoveSeparator, separators, viewportTransform, viewportWidth]);
 
-  const behaviorFlowNodes = useMemo<FlowNode<BehaviorNodeData>[]>(
-    () =>
-      nodes.map((node) => {
+  const behaviorFlowNodes = useMemo<FlowNode[]>(
+    () => {
+      const isStructuralSubtree = (node: CanvasNode) =>
+        !!node.renderAsSubtree || node.typeLabel === "NodeGraph";
+
+      const subtreeNodes = nodes.filter(isStructuralSubtree);
+      const regularNodes = nodes.filter((node) => !isStructuralSubtree(node));
+
+      const mapNode = (node: CanvasNode): FlowNode => {
         const width = node.width ?? DEFAULT_CANVAS_NODE_WIDTH;
         const height = node.height ?? DEFAULT_CANVAS_NODE_HEIGHT;
+
+        if (isStructuralSubtree(node)) {
+          return {
+            id: node.id,
+            type: "subtree" as const,
+            position: { x: node.x - width / 2, y: node.y - height / 2 },
+            data: { node },
+            draggable: false,
+            selectable: false,
+            focusable: false,
+            connectable: false,
+            width,
+            height,
+            style: {
+              width: `${width}px`,
+              height: `${height}px`,
+              zIndex: 0,
+              pointerEvents: "none",
+            },
+          } satisfies FlowNode<SubtreeNodeData>;
+        }
 
         return {
           id: node.id,
@@ -741,7 +826,11 @@ function EditorCanvasInner(props: EditorCanvasProps) {
           width,
           height,
         } satisfies FlowNode<BehaviorNodeData>;
-      }),
+      };
+
+      // Render subtree containers first so they sit behind the actual nodes.
+      return [...subtreeNodes.map(mapNode), ...regularNodes.map(mapNode)];
+    },
     [
       nodes,
       rootNodeId,
@@ -786,10 +875,12 @@ function EditorCanvasInner(props: EditorCanvasProps) {
         data: {
           onRemoveConnection,
           isHovered: hoveredEdgeId === connection.id,
+          kind: connection.kind,
+          label: connection.label,
         },
         markerEnd: {
           type: MarkerType.ArrowClosed,
-          color: "#fff",
+          color: "var(--text-primary)",
           width: 16,
           height: 16,
         },
@@ -911,18 +1002,16 @@ function EditorCanvasInner(props: EditorCanvasProps) {
       const isAction = (node: CanvasNode) =>
         node.kind === "actionType" || node.kind === "actionInstance";
       const isFlow = (node: CanvasNode) => node.category === FLOW_NODES_KEY;
-      const isNodeGraph = (node: CanvasNode) => node.typeLabel === "NodeGraph";
 
       // Rules:
-      // - Flow -> (Action/Service/Decorator/anything non-flow) is allowed (structure).
+      // - Flow -> (Flow/Action/Service/Decorator/anything non-flow) is allowed (structure).
       // - Action -> Action is allowed (plan/order/temporal relations).
-      // - Anything -> Flow is not allowed.
-      // - Flow -> Flow is not allowed.
+      // - Non-flow -> Flow is not allowed.
       if (!sourceNode || !targetNode) {
         return;
       }
 
-      if (isFlow(targetNode)) {
+      if (isFlow(targetNode) && !isFlow(sourceNode)) {
         return;
       }
 
@@ -930,8 +1019,6 @@ function EditorCanvasInner(props: EditorCanvasProps) {
         // allow Flow -> non-flow
       } else if (isAction(sourceNode) && isAction(targetNode)) {
         // allow Action -> Action (plan graph)
-      } else if (isNodeGraph(sourceNode) && isAction(targetNode)) {
-        // allow NodeGraph -> Action (membership / plan graph membership)
       } else {
         return;
       }

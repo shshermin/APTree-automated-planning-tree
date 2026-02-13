@@ -417,7 +417,24 @@ public class APTreeJsonCli {
           addEdge(flowId, cid, "child", null);
           if (child instanceof behaviortree._ast.ASTFlowNode) {
             visitFlowNode((behaviortree._ast.ASTFlowNode) child);
+          } else if (child instanceof behaviortree._ast.ASTActionNode) {
+            visitActionNode((behaviortree._ast.ASTActionNode) child);
           }
+        }
+      }
+
+      void visitActionNode(behaviortree._ast.ASTActionNode action) {
+        if (action == null) return;
+        String actionId = ensureNode(action);
+
+        // services/decorators as separate nodes so the UI can show them
+        for (behaviortree._ast.ASTService service : action.getServiceList()) {
+          String sid = ensureNode(service);
+          addEdge(actionId, sid, "service", null);
+        }
+        for (behaviortree._ast.ASTDecorator decorator : action.getDecoratorList()) {
+          String did = ensureNode(decorator);
+          addEdge(actionId, did, "decorator", null);
         }
       }
 
@@ -439,6 +456,8 @@ public class APTreeJsonCli {
 
           if (node instanceof behaviortree._ast.ASTFlowNode) {
             visitFlowNode((behaviortree._ast.ASTFlowNode) node);
+          } else if (node instanceof behaviortree._ast.ASTActionNode) {
+            visitActionNode((behaviortree._ast.ASTActionNode) node);
           }
         }
 
@@ -455,7 +474,14 @@ public class APTreeJsonCli {
             String label = null;
             try {
               if (rel.getTemptype() != null) {
-                label = rel.getTemptype().getClass().getSimpleName().replace("AST", "");
+                // Get the enum value (e.g., "Meets", "Precedes", etc.) rather than class name
+                var tempType = rel.getTemptype();
+                // MontiCore enums have an intValue() and we can get the string from the production
+                label = tempType.toString();
+                // Clean up potential quotes
+                if (label != null) {
+                  label = label.replace("\"", "").trim();
+                }
               }
             } catch (Exception ignored) {
               // optional
@@ -529,6 +555,46 @@ public class APTreeJsonCli {
         }
         return null;
       }
+      
+      static List<String> extractActionParams(Object astNode) {
+        List<String> params = new java.util.ArrayList<>();
+        if (!(astNode instanceof behaviortree._ast.ASTActionNode)) {
+          return params;
+        }
+        
+        try {
+          Class<?> clazz = astNode.getClass();
+          String className = clazz.getSimpleName();
+          
+          // Define parameter order per action type based on grammar
+          String[] paramGetters;
+          if (className.equals("ASTPickUpHL")) {
+            // Grammar: obj:Name@Element grabPos:Name@Location client:Name@Robot
+            paramGetters = new String[]{"getObj", "getGrabPos", "getClient"};
+          } else if (className.equals("ASTPlaceHL")) {
+            // Grammar: obj:Name@Element targetPos:Name@Location client:Name@Robot
+            paramGetters = new String[]{"getObj", "getTargetPos", "getClient"};
+          } else {
+            // Fallback: try common parameter names
+            paramGetters = new String[]{"getObj", "getElement", "getPos", "getGrabPos", "getTargetPos", "getLocation", "getClient", "getRobot", "getVg"};
+          }
+          
+          for (String getterName : paramGetters) {
+            try {
+              java.lang.reflect.Method method = clazz.getMethod(getterName);
+              Object value = method.invoke(astNode);
+              if (value != null) {
+                params.add(value.toString());
+              }
+            } catch (NoSuchMethodException e) {
+              // Method doesn't exist, continue
+            }
+          }
+        } catch (Exception ignored) {
+          // best-effort
+        }
+        return params;
+      }
 
       static String buildLabel(Object astNode, String name) {
         String type = astNode.getClass().getSimpleName();
@@ -546,6 +612,17 @@ public class APTreeJsonCli {
         if (astNode instanceof behaviortree._ast.ASTDecorator) {
           return name != null && !name.isBlank() ? "Decorator " + name : "Decorator";
         }
+        
+        // For action nodes, include parameters
+        if (astNode instanceof behaviortree._ast.ASTActionNode) {
+          List<String> params = extractActionParams(astNode);
+          String base = (name != null && !name.isBlank()) ? typeLabel + " " + name : typeLabel;
+          if (!params.isEmpty()) {
+            return base + " (" + String.join(" ", params) + ")";
+          }
+          return base;
+        }
+        
         if (name != null && !name.isBlank()) {
           return typeLabel + " " + name;
         }

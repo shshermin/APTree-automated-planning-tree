@@ -237,6 +237,10 @@ export interface SidebarManager {
   predicateTypeModalState: PredicateTypeModalState;
   actionTypeModalState: ActionTypeModalState;
   importActionInstancesFromText: (text: string) => ImportReport;
+  /** Adds new action types (skips duplicates by name) */
+  addActionTypes: (types: ActionType[]) => void;
+  /** Adds new action instances (skips duplicates by id) */
+  addActionInstances: (instances: ActionInstance[]) => void;
 }
 
 /** props consumed by the category item list component. */

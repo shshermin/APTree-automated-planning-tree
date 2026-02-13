@@ -233,6 +233,8 @@ function App() {
     actionTypes,
     getItemsForCategory,
     openEditModal,
+    addActionTypes,
+    addActionInstances,
   } = sidebarManager;
 
   const rawActionInstances = useMemo(
@@ -677,11 +679,22 @@ function App() {
             "APTree import succeeded, but no graph data was returned by the tool. Build the MontiCore tool jar with: (cd APTreeDSL && gradle shadowJar)."
           );
           return;
+          
         }
 
-        const canvasGraph = aptreeGraphToCanvasGraph(parsed.graph, actionTypes ?? []);
+        const importResult = aptreeGraphToCanvasGraph(parsed.graph, actionTypes ?? []);
 
-        setGraph(canvasGraph);
+        // Add discovered action types to the sidebar
+        if (importResult.discoveredActionTypes.length > 0) {
+          addActionTypes(importResult.discoveredActionTypes);
+        }
+
+        // Add discovered action instances to the sidebar
+        if (importResult.discoveredActionInstances.length > 0) {
+          addActionInstances(importResult.discoveredActionInstances);
+        }
+
+        setGraph(importResult.graph);
         setSeparators([]);
         setParameterDetail(null);
       } catch (error) {
@@ -690,7 +703,7 @@ function App() {
         );
       }
     },
-    [actionTypes]
+    [actionTypes, addActionTypes, addActionInstances]
   );
 
   /**
