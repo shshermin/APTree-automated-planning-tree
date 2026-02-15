@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import "./App.css";
 import Header from "./components/header/Header.tsx";
 import Sidebar from "./components/sidebar/Sidebar.tsx";
@@ -38,6 +38,11 @@ type CanvasGraph = {
   nodes: CanvasNode[];
   connections: NodeConnection[];
   rootNodeId: string | null;
+};
+
+type CanvasSnapshot = {
+  graph: CanvasGraph;
+  separators: CanvasSeparator[];
 };
 
 // legacy export/import format used when the editor had multiple level tabs.
@@ -224,6 +229,8 @@ function App() {
     rootNodeId: null,
   }));
   const [separators, setSeparators] = useState<CanvasSeparator[]>([]);
+  const [undoStack, setUndoStack] = useState<CanvasSnapshot[]>([]);
+  const [redoStack, setRedoStack] = useState<CanvasSnapshot[]>([]);
   const [parameterDetail, setParameterDetail] =
     useState<ActionParameterDetail | null>(null);
   const [isValidateOpen, setIsValidateOpen] = useState(false);
@@ -323,6 +330,91 @@ function App() {
    */
   const handleCloseActionParameterDetail = useCallback(() => {
     setParameterDetail(null);
+  }, []);
+
+  const graphRef = useRef(graph);
+  const separatorsRef = useRef(separators);
+  const lastHistoryRef = useRef<{ ts: number; reason: string } | null>(null);
+  const MAX_HISTORY = 80;
+
+  useEffect(() => {
+    graphRef.current = graph;
+  }, [graph]);
+
+  useEffect(() => {
+    separatorsRef.current = separators;
+  }, [separators]);
+
+  const pushHistory = useCallback((reason: string) => {
+    const snapshot: CanvasSnapshot = {
+      graph: graphRef.current,
+      separators: separatorsRef.current,
+    };
+    const now = Date.now();
+
+    setUndoStack((prev) => {
+      const last = lastHistoryRef.current;
+      const shouldReplace =
+        last && last.reason === reason && now - last.ts < 400 && prev.length > 0;
+      lastHistoryRef.current = { ts: now, reason };
+
+      if (shouldReplace) {
+        const next = prev.slice(0, -1);
+        next.push(snapshot);
+        return next;
+      }
+
+      const next = [...prev, snapshot];
+      if (next.length > MAX_HISTORY) {
+        next.shift();
+      }
+      return next;
+    });
+    setRedoStack([]);
+  }, []);
+
+  const handleUndo = useCallback(() => {
+    setUndoStack((prev) => {
+      if (!prev.length) {
+        return prev;
+      }
+      const snapshot = prev[prev.length - 1];
+      setRedoStack((redoPrev) => {
+        const next = [
+          ...redoPrev,
+          { graph: graphRef.current, separators: separatorsRef.current },
+        ];
+        if (next.length > MAX_HISTORY) {
+          next.shift();
+        }
+        return next;
+      });
+      setGraph(snapshot.graph);
+      setSeparators(snapshot.separators);
+      return prev.slice(0, -1);
+    });
+  }, []);
+
+  const handleRedo = useCallback(() => {
+    setRedoStack((prev) => {
+      if (!prev.length) {
+        return prev;
+      }
+      const snapshot = prev[prev.length - 1];
+      setUndoStack((undoPrev) => {
+        const next = [
+          ...undoPrev,
+          { graph: graphRef.current, separators: separatorsRef.current },
+        ];
+        if (next.length > MAX_HISTORY) {
+          next.shift();
+        }
+        return next;
+      });
+      setGraph(snapshot.graph);
+      setSeparators(snapshot.separators);
+      return prev.slice(0, -1);
+    });
   }, []);
 
   /**
@@ -592,6 +684,7 @@ function App() {
         };
 
         if (isV2(parsed)) {
+          pushHistory("import-graph");
           setGraph(normalizeImportedCanvasGraph(parsed.graph));
           setSeparators(normalizeImportedSeparators(parsed.separators));
           setParameterDetail(null);
@@ -600,6 +693,7 @@ function App() {
 
         if (isV1(parsed)) {
           const migrated = migrateV1GraphsToV2(parsed.graphs);
+          pushHistory("import-graph");
           setGraph(normalizeImportedCanvasGraph(migrated.graph));
           setSeparators(normalizeImportedSeparators(migrated.separators));
           setParameterDetail(null);
@@ -617,6 +711,7 @@ function App() {
                 ? (obj.separators as CanvasSeparator[])
                 : [];
 
+            pushHistory("import-graph");
             setGraph(normalizeImportedCanvasGraph(candidateGraph as CanvasGraph));
             setSeparators(normalizeImportedSeparators(candidateSeparators));
             setParameterDetail(null);
@@ -633,7 +728,7 @@ function App() {
         );
       }
     },
-    []
+    [pushHistory]
   );
 
   const handleImportAptreeModelFile = useCallback(
@@ -658,11 +753,23 @@ function App() {
 
         const parsed = normalizeAptreeValidateResponse(json);
 
+        const extraLogs: string[] = [];
+        if (parsed.findings && parsed.findings.length > 0) {
+          extraLogs.push("Findings:", ...parsed.findings.map((line) => `- ${line}`));
+        }
+        if (parsed.stderr) {
+          extraLogs.push("Stderr:", parsed.stderr);
+        }
+        if (parsed.toolLogs) {
+          extraLogs.push("Tool logs:", parsed.toolLogs);
+        }
+
         if (!response.ok) {
           const errors = parsed.errors?.length
             ? parsed.errors
             : [`HTTP ${response.status}`];
-          window.alert(`APTree import failed:\n- ${errors.join("\n- ")}`);
+          const details = extraLogs.length ? `\n\n${extraLogs.join("\n")}` : "";
+          window.alert(`APTree import failed:\n- ${errors.join("\n- ")}${details}`);
           return;
         }
 
@@ -670,7 +777,8 @@ function App() {
           const errors = parsed.errors?.length
             ? parsed.errors
             : ["Model validation failed"];
-          window.alert(`APTree validation failed:\n- ${errors.join("\n- ")}`);
+          const details = extraLogs.length ? `\n\n${extraLogs.join("\n")}` : "";
+          window.alert(`APTree validation failed:\n- ${errors.join("\n- ")}${details}`);
           return;
         }
 
@@ -694,6 +802,7 @@ function App() {
           addActionInstances(importResult.discoveredActionInstances);
         }
 
+        pushHistory("import-aptree");
         setGraph(importResult.graph);
         setSeparators([]);
         setParameterDetail(null);
@@ -703,7 +812,7 @@ function App() {
         );
       }
     },
-    [actionTypes, addActionTypes, addActionInstances]
+    [actionTypes, addActionTypes, addActionInstances, pushHistory]
   );
 
   /**
@@ -747,6 +856,7 @@ function App() {
         const option = behaviorNodeOptionMap.get(item.id);
 
         if (option) {
+          pushHistory("drop-node");
           setGraph((prev) => ({
             ...prev,
             nodes: [...prev.nodes, createBehaviorNode({ option, position })],
@@ -755,6 +865,7 @@ function App() {
         }
       }
 
+      pushHistory("drop-node");
       setGraph((prev) => ({
         ...prev,
         nodes: [
@@ -776,13 +887,14 @@ function App() {
         ],
       }));
     },
-    [behaviorNodeOptionMap]
+    [behaviorNodeOptionMap, pushHistory]
   );
 
   /**
    * Sets a flow node as the single root node.
    */
   const handleSetRootNode = useCallback((nodeId: string) => {
+    pushHistory("set-root");
     setGraph((prev) => {
       if (prev.rootNodeId === nodeId) {
         return { ...prev, rootNodeId: null };
@@ -800,10 +912,11 @@ function App() {
 
       return { ...prev, rootNodeId: nodeId };
     });
-  }, []);
+  }, [pushHistory]);
 
   const handleDropSeparator = useCallback(
     (position: { x: number; y: number }) => {
+      pushHistory("drop-separator");
       setSeparators((prev) => [
         ...prev,
         {
@@ -812,7 +925,14 @@ function App() {
         },
       ]);
     },
-    []
+    [pushHistory]
+  );
+
+  const handleBeginMoveSeparator = useCallback(
+    () => {
+      pushHistory("move-separator");
+    },
+    [pushHistory]
   );
 
   const handleMoveSeparator = useCallback((separatorId: string, y: number) => {
@@ -824,8 +944,9 @@ function App() {
   }, []);
 
   const handleRemoveSeparator = useCallback((separatorId: string) => {
+    pushHistory("remove-separator");
     setSeparators((prev) => prev.filter((separator) => separator.id !== separatorId));
-  }, []);
+  }, [pushHistory]);
 
   /**
    * handles moving an existing node within the editor canvas.
@@ -848,11 +969,19 @@ function App() {
     []
   );
 
+  const handleBeginMoveNode = useCallback(
+    () => {
+      pushHistory("move-node");
+    },
+    [pushHistory]
+  );
+
   /**
    * persists resize interactions emitted from the canvas.
    */
   const handleResizeNode = useCallback(
     (nodeId: string, size: { width: number; height: number }) => {
+      pushHistory("resize-node");
       setGraph((prev) => ({
         ...prev,
         nodes: prev.nodes.map((node) =>
@@ -866,13 +995,14 @@ function App() {
         ),
       }));
     },
-    []
+    [pushHistory]
   );
 
   /**
    * handles removing a node from the editor canvas.
    */
   const handleRemoveNode = useCallback((nodeId: string) => {
+    pushHistory("remove-node");
     setGraph((prev) => ({
       ...prev,
       nodes: prev.nodes.filter((node) => node.id !== nodeId),
@@ -881,7 +1011,7 @@ function App() {
       ),
       rootNodeId: prev.rootNodeId === nodeId ? null : prev.rootNodeId,
     }));
-  }, []);
+  }, [pushHistory]);
 
   /**
    * handles adding a connection between two nodes.
@@ -907,6 +1037,7 @@ function App() {
           return prev;
         }
 
+        pushHistory("add-connection");
         return {
           ...prev,
           connections: [
@@ -922,23 +1053,25 @@ function App() {
         };
       });
     },
-    []
+    [pushHistory]
   );
 
   /**
    * handles removing a connection between nodes.
    */
   const handleRemoveConnection = useCallback((connectionId: string) => {
+    pushHistory("remove-connection");
     setGraph((prev) => ({
       ...prev,
       connections: prev.connections.filter((conn) => conn.id !== connectionId),
     }));
-  }, []);
+  }, [pushHistory]);
 
   /**
    * handles cycling the flow success type for a flow node.
    */
   const handleCycleFlowSuccessType = useCallback((nodeId: string) => {
+    pushHistory("cycle-success");
     setGraph((prev) => ({
       ...prev,
       nodes: prev.nodes.map((node) => {
@@ -956,12 +1089,13 @@ function App() {
         };
       }),
     }));
-  }, []);
+  }, [pushHistory]);
 
   /**
    * handles creating a new behavior node on the canvas.
    */
   const handleCreateBehaviorNode = useCallback((option: BehaviorNodeOption) => {
+    pushHistory("create-node");
     setGraph((prev) => {
       const nextIndex = prev.nodes.length;
       const offset = 140;
@@ -975,7 +1109,7 @@ function App() {
         nodes: [...prev.nodes, createBehaviorNode({ option, position })],
       };
     });
-  }, []);
+  }, [pushHistory]);
 
   return (
     <>
@@ -988,6 +1122,10 @@ function App() {
           <Header
             theme={theme}
             onToggleTheme={handleToggleTheme}
+            onUndo={handleUndo}
+            onRedo={handleRedo}
+            canUndo={undoStack.length > 0}
+            canRedo={redoStack.length > 0}
             onImportActionInstances={handleImportActionInstancesFile}
             onExportCanvasGraph={handleExportCanvasGraph}
             onImportCanvasGraph={handleImportCanvasGraphFile}
@@ -1002,6 +1140,8 @@ function App() {
                 connections={graph.connections}
                 rootNodeId={graph.rootNodeId}
                 onDropNode={handleDropOnCanvas}
+                onBeginMoveNode={handleBeginMoveNode}
+                onBeginMoveSeparator={handleBeginMoveSeparator}
                 onDropSeparator={handleDropSeparator}
                 onMoveNode={handleMoveNode}
                 onMoveSeparator={handleMoveSeparator}

@@ -1,16 +1,16 @@
 // Empty behavior trees referenced by actions
 BehaviorTree PickupSubtree {
     Root FlowNode emptyNode {
-        ALL
-        ALLFLOW
+        All
+        AllFlow
         NodeGraph temp1graph {}
     }
 }
 
 BehaviorTree PlaceSubtree {
     Root FlowNode emptyNode {
-        ALL
-        ALLFLOW
+        All
+        AllFlow
         NodeGraph temp2graph {}
     }
 }

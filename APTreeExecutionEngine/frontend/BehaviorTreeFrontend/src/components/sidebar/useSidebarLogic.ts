@@ -1162,19 +1162,53 @@ export const useSidebarManager = (): SidebarManager => {
       setData((prev) => {
         const existingTypes =
           (prev[ACTION_TYPES_KEY] as ActionType[] | undefined) ?? [];
-        const existingNames = new Set(
-          existingTypes.map((t) => t.name.trim().toLowerCase())
+        const existingByName = new Map(
+          existingTypes.map((t) => [t.name.trim().toLowerCase(), t] as const)
         );
 
-        const toAdd = newTypes.filter(
-          (t) => !existingNames.has(t.name.trim().toLowerCase())
-        );
+        let hasChanges = false;
+        const nextTypes = existingTypes.map((t) => ({ ...t }));
 
-        if (!toAdd.length) return prev;
+        for (const incoming of newTypes) {
+          const key = incoming.name.trim().toLowerCase();
+          const existing = existingByName.get(key);
+          if (!existing) {
+            nextTypes.push(incoming);
+            hasChanges = true;
+            continue;
+          }
 
+          // Merge properties by name to avoid dropping missing params on import.
+          const existingProps = existing.properties ?? [];
+          const propByName = new Map(
+            existingProps.map((p) => [p.name.trim().toLowerCase(), p] as const)
+          );
+          const mergedProps = [...existingProps];
+          for (const prop of incoming.properties ?? []) {
+            const pKey = prop.name.trim().toLowerCase();
+            if (!pKey || propByName.has(pKey)) continue;
+            mergedProps.push({
+              ...prop,
+              id: prop.id || generatePropertyId(),
+            });
+          }
+
+          if (mergedProps.length !== existingProps.length) {
+            const index = nextTypes.findIndex((t) => t.id === existing.id);
+            if (index !== -1) {
+              nextTypes[index] = {
+                ...existing,
+                properties: mergedProps,
+              };
+              hasChanges = true;
+            }
+          }
+        }
+
+        if (!hasChanges) return prev;
         return {
           ...prev,
-          [ACTION_TYPES_KEY]: [...existingTypes, ...toAdd],
+          [ACTION_TYPES_KEY]: nextTypes,
         };
       });
     },

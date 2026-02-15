@@ -1,6 +1,10 @@
 export interface HeaderProps {
   theme: "light" | "dark";
   onToggleTheme: () => void;
+  onUndo: () => void;
+  onRedo: () => void;
+  canUndo: boolean;
+  canRedo: boolean;
   onImportActionInstances: (file: File) => void;
   onExportCanvasGraph: () => void;
   onImportCanvasGraph: (file: File) => void;

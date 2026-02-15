@@ -268,8 +268,11 @@ public class APTreeJsonCli {
       final String astType;
       final Integer line;
       final String successType;
+      final List<String> paramNames;
+      final List<String> paramValues;
 
-      Node(String id, String kind, String label, String name, String astType, Integer line, String successType) {
+      Node(String id, String kind, String label, String name, String astType, Integer line, String successType,
+           List<String> paramNames, List<String> paramValues) {
         this.id = id;
         this.kind = kind;
         this.label = label;
@@ -277,6 +280,8 @@ public class APTreeJsonCli {
         this.astType = astType;
         this.line = line;
         this.successType = successType;
+        this.paramNames = paramNames;
+        this.paramValues = paramValues;
       }
     }
 
@@ -337,6 +342,12 @@ public class APTreeJsonCli {
         if (n.astType != null) sb.append(",\"astType\":\"").append(escape(n.astType)).append("\"");
         if (n.line != null) sb.append(",\"line\":").append(n.line);
         if (n.successType != null) sb.append(",\"successType\":\"").append(escape(n.successType)).append("\"");
+        if (n.paramNames != null && !n.paramNames.isEmpty()) {
+          sb.append(",\"paramNames\":").append(stringArray(n.paramNames));
+        }
+        if (n.paramValues != null && !n.paramValues.isEmpty()) {
+          sb.append(",\"paramValues\":").append(stringArray(n.paramValues));
+        }
         sb.append("}");
       }
       sb.append("],\"edges\":[");
@@ -380,7 +391,20 @@ public class APTreeJsonCli {
         String label = buildLabel(astNode, name);
         Integer line = tryGetLine(astNode);
         String successType = tryGetSuccessType(astNode);
-        nodes.add(new Node(id, kind, label, name, astType, line, successType));
+        List<String> paramNames = null;
+        List<String> paramValues = null;
+        if (astNode instanceof behaviortree._ast.ASTActionNode) {
+          List<ParamPair> params = extractActionParamPairs(astNode);
+          if (!params.isEmpty()) {
+            paramNames = new ArrayList<>();
+            paramValues = new ArrayList<>();
+            for (ParamPair pair : params) {
+              paramNames.add(pair.name);
+              paramValues.add(pair.value);
+            }
+          }
+        }
+        nodes.add(new Node(id, kind, label, name, astType, line, successType, paramNames, paramValues));
         return id;
       }
 
@@ -556,35 +580,90 @@ public class APTreeJsonCli {
         return null;
       }
       
-      static List<String> extractActionParams(Object astNode) {
-        List<String> params = new java.util.ArrayList<>();
+      static final class ParamPair {
+        final String name;
+        final String value;
+
+        ParamPair(String name, String value) {
+          this.name = name;
+          this.value = value;
+        }
+      }
+
+      static final class ParamSpec {
+        final String getter;
+        final String name;
+
+        ParamSpec(String getter, String name) {
+          this.getter = getter;
+          this.name = name;
+        }
+      }
+
+      static List<ParamPair> extractActionParamPairs(Object astNode) {
+        List<ParamPair> params = new java.util.ArrayList<>();
         if (!(astNode instanceof behaviortree._ast.ASTActionNode)) {
           return params;
         }
-        
+
         try {
           Class<?> clazz = astNode.getClass();
           String className = clazz.getSimpleName();
-          
+
           // Define parameter order per action type based on grammar
-          String[] paramGetters;
+          ParamSpec[] paramSpecs;
           if (className.equals("ASTPickUpHL")) {
             // Grammar: obj:Name@Element grabPos:Name@Location client:Name@Robot
-            paramGetters = new String[]{"getObj", "getGrabPos", "getClient"};
+            paramSpecs = new ParamSpec[]{
+              new ParamSpec("getObj", "obj"),
+              new ParamSpec("getGrabPos", "grabPos"),
+              new ParamSpec("getClient", "client"),
+            };
           } else if (className.equals("ASTPlaceHL")) {
             // Grammar: obj:Name@Element targetPos:Name@Location client:Name@Robot
-            paramGetters = new String[]{"getObj", "getTargetPos", "getClient"};
+            paramSpecs = new ParamSpec[]{
+              new ParamSpec("getObj", "obj"),
+              new ParamSpec("getTargetPos", "targetPos"),
+              new ParamSpec("getClient", "client"),
+            };
+          } else if (className.equals("ASTPickUpML")) {
+            // Grammar: obj:Name@Element pos:Name@Firstposition client:Name@Robot vg:Name@VacGripper
+            paramSpecs = new ParamSpec[]{
+              new ParamSpec("getObj", "obj"),
+              new ParamSpec("getPos", "pos"),
+              new ParamSpec("getClient", "client"),
+              new ParamSpec("getVg", "vg"),
+            };
+          } else if (className.equals("ASTPlaceML")) {
+            // Grammar: obj:Name@Element placepos:Name@Location client:Name@Robot vg:Name@VacGripper
+            paramSpecs = new ParamSpec[]{
+              new ParamSpec("getObj", "obj"),
+              new ParamSpec("getPlacepos", "placePos"),
+              new ParamSpec("getClient", "client"),
+              new ParamSpec("getVg", "vg"),
+            };
           } else {
             // Fallback: try common parameter names
-            paramGetters = new String[]{"getObj", "getElement", "getPos", "getGrabPos", "getTargetPos", "getLocation", "getClient", "getRobot", "getVg"};
+            paramSpecs = new ParamSpec[]{
+              new ParamSpec("getObj", "obj"),
+              new ParamSpec("getElement", "element"),
+              new ParamSpec("getPos", "pos"),
+              new ParamSpec("getGrabPos", "grabPos"),
+              new ParamSpec("getTargetPos", "targetPos"),
+              new ParamSpec("getPlacepos", "placePos"),
+              new ParamSpec("getLocation", "location"),
+              new ParamSpec("getClient", "client"),
+              new ParamSpec("getRobot", "robot"),
+              new ParamSpec("getVg", "vg"),
+            };
           }
-          
-          for (String getterName : paramGetters) {
+
+          for (ParamSpec spec : paramSpecs) {
             try {
-              java.lang.reflect.Method method = clazz.getMethod(getterName);
+              java.lang.reflect.Method method = clazz.getMethod(spec.getter);
               Object value = method.invoke(astNode);
               if (value != null) {
-                params.add(value.toString());
+                params.add(new ParamPair(spec.name, value.toString()));
               }
             } catch (NoSuchMethodException e) {
               // Method doesn't exist, continue
@@ -615,10 +694,14 @@ public class APTreeJsonCli {
         
         // For action nodes, include parameters
         if (astNode instanceof behaviortree._ast.ASTActionNode) {
-          List<String> params = extractActionParams(astNode);
+          List<ParamPair> params = extractActionParamPairs(astNode);
           String base = (name != null && !name.isBlank()) ? typeLabel + " " + name : typeLabel;
           if (!params.isEmpty()) {
-            return base + " (" + String.join(" ", params) + ")";
+            List<String> values = new ArrayList<>();
+            for (ParamPair pair : params) {
+              values.add(pair.value);
+            }
+            return base + " (" + String.join(" ", values) + ")";
           }
           return base;
         }

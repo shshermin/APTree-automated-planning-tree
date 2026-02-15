@@ -23,6 +23,8 @@ export type AptreeValidateResponse = {
   errors?: string[];
   findings?: string[];
   graph?: AptreeGraph;
+  stderr?: string;
+  toolLogs?: string;
 };
 
 export type AptreeGraph = {
@@ -39,6 +41,8 @@ export type AptreeGraphNode = {
   astType?: string;
   line?: number;
   successType?: string;
+  paramNames?: string[];
+  paramValues?: string[];
 };
 
 export type AptreeGraphEdge = {
@@ -75,6 +79,8 @@ export function normalizeAptreeValidateResponse(
       ? (payload.findings as string[])
       : undefined,
     graph,
+    stderr: typeof payload.stderr === "string" ? payload.stderr : undefined,
+    toolLogs: typeof payload.toolLogs === "string" ? payload.toolLogs : undefined,
   };
 }
 
@@ -98,6 +104,12 @@ function normalizeGraph(
         line: typeof node.line === "number" ? node.line : undefined,
         successType:
           typeof node.successType === "string" ? node.successType : undefined,
+        paramNames: Array.isArray(node.paramNames)
+          ? (node.paramNames.filter((v) => v != null).map((v) => String(v)) as string[])
+          : undefined,
+        paramValues: Array.isArray(node.paramValues)
+          ? (node.paramValues.filter((v) => v != null).map((v) => String(v)) as string[])
+          : undefined,
       })) as AptreeGraphNode[])
     : [];
 
@@ -222,9 +234,11 @@ export function aptreeGraphToCanvasGraph(
 
       const rawLabel = n.label ?? "";
       const argsMatch = rawLabel.match(/\(([^)]*)\)/);
-      const args = argsMatch?.[1]
+      const labelArgs = argsMatch?.[1]
         ? argsMatch[1].trim().split(/\s+/).filter(Boolean)
         : undefined;
+      const paramNames = n.paramNames ?? [];
+      const paramValues = n.paramValues ?? labelArgs ?? [];
 
       // Determine or create action type
       let actionType = resolved;
@@ -232,13 +246,14 @@ export function aptreeGraphToCanvasGraph(
 
       if (!resolved && !discoveredActionTypes.has(typeId)) {
         // Create new action type with generic property names
+        const propertyCount = paramValues.length || paramNames.length;
         const newActionType: ActionType = {
           id: typeId,
           name: typeName,
           type: "GenericBTAction",
-          properties: (args ?? []).map((_arg, index) => ({
-            id: `param-${index}`,
-            name: `param${index + 1}`,
+          properties: Array.from({ length: propertyCount }).map((_, index) => ({
+            id: `param-${index + 1}`,
+            name: paramNames[index]?.trim() || `param${index + 1}`,
             valueType: "string",
           })),
         };
@@ -254,12 +269,27 @@ export function aptreeGraphToCanvasGraph(
 
       // Map args to property values using the action type's property IDs
       const propertyValues: Record<string, string> = {};
-      if (actionType && args) {
-        actionType.properties.forEach((prop, index) => {
-          if (args[index] !== undefined) {
-            propertyValues[prop.id] = args[index];
-          }
-        });
+      if (actionType && paramValues.length > 0) {
+        if (paramNames.length > 0) {
+          paramValues.forEach((value, index) => {
+            const name = paramNames[index]?.trim().toLowerCase();
+            const byName =
+              name &&
+              actionType.properties.find(
+                (prop) => prop.name?.trim().toLowerCase() === name,
+              );
+            const prop = byName ?? actionType.properties[index];
+            if (prop && value !== undefined) {
+              propertyValues[prop.id] = value;
+            }
+          });
+        } else {
+          actionType.properties.forEach((prop, index) => {
+            if (paramValues[index] !== undefined) {
+              propertyValues[prop.id] = paramValues[index];
+            }
+          });
+        }
       }
 
       const actionInstance: ActionInstance = {
@@ -283,7 +313,7 @@ export function aptreeGraphToCanvasGraph(
         y: 0,
         width: DEFAULT_CANVAS_NODE_WIDTH,
         height: DEFAULT_CANVAS_NODE_HEIGHT,
-        args,
+        args: paramValues,
         hasOutgoing,
       };
     } else if (n.kind === "service") {
@@ -359,19 +389,11 @@ export function aptreeGraphToCanvasGraph(
   // Layout constants
   const ROOT_X = 0;
   const ROOT_Y = -150; // Position root above the outer nodegraph
-  const FLOW_ROW_GAP_X = 700; // Increased gap between flow groups
   const ROOT_TO_FLOW_GAP_Y = 220;
   const FLOW_TO_SUBTREE_GAP_Y = 120;
-  const ACTION_COL_GAP_X = 340; // Gap between MEETS action pairs
-  const ACTION_ROW_GAP_Y = 220; // Vertical gap between action rows
   const TREE_GAP_X = 320; // Horizontal gap for plain BT (child-edge) layout
-  const TREE_GAP_Y = 140; // Vertical gap for plain BT (child-edge) layout
-  const SUBTREE_PADDING_X = 30; // Smaller padding
-  const SUBTREE_PADDING_TOP = 40;
-  const SUBTREE_PADDING_BOTTOM = 30;
+  const TREE_GAP_Y = 120; // Vertical gap for plain BT (child-edge) layout
   const SERVICE_OFFSET_Y = 55; // Service box offset above flow node
-  const DECORATOR_OFFSET_Y = 55; // Decorator offset above owner node
-  const DECORATOR_GAP_X = 140;
 
   const positionDecorators = () => {
     for (const [ownerId, decoratorIds] of decoratorsByOwner) {
@@ -379,6 +401,11 @@ export function aptreeGraphToCanvasGraph(
       if (!ownerCanvasId) continue;
       const ownerNode = canvasNodeById.get(ownerCanvasId);
       if (!ownerNode) continue;
+
+      const ownerW = ownerNode.width ?? DEFAULT_CANVAS_NODE_WIDTH;
+      const ownerH = ownerNode.height ?? DEFAULT_CANVAS_NODE_HEIGHT;
+      const decoratorOffsetY = Math.max(60, ownerH * 0.6 + 20);
+      const decoratorGapX = Math.max(160, ownerW * 0.7 + 40);
 
       for (let i = 0; i < decoratorIds.length; i++) {
         const did = decoratorIds[i];
@@ -390,10 +417,10 @@ export function aptreeGraphToCanvasGraph(
         // Spread multiple decorators around the owner (0, +1, -1, +2, -2, ...)
         const k = i === 0 ? 0 : Math.ceil(i / 2);
         const sign = i % 2 === 1 ? 1 : -1;
-        const dx = i === 0 ? 0 : sign * k * DECORATOR_GAP_X;
+        const dx = i === 0 ? 0 : sign * k * decoratorGapX;
 
         decNode.x = ownerNode.x + dx;
-        decNode.y = ownerNode.y - DECORATOR_OFFSET_Y;
+        decNode.y = ownerNode.y - decoratorOffsetY;
       }
     }
   };
@@ -497,6 +524,80 @@ export function aptreeGraphToCanvasGraph(
     }
   >();
 
+  const getActionMembersForFlow = (flowId: string): CanvasNode[] => {
+    const contained = containsByOwner.get(flowId) ?? [];
+    const actionGraphIds = contained.filter(
+      (id) => nodeById.get(id)?.kind === "nodeGraph",
+    );
+    const actionGraphId = actionGraphIds[0];
+
+    const actionMembers: CanvasNode[] = [];
+    if (actionGraphId) {
+      const memberIds = membersByGraph.get(actionGraphId) ?? [];
+      for (const mid of memberIds) {
+        const canvasId = canvasNodeIdByGraphId.get(mid);
+        if (canvasId) {
+          const cn = canvasNodeById.get(canvasId);
+          if (
+            cn &&
+            (nodeById.get(mid)?.kind === "action" ||
+              nodeById.get(mid)?.kind === "btNode")
+          ) {
+            actionMembers.push(cn);
+          }
+        }
+      }
+    }
+    return actionMembers;
+  };
+
+  const estimateFlowWidth = (flowId: string): number => {
+    const actionMembers = getActionMembersForFlow(flowId);
+    const maxActionW = actionMembers.length
+      ? Math.max(
+          ...actionMembers.map((n) => n.width ?? DEFAULT_CANVAS_NODE_WIDTH),
+        )
+      : DEFAULT_CANVAS_NODE_WIDTH;
+    const maxActionH = actionMembers.length
+      ? Math.max(
+          ...actionMembers.map((n) => n.height ?? DEFAULT_CANVAS_NODE_HEIGHT),
+        )
+      : DEFAULT_CANVAS_NODE_HEIGHT;
+
+    const actionColGapX = Math.max(maxActionW * 1.2 + 80, 320);
+    const padX = Math.max(24, maxActionW * 0.15 + 20);
+    const hasPair = (() => {
+      const actionIds = actionMembers
+        .map((n) => {
+          for (const [gid, cid] of canvasNodeIdByGraphId) {
+            if (cid === n.id) return gid;
+          }
+          return "";
+        })
+        .filter(Boolean);
+      if (!actionIds.length) return false;
+      const actionIdSet = new Set(actionIds);
+      return edgesByKind.relation.some(
+        (e) =>
+          isMeets(e) &&
+          actionIdSet.has(e.sourceId) &&
+          actionIdSet.has(e.targetId),
+      );
+    })();
+
+    const actionWidth = hasPair ? actionColGapX + maxActionW : maxActionW;
+    let subtreeWidth = actionWidth + padX * 2;
+
+    const hasService = (servicesByFlow.get(flowId) ?? []).length > 0;
+    if (hasService) {
+      const serviceOuterPadding = 20;
+      subtreeWidth += serviceOuterPadding * 2;
+    }
+
+    // Keep a sensible minimum footprint
+    return Math.max(subtreeWidth, DEFAULT_CANVAS_NODE_WIDTH * 1.6, maxActionH);
+  };
+
   // Layout a single flow node and its contained actions
   const layoutFlowAndActions = (
     flowId: string,
@@ -528,31 +629,7 @@ export function aptreeGraphToCanvasGraph(
       }
     }
 
-    // Get contained nodeGraph (action subtree)
-    const contained = containsByOwner.get(flowId) ?? [];
-    const actionGraphIds = contained.filter(
-      (id) => nodeById.get(id)?.kind === "nodeGraph",
-    );
-    const actionGraphId = actionGraphIds[0];
-
-    // Get action members from the nodeGraph
-    const actionMembers: CanvasNode[] = [];
-    if (actionGraphId) {
-      const memberIds = membersByGraph.get(actionGraphId) ?? [];
-      for (const mid of memberIds) {
-        const canvasId = canvasNodeIdByGraphId.get(mid);
-        if (canvasId) {
-          const cn = canvasNodeById.get(canvasId);
-          if (
-            cn &&
-            (nodeById.get(mid)?.kind === "action" ||
-              nodeById.get(mid)?.kind === "btNode")
-          ) {
-            actionMembers.push(cn);
-          }
-        }
-      }
-    }
+    const actionMembers = getActionMembersForFlow(flowId);
 
     // Build MEETS pairs for action layout
     const actionIds = actionMembers
@@ -591,13 +668,29 @@ export function aptreeGraphToCanvasGraph(
       rows.push({ single: id });
     }
 
+    const maxActionW = actionMembers.length
+      ? Math.max(
+          ...actionMembers.map((n) => n.width ?? DEFAULT_CANVAS_NODE_WIDTH),
+        )
+      : DEFAULT_CANVAS_NODE_WIDTH;
+    const maxActionH = actionMembers.length
+      ? Math.max(
+          ...actionMembers.map((n) => n.height ?? DEFAULT_CANVAS_NODE_HEIGHT),
+        )
+      : DEFAULT_CANVAS_NODE_HEIGHT;
+
+    // Dynamic spacing based on action size (+ small constant)
+    const actionColGapX = Math.max(maxActionW * 1.2 + 80, 320);
+    const actionRowGapY = Math.max(maxActionH * 0.9 + 60, 175);
+
     // Calculate action positions - starting below the flow node
-    const actionStartY = flowY + FLOW_TO_SUBTREE_GAP_Y + 60;
-    const leftX = baseX - ACTION_COL_GAP_X / 2;
-    const rightX = baseX + ACTION_COL_GAP_X / 2;
+    const actionStartY =
+      flowY + FLOW_TO_SUBTREE_GAP_Y + Math.max(60, maxActionH * 0.4 + 20);
+    const leftX = baseX - actionColGapX / 2;
+    const rightX = baseX + actionColGapX / 2;
 
     for (let i = 0; i < rows.length; i++) {
-      const y = actionStartY + i * ACTION_ROW_GAP_Y;
+      const y = actionStartY + i * actionRowGapY;
       const row = rows[i];
       if ("single" in row) {
         const canvasId = canvasNodeIdByGraphId.get(row.single);
@@ -626,6 +719,40 @@ export function aptreeGraphToCanvasGraph(
           }
         }
       }
+    }
+
+    // Create SubTreeInject wrappers for EACH action node
+    for (const actionNode of actionMembers) {
+      const actionBounds = nodeBounds(actionNode);
+      const actionPadded = {
+        left: actionBounds.left - 20,
+        right: actionBounds.right + 20,
+        top: actionBounds.top - 45,
+        bottom: actionBounds.bottom + 20,
+      };
+      const actionWrapperWidth = actionPadded.right - actionPadded.left;
+      const actionWrapperHeight = actionPadded.bottom - actionPadded.top;
+      const actionWrapperCenterX = actionPadded.left + actionWrapperWidth / 2;
+      const actionWrapperCenterY = actionPadded.top + actionWrapperHeight / 2;
+
+      const actionWrapperId =
+        "bt-subtree-inject-" + flowId + "-" + actionNode.id;
+      const actionWrapper: CanvasNode = {
+        id: actionWrapperId,
+        sourceId: "subtree-inject-" + flowId + "-" + actionNode.id,
+        name: "",
+        typeLabel: "SubTreeInject",
+        category: BT_NODES_KEY,
+        kind: "behaviorNode",
+        x: actionWrapperCenterX,
+        y: actionWrapperCenterY,
+        width: actionWrapperWidth,
+        height: actionWrapperHeight,
+        renderAsSubtree: true,
+        subtreeTitle: "SubTreeInject",
+        hasOutgoing: true,
+      };
+      wrapperNodes.push(actionWrapper);
     }
 
     // Create SubTreeInject wrappers for EACH action node (not one big wrapper)
@@ -674,11 +801,15 @@ export function aptreeGraphToCanvasGraph(
           bottom: actionStartY + 60,
         };
 
+    const padX = Math.max(24, maxActionW * 0.15 + 20);
+    const padTop = Math.max(32, maxActionH * 0.25 + 20);
+    const padBottom = Math.max(28, maxActionH * 0.2 + 18);
+
     const subtreePadded = {
-      left: actionBounds.left - SUBTREE_PADDING_X,
-      right: actionBounds.right + SUBTREE_PADDING_X,
-      top: actionBounds.top - SUBTREE_PADDING_TOP,
-      bottom: actionBounds.bottom + SUBTREE_PADDING_BOTTOM,
+      left: actionBounds.left - padX,
+      right: actionBounds.right + padX,
+      top: actionBounds.top - padTop,
+      bottom: actionBounds.bottom + padBottom,
     };
 
     const subtreeWidth = subtreePadded.right - subtreePadded.left;
@@ -686,35 +817,41 @@ export function aptreeGraphToCanvasGraph(
     const subtreeCenterX = subtreePadded.left + subtreeWidth / 2;
     const subtreeCenterY = subtreePadded.top + subtreeHeight / 2;
 
-    // Use the first action wrapper as the "main" subtree ID for flow connections
-    const subtreeWrapperId =
-      actionWrapperIds[0] ?? "bt-subtree-inject-" + flowId;
-
-    // Create Planning Service wrapper if there's a service
-    let serviceWrapperId: string | undefined;
+    // Center the flow (and service) horizontally over the subtree
+    flowCanvasNode.x = subtreeCenterX;
     if (hasService) {
-      const serviceOuterPadding = 20;
-      const serviceWrapperWidth = subtreeWidth + serviceOuterPadding * 2;
-      const serviceWrapperHeight = subtreeHeight + serviceOuterPadding * 2;
-
-      serviceWrapperId = "bt-service-wrapper-" + flowId;
-      const serviceWrapper: CanvasNode = {
-        id: serviceWrapperId,
-        sourceId: "service-wrapper-" + flowId,
-        name: "",
-        typeLabel: "",
-        category: BT_NODES_KEY,
-        kind: "behaviorNode",
-        x: baseX, // Use baseX to align directly below flow node
-        y: subtreeCenterY,
-        width: serviceWrapperWidth,
-        height: serviceWrapperHeight,
-        renderAsSubtree: true,
-        subtreeTitle: "",
-        hasOutgoing: true,
-      };
-      wrapperNodes.push(serviceWrapper);
+      const serviceId = serviceIds[0]!;
+      const serviceCanvasId = canvasNodeIdByGraphId.get(serviceId);
+      const serviceCanvasNode = serviceCanvasId
+        ? canvasNodeById.get(serviceCanvasId)
+        : undefined;
+      if (serviceCanvasNode) {
+        serviceCanvasNode.x = subtreeCenterX;
+        serviceCanvasNode.y = flowY - SERVICE_OFFSET_Y;
+      }
     }
+
+    // Create a nodegraph wrapper for the whole action group (so it shows even without services)
+    const subtreeWrapperId = "bt-nodegraph-wrapper-" + flowId;
+    const subtreeWrapper: CanvasNode = {
+      id: subtreeWrapperId,
+      sourceId: "nodegraph-wrapper-" + flowId,
+      name: "",
+      typeLabel: "",
+      category: BT_NODES_KEY,
+      kind: "behaviorNode",
+      x: subtreeCenterX,
+      y: subtreeCenterY,
+      width: subtreeWidth,
+      height: subtreeHeight,
+      renderAsSubtree: true,
+      subtreeTitle: "",
+      hasOutgoing: true,
+    };
+    wrapperNodes.push(subtreeWrapper);
+
+    // No extra planning-service wrapper; keep only nodegraph + per-action SubTreeInject wrappers
+    let serviceWrapperId: string | undefined;
 
     flowInfo.set(flowId, {
       flowX: baseX,
@@ -728,7 +865,7 @@ export function aptreeGraphToCanvasGraph(
     });
 
     // Connection from flow node down to its (service) subtree wrapper.
-    const targetSubtree = serviceWrapperId ?? subtreeWrapperId;
+    const targetSubtree = subtreeWrapperId;
     if (flowCanvasId) {
       connections.push({
         id: "bt-flow-to-subtree-" + flowId,
@@ -789,14 +926,22 @@ export function aptreeGraphToCanvasGraph(
   }
 
   if (flowIds.length > 0) {
-    // Arrange flow nodes in a row (APTree layout)
-    const flowCount = flowIds.length;
-    const rowWidth = (flowCount - 1) * FLOW_ROW_GAP_X;
-    const startFlowX = ROOT_X - rowWidth / 2;
+    // Arrange flow nodes in a row with dynamic spacing based on subtree widths
+    const flowWidths = flowIds.map((fid) => ({
+      id: fid,
+      width: estimateFlowWidth(fid),
+    }));
+    const baseGap = Math.max(80, DEFAULT_CANVAS_NODE_WIDTH * 0.4);
+    const totalWidth =
+      flowWidths.reduce((sum, f) => sum + f.width, 0) +
+      baseGap * Math.max(0, flowWidths.length - 1);
+    let cursorX = ROOT_X - totalWidth / 2;
     const flowY = ROOT_Y + ROOT_TO_FLOW_GAP_Y;
 
-    flowIds.forEach((fid, index) => {
-      layoutFlowAndActions(fid, startFlowX + index * FLOW_ROW_GAP_X, flowY);
+    flowWidths.forEach((entry) => {
+      const centerX = cursorX + entry.width / 2;
+      layoutFlowAndActions(entry.id, centerX, flowY);
+      cursorX += entry.width + baseGap;
     });
 
     // After placing flows/actions, place any decorator nodes attached to them.
@@ -833,8 +978,11 @@ export function aptreeGraphToCanvasGraph(
       setNodePos(graphId, ROOT_X + depth * TREE_GAP_X, 0);
 
       if (children.length === 0) {
+        const canvasId = canvasNodeIdByGraphId.get(graphId);
+        const cn = canvasId ? canvasNodeById.get(canvasId) : undefined;
+        const h = cn?.height ?? DEFAULT_CANVAS_NODE_HEIGHT;
         const y = nextY;
-        nextY += TREE_GAP_Y;
+        nextY += Math.max(TREE_GAP_Y, h + 40);
         tempYById.set(graphId, y);
         return y;
       }
@@ -860,6 +1008,21 @@ export function aptreeGraphToCanvasGraph(
       const depth = depthById.get(graphId) ?? 0;
       cn.x = ROOT_X + depth * TREE_GAP_X;
       cn.y = y + yShift;
+    }
+
+    // Center parents between their direct children (symmetric connectors)
+    for (const [parentId, children] of childrenByParent) {
+      if (children.length < 2) continue;
+      const parentCanvasId = canvasNodeIdByGraphId.get(parentId);
+      const parentNode = parentCanvasId ? canvasNodeById.get(parentCanvasId) : undefined;
+      if (!parentNode) continue;
+      const childYs = children
+        .map((cid) => tempYById.get(cid))
+        .filter((val): val is number => typeof val === "number");
+      if (!childYs.length) continue;
+      const minY = Math.min(...childYs);
+      const maxY = Math.max(...childYs);
+      parentNode.y = (minY + maxY) / 2 + yShift;
     }
 
     // Decorator nodes are connected via `decorator` edges and don't participate in the
