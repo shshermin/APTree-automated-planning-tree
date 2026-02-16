@@ -313,17 +313,7 @@ public abstract class BTNodeBase : IBTNode
         }
 
 
-        // Tick children if this node has them
-        if (HasChildren)
-        {
-            CurrentTickPhase = EBTNodeTickPhase.Children;
-            if (!OnTick_Children(InDeltaTime))
-            {
-                return OnTickReturn(status);
-            }
-            LogPhaseSuccess("Children");
-        }
-        childrenEndTime = DateTime.Now;
+    
 
          // Run NodeLogic phase
         CurrentTickPhase = EBTNodeTickPhase.NodeLogic;
@@ -335,6 +325,18 @@ public abstract class BTNodeBase : IBTNode
         }
         LogPhaseSuccess("NodeLogic");
         nodeLogicEndTime = DateTime.Now;
+
+            // Tick children if this node has them
+        if (HasChildren)
+        {
+            CurrentTickPhase = EBTNodeTickPhase.Children;
+            if (!OnTick_Children(InDeltaTime))
+            {
+                return OnTickReturn(status);
+            }
+            LogPhaseSuccess("Children");
+        }
+        childrenEndTime = DateTime.Now;
 
         // Record tick completion
         tickEndTime = DateTime.Now;
@@ -415,15 +417,25 @@ public abstract class BTNodeBase : IBTNode
     {
         BTNodeResult FinalResult = InProvisionalResult;
         CurrentTickPhase = EBTNodeTickPhase.WaitingForNextTick;
-        // if(Decorators != null)
-        // {
-        //     foreach(var Decorator in Decorators)
-        //     {
-        //         if (Decorator.CanPostProcessTickResult)
-        //             FinalResult = Decorator.PostProcessTickResult(FinalResult);
+         if(Decorators != null)
+         {
+             foreach(var Decorator in Decorators)
+             {
+                if (Decorator.CanPostProcessTickResult)
+                {
+                    var beforePostProcess = FinalResult;
+                    FinalResult = Decorator.PostProcessTickResult(FinalResult);
+                    if (FinalResult != beforePostProcess)
+                    {
+                        LoggingService.LogInfo($"🔀 OnTickReturn: Decorator {Decorator.GetType().Name} changed status of {DebugDisplayName}: {beforePostProcess} → {FinalResult}");
+                    }
+                }
 
-        //     }
-        // }
+             }
+         }
+
+        // Sync internal status with post-processed result so HasFinished is correct on next tick
+        status = FinalResult;
         
         // Track success and failure counts
         if (FinalResult == BTNodeResult.Success)

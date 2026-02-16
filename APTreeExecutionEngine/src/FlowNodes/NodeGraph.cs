@@ -234,12 +234,10 @@ public class NodeGraph
             // 2. Either it has no predecessors (first in sequence) OR all its predecessors are completed
             // 3. Any temporal constraints are satisfied
             bool canExecuteNode = CanExecuteNode(node);
-            bool allPredecessorsCompleted = node.Predecessors.Count == 0 || AllPredecessorsCompleted(node);
             
             LoggingService.LogInfo($"   🔍 NodeGraph: CanExecuteNode result: {canExecuteNode}");
-            LoggingService.LogInfo($"   🔍 NodeGraph: AllPredecessorsCompleted result: {allPredecessorsCompleted}");
             
-            if (canExecuteNode && allPredecessorsCompleted)
+            if (canExecuteNode)
             {
                 LoggingService.LogInfo($"   ✅ NodeGraph: Node {node.ActionNode.InstanceName.ToString()} can be executed");
                 executableNodes.Add(node.ActionNode as PActionNode);
@@ -248,14 +246,7 @@ public class NodeGraph
             else
             {
                 LoggingService.LogInfo($"   ❌ NodeGraph: Node {node.ActionNode.InstanceName.ToString()} cannot be executed");
-                if (!canExecuteNode)
-                {
-                    LoggingService.LogInfo($"   ❌ NodeGraph: Reason: CanExecuteNode returned false");
-                }
-                if (!allPredecessorsCompleted)
-                {
-                    LoggingService.LogInfo($"   ❌ NodeGraph: Reason: AllPredecessorsCompleted returned false");
-                }
+                LoggingService.LogInfo($"   ❌ NodeGraph: Reason: CanExecuteNode returned false");
             }
             LoggingService.LogInfo($"   🔍 NodeGraph: ===== End checking node {node.ActionNode.InstanceName.ToString()} =====");
         }
@@ -301,15 +292,9 @@ public class NodeGraph
             return true;
         }
 
-        // For nodes with predecessors, only check temporal constraints if all predecessors are completed
-        // This prevents checking MEETS constraints before the previous action has finished
-        if (!AllPredecessorsCompleted(node))
-        {
-            LoggingService.LogInfo($"   ❌ NodeGraph: Node {node.ActionNode.InstanceName.ToString()} cannot execute - predecessors not completed yet");
-            return false;
-        }
-
-        // Now check temporal constraints from other nodes
+        // Check temporal constraints from predecessor nodes
+        // Each constraint type determines what state the predecessor must be in
+        // (e.g., PRECEDES/MEETS require completion, OVERLAPS/STARTS only require execution started)
         LoggingService.LogInfo($"   🔍 NodeGraph: Checking temporal constraints for {node.ActionNode.InstanceName.ToString()}");
         foreach (var relation in node.Predecessors)
         {
@@ -407,23 +392,31 @@ public class NodeGraph
                 break;
             
             case TemporalConstraint.STARTS:
-                result = from.StartTime == to.StartTime;
-                // Console.WriteLine($"   🔍 NodeGraph: STARTS constraint - from start: {from.StartTime}, to start: {to.StartTime}, result: {result}");
+                // STARTS: From and To start at the same time (From ends first)
+                // Scheduling: To can start when From has started (executing or completed)
+                result = from.IsExecuting || from.IsCompleted;
+                LoggingService.LogInfo($"   🔍 NodeGraph: STARTS constraint - from executing: {from.IsExecuting}, from completed: {from.IsCompleted}, result: {result}");
                 break;
             
             case TemporalConstraint.FINISHES:
-                result = from.EndTime == to.EndTime;
-                // Console.WriteLine($"   🔍 NodeGraph: FINISHES constraint - from end: {from.EndTime}, to end: {to.EndTime}, result: {result}");
+                // FINISHES: From starts after To but they end at the same time
+                // Scheduling: To can start when From is executing or completed (they need to overlap)
+                result = from.IsExecuting || from.IsCompleted;
+                LoggingService.LogInfo($"   🔍 NodeGraph: FINISHES constraint - from executing: {from.IsExecuting}, from completed: {from.IsCompleted}, result: {result}");
                 break;
             
             case TemporalConstraint.CONTAINS:
-                result = from.StartTime <= to.StartTime && from.EndTime >= to.EndTime;
-                // Console.WriteLine($"   🔍 NodeGraph: CONTAINS constraint - result: {result}");
+                // CONTAINS: From starts before To and ends after To (From fully contains To)
+                // Scheduling: To can start when From is currently executing (started but not finished)
+                result = from.IsExecuting;
+                LoggingService.LogInfo($"   🔍 NodeGraph: CONTAINS constraint - from executing: {from.IsExecuting}, result: {result}");
                 break;
             
             case TemporalConstraint.EQUALS:
-                result = from.StartTime == to.StartTime && from.EndTime == to.EndTime;
-                // Console.WriteLine($"   🔍 NodeGraph: EQUALS constraint - result: {result}");
+                // EQUALS: From and To have the same start and end times
+                // Scheduling: To can start when From has started (executing or completed)
+                result = from.IsExecuting || from.IsCompleted;
+                LoggingService.LogInfo($"   🔍 NodeGraph: EQUALS constraint - from executing: {from.IsExecuting}, from completed: {from.IsCompleted}, result: {result}");
                 break;
             
             default:

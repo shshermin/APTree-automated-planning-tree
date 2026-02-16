@@ -144,38 +144,36 @@ public class BTFlowNode_Composite : BTFlowNodeBase
             return false; // This will trigger OnTickReturn with failed status
         }
         
-        // Execute children sequentially - one child per tick
-        if (currentChildIndex < allChildren.Count)
+        // Execute ALL children every tick (parallel execution)
+        // This ensures all cassettes progress simultaneously, which is required
+        // for cross-cassette synchronization (e.g. BTDecorator_DynamicPlanningComplete)
+        for (int i = 0; i < allChildren.Count; i++)
         {
-            var currentChild = allChildren[currentChildIndex];
-            var previousStatus = currentChild.status;
+            var child = allChildren[i];
             
-            LoggingService.LogInfo($"🎯 CompositeFlow: Ticking child {currentChildIndex + 1}/{allChildren.Count}: {currentChild.DebugDisplayName}");
-            
-            // Tick the current child
-            currentChild.Tick(inDeltaTime);
-            
-            LoggingService.LogInfo($"📊 CompositeFlow: Child {currentChild.DebugDisplayName}: {previousStatus} → {currentChild.status}");
-            
-            // If child completed (Succeeded or failed), move to next child
-            if (currentChild.status == BTNodeResult.Success || currentChild.status == BTNodeResult.Failure)
+            // Skip children that have already completed
+            if (child.status == BTNodeResult.Success || child.status == BTNodeResult.Failure)
             {
-                currentChildIndex++;
+                LoggingService.LogInfo($"📊 CompositeFlow: Skipping completed child {i + 1}/{allChildren.Count}: {child.DebugDisplayName} ({child.status})");
+                continue;
             }
             
-            // Continue ticking until all children are processed
-            status = BTNodeResult.InProgress;
-            return true;
+            var previousStatus = child.status;
+            
+            LoggingService.LogInfo($"🎯 CompositeFlow: Ticking child {i + 1}/{allChildren.Count}: {child.DebugDisplayName}");
+            
+            // Tick the child
+            child.Tick(inDeltaTime);
+            
+            LoggingService.LogInfo($"📊 CompositeFlow: Child {child.DebugDisplayName}: {previousStatus} → {child.status}");
         }
         
-        // All children have been processed once in this pass
-        // If any child is still running (neither succeeded nor failed), keep the composite running
+        // Check if any child is still running
         bool anyRunning = allChildren.Any(node => node.status != BTNodeResult.Success && node.status != BTNodeResult.Failure);
         if (anyRunning)
         {
-            currentChildIndex = 0; // wrap to first child for the next pass
             status = BTNodeResult.InProgress;
-            LoggingService.LogInfo($"⏳ CompositeFlow: Some children still running, continuing next pass");
+            LoggingService.LogInfo($"⏳ CompositeFlow: Some children still running, continuing next tick");
             return true;
         }
 

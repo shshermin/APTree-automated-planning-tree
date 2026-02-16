@@ -7,7 +7,7 @@ using BehaviorTreeMainProject.Log.Services;
 /// </summary>
 public class BTDecorator_DynamicPlanningComplete : BTDecoratorBase
 {
-    public override bool CanPostProcessTickResult => true;
+    public override bool CanPostProcessTickResult => false;
     public override BTNodeResult PostProcessTickResult(BTNodeResult InResult) => InResult;
     public BTDecorator_DynamicPlanningComplete() : base(false)
     {
