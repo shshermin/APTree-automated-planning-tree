@@ -11,11 +11,11 @@ using BehaviorTreeMainProject.Services;
 /// This replaces the former PActionNode.ResetPlanningStateAfterSuccess()
 /// and keeps the reset policy outside of the core action logic.
 /// </summary>
-public class BTDecorator_ResetOnSubtreeSuccess : BTDecoratorBase
+public class BTDecoratorResetOnSubtreeSuccess : BTDecoratorBase
 {
     public override bool CanPostProcessTickResult => true;
 
-    public BTDecorator_ResetOnSubtreeSuccess(PActionNode action) : base(false)
+    public BTDecoratorResetOnSubtreeSuccess(PActionNode action) : base(false)
     {
         AttachedAction = action;
     }

@@ -34,7 +34,7 @@ public class Blackboard<T> : IDisposable where T : class
     Dictionary<FastName, IBTNode> FlowNodeValues = new();
      Dictionary<FastName, State> StateValues = new();
     Dictionary<FastName, NodeGraph> NodeGraphValues = new();
-    Dictionary<FastName, BTFlowNode_Dynamic> InjectedSubtreesValues = new();
+    Dictionary<FastName, BTFlowNodeDynamic> InjectedSubtreesValues = new();
    
     private readonly EnvironmentGraph _envGraph;
 
@@ -50,7 +50,7 @@ public class Blackboard<T> : IDisposable where T : class
     /// before any other branch is allowed. Set by LowestCostExecution decorator, enforced by ExclusiveBranchGate.
     /// Only cleared when the chosen branch reaches Success.
     /// </summary>
-    public BTFlowNode_Dynamic? ChosenExecutingBranch { get; set; } = null;
+    public BTFlowNodeDynamic? ChosenExecutingBranch { get; set; } = null;
 
     /// <summary>
     /// Array to track when each cassette has generated and inserted its subtree
@@ -788,7 +788,7 @@ public List<PActionNode> GetAllActionInstances()
     }
 
     // Get and Set methods for Injected Subtrees
-    public BTFlowNode_Dynamic GetInjectedSubtree(FastName key)
+    public BTFlowNodeDynamic GetInjectedSubtree(FastName key)
     {
         if (!InjectedSubtreesValues.ContainsKey(key))
         {
@@ -797,7 +797,7 @@ public List<PActionNode> GetAllActionInstances()
         return InjectedSubtreesValues[key];
     }
 
-    public void SetInjectedSubtree(FastName key, BTFlowNode_Dynamic value)
+    public void SetInjectedSubtree(FastName key, BTFlowNodeDynamic value)
     {
         InjectedSubtreesValues[key] = value;
         Console.WriteLine($"Successfully added injected subtree to Blackboard with key: {key}");
@@ -810,7 +810,7 @@ public List<PActionNode> GetAllActionInstances()
     /// Gets all injected subtrees from the blackboard
     /// </summary>
     /// <returns>List of all injected subtrees</returns>
-    public List<BTFlowNode_Dynamic> GetAllInjectedSubtrees()
+    public List<BTFlowNodeDynamic> GetAllInjectedSubtrees()
     {
         return InjectedSubtreesValues.Values.ToList();
     }

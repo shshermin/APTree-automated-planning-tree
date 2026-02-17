@@ -16,7 +16,7 @@ public abstract class PActionNode : ActionNode
 
     // High-level action support
     public bool IsHighLevelAction { get; protected set; } = false;
-    public BTFlowNode_Dynamic HighLevelSubtree { get; protected set; }
+    public BTFlowNodeDynamic HighLevelSubtree { get; protected set; }
     public BTServiceBase PlanningService { get; protected set; }
 
     // SubtreeInjectionService access
@@ -69,7 +69,7 @@ public abstract class PActionNode : ActionNode
     /// <summary>
     /// Set this action as a high-level action with a subtree and planning service
     /// </summary>
-    public void SetAsHighLevelAction(BTFlowNode_Dynamic subtree, BTServiceBase planningService)
+    public void SetAsHighLevelAction(BTFlowNodeDynamic subtree, BTServiceBase planningService)
     {
        
             LoggingService.LogInfo($"🧹 GenericBTAction: Cleaning up old subtree before setting new one");
@@ -82,7 +82,7 @@ public abstract class PActionNode : ActionNode
             subtree.SetParentNode(this);
 
             // Attach decorator that handles planning state reset on subtree success
-            AddDecorator(new BTDecorator_ResetOnSubtreeSuccess(this));
+            AddDecorator(new BTDecoratorResetOnSubtreeSuccess(this));
 
             LoggingService.LogInfo($"🔧 GenericBTAction: Set {InstanceName.ToString()} as high-level action with subtree type: {subtree.GetType().Name}");
             LoggingService.LogInfo($"🔧 GenericBTAction: PlanningService type: {planningService.GetType().Name}");

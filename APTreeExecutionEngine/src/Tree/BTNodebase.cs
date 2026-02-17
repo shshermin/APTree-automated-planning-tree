@@ -27,7 +27,7 @@ public abstract class BTNodeBase : IBTNode
     // to keep track of the last status of the node
     public BTNodeResult status { get; protected set; } = BTNodeResult.Uninitialized;
     // to keep track of the tick phase of each node
-    protected EBTNodeTickPhase CurrentTickPhase { get; set; } = EBTNodeTickPhase.WaitingForNextTick;
+    protected BTNodeTickPhase CurrentTickPhase { get; set; } = BTNodeTickPhase.WaitingForNextTick;
     // to store the list of services of this node
     protected List<BTServiceBase>? AlwaysOnServices;
     protected List<BTServiceBase>? GenrealServices; 
@@ -257,7 +257,7 @@ public abstract class BTNodeBase : IBTNode
         }
 
         // Run AlwaysOnServices phase
-        CurrentTickPhase = EBTNodeTickPhase.AlwaysOnServices;
+        CurrentTickPhase = BTNodeTickPhase.AlwaysOnServices;
         if (!OnTick_AlwaysOnServices(InDeltaTime))
         {
             status = BTNodeResult.Failure;
@@ -267,7 +267,7 @@ public abstract class BTNodeBase : IBTNode
         LogPhaseSuccess("AlwaysOnServices");
 
         // Run GeneralServices phase
-        CurrentTickPhase = EBTNodeTickPhase.GeneralServices;
+        CurrentTickPhase = BTNodeTickPhase.GeneralServices;
         if (!OnTick_GeneralServices(InDeltaTime))
         {
             status = BTNodeResult.Failure;
@@ -278,7 +278,7 @@ public abstract class BTNodeBase : IBTNode
         servicesEndTime = DateTime.Now;
 
         // Run Decorators phase
-        CurrentTickPhase = EBTNodeTickPhase.Decorators;
+        CurrentTickPhase = BTNodeTickPhase.Decorators;
         if (!OnTick_Decorators(InDeltaTime))
         {
             status = BTNodeResult.Failure;
@@ -316,7 +316,7 @@ public abstract class BTNodeBase : IBTNode
     
 
          // Run NodeLogic phase
-        CurrentTickPhase = EBTNodeTickPhase.NodeLogic;
+        CurrentTickPhase = BTNodeTickPhase.NodeLogic;
         if (!OnTick_NodeLogic(InDeltaTime))
         {
             status = BTNodeResult.Failure;
@@ -329,7 +329,7 @@ public abstract class BTNodeBase : IBTNode
             // Tick children if this node has them
         if (HasChildren)
         {
-            CurrentTickPhase = EBTNodeTickPhase.Children;
+            CurrentTickPhase = BTNodeTickPhase.Children;
             if (!OnTick_Children(InDeltaTime))
             {
                 return OnTickReturn(status);
@@ -416,7 +416,7 @@ public abstract class BTNodeBase : IBTNode
     protected virtual BTNodeResult OnTickReturn(BTNodeResult InProvisionalResult)
     {
         BTNodeResult FinalResult = InProvisionalResult;
-        CurrentTickPhase = EBTNodeTickPhase.WaitingForNextTick;
+        CurrentTickPhase = BTNodeTickPhase.WaitingForNextTick;
          if(Decorators != null)
          {
              foreach(var Decorator in Decorators)

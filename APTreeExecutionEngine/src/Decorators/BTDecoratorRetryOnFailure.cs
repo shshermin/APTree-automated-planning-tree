@@ -4,11 +4,11 @@ using BehaviorTreeMainProject.Log.Services;
 /// Post-processing decorator that converts Failure → InProgress on the flow node it is attached to.
 /// That is its sole purpose. No resetting of children, no resetting of action graphs.
 /// </summary>
-public class BTDecorator_RetryOnFailure : BTDecoratorBase
+public class BTDecoratorRetryOnFailure : BTDecoratorBase
 {
     public override bool CanPostProcessTickResult => true;
 
-    public BTDecorator_RetryOnFailure(BTFlowNode_Dynamic attachedNode) : base(false)
+    public BTDecoratorRetryOnFailure(BTFlowNodeDynamic attachedNode) : base(false)
     {
         AttachedNode = attachedNode;
     }
@@ -22,7 +22,7 @@ public class BTDecorator_RetryOnFailure : BTDecoratorBase
     {
         if (InResult == BTNodeResult.Failure)
         {
-            LoggingService.LogInfo($"🔄 BTDecorator_RetryOnFailure: Failure on {AttachedNode?.DebugDisplayName} → converting to InProgress");
+            LoggingService.LogInfo($"🔄 BTDecoratorRetryOnFailure: Failure on {AttachedNode?.DebugDisplayName} → converting to InProgress");
             return BTNodeResult.InProgress;
         }
         return InResult;

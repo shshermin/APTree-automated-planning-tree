@@ -433,7 +433,7 @@ namespace BehaviorTreeMainProject
                 LoggingService.LogSuccess("ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ Created behavior tree instance");
 
                 // Create root composite flow node
-                rootNode = new BTFlowNode_Composite(new FastName("RootComposite"), behaviorTree);
+                rootNode = new BTFlowNodeComposite(new FastName("RootComposite"), behaviorTree);
                 //var rootNode = new BTFlowNode_CostBasedComposite(new FastName("RootComposite"), behaviorTree);
                 
                 // Ensure we start in planning phase
@@ -445,29 +445,29 @@ namespace BehaviorTreeMainProject
                 LoggingService.LogSuccess("ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ Created root composite flow node");
 
                 // Create four cassette flow nodes
-                var cassette1Node = new BTFlowNode_Dynamic(new FastName("cassette1"), behaviorTree, SuccessCriteria.ALL, 1.0f, true);  // Add LowestCost decorator
-                var cassette2Node = new BTFlowNode_Dynamic(new FastName("cassette2"), behaviorTree, SuccessCriteria.ALL, 1.0f, true);  // Add LowestCost decorator
-                var cassette3Node = new BTFlowNode_Dynamic(new FastName("cassette3"), behaviorTree, SuccessCriteria.ALL, 1.0f, true);  // Add LowestCost decorator
-                var cassette4Node = new BTFlowNode_Dynamic(new FastName("cassette4"), behaviorTree, SuccessCriteria.ALL, 1.0f, true);  // Add LowestCost decorator
+                var cassette1Node = new BTFlowNodeDynamic(new FastName("cassette1"), behaviorTree, SuccessCriteria.ALL, 1.0f, true);  // Add LowestCost decorator
+                var cassette2Node = new BTFlowNodeDynamic(new FastName("cassette2"), behaviorTree, SuccessCriteria.ALL, 1.0f, true);  // Add LowestCost decorator
+                var cassette3Node = new BTFlowNodeDynamic(new FastName("cassette3"), behaviorTree, SuccessCriteria.ALL, 1.0f, true);  // Add LowestCost decorator
+                var cassette4Node = new BTFlowNodeDynamic(new FastName("cassette4"), behaviorTree, SuccessCriteria.ALL, 1.0f, true);  // Add LowestCost decorator
 
                 LoggingService.LogSuccess("ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ Created four cassette flow nodes");
 
                 // Add all cassette nodes to the root composite node
-                ((BTFlowNode_Composite)rootNode).AddChild(cassette1Node);
-                ((BTFlowNode_Composite)rootNode).AddChild(cassette2Node);
-                ((BTFlowNode_Composite)rootNode).AddChild(cassette3Node);
-                ((BTFlowNode_Composite)rootNode).AddChild(cassette4Node);
+                ((BTFlowNodeComposite)rootNode).AddChild(cassette1Node);
+                ((BTFlowNodeComposite)rootNode).AddChild(cassette2Node);
+                ((BTFlowNodeComposite)rootNode).AddChild(cassette3Node);
+                ((BTFlowNodeComposite)rootNode).AddChild(cassette4Node);
 
                 LoggingService.LogSuccess("ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ Added all four cassette nodes to root composite node");
 
                 // Add planning phase management service to the root composite node
-                ((BTFlowNode_Composite)rootNode).AddPlanningPhaseService();
+                ((BTFlowNodeComposite)rootNode).AddPlanningPhaseService();
                 LoggingService.LogSuccess("ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ Added planning phase management service to root composite node");
                 
                 
 
                 // Set the root node
-                behaviorTree.root = (BTFlowNode_Composite)rootNode;
+                behaviorTree.root = (BTFlowNodeComposite)rootNode;
                 rootNode.SetOwiningTree(behaviorTree);
                 rootNode.SetTreeForAllServices(behaviorTree);
 
@@ -523,11 +523,11 @@ namespace BehaviorTreeMainProject
 
                 // Display tree structure
                 LoggingService.LogInfo("\nÃƒÂ°Ã…Â¸Ã¢â‚¬Å“Ã¢â‚¬Â¹ BEHAVIOR TREE STRUCTURE:");
-                LoggingService.LogInfo($"Root: BTFlowNode_Composite ({((BTFlowNode_Composite)rootNode).GetNodeName()})");
-                LoggingService.LogInfo($"ÃƒÂ¢Ã¢â‚¬ÂÃ…â€œÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ BTFlowNode_Dynamic ({cassette1Node.GetNodeName()}) - {pddlRequest1.PlannerName} Planner");
-                LoggingService.LogInfo($"ÃƒÂ¢Ã¢â‚¬ÂÃ…â€œÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ BTFlowNode_Dynamic ({cassette2Node.GetNodeName()}) - {pddlRequest2.PlannerName} Planner");
-                LoggingService.LogInfo($"ÃƒÂ¢Ã¢â‚¬ÂÃ…â€œÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ BTFlowNode_Dynamic ({cassette3Node.GetNodeName()}) - {pddlRequest3.PlannerName} Planner");
-                LoggingService.LogInfo($"ÃƒÂ¢Ã¢â‚¬ÂÃ¢â‚¬ÂÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ BTFlowNode_Dynamic ({cassette4Node.GetNodeName()}) - {pddlRequest4.PlannerName} Planner");
+                LoggingService.LogInfo($"Root: BTFlowNodeComposite ({((BTFlowNodeComposite)rootNode).GetNodeName()})");
+                LoggingService.LogInfo($"ÃƒÂ¢Ã¢â‚¬ÂÃ…â€œÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ BTFlowNodeDynamic ({cassette1Node.GetNodeName()}) - {pddlRequest1.PlannerName} Planner");
+                LoggingService.LogInfo($"ÃƒÂ¢Ã¢â‚¬ÂÃ…â€œÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ BTFlowNodeDynamic ({cassette2Node.GetNodeName()}) - {pddlRequest2.PlannerName} Planner");
+                LoggingService.LogInfo($"ÃƒÂ¢Ã¢â‚¬ÂÃ…â€œÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ BTFlowNodeDynamic ({cassette3Node.GetNodeName()}) - {pddlRequest3.PlannerName} Planner");
+                LoggingService.LogInfo($"ÃƒÂ¢Ã¢â‚¬ÂÃ¢â‚¬ÂÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ BTFlowNodeDynamic ({cassette4Node.GetNodeName()}) - {pddlRequest4.PlannerName} Planner");
 
                 LoggingService.LogSuccess("\nÃƒÂ°Ã…Â¸Ã…Â½Ã¢â‚¬Â° Behavior tree with cassette flow nodes created successfully!");
 
@@ -586,7 +586,7 @@ namespace BehaviorTreeMainProject
                 ExecutionSummaryLogger.TrackMemoryUsage("After Planner Execution", memoryAfterPlanner);
 
                 // Test individual cassette nodes
-                var rootNode = behaviorTree.root as BTFlowNode_Composite;
+                var rootNode = behaviorTree.root as BTFlowNodeComposite;
                 if (rootNode != null)
                 {
                     var children = rootNode.GetChildren();
@@ -607,7 +607,7 @@ namespace BehaviorTreeMainProject
                 }
                 else
                 {
-                    LoggingService.LogError($"ÃƒÂ¢Ã‚ÂÃ…â€™ Root node is not a BTFlowNode_Composite. Actual type: {behaviorTree.root?.GetType().Name ?? "null"}");
+                    LoggingService.LogError($"ÃƒÂ¢Ã‚ÂÃ…â€™ Root node is not a BTFlowNodeComposite. Actual type: {behaviorTree.root?.GetType().Name ?? "null"}");
                 }
 
                 LoggingService.LogSuccess("ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ Behavior tree structure test completed!");
@@ -626,7 +626,7 @@ namespace BehaviorTreeMainProject
                 LoggingService.LogSubsection("ÃƒÂ°Ã…Â¸Ã¢â‚¬Å“Ã…Â  NODEGRAPH STATUS REPORT");
                 LoggingService.LogInfo("=".PadRight(50, '='));
 
-                var rootNode = behaviorTree.root as BTFlowNode_Composite;
+                var rootNode = behaviorTree.root as BTFlowNodeComposite;
                 if (rootNode != null)
                 {
                     var children = rootNode.GetChildren();
@@ -635,7 +635,7 @@ namespace BehaviorTreeMainProject
                     for (int i = 0; i < children.Count; i++)
                     {
                         var child = children[i];
-                        if (child is BTFlowNode_Dynamic dynamicNode)
+                        if (child is BTFlowNodeDynamic dynamicNode)
                         {
                             LoggingService.LogInfo($"ÃƒÂ°Ã…Â¸Ã…Â½Ã‚Â¯ FLOW NODE {i + 1}: {dynamicNode.GetNodeName()}");
                             LoggingService.LogInfo($"   ÃƒÂ°Ã…Â¸Ã¢â‚¬Å“Ã¢â‚¬Â¹ Node Type: {child.GetType().Name}");
@@ -742,7 +742,7 @@ namespace BehaviorTreeMainProject
                     LoggingService.LogInfo($"ÃƒÂ°Ã…Â¸Ã¢â‚¬Å“Ã…Â  Progress: {completedCount}/{allPlanners.Count} completed, {executingCount} executing, {pendingCount} pending");
                     
                                          // Planning phase monitoring
-                     if (rootNode is BTFlowNode_Composite compositeNode)
+                     if (rootNode is BTFlowNodeComposite compositeNode)
                      {
                          var planningComplete = compositeNode.AreAllPlanningServicesComplete();
                          LoggingService.LogInfo($"\nÃƒÂ°Ã…Â¸Ã¢â‚¬Å“Ã¢â‚¬Â¹ PLANNING PHASE STATUS:");
@@ -753,7 +753,7 @@ namespace BehaviorTreeMainProject
                          for (int i = 0; i < children.Count; i++)
                          {
                              var child = children[i];
-                             if (child is BTFlowNode_Dynamic dynamicNode)
+                             if (child is BTFlowNodeDynamic dynamicNode)
                              {
                                  var hasPlanningService = dynamicNode.PlanningService != null;
                                  var planningServiceType = hasPlanningService ? dynamicNode.PlanningService.GetType().Name : "None";
@@ -901,10 +901,10 @@ namespace BehaviorTreeMainProject
             
                          try
              {
-                 var rootNode = behaviorTree.root as BTFlowNode_Composite;
+                 var rootNode = behaviorTree.root as BTFlowNodeComposite;
                  if (rootNode == null)
                  {
-                     LoggingService.LogError("ÃƒÂ¢Ã‚ÂÃ…â€™ Root node is not a BTFlowNode_Composite");
+                     LoggingService.LogError("ÃƒÂ¢Ã‚ÂÃ…â€™ Root node is not a BTFlowNodeComposite");
                      return;
                  }
 
@@ -914,7 +914,7 @@ namespace BehaviorTreeMainProject
                 for (int i = 0; i < children.Count; i++)
                 {
                     var child = children[i];
-                    if (child is BTFlowNode_Dynamic dynamicNode)
+                    if (child is BTFlowNodeDynamic dynamicNode)
                     {
                         LoggingService.LogInfo($"ÃƒÂ°Ã…Â¸Ã…Â½Ã‚Â¯ FLOW NODE {i + 1}: {dynamicNode.GetNodeName()}");
                         
@@ -1053,7 +1053,7 @@ namespace BehaviorTreeMainProject
                     LoggingService.LogInfo($"ÃƒÂ°Ã…Â¸Ã¢â‚¬ÂÃ¢â‚¬Å¾ SUBTREE STATUS MONITORING - {currentTime:HH:mm:ss}");
                     LoggingService.LogInfo("=".PadRight(60, '='));
                     
-                    var rootNode = behaviorTree.root as BTFlowNode_Composite;
+                    var rootNode = behaviorTree.root as BTFlowNodeComposite;
                     if (rootNode != null)
                     {
                         var children = rootNode.GetChildren();
@@ -1061,7 +1061,7 @@ namespace BehaviorTreeMainProject
                         for (int i = 0; i < children.Count; i++)
                         {
                             var child = children[i];
-                            if (child is BTFlowNode_Dynamic dynamicNode)
+                            if (child is BTFlowNodeDynamic dynamicNode)
                             {
                                 LoggingService.LogInfo($"ÃƒÂ°Ã…Â¸Ã…Â½Ã‚Â¯ FLOW NODE {i + 1}: {dynamicNode.GetNodeName()}");
                                 LoggingService.LogInfo($"   ÃƒÂ°Ã…Â¸Ã¢â‚¬Å“Ã…Â  Flow Node Status: {dynamicNode.status}");
@@ -1138,7 +1138,7 @@ namespace BehaviorTreeMainProject
         {
             try
             {
-                var rootNode = behaviorTree.root as BTFlowNode_Composite;
+                var rootNode = behaviorTree.root as BTFlowNodeComposite;
                 if (rootNode == null) return;
 
                 var children = rootNode.GetChildren();
@@ -1147,7 +1147,7 @@ namespace BehaviorTreeMainProject
                 for (int i = 0; i < children.Count; i++)
                 {
                     var child = children[i];
-                    if (child is BTFlowNode_Dynamic dynamicNode)
+                    if (child is BTFlowNodeDynamic dynamicNode)
                     {
                         // Check if planning service has generated a NodeGraph
                         if (dynamicNode.PlanningService is PlanningService plannerService && plannerService.HasGeneratedNodeGraph())
@@ -1295,14 +1295,14 @@ namespace BehaviorTreeMainProject
         {
             try
             {
-                var rootNode = behaviorTree.root as BTFlowNode_Composite;
+                var rootNode = behaviorTree.root as BTFlowNodeComposite;
                 if (rootNode == null) return;
 
                 var children = rootNode.GetChildren();
                 
                 foreach (var child in children)
                 {
-                    if (child is BTFlowNode_Dynamic dynamicNode)
+                    if (child is BTFlowNodeDynamic dynamicNode)
                     {
                         var actionGraph = dynamicNode.GetActionGraph();
                         var nodes = actionGraph.GetAllActionNodes();
@@ -1432,7 +1432,7 @@ namespace BehaviorTreeMainProject
         {
             try
             {
-                var rootNode = behaviorTree.root as BTFlowNode_Composite;
+                var rootNode = behaviorTree.root as BTFlowNodeComposite;
                 if (rootNode == null) return;
 
                 var children = rootNode.GetChildren();
@@ -1440,7 +1440,7 @@ namespace BehaviorTreeMainProject
                 
                 foreach (var child in children)
                 {
-                    if (child is BTFlowNode_Dynamic dynamicNode)
+                    if (child is BTFlowNodeDynamic dynamicNode)
                     {
                         if (dynamicNode.PlanningService is PlanningService plannerService && plannerService.HasGeneratedNodeGraph())
                         {
@@ -1558,13 +1558,13 @@ namespace BehaviorTreeMainProject
         {
             try
             {
-                var rootNode = behaviorTree.root as BTFlowNode_Composite;
+                var rootNode = behaviorTree.root as BTFlowNodeComposite;
                 if (rootNode == null) return;
 
                 var children = rootNode.GetChildren();
                 foreach (var child in children)
                 {
-                    if (child is BTFlowNode_Dynamic dynamicNode)
+                    if (child is BTFlowNodeDynamic dynamicNode)
                     {
                         var actionGraph = dynamicNode.GetActionGraph();
                         var nodes = actionGraph.GetAllActionNodes();
@@ -1607,14 +1607,14 @@ namespace BehaviorTreeMainProject
         {
             try
             {
-                var rootNode = behaviorTree.root as BTFlowNode_Composite;
+                var rootNode = behaviorTree.root as BTFlowNodeComposite;
                 if (rootNode == null) return;
 
                 var children = rootNode.GetChildren();
                 
                 foreach (var child in children)
                 {
-                    if (child is BTFlowNode_Dynamic dynamicNode)
+                    if (child is BTFlowNodeDynamic dynamicNode)
                     {
                         if (dynamicNode.PlanningService is PlanningService plannerService && plannerService.HasGeneratedNodeGraph())
                         {
@@ -1719,7 +1719,7 @@ namespace BehaviorTreeMainProject
                 actionNodes.Add(actionNode);
             }
             
-            if (node is BTFlowNode_Composite compositeNode)
+            if (node is BTFlowNodeComposite compositeNode)
             {
                 foreach (var child in compositeNode.GetChildren())
                 {

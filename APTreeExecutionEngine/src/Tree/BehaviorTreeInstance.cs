@@ -21,7 +21,7 @@ public class BehaviorTreeInstance : IBehaviorTree
         linkedBlackboard = InBlackboard;
        
         // Use composite flow node as root to support hierarchical structure
-        root = new BTFlowNode_Composite(new FastName(InRootNodeName), this);
+        root = new BTFlowNodeComposite(new FastName(InRootNodeName), this);
         root.SetOwiningTree(this);
     }
 
@@ -38,7 +38,7 @@ public class BehaviorTreeInstance : IBehaviorTree
             action.SetTreeForSubtreeInjectionService(this);
         }
         
-        return (root as BTFlowNode_Composite).AddChild(InNode);
+        return (root as BTFlowNodeComposite).AddChild(InNode);
         
     }
 

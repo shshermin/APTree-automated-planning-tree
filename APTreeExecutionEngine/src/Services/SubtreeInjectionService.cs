@@ -15,7 +15,7 @@ namespace BehaviorTreeMainProject
     public class SubtreeInjectionService : BTServiceBase
     {
         private readonly Dictionary<string, SubtreeConfiguration> subtreeConfigurations;
-        private readonly Dictionary<string, BTFlowNode_Dynamic> cachedSubtrees;
+        private readonly Dictionary<string, BTFlowNodeDynamic> cachedSubtrees;
         
         // Action to be processed in the next tick
         private PActionNode pendingAction;
@@ -27,7 +27,7 @@ namespace BehaviorTreeMainProject
         public SubtreeInjectionService(IBehaviorTree owningTree, PActionNode action) : base(owningTree)
         {
             subtreeConfigurations = new Dictionary<string, SubtreeConfiguration>();
-            cachedSubtrees = new Dictionary<string, BTFlowNode_Dynamic>();
+            cachedSubtrees = new Dictionary<string, BTFlowNodeDynamic>();
             pendingAction = action;
             
             InitializeDefaultConfigurations();
@@ -39,7 +39,7 @@ namespace BehaviorTreeMainProject
         public SubtreeInjectionService(PActionNode action) : base(null)
         {
             subtreeConfigurations = new Dictionary<string, SubtreeConfiguration>();
-            cachedSubtrees = new Dictionary<string, BTFlowNode_Dynamic>();
+            cachedSubtrees = new Dictionary<string, BTFlowNodeDynamic>();
             pendingAction = action;
             
             InitializeDefaultConfigurations();
@@ -283,7 +283,7 @@ namespace BehaviorTreeMainProject
         /// <summary>
         /// Create a subtree using a configuration
         /// </summary>
-        public BTFlowNode_Dynamic CreateSubtree(SubtreeConfiguration config, string instanceName, Dictionary<string, object> customParameters = null)
+        public BTFlowNodeDynamic CreateSubtree(SubtreeConfiguration config, string instanceName, Dictionary<string, object> customParameters = null)
         {
             try
             {
@@ -298,7 +298,7 @@ namespace BehaviorTreeMainProject
                 }
 
                 // Create subtree using the unified planner factory method
-                BTFlowNode_Dynamic subtree = CreatePlannerSubtree(config, instanceName, customParameters);
+                BTFlowNodeDynamic subtree = CreatePlannerSubtree(config, instanceName, customParameters);
 
                 // Cache the subtree if caching is enabled
                 if (config.UseCaching)
@@ -308,13 +308,13 @@ namespace BehaviorTreeMainProject
                 }
 
                 // Add the DynamicPlanningComplete decorator to the flow node
-                subtree.AddDecorator(new BTDecorator_DynamicPlanningComplete());
+                subtree.AddDecorator(new BTDecoratorDynamicPlanningComplete());
                 LogMessage($"🔧 SubtreeInjectionService: Added DynamicPlanningComplete decorator to flow node '{subtree.DebugDisplayName}'");
                 // Add the ExclusiveBranchGate decorator BEFORE LowestCost — it evaluates first
-                subtree.AddDecorator(new BTDecorator_ExclusiveBranchGate(subtree as BTFlowNode_Dynamic));
+                subtree.AddDecorator(new BTDecoratorExclusiveBranchGate(subtree as BTFlowNodeDynamic));
                 LogMessage($"🔧 SubtreeInjectionService: Added ExclusiveBranchGate decorator to flow node '{subtree.DebugDisplayName}'");
                 // add the lowestcost decorator (evaluates after ExclusiveBranchGate)
-                subtree.AddDecorator(new BTDecorator_LowestCostExecution(subtree as BTFlowNode_Dynamic));
+                subtree.AddDecorator(new BTDecoratorLowestCostExecution(subtree as BTFlowNodeDynamic));
                 LogMessage($"🔧 SubtreeInjectionService: Added LowestCostExecution decorator to flow node '{subtree.DebugDisplayName}'");
                 // DEBUG: Check if the decorator is actually in the list
                 var decoratorCount = subtree.GetType().GetField("Decorators", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.GetValue(subtree) as System.Collections.Generic.List<object>;
@@ -351,13 +351,51 @@ namespace BehaviorTreeMainProject
             action.SetAsHighLevelAction(subtree, subtree.PlanningService);
             LogMessage($"✅ SubtreeInjectionService: Injected subtree '{configName}' into action '{action.InstanceName.ToString()}'");
             
+            // Register the subtree in the .bt model file (annotation + BT block)
+            RegisterSubtreeInBTModel(action, config, instanceName);
+            
             // Track subtree injection
             BehaviorTreeComponentLogger.TrackSubtreeInjection($"{configName}_{instanceName}");
             
             // NOTE: Subtrees are now added to blackboard after successful planning, not during injection
             
             // Set the corresponding cassette subtree completion flag
-            BTDecorator_DynamicPlanningComplete.SetCassetteSubtreeCompletedFlag(OwningTree.root, action, linkedBlackboard);
+            BTDecoratorDynamicPlanningComplete.SetCassetteSubtreeCompletedFlag(OwningTree.root, action, linkedBlackboard);
+        }
+
+        /// <summary>
+        /// Registers the subtree in the .bt model file by:
+        /// 1. Adding @SubtreeName annotation to the parent HL action line
+        /// 2. Appending a new BehaviorTree block for the subtree with an empty NodeGraph
+        /// This allows the existing planner flow (BTFileWriter.UpdateCassetteNodeGraph)
+        /// to later find the subtree's FlowNode and populate its NodeGraph with planned actions.
+        /// </summary>
+        private void RegisterSubtreeInBTModel(PActionNode action, SubtreeConfiguration config, string instanceName)
+        {
+            try
+            {
+                // Derive names consistent with the runtime subtree structure
+                var subtreeBTName = $"{instanceName}Subtree";
+                // Must match the runtime DynamicFlowNode name so BTFileWriter can find it later
+                var flowNodeName = $"{config.Name}_DynamicFlow_{instanceName}";
+                var plannerServiceName = $"subtreeSrv_{instanceName}";
+                var plannerTypeName = config.PlannerName;
+
+                LogMessage($"🔧 SubtreeInjectionService: Registering subtree BT model '{subtreeBTName}' for action '{instanceName}'");
+
+                // 1. Annotate the parent HL action with @SubtreeName
+                BehaviorTreeMainProject.Services.AIPlanning.BTFileWriter.AnnotateActionWithSubtree(instanceName, subtreeBTName);
+
+                // 2. Append the subtree BehaviorTree block after the main BT
+                BehaviorTreeMainProject.Services.AIPlanning.BTFileWriter.AppendSubtreeBTModel(
+                    subtreeBTName, flowNodeName, plannerServiceName, plannerTypeName);
+
+                LogMessage($"✅ SubtreeInjectionService: Registered subtree '{subtreeBTName}' in BT model for action '{instanceName}'");
+            }
+            catch (Exception ex)
+            {
+                LogMessage($"❌ SubtreeInjectionService: Error registering subtree in BT model: {ex.Message}");
+            }
         }
 
         
@@ -433,12 +471,12 @@ namespace BehaviorTreeMainProject
         /// Creates a subtree for any planner type. The planner name comes from config.PlannerName,
         /// so adding a new planner requires no changes here — just add a new Planner subclass.
         /// </summary>
-        private BTFlowNode_Dynamic CreatePlannerSubtree(SubtreeConfiguration config, string instanceName, Dictionary<string, object> customParameters)
+        private BTFlowNodeDynamic CreatePlannerSubtree(SubtreeConfiguration config, string instanceName, Dictionary<string, object> customParameters)
         {
             var subtreeTree = new BehaviorTreeInstance();
             subtreeTree.Initialise(linkedBlackboard, $"{config.Name}_Subtree_{instanceName}");
 
-            var dynamicFlowNode = new BTFlowNode_Dynamic(
+            var dynamicFlowNode = new BTFlowNodeDynamic(
                 new FastName($"{config.Name}_DynamicFlow_{instanceName}"),
                 subtreeTree,
                 config.SuccessCriteria

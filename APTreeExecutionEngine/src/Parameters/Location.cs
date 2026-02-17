@@ -8,8 +8,6 @@ public abstract class Location : Entity  {
     public FastName TypeName { get; set; }
     public override FastName BaseType { get; set; }
     public Coordinate coordinate { get; set; }
-    public BoundingBox bbox { get; set; }
-
     // Empty constructor - required by Entity
     protected Location() : base()
     {

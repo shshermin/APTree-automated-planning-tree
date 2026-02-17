@@ -5,7 +5,7 @@
     "nodes": [
       {
         "id": "canvas-node-1",
-        "sourceId": "BTFlowNode_Composite",
+        "sourceId": "BTFlowNodeComposite",
         "name": "Root Sequence",
         "typeLabel": "Flow",
         "category": "flowNodes",

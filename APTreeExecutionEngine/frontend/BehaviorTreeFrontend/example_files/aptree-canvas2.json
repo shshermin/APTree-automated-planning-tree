@@ -5,7 +5,7 @@
     "nodes": [
       {
         "id": "3df4cdd8-9659-4f4f-86f1-810f0a93d31a",
-        "sourceId": "BTFlowNode_Composite",
+        "sourceId": "BTFlowNodeComposite",
         "name": "Composite",
         "typeLabel": "Flow",
         "category": "flowNodes",
@@ -18,7 +18,7 @@
       },
       {
         "id": "7f292cd2-ec49-4aa6-929d-c23a8f05887d",
-        "sourceId": "BTDecorator_DynamicPlanningComplete",
+        "sourceId": "BTDecoratorDynamicPlanningComplete",
         "name": "Dynamic Planning Complete",
         "typeLabel": "Decorator",
         "category": "decorators",

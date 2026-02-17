@@ -8,15 +8,15 @@ using BehaviorTreeMainProject.Log.Services;
 /// - If no ChosenExecutingBranch is set, all branches are allowed through (so LowestCost can pick one).
 /// 
 /// This decorator does NOT set or clear the chosen branch — that is the responsibility of 
-/// BTDecorator_LowestCostExecution. This decorator must be evaluated BEFORE LowestCost 
+/// BTDecoratorLowestCostExecution. This decorator must be evaluated BEFORE LowestCost 
 /// (added to the decorator list first).
 /// </summary>
-public class BTDecorator_ExclusiveBranchGate : BTDecoratorBase
+public class BTDecoratorExclusiveBranchGate : BTDecoratorBase
 {
     public override bool CanPostProcessTickResult => false;
     public override BTNodeResult PostProcessTickResult(BTNodeResult InResult) => InResult;
 
-    public BTDecorator_ExclusiveBranchGate(BTFlowNode_Dynamic attachedNode) : base(false)
+    public BTDecoratorExclusiveBranchGate(BTFlowNodeDynamic attachedNode) : base(false)
     {
         this.AttachedNode = attachedNode;
     }

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text.Json;
+using BehaviorTreeMainProject.Services.AIPlanning;
 
 
 /// <summary>
@@ -892,8 +893,8 @@ public class BlackboardWriter
             Console.WriteLine($"🔍 Extracted NodeGraph name: {nodeGraphName}");
             
             // Use the existing Parser to create the NodeGraph
-            var (actionInstances, relations) = Parser.ParsePlannerOutput(content);
-            var nodeGraph = Parser.ParseNodeGraph(actionInstances, relations, blackboard);
+            var (actionInstances, relations) = PDDLPlanningService.ParsePlannerOutput(content);
+            var nodeGraph = PDDLPlanningService.ParseNodeGraph(actionInstances, relations, blackboard);
             
             // Register the NodeGraph in the blackboard
             var fastNameKey = new FastName(nodeGraphName);

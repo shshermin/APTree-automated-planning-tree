@@ -162,7 +162,7 @@ namespace BehaviorTreeMainProject.Log.Services
 
             foreach (var plannerType in requiredPlannerTypes)
             {
-                var nodeTypeKey = $"BTFlowNode_Dynamic_{plannerType}";
+                var nodeTypeKey = $"BTFlowNodeDynamic_{plannerType}";
 
                 // Only add if we don't already have this row
                 if (!nodeTypeStats.ContainsKey(nodeTypeKey))
@@ -200,19 +200,19 @@ namespace BehaviorTreeMainProject.Log.Services
             // Categorize into main types
             if (typeName.Contains("GenericBTAction"))
                 return "GenericBTAction";
-            else if (typeName.Contains("BTFlowNode_Composite"))
-                return "BTFlowNode_Composite";
-            else if (typeName.Contains("BTFlowNode_Dynamic"))
+            else if (typeName.Contains("BTFlowNodeComposite"))
+                return "BTFlowNodeComposite";
+            else if (typeName.Contains("BTFlowNodeDynamic"))
             {
                 // For dynamic flow nodes, try to determine the planner type
                 try
                 {
-                    var flowNode = node as BTFlowNode_Dynamic;
+                    var flowNode = node as BTFlowNodeDynamic;
                     if (flowNode?.PlanningService?.planningRequest != null)
                     {
                         var plannerType = flowNode.PlanningService.CurrentPlanner?.DefaultPlannerName
                             ?? flowNode.PlanningService.planningRequest.PlanningType;
-                        return $"BTFlowNode_Dynamic_{plannerType}";
+                        return $"BTFlowNodeDynamic_{plannerType}";
                     }
                 }
                 catch (Exception ex)
@@ -221,7 +221,7 @@ namespace BehaviorTreeMainProject.Log.Services
                 }
 
                 // Fallback to generic dynamic node
-                return "BTFlowNode_Dynamic_Unknown";
+                return "BTFlowNodeDynamic_Unknown";
             }
             else
                 return typeName; // Use full type name for other types

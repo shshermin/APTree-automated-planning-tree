@@ -241,7 +241,7 @@ public class NodeGraph
             {
                 LoggingService.LogInfo($"   ✅ NodeGraph: Node {node.ActionNode.InstanceName.ToString()} can be executed");
                 executableNodes.Add(node.ActionNode as PActionNode);
-                // Don't set IsExecuting here - let the BTFLowNode_Dynamic handle that when it actually starts executing
+                // Don't set IsExecuting here - let the BTFlowNodeDynamic handle that when it actually starts executing
             }
             else
             {
@@ -476,38 +476,63 @@ public class NodeGraph
     }
 
     /// <summary>
-    /// Destroys all GraphNodes and their owned action nodes, clearing the entire graph.
-    /// This is a composition teardown — after calling this, the graph is empty.
+    /// Destroys only unexecuted GraphNodes (ReadyToTick or Uninitialized status).
+    /// Nodes that are InProgress, Success, or Failure are kept in the graph.
     /// </summary>
     public void DestroyAllNodes()
     {
-        LoggingService.LogWarning($"🗑️ NodeGraph: CLEAR called! This will remove all actions from the graph!");
-        LoggingService.LogWarning($"🗑️ NodeGraph: Stack trace for Clear call:");
-        var stackTrace = Environment.StackTrace;
-        var stackLines = stackTrace.Split('\n');
-        for (int i = 0; i < Math.Min(10, stackLines.Length); i++)
+        LoggingService.LogWarning($"🗑️ NodeGraph: DestroyAllNodes called — will only remove unexecuted nodes");
+
+        var nodesToDestroy = nodes
+            .Where(n => n.ActionNode != null &&
+                        (n.ActionNode.status == BTNodeResult.ReadyToTick ||
+                         n.ActionNode.status == BTNodeResult.Uninitialized))
+            .ToList();
+
+        var nodesToKeep = nodes.Except(nodesToDestroy).ToList();
+
+        if (nodesToDestroy.Count > 0)
         {
-            LoggingService.LogWarning($"   {stackLines[i].Trim()}");
+            BehaviorTreeComponentLogger.TrackActionDeletion("NodeGraphDestroyUnexecuted", nodesToDestroy.Count,
+                $"Destroyed {nodesToDestroy.Count} unexecuted nodes, kept {nodesToKeep.Count}");
         }
-        
-        // Track action deletion when clearing NodeGraph
+
+        foreach (var node in nodesToDestroy)
+        {
+            if (node.ActionNode != null)
+                nodeMap.Remove(node.ActionNode);
+            node.Destroy();
+        }
+
+        nodes = nodesToKeep;
+
+        LoggingService.LogWarning($"🗑️ NodeGraph: DestroyAllNodes completed — destroyed {nodesToDestroy.Count}, kept {nodesToKeep.Count}");
+    }
+
+    /// <summary>
+    /// Unconditionally destroys every GraphNode and its owned action node, regardless of status.
+    /// After calling this, the graph is completely empty.
+    /// </summary>
+    public void ForceDestroyAllNodes()
+    {
+        LoggingService.LogWarning($"🗑️ NodeGraph: ForceDestroyAllNodes called — removing ALL {nodes.Count} nodes");
+
         var actionCount = nodes.Count;
         if (actionCount > 0)
         {
-            BehaviorTreeComponentLogger.TrackActionDeletion("NodeGraphClear", actionCount, "NodeGraph clear - all actions removed");
+            BehaviorTreeComponentLogger.TrackActionDeletion("NodeGraphForceClear", actionCount, "Force clear - all actions removed");
         }
-        
-        // Composition: each GraphNode destroys its owned action node
+
         foreach (var node in nodes)
         {
             node.Destroy();
         }
-        
+
         nodes.Clear();
         nodeMap.Clear();
         elapsedTime = 0f;
-        
-        LoggingService.LogWarning($"🗑️ NodeGraph: Clear completed - destroyed {actionCount} actions from graph");
+
+        LoggingService.LogWarning($"🗑️ NodeGraph: ForceDestroyAllNodes completed — destroyed {actionCount} actions");
     }
 
     /// <summary>

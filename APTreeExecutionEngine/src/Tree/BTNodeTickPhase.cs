@@ -1,4 +1,4 @@
-public enum EBTNodeTickPhase
+public enum BTNodeTickPhase
 {
     WaitingForNextTick,
     AlwaysOnServices,

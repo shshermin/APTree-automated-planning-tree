@@ -448,7 +448,7 @@ public abstract class PlanningService : BTServiceBase
             var fastNameKey = new FastName(subtreeKey);
             
             // Add the subtree to the blackboard's injected subtrees
-            linkedBlackboard.SetInjectedSubtree(fastNameKey, OwningFlowNode as BTFlowNode_Dynamic);
+            linkedBlackboard.SetInjectedSubtree(fastNameKey, OwningFlowNode as BTFlowNodeDynamic);
             
             LoggingService.LogSuccess($"✅ PlanningService: Added subtree '{OwningFlowNode.DebugDisplayName}' to blackboard after successful planning");
             LoggingService.LogInfo($"   📝 Subtree key: {subtreeKey}");

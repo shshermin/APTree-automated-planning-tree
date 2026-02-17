@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using BehaviorTreeMainProject.Log.Services;
 
-public class BTFlowNode_Dynamic : BTFlowNodeBase
+public class BTFlowNodeDynamic : BTFlowNodeBase
 {
 
-    public override string TypeName => "BTFlowNode_Dynamic";
+    public override string TypeName => "BTFlowNodeDynamic";
     private bool planningCompleted = false;
 
     // Track if we've completed the first planning cycle
@@ -23,7 +23,7 @@ public class BTFlowNode_Dynamic : BTFlowNodeBase
 
     public override string DebugDisplayName { get; protected set; } = "DynamicFlowNode";
 
-    public BTFlowNode_Dynamic(
+    public BTFlowNodeDynamic(
         FastName nodeName,
         IBehaviorTree owningTree,
         SuccessCriteria successCriteria = SuccessCriteria.ALL,
@@ -35,19 +35,19 @@ public class BTFlowNode_Dynamic : BTFlowNodeBase
         DebugDisplayName = nodeName.ToString();
 
         // Track this flow node
-        LoggingService.TrackNodeStart(nodeName.ToString(), "BTFlowNode_Dynamic", System.DateTime.Now);
+        LoggingService.TrackNodeStart(nodeName.ToString(), "BTFlowNodeDynamic", System.DateTime.Now);
 
         // Track flow node initialization
         BehaviorTreeComponentLogger.TrackFlowNodeInitialization(this.GetType().Name);
 
         // Automatically add PlanningComplete decorator to dynamic flow nodes
-        AddDecorator(new BTDecorator_PlanningComplete());
-        LoggingService.LogInfo($"🔧 BTFlowNode_Dynamic: Added PlanningComplete decorator to {nodeName.ToString()}");
+        AddDecorator(new BTDecoratorPlanningComplete());
+        LoggingService.LogInfo($"🔧 BTFlowNodeDynamic: Added PlanningComplete decorator to {nodeName.ToString()}");
 
         // Add RetryOnFailure decorator: when all children finish but success criteria not met,
         // this post-processing decorator resets failed children and converts Failure → InProgress
-        AddDecorator(new BTDecorator_RetryOnFailure(this));
-        LoggingService.LogInfo($"🔧 BTFlowNode_Dynamic: Added RetryOnFailure decorator to {nodeName.ToString()}");
+        AddDecorator(new BTDecoratorRetryOnFailure(this));
+        LoggingService.LogInfo($"🔧 BTFlowNodeDynamic: Added RetryOnFailure decorator to {nodeName.ToString()}");
         
     }
 
@@ -65,7 +65,7 @@ public class BTFlowNode_Dynamic : BTFlowNodeBase
 
     protected override bool OnTick_NodeLogic(float inDeltaTime)
     {
-        LoggingService.LogInfo($"🚨 DEBUG: BTFlowNode_Dynamic.OnTick_NodeLogic called for {DebugDisplayName}");
+        LoggingService.LogInfo($"🚨 DEBUG: BTFlowNodeDynamic.OnTick_NodeLogic called for {DebugDisplayName}");
         LoggingService.LogInfo($"🔍 FlowNode: Current LastStatus: {status}");
         LoggingService.LogInfo($"🔍 FlowNode: HasChildren: {HasChildren}");
 
@@ -230,7 +230,7 @@ public class BTFlowNode_Dynamic : BTFlowNodeBase
     {
         // Increment tick counter
         tickCount++;
-        LoggingService.LogInfo($"🚨 DEBUG: BTFlowNode_Dynamic.OnTick_Children called for {DebugDisplayName} - Tick #{tickCount}");
+        LoggingService.LogInfo($"🚨 DEBUG: BTFlowNodeDynamic.OnTick_Children called for {DebugDisplayName} - Tick #{tickCount}");
         LoggingService.LogInfo($"🔍 FlowNode: Planning completed: {planningCompleted}");
         LoggingService.LogInfo($"🔍 FlowNode: ActionGraph exists: {actionGraph != null}");
         LoggingService.LogInfo($"🔍 FlowNode: Tick progress: {tickCount}/{MAX_TICKS_BEFORE_FAILURE} ({(MAX_TICKS_BEFORE_FAILURE - tickCount)} attempts remaining)");

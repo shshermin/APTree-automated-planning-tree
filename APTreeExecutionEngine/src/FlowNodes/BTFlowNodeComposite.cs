@@ -14,9 +14,9 @@ public enum CompositeTerminationPolicy
     StopAfterMaxAttempts        // Stop after N attempts/passes
 }
 
-public class BTFlowNode_Composite : BTFlowNodeBase
+public class BTFlowNodeComposite : BTFlowNodeBase
 {
-    public override string TypeName => "BTFlowNode_Composite";
+    public override string TypeName => "BTFlowNodeComposite";
 
 
     // List to store flow nodes (since NodeGraph is designed for action nodes)
@@ -28,7 +28,7 @@ public class BTFlowNode_Composite : BTFlowNodeBase
     public int MaxAttempts { get; set; } = 3;           // For StopAfterMaxAttempts policy
     private int currentAttempt = 0;                     // Track current attempt number
     
-    public BTFlowNode_Composite(
+    public BTFlowNodeComposite(
         FastName nodeName,
         IBehaviorTree owningTree,
         SuccessCriteria successCriteria = SuccessCriteria.ALL,
@@ -340,7 +340,7 @@ public class BTFlowNode_Composite : BTFlowNodeBase
     /// </summary>
     public void AddPlanningPhaseService()
     {
-        var planningPhaseService = new BTService_PlanningPhaseManager(OwningTree, this);
+        var planningPhaseService = new BTServicePlanningPhaseManager(OwningTree, this);
         AddService(planningPhaseService, false); // false = general service (runs during planning)
         LoggingService.LogInfo($"🔧 CompositeFlow: Added PlanningPhaseManager service to {DebugDisplayName}");
     }
@@ -368,7 +368,7 @@ public class BTFlowNode_Composite : BTFlowNodeBase
         
         foreach (var child in children)
         {
-            if (child is BTFlowNode_Dynamic dynamicNode)
+            if (child is BTFlowNodeDynamic dynamicNode)
             {
                 // Check if this dynamic node has a planning service
                 if (dynamicNode.PlanningService is PlanningService plannerService)
@@ -386,7 +386,7 @@ public class BTFlowNode_Composite : BTFlowNodeBase
                     return false; // No planning service means not ready
                 }
             }
-            else if (child is BTFlowNode_Composite childCompositeNode)
+            else if (child is BTFlowNodeComposite childCompositeNode)
             {
                 // Recursively check composite nodes
                 if (!childCompositeNode.AreAllPlanningServicesComplete())

@@ -48,7 +48,7 @@ app.MapGet("/api/catalog/flows", () =>
     Results.Ok(BuildNodeCatalog(typeof(BTFlowNodeBase), kind: "flow", typeLabel: "Flow")))
     .WithName("GetFlowCatalog");
 
-app.MapPost("/api/aptree/validate", async (AptreeValidateRequest request, IWebHostEnvironment env, CancellationToken ct) =>
+app.MapPost("/api/aptree/validate", async (APTreeValidateRequest request, IWebHostEnvironment env, CancellationToken ct) =>
 {
     if (string.IsNullOrWhiteSpace(request.ModelText))
     {
@@ -189,7 +189,7 @@ static string ToDisplayName(string rawName)
     if (string.IsNullOrWhiteSpace(rawName)) return rawName;
 
     // Strip common prefixes, then prettify.
-    var name = Regex.Replace(rawName, "^(BTDecorator_|BTService_|PlanningService_|BTFlowNode_|BTFLowNode_|Call)", "");
+    var name = Regex.Replace(rawName, "^(BTDecorator|BTService|PlanningService|BTFlowNode|Call)", "");
     name = name.Replace('_', ' ');
     name = Regex.Replace(name, @"(?<=[a-z0-9])([A-Z])", " $1");
     name = Regex.Replace(name, @"(?<=[A-Z])([A-Z][a-z])", " $1");
@@ -381,7 +381,7 @@ static async Task<ProcessResult> RunProcessAsync(string fileName, string argumen
     return new ProcessResult(process.ExitCode, stdout.ToString().Trim(), stderr.ToString().Trim());
 }
 
-record AptreeValidateRequest(
+record APTreeValidateRequest(
     string ModelText,
     string? InstancesText,
     string? JarPath

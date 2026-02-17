@@ -5,13 +5,13 @@ using BehaviorTreeMainProject.Log.Services;
 /// Decorator that ensures planning is completed before allowing node execution.
 /// This decorator checks the global PlanningPhase flag on the blackboard.
 /// </summary>
-public class BTDecorator_PlanningComplete : BTDecoratorBase
+public class BTDecoratorPlanningComplete : BTDecoratorBase
 {
 
     public override bool CanPostProcessTickResult => false;
     public override BTNodeResult PostProcessTickResult(BTNodeResult InResult) => InResult;
     
-    public BTDecorator_PlanningComplete() : base(false)
+    public BTDecoratorPlanningComplete() : base(false)
     {
     }
     

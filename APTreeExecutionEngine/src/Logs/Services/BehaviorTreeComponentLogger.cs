@@ -59,19 +59,19 @@ namespace BehaviorTreeMainProject.Log.Services
         private void InitializeComponentTracking()
         {
             // Initialize simplified flow node tracking
-            flowNodeStats["BTFlowNode_Dynamic"] = new FlowNodeStats();
-            flowNodeStats["BTFlowNode_Composite"] = new FlowNodeStats();
+            flowNodeStats["BTFlowNodeDynamic"] = new FlowNodeStats();
+            flowNodeStats["BTFlowNodeComposite"] = new FlowNodeStats();
             
             // Initialize decorator tracking
-            flowNodeStats["BTDecorator_PlanningComplete"] = new FlowNodeStats();
-            flowNodeStats["BTDecorator_DynamicPlanningComplete"] = new FlowNodeStats();
-            flowNodeStats["BTDecorator_LowestCostExecution"] = new FlowNodeStats();
+            flowNodeStats["BTDecoratorPlanningComplete"] = new FlowNodeStats();
+            flowNodeStats["BTDecoratorDynamicPlanningComplete"] = new FlowNodeStats();
+            flowNodeStats["BTDecoratorLowestCostExecution"] = new FlowNodeStats();
             
             // Initialize service tracking - use actual concrete service class names
             flowNodeStats["PDDLPlanningService"] = new FlowNodeStats();
             flowNodeStats["CallGOAPPlanner"] = new FlowNodeStats();
             flowNodeStats["CallSCPlanner"] = new FlowNodeStats();
-            flowNodeStats["BTService_PlanningPhaseManager"] = new FlowNodeStats();
+            flowNodeStats["BTServicePlanningPhaseManager"] = new FlowNodeStats();
             flowNodeStats["SubtreeInjectionService"] = new FlowNodeStats();
             
             // Initialize action tracking
@@ -81,11 +81,11 @@ namespace BehaviorTreeMainProject.Log.Services
             var components = new[] { 
                 "GenericBTAction", 
                 "SubtreesInjected", 
-                "DecoratorBTDecorator_DynamicPlanningComplete", 
-                "DecoratorBTDecorator_LowestCostExecution", 
-                "DecoratorBTDecorator_PlanningComplete", 
+                "DecoratorBTDecoratorDynamicPlanningComplete", 
+                "DecoratorBTDecoratorLowestCostExecution", 
+                "DecoratorBTDecoratorPlanningComplete", 
                 "ServicePDDLPlanningService", 
-                "ServiceBTService_PlanningPhaseManager", 
+                "ServiceBTServicePlanningPhaseManager", 
                 "ServiceSubtreeInjectionService",
                 "PDDLPlanningService"
             };
@@ -784,7 +784,7 @@ namespace BehaviorTreeMainProject.Log.Services
                 WriteLog("🔍 DEBUG: All tracked component keys in flowNodeStats:");
                 foreach (var kvp in flowNodeStats)
                 {
-                    if (kvp.Key.StartsWith("BTFlowNode_") || kvp.Key.StartsWith("BTDecorator_") || kvp.Key.StartsWith("BTService") || kvp.Key.StartsWith("Call") || kvp.Key == "SubtreeInjectionService" || kvp.Key == "GenericBTAction")
+                    if (kvp.Key.StartsWith("BTFlowNode") || kvp.Key.StartsWith("BTDecorator") || kvp.Key.StartsWith("BTService") || kvp.Key.StartsWith("Call") || kvp.Key == "SubtreeInjectionService" || kvp.Key == "GenericBTAction")
                     {
                         WriteLog($"   Key: '{kvp.Key}' -> AdditionCount: {kvp.Value.AdditionCount}");
                     }
@@ -795,7 +795,7 @@ namespace BehaviorTreeMainProject.Log.Services
                 foreach (var kvp in flowNodeStats)
                 {
                     var componentType = kvp.Key;
-                    if (componentType.StartsWith("BTFlowNode_") || componentType.StartsWith("BTDecorator_") || componentType.StartsWith("BTService") || componentType.StartsWith("Call") || componentType == "SubtreeInjectionService" || componentType == "GenericBTAction")
+                    if (componentType.StartsWith("BTFlowNode") || componentType.StartsWith("BTDecorator") || componentType.StartsWith("BTService") || componentType.StartsWith("Call") || componentType == "SubtreeInjectionService" || componentType == "GenericBTAction")
                     {
                         data[componentType] = kvp.Value.AdditionCount;
                         WriteLog($"🔍 DEBUG: Added {componentType} = {kvp.Value.AdditionCount} to data (from AdditionCount)");

@@ -6,24 +6,24 @@ using BehaviorTreeMainProject.Log.Services;
 /// This service runs during the planning phase and automatically switches to execution
 /// when all planning services have completed successfully.
 /// </summary>
-public class BTService_PlanningPhaseManager : BTServiceBase
+public class BTServicePlanningPhaseManager : BTServiceBase
 {
     public string DebugDisplayName { get; protected set; } = "PlanningPhaseManager";
 
-    public BTService_PlanningPhaseManager(IBehaviorTree InOwningTree, BTFlowNodeBase InOwningFlowNode) : base(InOwningTree)
+    public BTServicePlanningPhaseManager(IBehaviorTree InOwningTree, BTFlowNodeBase InOwningFlowNode) : base(InOwningTree)
     {
         AttachedNode = InOwningFlowNode;
     }
 
     public override bool OnEvaluate(float inDeltaTime)
     {
-        LoggingService.LogInfo($"🔧 BTService_PlanningPhaseManager.Tick: Starting tick...");
+        LoggingService.LogInfo($"🔧 BTServicePlanningPhaseManager.Tick: Starting tick...");
         
         // This service runs even during planning phase
-        LoggingService.LogInfo($"🔧 BTService_PlanningPhaseManager.Tick: Calling CheckAndSwitchToExecutionPhase()...");
+        LoggingService.LogInfo($"🔧 BTServicePlanningPhaseManager.Tick: Calling CheckAndSwitchToExecutionPhase()...");
         CheckAndSwitchToExecutionPhase();
         
-        LoggingService.LogInfo($"🔧 BTService_PlanningPhaseManager.Tick: Tick completed");
+        LoggingService.LogInfo($"🔧 BTServicePlanningPhaseManager.Tick: Tick completed");
         return true;
     }
     /// <summary>
@@ -69,13 +69,13 @@ public class BTService_PlanningPhaseManager : BTServiceBase
     private bool AreAllPlanningServicesComplete()
     {
         // Since this service is attached to a composite node, we can directly access it
-        if (AttachedNode is BTFlowNode_Composite compositeNode)
+        if (AttachedNode is BTFlowNodeComposite compositeNode)
         {
             var children = compositeNode.GetChildren();
             
             foreach (var child in children)
             {
-                if (child is BTFlowNode_Dynamic dynamicNode)
+                if (child is BTFlowNodeDynamic dynamicNode)
                 {
                     // Check if this dynamic node has a planning service
                     if (dynamicNode.PlanningService is PlanningService plannerService)
@@ -93,7 +93,7 @@ public class BTService_PlanningPhaseManager : BTServiceBase
                         return false; // No planning service means not ready
                     }
                 }
-                else if (child is BTFlowNode_Composite childCompositeNode)
+                else if (child is BTFlowNodeComposite childCompositeNode)
                 {
                     // Recursively check composite nodes
                     if (!childCompositeNode.AreAllPlanningServicesComplete())

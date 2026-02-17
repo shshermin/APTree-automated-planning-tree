@@ -5,11 +5,11 @@ using BehaviorTreeMainProject.Log.Services;
 /// Decorator that ensures dynamic planning is completed before allowing node execution.
 /// This decorator simply checks the PlanningPhaseDynamic flag on the blackboard.
 /// </summary>
-public class BTDecorator_DynamicPlanningComplete : BTDecoratorBase
+public class BTDecoratorDynamicPlanningComplete : BTDecoratorBase
 {
     public override bool CanPostProcessTickResult => false;
     public override BTNodeResult PostProcessTickResult(BTNodeResult InResult) => InResult;
-    public BTDecorator_DynamicPlanningComplete() : base(false)
+    public BTDecoratorDynamicPlanningComplete() : base(false)
     {
 
     }
@@ -137,7 +137,7 @@ public class BTDecorator_DynamicPlanningComplete : BTDecoratorBase
         if (node == null) return -1;
 
         // Check if this is a cassette flow node
-        if (node is BTFlowNode_Dynamic flowNode)
+        if (node is BTFlowNodeDynamic flowNode)
         {
             var nodeName = flowNode.GetNodeName().ToLower();
             if (nodeName.StartsWith("cassette"))
@@ -160,7 +160,7 @@ public class BTDecorator_DynamicPlanningComplete : BTDecoratorBase
         // If this node has children, recursively check them
         if (node.HasChildren)
         {
-            if (node is BTFlowNode_Composite compositeNode)
+            if (node is BTFlowNodeComposite compositeNode)
             {
                 var children = compositeNode.GetChildren();
                 foreach (var child in children)
@@ -169,7 +169,7 @@ public class BTDecorator_DynamicPlanningComplete : BTDecoratorBase
                     if (result >= 0) return result;
                 }
             }
-            else if (node is BTFlowNode_Dynamic dynamicNode)
+            else if (node is BTFlowNodeDynamic dynamicNode)
             {
                 var actionGraph = dynamicNode.GetActionGraph();
                 if (actionGraph != null)
@@ -199,7 +199,7 @@ public class BTDecorator_DynamicPlanningComplete : BTDecoratorBase
     /// <summary>
     /// Check if a flow node contains the given action.
     /// </summary>
-    private static bool ContainsAction(BTFlowNode_Dynamic flowNode, PActionNode targetAction)
+    private static bool ContainsAction(BTFlowNodeDynamic flowNode, PActionNode targetAction)
     {
         var actionGraph = flowNode.GetActionGraph();
         if (actionGraph != null)
@@ -236,7 +236,7 @@ public class BTDecorator_DynamicPlanningComplete : BTDecoratorBase
         {
             try
             {
-                var cassetteNode = LinkedBlackboard.GetFlowNode(new FastName(cassetteName)) as BTFlowNode_Dynamic;
+                var cassetteNode = LinkedBlackboard.GetFlowNode(new FastName(cassetteName)) as BTFlowNodeDynamic;
                 
                 if (cassetteNode != null)
                 {
