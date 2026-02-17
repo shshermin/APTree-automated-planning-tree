@@ -325,6 +325,19 @@ task runLiveMatSetupObjectsGenerator(type: JavaExec) {
     workingDir = projectDir
 }
 
+task generateBTModelJson(type: JavaExec) {
+    description = 'Parses APTree BT model and exports full tree structure as JSON for the C# execution engine'
+    dependsOn 'compileJava'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'BTInstanceJsonGenerator'
+    workingDir = projectDir
+    args = [
+        project.properties.get('btModel', 'src/test/resources/valid/behavior_trees/APTreeLiveMat.bt'),
+        project.properties.get('instances', 'src/test/resources/valid/CRFConcrete/LiveMatSetupObjects.bt'),
+        project.properties.get('outputName', 'target/BehaviorTreeModel.json')
+    ]
+}
+
 // Task to generate Class Diagram from grammar (shows AST structure)
 task generateASTClassDiagram(type: JavaExec) {
     dependsOn 'compileJava'
