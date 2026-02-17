@@ -1,2 +1,0 @@
-ActionInstance: MoveBase (goal=Kitchen, speed=0.5)
-ActionInstance: PickUp (object=Cup)
