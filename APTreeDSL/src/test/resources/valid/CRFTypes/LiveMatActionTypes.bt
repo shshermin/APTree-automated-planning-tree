@@ -69,7 +69,7 @@ Define Action StackHL {
 }
 
 // Robot stacks one bigger object on top of multiple objects
-Define Action StackonmultipleHL {
+Define Action StackOnMultipleHL {
     ActLevel: HighLevel
     Properties {
         plate: Element
@@ -90,7 +90,7 @@ Define Action StackonmultipleHL {
 }
 
 // Robot pours glue on top of an object
-Define Action GluingPLateHL {
+Define Action GluingPlateHL {
     ActLevel: HighLevel
     Properties {
         obj: Plate
@@ -144,5 +144,246 @@ Define Action NailingHL {
     }
     Effects {
         nailed(obj)
+    }
+}
+
+// ==================== ML (MidLevel) Actions ====================
+
+// Robot travels from one location to another
+Define Action TravelML {
+    ActLevel: MidLevel
+    Properties {
+        client: Robot
+        from: Location
+        to: Location
+    }
+    Preconditions {
+        atAgent(client, from)
+    }
+    Effects {
+        !atAgent(client, from)
+        atAgent(client, to)
+    }
+}
+
+// Robot equips the endeffector
+Define Action EquipeML {
+    ActLevel: MidLevel
+    Properties {
+        client: Robot
+        too: Tool
+        ep: EquipPosition
+    }
+    Preconditions {
+        atTool(too, ep)
+        !robotequipped(client)
+        !positionfree(ep)
+    }
+    Effects {
+        hasTool(client, too)
+        robotequipped(client)
+        positionfree(ep)
+        !atTool(too, ep)
+    }
+}
+
+// Robot puts the endeffector down
+Define Action DeequipML {
+    ActLevel: MidLevel
+    Properties {
+        client: Robot
+        too: Tool
+        ep: EquipPosition
+    }
+    Preconditions {
+        hasTool(client, too)
+        robotequipped(client)
+        positionfree(ep)
+        !atTool(too, ep)
+    }
+    Effects {
+        !robotequipped(client)
+        !hasTool(client, too)
+        !positionfree(ep)
+        atTool(too, ep)
+    }
+}
+
+// Robot turns on the tool
+Define Action InitializeML {
+    ActLevel: MidLevel
+    Properties {
+        client: Robot
+        too: Tool
+    }
+    Preconditions {
+        robotequipped(client)
+        hasTool(client, too)
+        !activeTool(too)
+    }
+    Effects {
+        activeTool(too)
+    }
+}
+
+// Robot turns off the tool
+Define Action CloseToolML {
+    ActLevel: MidLevel
+    Properties {
+        client: Robot
+        too: Tool
+    }
+    Preconditions {
+        activeTool(too)
+        vgempty(client)
+    }
+    Effects {
+        !activeTool(too)
+    }
+}
+
+// Robot picks up an object with vacuum gripper
+Define Action PickUpML {
+    ActLevel: MidLevel
+    Properties {
+        obj: Element
+        pos: FirstPos
+        client: Robot
+        vg: VacGripper
+    }
+    Preconditions {
+        hasTool(client, vg)
+        activeTool(vg)
+        atplace(obj, pos)
+        atAgent(client, pos)
+        vgempty(client)
+        !holding(client, obj)
+        clear(obj)
+    }
+    Effects {
+        holding(client, obj)
+        !atplace(obj, pos)
+        !vgempty(client)
+        !clear(obj)
+    }
+}
+
+// Robot places an object with vacuum gripper
+Define Action PlaceML {
+    ActLevel: MidLevel
+    Properties {
+        obj: Element
+        placepos: Location
+        client: Robot
+        vg: VacGripper
+    }
+    Preconditions {
+        !vgempty(client)
+        holding(client, obj)
+        atAgent(client, placepos)
+        activeTool(vg)
+        !clear(obj)
+        positionfree(placepos)
+    }
+    Effects {
+        atplace(obj, placepos)
+        !holding(client, obj)
+        vgempty(client)
+        clear(obj)
+        !positionfree(placepos)
+    }
+}
+
+// Robot glues an object
+Define Action GluingML {
+    ActLevel: MidLevel
+    Properties {
+        obj: Element
+        pos: PositionOnRail
+        client: Robot
+        gg: GlueGun
+    }
+    Preconditions {
+        atAgent(client, pos)
+        atplace(obj, pos)
+        clear(obj)
+        activeTool(gg)
+        !glued(obj)
+    }
+    Effects {
+        glued(obj)
+    }
+}
+
+// Robot nails an object
+Define Action NailingML {
+    ActLevel: MidLevel
+    Properties {
+        obj: Element
+        pos: PositionOnRail
+        client: Robot
+        ng: NailGripper
+    }
+    Preconditions {
+        atAgent(client, pos)
+        atplace(obj, pos)
+        activeTool(ng)
+        !nailed(obj)
+    }
+    Effects {
+        nailed(obj)
+    }
+}
+
+// Robot stacks one object on top of another
+Define Action StackML {
+    ActLevel: MidLevel
+    Properties {
+        obj1: Element
+        obj2: Element
+        client: Robot
+        vg: VacGripper
+        pr: PositionOnRail
+    }
+    Preconditions {
+        !vgempty(client)
+        holding(client, obj1)
+        atAgent(client, pr)
+        activeTool(vg)
+        atplace(obj2, pr)
+        !positionfree(pr)
+    }
+    Effects {
+        ontop(obj1, obj2)
+        !holding(client, obj1)
+        atplace(obj1, pr)
+        vgempty(client)
+        !clear(obj2)
+        clear(obj1)
+        stacked(obj1)
+    }
+}
+
+// Robot stacks one bigger object on top of multiple objects
+Define Action StackOnMultipleML {
+    ActLevel: MidLevel
+    Properties {
+        plate: Plate
+        client: Robot
+        pos: PositionOnRail
+        vg: VacGripper
+        mod: Cassette
+        lay: Stack
+    }
+    Preconditions {
+        holding(client, plate)
+        atAgent(client, pos)
+        activeTool(vg)
+        !atplace(plate, pos)
+    }
+    Effects {
+        atplace(plate, pos)
+        vgempty(client)
+        !clear(plate)
     }
 }

@@ -2,7 +2,7 @@ grammar CRFTypesCon extends CRFTypesDef, de.monticore.MCBasics {
 
 ////////// ?????? I am not sure why do we get errors if we dont include this world thing!
 @Override
-World = (PropertyTypeDefinition | Property | PredicateTypeDefinition | ActionTypeDefinition | Beam | Plate | FirstPos | Robot | VacGripper | Holding | AtPlace | AtTool | NailGripper | GlueGun | Stack | Cassette | PositionOnRail | EquipPosition | StackPosition | IsAt | AtAgent | HasTool | Clear | OnTop | AllSet | BelongsToLayer | BelongsToModule | PositionFree | Stacked | Glued | Nailed | VgEmpty)*;
+World = ( PropertyTypeDefinition | Property | PredicateTypeDefinition | ActionTypeDefinition | Beam | Plate | FirstPos | Robot | VacGripper | Holding | AtPlace | AtTool | NailGripper | GlueGun | Stack | Cassette | PositionOnRail | EquipPosition | StackPosition | IsAt | AtAgent | HasTool | Clear | OnTop | AllSet | BelongsToLayer | BelongsToModule | PositionFree | Stacked | Glued | Nailed | VgEmpty)*;
 
 // === GENERATED RULES (DO NOT EDIT BELOW) ===
 symbol Beam extends Element = "Beam" name:Name "(" loc:Name@Location ")";
@@ -41,11 +41,61 @@ AtTool extends Predicate = not:["!"]? "AtTool" "(" tool:Name@Tool loc:Name@Locat
 
 
 // === GENERATED ACTION RULES (DO NOT EDIT BELOW) ===
- PickUpHL extends PActionNode = "Action" "PickUpHL" name:Name "(" obj:Name@Element grabPos:Name@Location client:Name@Robot ")" ("{" (Decorator | Service)* "}")?  ("@" subtreeAnnotation:Name)?;
-  astrule PickUpHL = method public crftypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=crftypesdef._ast.ASTActionLevel.HIGHLEVEL; } return actLevel; } ;
+PickUpHL extends PActionNode = "Action" "PickUpHL" name:Name "(" obj:Name@Element grabPos:Name@Location client:Name@Robot ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
+astrule PickUpHL = method public crftypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=crftypesdef._ast.ASTActionLevel.HIGHLEVEL; } return actLevel; } ;
 
-  PlaceHL extends PActionNode = "Action" "PlaceHL" name:Name "(" obj:Name@Element targetPos:Name@Location client:Name@Robot ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
-  astrule PlaceHL = method public crftypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=crftypesdef._ast.ASTActionLevel.HIGHLEVEL; } return actLevel; } ;
+PlaceHL extends PActionNode = "Action" "PlaceHL" name:Name "(" obj:Name@Element placePos:Name@Location client:Name@Robot ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
+astrule PlaceHL = method public crftypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=crftypesdef._ast.ASTActionLevel.HIGHLEVEL; } return actLevel; } ;
+
+StackHL extends PActionNode = "Action" "StackHL" name:Name "(" obj1:Name@Element obj2:Name@Element client:Name@Robot pr:Name@Location lay:Name@Stack mod:Name@Cassette ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
+astrule StackHL = method public crftypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=crftypesdef._ast.ASTActionLevel.HIGHLEVEL; } return actLevel; } ;
+
+StackOnMultipleHL extends PActionNode = "Action" "StackOnMultipleHL" name:Name "(" plate:Name@Element client:Name@Robot pos:Name@Location mod:Name@Cassette lay:Name@Stack ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
+astrule StackOnMultipleHL = method public crftypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=crftypesdef._ast.ASTActionLevel.HIGHLEVEL; } return actLevel; } ;
+
+GluingPlateHL extends PActionNode = "Action" "GluingPlateHL" name:Name "(" obj:Name@Plate pos:Name@PositionOnRail client:Name@Robot ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
+astrule GluingPlateHL = method public crftypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=crftypesdef._ast.ASTActionLevel.HIGHLEVEL; } return actLevel; } ;
+
+GluingBeamHL extends PActionNode = "Action" "GluingBeamHL" name:Name "(" obj:Name@Beam pos:Name@PositionOnRail client:Name@Robot mod:Name@Cassette lay:Name@Stack ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
+astrule GluingBeamHL = method public crftypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=crftypesdef._ast.ASTActionLevel.HIGHLEVEL; } return actLevel; } ;
+
+NailingHL extends PActionNode = "Action" "NailingHL" name:Name "(" obj:Name@Element pos:Name@PositionOnRail client:Name@Robot ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
+astrule NailingHL = method public crftypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=crftypesdef._ast.ASTActionLevel.HIGHLEVEL; } return actLevel; } ;
+
+TravelML extends PActionNode = "Action" "TravelML" name:Name "(" client:Name@Robot from:Name@Location to:Name@Location ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
+astrule TravelML = method public crftypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=crftypesdef._ast.ASTActionLevel.MIDLEVEL; } return actLevel; } ;
+
+EquipeML extends PActionNode = "Action" "EquipeML" name:Name "(" client:Name@Robot too:Name@Tool ep:Name@EquipPosition ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
+astrule EquipeML = method public crftypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=crftypesdef._ast.ASTActionLevel.MIDLEVEL; } return actLevel; } ;
+
+DeequipML extends PActionNode = "Action" "DeequipML" name:Name "(" client:Name@Robot too:Name@Tool ep:Name@EquipPosition ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
+astrule DeequipML = method public crftypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=crftypesdef._ast.ASTActionLevel.MIDLEVEL; } return actLevel; } ;
+
+InitializeML extends PActionNode = "Action" "InitializeML" name:Name "(" client:Name@Robot too:Name@Tool ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
+astrule InitializeML = method public crftypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=crftypesdef._ast.ASTActionLevel.MIDLEVEL; } return actLevel; } ;
+
+CloseToolML extends PActionNode = "Action" "CloseToolML" name:Name "(" client:Name@Robot too:Name@Tool ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
+astrule CloseToolML = method public crftypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=crftypesdef._ast.ASTActionLevel.MIDLEVEL; } return actLevel; } ;
+
+PickUpML extends PActionNode = "Action" "PickUpML" name:Name "(" obj:Name@Element pos:Name@FirstPos client:Name@Robot vg:Name@VacGripper ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
+astrule PickUpML = method public crftypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=crftypesdef._ast.ASTActionLevel.MIDLEVEL; } return actLevel; } ;
+
+PlaceML extends PActionNode = "Action" "PlaceML" name:Name "(" obj:Name@Element placepos:Name@Location client:Name@Robot vg:Name@VacGripper ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
+astrule PlaceML = method public crftypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=crftypesdef._ast.ASTActionLevel.MIDLEVEL; } return actLevel; } ;
+
+GluingML extends PActionNode = "Action" "GluingML" name:Name "(" obj:Name@Element pos:Name@PositionOnRail client:Name@Robot gg:Name@GlueGun ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
+astrule GluingML = method public crftypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=crftypesdef._ast.ASTActionLevel.MIDLEVEL; } return actLevel; } ;
+
+NailingML extends PActionNode = "Action" "NailingML" name:Name "(" obj:Name@Element pos:Name@PositionOnRail client:Name@Robot ng:Name@NailGripper ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
+astrule NailingML = method public crftypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=crftypesdef._ast.ASTActionLevel.MIDLEVEL; } return actLevel; } ;
+
+StackML extends PActionNode = "Action" "StackML" name:Name "(" obj1:Name@Element obj2:Name@Element client:Name@Robot vg:Name@VacGripper pr:Name@PositionOnRail ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
+astrule StackML = method public crftypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=crftypesdef._ast.ASTActionLevel.MIDLEVEL; } return actLevel; } ;
+
+StackOnMultipleML extends PActionNode = "Action" "StackOnMultipleML" name:Name "(" plate:Name@Plate client:Name@Robot pos:Name@PositionOnRail vg:Name@VacGripper mod:Name@Cassette lay:Name@Stack ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
+astrule StackOnMultipleML = method public crftypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=crftypesdef._ast.ASTActionLevel.MIDLEVEL; } return actLevel; } ;
 // === END GENERATED ACTION RULES ===
+
+
 
 }

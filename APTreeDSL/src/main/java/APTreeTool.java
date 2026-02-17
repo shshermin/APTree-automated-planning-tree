@@ -29,8 +29,9 @@ import crftypesdef._cocos.CRFTypesDefASTPActionNodeCoCo;
 import crftypesdef._symboltable.ElementSymbol;
 import de.se_rwth.commons.logging.Log;
 import dynamicbtflownode.DynamicBTFlowNodeMill;
-import dynamicbtflownode._ast.ASTAPTree; 
+import dynamicbtflownode._ast.ASTAPTree;
 import dynamicbtflownode._ast.ASTDynamicBTFlowNodeNode;
+import dynamicbtflownode._ast.ASTFinalWorld;
 import dynamicbtflownode._ast.ASTGraphNode;
 import dynamicbtflownode._cocos.DynamicBTFlowNodeASTGraphNodeCoCo;
 import dynamicbtflownode._cocos.DynamicBTFlowNodeCoCoChecker;
@@ -69,7 +70,7 @@ public class APTreeTool {
     
     APTreeTool tool = new APTreeTool();
     // If an argument is given, use it as a file; otherwise, default to valid/behavior_trees
-    String filePath = args.length > 0 ? args[0] : "src/test/resources/valid/behavior_trees/APTree.bt";
+    String filePath = args.length > 0 ? args[0] : "src/test/resources/valid/behavior_trees/APTreeLivematFinal.bt";
     tool.run(filePath);
   }
 
@@ -80,7 +81,7 @@ public class APTreeTool {
     DynamicBTFlowNodeMill.init();
     
     // 2. Load concrete instances into symbol table FIRST
-    String instancesFile = "src/test/resources/valid/CRFConcrete/CRFConcreteInstances.bt";
+    String instancesFile = "src/test/resources/valid/CRFConcrete/LiveMatSetupObjects.bt";
     loadConcreteInstancesIntoGlobalScope(instancesFile);
     
     // 2.5. Export property instances to JSON right after loading symbols
@@ -93,11 +94,15 @@ public class APTreeTool {
     );
 
     try {
-        // 4. Parse tree
-        ASTAPTree ast = DynamicBTFlowNodeMill.parser().parseAPTree(modelFile)
+        // 4. Parse tree (FinalWorld supports multiple BehaviorTree blocks)
+        ASTFinalWorld world = DynamicBTFlowNodeMill.parser().parseFinalWorld(modelFile)
              .orElseThrow(() -> new RuntimeException("Parsing failed for file: " + modelFile));
+        if (world.getAPTreeList().isEmpty()) {
+            throw new RuntimeException("No BehaviorTree found in file: " + modelFile);
+        }
+        ASTAPTree ast = world.getAPTree(0);
              
-        System.out.println("[OK] SUCCESS: Syntactically parsed '" + ast.getName() + "'");
+        System.out.println("[OK] SUCCESS: Syntactically parsed '" + ast.getName() + "' (" + world.getAPTreeList().size() + " tree(s))");
     
         // 4.5. PRE-VALIDATION: Check all element references BEFORE symbol table creation
         List<String> validationErrors = validateElementReferences(ast);
@@ -115,7 +120,7 @@ public class APTreeTool {
         IDynamicBTFlowNodeGlobalScope gs = DynamicBTFlowNodeMill.globalScope();
         IDynamicBTFlowNodeArtifactScope as;
         
-        as = DynamicBTFlowNodeMill.scopesGenitorDelegator().createFromAST(ast);
+        as = DynamicBTFlowNodeMill.scopesGenitorDelegator().createFromAST(world);
         as.setEnclosingScope(gs);
         
         // 6. Run CoCo Checks
@@ -335,6 +340,10 @@ public class APTreeTool {
       
       // Create symbol table from instances AST
       var instanceScope = crftypescon.CRFTypesConMill.scopesGenitorDelegator().createFromAST(world);
+      
+      // Bridge: add the instance scope into the DynamicBTFlowNode global scope
+      // so that resolveElement() etc. can find Beam, Plate, Robot symbols
+      DynamicBTFlowNodeMill.globalScope().addSubScope(instanceScope);
       
       // Generic loading of all symbol types from the scope via Reflection
       // Captures ALL symbol types: Elements, Tools, Agents, Locations, and any user-defined types

@@ -16,6 +16,7 @@ import de.se_rwth.commons.logging.Log;
 import dynamicbtflownode.DynamicBTFlowNodeMill;
 import dynamicbtflownode._ast.ASTAPTree;
 import dynamicbtflownode._ast.ASTDynamicBTFlowNodeNode;
+import dynamicbtflownode._ast.ASTFinalWorld;
 import dynamicbtflownode._cocos.DynamicBTFlowNodeCoCoChecker;
 import dynamicbtflownode._symboltable.IDynamicBTFlowNodeArtifactScope;
 import dynamicbtflownode._symboltable.IDynamicBTFlowNodeGlobalScope;
@@ -92,12 +93,13 @@ public class APTreeJsonCli {
           new de.monticore.io.paths.MCPath(Paths.get("target", "symbols"))
       );
 
-      Optional<ASTAPTree> parsed = DynamicBTFlowNodeMill.parser().parseAPTree(modelFile);
-      if (parsed.isEmpty()) {
+      Optional<ASTFinalWorld> parsedWorld = DynamicBTFlowNodeMill.parser().parseFinalWorld(modelFile);
+      if (parsedWorld.isEmpty() || parsedWorld.get().getAPTreeList().isEmpty()) {
         return findingsJson(false, null, "Parsing failed", collectFindings());
       }
 
-      ASTAPTree ast = parsed.get();
+      ASTFinalWorld world = parsedWorld.get();
+      ASTAPTree ast = world.getAPTree(0);
 
       GraphExport graph = GraphExport.fromTree(ast);
 
@@ -109,7 +111,7 @@ public class APTreeJsonCli {
 
       // Symbol table creation
       IDynamicBTFlowNodeGlobalScope gs = DynamicBTFlowNodeMill.globalScope();
-      IDynamicBTFlowNodeArtifactScope as = DynamicBTFlowNodeMill.scopesGenitorDelegator().createFromAST(ast);
+      IDynamicBTFlowNodeArtifactScope as = DynamicBTFlowNodeMill.scopesGenitorDelegator().createFromAST(world);
       as.setEnclosingScope(gs);
 
       // CoCos

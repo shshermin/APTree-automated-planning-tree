@@ -1,5 +1,5 @@
 grammar DynamicBTFlowNode extends PlanningService {
-
+FinalWorld = (APTree)*;
    APTree extends BehaviorTree = "BehaviorTree" name:Name "{" "Root" root:FlowNode "}";
     // Dynamic BTflow node definition - separate node type with different keyword
     DynamicFlowNode extends FlowNode = 
