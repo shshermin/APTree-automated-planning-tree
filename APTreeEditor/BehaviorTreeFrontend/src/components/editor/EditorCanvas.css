@@ -105,6 +105,8 @@
   justify-content: center;
   min-width: 40px;
   padding: 4px 10px;
+  cursor: pointer;
+  appearance: none;
   border-radius: var(--radius-sm);
   border: 1px solid color-mix(in srgb, var(--border-muted) 60%, transparent);
   background: color-mix(in srgb, var(--surface-panel) 90%, transparent);
@@ -113,6 +115,11 @@
   font-weight: 600;
   line-height: 1;
   white-space: nowrap;
+}
+
+.canvas-node-pre-eff-box:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 .canvas-edge-label {
@@ -614,6 +621,11 @@
     transform var(--transition-fast);
 }
 
+.canvas-node-action-btn.is-compact {
+  width: fit-content;
+  align-self: flex-start;
+}
+
 .canvas-node-action-btn:hover {
   background: color-mix(in srgb, var(--accent) 20%, var(--surface-panel-alt) 80%);
   border-color: var(--accent);
@@ -623,6 +635,12 @@
 .canvas-node-action-btn:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
+}
+
+.canvas-node-action-btn.is-active {
+  background: color-mix(in srgb, var(--accent) 28%, var(--surface-panel-alt) 72%);
+  border-color: var(--accent);
+  color: var(--text-primary);
 }
 
 .canvas-node-parameterType {
@@ -694,6 +712,39 @@
 .canvas-node-flow .canvas-node-badge,
 .canvas-node-flow .canvas-node-state {
   display: none;
+}
+
+.canvas-node-flow-merged .canvas-node-label,
+.canvas-node-flow-merged .canvas-node-meta,
+.canvas-node-flow-merged .canvas-node-badge {
+  display: none;
+}
+
+.canvas-node-flow-merged-header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 6px 4px 2px;
+  text-align: center;
+}
+
+.canvas-node-flow-service {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: 0.02em;
+}
+
+.canvas-node-flow-divider {
+  height: 3px;
+  width: 100%;
+  background: color-mix(in srgb, var(--border-strong) 90%, transparent);
+}
+
+.canvas-node-flow-name {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
 }
 
 .canvas-node-flow .canvas-node-success {
@@ -900,12 +951,40 @@
   margin-top: 4px;
   padding-top: 4px;
   border-top: 1px solid color-mix(in srgb, var(--border-subtle) 80%, transparent);
-  max-height: 46vh;
-  overflow-y: auto;
 }
 
 .canvas-predicate-modal-body .canvas-node-state-group {
   margin-top: 4px;
+}
+
+.canvas-predicate-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.canvas-predicate-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 240px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.canvas-predicate-form-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.canvas-predicate-negate {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
 }
 
 

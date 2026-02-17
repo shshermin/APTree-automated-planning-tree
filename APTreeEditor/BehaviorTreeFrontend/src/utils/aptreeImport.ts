@@ -391,6 +391,7 @@ export function aptreeGraphToCanvasGraph(
   const ROOT_Y = -150; // Position root above the outer nodegraph
   const ROOT_TO_FLOW_GAP_Y = 220;
   const FLOW_TO_SUBTREE_GAP_Y = 120;
+  const SERVICE_FLOW_EXTRA_GAP_Y = 24;
   const TREE_GAP_X = 320; // Horizontal gap for plain BT (child-edge) layout
   const TREE_GAP_Y = 120; // Vertical gap for plain BT (child-edge) layout
   const SERVICE_OFFSET_Y = 55; // Service box offset above flow node
@@ -626,6 +627,8 @@ export function aptreeGraphToCanvasGraph(
       if (serviceCanvasNode) {
         serviceCanvasNode.x = baseX;
         serviceCanvasNode.y = flowY - SERVICE_OFFSET_Y;
+        flowCanvasNode.serviceLabel = serviceCanvasNode.typeLabel;
+        serviceCanvasNode.hidden = true;
       }
     }
 
@@ -685,7 +688,10 @@ export function aptreeGraphToCanvasGraph(
 
     // Calculate action positions - starting below the flow node
     const actionStartY =
-      flowY + FLOW_TO_SUBTREE_GAP_Y + Math.max(60, maxActionH * 0.4 + 20);
+      flowY +
+      FLOW_TO_SUBTREE_GAP_Y +
+      (hasService ? SERVICE_FLOW_EXTRA_GAP_Y : 0) +
+      Math.max(60, maxActionH * 0.4 + 20);
     const leftX = baseX - actionColGapX / 2;
     const rightX = baseX + actionColGapX / 2;
 
@@ -828,6 +834,8 @@ export function aptreeGraphToCanvasGraph(
       if (serviceCanvasNode) {
         serviceCanvasNode.x = subtreeCenterX;
         serviceCanvasNode.y = flowY - SERVICE_OFFSET_Y;
+        flowCanvasNode.serviceLabel = serviceCanvasNode.typeLabel;
+        serviceCanvasNode.hidden = true;
       }
     }
 
@@ -851,7 +859,7 @@ export function aptreeGraphToCanvasGraph(
     wrapperNodes.push(subtreeWrapper);
 
     // No extra planning-service wrapper; keep only nodegraph + per-action SubTreeInject wrappers
-    let serviceWrapperId: string | undefined;
+    const serviceWrapperId: string | undefined = undefined;
 
     flowInfo.set(flowId, {
       flowX: baseX,
@@ -1057,7 +1065,7 @@ export function aptreeGraphToCanvasGraph(
         const scid = canvasNodeIdByGraphId.get(sid);
         if (scid) {
           const sn = canvasNodeById.get(scid);
-          if (sn) {
+          if (sn && !sn.hidden) {
             allBounds.push(nodeBounds(sn));
           }
         }
