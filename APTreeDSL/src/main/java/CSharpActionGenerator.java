@@ -16,7 +16,7 @@ import de.se_rwth.commons.logging.Log;
  * Generates C# classes from MontiCore Action Type Definitions (.bt files).
  *
  * Usage:
- *   java CSharpActionGenerator <input-bt-file> <output-csharp-dir>
+ *   java CSharpActionGenerator {@code <input-bt-file> <output-csharp-dir>}
  */
 public class CSharpActionGenerator {
 

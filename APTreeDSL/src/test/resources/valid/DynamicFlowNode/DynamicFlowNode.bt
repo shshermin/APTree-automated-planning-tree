@@ -1,5 +1,5 @@
 DynamicFlowNode MyFlowNode {
-    PlanningService myservice
+    ServicePlanning myservice
     CompositionOperator ALL
     Nodegraph mygraph {
         Action PickUpHL mypickup (beam1 position1 robot1)

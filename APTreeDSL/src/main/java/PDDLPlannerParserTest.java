@@ -2,7 +2,7 @@ import java.io.File;
 import java.util.Optional;
 
 import planningservice.PlanningServiceMill;
-import planningservice._ast.ASTPDDLPlannerService;
+import planningservice._ast.ASTServicePDDLPlanner;
 import planningservice._ast.ASTPWorld;
 import planningservice._parser.PlanningServiceParser;
 
@@ -62,7 +62,7 @@ public class PDDLPlannerParserTest {
     /**
      * Display the parsed PDDLPlannerService
      */
-    public static void displayPlannerService(ASTPDDLPlannerService plannerService) {
+    public static void displayPlannerService(ASTServicePDDLPlanner plannerService) {
         System.out.println("========================================");
         System.out.println("PDDL PLANNER SERVICE");
         System.out.println("========================================\n");

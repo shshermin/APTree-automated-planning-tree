@@ -5,7 +5,7 @@ BehaviorTree APTree {
         AllFlow
         NodeGraph {    
             FlowNode  HandlePlate {
-                PlanningService MyPlannerSrv1 Enhsp1 
+                ServicePlanning MyPlannerSrv1 Enhsp1 
                 All
                 AllAction
                 NodeGraph {
@@ -16,7 +16,7 @@ BehaviorTree APTree {
                 }
             } 
             FlowNode BeamPlacement {
-                PlanningService MyPlannerSrv2 Enhsp1 
+                ServicePlanning MyPlannerSrv2 Enhsp1 
                 All
                 AllAction
                 NodeGraph {

@@ -16,7 +16,7 @@ import java.util.Optional;
  * Generates C# classes from MontiCore Property Type Definitions (.bt files).
  *
  * Usage:
- *   java CSharopCodeGenerator <input-bt-file> <output-csharp-dir>
+ *   java CSharopCodeGenerator {@code <input-bt-file> <output-csharp-dir>}
  */
 public class CSharopCodeGenerator {
 

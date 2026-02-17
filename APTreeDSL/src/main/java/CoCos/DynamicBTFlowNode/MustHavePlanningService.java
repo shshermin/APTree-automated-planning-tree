@@ -6,7 +6,7 @@ import behaviortree._ast.ASTService;
 import de.se_rwth.commons.logging.Log;
 import dynamicbtflownode._ast.ASTDynamicFlowNode;
 import dynamicbtflownode._cocos.DynamicBTFlowNodeASTDynamicFlowNodeCoCo;
-import planningservice._ast.ASTPService;
+import planningservice._ast.ASTServicePlanning;
 
 /**
  * CoCo: Every Dynamic FlowNode must declare at least one PlanningService.
@@ -26,7 +26,7 @@ public class MustHavePlanningService implements DynamicBTFlowNodeASTDynamicFlowN
     }
 
     boolean hasPlanningService = services.stream()
-        .anyMatch(s -> s instanceof ASTPService);
+        .anyMatch(s -> s instanceof ASTServicePlanning);
 
     if (!hasPlanningService) {
       Log.error(

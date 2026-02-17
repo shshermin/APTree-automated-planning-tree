@@ -16,7 +16,7 @@ import de.se_rwth.commons.logging.Log;
  * Generates C# classes from MontiCore Predicate Type Definitions (.bt files).
  *
  * Usage:
- *   java CSharpPredicateGenerator <input-bt-file> <output-csharp-dir>
+ *   java CSharpPredicateGenerator {@code <input-bt-file> <output-csharp-dir>}
  */
 public class CSharpPredicateGenerator {
 
