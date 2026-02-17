@@ -1,6 +1,6 @@
 using System;
 
-public class Agent : Entity
+public class Agent : CustomProperty
 {
     public FastName NameKey { get; set; }
     public DateTime LastModified { get; set; }
@@ -11,7 +11,7 @@ public class Agent : Entity
     // Tool attribute for the agent
     public Tool Tool { get; set; }
 
-    // Empty constructor - required by Entity
+    // Empty constructor - required by CustomProperty
     public Agent() : base()
     {
         BaseType = new FastName("Agent");

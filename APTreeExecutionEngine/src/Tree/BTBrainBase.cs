@@ -3,10 +3,10 @@ using System.Security.Cryptography.X509Certificates;
 public abstract class BTBrainBase : IBTBrain
 {
     public Blackboard<FastName> LinkedBlackboard { get; protected set; }
-    public IBehaviorTree LinkedBehaviourTree { get; protected set; } = new BehaviorTreeInstance();
+    public IBehaviorTree LinkedBehaviourTree { get; protected set; } = new BehaviorTree();
     private DateTime lastUpdateTime = DateTime.Now;
    
-    public Entity self { get; protected set; }
+    public CustomProperty self { get; protected set; }
     public void Start()
     {
         //setting things on the blackboard

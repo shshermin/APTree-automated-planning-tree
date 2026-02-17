@@ -7,7 +7,7 @@ namespace BehaviorTreeMainProject.Log.Services
 {
     public class LoggingService : BaseLogger
     {
-        private static LoggingService instance;
+        private static LoggingService? instance;
         private static readonly object lockObject = new object();
         
         // Node tracking statistics
@@ -37,7 +37,7 @@ namespace BehaviorTreeMainProject.Log.Services
 
         private LoggingService() { }
 
-        public static void Initialize(string serviceName, bool enableConsole = true, bool enableFile = true)
+        public new static void Initialize(string serviceName, bool enableConsole = true, bool enableFile = true)
         {
             var logger = Instance;
             logger.InitializeInternal(serviceName, enableConsole, enableFile);
@@ -220,7 +220,7 @@ namespace BehaviorTreeMainProject.Log.Services
             WriteSectionHeader("END OF SUMMARY REPORT");
         }
 
-        public static void Close()
+        public new static void Close()
         {
             Instance.CloseInternal();
         }

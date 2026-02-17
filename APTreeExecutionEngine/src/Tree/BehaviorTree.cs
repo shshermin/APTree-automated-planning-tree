@@ -1,12 +1,12 @@
-public class BehaviorTreeInstance : IBehaviorTree
+public class BehaviorTree : IBehaviorTree
 {
     public string DebugDisplayName { get; set; } = "Behavior Tree";
 
     public Blackboard<FastName> linkedBlackboard { get; protected set; }
 
-    public BTFlowNodeBase root { get;  set; }
+    public FlowNode root { get;  set; }
 
-    public BehaviorTreeInstance()
+    public BehaviorTree()
     {
         DebugDisplayName = "Default Tree";
         linkedBlackboard = null;
@@ -32,7 +32,7 @@ public class BehaviorTreeInstance : IBehaviorTree
         // Set the tree for all services that don't have it set yet
         InNode.SetTreeForAllServices(this);
         
-        // If this is a GenericBTAction, also set the tree for its SubtreeInjectionService
+        // If this is a GenericBTAction, also set the tree for its ServiceSubtreeInject
         if (InNode is PActionNode action)
         {
             action.SetTreeForSubtreeInjectionService(this);

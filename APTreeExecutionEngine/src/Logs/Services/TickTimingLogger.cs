@@ -11,7 +11,7 @@ namespace BehaviorTreeMainProject.Log.Services
     /// </summary>
     public class TickTimingLogger : BaseLogger
     {
-        private static TickTimingLogger instance;
+        private static TickTimingLogger? instance;
         private static readonly object lockObject = new object();
 
         // Tick timing statistics by node type
@@ -46,12 +46,12 @@ namespace BehaviorTreeMainProject.Log.Services
         /// <summary>
         /// Track tick timing for a node that completed the full tick cycle
         /// </summary>
-        public static void TrackTickTiming(BTNodeBase node)
+        public static void TrackTickTiming(BTNode node)
         {
             Instance.TrackTickTimingInternal(node);
         }
 
-        private void TrackTickTimingInternal(BTNodeBase node)
+        private void TrackTickTimingInternal(BTNode node)
         {
             lock (lockObject)
             {
@@ -193,7 +193,7 @@ namespace BehaviorTreeMainProject.Log.Services
         /// <summary>
         /// Get the node type for categorization with planner-specific details
         /// </summary>
-        private string GetNodeType(BTNodeBase node)
+        private string GetNodeType(BTNode node)
         {
             string typeName = node.TypeName;
 
@@ -202,16 +202,16 @@ namespace BehaviorTreeMainProject.Log.Services
                 return "GenericBTAction";
             else if (typeName.Contains("BTFlowNodeComposite"))
                 return "BTFlowNodeComposite";
-            else if (typeName.Contains("BTFlowNodeDynamic"))
+            else if (typeName.Contains("DynamicFlowNode"))
             {
                 // For dynamic flow nodes, try to determine the planner type
                 try
                 {
-                    var flowNode = node as BTFlowNodeDynamic;
-                    if (flowNode?.PlanningService?.planningRequest != null)
+                    var flowNode = node as DynamicFlowNode;
+                    if (flowNode?.ServicePlanning?.planningRequest != null)
                     {
-                        var plannerType = flowNode.PlanningService.CurrentPlanner?.DefaultPlannerName
-                            ?? flowNode.PlanningService.planningRequest.PlanningType;
+                        var plannerType = flowNode.ServicePlanning.CurrentPlanner?.DefaultPlannerName
+                            ?? flowNode.ServicePlanning.planningRequest.PlanningType;
                         return $"BTFlowNodeDynamic_{plannerType}";
                     }
                 }

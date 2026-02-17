@@ -6,7 +6,7 @@ namespace ModelLoader.ParameterTypes
     public class PositionOnRail : Location
     {
 
-        // Empty constructor - required by Entity
+        // Empty constructor - required by CustomProperty
         public PositionOnRail() : base()
         {
             BaseType = new FastName("Location");

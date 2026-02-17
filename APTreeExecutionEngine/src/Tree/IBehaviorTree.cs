@@ -3,7 +3,7 @@ public interface IBehaviorTree
 {
    
     Blackboard<FastName> linkedBlackboard{ get; }
-    BTFlowNodeBase root{ get; }
+    FlowNode root{ get; }
 
     // function for initializing a tree
     void Initialise( Blackboard<FastName> InBlackboard, string InRootNodeName = "Root");

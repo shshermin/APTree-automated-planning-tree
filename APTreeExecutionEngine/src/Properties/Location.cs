@@ -1,14 +1,13 @@
 using System;
 using System.Collections.Generic;
 
-public abstract class Location : Entity  {
+public abstract class Location : CustomProperty  {
     public FastName NameKey { get; set; }
     public DateTime LastModified { get; set; }
     public string ID { get; set; }
     public FastName TypeName { get; set; }
     public override FastName BaseType { get; set; }
-    public Coordinate coordinate { get; set; }
-    // Empty constructor - required by Entity
+    // Empty constructor - required by CustomProperty
     protected Location() : base()
     {
         BaseType = new FastName("Location");

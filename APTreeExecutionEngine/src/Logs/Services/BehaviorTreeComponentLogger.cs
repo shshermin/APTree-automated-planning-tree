@@ -59,7 +59,7 @@ namespace BehaviorTreeMainProject.Log.Services
         private void InitializeComponentTracking()
         {
             // Initialize simplified flow node tracking
-            flowNodeStats["BTFlowNodeDynamic"] = new FlowNodeStats();
+            flowNodeStats["DynamicFlowNode"] = new FlowNodeStats();
             flowNodeStats["BTFlowNodeComposite"] = new FlowNodeStats();
             
             // Initialize decorator tracking
@@ -68,11 +68,11 @@ namespace BehaviorTreeMainProject.Log.Services
             flowNodeStats["BTDecoratorLowestCostExecution"] = new FlowNodeStats();
             
             // Initialize service tracking - use actual concrete service class names
-            flowNodeStats["PDDLPlanningService"] = new FlowNodeStats();
+            flowNodeStats["ServicePDDLPlanning"] = new FlowNodeStats();
             flowNodeStats["CallGOAPPlanner"] = new FlowNodeStats();
             flowNodeStats["CallSCPlanner"] = new FlowNodeStats();
-            flowNodeStats["BTServicePlanningPhaseManager"] = new FlowNodeStats();
-            flowNodeStats["SubtreeInjectionService"] = new FlowNodeStats();
+            flowNodeStats["ServicePlanningPhaseManager"] = new FlowNodeStats();
+            flowNodeStats["ServiceSubtreeInject"] = new FlowNodeStats();
             
             // Initialize action tracking
             flowNodeStats["GenericBTAction"] = new FlowNodeStats();
@@ -87,7 +87,7 @@ namespace BehaviorTreeMainProject.Log.Services
                 "ServicePDDLPlanningService", 
                 "ServiceBTServicePlanningPhaseManager", 
                 "ServiceSubtreeInjectionService",
-                "PDDLPlanningService"
+                "ServicePDDLPlanning"
             };
             
             foreach (var component in components)
@@ -242,15 +242,26 @@ namespace BehaviorTreeMainProject.Log.Services
             Instance.TrackComponentExecutionInternal(componentType, instanceName, success, childCount);
         }
 
+        /// <summary>
+        /// Ensures a FlowNodeStats entry exists for the given key, auto-registering unknown types.
+        /// Must be called while holding lockObject.
+        /// </summary>
+        private FlowNodeStats EnsureFlowNodeStats(string key)
+        {
+            if (!flowNodeStats.ContainsKey(key))
+            {
+                flowNodeStats[key] = new FlowNodeStats();
+            }
+            return flowNodeStats[key];
+        }
+
         private void TrackFlowNodeTickInternal(string flowNodeType)
         {
             lock (lockObject)
             {
-                if (flowNodeStats.ContainsKey(flowNodeType))
-                {
-                    flowNodeStats[flowNodeType].TickCount++;
-                    WriteLog($"📊 Flow Node Tick: {flowNodeType} - Total ticks: {flowNodeStats[flowNodeType].TickCount}");
-                }
+                var stats = EnsureFlowNodeStats(flowNodeType);
+                stats.TickCount++;
+                WriteLog($"📊 Flow Node Tick: {flowNodeType} - Total ticks: {stats.TickCount}");
             }
         }
 
@@ -258,11 +269,9 @@ namespace BehaviorTreeMainProject.Log.Services
         {
             lock (lockObject)
             {
-                if (flowNodeStats.ContainsKey(flowNodeType))
-                {
-                    flowNodeStats[flowNodeType].SuccessCount++;
-                    WriteLog($"✅ Flow Node Success: {flowNodeType} - Total successes: {flowNodeStats[flowNodeType].SuccessCount}");
-                }
+                var stats = EnsureFlowNodeStats(flowNodeType);
+                stats.SuccessCount++;
+                WriteLog($"✅ Flow Node Success: {flowNodeType} - Total successes: {stats.SuccessCount}");
             }
         }
 
@@ -270,11 +279,9 @@ namespace BehaviorTreeMainProject.Log.Services
         {
             lock (lockObject)
             {
-                if (flowNodeStats.ContainsKey(flowNodeType))
-                {
-                    flowNodeStats[flowNodeType].FailureCount++;
-                    WriteLog($"❌ Flow Node Failure: {flowNodeType} - Total failures: {flowNodeStats[flowNodeType].FailureCount}");
-                }
+                var stats = EnsureFlowNodeStats(flowNodeType);
+                stats.FailureCount++;
+                WriteLog($"❌ Flow Node Failure: {flowNodeType} - Total failures: {stats.FailureCount}");
             }
         }
 
@@ -282,11 +289,9 @@ namespace BehaviorTreeMainProject.Log.Services
         {
             lock (lockObject)
             {
-                if (flowNodeStats.ContainsKey(decoratorType))
-                {
-                    flowNodeStats[decoratorType].TickCount++;
-                    WriteLog($"📊 Decorator Tick: {decoratorType} - Total ticks: {flowNodeStats[decoratorType].TickCount}");
-                }
+                var stats = EnsureFlowNodeStats(decoratorType);
+                stats.TickCount++;
+                WriteLog($"📊 Decorator Tick: {decoratorType} - Total ticks: {stats.TickCount}");
             }
         }
 
@@ -294,11 +299,9 @@ namespace BehaviorTreeMainProject.Log.Services
         {
             lock (lockObject)
             {
-                if (flowNodeStats.ContainsKey(decoratorType))
-                {
-                    flowNodeStats[decoratorType].SuccessCount++;
-                    WriteLog($"✅ Decorator Success: {decoratorType} - Total successes: {flowNodeStats[decoratorType].SuccessCount}");
-                }
+                var stats = EnsureFlowNodeStats(decoratorType);
+                stats.SuccessCount++;
+                WriteLog($"✅ Decorator Success: {decoratorType} - Total successes: {stats.SuccessCount}");
             }
         }
 
@@ -306,11 +309,9 @@ namespace BehaviorTreeMainProject.Log.Services
         {
             lock (lockObject)
             {
-                if (flowNodeStats.ContainsKey(decoratorType))
-                {
-                    flowNodeStats[decoratorType].FailureCount++;
-                    WriteLog($"❌ Decorator Failure: {decoratorType} - Total failures: {flowNodeStats[decoratorType].FailureCount}");
-                }
+                var stats = EnsureFlowNodeStats(decoratorType);
+                stats.FailureCount++;
+                WriteLog($"❌ Decorator Failure: {decoratorType} - Total failures: {stats.FailureCount}");
             }
         }
 
@@ -318,11 +319,9 @@ namespace BehaviorTreeMainProject.Log.Services
         {
             lock (lockObject)
             {
-                if (flowNodeStats.ContainsKey(serviceType))
-                {
-                    flowNodeStats[serviceType].TickCount++;
-                    WriteLog($"📊 Service Tick: {serviceType} - Total ticks: {flowNodeStats[serviceType].TickCount}");
-                }
+                var stats = EnsureFlowNodeStats(serviceType);
+                stats.TickCount++;
+                WriteLog($"📊 Service Tick: {serviceType} - Total ticks: {stats.TickCount}");
             }
         }
 
@@ -330,11 +329,9 @@ namespace BehaviorTreeMainProject.Log.Services
         {
             lock (lockObject)
             {
-                if (flowNodeStats.ContainsKey(serviceType))
-                {
-                    flowNodeStats[serviceType].SuccessCount++;
-                    WriteLog($"✅ Service Success: {serviceType} - Total successes: {flowNodeStats[serviceType].SuccessCount}");
-                }
+                var stats = EnsureFlowNodeStats(serviceType);
+                stats.SuccessCount++;
+                WriteLog($"✅ Service Success: {serviceType} - Total successes: {stats.SuccessCount}");
             }
         }
 
@@ -342,11 +339,9 @@ namespace BehaviorTreeMainProject.Log.Services
         {
             lock (lockObject)
             {
-                if (flowNodeStats.ContainsKey(serviceType))
-                {
-                    flowNodeStats[serviceType].FailureCount++;
-                    WriteLog($"❌ Service Failure: {serviceType} - Total failures: {flowNodeStats[serviceType].FailureCount}");
-                }
+                var stats = EnsureFlowNodeStats(serviceType);
+                stats.FailureCount++;
+                WriteLog($"❌ Service Failure: {serviceType} - Total failures: {stats.FailureCount}");
             }
         }
 
@@ -354,11 +349,9 @@ namespace BehaviorTreeMainProject.Log.Services
         {
             lock (lockObject)
             {
-                if (flowNodeStats.ContainsKey(flowNodeType))
-                {
-                    flowNodeStats[flowNodeType].AdditionCount++;
-                    WriteLog($"➕ Flow Node Addition: {flowNodeType} - Total additions: {flowNodeStats[flowNodeType].AdditionCount}");
-                }
+                var stats = EnsureFlowNodeStats(flowNodeType);
+                stats.AdditionCount++;
+                WriteLog($"➕ Flow Node Addition: {flowNodeType} - Total additions: {stats.AdditionCount}");
             }
         }
 
@@ -366,11 +359,9 @@ namespace BehaviorTreeMainProject.Log.Services
         {
             lock (lockObject)
             {
-                if (flowNodeStats.ContainsKey(flowNodeType))
-                {
-                    flowNodeStats[flowNodeType].AdditionCount++;
-                    WriteLog($"🏗️ Flow Node Initialization: {flowNodeType} - Total initializations: {flowNodeStats[flowNodeType].AdditionCount}");
-                }
+                var stats = EnsureFlowNodeStats(flowNodeType);
+                stats.AdditionCount++;
+                WriteLog($"🏗️ Flow Node Initialization: {flowNodeType} - Total initializations: {stats.AdditionCount}");
             }
         }
 
@@ -378,11 +369,9 @@ namespace BehaviorTreeMainProject.Log.Services
         {
             lock (lockObject)
             {
-                if (flowNodeStats.ContainsKey(serviceType))
-                {
-                    flowNodeStats[serviceType].AdditionCount++;
-                    WriteLog($"➕ Service Addition: {serviceType} - Total additions: {flowNodeStats[serviceType].AdditionCount}");
-                }
+                var stats = EnsureFlowNodeStats(serviceType);
+                stats.AdditionCount++;
+                WriteLog($"➕ Service Addition: {serviceType} - Total additions: {stats.AdditionCount}");
             }
         }
 
@@ -390,11 +379,9 @@ namespace BehaviorTreeMainProject.Log.Services
         {
             lock (lockObject)
             {
-                if (flowNodeStats.ContainsKey(decoratorType))
-                {
-                    flowNodeStats[decoratorType].AdditionCount++;
-                    WriteLog($"➕ Decorator Addition: {decoratorType} - Total additions: {flowNodeStats[decoratorType].AdditionCount}");
-                }
+                var stats = EnsureFlowNodeStats(decoratorType);
+                stats.AdditionCount++;
+                WriteLog($"➕ Decorator Addition: {decoratorType} - Total additions: {stats.AdditionCount}");
             }
         }
 
@@ -402,11 +389,9 @@ namespace BehaviorTreeMainProject.Log.Services
         {
             lock (lockObject)
             {
-                if (flowNodeStats.ContainsKey(actionType))
-                {
-                    flowNodeStats[actionType].TickCount++;
-                    WriteLog($"📊 Action Tick: {actionType} - Total ticks: {flowNodeStats[actionType].TickCount}");
-                }
+                var stats = EnsureFlowNodeStats(actionType);
+                stats.TickCount++;
+                WriteLog($"📊 Action Tick: {actionType} - Total ticks: {stats.TickCount}");
             }
         }
 
@@ -414,11 +399,9 @@ namespace BehaviorTreeMainProject.Log.Services
         {
             lock (lockObject)
             {
-                if (flowNodeStats.ContainsKey(actionType))
-                {
-                    flowNodeStats[actionType].SuccessCount++;
-                    WriteLog($"✅ Action Success: {actionType} - Total successes: {flowNodeStats[actionType].SuccessCount}");
-                }
+                var stats = EnsureFlowNodeStats(actionType);
+                stats.SuccessCount++;
+                WriteLog($"✅ Action Success: {actionType} - Total successes: {stats.SuccessCount}");
             }
         }
 
@@ -426,11 +409,9 @@ namespace BehaviorTreeMainProject.Log.Services
         {
             lock (lockObject)
             {
-                if (flowNodeStats.ContainsKey(actionType))
-                {
-                    flowNodeStats[actionType].FailureCount++;
-                    WriteLog($"❌ Action Failure: {actionType} - Total failures: {flowNodeStats[actionType].FailureCount}");
-                }
+                var stats = EnsureFlowNodeStats(actionType);
+                stats.FailureCount++;
+                WriteLog($"❌ Action Failure: {actionType} - Total failures: {stats.FailureCount}");
             }
         }
 
@@ -438,11 +419,9 @@ namespace BehaviorTreeMainProject.Log.Services
         {
             lock (lockObject)
             {
-                if (flowNodeStats.ContainsKey(actionType))
-                {
-                    flowNodeStats[actionType].AdditionCount++;
-                    WriteLog($"➕ Action Addition: {actionType} - Total additions: {flowNodeStats[actionType].AdditionCount}");
-                }
+                var stats = EnsureFlowNodeStats(actionType);
+                stats.AdditionCount++;
+                WriteLog($"➕ Action Addition: {actionType} - Total additions: {stats.AdditionCount}");
             }
         }
 
@@ -784,7 +763,7 @@ namespace BehaviorTreeMainProject.Log.Services
                 WriteLog("🔍 DEBUG: All tracked component keys in flowNodeStats:");
                 foreach (var kvp in flowNodeStats)
                 {
-                    if (kvp.Key.StartsWith("BTFlowNode") || kvp.Key.StartsWith("BTDecorator") || kvp.Key.StartsWith("BTService") || kvp.Key.StartsWith("Call") || kvp.Key == "SubtreeInjectionService" || kvp.Key == "GenericBTAction")
+                    if (kvp.Key.StartsWith("BTFlowNode") || kvp.Key.StartsWith("BTDecorator") || kvp.Key.StartsWith("BTService") || kvp.Key.StartsWith("Call") || kvp.Key == "ServiceSubtreeInject" || kvp.Key == "GenericBTAction")
                     {
                         WriteLog($"   Key: '{kvp.Key}' -> AdditionCount: {kvp.Value.AdditionCount}");
                     }
@@ -795,7 +774,7 @@ namespace BehaviorTreeMainProject.Log.Services
                 foreach (var kvp in flowNodeStats)
                 {
                     var componentType = kvp.Key;
-                    if (componentType.StartsWith("BTFlowNode") || componentType.StartsWith("BTDecorator") || componentType.StartsWith("BTService") || componentType.StartsWith("Call") || componentType == "SubtreeInjectionService" || componentType == "GenericBTAction")
+                    if (componentType.StartsWith("BTFlowNode") || componentType.StartsWith("BTDecorator") || componentType.StartsWith("BTService") || componentType.StartsWith("Call") || componentType == "ServiceSubtreeInject" || componentType == "GenericBTAction")
                     {
                         data[componentType] = kvp.Value.AdditionCount;
                         WriteLog($"🔍 DEBUG: Added {componentType} = {kvp.Value.AdditionCount} to data (from AdditionCount)");

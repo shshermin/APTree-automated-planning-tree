@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using BehaviorTreeMainProject.Log.Services;
 
-public class BTFlowNodeDynamic : BTFlowNodeBase
+public class DynamicFlowNode : FlowNode
 {
 
-    public override string TypeName => "BTFlowNodeDynamic";
+    public override string TypeName => "DynamicFlowNode";
     private bool planningCompleted = false;
 
     // Track if we've completed the first planning cycle
@@ -23,7 +23,7 @@ public class BTFlowNodeDynamic : BTFlowNodeBase
 
     public override string DebugDisplayName { get; protected set; } = "DynamicFlowNode";
 
-    public BTFlowNodeDynamic(
+    public DynamicFlowNode(
         FastName nodeName,
         IBehaviorTree owningTree,
         SuccessCriteria successCriteria = SuccessCriteria.ALL,
@@ -35,19 +35,19 @@ public class BTFlowNodeDynamic : BTFlowNodeBase
         DebugDisplayName = nodeName.ToString();
 
         // Track this flow node
-        LoggingService.TrackNodeStart(nodeName.ToString(), "BTFlowNodeDynamic", System.DateTime.Now);
+        LoggingService.TrackNodeStart(nodeName.ToString(), "DynamicFlowNode", System.DateTime.Now);
 
         // Track flow node initialization
         BehaviorTreeComponentLogger.TrackFlowNodeInitialization(this.GetType().Name);
 
         // Automatically add PlanningComplete decorator to dynamic flow nodes
         AddDecorator(new BTDecoratorPlanningComplete());
-        LoggingService.LogInfo($"🔧 BTFlowNodeDynamic: Added PlanningComplete decorator to {nodeName.ToString()}");
+        LoggingService.LogInfo($"🔧 DynamicFlowNode: Added PlanningComplete decorator to {nodeName.ToString()}");
 
         // Add RetryOnFailure decorator: when all children finish but success criteria not met,
         // this post-processing decorator resets failed children and converts Failure → InProgress
         AddDecorator(new BTDecoratorRetryOnFailure(this));
-        LoggingService.LogInfo($"🔧 BTFlowNodeDynamic: Added RetryOnFailure decorator to {nodeName.ToString()}");
+        LoggingService.LogInfo($"🔧 DynamicFlowNode: Added RetryOnFailure decorator to {nodeName.ToString()}");
         
     }
 
@@ -65,7 +65,7 @@ public class BTFlowNodeDynamic : BTFlowNodeBase
 
     protected override bool OnTick_NodeLogic(float inDeltaTime)
     {
-        LoggingService.LogInfo($"🚨 DEBUG: BTFlowNodeDynamic.OnTick_NodeLogic called for {DebugDisplayName}");
+        LoggingService.LogInfo($"🚨 DEBUG: DynamicFlowNode.OnTick_NodeLogic called for {DebugDisplayName}");
         LoggingService.LogInfo($"🔍 FlowNode: Current LastStatus: {status}");
         LoggingService.LogInfo($"🔍 FlowNode: HasChildren: {HasChildren}");
 
@@ -130,7 +130,7 @@ public class BTFlowNodeDynamic : BTFlowNodeBase
             LoggingService.LogInfo($"🔄 FlowNode: Node {DebugDisplayName} was uninitialized, checking if planning is already completed");
 
             // Check if planning has already been completed by checking if NodeGraph exists
-            if (PlanningService is PlanningService initPlannerService && initPlannerService.GetGeneratedNodeGraph() != null)
+            if (ServicePlanning is ServicePlanning initPlannerService && initPlannerService.GetGeneratedNodeGraph() != null)
             {
                 LoggingService.LogInfo($"🔄 FlowNode: Planning already completed (NodeGraph exists), setting planningCompleted = true");
                 planningCompleted = true;
@@ -145,7 +145,7 @@ public class BTFlowNodeDynamic : BTFlowNodeBase
         }
 
         // Only reset planning if it hasn't completed yet (success or failure)
-        if (PlanningService is PlanningService plannerService)
+        if (ServicePlanning is ServicePlanning plannerService)
         {
             // If planning has already completed (success or failure), don't reset it
             if (plannerService.HasCompleted)
@@ -230,7 +230,7 @@ public class BTFlowNodeDynamic : BTFlowNodeBase
     {
         // Increment tick counter
         tickCount++;
-        LoggingService.LogInfo($"🚨 DEBUG: BTFlowNodeDynamic.OnTick_Children called for {DebugDisplayName} - Tick #{tickCount}");
+        LoggingService.LogInfo($"🚨 DEBUG: DynamicFlowNode.OnTick_Children called for {DebugDisplayName} - Tick #{tickCount}");
         LoggingService.LogInfo($"🔍 FlowNode: Planning completed: {planningCompleted}");
         LoggingService.LogInfo($"🔍 FlowNode: ActionGraph exists: {actionGraph != null}");
         LoggingService.LogInfo($"🔍 FlowNode: Tick progress: {tickCount}/{MAX_TICKS_BEFORE_FAILURE} ({(MAX_TICKS_BEFORE_FAILURE - tickCount)} attempts remaining)");

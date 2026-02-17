@@ -5,7 +5,7 @@ using ModelLoader.PredicateTypes;
 
 namespace BehaviorTreeMainProject
 {
-    public class StackonmultipleML : PActionNode
+    public class StackOnMultipleML : PActionNode
     {
         // Parameter: plate of type plate
         public Plate plate { get; private set; }
@@ -29,7 +29,7 @@ namespace BehaviorTreeMainProject
         private State preconditions;
         private State effects;
 
-        public StackonmultipleML(string actionType, string instanceName, Blackboard<FastName> blackboard, Plate plate, Robot client, PositionOnRail pos, VacGripper vg, Cassette mod, Stack lay)
+        public StackOnMultipleML(string actionType, string instanceName, Blackboard<FastName> blackboard, Plate plate, Robot client, PositionOnRail pos, VacGripper vg, Cassette mod, Stack lay)
             : base(actionType, instanceName, blackboard)
         {
             this.plate = plate;

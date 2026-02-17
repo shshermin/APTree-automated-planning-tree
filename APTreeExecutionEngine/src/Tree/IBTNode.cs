@@ -22,7 +22,7 @@ public interface IBTNode
 bool DoDecoratorsNowPermitRunning(float InDeltaTime);
     void Reset();
     BTNodeResult Tick(float InDeltaTime);
-    IBTNode AddService(BTServiceBase InService, bool InIsAlwaysOn = false);
+    IBTNode AddService(Service InService, bool InIsAlwaysOn = false);
     IBTNode AddDecorator(IBTDecorator InDecorator);
 
 

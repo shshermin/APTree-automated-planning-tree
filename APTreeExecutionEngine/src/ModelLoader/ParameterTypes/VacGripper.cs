@@ -7,7 +7,7 @@ namespace ModelLoader.ParameterTypes
     {
         public string IsOn { get; set; }
 
-        // Empty constructor - required by Entity
+        // Empty constructor - required by CustomProperty
         public VacGripper() : base()
         {
             BaseType = new FastName("Tool");

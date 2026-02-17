@@ -11,7 +11,7 @@ namespace BehaviorTreeMainProject.Log.Services
     /// </summary>
     public class ExecutionFlowLogger : BaseLogger
     {
-        private static ExecutionFlowLogger instance;
+        private static ExecutionFlowLogger? instance;
         private static readonly object lockObject = new object();
         private int tickCounter = 0;
         private DateTime sessionStartTime;
@@ -47,7 +47,7 @@ namespace BehaviorTreeMainProject.Log.Services
         /// <param name="serviceName">Name for the log file</param>
         /// <param name="enableConsole">Whether to output to console</param>
         /// <param name="enableFile">Whether to write to file</param>
-        public static void Initialize(string serviceName, bool enableConsole = true, bool enableFile = true)
+        public new static void Initialize(string serviceName, bool enableConsole = true, bool enableFile = true)
         {
             var logger = Instance;
             logger.InitializeInternal(serviceName, enableConsole, enableFile);
@@ -56,9 +56,17 @@ namespace BehaviorTreeMainProject.Log.Services
         private void InitializeInternal(string serviceName, bool enableConsole, bool enableFile)
         {
             sessionStartTime = DateTime.Now;
-            // Use compact timestamp format for execution flow logs
-            var logFilePath = LogConfiguration.GetCompactLogFilePath($"ExecutionFlow_{serviceName}");
-            base.Initialize(serviceName, enableConsole, enableFile);
+            this.enableConsole = enableConsole;
+            this.enableFile = enableFile;
+
+            if (enableFile)
+            {
+                // Use compact timestamp format for execution flow logs
+                var logFilePath = LogConfiguration.GetCompactLogFilePath($"ExecutionFlow_{serviceName}");
+                fileManager = new LogFileManager(logFilePath);
+            }
+
+            isInitialized = true;
             
             LogHeader($"🚀 EXECUTION FLOW LOGGER INITIALIZED - {serviceName}");
             LogHeader($"📅 Session started: {sessionStartTime:yyyy-MM-dd HH:mm:ss.fff}");
@@ -258,7 +266,7 @@ namespace BehaviorTreeMainProject.Log.Services
         /// <summary>
         /// Close the logger and write final statistics
         /// </summary>
-        public static void Close()
+        public new static void Close()
         {
             Instance.CloseInternal();
         }
@@ -274,7 +282,7 @@ namespace BehaviorTreeMainProject.Log.Services
         /// Get the log file path
         /// </summary>
         /// <returns>Path to the log file</returns>
-        public static string GetLogFilePath()
+        public new static string GetLogFilePath()
         {
             return Instance.GetLogFilePathInternal();
         }
@@ -318,11 +326,6 @@ namespace BehaviorTreeMainProject.Log.Services
         }
 
         #region Private Methods
-
-        private void WriteLog(string message)
-        {
-            base.WriteLog(message);
-        }
 
         private void TrackNodeTick(string nodeName)
         {

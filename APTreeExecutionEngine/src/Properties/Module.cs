@@ -1,30 +1,30 @@
 using System;
 
-public class Layer : Entity
+public class Module : CustomProperty
 {
 	public FastName NameKey { get; set; }
 	public DateTime LastModified { get; set; }
 	public string ID { get; set; }
 	public FastName TypeName { get; set; }
 	public override FastName BaseType { get; set; }
-
 	/// <summary>
 	/// Each element should have a nameid. the name id should comply with PDDL naming conventions
 	/// </summary>
+	public readonly string NameID;
 
-	private Module module;
+	private Layer layer;
 
-	// Empty constructor - required by Entity
-	public Layer() : base()
+	// Empty constructor - required by CustomProperty
+	public Module() : base()
 	{
-		BaseType = new FastName("Layer");
-		TypeName = new FastName("Layer");
+		BaseType = new FastName("Module");
+		TypeName = new FastName("Module");
 	}
 
-	public Layer(string InName) : base(InName)
+	public Module(string InName) : base(InName)
 	{
-		BaseType = new FastName("Layer");
-		TypeName = new FastName("Layer");
+		BaseType = new FastName("Module");
+		TypeName = new FastName("Module");
 	}
 	 public override void SetParameters(Dictionary<string, object> parameters)
     {

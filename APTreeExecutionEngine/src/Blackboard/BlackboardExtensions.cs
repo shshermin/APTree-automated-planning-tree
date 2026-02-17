@@ -74,7 +74,7 @@ public static string FormatPredicate(Predicate predicate)
     {
         var parameters = predicate.GetAllProperties()
             .Where(p => p.Key != "PredicateName" && p.Key != "PredicateType" && p.Key != "isNegated")
-            .Select(p => GetInstanceId(p.Value as Entity))
+            .Select(p => GetInstanceId(p.Value as CustomProperty))
             .Where(id => !string.IsNullOrEmpty(id)) // Filter out null/empty IDs
             .ToList();
 
@@ -87,7 +87,7 @@ public static string FormatPredicate(Predicate predicate)
     }
 }
 
-private static string GetInstanceId(Entity obj)
+private static string GetInstanceId(CustomProperty obj)
 {
     if (obj == null)
         return "";
@@ -96,24 +96,24 @@ private static string GetInstanceId(Entity obj)
 }
 
 /// <summary>
-/// Registers an Entity instance on the blackboard if it doesn't already exist based on its base type.
+/// Registers an CustomProperty instance on the blackboard if it doesn't already exist based on its base type.
 /// The method automatically determines the correct registration method based on the entity's type.
 /// </summary>
 /// <typeparam name="T">The blackboard key type</typeparam>
 /// <param name="blackboard">The blackboard instance</param>
 /// <param name="entity">The entity to register</param>
 /// <returns>True if the entity was registered, false if it already existed</returns>
-public static bool RegisterEntityIfNotExists<T>(this Blackboard<T> blackboard, Entity entity) where T : class
+public static bool RegisterEntityIfNotExists<T>(this Blackboard<T> blackboard, CustomProperty entity) where T : class
 {
     if (entity == null)
     {
-        throw new ArgumentNullException(nameof(entity), "Entity cannot be null");
+        throw new ArgumentNullException(nameof(entity), "CustomProperty cannot be null");
     }
 
     var key = entity.NameKey;
     if (key == null)
     {
-        throw new ArgumentException("Entity must have a valid NameKey", nameof(entity));
+        throw new ArgumentException("CustomProperty must have a valid NameKey", nameof(entity));
     }
 
     // Check if entity already exists based on its type
@@ -152,13 +152,13 @@ public static bool RegisterEntityIfNotExists<T>(this Blackboard<T> blackboard, E
     }
     catch (ArgumentException)
     {
-        // Entity doesn't exist, which is what we want
+        // CustomProperty doesn't exist, which is what we want
         alreadyExists = false;
     }
 
     if (alreadyExists)
     {
-        Console.WriteLine($"Entity of type {entity.GetType().Name} with key {key} already exists in blackboard");
+        Console.WriteLine($"CustomProperty of type {entity.GetType().Name} with key {key} already exists in blackboard");
         return false;
     }
 

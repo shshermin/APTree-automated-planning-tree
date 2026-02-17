@@ -11,7 +11,7 @@ using BehaviorTreeMainProject.Services;
 /// This replaces the former PActionNode.ResetPlanningStateAfterSuccess()
 /// and keeps the reset policy outside of the core action logic.
 /// </summary>
-public class BTDecoratorResetOnSubtreeSuccess : BTDecoratorBase
+public class BTDecoratorResetOnSubtreeSuccess : Decorator
 {
     public override bool CanPostProcessTickResult => true;
 
@@ -44,14 +44,14 @@ public class BTDecoratorResetOnSubtreeSuccess : BTDecoratorBase
         {
             LoggingService.LogInfo($"🔄 ResetOnSubtreeSuccess: HL action {AttachedAction.InstanceName} succeeded — resetting planning state");
 
-            var subtreeInjectionService = AttachedAction.SubtreeInjectionService;
+            var subtreeInjectionService = AttachedAction.ServiceSubtreeInject;
             if (subtreeInjectionService != null)
             {
                 subtreeInjectionService.resetAfterSuccessFullExecution();
             }
             else
             {
-                LoggingService.LogWarning($"⚠️ ResetOnSubtreeSuccess: SubtreeInjectionService not found for {AttachedAction.InstanceName}");
+                LoggingService.LogWarning($"⚠️ ResetOnSubtreeSuccess: ServiceSubtreeInject not found for {AttachedAction.InstanceName}");
             }
         }
         catch (Exception ex)

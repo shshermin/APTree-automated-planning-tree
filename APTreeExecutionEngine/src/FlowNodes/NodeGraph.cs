@@ -101,7 +101,7 @@ public class NodeGraph
         LoggingService.LogInfo($"🔍 NodeGraph: Before adding relation - {to.InstanceName.ToString()} has {toNode.Predecessors.Count} predecessors");
         
         // Create and add the relation with a default temporal constraint (PRECEDES)
-        var relation = new Relation(fromNode, toNode, TemporalConstraint.PRECEDES);
+        var relation = new Relation(fromNode, toNode, TemporalType.PRECEDES);
         fromNode.Successors.Add(relation);
         toNode.Predecessors.Add(relation);
         
@@ -120,7 +120,7 @@ public class NodeGraph
     /// <summary>
     /// Add a temporal constraint between two nodes (based on Allen's theory)
     /// </summary>
-    public void AddTemporalConstraint(ActionNode from, ActionNode to, TemporalConstraint constraint)
+    public void AddTemporalConstraint(ActionNode from, ActionNode to, TemporalType constraint)
     {
         LoggingService.LogInfo($"🔧 NodeGraph: AddTemporalConstraint called: {from.InstanceName.ToString()} {constraint} {to.InstanceName.ToString()}");
         
@@ -241,7 +241,7 @@ public class NodeGraph
             {
                 LoggingService.LogInfo($"   ✅ NodeGraph: Node {node.ActionNode.InstanceName.ToString()} can be executed");
                 executableNodes.Add(node.ActionNode as PActionNode);
-                // Don't set IsExecuting here - let the BTFlowNodeDynamic handle that when it actually starts executing
+                // Don't set IsExecuting here - let the DynamicFlowNode handle that when it actually starts executing
             }
             else
             {
@@ -345,18 +345,18 @@ public class NodeGraph
     /// <summary>
     /// Check if a temporal constraint is satisfied based on Allen's theory
     /// </summary>
-    private bool IsTemporalConstraintSatisfied(GraphNode from, GraphNode to, TemporalConstraint constraint)
+    private bool IsTemporalConstraintSatisfied(GraphNode from, GraphNode to, TemporalType constraint)
     {
         bool result = false;
         
         switch (constraint)
         {
-            case TemporalConstraint.PRECEDES:
+            case TemporalType.PRECEDES:
                 result = from.IsCompleted && !to.IsExecuting;
                 // Console.WriteLine($"   🔍 NodeGraph: PRECEDES constraint - from completed: {from.IsCompleted}, to executing: {to.IsExecuting}, result: {result}");
                 break;
             
-            case TemporalConstraint.MEETS:
+            case TemporalType.MEETS:
                 // MEETS: the next action starts immediately after the previous one ends
                 // For initial execution, we just need the previous action to be completed
                 // For timing precision, we check that the next action hasn't started yet or starts at the right time
@@ -375,7 +375,7 @@ public class NodeGraph
                 }
                 break;
             
-            case TemporalConstraint.OVERLAPS:
+            case TemporalType.OVERLAPS:
                 // OVERLAPS: actions can run in parallel
                 // For parallel execution, we allow the second action to start while the first is still executing
                 if (from.IsExecuting || from.IsCompleted)
@@ -391,28 +391,28 @@ public class NodeGraph
                 // Console.WriteLine($"   🔍 NodeGraph: OVERLAPS constraint - from executing: {from.IsExecuting}, from completed: {from.IsCompleted}, to completed: {to.IsCompleted}, result: {result}");
                 break;
             
-            case TemporalConstraint.STARTS:
+            case TemporalType.STARTS:
                 // STARTS: From and To start at the same time (From ends first)
                 // Scheduling: To can start when From has started (executing or completed)
                 result = from.IsExecuting || from.IsCompleted;
                 LoggingService.LogInfo($"   🔍 NodeGraph: STARTS constraint - from executing: {from.IsExecuting}, from completed: {from.IsCompleted}, result: {result}");
                 break;
             
-            case TemporalConstraint.FINISHES:
+            case TemporalType.FINISHES:
                 // FINISHES: From starts after To but they end at the same time
                 // Scheduling: To can start when From is executing or completed (they need to overlap)
                 result = from.IsExecuting || from.IsCompleted;
                 LoggingService.LogInfo($"   🔍 NodeGraph: FINISHES constraint - from executing: {from.IsExecuting}, from completed: {from.IsCompleted}, result: {result}");
                 break;
             
-            case TemporalConstraint.CONTAINS:
+            case TemporalType.CONTAINS:
                 // CONTAINS: From starts before To and ends after To (From fully contains To)
                 // Scheduling: To can start when From is currently executing (started but not finished)
                 result = from.IsExecuting;
                 LoggingService.LogInfo($"   🔍 NodeGraph: CONTAINS constraint - from executing: {from.IsExecuting}, result: {result}");
                 break;
             
-            case TemporalConstraint.EQUALS:
+            case TemporalType.EQUALS:
                 // EQUALS: From and To have the same start and end times
                 // Scheduling: To can start when From has started (executing or completed)
                 result = from.IsExecuting || from.IsCompleted;

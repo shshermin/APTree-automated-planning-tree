@@ -11,7 +11,7 @@ namespace BehaviorTreeMainProject.Log.Services
     /// </summary>
     public class BlackboardSummaryLogger : BaseLogger
     {
-        private static BlackboardSummaryLogger instance;
+        private static BlackboardSummaryLogger? instance;
         private static readonly object lockObject = new object();
         
         // Phase tracking
@@ -302,7 +302,7 @@ namespace BehaviorTreeMainProject.Log.Services
             
             foreach (var item in dictionary.Values)
             {
-                string typeName = GetTypeName(item);
+                string typeName = GetTypeName(item!);
                 if (!typeCounts.ContainsKey(typeName))
                     typeCounts[typeName] = 0;
                 typeCounts[typeName]++;
@@ -320,7 +320,7 @@ namespace BehaviorTreeMainProject.Log.Services
             
             foreach (var item in list)
             {
-                string typeName = GetTypeName(item);
+                string typeName = GetTypeName(item!);
                 if (!typeCounts.ContainsKey(typeName))
                     typeCounts[typeName] = 0;
                 typeCounts[typeName]++;
@@ -340,7 +340,7 @@ namespace BehaviorTreeMainProject.Log.Services
                 case PActionNode action:
                     return action.actionType.ToString();
                 
-                case BTFlowNodeBase flowNode:
+                case FlowNode flowNode:
                     return flowNode.TypeName;
                 
                 case Element element:
@@ -432,7 +432,7 @@ namespace BehaviorTreeMainProject.Log.Services
         /// <summary>
         /// Close the logger
         /// </summary>
-        public static void Close()
+        public new static void Close()
         {
             Instance.CloseInternal();
         }

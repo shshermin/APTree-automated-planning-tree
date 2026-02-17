@@ -35,7 +35,7 @@ using BehaviorTreeMainProject.Log.Services;
 ///     Console.WriteLine($"{kvp.Key}: {kvp.Value}");
 /// }
 /// </summary>
-public abstract class PlanningService : BTServiceBase
+public abstract class ServicePlanning : Service
 {
     // Store the generated NodeGraph
     protected NodeGraph generatedNodeGraph;
@@ -65,7 +65,7 @@ public abstract class PlanningService : BTServiceBase
 
 
 
-    protected PlanningService(IBehaviorTree InOwningTree, IPlannerCommunicator communicator, IPlanningRequest InPlanningRequest)
+    protected ServicePlanning(IBehaviorTree InOwningTree, IPlannerCommunicator communicator, IPlanningRequest InPlanningRequest)
         : base(InOwningTree)
     {
         generatedNodeGraph = null;
@@ -74,17 +74,17 @@ public abstract class PlanningService : BTServiceBase
     }
     
     // Reference to the flow node that owns this planning service
-    protected BTFlowNodeBase OwningFlowNode { get; set; }
+    protected FlowNode OwningFlowNode { get; set; }
     
     /// <summary>
     /// Set the owning flow node for this planning service
     /// </summary>
     /// <param name="flowNode">The flow node that owns this planning service</param>
-    public void SetOwningFlowNode(BTFlowNodeBase flowNode)
+    public void SetOwningFlowNode(FlowNode flowNode)
     {
-        LoggingService.LogInfo($"🔧 PlanningService: SetOwningFlowNode called - {GetType().Name} ↔ {flowNode.DebugDisplayName}");
+        LoggingService.LogInfo($"🔧 ServicePlanning: SetOwningFlowNode called - {GetType().Name} ↔ {flowNode.DebugDisplayName}");
         OwningFlowNode = flowNode;
-        LoggingService.LogInfo($"🔧 PlanningService: Bidirectional reference established - {GetType().Name} ↔ {flowNode.DebugDisplayName}");
+        LoggingService.LogInfo($"🔧 ServicePlanning: Bidirectional reference established - {GetType().Name} ↔ {flowNode.DebugDisplayName}");
     }
    
 
@@ -139,9 +139,6 @@ public abstract class PlanningService : BTServiceBase
                 HasPlanGenerated = false;
                 LastError = result.Error;
 
-                // Track planning service failure for execution summary
-                ExecutionSummaryLogger.TrackPlanningService(plannerType, plannerType, StartTime, false, 0, PlannerEndTime, EndTime);
-
                 LoggingService.LogError($"⚠️ {GetType().Name}: Planning failed at {EndTime:HH:mm:ss.fff} - {result.Error}");
                 LoggingService.LogInfo($"⏱️ {GetType().Name}: Planner execution time: {PlannerEndTime - StartTime:hh\\:mm\\:ss\\.fff}");
                 LoggingService.LogInfo($"⏱️ {GetType().Name}: Total service time: {EndTime - StartTime:hh\\:mm\\:ss\\.fff}");
@@ -162,9 +159,6 @@ public abstract class PlanningService : BTServiceBase
                 HasPlanGenerated = false;
                 LastError = "Failed to generate NodeGraph from planner result";
 
-                // Track planning service failure for execution summary
-                ExecutionSummaryLogger.TrackPlanningService(plannerType, plannerType, StartTime, false, 0, PlannerEndTime, EndTime);
-
                 LoggingService.LogError($"⚠️ {GetType().Name}: Failed to generate NodeGraph at {EndTime:HH:mm:ss.fff}");
                 LoggingService.LogInfo($"⏱️ {GetType().Name}: Execution time: {EndTime - StartTime:hh\\:mm\\:ss\\.fff}");
                 LoggingService.LogInfo($"📋 {GetType().Name}: Planning Status - Completed: {HasCompleted}, Successful: {WasSuccessful}, Plan Generated: {HasPlanGenerated}");
@@ -175,29 +169,28 @@ public abstract class PlanningService : BTServiceBase
             // Step 4: Directly assign NodeGraph to owning flow node (if available)
             if (OwningFlowNode != null)
             {
-                LoggingService.LogInfo($"🔧 PlanningService: Directly assigning NodeGraph to flow node {OwningFlowNode.DebugDisplayName}");
-                LoggingService.LogInfo($"🔧 PlanningService: NodeGraph has {generatedNodeGraph.GetAllActionNodes().Count} actions");
-                LoggingService.LogInfo($"🔧 PlanningService: Calling SetActionGraph on {OwningFlowNode.DebugDisplayName}");
+                LoggingService.LogInfo($"🔧 ServicePlanning: Directly assigning NodeGraph to flow node {OwningFlowNode.DebugDisplayName}");
+                LoggingService.LogInfo($"🔧 ServicePlanning: NodeGraph has {generatedNodeGraph.GetAllActionNodes().Count} actions");
+                LoggingService.LogInfo($"🔧 ServicePlanning: Calling SetActionGraph on {OwningFlowNode.DebugDisplayName}");
                 OwningFlowNode.SetActionGraph(generatedNodeGraph);
 
                 // Set up services for all actions in the NodeGraph
-                LoggingService.LogInfo($"🔧 PlanningService: Setting up services for all actions in NodeGraph...");
+                LoggingService.LogInfo($"🔧 ServicePlanning: Setting up services for all actions in NodeGraph...");
                 var allActions = generatedNodeGraph.GetAllActionNodes();
                 for (int i = 0; i < allActions.Count; i++)
                 {
                     var action = allActions[i];
-                    LoggingService.LogInfo($"🔧 PlanningService: Setting up services for action {i + 1}: {action.InstanceName.ToString()}");
+                    LoggingService.LogInfo($"🔧 ServicePlanning: Setting up services for action {i + 1}: {action.InstanceName.ToString()}");
                     OwningFlowNode.AddChild(action);
                 }
-                LoggingService.LogSuccess($"✅ PlanningService: Completed service setup for {allActions.Count} actions");
+                LoggingService.LogSuccess($"✅ ServicePlanning: Completed service setup for {allActions.Count} actions");
 
-                // Track the final action count after all actions are set up
-                ExecutionSummaryLogger.TrackNodeFinalCount("GenericBTAction", allActions.Count);
+
             }
             else
             {
-                LoggingService.LogWarning($"⚠️ PlanningService: No owning flow node set, cannot directly assign NodeGraph");
-                LoggingService.LogWarning($"⚠️ PlanningService: OwningFlowNode is null - this means the bidirectional reference was not set properly");
+                LoggingService.LogWarning($"⚠️ ServicePlanning: No owning flow node set, cannot directly assign NodeGraph");
+                LoggingService.LogWarning($"⚠️ ServicePlanning: OwningFlowNode is null - this means the bidirectional reference was not set properly");
             }
 
             // Step 5: Store in blackboard (for backward compatibility and monitoring)
@@ -210,7 +203,7 @@ public abstract class PlanningService : BTServiceBase
             }
             else
             {
-                LoggingService.LogWarning($"⚠️ PlanningService: OwningFlowNode is not a high-level action, cannot add subtree to blackboard");
+                LoggingService.LogWarning($"⚠️ ServicePlanning: OwningFlowNode is not a high-level action, cannot add subtree to blackboard");
             }
 
             // Complete execution tracking
@@ -221,9 +214,6 @@ public abstract class PlanningService : BTServiceBase
             HasPlanGenerated = true;
             LastError = null;
 
-            // Track planning service completion for execution summary
-            var actionsGenerated = generatedNodeGraph?.GetAllActionNodes().Count ?? 0;
-            ExecutionSummaryLogger.TrackPlanningService(plannerType, plannerType, StartTime, true, actionsGenerated, PlannerEndTime, EndTime);
             
             // Track final actions remaining after successful planning
             var finalActionCount = linkedBlackboard.GetAllActions().Count;
@@ -245,9 +235,6 @@ public abstract class PlanningService : BTServiceBase
             WasSuccessful = false;
             HasPlanGenerated = false;
             LastError = ex.Message;
-
-            // Track planning service failure for execution summary
-            ExecutionSummaryLogger.TrackPlanningService(plannerType, plannerType, StartTime, false, 0, EndTime);
 
             LoggingService.LogError($"❌ {GetType().Name}: Error during planning process at {EndTime:HH:mm:ss.fff}: {ex.Message}");
             LoggingService.LogInfo($"⏱️ {GetType().Name}: Execution time: {EndTime - StartTime:hh\\:mm\\:ss\\.fff}");
@@ -275,7 +262,7 @@ public abstract class PlanningService : BTServiceBase
     {
         if (generatedNodeGraph == null)
         {
-            LoggingService.LogWarning("⚠️ PlanningService: No NodeGraph to store in blackboard");
+            LoggingService.LogWarning("⚠️ ServicePlanning: No NodeGraph to store in blackboard");
             return;
         }
         
@@ -288,12 +275,12 @@ public abstract class PlanningService : BTServiceBase
             // Store in blackboard
             linkedBlackboard.SetNodeGraph(nodeGraphKey, generatedNodeGraph);
             
-            LoggingService.LogSuccess($"✅ PlanningService: Stored NodeGraph '{nodeGraphName}' in blackboard");
+            LoggingService.LogSuccess($"✅ ServicePlanning: Stored NodeGraph '{nodeGraphName}' in blackboard");
             LoggingService.LogInfo($"   📊 NodeGraph contains {generatedNodeGraph.GetAllActionNodes().Count} actions");
         }
         catch (Exception ex)
         {
-            LoggingService.LogError($"❌ PlanningService: Error storing NodeGraph in blackboard: {ex.Message}");
+            LoggingService.LogError($"❌ ServicePlanning: Error storing NodeGraph in blackboard: {ex.Message}");
         }
     }
     
@@ -437,7 +424,7 @@ public abstract class PlanningService : BTServiceBase
     {
         if (OwningFlowNode == null)
         {
-            LoggingService.LogWarning("⚠️ PlanningService: No owning flow node, cannot add subtree to blackboard");
+            LoggingService.LogWarning("⚠️ ServicePlanning: No owning flow node, cannot add subtree to blackboard");
             return;
         }
         
@@ -448,15 +435,15 @@ public abstract class PlanningService : BTServiceBase
             var fastNameKey = new FastName(subtreeKey);
             
             // Add the subtree to the blackboard's injected subtrees
-            linkedBlackboard.SetInjectedSubtree(fastNameKey, OwningFlowNode as BTFlowNodeDynamic);
+            linkedBlackboard.SetInjectedSubtree(fastNameKey, OwningFlowNode as DynamicFlowNode);
             
-            LoggingService.LogSuccess($"✅ PlanningService: Added subtree '{OwningFlowNode.DebugDisplayName}' to blackboard after successful planning");
+            LoggingService.LogSuccess($"✅ ServicePlanning: Added subtree '{OwningFlowNode.DebugDisplayName}' to blackboard after successful planning");
             LoggingService.LogInfo($"   📝 Subtree key: {subtreeKey}");
             LoggingService.LogInfo($"   📊 NodeGraph contains {generatedNodeGraph?.GetAllActionNodes().Count ?? 0} actions");
         }
         catch (Exception ex)
         {
-            LoggingService.LogError($"❌ PlanningService: Error adding subtree to blackboard: {ex.Message}");
+            LoggingService.LogError($"❌ ServicePlanning: Error adding subtree to blackboard: {ex.Message}");
         }
     }
 }

@@ -1,10 +1,10 @@
 using BehaviorTreeMainProject.Log.Services;
 
-public abstract class BTServiceBase
+public abstract class Service
 {
 
     public IBehaviorTree OwningTree { get; protected set; } = null!;
-    public BTFlowNodeBase AttachedNode { get; protected set; } = null!;
+    public FlowNode AttachedNode { get; protected set; } = null!;
 
     // Service execution statistics tracking
     private int totalTickCount = 0;
@@ -16,7 +16,7 @@ public abstract class BTServiceBase
     public int SuccessCount => successCount;
     public int FailureCount => failureCount;
 
-    protected BTServiceBase(IBehaviorTree InOwningTree)
+    protected Service(IBehaviorTree InOwningTree)
 
     {
         this.OwningTree = InOwningTree;

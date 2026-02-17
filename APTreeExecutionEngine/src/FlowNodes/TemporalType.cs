@@ -1,4 +1,4 @@
-public enum TemporalConstraint
+public enum TemporalType
 {
     PRECEDES,
     MEETS,

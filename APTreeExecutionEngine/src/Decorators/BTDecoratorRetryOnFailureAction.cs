@@ -14,7 +14,7 @@ using BehaviorTreeMainProject.Log.Services;
 /// The decorator does NOT interfere with pre-tick evaluation (OnEvaluate always returns true).
 /// It only acts in the post-processing phase via PostProcessTickResult.
 /// </summary>
-public class BTDecoratorRetryOnFailureAction : BTDecoratorBase
+public class BTDecoratorRetryOnFailureAction : Decorator
 {
     public override bool CanPostProcessTickResult => true;
 
@@ -52,7 +52,7 @@ public class BTDecoratorRetryOnFailureAction : BTDecoratorBase
         }
 
         // If the action was blocked by decorators, its status will be Failure but it never
-        // actually executed. In BTNodeBase.Tick(), when decorators block, status is set to Failure
+        // actually executed. In BTNode.Tick(), when decorators block, status is set to Failure
         // and the node logic / children phases are skipped entirely. The action stays in a 
         // "never ran" state. We detect this by checking if the action was still ReadyToTick
         // or if decorators blocked it (status set to Failure without execution).

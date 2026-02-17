@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-public abstract class Tool : Entity
+public abstract class Tool : CustomProperty
 {
     public FastName NameKey { get; set; }
     public DateTime LastModified { get; set; }
@@ -9,7 +9,7 @@ public abstract class Tool : Entity
     public FastName TypeName { get; set; }
     public override FastName BaseType { get; set; }
 
-    // Empty constructor - required by Entity
+    // Empty constructor - required by CustomProperty
     protected Tool() : base()
     {
         BaseType = new FastName("Tool");

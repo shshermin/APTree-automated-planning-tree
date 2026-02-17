@@ -6,24 +6,24 @@ using BehaviorTreeMainProject.Log.Services;
 /// This service runs during the planning phase and automatically switches to execution
 /// when all planning services have completed successfully.
 /// </summary>
-public class BTServicePlanningPhaseManager : BTServiceBase
+public class ServicePlanningPhaseManager : Service
 {
     public string DebugDisplayName { get; protected set; } = "PlanningPhaseManager";
 
-    public BTServicePlanningPhaseManager(IBehaviorTree InOwningTree, BTFlowNodeBase InOwningFlowNode) : base(InOwningTree)
+    public ServicePlanningPhaseManager(IBehaviorTree InOwningTree, FlowNode InOwningFlowNode) : base(InOwningTree)
     {
         AttachedNode = InOwningFlowNode;
     }
 
     public override bool OnEvaluate(float inDeltaTime)
     {
-        LoggingService.LogInfo($"🔧 BTServicePlanningPhaseManager.Tick: Starting tick...");
+        LoggingService.LogInfo($"🔧 ServicePlanningPhaseManager.Tick: Starting tick...");
         
         // This service runs even during planning phase
-        LoggingService.LogInfo($"🔧 BTServicePlanningPhaseManager.Tick: Calling CheckAndSwitchToExecutionPhase()...");
+        LoggingService.LogInfo($"🔧 ServicePlanningPhaseManager.Tick: Calling CheckAndSwitchToExecutionPhase()...");
         CheckAndSwitchToExecutionPhase();
         
-        LoggingService.LogInfo($"🔧 BTServicePlanningPhaseManager.Tick: Tick completed");
+        LoggingService.LogInfo($"🔧 ServicePlanningPhaseManager.Tick: Tick completed");
         return true;
     }
     /// <summary>
@@ -45,8 +45,7 @@ public class BTServicePlanningPhaseManager : BTServiceBase
             ExecutionFlowLogger.LogPlanningEvent("PHASE_COMPLETE", "All planning services finished");
             linkedBlackboard.PlanningPhase = false;
             
-            // Track planning phase transition for execution summary
-            ExecutionSummaryLogger.TrackPlanningPhaseTransition(false);
+
             
             // Track final actions remaining at the end of planning phase
             var finalActionCount = linkedBlackboard.GetAllActions().Count;
@@ -75,10 +74,10 @@ public class BTServicePlanningPhaseManager : BTServiceBase
             
             foreach (var child in children)
             {
-                if (child is BTFlowNodeDynamic dynamicNode)
+                if (child is DynamicFlowNode dynamicNode)
                 {
                     // Check if this dynamic node has a planning service
-                    if (dynamicNode.PlanningService is PlanningService plannerService)
+                    if (dynamicNode.ServicePlanning is ServicePlanning plannerService)
                     {
                         // Check if planning has generated a NodeGraph
                         if (!plannerService.HasGeneratedNodeGraph())

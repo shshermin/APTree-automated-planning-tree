@@ -7,7 +7,7 @@ namespace ModelLoader.ParameterTypes
     {
         public double Length { get; set; }
 
-        // Empty constructor - required by Entity
+        // Empty constructor - required by CustomProperty
         public Beam() : base()
         {
             BaseType = new FastName("Element");

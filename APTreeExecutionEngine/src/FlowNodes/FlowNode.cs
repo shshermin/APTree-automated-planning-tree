@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using BehaviorTreeMainProject.Services;
 using BehaviorTreeMainProject.Log.Services;
 
-public abstract class BTFlowNodeBase : BTNodeBase, IEnumerable
+public abstract class FlowNode : BTNode, IEnumerable
 {
     // is this node allowed to have children?
     public override bool HasChildren => true;
@@ -24,7 +24,7 @@ public abstract class BTFlowNodeBase : BTNodeBase, IEnumerable
     int currentCount = 0;
 
     // Planning service for high-level actions
-    public PlanningService PlanningService { get; protected set; }
+    public ServicePlanning ServicePlanning { get; protected set; }
     private readonly IBehaviorTree owningTree;
 
     // Node name property
@@ -40,7 +40,7 @@ public abstract class BTFlowNodeBase : BTNodeBase, IEnumerable
 
 
 
-    public BTFlowNodeBase(FastName nodeName, SuccessCriteria criteria = SuccessCriteria.ALL, float threshold = 1.0f)
+    public FlowNode(FastName nodeName, SuccessCriteria criteria = SuccessCriteria.ALL, float threshold = 1.0f)
     {
         this.InstanceName = nodeName;
         this.DebugDisplayName = nodeName.ToString();
@@ -130,8 +130,7 @@ public abstract class BTFlowNodeBase : BTNodeBase, IEnumerable
             _ => false
         };
         
-        // Track flow node execution for execution summary
-        ExecutionSummaryLogger.TrackFlowNode(DebugDisplayName, GetType().Name, result);
+
         
         return result;
     }
@@ -175,7 +174,7 @@ public abstract class BTFlowNodeBase : BTNodeBase, IEnumerable
             graph.AddOrderRelation(currentAction, nextAction);
 
             // Add temporal constraint (MEETS - next action starts when current ends)
-            graph.AddTemporalConstraint(currentAction, nextAction, TemporalConstraint.MEETS);
+            graph.AddTemporalConstraint(currentAction, nextAction, TemporalType.MEETS);
         }
 
         Console.WriteLine($"🔧 CreateNodeGraphFromActions: Created {actionNodes.Count - 1} relations");
@@ -200,7 +199,7 @@ public abstract class BTFlowNodeBase : BTNodeBase, IEnumerable
     /// <param name="useOrderRelations">Whether to create sequential order relations</param>
     /// <param name="defaultTemporalConstraint">Default temporal constraint between consecutive actions</param>
     /// <returns>The created NodeGraph</returns>
-    protected NodeGraph CreateNodeGraphFromActions(List<PActionNode> actionNodes, bool useOrderRelations, TemporalConstraint defaultTemporalConstraint)
+    protected NodeGraph CreateNodeGraphFromActions(List<PActionNode> actionNodes, bool useOrderRelations, TemporalType defaultTemporalConstraint)
     {
         var graph = new NodeGraph();
 
@@ -238,8 +237,8 @@ public abstract class BTFlowNodeBase : BTNodeBase, IEnumerable
     /// <param name="graph">The NodeGraph to use</param>
     public void SetActionGraph(NodeGraph graph)
     {
-        LoggingService.LogInfo($"🔧 BTFlowNodeBase: SetActionGraph called for {DebugDisplayName} - New NodeGraph HashCode: {graph?.GetHashCode()}");
-        LoggingService.LogInfo($"🔧 BTFlowNodeBase: New NodeGraph has {graph?.GetAllActionNodes().Count ?? 0} actions");
+        LoggingService.LogInfo($"🔧 FlowNode: SetActionGraph called for {DebugDisplayName} - New NodeGraph HashCode: {graph?.GetHashCode()}");
+        LoggingService.LogInfo($"🔧 FlowNode: New NodeGraph has {graph?.GetAllActionNodes().Count ?? 0} actions");
 
         // Simplified tracking - child count tracking removed
 
@@ -249,14 +248,14 @@ public abstract class BTFlowNodeBase : BTNodeBase, IEnumerable
             int currentActionCount = actionGraph.GetAllActionNodes().Count;
             int newActionCount = graph?.GetAllActionNodes().Count ?? 0;
 
-            LoggingService.LogInfo($"🔧 BTFlowNodeBase: Current NodeGraph has {currentActionCount} actions");
-            LoggingService.LogInfo($"🔧 BTFlowNodeBase: New NodeGraph has {newActionCount} actions");
+            LoggingService.LogInfo($"🔧 FlowNode: Current NodeGraph has {currentActionCount} actions");
+            LoggingService.LogInfo($"🔧 FlowNode: New NodeGraph has {newActionCount} actions");
 
             // Allow replacement if current graph is empty and new graph has actions
             if (currentActionCount == 0 && newActionCount > 0)
             {
-                LoggingService.LogInfo($"🔧 BTFlowNodeBase: Allowing replacement - current graph is empty, new graph has {newActionCount} actions");
-                LoggingService.LogInfo($"🔧 BTFlowNodeBase: Replacing empty NodeGraph (HashCode: {actionGraph.GetHashCode()}) with populated NodeGraph (HashCode: {graph?.GetHashCode()})");
+                LoggingService.LogInfo($"🔧 FlowNode: Allowing replacement - current graph is empty, new graph has {newActionCount} actions");
+                LoggingService.LogInfo($"🔧 FlowNode: Replacing empty NodeGraph (HashCode: {actionGraph.GetHashCode()}) with populated NodeGraph (HashCode: {graph?.GetHashCode()})");
                 actionGraph = graph;
                 return;
             }
@@ -264,20 +263,20 @@ public abstract class BTFlowNodeBase : BTNodeBase, IEnumerable
             // Prevent replacement if current graph has actions (to preserve completion statuses)
             if (currentActionCount > 0)
             {
-                LoggingService.LogWarning($"🔒 BTFlowNodeBase: NodeGraph already set with {currentActionCount} actions (HashCode: {actionGraph.GetHashCode()}), preventing replacement with new NodeGraph (HashCode: {graph?.GetHashCode()})");
-                LoggingService.LogWarning($"🔒 BTFlowNodeBase: This prevents loss of completion statuses. New NodeGraph will be ignored.");
+                LoggingService.LogWarning($"🔒 FlowNode: NodeGraph already set with {currentActionCount} actions (HashCode: {actionGraph.GetHashCode()}), preventing replacement with new NodeGraph (HashCode: {graph?.GetHashCode()})");
+                LoggingService.LogWarning($"🔒 FlowNode: This prevents loss of completion statuses. New NodeGraph will be ignored.");
                 return; // Don't replace the existing NodeGraph
             }
         }
         else
         {
-            LoggingService.LogInfo($"🔧 BTFlowNodeBase: No existing NodeGraph, setting initial NodeGraph");
+            LoggingService.LogInfo($"🔧 FlowNode: No existing NodeGraph, setting initial NodeGraph");
         }
 
-        LoggingService.LogInfo($"🔧 BTFlowNodeBase: Setting initial NodeGraph (HashCode: {graph?.GetHashCode()})");
+        LoggingService.LogInfo($"🔧 FlowNode: Setting initial NodeGraph (HashCode: {graph?.GetHashCode()})");
         actionGraph = graph;
         
-        // Note: Action node final count is now tracked in PlanningService after all actions are set up
+        // Note: Action node final count is now tracked in ServicePlanning after all actions are set up
     }
 
     /// <summary>
@@ -287,7 +286,7 @@ public abstract class BTFlowNodeBase : BTNodeBase, IEnumerable
     {
         if (actionGraph != null)
         {
-            LoggingService.LogWarning($"🔄 BTFlowNodeBase: Clearing action graph (HashCode: {actionGraph.GetHashCode()}) for {DebugDisplayName}");
+            LoggingService.LogWarning($"🔄 FlowNode: Clearing action graph (HashCode: {actionGraph.GetHashCode()}) for {DebugDisplayName}");
             
             // Use the new Clear() method to actually remove actions from the NodeGraph
             actionGraph.DestroyAllNodes();
@@ -301,8 +300,8 @@ public abstract class BTFlowNodeBase : BTNodeBase, IEnumerable
     /// <param name="graph">The NodeGraph to use</param>
     public void ForceSetActionGraph(NodeGraph graph)
     {
-        LoggingService.LogWarning($"⚠️ BTFlowNodeBase: ForceSetActionGraph called - This bypasses the NodeGraph lock!");
-        LoggingService.LogWarning($"⚠️ BTFlowNodeBase: Previous HashCode: {actionGraph?.GetHashCode()}, New HashCode: {graph?.GetHashCode()}");
+        LoggingService.LogWarning($"⚠️ FlowNode: ForceSetActionGraph called - This bypasses the NodeGraph lock!");
+        LoggingService.LogWarning($"⚠️ FlowNode: Previous HashCode: {actionGraph?.GetHashCode()}, New HashCode: {graph?.GetHashCode()}");
         actionGraph = graph;
     }
 
@@ -319,27 +318,27 @@ public abstract class BTFlowNodeBase : BTNodeBase, IEnumerable
     /// Set the planning service for this flow node
     /// </summary>
     /// <param name="service">The planning service to use</param>
-    public void SetPlanningService(PlanningService service)
+    public void SetPlanningService(ServicePlanning service)
     {
-        LoggingService.LogInfo($"🔧 BTFlowNodeBase: SetPlanningService called for {DebugDisplayName} with service {service.GetType().Name}");
-        PlanningService = service;
+        LoggingService.LogInfo($"🔧 FlowNode: SetPlanningService called for {DebugDisplayName} with service {service.GetType().Name}");
+        ServicePlanning = service;
 
-        // If this is a PlanningService, set the bidirectional reference
-        if (service is PlanningService plannerService)
+        // If this is a ServicePlanning, set the bidirectional reference
+        if (service is ServicePlanning plannerService)
         {
-            LoggingService.LogInfo($"🔧 BTFlowNodeBase: Setting bidirectional reference with planning service {service.GetType().Name}");
+            LoggingService.LogInfo($"🔧 FlowNode: Setting bidirectional reference with planning service {service.GetType().Name}");
             plannerService.SetOwningFlowNode(this);
-            LoggingService.LogInfo($"🔧 BTFlowNodeBase: Bidirectional reference set - {DebugDisplayName} ↔ {service.GetType().Name}");
+            LoggingService.LogInfo($"🔧 FlowNode: Bidirectional reference set - {DebugDisplayName} ↔ {service.GetType().Name}");
         }
         else
         {
-            LoggingService.LogWarning($"⚠️ BTFlowNodeBase: Service {service.GetType().Name} is not a PlanningService, cannot set bidirectional reference");
+            LoggingService.LogWarning($"⚠️ FlowNode: Service {service.GetType().Name} is not a ServicePlanning, cannot set bidirectional reference");
         }
 
         // Add the planning service to the general services list so it gets ticked
         AddService(service, false); // false = not always on
 
-        LoggingService.LogInfo($"🔧 BTFlowNodeBase: Added planning service {service.GetType().Name} to services list for {DebugDisplayName}");
+        LoggingService.LogInfo($"🔧 FlowNode: Added planning service {service.GetType().Name} to services list for {DebugDisplayName}");
     }
 
     /// <summary>

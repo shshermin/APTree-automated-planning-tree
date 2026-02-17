@@ -6,7 +6,7 @@ namespace ModelLoader.ParameterTypes
     public class Stackposition : Location
     {
 
-        // Empty constructor - required by Entity
+        // Empty constructor - required by CustomProperty
         public Stackposition() : base()
         {
             BaseType = new FastName("Location");

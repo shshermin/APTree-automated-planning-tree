@@ -7,7 +7,7 @@ using System.Linq;
 /// 
 /// ENHSP raw output lines:  "0.0: (travelml r1 pr2 ep1)"
 /// </summary>
-public class ENHSPPlanner : Planner
+public class PlannerENHSP : Planner
 {
     public override string[] PlannerNames => new[] { "ENHSP" };
 

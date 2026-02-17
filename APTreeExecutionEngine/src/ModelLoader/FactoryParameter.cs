@@ -6,7 +6,7 @@ using BehaviorTreeMainProject.Log.Services;
 public class FactoryParameter : Singleton<FactoryParameter>
 {
     // Create a parameter instance by type name and instance name only
-    public Entity CreateParameter(string typeName, string instanceName)
+    public CustomProperty CreateParameter(string typeName, string instanceName)
     {
         // Start timing
         var startTime = DateTime.Now;
@@ -20,7 +20,7 @@ public class FactoryParameter : Singleton<FactoryParameter>
         }
 
         // Create instance using empty constructor
-        var instance = Activator.CreateInstance(parameterType) as Entity;
+        var instance = Activator.CreateInstance(parameterType) as CustomProperty;
         
         if (instance == null)
         {
@@ -44,7 +44,7 @@ public class FactoryParameter : Singleton<FactoryParameter>
     }
 
     // Create a parameter instance with parameter values
-    public Entity CreateParameter(string typeName, string instanceName, Dictionary<string, object> parameters)
+    public CustomProperty CreateParameter(string typeName, string instanceName, Dictionary<string, object> parameters)
     {
         // Create the base instance
         var instance = CreateParameter(typeName, instanceName);
@@ -58,12 +58,12 @@ public class FactoryParameter : Singleton<FactoryParameter>
     // Dynamically find parameter type by name
     private Type FindParameterType(string typeName)
     {
-        // Get the assembly containing Entity types
-        var assembly = typeof(Entity).Assembly;
+        // Get the assembly containing CustomProperty types
+        var assembly = typeof(CustomProperty).Assembly;
         
-        // Search for types that inherit from Entity
+        // Search for types that inherit from CustomProperty
         var entityTypes = assembly.GetTypes()
-            .Where(t => t.IsSubclassOf(typeof(Entity)) && !t.IsAbstract)
+            .Where(t => t.IsSubclassOf(typeof(CustomProperty)) && !t.IsAbstract)
             .ToList();
         
         // Try exact match first (case-insensitive)

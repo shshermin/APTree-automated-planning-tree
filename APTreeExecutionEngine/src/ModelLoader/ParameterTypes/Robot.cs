@@ -8,7 +8,7 @@ namespace ModelLoader.ParameterTypes
         public string Type { get; set; }
         public double Speed { get; set; }
 
-        // Empty constructor - required by Entity
+        // Empty constructor - required by CustomProperty
         public Robot() : base()
         {
             BaseType = new FastName("Agent");

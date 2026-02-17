@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 
-public abstract class ActionNode :BTNodeBase
+public abstract class ActionNode :BTNode
 {
     private readonly Func<Dictionary<string, object>, float, bool> actionLogic;
     protected readonly Blackboard<FastName> blackboard;

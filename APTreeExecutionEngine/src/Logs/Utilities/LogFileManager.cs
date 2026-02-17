@@ -9,7 +9,7 @@ namespace BehaviorTreeMainProject.Log
     /// </summary>
     public class LogFileManager : IDisposable
     {
-        private StreamWriter fileWriter;
+        private StreamWriter? fileWriter;
         private string logFilePath;
         private readonly object fileLock = new object();
         private bool isDisposed = false;
@@ -48,7 +48,7 @@ namespace BehaviorTreeMainProject.Log
                         var fileName = Path.GetFileNameWithoutExtension(logFilePath);
                         var extension = Path.GetExtension(logFilePath);
                         var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss_fff");
-                        var newLogFilePath = Path.Combine(directory, $"{fileName}_{timestamp}{extension}");
+                        var newLogFilePath = Path.Combine(directory ?? ".", $"{fileName}_{timestamp}{extension}");
                         
                         Console.WriteLine($"⚠️ Log file {logFilePath} is locked, creating new file: {newLogFilePath}");
                         logFilePath = newLogFilePath;
@@ -67,7 +67,7 @@ namespace BehaviorTreeMainProject.Log
                 try
                 {
                     var directory = Path.GetDirectoryName(logFilePath);
-                    var fallbackPath = Path.Combine(directory, $"fallback_{DateTime.Now:yyyyMMdd_HHmmss_fff}.log");
+                    var fallbackPath = Path.Combine(directory ?? ".", $"fallback_{DateTime.Now:yyyyMMdd_HHmmss_fff}.log");
                     Console.WriteLine($"🔄 Attempting to create fallback log file: {fallbackPath}");
                     
                     logFilePath = fallbackPath;
@@ -142,7 +142,9 @@ namespace BehaviorTreeMainProject.Log
                     fileWriter.Dispose();
                 }
 
-                var backupPath = logFilePath.Replace(".log", $"_backup_{DateTime.Now:yyyyMMdd_HHmmss}.log");
+                var ext = Path.GetExtension(logFilePath);
+                var nameWithoutExt = logFilePath.Substring(0, logFilePath.Length - ext.Length);
+                var backupPath = $"{nameWithoutExt}_backup_{DateTime.Now:yyyyMMdd_HHmmss}{ext}";
                 File.Move(logFilePath, backupPath);
                 
                 // Recreate file

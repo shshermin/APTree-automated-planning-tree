@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
@@ -37,15 +37,15 @@ app.UseSwaggerUI();
 app.MapGet("/health", () => Results.Ok(new { ok = true }));
 
 app.MapGet("/api/catalog/decorators", () =>
-    Results.Ok(BuildNodeCatalog(typeof(BTDecoratorBase), kind: "decorator", typeLabel: "Decorator")))
+    Results.Ok(BuildNodeCatalog(typeof(Decorator), kind: "decorator", typeLabel: "Decorator")))
     .WithName("GetDecoratorCatalog");
 
 app.MapGet("/api/catalog/services", () =>
-    Results.Ok(BuildNodeCatalog(typeof(BTServiceBase), kind: "service", typeLabel: "Service")))
+    Results.Ok(BuildNodeCatalog(typeof(Service), kind: "service", typeLabel: "Service")))
     .WithName("GetServiceCatalog");
 
 app.MapGet("/api/catalog/flows", () =>
-    Results.Ok(BuildNodeCatalog(typeof(BTFlowNodeBase), kind: "flow", typeLabel: "Flow")))
+    Results.Ok(BuildNodeCatalog(typeof(FlowNode), kind: "flow", typeLabel: "Flow")))
     .WithName("GetFlowCatalog");
 
 app.MapPost("/api/aptree/validate", async (APTreeValidateRequest request, IWebHostEnvironment env, CancellationToken ct) =>
@@ -189,7 +189,7 @@ static string ToDisplayName(string rawName)
     if (string.IsNullOrWhiteSpace(rawName)) return rawName;
 
     // Strip common prefixes, then prettify.
-    var name = Regex.Replace(rawName, "^(BTDecorator|BTService|PlanningService|BTFlowNode|Call)", "");
+    var name = Regex.Replace(rawName, "^(BTDecorator|BTService|ServicePlanning|BTFlowNode|Call)", "");
     name = name.Replace('_', ' ');
     name = Regex.Replace(name, @"(?<=[a-z0-9])([A-Z])", " $1");
     name = Regex.Replace(name, @"(?<=[A-Z])([A-Z][a-z])", " $1");

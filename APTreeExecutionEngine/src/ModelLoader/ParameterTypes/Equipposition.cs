@@ -6,7 +6,7 @@ namespace ModelLoader.ParameterTypes
     public class EquipPosition : Location
     {
 
-        // Empty constructor - required by Entity
+        // Empty constructor - required by CustomProperty
         public EquipPosition() : base()
         {
             BaseType = new FastName("Location");

@@ -37,7 +37,7 @@ public class EnvironmentGraph : IDisposable
             // Only keep real predicate parameters that map to entities in the graph
             var paramList = parameters
                 .Where(p => p.Key != "PredicateName" && p.Key != "PredicateType" && p.Key != "isNegated")
-                .Where(p => p.Value is Entity)
+                .Where(p => p.Value is CustomProperty)
                 .ToList();
 
             string query;
@@ -45,7 +45,7 @@ public class EnvironmentGraph : IDisposable
 
             if (paramList.Count == 1)
             {
-                var value = paramList[0].Value as Entity;
+                var value = paramList[0].Value as CustomProperty;
                 query = $@"
                     MERGE (p0:{paramList[0].Value.GetType().Name} {{name: $firstParamName}})
                     SET p0:{predicate.GetPredicateType()}
@@ -60,8 +60,8 @@ public class EnvironmentGraph : IDisposable
             }
             else if (paramList.Count == 2)
             {
-                var value1 = paramList[0].Value as Entity;
-                var value2 = paramList[1].Value as Entity;
+                var value1 = paramList[0].Value as CustomProperty;
+                var value2 = paramList[1].Value as CustomProperty;
                 query = $@"
                     MERGE (p0:{paramList[0].Value.GetType().Name} {{name: $firstParamName}})
                     MERGE (p1:{paramList[1].Value.GetType().Name} {{name: $secondParamName}})

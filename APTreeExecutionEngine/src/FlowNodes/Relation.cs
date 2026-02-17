@@ -6,9 +6,9 @@ public class Relation
 {
     public GraphNode From { get; set; }
     public GraphNode To { get; set; }
-    public TemporalConstraint tempType { get; set; }
+    public TemporalType tempType { get; set; }
 
-    public Relation(GraphNode from, GraphNode to, TemporalConstraint constraint)
+    public Relation(GraphNode from, GraphNode to, TemporalType constraint)
     {
         From = from;
         To = to;

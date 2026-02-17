@@ -14,7 +14,7 @@ public enum CompositeTerminationPolicy
     StopAfterMaxAttempts        // Stop after N attempts/passes
 }
 
-public class BTFlowNodeComposite : BTFlowNodeBase
+public class BTFlowNodeComposite : FlowNode
 {
     public override string TypeName => "BTFlowNodeComposite";
 
@@ -56,7 +56,7 @@ public class BTFlowNodeComposite : BTFlowNodeBase
         // Set the tree for all services that don't have it set yet
         childNode.SetTreeForAllServices(OwningTree);
         
-        // If this is a GenericBTAction, also set the tree for its SubtreeInjectionService
+        // If this is a GenericBTAction, also set the tree for its ServiceSubtreeInject
         if (childNode is PActionNode action)
         {
             action.SetTreeForSubtreeInjectionService(OwningTree);
@@ -70,7 +70,7 @@ public class BTFlowNodeComposite : BTFlowNodeBase
             LinkedBlackboard.SetActionInstance(actionNode.InstanceName, actionNode);
             // Console.WriteLine($"✅ Added action node: {childNode.DebugDisplayName} to composite flow node actionGraph");
         }
-        else if (childNode is BTFlowNodeBase flowNode)
+        else if (childNode is FlowNode flowNode)
         {
             // For flow nodes, we'll store them in a separate list for now
             // In the future, we could extend NodeGraph to handle flow nodes
@@ -340,7 +340,7 @@ public class BTFlowNodeComposite : BTFlowNodeBase
     /// </summary>
     public void AddPlanningPhaseService()
     {
-        var planningPhaseService = new BTServicePlanningPhaseManager(OwningTree, this);
+        var planningPhaseService = new ServicePlanningPhaseManager(OwningTree, this);
         AddService(planningPhaseService, false); // false = general service (runs during planning)
         LoggingService.LogInfo($"🔧 CompositeFlow: Added PlanningPhaseManager service to {DebugDisplayName}");
     }
@@ -368,10 +368,10 @@ public class BTFlowNodeComposite : BTFlowNodeBase
         
         foreach (var child in children)
         {
-            if (child is BTFlowNodeDynamic dynamicNode)
+            if (child is DynamicFlowNode dynamicNode)
             {
                 // Check if this dynamic node has a planning service
-                if (dynamicNode.PlanningService is PlanningService plannerService)
+                if (dynamicNode.ServicePlanning is ServicePlanning plannerService)
                 {
                     // Check if planning has generated a NodeGraph
                     if (!plannerService.HasGeneratedNodeGraph())

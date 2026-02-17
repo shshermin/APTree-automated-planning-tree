@@ -16,11 +16,11 @@ public abstract class PActionNode : ActionNode
 
     // High-level action support
     public bool IsHighLevelAction { get; protected set; } = false;
-    public BTFlowNodeDynamic HighLevelSubtree { get; protected set; }
-    public BTServiceBase PlanningService { get; protected set; }
+    public DynamicFlowNode HighLevelSubtree { get; protected set; }
+    public Service ServicePlanning { get; protected set; }
 
-    // SubtreeInjectionService access
-    public SubtreeInjectionService SubtreeInjectionService => GetSubtreeInjectionService();
+    // ServiceSubtreeInject access
+    public ServiceSubtreeInject ServiceSubtreeInject => GetSubtreeInjectionService();
 
     // Abstract properties for preconditions and effects
     protected abstract State Preconditions { get; }
@@ -57,26 +57,23 @@ public abstract class PActionNode : ActionNode
         
         LoggingService.LogInfo($"🔧 GenericBTAction: About to call InitializeSubtreeInjectionService for {instanceName}");
         
-        // Automatically add SubtreeInjectionService to all actions
+        // Automatically add ServiceSubtreeInject to all actions
         InitializeSubtreeInjectionService();
         
         LoggingService.LogInfo($"🔧 GenericBTAction: Constructor completed for {instanceName}");
-        
-        // Track action node creation for execution summary
-        ExecutionSummaryLogger.TrackNodeCreation("GenericBTAction");
     }
 
     /// <summary>
     /// Set this action as a high-level action with a subtree and planning service
     /// </summary>
-    public void SetAsHighLevelAction(BTFlowNodeDynamic subtree, BTServiceBase planningService)
+    public void SetAsHighLevelAction(DynamicFlowNode subtree, Service planningService)
     {
        
             LoggingService.LogInfo($"🧹 GenericBTAction: Cleaning up old subtree before setting new one");
 
             IsHighLevelAction = true;
             HighLevelSubtree = subtree;
-            PlanningService = planningService;
+            ServicePlanning = planningService;
 
             // NEW: Establish bidirectional parent-child relationship
             subtree.SetParentNode(this);
@@ -85,7 +82,7 @@ public abstract class PActionNode : ActionNode
             AddDecorator(new BTDecoratorResetOnSubtreeSuccess(this));
 
             LoggingService.LogInfo($"🔧 GenericBTAction: Set {InstanceName.ToString()} as high-level action with subtree type: {subtree.GetType().Name}");
-            LoggingService.LogInfo($"🔧 GenericBTAction: PlanningService type: {planningService.GetType().Name}");
+            LoggingService.LogInfo($"🔧 GenericBTAction: ServicePlanning type: {planningService.GetType().Name}");
             LoggingService.LogInfo($"🔧 GenericBTAction: Established parent-child relationship: {InstanceName.ToString()} ↔ {subtree.DebugDisplayName}");
         
     }
@@ -97,7 +94,7 @@ public abstract class PActionNode : ActionNode
     {
         IsHighLevelAction = false;
         HighLevelSubtree = null;
-        PlanningService = null;
+        ServicePlanning = null;
         // Console.WriteLine($"🔧 GenericBTAction: Removed subtree from {InstanceName.ToString()}");
     }
 
@@ -413,7 +410,7 @@ public abstract class PActionNode : ActionNode
     }
 
     /// <summary>
-    /// Initialize and add SubtreeInjectionService to this action
+    /// Initialize and add ServiceSubtreeInject to this action
     /// </summary>
     private void InitializeSubtreeInjectionService()
     {
@@ -423,10 +420,10 @@ public abstract class PActionNode : ActionNode
         {
             LoggingService.LogInfo($"🔧 GenericBTAction: InitializeSubtreeInjectionService called for {InstanceName.ToString()}");
             
-            // Create a new SubtreeInjectionService instance for this action without the tree initially
-            var subtreeService = new SubtreeInjectionService(this);
-            LoggingService.LogInfo($"🔧 GenericBTAction: Created SubtreeInjectionService instance for {InstanceName.ToString()}");
-            LoggingService.LogInfo($"🔧 GenericBTAction: Created SubtreeInjectionService instance for {InstanceName.ToString()}");
+            // Create a new ServiceSubtreeInject instance for this action without the tree initially
+            var subtreeService = new ServiceSubtreeInject(this);
+            LoggingService.LogInfo($"🔧 GenericBTAction: Created ServiceSubtreeInject instance for {InstanceName.ToString()}");
+            LoggingService.LogInfo($"🔧 GenericBTAction: Created ServiceSubtreeInject instance for {InstanceName.ToString()}");
             
             // Add it to the GeneralServices (not AlwaysOnServices since it should only run when needed)
             LoggingService.LogInfo($"🔧 GenericBTAction: About to call AddService for {InstanceName.ToString()}");
@@ -438,24 +435,24 @@ public abstract class PActionNode : ActionNode
             var addedService = GetSubtreeInjectionService();
             if (addedService != null)
             {
-                LoggingService.LogSuccess($"✅ GenericBTAction: Successfully added SubtreeInjectionService to {InstanceName.ToString()}");
-                LoggingService.LogInfo($"✅ GenericBTAction: Successfully added SubtreeInjectionService to {InstanceName.ToString()}");
+                LoggingService.LogSuccess($"✅ GenericBTAction: Successfully added ServiceSubtreeInject to {InstanceName.ToString()}");
+                LoggingService.LogInfo($"✅ GenericBTAction: Successfully added ServiceSubtreeInject to {InstanceName.ToString()}");
             }
             else
             {
-                LoggingService.LogWarning($"❌ GenericBTAction: Failed to add SubtreeInjectionService to {InstanceName.ToString()} - GetSubtreeInjectionService returned null");
-                LoggingService.LogWarning($"❌ GenericBTAction: Failed to add SubtreeInjectionService to {InstanceName.ToString()} - GetSubtreeInjectionService returned null");
+                LoggingService.LogWarning($"❌ GenericBTAction: Failed to add ServiceSubtreeInject to {InstanceName.ToString()} - GetSubtreeInjectionService returned null");
+                LoggingService.LogWarning($"❌ GenericBTAction: Failed to add ServiceSubtreeInject to {InstanceName.ToString()} - GetSubtreeInjectionService returned null");
             }
         }
         catch (Exception ex)
         {
             LoggingService.LogError($"❌ GenericBTAction: Exception in InitializeSubtreeInjectionService for {InstanceName.ToString()}: {ex.Message}");
-            LoggingService.LogError($"❌ GenericBTAction: Failed to initialize SubtreeInjectionService for {InstanceName.ToString()}: {ex.Message}");
+            LoggingService.LogError($"❌ GenericBTAction: Failed to initialize ServiceSubtreeInject for {InstanceName.ToString()}: {ex.Message}");
         }
     }
 
     /// <summary>
-    /// Set the tree for the SubtreeInjectionService after the action is added to the tree
+    /// Set the tree for the ServiceSubtreeInject after the action is added to the tree
     /// This should be called after SetOwiningTree is called on the action
     /// </summary>
     public void SetTreeForSubtreeInjectionService(IBehaviorTree InOwningtree)
@@ -468,15 +465,15 @@ public abstract class PActionNode : ActionNode
     }
 
     /// <summary>
-    /// Get the SubtreeInjectionService associated with this action
+    /// Get the ServiceSubtreeInject associated with this action
     /// </summary>
-    public SubtreeInjectionService GetSubtreeInjectionService()
+    public ServiceSubtreeInject GetSubtreeInjectionService()
     {
         if (GenrealServices != null)
         {
             foreach (var service in GenrealServices)
             {
-                if (service is SubtreeInjectionService subtreeService)
+                if (service is ServiceSubtreeInject subtreeService)
                 {
                     return subtreeService;
                 }
@@ -500,11 +497,11 @@ public abstract class PActionNode : ActionNode
                 effects.Add(predicate); // This line was missing!
             }
 
-            // Console.WriteLine($"🎯 SubtreeInjectionService: Retrieved {effects.Count} effects from action");
+            // Console.WriteLine($"🎯 ServiceSubtreeInject: Retrieved {effects.Count} effects from action");
         }
         catch (Exception ex)
         {
-            // Console.WriteLine($"❌ SubtreeInjectionService: Error getting action effects: {ex.Message}");
+            // Console.WriteLine($"❌ ServiceSubtreeInject: Error getting action effects: {ex.Message}");
         }
 
         return effects;

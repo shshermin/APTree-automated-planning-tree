@@ -1,6 +1,6 @@
 using BehaviorTreeMainProject.Log.Services;
 
-public abstract class BTDecoratorBase : IBTDecorator
+public abstract class Decorator : IBTDecorator
 {
     // gets the responsible agent
    // public Agent self => LinkedBlackboard.GetAgent();
@@ -10,7 +10,7 @@ public abstract class BTDecoratorBase : IBTDecorator
 
     public Blackboard<FastName> LinkedBlackboard => OwningTree.linkedBlackboard;
     public PActionNode? AttachedAction { get; protected set; }
-    public BTFlowNodeDynamic? AttachedNode { get; protected set; }
+    public DynamicFlowNode? AttachedNode { get; protected set; }
     public abstract bool CanPostProcessTickResult { get; }
     public abstract BTNodeResult PostProcessTickResult(BTNodeResult InResult);
   
@@ -26,7 +26,7 @@ public abstract class BTDecoratorBase : IBTDecorator
     public int TotalTickCount => totalTickCount;
     public int SuccessCount => successCount;
     public int FailureCount => failureCount;
-    protected BTDecoratorBase(bool bInIsInverted = false)
+    protected Decorator(bool bInIsInverted = false)
     {
         this.bIsInverted = bInIsInverted;
     }

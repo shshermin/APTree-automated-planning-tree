@@ -10,7 +10,7 @@ using System.Linq;
 ///   pickupml lp2 fp9 r1 vg1 (1)
 ///   placeml lp2 pr3 r1 vg1 (1)
 /// </summary>
-public class LAMAFirstPlanner : Planner
+public class PlannerLAMAFirst : Planner
 {
     public override string[] PlannerNames => new[] { "LAMA-FIRST", "LAMA" };
 

@@ -13,7 +13,7 @@ using System.Text.RegularExpressions;
 ///   or simply:
 ///   0: TRAVELML R1 PR2 EP1
 /// </summary>
-public class MetricFFPlanner : Planner
+public class PlannerMetricFF : Planner
 {
     public override string[] PlannerNames => new[] { "FF", "METRIC-FF" };
 

@@ -8,7 +8,7 @@ namespace ModelLoader.ParameterTypes
         public int Level { get; set; }
         public Module BelongsToModule { get; set; }
 
-        // Empty constructor - required by Entity
+        // Empty constructor - required by CustomProperty
         public Stack() : base()
         {
             BaseType = new FastName("Layer");

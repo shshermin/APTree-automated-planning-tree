@@ -8,7 +8,7 @@ namespace ModelLoader.ParameterTypes
         public double Thickness { get; set; }
         public string Material { get; set; }
 
-        // Empty constructor - required by Entity
+        // Empty constructor - required by CustomProperty
         public Plate() : base()
         {
             BaseType = new FastName("Element");

@@ -7,7 +7,7 @@ namespace ModelLoader.ParameterTypes
     {
         public string Layers { get; set; }
 
-        // Empty constructor - required by Entity
+        // Empty constructor - required by CustomProperty
         public Cassette() : base()
         {
             BaseType = new FastName("Module");

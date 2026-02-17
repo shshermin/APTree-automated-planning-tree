@@ -9,7 +9,7 @@ namespace BehaviorTreeMainProject.Log.Services
     /// </summary>
     public class BlackboardTrackingLogger : BaseLogger
     {
-        private static BlackboardTrackingLogger instance;
+        private static BlackboardTrackingLogger? instance;
         private static readonly object lockObject = new object();
         
         // Tracking counters
@@ -225,7 +225,7 @@ namespace BehaviorTreeMainProject.Log.Services
         /// <summary>
         /// Close the logger and write final statistics
         /// </summary>
-        public static void Close()
+        public new static void Close()
         {
             Instance.CloseInternal();
         }
@@ -240,7 +240,7 @@ namespace BehaviorTreeMainProject.Log.Services
         /// <summary>
         /// Get the log file path
         /// </summary>
-        public static string GetLogFilePath()
+        public new static string GetLogFilePath()
         {
             return Instance.GetLogFilePathInternal();
         }

@@ -5,7 +5,7 @@ using ModelLoader.PredicateTypes;
 
 namespace BehaviorTreeMainProject
 {
-    public class GluingPLateHL : PActionNode
+    public class GluingPlateHL : PActionNode
     {
         // Parameter: obj of type plate
         public Plate obj { get; private set; }
@@ -20,7 +20,7 @@ namespace BehaviorTreeMainProject
         private State preconditions;
         private State effects;
 
-        public GluingPLateHL(string actionType, string instanceName, Blackboard<FastName> blackboard, Plate obj, PositionOnRail pos, Robot client)
+        public GluingPlateHL(string actionType, string instanceName, Blackboard<FastName> blackboard, Plate obj, PositionOnRail pos, Robot client)
             : base(actionType, instanceName, blackboard)
         {
             this.obj = obj;

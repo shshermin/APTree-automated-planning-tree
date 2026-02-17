@@ -5,7 +5,7 @@ using ModelLoader.PredicateTypes;
 
 namespace BehaviorTree.Actions
 {
-    public class StackonmultipleHL : PActionNode
+    public class StackOnMultipleHL : PActionNode
     {
         // Parameter: plate of type Element
         public Element plate { get; private set; }
@@ -26,7 +26,7 @@ namespace BehaviorTree.Actions
         private State preconditions;
         private State effects;
 
-        public StackonmultipleHL(string actionType, string instanceName, Blackboard<FastName> blackboard, Element plate, Robot client, Location pos, Cassette mod, Stack lay)
+        public StackOnMultipleHL(string actionType, string instanceName, Blackboard<FastName> blackboard, Element plate, Robot client, Location pos, Cassette mod, Stack lay)
             : base(actionType, instanceName, blackboard)
         {
             this.plate = plate;

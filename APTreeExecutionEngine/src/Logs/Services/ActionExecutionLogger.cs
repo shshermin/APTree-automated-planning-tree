@@ -14,10 +14,10 @@ namespace BehaviorTreeMainProject.Log.Services
     {
         public int Counter { get; set; }
         public DateTime Timestamp { get; set; }
-        public string ActionName { get; set; }
-        public string InstanceName { get; set; }
-        public string Status { get; set; }
-        public string AdditionalInfo { get; set; }
+        public string ActionName { get; set; } = "";
+        public string InstanceName { get; set; } = "";
+        public string Status { get; set; } = "";
+        public string AdditionalInfo { get; set; } = "";
         public double TimeSinceStartMs { get; set; }
     }
 
@@ -26,7 +26,7 @@ namespace BehaviorTreeMainProject.Log.Services
     /// </summary>
     public class ActionExecutionLogger : BaseLogger
     {
-        private static ActionExecutionLogger instance;
+        private static ActionExecutionLogger? instance;
         private static readonly object lockObject = new object();
         private int executionCounter = 0;
         private readonly DateTime startTime;
@@ -151,7 +151,7 @@ namespace BehaviorTreeMainProject.Log.Services
         /// <summary>
         /// Get the path to the current log file
         /// </summary>
-        public string GetLogFilePath()
+        public new string GetLogFilePath()
         {
             return base.GetLogFilePath();
         }

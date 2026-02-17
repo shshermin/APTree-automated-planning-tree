@@ -11,7 +11,7 @@ using BehaviorTreeMainProject.Log.Services;
 
 namespace BehaviorTreeMainProject.Services.AIPlanning
 {
-    public class PDDLPlanningService : PlanningService
+    public class ServicePDDLPlanning : ServicePlanning
     {
         private DateTime planningStartTime;
         private bool planningStarted = false;
@@ -35,7 +35,7 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
         // Track generated problem files for debugging (static since generation happens before instance creation)
         private static readonly List<string> s_generatedProblemFiles = new List<string>();
 
-        public PDDLPlanningService(BehaviorTreeInstance InOwningTree, PDDLPlanningRequest InPlanningRequest)
+        public ServicePDDLPlanning(BehaviorTree InOwningTree, PDDLPlanningRequest InPlanningRequest)
             : base(InOwningTree, new RestPlannerCommunicator("http://localhost:5000"), InPlanningRequest)
         {
             this.blackboard = InOwningTree.linkedBlackboard;
@@ -62,27 +62,27 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
             int actionsGenerated = 0;
             NodeGraph nodeGraph = null;
 
-            LoggingService.LogInfo($"🔧 PDDLPlanningService: Converting PDDL result to NodeGraph...");
-            LoggingService.LogInfo($"📋 PDDLPlanningService: Execution Mode: {ExecutionMode}");
-            LoggingService.LogInfo($"📋 PDDLPlanningService: Problem File: {PlanningRequest.ProblemFile}");
+            LoggingService.LogInfo($"🔧 ServicePDDLPlanning: Converting PDDL result to NodeGraph...");
+            LoggingService.LogInfo($"📋 ServicePDDLPlanning: Execution Mode: {ExecutionMode}");
+            LoggingService.LogInfo($"📋 ServicePDDLPlanning: Problem File: {PlanningRequest.ProblemFile}");
             
             try
             {
                 if (string.IsNullOrEmpty(result.Plan))
                 {
-                    LoggingService.LogWarning("⚠️ PDDLPlanningService: No plan in planning result");
+                    LoggingService.LogWarning("⚠️ ServicePDDLPlanning: No plan in planning result");
                     success = false;
                 }
                 else
                 {
                     // Step 1: Transform raw planner output to DSL NodeGraph format
                     var plannerUsed = result.PlannerUsed ?? PlanningRequest.PlannerName ?? "ENHSP";
-                    LoggingService.LogInfo($"🔧 PDDLPlanningService: Transforming raw {plannerUsed} output to APTree DSL format...");
+                    LoggingService.LogInfo($"🔧 ServicePDDLPlanning: Transforming raw {plannerUsed} output to APTree DSL format...");
 
                     var planner = Planner.FromName(plannerUsed);
                     var dslPlanString = planner.TransformToAPTreeModel(result.Plan);
 
-                    LoggingService.LogInfo($"🔧 PDDLPlanningService: Transformed plan string:\n{dslPlanString}");
+                    LoggingService.LogInfo($"🔧 ServicePDDLPlanning: Transformed plan string:\n{dslPlanString}");
 
                     // Step 2: Parse the DSL plan string and create NodeGraph
                     nodeGraph = ParsePlanStringToNodeGraph(dslPlanString);
@@ -90,14 +90,14 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
                     if (nodeGraph != null)
                     {
                         actionsGenerated = nodeGraph.GetAllActionNodes().Count;
-                        LoggingService.LogSuccess($"✅ PDDLPlanningService: Generated NodeGraph with {actionsGenerated} actions");
-                        LoggingService.LogSuccess($"✅ PDDLPlanningService: Execution Mode applied: {ExecutionMode}");
+                        LoggingService.LogSuccess($"✅ ServicePDDLPlanning: Generated NodeGraph with {actionsGenerated} actions");
+                        LoggingService.LogSuccess($"✅ ServicePDDLPlanning: Execution Mode applied: {ExecutionMode}");
 
                         // Write the generated DSL plan back into APTreeLivematFinal.bt
                         var cassetteName = OwningFlowNode?.GetNodeName();
                         if (!string.IsNullOrEmpty(cassetteName))
                         {
-                            BTFileWriter.UpdateCassetteNodeGraph(cassetteName, dslPlanString);
+                            APTreeModelWriter.UpdateCassetteNodeGraph(cassetteName, dslPlanString);
                         }
                     }
                     else
@@ -108,7 +108,7 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"❌ PDDLPlanningService: Error generating NodeGraph: {ex.Message}");
+                LoggingService.LogError($"❌ ServicePDDLPlanning: Error generating NodeGraph: {ex.Message}");
                 success = false;
             }
 
@@ -122,12 +122,12 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
         /// <returns>A populated NodeGraph instance</returns>
         private NodeGraph ParsePlanStringToNodeGraph(string planString)
         {
-            LoggingService.LogInfo($"🔧 PDDLPlanningService: ParsePlanStringToNodeGraph called");
-            LoggingService.LogInfo($"🔧 PDDLPlanningService: Plan string length: {planString?.Length ?? 0}");
+            LoggingService.LogInfo($"🔧 ServicePDDLPlanning: ParsePlanStringToNodeGraph called");
+            LoggingService.LogInfo($"🔧 ServicePDDLPlanning: Plan string length: {planString?.Length ?? 0}");
             
             if (string.IsNullOrEmpty(planString))
             {
-                LoggingService.LogError($"❌ PDDLPlanningService: Plan string is null or empty");
+                LoggingService.LogError($"❌ ServicePDDLPlanning: Plan string is null or empty");
                 return new NodeGraph();
             }
             
@@ -136,18 +136,18 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
                 // Step 1: Parse planner output to extract action instances and relations
                 var (actionInstances, relations) = ParsePlannerOutput(planString);
                 
-                LoggingService.LogInfo($"🔧 PDDLPlanningService: Extracted {actionInstances.Count} action instances and {relations.Count} relations");
+                LoggingService.LogInfo($"🔧 ServicePDDLPlanning: Extracted {actionInstances.Count} action instances and {relations.Count} relations");
                 
                 // Step 2: Create NodeGraph from the extracted data
                 var nodeGraph = ParseNodeGraph(actionInstances, relations, blackboard);
                 
-                LoggingService.LogSuccess($"✅ PDDLPlanningService: Successfully created NodeGraph with {nodeGraph.GetAllActionNodes().Count} nodes");
+                LoggingService.LogSuccess($"✅ ServicePDDLPlanning: Successfully created NodeGraph with {nodeGraph.GetAllActionNodes().Count} nodes");
                 return nodeGraph;
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"❌ PDDLPlanningService: Exception in ParsePlanStringToNodeGraph: {ex.Message}");
-                LoggingService.LogError($"❌ PDDLPlanningService: Stack trace: {ex.StackTrace}");
+                LoggingService.LogError($"❌ ServicePDDLPlanning: Exception in ParsePlanStringToNodeGraph: {ex.Message}");
+                LoggingService.LogError($"❌ ServicePDDLPlanning: Stack trace: {ex.StackTrace}");
                 return new NodeGraph();
             }
         }
@@ -166,7 +166,7 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
             
             if (actions.Count == 0) return nodeGraph;
             
-            LoggingService.LogInfo($"🔧 PDDLPlanningService: Creating NodeGraph with {ExecutionMode} execution mode for {actions.Count} actions");
+            LoggingService.LogInfo($"🔧 ServicePDDLPlanning: Creating NodeGraph with {ExecutionMode} execution mode for {actions.Count} actions");
             
             switch (ExecutionMode)
             {
@@ -186,14 +186,14 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
         
         private NodeGraph CreateSequentialNodeGraph(List<PActionNode> actions, NodeGraph nodeGraph)
         {
-            LoggingService.LogInfo($"🔧 PDDLPlanningService: Creating sequential execution pattern");
+            LoggingService.LogInfo($"🔧 ServicePDDLPlanning: Creating sequential execution pattern");
             
             // Add sequential relations (MEETS constraints) between consecutive actions
             for (int i = 0; i < actions.Count - 1; i++)
             {
                 nodeGraph.AddOrderRelation(actions[i], actions[i + 1]);
-                nodeGraph.AddTemporalConstraint(actions[i], actions[i + 1], TemporalConstraint.MEETS);
-                LoggingService.LogInfo($"🔧 PDDLPlanningService: Added sequential relation: {actions[i].InstanceName} → {actions[i + 1].InstanceName}");
+                nodeGraph.AddTemporalConstraint(actions[i], actions[i + 1], TemporalType.MEETS);
+                LoggingService.LogInfo($"🔧 ServicePDDLPlanning: Added sequential relation: {actions[i].InstanceName} → {actions[i + 1].InstanceName}");
             }
             
             return nodeGraph;
@@ -201,11 +201,11 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
         
         private NodeGraph CreateParallelNodeGraph(List<PActionNode> actions, NodeGraph nodeGraph)
         {
-            LoggingService.LogInfo($"🔧 PDDLPlanningService: Creating parallel execution pattern");
+            LoggingService.LogInfo($"🔧 ServicePDDLPlanning: Creating parallel execution pattern");
             
             if (actions.Count == 1)
             {
-                LoggingService.LogInfo($"🔧 PDDLPlanningService: Single action execution");
+                LoggingService.LogInfo($"🔧 ServicePDDLPlanning: Single action execution");
                 return nodeGraph;
             }
             
@@ -213,8 +213,8 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
             for (int i = 1; i < actions.Count; i++)
             {
                 nodeGraph.AddOrderRelation(actions[0], actions[i]);
-                nodeGraph.AddTemporalConstraint(actions[0], actions[i], TemporalConstraint.OVERLAPS);
-                LoggingService.LogInfo($"🔧 PDDLPlanningService: Added parallel relation: {actions[0].InstanceName} || {actions[i].InstanceName}");
+                nodeGraph.AddTemporalConstraint(actions[0], actions[i], TemporalType.OVERLAPS);
+                LoggingService.LogInfo($"🔧 ServicePDDLPlanning: Added parallel relation: {actions[0].InstanceName} || {actions[i].InstanceName}");
             }
             
             return nodeGraph;
@@ -222,7 +222,7 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
         
         private NodeGraph CreateHybridNodeGraph(List<PActionNode> actions, NodeGraph nodeGraph)
         {
-            LoggingService.LogInfo($"🔧 PDDLPlanningService: Creating hybrid execution pattern");
+            LoggingService.LogInfo($"🔧 ServicePDDLPlanning: Creating hybrid execution pattern");
             
             if (actions.Count <= 2)
             {
@@ -236,23 +236,23 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
             
             // First action to second action (sequential)
             nodeGraph.AddOrderRelation(actions[0], actions[1]);
-            nodeGraph.AddTemporalConstraint(actions[0], actions[1], TemporalConstraint.MEETS);
-            LoggingService.LogInfo($"🔧 PDDLPlanningService: Added sequential relation: {actions[0].InstanceName} → {actions[1].InstanceName}");
+            nodeGraph.AddTemporalConstraint(actions[0], actions[1], TemporalType.MEETS);
+            LoggingService.LogInfo($"🔧 ServicePDDLPlanning: Added sequential relation: {actions[0].InstanceName} → {actions[1].InstanceName}");
             
             // Second action to third action (parallel)
             if (actions.Count > 2)
             {
                 nodeGraph.AddOrderRelation(actions[1], actions[2]);
-                nodeGraph.AddTemporalConstraint(actions[1], actions[2], TemporalConstraint.OVERLAPS);
-                LoggingService.LogInfo($"🔧 PDDLPlanningService: Added parallel relation: {actions[1].InstanceName} || {actions[2].InstanceName}");
+                nodeGraph.AddTemporalConstraint(actions[1], actions[2], TemporalType.OVERLAPS);
+                LoggingService.LogInfo($"🔧 ServicePDDLPlanning: Added parallel relation: {actions[1].InstanceName} || {actions[2].InstanceName}");
             }
             
             // Remaining actions in parallel
             for (int i = 3; i < actions.Count; i++)
             {
                 nodeGraph.AddOrderRelation(actions[1], actions[i]);
-                nodeGraph.AddTemporalConstraint(actions[1], actions[i], TemporalConstraint.OVERLAPS);
-                LoggingService.LogInfo($"🔧 PDDLPlanningService: Added parallel relation: {actions[1].InstanceName} || {actions[i].InstanceName}");
+                nodeGraph.AddTemporalConstraint(actions[1], actions[i], TemporalType.OVERLAPS);
+                LoggingService.LogInfo($"🔧 ServicePDDLPlanning: Added parallel relation: {actions[1].InstanceName} || {actions[i].InstanceName}");
             }
             
             return nodeGraph;
@@ -274,11 +274,11 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
             try
             {
                 string instanceName = action.InstanceName.ToString();
-                LoggingService.LogInfo($"🔧 PDDLPlanningService: Starting GenerateDynamicPDDLProblem for instance: {instanceName}");
+                LoggingService.LogInfo($"🔧 ServicePDDLPlanning: Starting GenerateDynamicPDDLProblem for instance: {instanceName}");
 
                 if (action == null)
                 {
-                    LoggingService.LogError($"❌ PDDLPlanningService: action is null!");
+                    LoggingService.LogError($"❌ ServicePDDLPlanning: action is null!");
                     throw new ArgumentNullException(nameof(action));
                 }
 
@@ -288,28 +288,28 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
                 string problemFilePath = $"python_service/Plannerinputs/generated/{problemFileName}";
                 string relativeProblemPath = $"Plannerinputs/generated/{problemFileName}";
 
-                LoggingService.LogInfo($"🔧 PDDLPlanningService: Generating PDDL problem file: {problemFileName}");
-                LoggingService.LogInfo($"🔧 PDDLPlanningService: Action type: {actionType}, Action full name: {actionFullName}");
+                LoggingService.LogInfo($"🔧 ServicePDDLPlanning: Generating PDDL problem file: {problemFileName}");
+                LoggingService.LogInfo($"🔧 ServicePDDLPlanning: Action type: {actionType}, Action full name: {actionFullName}");
 
                 if (blackboard == null)
                 {
-                    LoggingService.LogError($"❌ PDDLPlanningService: blackboard is null!");
+                    LoggingService.LogError($"❌ ServicePDDLPlanning: blackboard is null!");
                     throw new ArgumentNullException(nameof(blackboard));
                 }
 
                 // 1. Retrieve predicates from blackboard
                 var initialstatepredicates = blackboard.GetTruePredicates();
-                LoggingService.LogInfo($"🔧 PDDLPlanningService: Retrieved {initialstatepredicates?.Count ?? 0} initial state predicates");
+                LoggingService.LogInfo($"🔧 ServicePDDLPlanning: Retrieved {initialstatepredicates?.Count ?? 0} initial state predicates");
 
                 if (initialstatepredicates == null)
                     throw new InvalidOperationException("initialstatepredicates is null");
 
                 string initialstatepredicatesPDDL = ConvertMultiplePredicatesToPDDL(initialstatepredicates);
-                LoggingService.LogInfo($"📋 PDDLPlanningService: Initial state PDDL: {initialstatepredicatesPDDL}");
+                LoggingService.LogInfo($"📋 ServicePDDLPlanning: Initial state PDDL: {initialstatepredicatesPDDL}");
 
                 // 2. Get action effects for goals
                 var goalstatePredicates = action.GetActionEffects();
-                LoggingService.LogInfo($"🔧 PDDLPlanningService: Retrieved {goalstatePredicates?.Count ?? 0} goal predicates from action effects");
+                LoggingService.LogInfo($"🔧 ServicePDDLPlanning: Retrieved {goalstatePredicates?.Count ?? 0} goal predicates from action effects");
 
                 if (goalstatePredicates == null)
                     throw new InvalidOperationException("goalstatePredicates is null");
@@ -318,45 +318,45 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
                     LoggingService.LogInfo($"   Goal predicate: {predicate?.PredicateName}");
 
                 string goalstatepredicatesPDDL = ConvertMultiplePredicatesToPDDL(goalstatePredicates);
-                LoggingService.LogInfo($"🎯 PDDLPlanningService: Goal state PDDL: {goalstatepredicatesPDDL}");
+                LoggingService.LogInfo($"🎯 ServicePDDLPlanning: Goal state PDDL: {goalstatepredicatesPDDL}");
 
                 // 3. Generate PDDL problem content
                 string pddlContent = GeneratePDDLProblemContent(actionFullName, initialstatepredicatesPDDL, goalstatepredicatesPDDL);
-                LoggingService.LogInfo($"🔧 PDDLPlanningService: Generated PDDL content length: {pddlContent?.Length ?? 0}");
+                LoggingService.LogInfo($"🔧 ServicePDDLPlanning: Generated PDDL content length: {pddlContent?.Length ?? 0}");
 
                 // 4. Write to file
-                LoggingService.LogInfo($"🔧 PDDLPlanningService: About to write file to: {problemFilePath}");
+                LoggingService.LogInfo($"🔧 ServicePDDLPlanning: About to write file to: {problemFilePath}");
                 File.WriteAllText(problemFilePath, pddlContent, Encoding.UTF8);
-                LoggingService.LogInfo($"🔧 PDDLPlanningService: File written successfully");
+                LoggingService.LogInfo($"🔧 ServicePDDLPlanning: File written successfully");
 
                 // 5. Verify file was created and contains content
                 if (File.Exists(problemFilePath))
                 {
                     var fileContent = File.ReadAllText(problemFilePath);
-                    LoggingService.LogInfo($"✅ PDDLPlanningService: Generated PDDL problem file: {problemFilePath}");
-                    LoggingService.LogInfo($"📄 PDDLPlanningService: File size: {fileContent.Length} characters");
-                    LoggingService.LogInfo($"📄 PDDLPlanningService: Problem file content preview:");
-                    LoggingService.LogInfo(pddlContent);
+                    LoggingService.LogInfo($"✅ ServicePDDLPlanning: Generated PDDL problem file: {problemFilePath}");
+                    LoggingService.LogInfo($"📄 ServicePDDLPlanning: File size: {fileContent.Length} characters");
+                    LoggingService.LogInfo($"📄 ServicePDDLPlanning: Problem file content preview:");
+                    LoggingService.LogInfo(pddlContent ?? "(empty)");
 
                     if (fileContent.Contains("(:goal"))
-                        LoggingService.LogInfo($"✅ PDDLPlanningService: Problem file contains goal section");
+                        LoggingService.LogInfo($"✅ ServicePDDLPlanning: Problem file contains goal section");
                     else
-                        LoggingService.LogWarning($"⚠️ PDDLPlanningService: Problem file does NOT contain goal section!");
+                        LoggingService.LogWarning($"⚠️ ServicePDDLPlanning: Problem file does NOT contain goal section!");
                 }
                 else
                 {
-                    LoggingService.LogError($"❌ PDDLPlanningService: Failed to create problem file: {problemFilePath}");
+                    LoggingService.LogError($"❌ ServicePDDLPlanning: Failed to create problem file: {problemFilePath}");
                 }
 
                 s_generatedProblemFiles.Add(problemFilePath);
 
-                LoggingService.LogInfo($"✅ PDDLPlanningService: Successfully completed GenerateDynamicPDDLProblem");
+                LoggingService.LogInfo($"✅ ServicePDDLPlanning: Successfully completed GenerateDynamicPDDLProblem");
                 return relativeProblemPath;
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"❌ PDDLPlanningService: Error generating PDDL problem: {ex.Message}");
-                LoggingService.LogError($"❌ PDDLPlanningService: Stack trace: {ex.StackTrace}");
+                LoggingService.LogError($"❌ ServicePDDLPlanning: Error generating PDDL problem: {ex.Message}");
+                LoggingService.LogError($"❌ ServicePDDLPlanning: Stack trace: {ex.StackTrace}");
                 // Fallback to default problem file
                 return "Plannerinputs/static/bigproblem.pddl";
             }
@@ -395,21 +395,21 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
         {
             try
             {
-                string filePath = "src/InputInstances/ParameterInstances_PDDL.txt";
+                string filePath = "python_service/Plannerinputs/static/ParameterInstances_PDDL.txt";
 
                 if (!File.Exists(filePath))
                 {
-                    LoggingService.LogError($"❌ PDDLPlanningService: ParameterInstances_PDDL.txt file not found at {filePath}");
+                    LoggingService.LogError($"❌ ServicePDDLPlanning: ParameterInstances_PDDL.txt file not found at {filePath}");
                     return string.Empty;
                 }
 
                 string content = File.ReadAllText(filePath);
-                LoggingService.LogInfo($"✅ PDDLPlanningService: Successfully read {content.Length} characters from ParameterInstances_PDDL.txt");
+                LoggingService.LogInfo($"✅ ServicePDDLPlanning: Successfully read {content.Length} characters from ParameterInstances_PDDL.txt");
                 return content;
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"❌ PDDLPlanningService: Error reading ParameterInstances_PDDL.txt: {ex.Message}");
+                LoggingService.LogError($"❌ ServicePDDLPlanning: Error reading ParameterInstances_PDDL.txt: {ex.Message}");
                 return string.Empty;
             }
         }
@@ -659,7 +659,7 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
             
             // Extract temporal constraint
             string constraintStr = relationLine.Substring(arrowStart + 3, arrowEnd - arrowStart - 3).Trim();
-            TemporalConstraint temporalConstraint = ParseTemporalConstraint(constraintStr);
+            TemporalType temporalConstraint = ParseTemporalConstraint(constraintStr);
             
             // Extract target action name
             string targetActionName = relationLine.Substring(arrowEnd + 4).Trim();
@@ -798,10 +798,10 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
             }
         }
 
-        private static TemporalConstraint ParseTemporalConstraint(string constraintStr)
+        private static TemporalType ParseTemporalConstraint(string constraintStr)
         {
             // Convert temporal constraint string to enum
-            if (Enum.TryParse<TemporalConstraint>(constraintStr, true, out var temporalConstraint))
+            if (Enum.TryParse<TemporalType>(constraintStr, true, out var temporalConstraint))
             {
                 return temporalConstraint;
             }
@@ -811,24 +811,24 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
             {
                 case "PRECEDES":
                 case "BEFORE":
-                    return TemporalConstraint.PRECEDES;
+                    return TemporalType.PRECEDES;
                 case "MEETS":
                 case "SEQUENTIAL":
-                    return TemporalConstraint.MEETS;
+                    return TemporalType.MEETS;
                 case "OVERLAPS":
                 case "PARALLEL":
-                    return TemporalConstraint.OVERLAPS;
+                    return TemporalType.OVERLAPS;
                 case "STARTS":
-                    return TemporalConstraint.STARTS;
+                    return TemporalType.STARTS;
                 case "FINISHES":
-                    return TemporalConstraint.FINISHES;
+                    return TemporalType.FINISHES;
                 case "CONTAINS":
-                    return TemporalConstraint.CONTAINS;
+                    return TemporalType.CONTAINS;
                 case "EQUALS":
-                    return TemporalConstraint.EQUALS;
+                    return TemporalType.EQUALS;
                 default:
                     LoggingService.LogWarning($"⚠️ ParseTemporalConstraint: Unknown temporal constraint '{constraintStr}', defaulting to MEETS");
-                    return TemporalConstraint.MEETS;
+                    return TemporalType.MEETS;
             }
         }
 

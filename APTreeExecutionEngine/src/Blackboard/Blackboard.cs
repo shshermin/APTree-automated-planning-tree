@@ -34,7 +34,7 @@ public class Blackboard<T> : IDisposable where T : class
     Dictionary<FastName, IBTNode> FlowNodeValues = new();
      Dictionary<FastName, State> StateValues = new();
     Dictionary<FastName, NodeGraph> NodeGraphValues = new();
-    Dictionary<FastName, BTFlowNodeDynamic> InjectedSubtreesValues = new();
+    Dictionary<FastName, DynamicFlowNode> InjectedSubtreesValues = new();
    
     private readonly EnvironmentGraph _envGraph;
 
@@ -50,7 +50,7 @@ public class Blackboard<T> : IDisposable where T : class
     /// before any other branch is allowed. Set by LowestCostExecution decorator, enforced by ExclusiveBranchGate.
     /// Only cleared when the chosen branch reaches Success.
     /// </summary>
-    public BTFlowNodeDynamic? ChosenExecutingBranch { get; set; } = null;
+    public DynamicFlowNode? ChosenExecutingBranch { get; set; } = null;
 
     /// <summary>
     /// Array to track when each cassette has generated and inserted its subtree
@@ -121,7 +121,7 @@ public class Blackboard<T> : IDisposable where T : class
     {
         return FlowNodeValues.Values.ToList();
     }
-    public void SetFlowNodeInstance(FastName key, BTFlowNodeBase value)
+    public void SetFlowNodeInstance(FastName key, FlowNode value)
     {
         if (!FlowNodeValues.ContainsKey(key))
         {
@@ -242,18 +242,18 @@ public class Blackboard<T> : IDisposable where T : class
 /// <param name="key"></param>
 /// <param name="elementType"></param>
 /// <exception cref="ArgumentException"></exception>
-   public void SetEntityType(FastName key, Entity elementType)
+   public void SetEntityType(FastName key, CustomProperty elementType)
 {
-    if (!typeof(Entity).IsAssignableFrom(elementType.GetType()))
+    if (!typeof(CustomProperty).IsAssignableFrom(elementType.GetType()))
     {
-        throw new ArgumentException($"Type {elementType.GetType().Name} is not an Entity type");
+        throw new ArgumentException($"Type {elementType.GetType().Name} is not an CustomProperty type");
     }
 
     if (!AvailableEntityTypes.Contains(key))
     {
         AvailableEntityTypes.Add(key);
         // Log new entity type added
-        BlackboardTrackingLogger.LogNewType(key.ToString(), "Entity", $"Entity type: {elementType.GetType().Name}");
+        BlackboardTrackingLogger.LogNewType(key.ToString(), "CustomProperty", $"CustomProperty type: {elementType.GetType().Name}");
     }
     AvailableEntityTypes.Add(key);
 }
@@ -268,7 +268,7 @@ public void RegisterEntityType(FastName typeName)
     {
         AvailableEntityTypes.Add(typeName);
         // Log new entity type registered
-        BlackboardTrackingLogger.LogNewType(typeName.ToString(), "Entity", "Registered entity type");
+        BlackboardTrackingLogger.LogNewType(typeName.ToString(), "CustomProperty", "Registered entity type");
     }
 }
 
@@ -788,7 +788,7 @@ public List<PActionNode> GetAllActionInstances()
     }
 
     // Get and Set methods for Injected Subtrees
-    public BTFlowNodeDynamic GetInjectedSubtree(FastName key)
+    public DynamicFlowNode GetInjectedSubtree(FastName key)
     {
         if (!InjectedSubtreesValues.ContainsKey(key))
         {
@@ -797,7 +797,7 @@ public List<PActionNode> GetAllActionInstances()
         return InjectedSubtreesValues[key];
     }
 
-    public void SetInjectedSubtree(FastName key, BTFlowNodeDynamic value)
+    public void SetInjectedSubtree(FastName key, DynamicFlowNode value)
     {
         InjectedSubtreesValues[key] = value;
         Console.WriteLine($"Successfully added injected subtree to Blackboard with key: {key}");
@@ -810,7 +810,7 @@ public List<PActionNode> GetAllActionInstances()
     /// Gets all injected subtrees from the blackboard
     /// </summary>
     /// <returns>List of all injected subtrees</returns>
-    public List<BTFlowNodeDynamic> GetAllInjectedSubtrees()
+    public List<DynamicFlowNode> GetAllInjectedSubtrees()
     {
         return InjectedSubtreesValues.Values.ToList();
     }

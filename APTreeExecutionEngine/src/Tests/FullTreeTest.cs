@@ -16,7 +16,7 @@ namespace BehaviorTreeMainProject
     public class FullTreeTest
     {
         // Track all planner executions
-        private List<PlanningService> allPlanners = new List<PlanningService>();
+        private List<ServicePlanning> allPlanners = new List<ServicePlanning>();
         private DateTime testStartTime;
         private DateTime testEndTime;
         private IBTNode rootNode; // Store root node for monitoring
@@ -89,10 +89,6 @@ namespace BehaviorTreeMainProject
                 // Generate summary table at the end
                 LoggingService.GenerateSummaryTable();
                 
-                // Generate execution summary
-                ExecutionSummaryLogger.GenerateSummary();
-                ExecutionSummaryLogger.Close();
-                
                 // Log final blackboard tracking statistics
                 BlackboardTrackingLogger.LogStatistics();
                 
@@ -103,10 +99,6 @@ namespace BehaviorTreeMainProject
                 // Generate behavior tree component CSV summary
                 BehaviorTreeComponentLogger.GenerateCSVSummary(blackboard);
                 BehaviorTreeComponentLogger.Close();
-                
-                // Generate planner statistics CSV summary
-                PlannerSummaryLogger.GenerateCSVSummary();
-                PlannerSummaryLogger.Close();
                 
                 // Generate tick timing CSV summary
                 TickTimingLogger.GenerateCSVSummary();
@@ -132,10 +124,6 @@ namespace BehaviorTreeMainProject
                 
                 // Generate summary table even if test failed
                 LoggingService.GenerateSummaryTable();
-                
-                // Generate execution summary even if test failed
-                ExecutionSummaryLogger.GenerateSummary();
-                ExecutionSummaryLogger.Close();
                 
                 // Close logging service
                 LoggingService.Close();
@@ -181,7 +169,7 @@ namespace BehaviorTreeMainProject
 
             try
             {
-                // 1. Entity Types
+                // 1. CustomProperty Types
                 var entityTypes = blackboard.GetAllEntityTypes();
                 LoggingService.LogInfo($"\nÃƒÂ°Ã…Â¸Ã‚ÂÃ‚Â·ÃƒÂ¯Ã‚Â¸Ã‚Â  ENTITY TYPES ({entityTypes.Count}):");
                 foreach (var entityType in entityTypes)
@@ -251,7 +239,7 @@ namespace BehaviorTreeMainProject
                     }
                 }
 
-                // 6. Entity Values
+                // 6. CustomProperty Values
                 LoggingService.LogInfo($"\nÃƒÂ°Ã…Â¸Ã‚ÂÃ¢â‚¬â€ÃƒÂ¯Ã‚Â¸Ã‚Â  ENTITY VALUES:");
                 LoggingService.LogInfo($"   - Element Values: {GetDictionaryCount(blackboard, "ElementValues")}");
                 if (GetDictionaryCount(blackboard, "ElementValues") > 0)
@@ -350,7 +338,7 @@ namespace BehaviorTreeMainProject
 
                 // 10. Summary
                 LoggingService.LogInfo($"\nÃƒÂ°Ã…Â¸Ã¢â‚¬Å“Ã…Â  SUMMARY:");
-                LoggingService.LogInfo($"   - Entity Types: {entityTypes.Count}");
+                LoggingService.LogInfo($"   - CustomProperty Types: {entityTypes.Count}");
                 LoggingService.LogInfo($"   - Predicate Types: {predicateTypes.Count}");
                 LoggingService.LogInfo($"   - Action Types: {actionTypes.Count}");
                 LoggingService.LogInfo($"   - Action Instances: {actionInstances.Count}");
@@ -402,9 +390,9 @@ namespace BehaviorTreeMainProject
                     {
                         foreach (System.Collections.DictionaryEntry entry in dict)
                         {
-                            // For Entity objects, use NameKey.ToString() instead of the full type name
+                            // For CustomProperty objects, use NameKey.ToString() instead of the full type name
                             object displayValue = entry.Value;
-                            if (entry.Value is Entity entity)
+                            if (entry.Value is CustomProperty entity)
                             {
                                 displayValue = entity.NameKey?.ToString() ?? entry.Value.ToString();
                             }
@@ -428,7 +416,7 @@ namespace BehaviorTreeMainProject
                 LoggingService.LogInfo("ÃƒÂ°Ã…Â¸Ã…â€™Ã‚Â³ Creating behavior tree with cassette flow nodes...");
 
                 // Create behavior tree instance first
-                var behaviorTree = new BehaviorTreeInstance();
+                var behaviorTree = new BehaviorTree();
                 behaviorTree.Initialise(blackboard, "CassetteBehaviorTree");
                 LoggingService.LogSuccess("ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ Created behavior tree instance");
 
@@ -445,10 +433,10 @@ namespace BehaviorTreeMainProject
                 LoggingService.LogSuccess("ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ Created root composite flow node");
 
                 // Create four cassette flow nodes
-                var cassette1Node = new BTFlowNodeDynamic(new FastName("cassette1"), behaviorTree, SuccessCriteria.ALL, 1.0f, true);  // Add LowestCost decorator
-                var cassette2Node = new BTFlowNodeDynamic(new FastName("cassette2"), behaviorTree, SuccessCriteria.ALL, 1.0f, true);  // Add LowestCost decorator
-                var cassette3Node = new BTFlowNodeDynamic(new FastName("cassette3"), behaviorTree, SuccessCriteria.ALL, 1.0f, true);  // Add LowestCost decorator
-                var cassette4Node = new BTFlowNodeDynamic(new FastName("cassette4"), behaviorTree, SuccessCriteria.ALL, 1.0f, true);  // Add LowestCost decorator
+                var cassette1Node = new DynamicFlowNode(new FastName("cassette1"), behaviorTree, SuccessCriteria.ALL, 1.0f, true);  // Add LowestCost decorator
+                var cassette2Node = new DynamicFlowNode(new FastName("cassette2"), behaviorTree, SuccessCriteria.ALL, 1.0f, true);  // Add LowestCost decorator
+                var cassette3Node = new DynamicFlowNode(new FastName("cassette3"), behaviorTree, SuccessCriteria.ALL, 1.0f, true);  // Add LowestCost decorator
+                var cassette4Node = new DynamicFlowNode(new FastName("cassette4"), behaviorTree, SuccessCriteria.ALL, 1.0f, true);  // Add LowestCost decorator
 
                 LoggingService.LogSuccess("ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ Created four cassette flow nodes");
 
@@ -478,10 +466,10 @@ namespace BehaviorTreeMainProject
                 var pddlRequest3 = new PDDLPlanningRequest("./Plannerinputs/static/domain.pddl", "./Plannerinputs/static/problemC3.pddl", "/home/shermin/ENHSP-Public/enhsp.jar", "ENHSP");
                 var pddlRequest4 = new PDDLPlanningRequest("./Plannerinputs/static/domain.pddl", "./Plannerinputs/static/problemC4.pddl", "/home/shermin/ENHSP-Public/enhsp.jar", "ENHSP");
 
-                var pddlPlanner1 = new PDDLPlanningService(behaviorTree, pddlRequest1);
-                var pddlPlanner2 = new PDDLPlanningService(behaviorTree, pddlRequest2);
-                var pddlPlanner3 = new PDDLPlanningService(behaviorTree, pddlRequest3);
-                var pddlPlanner4 = new PDDLPlanningService(behaviorTree, pddlRequest4);
+                var pddlPlanner1 = new ServicePDDLPlanning(behaviorTree, pddlRequest1);
+                var pddlPlanner2 = new ServicePDDLPlanning(behaviorTree, pddlRequest2);
+                var pddlPlanner3 = new ServicePDDLPlanning(behaviorTree, pddlRequest3);
+                var pddlPlanner4 = new ServicePDDLPlanning(behaviorTree, pddlRequest4);
                 
                 // Track all planners for execution summary
                 allPlanners.Add(pddlPlanner1);
@@ -490,10 +478,10 @@ namespace BehaviorTreeMainProject
                 allPlanners.Add(pddlPlanner4);
                 
                 // Configure execution modes for the cassettes
-                pddlPlanner1.ExecutionMode = PDDLPlanningService.ParallelExecutionMode.Parallel;    // Parallel execution
-                pddlPlanner2.ExecutionMode = PDDLPlanningService.ParallelExecutionMode.Parallel;    // Parallel execution
-                pddlPlanner3.ExecutionMode = PDDLPlanningService.ParallelExecutionMode.Parallel;    // Parallel execution
-                pddlPlanner4.ExecutionMode = PDDLPlanningService.ParallelExecutionMode.Parallel;    // Parallel execution
+                pddlPlanner1.ExecutionMode = ServicePDDLPlanning.ParallelExecutionMode.Parallel;    // Parallel execution
+                pddlPlanner2.ExecutionMode = ServicePDDLPlanning.ParallelExecutionMode.Parallel;    // Parallel execution
+                pddlPlanner3.ExecutionMode = ServicePDDLPlanning.ParallelExecutionMode.Parallel;    // Parallel execution
+                pddlPlanner4.ExecutionMode = ServicePDDLPlanning.ParallelExecutionMode.Parallel;    // Parallel execution
 
                 LoggingService.LogInfo("ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ Created PDDL planners for all four cassettes");
                 LoggingService.LogInfo($"ÃƒÂ°Ã…Â¸Ã¢â‚¬ÂÃ‚Â§ Execution Modes:");
@@ -524,10 +512,10 @@ namespace BehaviorTreeMainProject
                 // Display tree structure
                 LoggingService.LogInfo("\nÃƒÂ°Ã…Â¸Ã¢â‚¬Å“Ã¢â‚¬Â¹ BEHAVIOR TREE STRUCTURE:");
                 LoggingService.LogInfo($"Root: BTFlowNodeComposite ({((BTFlowNodeComposite)rootNode).GetNodeName()})");
-                LoggingService.LogInfo($"ÃƒÂ¢Ã¢â‚¬ÂÃ…â€œÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ BTFlowNodeDynamic ({cassette1Node.GetNodeName()}) - {pddlRequest1.PlannerName} Planner");
-                LoggingService.LogInfo($"ÃƒÂ¢Ã¢â‚¬ÂÃ…â€œÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ BTFlowNodeDynamic ({cassette2Node.GetNodeName()}) - {pddlRequest2.PlannerName} Planner");
-                LoggingService.LogInfo($"ÃƒÂ¢Ã¢â‚¬ÂÃ…â€œÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ BTFlowNodeDynamic ({cassette3Node.GetNodeName()}) - {pddlRequest3.PlannerName} Planner");
-                LoggingService.LogInfo($"ÃƒÂ¢Ã¢â‚¬ÂÃ¢â‚¬ÂÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ BTFlowNodeDynamic ({cassette4Node.GetNodeName()}) - {pddlRequest4.PlannerName} Planner");
+                LoggingService.LogInfo($"ÃƒÂ¢Ã¢â‚¬ÂÃ…â€œÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ DynamicFlowNode ({cassette1Node.GetNodeName()}) - {pddlRequest1.PlannerName} Planner");
+                LoggingService.LogInfo($"ÃƒÂ¢Ã¢â‚¬ÂÃ…â€œÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ DynamicFlowNode ({cassette2Node.GetNodeName()}) - {pddlRequest2.PlannerName} Planner");
+                LoggingService.LogInfo($"ÃƒÂ¢Ã¢â‚¬ÂÃ…â€œÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ DynamicFlowNode ({cassette3Node.GetNodeName()}) - {pddlRequest3.PlannerName} Planner");
+                LoggingService.LogInfo($"ÃƒÂ¢Ã¢â‚¬ÂÃ¢â‚¬ÂÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ DynamicFlowNode ({cassette4Node.GetNodeName()}) - {pddlRequest4.PlannerName} Planner");
 
                 LoggingService.LogSuccess("\nÃƒÂ°Ã…Â¸Ã…Â½Ã¢â‚¬Â° Behavior tree with cassette flow nodes created successfully!");
 
@@ -559,7 +547,7 @@ namespace BehaviorTreeMainProject
         }
 
         // Test the behavior tree structure
-        private async Task TestBehaviorTreeStructure(BehaviorTreeInstance behaviorTree)
+        private async Task TestBehaviorTreeStructure(BehaviorTree behaviorTree)
         {
             try
             {
@@ -567,23 +555,18 @@ namespace BehaviorTreeMainProject
 
                 // Track memory usage before tree execution
                 var memoryBefore = GC.GetTotalMemory(false);
-                ExecutionSummaryLogger.TrackMemoryUsage("Before Tree Execution", memoryBefore);
                 
                 // Test initial tick
-                ExecutionSummaryLogger.StartTreeExecution();
                 BlackboardSummaryLogger.StartTreeTicking();
                 var result = behaviorTree.Tick(0.0f);
                 BlackboardSummaryLogger.EndTreeTicking();
-                ExecutionSummaryLogger.EndTreeExecution();
                 LoggingService.LogSuccess($"ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ Initial tree tick result: {result}");
                 
                 // Track memory usage after tree execution
                 var memoryAfter = GC.GetTotalMemory(false);
-                ExecutionSummaryLogger.TrackMemoryUsage("After Tree Execution", memoryAfter);
                 
                 // Track memory usage after planner execution
                 var memoryAfterPlanner = GC.GetTotalMemory(false);
-                ExecutionSummaryLogger.TrackMemoryUsage("After Planner Execution", memoryAfterPlanner);
 
                 // Test individual cassette nodes
                 var rootNode = behaviorTree.root as BTFlowNodeComposite;
@@ -595,7 +578,7 @@ namespace BehaviorTreeMainProject
                     for (int i = 0; i < children.Count; i++)
                     {
                         var child = children[i];
-                        if (child is BTFlowNodeBase flowNode)
+                        if (child is FlowNode flowNode)
                         {
                             LoggingService.LogInfo($"   Child {i + 1}: {child.GetType().Name} - {flowNode.GetNodeName()}");
                         }
@@ -619,7 +602,7 @@ namespace BehaviorTreeMainProject
         }
 
         // Display NodeGraph status for each flow node
-        private async Task DisplayNodeGraphStatus(BehaviorTreeInstance behaviorTree)
+        private async Task DisplayNodeGraphStatus(BehaviorTree behaviorTree)
         {
             try
             {
@@ -635,18 +618,18 @@ namespace BehaviorTreeMainProject
                     for (int i = 0; i < children.Count; i++)
                     {
                         var child = children[i];
-                        if (child is BTFlowNodeDynamic dynamicNode)
+                        if (child is DynamicFlowNode dynamicNode)
                         {
                             LoggingService.LogInfo($"ÃƒÂ°Ã…Â¸Ã…Â½Ã‚Â¯ FLOW NODE {i + 1}: {dynamicNode.GetNodeName()}");
                             LoggingService.LogInfo($"   ÃƒÂ°Ã…Â¸Ã¢â‚¬Å“Ã¢â‚¬Â¹ Node Type: {child.GetType().Name}");
                             
                             // Check if planning service is set
-                            if (dynamicNode.PlanningService != null)
+                            if (dynamicNode.ServicePlanning != null)
                             {
-                                LoggingService.LogInfo($"   ÃƒÂ°Ã…Â¸Ã¢â‚¬ÂÃ‚Â§ Planning Service: {dynamicNode.PlanningService.GetType().Name}");
+                                LoggingService.LogInfo($"   ÃƒÂ°Ã…Â¸Ã¢â‚¬ÂÃ‚Â§ Planning Service: {dynamicNode.ServicePlanning.GetType().Name}");
                                 
-                                // Check if it's a PlanningService
-                                if (dynamicNode.PlanningService is PlanningService plannerService)
+                                // Check if it's a ServicePlanning
+                                if (dynamicNode.ServicePlanning is ServicePlanning plannerService)
                                 {
                                     LoggingService.LogInfo($"   ÃƒÂ°Ã…Â¸Ã¢â‚¬Å“Ã…Â  Has Generated NodeGraph: {plannerService.HasGeneratedNodeGraph()}");
                                     
@@ -753,11 +736,11 @@ namespace BehaviorTreeMainProject
                          for (int i = 0; i < children.Count; i++)
                          {
                              var child = children[i];
-                             if (child is BTFlowNodeDynamic dynamicNode)
+                             if (child is DynamicFlowNode dynamicNode)
                              {
-                                 var hasPlanningService = dynamicNode.PlanningService != null;
-                                 var planningServiceType = hasPlanningService ? dynamicNode.PlanningService.GetType().Name : "None";
-                                 LoggingService.LogInfo($"   {dynamicNode.GetNodeName()}: PlanningService={planningServiceType}");
+                                 var hasPlanningService = dynamicNode.ServicePlanning != null;
+                                 var planningServiceType = hasPlanningService ? dynamicNode.ServicePlanning.GetType().Name : "None";
+                                 LoggingService.LogInfo($"   {dynamicNode.GetNodeName()}: ServicePlanning={planningServiceType}");
                              }
                          }
                      }
@@ -894,7 +877,7 @@ namespace BehaviorTreeMainProject
         }
         
         // Track subtree status for high-level actions generated by flow nodes
-        private async Task TrackSubtreeStatusForHLActions(BehaviorTreeInstance behaviorTree)
+        private async Task TrackSubtreeStatusForHLActions(BehaviorTree behaviorTree)
         {
             LoggingService.LogSubsection("ÃƒÂ°Ã…Â¸Ã…â€™Ã‚Â³ TRACKING SUBTREE STATUS FOR HL ACTIONS");
             LoggingService.LogInfo("=".PadRight(60, '='));
@@ -914,12 +897,12 @@ namespace BehaviorTreeMainProject
                 for (int i = 0; i < children.Count; i++)
                 {
                     var child = children[i];
-                    if (child is BTFlowNodeDynamic dynamicNode)
+                    if (child is DynamicFlowNode dynamicNode)
                     {
                         LoggingService.LogInfo($"ÃƒÂ°Ã…Â¸Ã…Â½Ã‚Â¯ FLOW NODE {i + 1}: {dynamicNode.GetNodeName()}");
                         
                         // Check if planning service has generated a NodeGraph
-                        if (dynamicNode.PlanningService is PlanningService plannerService && plannerService.HasGeneratedNodeGraph())
+                        if (dynamicNode.ServicePlanning is ServicePlanning plannerService && plannerService.HasGeneratedNodeGraph())
                         {
                             var generatedGraph = plannerService.GetGeneratedNodeGraph();
                             var actions = generatedGraph.GetAllActionNodes();
@@ -964,9 +947,9 @@ namespace BehaviorTreeMainProject
                                         }
                                         
                                         // Check if it has a planning service
-                                        if (genericAction.PlanningService != null)
+                                        if (genericAction.ServicePlanning != null)
                                         {
-                                            LoggingService.LogInfo($"      ÃƒÂ°Ã…Â¸Ã¢â‚¬ÂÃ‚Â§ Has Planning Service: Yes ({genericAction.PlanningService.GetType().Name})");
+                                            LoggingService.LogInfo($"      ÃƒÂ°Ã…Â¸Ã¢â‚¬ÂÃ‚Â§ Has Planning Service: Yes ({genericAction.ServicePlanning.GetType().Name})");
                                         }
                                         else
                                         {
@@ -978,14 +961,14 @@ namespace BehaviorTreeMainProject
                                         LoggingService.LogInfo($"      ÃƒÂ¢Ã‚ÂÃ…â€™ Is High-Level Action: No");
                                     }
                                     
-                                    // Check if it has a SubtreeInjectionService
+                                    // Check if it has a ServiceSubtreeInject
                                     var subtreeService = genericAction.GetSubtreeInjectionService();
                                     if (subtreeService != null)
                                     {
-                                        LoggingService.LogInfo($"      ÃƒÂ°Ã…Â¸Ã¢â‚¬ÂÃ‚Â§ Has SubtreeInjectionService: Yes");
+                                        LoggingService.LogInfo($"      ÃƒÂ°Ã…Â¸Ã¢â‚¬ÂÃ‚Â§ Has ServiceSubtreeInject: Yes");
                                         
                                         // Check if any problem files were generated
-                                        var generatedFiles = PDDLPlanningService.GeneratedProblemFiles;
+                                        var generatedFiles = ServicePDDLPlanning.GeneratedProblemFiles;
                                         if (generatedFiles.Count > 0)
                                         {
                                             LoggingService.LogInfo($"      ÃƒÂ°Ã…Â¸Ã¢â‚¬Å“Ã¢â‚¬Å¾ Generated Problem Files: {generatedFiles.Count}");
@@ -997,7 +980,7 @@ namespace BehaviorTreeMainProject
                                     }
                                     else
                                     {
-                                        LoggingService.LogInfo($"      ÃƒÂ¢Ã‚ÂÃ…â€™ Has SubtreeInjectionService: No");
+                                        LoggingService.LogInfo($"      ÃƒÂ¢Ã‚ÂÃ…â€™ Has ServiceSubtreeInject: No");
                                     }
                                 }
                                 else
@@ -1026,7 +1009,7 @@ namespace BehaviorTreeMainProject
         }
 
         // Continuous monitoring of subtree status for high-level actions
-        private async Task MonitorSubtreeStatusContinuously(BehaviorTreeInstance behaviorTree)
+        private async Task MonitorSubtreeStatusContinuously(BehaviorTree behaviorTree)
         {
             LoggingService.LogInfo("\nÃƒÂ°Ã…Â¸Ã¢â‚¬ÂÃ¢â‚¬Å¾ CONTINUOUS SUBTREE STATUS MONITORING");
             LoggingService.LogInfo("=".PadRight(60, '='));
@@ -1061,13 +1044,13 @@ namespace BehaviorTreeMainProject
                         for (int i = 0; i < children.Count; i++)
                         {
                             var child = children[i];
-                            if (child is BTFlowNodeDynamic dynamicNode)
+                            if (child is DynamicFlowNode dynamicNode)
                             {
                                 LoggingService.LogInfo($"ÃƒÂ°Ã…Â¸Ã…Â½Ã‚Â¯ FLOW NODE {i + 1}: {dynamicNode.GetNodeName()}");
                                 LoggingService.LogInfo($"   ÃƒÂ°Ã…Â¸Ã¢â‚¬Å“Ã…Â  Flow Node Status: {dynamicNode.status}");
                                 
                                 // Check if planning service has generated a NodeGraph
-                                if (dynamicNode.PlanningService is PlanningService plannerService && plannerService.HasGeneratedNodeGraph())
+                                if (dynamicNode.ServicePlanning is ServicePlanning plannerService && plannerService.HasGeneratedNodeGraph())
                                 {
                                     var generatedGraph = plannerService.GetGeneratedNodeGraph();
                                     var actions = generatedGraph.GetAllActionNodes();
@@ -1134,7 +1117,7 @@ namespace BehaviorTreeMainProject
         }
 
         // Track subtree status during tree execution (call this on each tick)
-        private void TrackSubtreeStatusOnTick(BehaviorTreeInstance behaviorTree, int tickNumber)
+        private void TrackSubtreeStatusOnTick(BehaviorTree behaviorTree, int tickNumber)
         {
             try
             {
@@ -1147,10 +1130,10 @@ namespace BehaviorTreeMainProject
                 for (int i = 0; i < children.Count; i++)
                 {
                     var child = children[i];
-                    if (child is BTFlowNodeDynamic dynamicNode)
+                    if (child is DynamicFlowNode dynamicNode)
                     {
                         // Check if planning service has generated a NodeGraph
-                        if (dynamicNode.PlanningService is PlanningService plannerService && plannerService.HasGeneratedNodeGraph())
+                        if (dynamicNode.ServicePlanning is ServicePlanning plannerService && plannerService.HasGeneratedNodeGraph())
                         {
                             var generatedGraph = plannerService.GetGeneratedNodeGraph();
                             var actions = generatedGraph.GetAllActionNodes();
@@ -1195,7 +1178,7 @@ namespace BehaviorTreeMainProject
         }
 
         // Execute tree with comprehensive logging
-        private async Task ExecuteTreeWithComprehensiveLogging(BehaviorTreeInstance behaviorTree)
+        private async Task ExecuteTreeWithComprehensiveLogging(BehaviorTree behaviorTree)
         {
             LoggingService.LogSection("ÃƒÂ°Ã…Â¸Ã…Â¡Ã¢â€šÂ¬ EXECUTING TREE WITH COMPREHENSIVE LOGGING");
             
@@ -1226,11 +1209,9 @@ namespace BehaviorTreeMainProject
                     LoggingService.LogInfo($"\nÃƒÂ°Ã…Â¸Ã¢â‚¬ÂÃ¢â‚¬Å¾ TICK {tickCount} STARTING...");
                     
                     // Execute one tick
-                    ExecutionSummaryLogger.StartTreeExecution();
                     BlackboardSummaryLogger.StartTreeTicking();
                     var result = behaviorTree.Tick(0.1f); // 0.1 second delta time
                     BlackboardSummaryLogger.EndTreeTicking();
-                    ExecutionSummaryLogger.EndTreeExecution();
                     
                     // Log comprehensive tick information
                     LogComprehensiveTickInfo(behaviorTree, tickCount, actionStatusHistory);
@@ -1264,7 +1245,7 @@ namespace BehaviorTreeMainProject
         }
 
         // Log comprehensive tick information including NodeGraph details and order relations
-        private void LogComprehensiveTickInfo(BehaviorTreeInstance behaviorTree, int tickNumber, Dictionary<string, BTNodeResult> actionStatusHistory)
+        private void LogComprehensiveTickInfo(BehaviorTree behaviorTree, int tickNumber, Dictionary<string, BTNodeResult> actionStatusHistory)
         {
             try
             {
@@ -1291,7 +1272,7 @@ namespace BehaviorTreeMainProject
         }
 
         // Log NodeGraph details including order relations
-        private void LogNodeGraphDetails(BehaviorTreeInstance behaviorTree, int tickNumber)
+        private void LogNodeGraphDetails(BehaviorTree behaviorTree, int tickNumber)
         {
             try
             {
@@ -1302,7 +1283,7 @@ namespace BehaviorTreeMainProject
                 
                 foreach (var child in children)
                 {
-                    if (child is BTFlowNodeDynamic dynamicNode)
+                    if (child is DynamicFlowNode dynamicNode)
                     {
                         var actionGraph = dynamicNode.GetActionGraph();
                         var nodes = actionGraph.GetAllActionNodes();
@@ -1374,7 +1355,7 @@ namespace BehaviorTreeMainProject
         }
 
         // Log action status changes
-        private void LogActionStatusChanges(BehaviorTreeInstance behaviorTree, int tickNumber, Dictionary<string, BTNodeResult> actionStatusHistory)
+        private void LogActionStatusChanges(BehaviorTree behaviorTree, int tickNumber, Dictionary<string, BTNodeResult> actionStatusHistory)
         {
             try
             {
@@ -1428,7 +1409,7 @@ namespace BehaviorTreeMainProject
         }
 
         // Log subtree status for high-level actions
-        private void LogSubtreeStatusForHLActions(BehaviorTreeInstance behaviorTree, int tickNumber)
+        private void LogSubtreeStatusForHLActions(BehaviorTree behaviorTree, int tickNumber)
         {
             try
             {
@@ -1440,9 +1421,9 @@ namespace BehaviorTreeMainProject
                 
                 foreach (var child in children)
                 {
-                    if (child is BTFlowNodeDynamic dynamicNode)
+                    if (child is DynamicFlowNode dynamicNode)
                     {
-                        if (dynamicNode.PlanningService is PlanningService plannerService && plannerService.HasGeneratedNodeGraph())
+                        if (dynamicNode.ServicePlanning is ServicePlanning plannerService && plannerService.HasGeneratedNodeGraph())
                         {
                             var generatedGraph = plannerService.GetGeneratedNodeGraph();
                             var actions = generatedGraph.GetAllActionNodes();
@@ -1554,7 +1535,7 @@ namespace BehaviorTreeMainProject
         }
 
         // Check NodeGraph execution status to debug why actions aren't progressing
-        private void CheckNodeGraphExecutionStatus(BehaviorTreeInstance behaviorTree, int tickNumber)
+        private void CheckNodeGraphExecutionStatus(BehaviorTree behaviorTree, int tickNumber)
         {
             try
             {
@@ -1564,7 +1545,7 @@ namespace BehaviorTreeMainProject
                 var children = rootNode.GetChildren();
                 foreach (var child in children)
                 {
-                    if (child is BTFlowNodeDynamic dynamicNode)
+                    if (child is DynamicFlowNode dynamicNode)
                     {
                         var actionGraph = dynamicNode.GetActionGraph();
                         var nodes = actionGraph.GetAllActionNodes();
@@ -1603,7 +1584,7 @@ namespace BehaviorTreeMainProject
         }
 
         // Log detailed subtree NodeGraph information on every tick
-        private void LogDetailedSubtreeNodeGraphs(BehaviorTreeInstance behaviorTree, int tickNumber)
+        private void LogDetailedSubtreeNodeGraphs(BehaviorTree behaviorTree, int tickNumber)
         {
             try
             {
@@ -1614,9 +1595,9 @@ namespace BehaviorTreeMainProject
                 
                 foreach (var child in children)
                 {
-                    if (child is BTFlowNodeDynamic dynamicNode)
+                    if (child is DynamicFlowNode dynamicNode)
                     {
-                        if (dynamicNode.PlanningService is PlanningService plannerService && plannerService.HasGeneratedNodeGraph())
+                        if (dynamicNode.ServicePlanning is ServicePlanning plannerService && plannerService.HasGeneratedNodeGraph())
                         {
                             var generatedGraph = plannerService.GetGeneratedNodeGraph();
                             var actions = generatedGraph.GetAllActionNodes();

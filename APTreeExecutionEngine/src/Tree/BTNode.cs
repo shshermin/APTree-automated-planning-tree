@@ -2,7 +2,7 @@ using System.Reflection.PortableExecutable;
 using BehaviorTreeMainProject.Services;
 using BehaviorTreeMainProject.Log.Services;
 
-public abstract class BTNodeBase : IBTNode
+public abstract class BTNode : IBTNode
 {
     //public  string DebugDisplayName { get; protected set; } = "Unnamed Node";
     //who is responsible for doing this action
@@ -20,7 +20,7 @@ public abstract class BTNodeBase : IBTNode
     public void SetParentNode(IBTNode parent)
     {
         ParentNode = parent;
-        LoggingService.LogInfo($"🔧 BTNodeBase: {DebugDisplayName} - Parent reference set to: {parent?.DebugDisplayName ?? "null"}");
+        LoggingService.LogInfo($"🔧 BTNode: {DebugDisplayName} - Parent reference set to: {parent?.DebugDisplayName ?? "null"}");
     }
 
     public Blackboard<FastName> LinkedBlackboard => OwningTree.linkedBlackboard;
@@ -29,8 +29,8 @@ public abstract class BTNodeBase : IBTNode
     // to keep track of the tick phase of each node
     protected BTNodeTickPhase CurrentTickPhase { get; set; } = BTNodeTickPhase.WaitingForNextTick;
     // to store the list of services of this node
-    protected List<BTServiceBase>? AlwaysOnServices;
-    protected List<BTServiceBase>? GenrealServices; 
+    protected List<Service>? AlwaysOnServices;
+    protected List<Service>? GenrealServices; 
     // to store the list of decorators of this node
     protected List<IBTDecorator>? Decorators;
     
@@ -96,7 +96,7 @@ public abstract class BTNodeBase : IBTNode
     /// <param name="InIsAlwaysOn"></param>
     /// <returns></returns>
 
-    public IBTNode AddService(BTServiceBase InService, bool InIsAlwaysOn = false)
+    public IBTNode AddService(Service InService, bool InIsAlwaysOn = false)
     {
         // Only set the tree if it's already available
         if (OwningTree != null)
@@ -200,39 +200,39 @@ public abstract class BTNodeBase : IBTNode
     /// </summary>
     public virtual IBTNode AddChild(IBTNode childNode)
     {
-        LoggingService.LogInfo($"🔧 BTNodeBase: AddChild called for {DebugDisplayName} - adding child: {childNode.DebugDisplayName}");
+        LoggingService.LogInfo($"🔧 BTNode: AddChild called for {DebugDisplayName} - adding child: {childNode.DebugDisplayName}");
         
         // NEW: Set the parent reference for bidirectional access
         childNode.SetParentNode(this);
-        LoggingService.LogInfo($"🔧 BTNodeBase: Set ParentNode for child {childNode.DebugDisplayName}");
+        LoggingService.LogInfo($"🔧 BTNode: Set ParentNode for child {childNode.DebugDisplayName}");
         
         // Set the owning tree for the child
         childNode.SetOwiningTree(OwningTree);
-        LoggingService.LogInfo($"🔧 BTNodeBase: Set OwningTree for child {childNode.DebugDisplayName}");
+        LoggingService.LogInfo($"🔧 BTNode: Set OwningTree for child {childNode.DebugDisplayName}");
         
         // Set the tree for all services that don't have it set yet
         childNode.SetTreeForAllServices(OwningTree);
-        LoggingService.LogInfo($"🔧 BTNodeBase: Set tree for all services of child {childNode.DebugDisplayName}");
+        LoggingService.LogInfo($"🔧 BTNode: Set tree for all services of child {childNode.DebugDisplayName}");
         
-        // If this is a GenericBTAction, also set the tree for its SubtreeInjectionService
+        // If this is a GenericBTAction, also set the tree for its ServiceSubtreeInject
         if (childNode is PActionNode action)
         {
             action.SetTreeForSubtreeInjectionService(OwningTree);
             LinkedBlackboard.SetActionInstance(action.InstanceName, action);
-            LoggingService.LogInfo($"🔧 BTNodeBase: Set tree for SubtreeInjectionService of {childNode.DebugDisplayName}");
+            LoggingService.LogInfo($"🔧 BTNode: Set tree for ServiceSubtreeInject of {childNode.DebugDisplayName}");
             
             // Track action addition
             BehaviorTreeComponentLogger.TrackActionAddition("GenericBTAction");
         }
-        else if (childNode is BTFlowNodeBase flowNode)
+        else if (childNode is FlowNode flowNode)
         {
             LinkedBlackboard.SetFlowNodeInstance(flowNode.InstanceName, flowNode);
-            LoggingService.LogInfo($"🔧 BTNodeBase: Set tree for all services of {childNode.DebugDisplayName}");
+            LoggingService.LogInfo($"🔧 BTNode: Set tree for all services of {childNode.DebugDisplayName}");
             
             // Flow node counting now handled in constructors via TrackFlowNodeInitialization
         }
         
-        LoggingService.LogInfo($"🔧 BTNodeBase: AddChild completed for {childNode.DebugDisplayName}");
+        LoggingService.LogInfo($"🔧 BTNode: AddChild completed for {childNode.DebugDisplayName}");
         return childNode;
     }
 /// <summary>
@@ -352,7 +352,7 @@ public abstract class BTNodeBase : IBTNode
     private void LogTickStart()
     {
         // Track flow node tick if this is a flow node
-        if (this is BTFlowNodeBase)
+        if (this is FlowNode)
         {
             BehaviorTreeComponentLogger.TrackFlowNodeTick(this.GetType().Name);
         }
@@ -362,7 +362,7 @@ public abstract class BTNodeBase : IBTNode
         }
         
         ExecutionFlowLogger.LogNodeTick(DebugDisplayName, GetType().Name, "START", status.ToString());
-        LoggingService.LogInfo($"🔄 BTNodeBase: {DebugDisplayName} - Tick started");
+        LoggingService.LogInfo($"🔄 BTNode: {DebugDisplayName} - Tick started");
     }
 
     /// <summary>
@@ -370,7 +370,7 @@ public abstract class BTNodeBase : IBTNode
     /// </summary>
     private void LogPhaseFailure(string phaseName)
     {
-        LoggingService.LogWarning($"❌ BTNodeBase: {phaseName} failed for {DebugDisplayName}");
+        LoggingService.LogWarning($"❌ BTNode: {phaseName} failed for {DebugDisplayName}");
         ExecutionFlowLogger.LogPhaseTransition(DebugDisplayName, phaseName, "EXIT");
         BehaviorTreeComponentLogger.TrackNodeFailure(this.GetType().Name, DebugDisplayName);
     }
@@ -380,7 +380,7 @@ public abstract class BTNodeBase : IBTNode
     /// </summary>
     private void LogPhaseSuccess(string phaseName)
     {
-        LoggingService.LogInfo($"✅ BTNodeBase: {DebugDisplayName} - {phaseName} completed successfully");
+        LoggingService.LogInfo($"✅ BTNode: {DebugDisplayName} - {phaseName} completed successfully");
         if (phaseName != "AlwaysOnServices")
         {
             string previousPhase = phaseName == "GeneralServices" ? "AlwaysOnServices" :
@@ -395,7 +395,7 @@ public abstract class BTNodeBase : IBTNode
     /// </summary>
     private void LogDecoratorBlocked()
     {
-        LoggingService.LogInfo($"⏳ BTNodeBase: Decorators blocked execution for {DebugDisplayName}");
+        LoggingService.LogInfo($"⏳ BTNode: Decorators blocked execution for {DebugDisplayName}");
         BehaviorTreeComponentLogger.TrackNodeFailure(this.GetType().Name, DebugDisplayName);
     }
 
@@ -404,9 +404,9 @@ public abstract class BTNodeBase : IBTNode
     /// </summary>
     private void LogTickCompletion()
     {
-        LoggingService.LogInfo($"⏱️ BTNodeBase: {DebugDisplayName} - Tick timing: Services={ServicesDuration.TotalMilliseconds:F2}ms, Decorators={DecoratorsDuration.TotalMilliseconds:F2}ms, NodeLogic={NodeLogicDuration.TotalMilliseconds:F2}ms, Children={ChildrenDuration.TotalMilliseconds:F2}ms, Total={TotalTickDuration.TotalMilliseconds:F2}ms");
+        LoggingService.LogInfo($"⏱️ BTNode: {DebugDisplayName} - Tick timing: Services={ServicesDuration.TotalMilliseconds:F2}ms, Decorators={DecoratorsDuration.TotalMilliseconds:F2}ms, NodeLogic={NodeLogicDuration.TotalMilliseconds:F2}ms, Children={ChildrenDuration.TotalMilliseconds:F2}ms, Total={TotalTickDuration.TotalMilliseconds:F2}ms");
         TickTimingLogger.TrackTickTiming(this);
-        LoggingService.LogInfo($"✅ BTNodeBase: {DebugDisplayName} - Tick method completed successfully, returning {status}");
+        LoggingService.LogInfo($"✅ BTNode: {DebugDisplayName} - Tick method completed successfully, returning {status}");
     }
     /// <summary>
     ///  
@@ -442,7 +442,7 @@ public abstract class BTNodeBase : IBTNode
         {
             successCount++;
             // Track flow node success if this is a flow node
-            if (this is BTFlowNodeBase)
+            if (this is FlowNode)
             {
                 BehaviorTreeComponentLogger.TrackFlowNodeSuccess(this.GetType().Name);
             }
@@ -450,6 +450,13 @@ public abstract class BTNodeBase : IBTNode
             else if (this is PActionNode)
             {
                 BehaviorTreeComponentLogger.TrackActionSuccess("GenericBTAction");
+
+                // Log ML action result to the compact ML-only log
+                var className = this.GetType().Name;
+                if (className.EndsWith("ML"))
+                {
+                    MLActionResultLogger.Instance.LogSuccess(className, ((PActionNode)this).InstanceName.ToString());
+                }
             }
             // Simplified tracking - detailed node success tracking removed
         }
@@ -457,7 +464,7 @@ public abstract class BTNodeBase : IBTNode
         {
             failureCount++;
             // Track flow node failure if this is a flow node
-            if (this is BTFlowNodeBase)
+            if (this is FlowNode)
             {
                 BehaviorTreeComponentLogger.TrackFlowNodeFailure(this.GetType().Name);
             }
@@ -465,6 +472,13 @@ public abstract class BTNodeBase : IBTNode
             else if (this is PActionNode)
             {
                 BehaviorTreeComponentLogger.TrackActionFailure("GenericBTAction");
+
+                // Log ML action result to the compact ML-only log
+                var className = this.GetType().Name;
+                if (className.EndsWith("ML"))
+                {
+                    MLActionResultLogger.Instance.LogFailure(className, ((PActionNode)this).InstanceName.ToString());
+                }
             }
             // Simplified tracking - detailed node failure tracking removed
         }
@@ -493,15 +507,15 @@ public abstract class BTNodeBase : IBTNode
     }
     protected virtual bool OnTick_GeneralServices(float InDeltaTime)
     {
-        LoggingService.LogInfo($"🚨 DEBUG: BTNodeBase.OnTick_GeneralServices called for {DebugDisplayName}");
-        LoggingService.LogInfo($"🔍 BTNodeBase: GeneralServices count: {GenrealServices?.Count ?? 0}");
+        LoggingService.LogInfo($"🚨 DEBUG: BTNode.OnTick_GeneralServices called for {DebugDisplayName}");
+        LoggingService.LogInfo($"🔍 BTNode: GeneralServices count: {GenrealServices?.Count ?? 0}");
         
         if(GenrealServices != null && GenrealServices.Count > 0)
         {
-            LoggingService.LogInfo($"🔍 BTNodeBase: Executing {GenrealServices.Count} general services");
+            LoggingService.LogInfo($"🔍 BTNode: Executing {GenrealServices.Count} general services");
             foreach(var service in GenrealServices)
             {
-                LoggingService.LogInfo($"   🔄 BTNodeBase: Calling service.Tick() for {service.GetType().Name}");
+                LoggingService.LogInfo($"   🔄 BTNode: Calling service.Tick() for {service.GetType().Name}");
                 
                 // Log service tick start
                 ExecutionFlowLogger.LogServiceTick(service.GetType().Name, "GeneralService", DebugDisplayName, "START");
@@ -513,30 +527,30 @@ public abstract class BTNodeBase : IBTNode
                 
                 if (!serviceResult)
                 {
-                    LoggingService.LogWarning($"   ❌ BTNodeBase: Service {service.GetType().Name} returned false");
+                    LoggingService.LogWarning($"   ❌ BTNode: Service {service.GetType().Name} returned false");
                     return false;
                 }
-                LoggingService.LogInfo($"   ✅ BTNodeBase: Service {service.GetType().Name} returned true");
+                LoggingService.LogInfo($"   ✅ BTNode: Service {service.GetType().Name} returned true");
             }
-            LoggingService.LogInfo($"   ✅ BTNodeBase: All general services completed successfully");
+            LoggingService.LogInfo($"   ✅ BTNode: All general services completed successfully");
         }
         else
         {
-            LoggingService.LogInfo($"🔍 BTNodeBase: No general services to execute");
+            LoggingService.LogInfo($"🔍 BTNode: No general services to execute");
         }
         return true;
     }
     protected virtual bool OnTick_Decorators(float InDeltaTime)
     {
-        LoggingService.LogInfo($"🔄 BTNodeBase: {DebugDisplayName} - OnTick_Decorators called, decorator count: {Decorators?.Count ?? 0}");
+        LoggingService.LogInfo($"🔄 BTNode: {DebugDisplayName} - OnTick_Decorators called, decorator count: {Decorators?.Count ?? 0}");
         
         if(Decorators != null)
         {
-            LoggingService.LogInfo($"🔄 BTNodeBase: {DebugDisplayName} - Starting decorator evaluation for {Decorators.Count} decorators");
+            LoggingService.LogInfo($"🔄 BTNode: {DebugDisplayName} - Starting decorator evaluation for {Decorators.Count} decorators");
             
             foreach(var decorator in Decorators)
             {
-                LoggingService.LogInfo($"🔄 BTNodeBase: {DebugDisplayName} - Evaluating decorator: {decorator.GetType().Name}");
+                LoggingService.LogInfo($"🔄 BTNode: {DebugDisplayName} - Evaluating decorator: {decorator.GetType().Name}");
                 
                 // Log decorator tick start
                 ExecutionFlowLogger.LogDecoratorTick(decorator.GetType().Name, "Decorator", DebugDisplayName, "START");
@@ -546,20 +560,20 @@ public abstract class BTNodeBase : IBTNode
                 // Log decorator tick result
                 ExecutionFlowLogger.LogDecoratorTick(decorator.GetType().Name, "Decorator", DebugDisplayName, decoratorResult ? "ALLOW" : "BLOCK");
                 
-                LoggingService.LogInfo($"🔄 BTNodeBase: {DebugDisplayName} - Decorator {decorator.GetType().Name} result: {(decoratorResult ? "ALLOW" : "BLOCK")}");
+                LoggingService.LogInfo($"🔄 BTNode: {DebugDisplayName} - Decorator {decorator.GetType().Name} result: {(decoratorResult ? "ALLOW" : "BLOCK")}");
                 
                 if (!decoratorResult)
                 {
-                    LoggingService.LogInfo($"🔄 BTNodeBase: {DebugDisplayName} - Decorator {decorator.GetType().Name} BLOCKED execution, returning false");
+                    LoggingService.LogInfo($"🔄 BTNode: {DebugDisplayName} - Decorator {decorator.GetType().Name} BLOCKED execution, returning false");
                     return false;
                 }
             }
             
-            LoggingService.LogInfo($"✅ BTNodeBase: {DebugDisplayName} - All {Decorators.Count} decorators evaluated successfully, returning true");
+            LoggingService.LogInfo($"✅ BTNode: {DebugDisplayName} - All {Decorators.Count} decorators evaluated successfully, returning true");
         }
         else
         {
-            LoggingService.LogInfo($"🔄 BTNodeBase: {DebugDisplayName} - No decorators to evaluate, returning true");
+            LoggingService.LogInfo($"🔄 BTNode: {DebugDisplayName} - No decorators to evaluate, returning true");
         }
         return true;
     }

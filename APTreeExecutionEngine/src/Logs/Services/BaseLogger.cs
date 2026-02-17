@@ -8,7 +8,7 @@ namespace BehaviorTreeMainProject.Log
     /// </summary>
     public abstract class BaseLogger : IBaseLogger
     {
-        protected LogFileManager fileManager;
+        protected LogFileManager? fileManager;
         protected LogStatistics statistics;
         protected readonly object logLock = new object();
         protected bool enableConsole;
@@ -56,46 +56,65 @@ namespace BehaviorTreeMainProject.Log
 
         public virtual void WriteLog(string prefix, string message, ConsoleColor color = ConsoleColor.White)
         {
+            if (!isInitialized) return;
+
             var formattedMessage = LogFormatter.FormatMessage(prefix, message);
-            
-            if (enableConsole && LogConfiguration.EnableColors)
+
+            lock (logLock)
             {
-                var originalColor = Console.ForegroundColor;
-                Console.ForegroundColor = color;
-                Console.WriteLine(formattedMessage);
-                Console.ForegroundColor = originalColor;
-            }
-            else
-            {
-                WriteLog(formattedMessage);
-            }
-            
-            // Always write to file regardless of color settings
-            if (enableFile && fileManager != null)
-            {
-                fileManager.WriteLine(formattedMessage);
+                // Console output (with optional color)
+                if (enableConsole)
+                {
+                    if (LogConfiguration.EnableColors)
+                    {
+                        var originalColor = Console.ForegroundColor;
+                        Console.ForegroundColor = color;
+                        Console.WriteLine(formattedMessage);
+                        Console.ForegroundColor = originalColor;
+                    }
+                    else
+                    {
+                        Console.WriteLine(formattedMessage);
+                    }
+                }
+
+                // File output (once)
+                if (enableFile && fileManager != null)
+                {
+                    fileManager.WriteLine(formattedMessage);
+                }
             }
         }
 
         public virtual void WriteLog(LogEntry entry)
         {
-            var formattedMessage = entry.ToString();
-            
-            if (enableConsole && LogConfiguration.EnableColors)
-            {
-                var originalColor = Console.ForegroundColor;
-                Console.ForegroundColor = entry.Color;
-                Console.WriteLine(formattedMessage);
-                Console.ForegroundColor = originalColor;
-            }
-            else
-            {
-                WriteLog(formattedMessage);
-            }
+            if (!isInitialized) return;
 
-            if (enableFile && fileManager != null)
+            var formattedMessage = entry.ToString();
+
+            lock (logLock)
             {
-                fileManager.WriteLine(formattedMessage);
+                // Console output (with optional color)
+                if (enableConsole)
+                {
+                    if (LogConfiguration.EnableColors)
+                    {
+                        var originalColor = Console.ForegroundColor;
+                        Console.ForegroundColor = entry.Color;
+                        Console.WriteLine(formattedMessage);
+                        Console.ForegroundColor = originalColor;
+                    }
+                    else
+                    {
+                        Console.WriteLine(formattedMessage);
+                    }
+                }
+
+                // File output (once)
+                if (enableFile && fileManager != null)
+                {
+                    fileManager.WriteLine(formattedMessage);
+                }
             }
         }
 
@@ -112,8 +131,8 @@ namespace BehaviorTreeMainProject.Log
             if (fileManager != null)
             {
                 fileManager.Dispose();
-                fileManager = null;
             }
+            fileManager = null;
             isInitialized = false;
         }
 

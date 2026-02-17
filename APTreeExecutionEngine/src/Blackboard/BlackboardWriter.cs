@@ -383,7 +383,7 @@ public class BlackboardWriter
     /// Takes a single parameter instance, determines its base type, and registers it in the appropriate blackboard dictionary
     /// </summary>
     /// <param name="parameterInstance">The parameter instance to register</param>
-    public void RegisterParameterInstanceByBaseType(Entity parameterInstance)
+    public void RegisterParameterInstanceByBaseType(CustomProperty parameterInstance)
     {
         try
         {
@@ -426,7 +426,7 @@ public class BlackboardWriter
                     break;
                     
                 default:
-                    Console.WriteLine($"  ⚠️ Unknown base type '{baseTypeName}' for instance '{parameterInstance.ID}', registering as generic Entity");
+                    Console.WriteLine($"  ⚠️ Unknown base type '{baseTypeName}' for instance '{parameterInstance.ID}', registering as generic CustomProperty");
                     blackboard.RegisterEntityIfNotExists(parameterInstance);
                     break;
             }
@@ -442,7 +442,7 @@ public class BlackboardWriter
     /// </summary>
     /// <param name="instance">The entity instance</param>
     /// <returns>The base type name (e.g., "Element", "Agent", "Location")</returns>
-    private string GetBaseTypeName(Entity instance)
+    private string GetBaseTypeName(CustomProperty instance)
     {
         // Get the base type from the entity's BaseType property
         if (instance.BaseType != null)
@@ -454,7 +454,7 @@ public class BlackboardWriter
         Type currentType = instance.GetType();
         
         // Check inheritance hierarchy to find the base type
-        while (currentType != null && currentType != typeof(Entity))
+        while (currentType != null && currentType != typeof(CustomProperty))
         {
             if (currentType == typeof(Element))
                 return "Element";
@@ -482,9 +482,9 @@ public class BlackboardWriter
     /// </summary>
     /// <param name="filePath">Path to the LiveMatSetupObjects.json file</param>
     /// <returns>List of created parameter instances</returns>
-    public List<Entity> ParseMontiCoreGrammarFile(string filePath)
+    public List<CustomProperty> ParseMontiCoreGrammarFile(string filePath)
     {
-        List<Entity> createdInstances = new List<Entity>();
+        List<CustomProperty> createdInstances = new List<CustomProperty>();
         
         try
         {
@@ -893,8 +893,8 @@ public class BlackboardWriter
             Console.WriteLine($"🔍 Extracted NodeGraph name: {nodeGraphName}");
             
             // Use the existing Parser to create the NodeGraph
-            var (actionInstances, relations) = PDDLPlanningService.ParsePlannerOutput(content);
-            var nodeGraph = PDDLPlanningService.ParseNodeGraph(actionInstances, relations, blackboard);
+            var (actionInstances, relations) = ServicePDDLPlanning.ParsePlannerOutput(content);
+            var nodeGraph = ServicePDDLPlanning.ParseNodeGraph(actionInstances, relations, blackboard);
             
             // Register the NodeGraph in the blackboard
             var fastNameKey = new FastName(nodeGraphName);

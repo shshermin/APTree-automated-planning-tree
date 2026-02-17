@@ -9,7 +9,7 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
     /// Writes generated planner NodeGraph DSL strings back into the APTreeLivematFinal.bt file,
     /// replacing the empty "NodeGraph { }" placeholder for the matching cassette FlowNode.
     /// </summary>
-    public static class BTFileWriter
+    public static class APTreeModelWriter
     {
         /// <summary>
         /// Default path to the .bt file.
@@ -40,13 +40,13 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
 
             if (!File.Exists(filePath))
             {
-                LoggingService.LogWarning($"⚠️ BTFileWriter: .bt file not found at {filePath}");
+                LoggingService.LogWarning($"⚠️ APTreeModelWriter: .bt file not found at {filePath}");
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(nodeGraphDsl))
             {
-                LoggingService.LogWarning($"⚠️ BTFileWriter: Empty NodeGraph DSL for {cassetteName}, skipping .bt update");
+                LoggingService.LogWarning($"⚠️ APTreeModelWriter: Empty NodeGraph DSL for {cassetteName}, skipping .bt update");
                 return;
             }
 
@@ -60,7 +60,7 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
 
                 if (!headerMatch.Success)
                 {
-                    LoggingService.LogWarning($"⚠️ BTFileWriter: Could not find FlowNode '{cassetteName}' in {filePath}");
+                    LoggingService.LogWarning($"⚠️ APTreeModelWriter: Could not find FlowNode '{cassetteName}' in {filePath}");
                     return;
                 }
 
@@ -70,7 +70,7 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
 
                 if (!nodeGraphKeyword.Success)
                 {
-                    LoggingService.LogWarning($"⚠️ BTFileWriter: Could not find NodeGraph block for FlowNode '{cassetteName}' in {filePath}");
+                    LoggingService.LogWarning($"⚠️ APTreeModelWriter: Could not find NodeGraph block for FlowNode '{cassetteName}' in {filePath}");
                     return;
                 }
 
@@ -90,7 +90,7 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
 
                 if (depth != 0)
                 {
-                    LoggingService.LogWarning($"⚠️ BTFileWriter: Unbalanced braces in NodeGraph for FlowNode '{cassetteName}'");
+                    LoggingService.LogWarning($"⚠️ APTreeModelWriter: Unbalanced braces in NodeGraph for FlowNode '{cassetteName}'");
                     return;
                 }
 
@@ -112,11 +112,11 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
 
                 File.WriteAllText(filePath, updated);
 
-                LoggingService.LogSuccess($"✅ BTFileWriter: Updated NodeGraph for FlowNode '{cassetteName}' in {Path.GetFileName(filePath)}");
+                LoggingService.LogSuccess($"✅ APTreeModelWriter: Updated NodeGraph for FlowNode '{cassetteName}' in {Path.GetFileName(filePath)}");
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"❌ BTFileWriter: Error updating .bt file for '{cassetteName}': {ex.Message}");
+                LoggingService.LogError($"❌ APTreeModelWriter: Error updating .bt file for '{cassetteName}': {ex.Message}");
             }
         }
 
@@ -127,7 +127,7 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
         /// </summary>
         /// <param name="subtreeBTName">The BehaviorTree name, e.g. "PickUpHL_lp1_fp1_r1Subtree".</param>
         /// <param name="flowNodeName">The FlowNode name inside the subtree (must match the runtime DynamicFlowNode name).</param>
-        /// <param name="plannerServiceName">The PlanningService instance name, e.g. "subtreeSrv_PickUpHL_lp1_fp1_r1".</param>
+        /// <param name="plannerServiceName">The ServicePlanning instance name, e.g. "subtreeSrv_PickUpHL_lp1_fp1_r1".</param>
         /// <param name="plannerTypeName">The planner type reference, e.g. "Enhsp1".</param>
         /// <param name="btFilePath">Optional override for the .bt file path.</param>
         public static void AppendSubtreeBTModel(
@@ -141,7 +141,7 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
 
             if (!File.Exists(filePath))
             {
-                LoggingService.LogWarning($"⚠️ BTFileWriter: .bt file not found at {filePath}");
+                LoggingService.LogWarning($"⚠️ APTreeModelWriter: .bt file not found at {filePath}");
                 return;
             }
 
@@ -152,7 +152,7 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
                 // Check if this subtree BT already exists
                 if (content.Contains($"BehaviorTree {subtreeBTName}"))
                 {
-                    LoggingService.LogInfo($"ℹ️ BTFileWriter: Subtree BT '{subtreeBTName}' already exists, skipping");
+                    LoggingService.LogInfo($"ℹ️ APTreeModelWriter: Subtree BT '{subtreeBTName}' already exists, skipping");
                     return;
                 }
 
@@ -163,7 +163,7 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
                 sb.AppendLine();
                 sb.AppendLine($"BehaviorTree {subtreeBTName} {{");
                 sb.AppendLine($"    Root FlowNode {flowNodeName} {{");
-                sb.AppendLine($"        PlanningService {plannerServiceName} {plannerTypeName}");
+                sb.AppendLine($"        ServicePlanning {plannerServiceName} {plannerTypeName}");
                 sb.AppendLine($"        All");
                 sb.AppendLine($"        AllAction");
                 sb.AppendLine($"        NodeGraph {{ }}");
@@ -175,11 +175,11 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
 
                 File.WriteAllText(filePath, content);
 
-                LoggingService.LogSuccess($"✅ BTFileWriter: Appended subtree BT '{subtreeBTName}' to {Path.GetFileName(filePath)}");
+                LoggingService.LogSuccess($"✅ APTreeModelWriter: Appended subtree BT '{subtreeBTName}' to {Path.GetFileName(filePath)}");
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"❌ BTFileWriter: Error appending subtree BT '{subtreeBTName}': {ex.Message}");
+                LoggingService.LogError($"❌ APTreeModelWriter: Error appending subtree BT '{subtreeBTName}': {ex.Message}");
             }
         }
 
@@ -200,7 +200,7 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
 
             if (!File.Exists(filePath))
             {
-                LoggingService.LogWarning($"⚠️ BTFileWriter: .bt file not found at {filePath}");
+                LoggingService.LogWarning($"⚠️ APTreeModelWriter: .bt file not found at {filePath}");
                 return;
             }
 
@@ -211,7 +211,7 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
                 // Check if annotation already present
                 if (content.Contains($"@{subtreeBTName}"))
                 {
-                    LoggingService.LogInfo($"ℹ️ BTFileWriter: Action already annotated with @{subtreeBTName}, skipping");
+                    LoggingService.LogInfo($"ℹ️ APTreeModelWriter: Action already annotated with @{subtreeBTName}, skipping");
                     return;
                 }
 
@@ -222,7 +222,7 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
 
                 if (!match.Success)
                 {
-                    LoggingService.LogWarning($"⚠️ BTFileWriter: Could not find action '{actionInstanceName}' in {Path.GetFileName(filePath)}");
+                    LoggingService.LogWarning($"⚠️ APTreeModelWriter: Could not find action '{actionInstanceName}' in {Path.GetFileName(filePath)}");
                     return;
                 }
 
@@ -234,11 +234,11 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
 
                 File.WriteAllText(filePath, content);
 
-                LoggingService.LogSuccess($"✅ BTFileWriter: Annotated action '{actionInstanceName}' with @{subtreeBTName}");
+                LoggingService.LogSuccess($"✅ APTreeModelWriter: Annotated action '{actionInstanceName}' with @{subtreeBTName}");
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"❌ BTFileWriter: Error annotating action '{actionInstanceName}': {ex.Message}");
+                LoggingService.LogError($"❌ APTreeModelWriter: Error annotating action '{actionInstanceName}': {ex.Message}");
             }
         }
 

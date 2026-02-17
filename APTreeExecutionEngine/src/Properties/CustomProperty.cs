@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-public abstract class Entity 
+public abstract class CustomProperty 
 {
    public FastName NameKey { get;  set; }
    public DateTime LastModified { get;  set; }
@@ -10,7 +10,7 @@ public abstract class Entity
    public abstract FastName BaseType { get; set; }
 
        // Protected empty constructor - forces all derived classes to have one
-    protected Entity() 
+    protected CustomProperty() 
     {
         LastModified = DateTime.Now;
         // Automatically set TypeName to the actual class name
@@ -18,7 +18,7 @@ public abstract class Entity
     }
 
    // Optional: Constructor that takes a name
-   protected Entity(string name) : this()
+   protected CustomProperty(string name) : this()
    {
        NameKey = new FastName(name);
        ID = name;

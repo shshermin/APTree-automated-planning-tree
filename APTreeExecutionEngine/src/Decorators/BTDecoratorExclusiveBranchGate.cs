@@ -11,12 +11,12 @@ using BehaviorTreeMainProject.Log.Services;
 /// BTDecoratorLowestCostExecution. This decorator must be evaluated BEFORE LowestCost 
 /// (added to the decorator list first).
 /// </summary>
-public class BTDecoratorExclusiveBranchGate : BTDecoratorBase
+public class BTDecoratorExclusiveBranchGate : Decorator
 {
     public override bool CanPostProcessTickResult => false;
     public override BTNodeResult PostProcessTickResult(BTNodeResult InResult) => InResult;
 
-    public BTDecoratorExclusiveBranchGate(BTFlowNodeDynamic attachedNode) : base(false)
+    public BTDecoratorExclusiveBranchGate(DynamicFlowNode attachedNode) : base(false)
     {
         this.AttachedNode = attachedNode;
     }

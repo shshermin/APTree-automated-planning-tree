@@ -12,13 +12,13 @@ using BehaviorTreeMainProject.Log.Services;
 /// This decorator only clears the chosen branch when it reaches SUCCESS — not Failure.
 /// This ensures a branch finishes all its ML children before another branch can be selected.
 /// </summary>
-public class BTDecoratorLowestCostExecution : BTDecoratorBase
+public class BTDecoratorLowestCostExecution : Decorator
 {
     public override bool CanPostProcessTickResult => false;
     public override BTNodeResult PostProcessTickResult(BTNodeResult InResult) => InResult;
     public int lowestCost;
 
-    public BTDecoratorLowestCostExecution(BTFlowNodeDynamic AttachedNode) : base(false)
+    public BTDecoratorLowestCostExecution(DynamicFlowNode AttachedNode) : base(false)
     {
         this.AttachedNode = AttachedNode;
     }
@@ -76,7 +76,7 @@ public class BTDecoratorLowestCostExecution : BTDecoratorBase
             var injectedSubtrees = LinkedBlackboard.GetAllInjectedSubtrees();
             LoggingService.LogInfo($"🔍 ChooseNextBranch: Evaluating {injectedSubtrees.Count} injected subtrees");
 
-            var candidates = new List<(BTFlowNodeDynamic subtree, string name, int cost)>();
+            var candidates = new List<(DynamicFlowNode subtree, string name, int cost)>();
 
             foreach (var subtree in injectedSubtrees)
             {
