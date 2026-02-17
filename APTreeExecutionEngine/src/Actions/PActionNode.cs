@@ -54,8 +54,6 @@ public abstract class PActionNode : ActionNode
         
         // Automatically add SubtreeInjectionService to all actions
         InitializeSubtreeInjectionService();
-
-   
         
         LoggingService.LogInfo($"🔧 GenericBTAction: Constructor completed for {instanceName}");
         

@@ -11,19 +11,19 @@ namespace BehaviorTreeMainProject
         public Element obj { get; private set; }
 
         // Parameter: pos of type firstposition
-        public Firstposition pos { get; private set; }
+        public FirstPos pos { get; private set; }
 
         // Parameter: client of type robot
         public Robot client { get; private set; }
 
         // Parameter: vg of type vacuumGripper
-        public VacuumGripper vg { get; private set; }
+        public VacGripper vg { get; private set; }
 
         // Preconditions and Effects as State objects
         private State preconditions;
         private State effects;
 
-        public PickUpML(string actionType, string instanceName, Blackboard<FastName> blackboard, Element obj, Firstposition pos, Robot client, VacuumGripper vg)
+        public PickUpML(string actionType, string instanceName, Blackboard<FastName> blackboard, Element obj, FirstPos pos, Robot client, VacGripper vg)
             : base(actionType, instanceName, blackboard)
         {
             this.obj = obj;

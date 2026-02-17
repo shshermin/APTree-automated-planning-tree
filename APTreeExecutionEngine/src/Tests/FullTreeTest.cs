@@ -473,10 +473,10 @@ namespace BehaviorTreeMainProject
 
                 // Create PDDL planners for all four cassettes (after behavior tree is created)
                 // Different planners and problem files for each cassette
-                var pddlRequest1 = new PDDLPlanningRequest("./Plannerinputs/domain.pddl", "./Plannerinputs/problemC1.pddl", "/home/shermin/ENHSP-Public/enhsp.jar", "ENHSP");
-                var pddlRequest2 = new PDDLPlanningRequest("./Plannerinputs/domain.pddl", "./Plannerinputs/problemC2.pddl", "/home/shermin/ENHSP-Public/enhsp.jar", "ENHSP");
-                var pddlRequest3 = new PDDLPlanningRequest("./Plannerinputs/domain.pddl", "./Plannerinputs/problemC3.pddl", "/home/shermin/ENHSP-Public/enhsp.jar", "ENHSP");
-                var pddlRequest4 = new PDDLPlanningRequest("./Plannerinputs/domain.pddl", "./Plannerinputs/problemC4.pddl", "/home/shermin/ENHSP-Public/enhsp.jar", "ENHSP");
+                var pddlRequest1 = new PDDLPlanningRequest("./Plannerinputs/static/domain.pddl", "./Plannerinputs/static/problemC1.pddl", "/home/shermin/ENHSP-Public/enhsp.jar", "ENHSP");
+                var pddlRequest2 = new PDDLPlanningRequest("./Plannerinputs/static/domain.pddl", "./Plannerinputs/static/problemC2.pddl", "/home/shermin/ENHSP-Public/enhsp.jar", "ENHSP");
+                var pddlRequest3 = new PDDLPlanningRequest("./Plannerinputs/static/domain.pddl", "./Plannerinputs/static/problemC3.pddl", "/home/shermin/ENHSP-Public/enhsp.jar", "ENHSP");
+                var pddlRequest4 = new PDDLPlanningRequest("./Plannerinputs/static/domain.pddl", "./Plannerinputs/static/problemC4.pddl", "/home/shermin/ENHSP-Public/enhsp.jar", "ENHSP");
 
                 var pddlPlanner1 = new CallPDDLPlanner(behaviorTree, pddlRequest1);
                 var pddlPlanner2 = new CallPDDLPlanner(behaviorTree, pddlRequest2);

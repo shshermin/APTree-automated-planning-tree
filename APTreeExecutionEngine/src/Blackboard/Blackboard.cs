@@ -46,6 +46,13 @@ public class Blackboard<T> : IDisposable where T : class
     public int LowestCost { get; set; } = 0;
 
     /// <summary>
+    /// The currently chosen dynamic flow node that must finish executing all its children
+    /// before any other branch is allowed. Set by LowestCostExecution decorator, enforced by ExclusiveBranchGate.
+    /// Only cleared when the chosen branch reaches Success.
+    /// </summary>
+    public BTFlowNode_Dynamic? ChosenExecutingBranch { get; set; } = null;
+
+    /// <summary>
     /// Array to track when each cassette has generated and inserted its subtree
     /// Index 0 = cassette1, Index 1 = cassette2, Index 2 = cassette3, Index 3 = cassette4
     /// </summary>

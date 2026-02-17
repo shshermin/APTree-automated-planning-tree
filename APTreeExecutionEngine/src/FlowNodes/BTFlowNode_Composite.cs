@@ -23,10 +23,6 @@ public class BTFlowNode_Composite : BTFlowNodeBase
     public override string DebugDisplayName { get; protected set; } = "CompositeFlowNode";
     private List<IBTNode> flowNodes = new List<IBTNode>();
 
-    
-    // Track the current child being executed for sequential execution
-    private int currentChildIndex = 0;
-
     // Termination policy configuration
     public CompositeTerminationPolicy TerminationPolicy { get; set; } = CompositeTerminationPolicy.NeverStop;
     public int MaxAttempts { get; set; } = 3;           // For StopAfterMaxAttempts policy
@@ -131,7 +127,9 @@ public class BTFlowNode_Composite : BTFlowNodeBase
     
     /// <summary>
     /// Execute the composite flow node logic
-    /// This executes child subtrees sequentially, one per tick
+    /// Children are ticked strictly sequentially: each child is ticked and its result
+    /// is fully returned before the next child is ticked. This eliminates race conditions
+    /// where decorators on different children could see inconsistent blackboard state.
     /// </summary>
     protected override bool OnTick_NodeLogic(float inDeltaTime)
     {
@@ -144,28 +142,24 @@ public class BTFlowNode_Composite : BTFlowNodeBase
             return false; // This will trigger OnTickReturn with failed status
         }
         
-        // Execute ALL children every tick (parallel execution)
-        // This ensures all cassettes progress simultaneously, which is required
-        // for cross-cassette synchronization (e.g. BTDecorator_DynamicPlanningComplete)
+        // Tick children SEQUENTIALLY: tick child i, wait for its result, then tick child i+1.
+        // Each child's Tick() fully completes (including all decorator evaluation, node logic,
+        // and post-processing) before the next child begins. This ensures that blackboard
+        // state changes made by one child's decorators (e.g. LowestCostExecution writing
+        // ChosenExecutingBranch) are fully visible to the next child's decorators
+        // (e.g. ExclusiveBranchGate reading ChosenExecutingBranch).
         for (int i = 0; i < allChildren.Count; i++)
         {
             var child = allChildren[i];
             
-            // Skip children that have already completed
-            if (child.status == BTNodeResult.Success || child.status == BTNodeResult.Failure)
-            {
-                LoggingService.LogInfo($"📊 CompositeFlow: Skipping completed child {i + 1}/{allChildren.Count}: {child.DebugDisplayName} ({child.status})");
-                continue;
-            }
-            
             var previousStatus = child.status;
             
-            LoggingService.LogInfo($"🎯 CompositeFlow: Ticking child {i + 1}/{allChildren.Count}: {child.DebugDisplayName}");
+            LoggingService.LogInfo($"🎯 CompositeFlow: [{i + 1}/{allChildren.Count}] Ticking child: {child.DebugDisplayName} (current status: {previousStatus})");
             
-            // Tick the child
+            // Tick the child - this call blocks until the child's full tick cycle completes
             child.Tick(inDeltaTime);
             
-            LoggingService.LogInfo($"📊 CompositeFlow: Child {child.DebugDisplayName}: {previousStatus} → {child.status}");
+            LoggingService.LogInfo($"📊 CompositeFlow: [{i + 1}/{allChildren.Count}] Child {child.DebugDisplayName}: {previousStatus} → {child.status}");
         }
         
         // Check if any child is still running
@@ -202,7 +196,6 @@ public class BTFlowNode_Composite : BTFlowNodeBase
         {
             // Reset failed children and try again
             ResetFailedChildren(allChildren);
-            currentChildIndex = 0;
             status = BTNodeResult.InProgress;
             LoggingService.LogInfo($"🔄 CompositeFlow: Retrying - attempt {currentAttempt}, continuing execution");
             return true;
@@ -318,9 +311,6 @@ public class BTFlowNode_Composite : BTFlowNodeBase
         
         // Reset the current count for maxCount mechanism
         ResetCurrentCount();
-        
-        // Reset the current child index for sequential execution
-        currentChildIndex = 0;
         
         // Reset the attempt counter for termination policy
         currentAttempt = 0;

@@ -17,13 +17,13 @@ namespace BehaviorTreeMainProject
         public Robot client { get; private set; }
 
         // Parameter: vg of type vacuumGripper
-        public VacuumGripper vg { get; private set; }
+        public VacGripper vg { get; private set; }
 
         // Preconditions and Effects as State objects
         private State preconditions;
         private State effects;
 
-        public PlaceML(string actionType, string instanceName, Blackboard<FastName> blackboard, Element obj, Location placepos, Robot client, VacuumGripper vg)
+        public PlaceML(string actionType, string instanceName, Blackboard<FastName> blackboard, Element obj, Location placepos, Robot client, VacGripper vg)
             : base(actionType, instanceName, blackboard)
         {
             this.obj = obj;

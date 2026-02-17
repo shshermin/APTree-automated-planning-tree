@@ -2,7 +2,7 @@ grammar CRFTypesCon extends CRFTypesDef, de.monticore.MCBasics {
 
 ////////// ?????? I am not sure why do we get errors if we dont include this world thing!
 @Override
-World = (PropertyTypeDefinition | Property | PredicateTypeDefinition | ActionTypeDefinition | Beam | Plate | FirstPos | Robot | VacGripper | Holding | AtPlace | NailGripper | GlueGun | Stack | Cassette | PositionOnRail | EquipPosition | StackPosition | IsAt | AtAgent | HasTool | Clear | OnTop | AllSet | BelongsToLayer | BelongsToModule | PositionFree | Stacked | Glued | Nailed | VgEmpty)*;
+World = (PropertyTypeDefinition | Property | PredicateTypeDefinition | ActionTypeDefinition | Beam | Plate | FirstPos | Robot | VacGripper | Holding | AtPlace | AtTool | NailGripper | GlueGun | Stack | Cassette | PositionOnRail | EquipPosition | StackPosition | IsAt | AtAgent | HasTool | Clear | OnTop | AllSet | BelongsToLayer | BelongsToModule | PositionFree | Stacked | Glued | Nailed | VgEmpty)*;
 
 // === GENERATED RULES (DO NOT EDIT BELOW) ===
 symbol Beam extends Element = "Beam" name:Name "(" loc:Name@Location ")";
@@ -36,6 +36,7 @@ Stacked extends Predicate = not:["!"]? "Stacked" "(" myObject:Name@Element ")";
 Glued extends Predicate = not:["!"]? "Glued" "(" myObject:Name@Element ")";
 Nailed extends Predicate = not:["!"]? "Nailed" "(" myObject:Name@Element ")";
 VgEmpty extends Predicate = not:["!"]? "VgEmpty" "(" client:Name@Agent ")";
+AtTool extends Predicate = not:["!"]? "AtTool" "(" tool:Name@Tool loc:Name@Location ")";
 // === END GENERATED PREDICATE RULES ===
 
 

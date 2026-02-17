@@ -135,6 +135,9 @@ public static class Parser
         string[] lines = plannerOutput.Split('\n', StringSplitOptions.RemoveEmptyEntries);
         LoggingService.LogInfo($"🔧 Parser: Processing {lines.Length} lines from planner output");
         
+        // Track the current action instance name for inline DSL relations
+        string currentActionInstanceName = null;
+
         foreach (string line in lines)
         {
             string trimmedLine = line.Trim();
@@ -142,24 +145,56 @@ public static class Parser
                 continue;
                 
             LoggingService.LogInfo($"🔧 Parser: Processing line: {trimmedLine}");
-            
-            // Check if this is a relation line FIRST (contains "--[")
-            // This must be checked before action instances to avoid conflicts
+
+            // --- DSL NodeGraph format ---
+            // Lines like: Action PickUpHL PickUpHL_lp1_fp1_r1 (lp1 fp1 r1) {
+            if (trimmedLine.StartsWith("Action "))
+            {
+                // Strip optional trailing '{'
+                var clean = trimmedLine.TrimEnd('{').Trim();
+                var match = Regex.Match(clean, @"^Action\s+(\w+)\s+(\w+)\s+\(([^)]*)\)");
+                if (match.Success)
+                {
+                    var instanceName = match.Groups[2].Value;
+                    // Produce the ActionInstance: format the downstream pipeline expects
+                    actionInstances.Add($"ActionInstance: {instanceName}");
+                    currentActionInstanceName = instanceName;
+                    LoggingService.LogInfo($"🔧 Parser: Added DSL action instance: {instanceName}");
+                }
+                continue;
+            }
+
+            // --- Relation lines (both DSL inline and standalone) ---
             if (trimmedLine.Contains("--["))
             {
-                relations.Add(trimmedLine);
-                LoggingService.LogInfo($"🔧 Parser: Added relation: {trimmedLine}");
+                // Remove trailing semicolon (DSL inline style)
+                var relLine = trimmedLine.TrimEnd(';').Trim();
+
+                // If the line starts with the arrow (DSL inline: "--[Meets]--> Target"),
+                // prepend the current action as source
+                if (relLine.StartsWith("--[") && currentActionInstanceName != null)
+                {
+                    relLine = $"{currentActionInstanceName} {relLine}";
+                }
+
+                relations.Add(relLine);
+                LoggingService.LogInfo($"🔧 Parser: Added relation: {relLine}");
+                continue;
             }
-            // Check if this is an action instance line
-            else if (trimmedLine.StartsWith("ActionInstance:"))
+
+            // --- Legacy flat format ---
+            if (trimmedLine.StartsWith("ActionInstance:"))
             {
                 actionInstances.Add(trimmedLine);
                 LoggingService.LogInfo($"🔧 Parser: Added action instance: {trimmedLine}");
+                continue;
             }
-            else
-            {
-                LoggingService.LogWarning($"⚠️ Parser: Ignoring unrecognized line: {trimmedLine}");
-            }
+
+            // Skip structural tokens (NodeGraph, braces)
+            if (trimmedLine == "NodeGraph {" || trimmedLine == "NodeGraph{" || trimmedLine == "{" || trimmedLine == "}")
+                continue;
+
+            LoggingService.LogWarning($"⚠️ Parser: Ignoring unrecognized line: {trimmedLine}");
         }
         
         LoggingService.LogSuccess($"✅ Parser: Extracted {actionInstances.Count} action instances and {relations.Count} relations");

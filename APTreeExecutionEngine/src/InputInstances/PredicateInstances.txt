@@ -158,12 +158,12 @@ PredicateInstance: clear(myObject = b23, isNegated = false)
 PredicateInstance: clear(myObject = b24, isNegated = false)
 
 # belongstolayer predicates for problemC4 objects
-PredicateInstance: belongstolayer(myObject = b19, lay = lay4, isNegated = false)
-PredicateInstance: belongstolayer(myObject = b20, lay = lay4, isNegated = false)
-PredicateInstance: belongstolayer(myObject = b21, lay = lay4, isNegated = false)
-PredicateInstance: belongstolayer(myObject = b22, lay = lay4, isNegated = false)
-PredicateInstance: belongstolayer(myObject = b23, lay = lay4, isNegated = false)
-PredicateInstance: belongstolayer(myObject = b24, lay = lay4, isNegated = false)
+PredicateInstance: belongstolayer(myObject = b19, lay = lay1, isNegated = false)
+PredicateInstance: belongstolayer(myObject = b20, lay = lay1, isNegated = false)
+PredicateInstance: belongstolayer(myObject = b21, lay = lay1, isNegated = false)
+PredicateInstance: belongstolayer(myObject = b22, lay = lay1, isNegated = false)
+PredicateInstance: belongstolayer(myObject = b23, lay = lay1, isNegated = false)
+PredicateInstance: belongstolayer(myObject = b24, lay = lay1, isNegated = false)
 
 # belongstomodule predicates for problemC4 objects
 PredicateInstance: belongstomodule(myObject = b19, mod = m4, isNegated = false)

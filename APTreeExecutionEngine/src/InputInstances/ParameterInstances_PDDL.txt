@@ -71,7 +71,7 @@ tp1 - plate
 tp2 - plate
 tp3 - plate
 tp4 - plate
-vg1 - vaccumgripper
+vg1 - vacgripper
 ng1 - nailgripper
 gg1 - gluegun
 m1 - cassette
@@ -80,4 +80,4 @@ m3 - cassette
 m4 - cassette
 lay1 - stack
 lay2 - stack
-lay3 - stack  
+lay3 - stack 

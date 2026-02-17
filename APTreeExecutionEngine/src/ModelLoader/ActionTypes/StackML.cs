@@ -17,7 +17,7 @@ namespace BehaviorTreeMainProject
         public Robot client { get; private set; }
 
         // Parameter: vg of type vacuumGripper
-        public VacuumGripper vg { get; private set; }
+        public VacGripper vg { get; private set; }
 
         // Parameter: pr of type positionOnRail
         public PositionOnRail pr { get; private set; }
@@ -26,7 +26,7 @@ namespace BehaviorTreeMainProject
         private State preconditions;
         private State effects;
 
-        public StackML(string actionType, string instanceName, Blackboard<FastName> blackboard, Element obj1, Element obj2, Robot client, VacuumGripper vg, PositionOnRail pr)
+        public StackML(string actionType, string instanceName, Blackboard<FastName> blackboard, Element obj1, Element obj2, Robot client, VacGripper vg, PositionOnRail pr)
             : base(actionType, instanceName, blackboard)
         {
             this.obj1 = obj1;

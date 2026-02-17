@@ -17,7 +17,7 @@ namespace BehaviorTreeMainProject
         public PositionOnRail pos { get; private set; }
 
         // Parameter: vg of type vacuumGripper
-        public VacuumGripper vg { get; private set; }
+        public VacGripper vg { get; private set; }
 
         // Parameter: mod of type cassette
         public Cassette mod { get; private set; }
@@ -29,7 +29,7 @@ namespace BehaviorTreeMainProject
         private State preconditions;
         private State effects;
 
-        public StackonmultipleML(string actionType, string instanceName, Blackboard<FastName> blackboard, Plate plate, Robot client, PositionOnRail pos, VacuumGripper vg, Cassette mod, Stack lay)
+        public StackonmultipleML(string actionType, string instanceName, Blackboard<FastName> blackboard, Plate plate, Robot client, PositionOnRail pos, VacGripper vg, Cassette mod, Stack lay)
             : base(actionType, instanceName, blackboard)
         {
             this.plate = plate;

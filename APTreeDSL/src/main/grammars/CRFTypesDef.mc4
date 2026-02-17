@@ -24,13 +24,13 @@ abstract symbol  Agent    implements CustomProperty = name:Name ;
      Property = name:Name ":" type:BasicType isList:["+"]? ;
  
   // 5. The Dynamic Definition rule
-     PropertyTypeDefinition = "Define" name:Name "as" superType:Name ("{" (Property)* "}")?;
+     PropertyTypeDefinition = superType:Name  name:Name  ("{" (Property)* "}")?;
 
 
 //////// predicate definition
 
 // Predicate type definition
-      PredicateTypeDefinition = "Define" "Predicate" name:Name  "{" (Property)* "}";
+      PredicateTypeDefinition = "Predicate" name:Name  "{" (Property)* "}";
 //predicateType
 ////???????????????????? how can I use "!" in the concrete syntax?
       abstract Predicate = not:["!"]?;

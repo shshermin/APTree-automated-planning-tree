@@ -14,14 +14,14 @@ namespace BehaviorTreeMainProject
         public Tool too { get; private set; }
 
         // Parameter: ep of type equipposition
-        public Equipposition ep { get; private set; }
+        public EquipPosition ep { get; private set; }
 
         // Preconditions and Effects as State objects
         private State preconditions;
         private State effects;
         public int cost = 50;
 
-        public DeequipML(string actionType, string instanceName, Blackboard<FastName> blackboard, Robot client, Tool too, Equipposition ep)
+        public DeequipML(string actionType, string instanceName, Blackboard<FastName> blackboard, Robot client, Tool too, EquipPosition ep)
             : base(actionType, instanceName, blackboard)
         {
             this.client = client;

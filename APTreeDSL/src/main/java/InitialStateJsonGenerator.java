@@ -170,6 +170,18 @@ public class InitialStateJsonGenerator {
     if (obj == null) return;
 
     try {
+      // Check for the 'not' keyword attribute (generated as isNot() by MontiCore for not:["!"]?)
+      try {
+        java.lang.reflect.Method isNotMethod = obj.getClass().getMethod("isNot");
+        if (isNotMethod.getReturnType() == boolean.class || isNotMethod.getReturnType() == Boolean.class) {
+          boolean isNot = (boolean) isNotMethod.invoke(obj);
+          instance.addProperty("not", isNot);
+        }
+      } catch (NoSuchMethodException e) {
+        // No isNot() method — default to false
+        instance.addProperty("not", false);
+      }
+
       java.lang.reflect.Method[] methods = obj.getClass().getMethods();
 
       for (java.lang.reflect.Method method : methods) {

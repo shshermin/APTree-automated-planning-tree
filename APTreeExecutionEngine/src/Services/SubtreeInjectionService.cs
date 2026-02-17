@@ -296,8 +296,8 @@ namespace BehaviorTreeMainProject
                 var actionType = pendingAction.actionType.ToString();
                 var actionFullName = pendingAction.GetType().Name; // Get the full class name
                 string problemFileName = $"problem{instanceName}.pddl";
-                string problemFilePath = $"python_service/Plannerinputs/{problemFileName}";
-                string relativeProblemPath = $"Plannerinputs/{problemFileName}";
+                string problemFilePath = $"python_service/Plannerinputs/generated/{problemFileName}";
+                string relativeProblemPath = $"Plannerinputs/generated/{problemFileName}";
                 
                 LogMessage($"🔧 SubtreeInjectionService: Generating PDDL problem file: {problemFileName}");
                 LogMessage($"🔧 SubtreeInjectionService: Action type: {actionType}, Action full name: {actionFullName}");
@@ -390,7 +390,7 @@ namespace BehaviorTreeMainProject
                 LogMessage($"❌ SubtreeInjectionService: Exception type: {ex.GetType().Name}");
                 LogMessage($"❌ SubtreeInjectionService: Stack trace: {ex.StackTrace}");
                 // Fallback to default problem file
-                return "Plannerinputs/bigproblem.pddl";
+                return "Plannerinputs/static/bigproblem.pddl";
             }
         }
 
@@ -583,9 +583,7 @@ namespace BehaviorTreeMainProject
         {
             FF,
             ENHSP,
-            LAMA_FIRST,
-            GOAP,
-            StateChart
+            LAMA_FIRST
         }
 
         /// <summary>
@@ -595,8 +593,8 @@ namespace BehaviorTreeMainProject
         {
             // FF Planner Configuration
             var ffConfig = new SubtreeConfiguration("FF_Default", PlannerType.FF, SuccessCriteria.ALL);
-                            ffConfig.PlannerParameters["domainFile"] = "Plannerinputs/DomainML.pddl";
-                          ffConfig.PlannerParameters["problemFile"] = "Plannerinputs/bigproblem.pddl";
+                            ffConfig.PlannerParameters["domainFile"] = "Plannerinputs/static/DomainML.pddl";
+                          ffConfig.PlannerParameters["problemFile"] = "Plannerinputs/static/bigproblem.pddl";
             ffConfig.PlannerParameters["plannerPath"] = "ff";  // FF planner command for Docker
             ffConfig.PlannerParameters["timeoutSeconds"] = 30;
             ffConfig.PlannerParameters["maxPlanLength"] = 20;
@@ -605,8 +603,8 @@ namespace BehaviorTreeMainProject
 
             // ENHSP Planner Configuration
             var enhspConfig = new SubtreeConfiguration("ENHSP_Default", PlannerType.ENHSP, SuccessCriteria.ALL);
-                            enhspConfig.PlannerParameters["domainFile"] = "Plannerinputs/domain.pddl";
-                enhspConfig.PlannerParameters["problemFile"] = "Plannerinputs/problemC1.pddl";
+                            enhspConfig.PlannerParameters["domainFile"] = "Plannerinputs/static/domain.pddl";
+                enhspConfig.PlannerParameters["problemFile"] = "Plannerinputs/static/problemC1.pddl";
             enhspConfig.PlannerParameters["plannerPath"] = "/home/shermin/ENHSP-Public/enhsp.jar";
             enhspConfig.PlannerParameters["timeoutSeconds"] = 30;
             enhspConfig.PlannerParameters["maxPlanLength"] = 40;
@@ -615,32 +613,17 @@ namespace BehaviorTreeMainProject
 
             // LAMA-FIRST Planner Configuration
             var lamaFirstConfig = new SubtreeConfiguration("LAMA_FIRST_Default", PlannerType.LAMA_FIRST, SuccessCriteria.ALL);
-            lamaFirstConfig.PlannerParameters["domainFile"] = "Plannerinputs/DomainML.pddl";
-            lamaFirstConfig.PlannerParameters["problemFile"] = "Plannerinputs/problemC1.pddl";
+            lamaFirstConfig.PlannerParameters["domainFile"] = "Plannerinputs/static/DomainML.pddl";
+            lamaFirstConfig.PlannerParameters["problemFile"] = "Plannerinputs/static/problemC1.pddl";
             lamaFirstConfig.PlannerParameters["plannerPath"] = "lama-first";  // LAMA-FIRST planner command for Docker
             lamaFirstConfig.PlannerParameters["timeoutSeconds"] = 30;
             lamaFirstConfig.PlannerParameters["maxPlanLength"] = 20;
             lamaFirstConfig.PlannerParameters["executionMode"] = CallPDDLPlanner.ParallelExecutionMode.Sequential;
             subtreeConfigurations["LAMA_FIRST_Default"] = lamaFirstConfig;
 
-            // GOAP Planner Configuration
-            var goapConfig = new SubtreeConfiguration("GOAP_Default", PlannerType.GOAP, SuccessCriteria.ALL);
-            goapConfig.PlannerParameters["timeoutSeconds"] = 30;
-            goapConfig.PlannerParameters["maxPlanLength"] = 10;
-            goapConfig.PlannerParameters["domain"] = "Construction";
-            goapConfig.PlannerParameters["enableDebugLogging"] = true;
-            goapConfig.PlannerParameters["heuristicWeight"] = 1.0f;
-            goapConfig.PlannerParameters["maxSearchDepth"] = 50;
-            subtreeConfigurations["GOAP_Default"] = goapConfig;
 
-            // StateChart Planner Configuration
-            var stateChartConfig = new SubtreeConfiguration("StateChart_Default", PlannerType.StateChart, SuccessCriteria.ALL);
-            stateChartConfig.PlannerParameters["timeoutSeconds"] = 30;
-            stateChartConfig.PlannerParameters["maxPlanLength"] = 10;
-            stateChartConfig.PlannerParameters["currentState"] = "initial";
-            stateChartConfig.PlannerParameters["targetState"] = "final";
-            stateChartConfig.PlannerParameters["availableTransitions"] = new List<string> { "start", "process", "complete" };
-            subtreeConfigurations["StateChart_Default"] = stateChartConfig;
+
+          
 
             LogMessage("✅ SubtreeInjectionService: Initialized default configurations");
         }
@@ -690,8 +673,6 @@ namespace BehaviorTreeMainProject
                     PlannerType.FF => CreateFFSubtree(config, instanceName, customParameters),
                     PlannerType.ENHSP => CreateENHSPSubtree(config, instanceName, customParameters),
                     PlannerType.LAMA_FIRST => CreateLamaFirstSubtree(config, instanceName, customParameters),
-                    PlannerType.GOAP => CreateGOAPSubtree(config, instanceName, customParameters),
-                    PlannerType.StateChart => CreateStateChartSubtree(config, instanceName, customParameters),
                     _ => throw new ArgumentException($"Unsupported planner type: {config.PlannerType}")
                 };
 
@@ -705,7 +686,10 @@ namespace BehaviorTreeMainProject
                 // Add the DynamicPlanningComplete decorator to the flow node
                 subtree.AddDecorator(new BTDecorator_DynamicPlanningComplete());
                 LogMessage($"🔧 SubtreeInjectionService: Added DynamicPlanningComplete decorator to flow node '{subtree.DebugDisplayName}'");
-                // add the lowestcost decorator
+                // Add the ExclusiveBranchGate decorator BEFORE LowestCost — it evaluates first
+                subtree.AddDecorator(new BTDecorator_ExclusiveBranchGate(subtree as BTFlowNode_Dynamic));
+                LogMessage($"🔧 SubtreeInjectionService: Added ExclusiveBranchGate decorator to flow node '{subtree.DebugDisplayName}'");
+                // add the lowestcost decorator (evaluates after ExclusiveBranchGate)
                 subtree.AddDecorator(new BTDecorator_LowestCostExecution(subtree as BTFlowNode_Dynamic));
                 LogMessage($"🔧 SubtreeInjectionService: Added LowestCostExecution decorator to flow node '{subtree.DebugDisplayName}'");
                 // DEBUG: Check if the decorator is actually in the list
@@ -1100,70 +1084,7 @@ namespace BehaviorTreeMainProject
             return dynamicFlowNode;
         }
 
-        /// <summary>
-        /// Create GOAP subtree
-        /// </summary>
-        private BTFlowNode_Dynamic CreateGOAPSubtree(SubtreeConfiguration config, string instanceName, Dictionary<string, object> customParameters)
-        {
-            var subtreeTree = new BehaviorTreeInstance();
-            subtreeTree.Initialise(linkedBlackboard, $"{config.Name}_Subtree_{instanceName}");
-
-            var dynamicFlowNode = new BTFlowNode_Dynamic(
-                new FastName($"{config.Name}_DynamicFlow_{instanceName}"),
-                subtreeTree,
-                config.SuccessCriteria
-            );
-
-            var parameters = MergeParameters(config.PlannerParameters, customParameters);
-
-            var goapRequest = new GOAPPlanningRequest
-            {
-                TimeoutSeconds = Convert.ToInt32(parameters["timeoutSeconds"]),
-                MaxPlanLength = Convert.ToInt32(parameters["maxPlanLength"]),
-                Domain = parameters["domain"].ToString(),
-                EnableDebugLogging = Convert.ToBoolean(parameters["enableDebugLogging"]),
-                HeuristicWeight = Convert.ToSingle(parameters["heuristicWeight"]),
-                MaxSearchDepth = Convert.ToInt32(parameters["maxSearchDepth"])
-            };
-
-            // Set default GOAP state and goals if not provided
-            if (!customParameters?.ContainsKey("initialState") == true)
-            {
-                goapRequest.InitialState = new Dictionary<string, object>
-                {
-                    ["robot_empty"] = true,
-                    ["object_at_location"] = true,
-                    ["location_free"] = true,
-                    ["object_clear"] = true,
-                    ["object_not_stacked"] = true
-                };
-            }
-
-            if (!customParameters?.ContainsKey("goals") == true)
-            {
-                goapRequest.Goals = new Dictionary<string, object>
-                {
-                    ["robot_holding_object"] = true,
-                    ["object_not_at_location"] = true,
-                    ["robot_not_empty"] = true
-                };
-            }
-
-            if (!customParameters?.ContainsKey("availableActions") == true)
-            {
-                goapRequest.AvailableActions = new List<string>
-                {
-                    "TravelML", "EquipeML", "PickUpML", "DeequipML"
-                };
-            }
-
-            var goapPlanner = new CallGOAPPlanner(subtreeTree, goapRequest);
-
-            dynamicFlowNode.SetPlanningService(goapPlanner);
-            subtreeTree.root = dynamicFlowNode;
-
-            return dynamicFlowNode;
-        }
+        
 
      
 
@@ -1194,38 +1115,7 @@ namespace BehaviorTreeMainProject
 
         
 
-        /// <summary>
-        /// Create StateChart subtree
-        /// </summary>
-        private BTFlowNode_Dynamic CreateStateChartSubtree(SubtreeConfiguration config, string instanceName, Dictionary<string, object> customParameters)
-        {
-            var subtreeTree = new BehaviorTreeInstance();
-            subtreeTree.Initialise(linkedBlackboard, $"{config.Name}_Subtree_{instanceName}");
-
-            var dynamicFlowNode = new BTFlowNode_Dynamic(
-                new FastName($"{config.Name}_DynamicFlow_{instanceName}"),
-                subtreeTree,
-                config.SuccessCriteria
-            );
-
-            var parameters = MergeParameters(config.PlannerParameters, customParameters);
-
-            var stateChartRequest = new StateChartPlanningRequest
-            {
-                TimeoutSeconds = Convert.ToInt32(parameters["timeoutSeconds"]),
-                MaxPlanLength = Convert.ToInt32(parameters["maxPlanLength"]),
-                CurrentState = parameters["currentState"]?.ToString() ?? "initial",
-                TargetState = parameters["targetState"]?.ToString() ?? "final",
-                AvailableTransitions = parameters["availableTransitions"] as List<string> ?? new List<string>()
-            };
-
-            var stateChartPlanner = new CallSCPlanner(subtreeTree, stateChartRequest);
-
-            dynamicFlowNode.SetPlanningService(stateChartPlanner);
-            subtreeTree.root = dynamicFlowNode;
-
-            return dynamicFlowNode;
-        }
+      
 
         /// <summary>
         /// Find which cassette flow node contains the given action by traversing the tree structure

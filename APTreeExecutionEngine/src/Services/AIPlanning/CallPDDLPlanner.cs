@@ -69,14 +69,30 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
                 }
                 else
                 {
-                    // Parse the plan string and create NodeGraph
-                    nodeGraph = ParsePlanStringToNodeGraph(result.Plan);
+                    // Step 1: Transform raw planner output to DSL NodeGraph format
+                    var plannerUsed = result.PlannerUsed ?? PlanningRequest.PlannerName ?? "ENHSP";
+                    LoggingService.LogInfo($"🔧 CallPDDLPlanner: Transforming raw {plannerUsed} output to APTree DSL format...");
+
+                    var planner = Planner.FromName(plannerUsed);
+                    var dslPlanString = planner.TransformToAPTreeModel(result.Plan);
+
+                    LoggingService.LogInfo($"🔧 CallPDDLPlanner: Transformed plan string:\n{dslPlanString}");
+
+                    // Step 2: Parse the DSL plan string and create NodeGraph
+                    nodeGraph = ParsePlanStringToNodeGraph(dslPlanString);
                     
                     if (nodeGraph != null)
                     {
                         actionsGenerated = nodeGraph.GetAllActionNodes().Count;
                         LoggingService.LogSuccess($"✅ CallPDDLPlanner: Generated NodeGraph with {actionsGenerated} actions");
                         LoggingService.LogSuccess($"✅ CallPDDLPlanner: Execution Mode applied: {ExecutionMode}");
+
+                        // Write the generated DSL plan back into APTreeLivematFinal.bt
+                        var cassetteName = OwningFlowNode?.GetNodeName();
+                        if (!string.IsNullOrEmpty(cassetteName))
+                        {
+                            BtFileWriter.UpdateCassetteNodeGraph(cassetteName, dslPlanString);
+                        }
                     }
                     else
                     {
