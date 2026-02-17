@@ -138,6 +138,10 @@ function Dropdown({ title, items }: DropdownProps) {
 export default function Header({
   theme,
   onToggleTheme,
+  onUndo,
+  onRedo,
+  canUndo,
+  canRedo,
   onImportActionInstances,
   onExportCanvasGraph,
   onImportCanvasGraph,
@@ -190,7 +194,15 @@ export default function Header({
           <Dropdown title="File" items={fileMenuItems} />
           <Dropdown
             title="Edit"
-            items={["Undo", "Redo", "Cut", "Copy", "Paste", "Delete"]}
+            items={[
+              { kind: "action", label: "Undo", onSelect: onUndo, disabled: !canUndo },
+              { kind: "action", label: "Redo", onSelect: onRedo, disabled: !canRedo },
+              { kind: "divider" },
+              "Cut",
+              "Copy",
+              "Paste",
+              "Delete",
+            ]}
           />
           <Dropdown
             title="View"
@@ -211,7 +223,13 @@ export default function Header({
         <div className="header-separator"></div>
 
         <div className="header-actions">
-          <button className="icon-btn" title="Undo" aria-label="Undo">
+          <button
+            className="icon-btn"
+            title="Undo"
+            aria-label="Undo"
+            onClick={onUndo}
+            disabled={!canUndo}
+          >
             <svg
               width="16"
               height="16"
@@ -227,7 +245,13 @@ export default function Header({
             </svg>
           </button>
 
-          <button className="icon-btn" title="Redo" aria-label="Redo">
+          <button
+            className="icon-btn"
+            title="Redo"
+            aria-label="Redo"
+            onClick={onRedo}
+            disabled={!canRedo}
+          >
             <svg
               width="16"
               height="16"

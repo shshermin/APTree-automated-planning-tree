@@ -7,7 +7,6 @@ using BehaviorTreeMainProject;
 // Run the behavior tree test
 await FullTreeTest.RunTest();
 
-/* WEB API CODE - COMMENTED OUT FOR NOW
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
@@ -56,7 +55,13 @@ app.MapPost("/api/aptree/validate", async (AptreeValidateRequest request, IWebHo
         return Results.BadRequest(new { ok = false, errors = new[] { "ModelText is required" } });
     }
 
-    var montiCoreDir = Path.Combine(env.ContentRootPath, "APTreeDSL");
+    var montiCoreDir = FindMontiCoreDir(env.ContentRootPath);
+    if (montiCoreDir == null)
+    {
+        return Results.Problem(
+            title: "APTreeDSL directory not found",
+            detail: $"Searched from ContentRootPath: {env.ContentRootPath}. Expected a folder named APTreeDSL next to the solution or within the backend folder.");
+    }
     var jarPath = request.JarPath;
     if (string.IsNullOrWhiteSpace(jarPath))
     {
@@ -128,7 +133,7 @@ app.MapPost("/api/aptree/validate", async (AptreeValidateRequest request, IWebHo
 ;
 
 app.Run();
-*/
+
 
 static IReadOnlyList<NodeCatalogEntry> BuildNodeCatalog(Type baseType, string kind, string typeLabel)
 {
@@ -152,6 +157,31 @@ static IReadOnlyList<NodeCatalogEntry> BuildNodeCatalog(Type baseType, string ki
         })
         .OrderBy(entry => entry.Label, StringComparer.OrdinalIgnoreCase)
         .ToList();
+}
+
+static string? FindMontiCoreDir(string contentRoot)
+{
+    // Common layouts:
+    // 1) <repo>/APTreeExecutionEngine (contentRoot) + ../APTreeDSL
+    // 2) <repo>/APTreeExecutionEngine (contentRoot) + ./APTreeDSL (if copied)
+    // 3) When run from subfolder, climb up a few levels to find APTreeDSL
+    var candidates = new[]
+    {
+        Path.Combine(contentRoot, "APTreeDSL"),
+        Path.GetFullPath(Path.Combine(contentRoot, "..", "APTreeDSL")),
+        Path.GetFullPath(Path.Combine(contentRoot, "..", "..", "APTreeDSL")),
+        Path.GetFullPath(Path.Combine(contentRoot, "..", "..", "..", "APTreeDSL")),
+    };
+
+    foreach (var candidate in candidates)
+    {
+        if (Directory.Exists(candidate))
+        {
+            return candidate;
+        }
+    }
+
+    return null;
 }
 
 static string ToDisplayName(string rawName)
@@ -366,4 +396,3 @@ record NodeCatalogEntry(
     string Kind,
     string? Description
 );
-

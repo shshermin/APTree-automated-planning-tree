@@ -68,7 +68,7 @@ gradle shadowJar
 Run backend + frontend:
 ```bash
 # backend (repo root)
-cd BehaviorTreeMainProject
+cd APTreeExecutionEngine
 dotnet run --project BehaviorTreeMainProject.csproj --urls http://localhost:5254
 
 # frontend (this folder)

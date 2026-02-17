@@ -106,6 +106,43 @@ const portPositions: Record<PortSide, Position> = {
   left: Position.Left,
 };
 
+const portPoint = (node: CanvasNode, port: PortSide) => {
+  const halfW = (node.width ?? DEFAULT_CANVAS_NODE_WIDTH) / 2;
+  const halfH = (node.height ?? DEFAULT_CANVAS_NODE_HEIGHT) / 2;
+  switch (port) {
+    case "left":
+      return { x: node.x - halfW, y: node.y };
+    case "right":
+      return { x: node.x + halfW, y: node.y };
+    case "top":
+      return { x: node.x, y: node.y - halfH };
+    case "bottom":
+      return { x: node.x, y: node.y + halfH };
+  }
+};
+
+const chooseShortestPorts = (
+  source: CanvasNode,
+  target: CanvasNode,
+  sourcePorts: PortSide[],
+  targetPorts: PortSide[]
+) => {
+  let best: { sourcePort: PortSide; targetPort: PortSide; d2: number } | null = null;
+  for (const sp of sourcePorts) {
+    const a = portPoint(source, sp);
+    for (const tp of targetPorts) {
+      const b = portPoint(target, tp);
+      const dx = a.x - b.x;
+      const dy = a.y - b.y;
+      const d2 = dx * dx + dy * dy;
+      if (!best || d2 < best.d2) {
+        best = { sourcePort: sp, targetPort: tp, d2 };
+      }
+    }
+  }
+  return best ?? { sourcePort: "bottom", targetPort: "top", d2: 0 };
+};
+
 const PORT_STYLES: Record<PortSide, CSSProperties> = {
   top: { top: -6, left: "50%", transform: "translate(-50%, 0)" },
   right: { right: -6, top: "50%", transform: "translate(0, -50%)" },
@@ -136,28 +173,6 @@ const PARAM_BOX_HEIGHT = 24;
 const PARAM_BOX_GAP = 6;
 const PARAM_STACK_CLEARANCE = 18;
 const SUCCESS_BADGE_CLEARANCE = 32;
-
-/**
- * resolves the port side from a handle ID string.
- * @param handleId the handle ID string from react-flow 
- * @param fallback the fallback port side if none can be resolved 
- * @returns the resolved port side 
- */
-function resolvePortFromHandle(
-  handleId: string | null | undefined,
-  fallback: PortSide
-): PortSide {
-  if (!handleId) {
-    return fallback;
-  }
-
-  const match = handleId.match(/(top|right|bottom|left)$/);
-  if (!match) {
-    return fallback;
-  }
-
-  return match[1] as PortSide;
-}
 
 /**
  * checks if a canvas node is an action node.
@@ -476,22 +491,20 @@ function BehaviorTreeNode({ id, data, selected }: NodeProps<BehaviorNodeData>) {
         />
       ))}
 
-      {!isFlowNode
-        ? (Object.keys(portPositions) as PortSide[]).map((side) => (
-            <Handle
-              key={`target-${side}`}
-              type="target"
-              position={portPositions[side]}
-              id={`target-${side}`}
-              className="canvas-node-handle canvas-node-handle-hitbox canvas-node-handle-target"
-              style={{
-                ...TARGET_HANDLE_STYLES[side],
-                ...(targetHandleOverrides[side] ?? {}),
-              }}
-              isConnectableStart={false}
-            />
-          ))
-        : null}
+      {(Object.keys(portPositions) as PortSide[]).map((side) => (
+        <Handle
+          key={`target-${side}`}
+          type="target"
+          position={portPositions[side]}
+          id={`target-${side}`}
+          className="canvas-node-handle canvas-node-handle-hitbox canvas-node-handle-target"
+          style={{
+            ...TARGET_HANDLE_STYLES[side],
+            ...(targetHandleOverrides[side] ?? {}),
+          }}
+          isConnectableStart={false}
+        />
+      ))}
 
       {shouldRenderSourceHandles &&
         (Object.keys(portPositions) as PortSide[]).map((side) => (
@@ -696,6 +709,8 @@ function EditorCanvasInner(props: EditorCanvasProps) {
     rootNodeId = null,
     onDropNode,
     onDropSeparator,
+    onBeginMoveNode,
+    onBeginMoveSeparator,
     onMoveNode,
     onMoveSeparator,
     onResizeNode,
@@ -1023,8 +1038,12 @@ function EditorCanvasInner(props: EditorCanvasProps) {
         return;
       }
 
-      const sourcePort = resolvePortFromHandle(connection.sourceHandle, "right");
-      const targetPort = resolvePortFromHandle(connection.targetHandle, "left");
+      const allPorts: PortSide[] = ["top", "right", "bottom", "left"];
+      const sourcePorts = allPorts;
+      const targetPorts = isFlow(targetNode) ? (["top"] as PortSide[]) : allPorts;
+      const best = chooseShortestPorts(sourceNode, targetNode, sourcePorts, targetPorts);
+      const sourcePort = best.sourcePort;
+      const targetPort = best.targetPort;
       onAddConnection(
         connection.source,
         connection.target,
@@ -1066,6 +1085,18 @@ function EditorCanvasInner(props: EditorCanvasProps) {
       });
     },
     [onMoveNode, onMoveSeparator]
+  );
+
+  const handleNodeDragStart = useCallback(
+    (_event: React.MouseEvent, node: FlowNode) => {
+      if (node.type === "separator") {
+        onBeginMoveSeparator?.(node.id);
+        return;
+      }
+
+      onBeginMoveNode?.(node.id);
+    },
+    [onBeginMoveNode, onBeginMoveSeparator]
   );
 
   /**
@@ -1132,6 +1163,7 @@ function EditorCanvasInner(props: EditorCanvasProps) {
         onEdgeMouseLeave={handleEdgeMouseLeave}
         onNodeMouseEnter={handleNodeMouseEnter}
         onNodeMouseLeave={handleNodeMouseLeave}
+        onNodeDragStart={handleNodeDragStart}
         onNodeDrag={handleNodeDrag}
         onNodeDragStop={handleNodeDragStop}
         connectionLineType={ConnectionLineType.SmoothStep}

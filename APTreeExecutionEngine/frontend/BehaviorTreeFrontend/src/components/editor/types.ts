@@ -77,6 +77,8 @@ export interface EditorCanvasProps {
     item: DraggedSidebarItem,
     position: { x: number; y: number }
   ) => void;
+  onBeginMoveNode?: (nodeId: string) => void;
+  onBeginMoveSeparator?: (separatorId: string) => void;
   onDropSeparator?: (position: { x: number; y: number }) => void;
   onMoveNode?: (
     nodeId: string,
