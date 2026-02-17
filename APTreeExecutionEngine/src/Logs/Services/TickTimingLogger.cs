@@ -13,7 +13,7 @@ namespace BehaviorTreeMainProject.Log.Services
     {
         private static TickTimingLogger instance;
         private static readonly object lockObject = new object();
-        
+
         // Tick timing statistics by node type
         private readonly Dictionary<string, TickTimingStats> nodeTypeStats = new Dictionary<string, TickTimingStats>();
 
@@ -38,7 +38,7 @@ namespace BehaviorTreeMainProject.Log.Services
         private TickTimingLogger()
         {
             base.Initialize("TickTiming", true, true);
-            
+
             WriteSectionHeader("⏱️ TICK TIMING LOGGER INITIALIZED");
             WriteLog("Ready to track tick timing statistics for behavior tree nodes");
         }
@@ -62,7 +62,7 @@ namespace BehaviorTreeMainProject.Log.Services
                 }
 
                 var nodeType = GetNodeType(node);
-                
+
                 if (!nodeTypeStats.ContainsKey(nodeType))
                 {
                     nodeTypeStats[nodeType] = new TickTimingStats
@@ -102,14 +102,14 @@ namespace BehaviorTreeMainProject.Log.Services
             lock (lockObject)
             {
                 WriteSectionHeader("⏱️ TICK TIMING CSV SUMMARY");
-                
+
                 // Generate CSV content
                 var csvContent = GenerateCSVContent();
-                
+
                 // Write CSV to log
                 WriteLog("CSV Summary:");
                 WriteLog(csvContent);
-                
+
                 // Also write to a separate CSV file
                 WriteCSVToFile(csvContent);
             }
@@ -118,25 +118,25 @@ namespace BehaviorTreeMainProject.Log.Services
         private string GenerateCSVContent()
         {
             var csv = new StringBuilder();
-            
+
             // CSV Header
             csv.AppendLine("NodeType,TotalTicks,AverageServicesTimeMs,AverageDecoratorsTimeMs,AverageNodeLogicTimeMs,AverageChildrenTimeMs,AverageTotalTickTimeMs,TotalServicesTimeMs,TotalDecoratorsTimeMs,TotalNodeLogicTimeMs,TotalChildrenTimeMs,TotalTickTimeMs");
-            
+
             // CSV Rows for each node type
             foreach (var kvp in nodeTypeStats.OrderBy(x => x.Key))
             {
                 var nodeType = kvp.Key;
                 var stats = kvp.Value;
-                
+
                 var avgServicesTime = stats.TotalTicks > 0 ? stats.TotalServicesTime.TotalMilliseconds / stats.TotalTicks : 0;
                 var avgDecoratorsTime = stats.TotalTicks > 0 ? stats.TotalDecoratorsTime.TotalMilliseconds / stats.TotalTicks : 0;
                 var avgNodeLogicTime = stats.TotalTicks > 0 ? stats.TotalNodeLogicTime.TotalMilliseconds / stats.TotalTicks : 0;
                 var avgChildrenTime = stats.TotalTicks > 0 ? stats.TotalChildrenTime.TotalMilliseconds / stats.TotalTicks : 0;
                 var avgTotalTickTime = stats.TotalTicks > 0 ? stats.TotalTickTime.TotalMilliseconds / stats.TotalTicks : 0;
-                
+
                 csv.AppendLine($"{nodeType},{stats.TotalTicks},{avgServicesTime:F2},{avgDecoratorsTime:F2},{avgNodeLogicTime:F2},{avgChildrenTime:F2},{avgTotalTickTime:F2},{stats.TotalServicesTime.TotalMilliseconds:F2},{stats.TotalDecoratorsTime.TotalMilliseconds:F2},{stats.TotalNodeLogicTime.TotalMilliseconds:F2},{stats.TotalChildrenTime.TotalMilliseconds:F2},{stats.TotalTickTime.TotalMilliseconds:F2}");
             }
-            
+
             // Add totals row if we have data
             if (nodeTypeStats.Any())
             {
@@ -146,31 +146,31 @@ namespace BehaviorTreeMainProject.Log.Services
                 var totalNodeLogicTime = TimeSpan.FromMilliseconds(nodeTypeStats.Values.Sum(s => s.TotalNodeLogicTime.TotalMilliseconds));
                 var totalChildrenTime = TimeSpan.FromMilliseconds(nodeTypeStats.Values.Sum(s => s.TotalChildrenTime.TotalMilliseconds));
                 var totalTickTime = TimeSpan.FromMilliseconds(nodeTypeStats.Values.Sum(s => s.TotalTickTime.TotalMilliseconds));
-                
+
                 var overallAvgServicesTime = totalTicks > 0 ? totalServicesTime.TotalMilliseconds / totalTicks : 0;
                 var overallAvgDecoratorsTime = totalTicks > 0 ? totalDecoratorsTime.TotalMilliseconds / totalTicks : 0;
                 var overallAvgNodeLogicTime = totalTicks > 0 ? totalNodeLogicTime.TotalMilliseconds / totalTicks : 0;
                 var overallAvgChildrenTime = totalTicks > 0 ? totalChildrenTime.TotalMilliseconds / totalTicks : 0;
                 var overallAvgTotalTickTime = totalTicks > 0 ? totalTickTime.TotalMilliseconds / totalTicks : 0;
-                
+
                 csv.AppendLine($"TOTAL,{totalTicks},{overallAvgServicesTime:F2},{overallAvgDecoratorsTime:F2},{overallAvgNodeLogicTime:F2},{overallAvgChildrenTime:F2},{overallAvgTotalTickTime:F2},{totalServicesTime.TotalMilliseconds:F2},{totalDecoratorsTime.TotalMilliseconds:F2},{totalNodeLogicTime.TotalMilliseconds:F2},{totalChildrenTime.TotalMilliseconds:F2},{totalTickTime.TotalMilliseconds:F2}");
             }
-            
+
             // Ensure we have rows for all three main planner types (FF, ENHSP, LAMA-FIRST)
             // even if they don't have any data
             var requiredPlannerTypes = new[] { "FF", "ENHSP", "LAMA-FIRST" };
-            
+
             foreach (var plannerType in requiredPlannerTypes)
             {
                 var nodeTypeKey = $"BTFlowNode_Dynamic_{plannerType}";
-                
+
                 // Only add if we don't already have this row
                 if (!nodeTypeStats.ContainsKey(nodeTypeKey))
                 {
                     csv.AppendLine($"{nodeTypeKey},0,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00");
                 }
             }
-            
+
             return csv.ToString();
         }
 
@@ -180,7 +180,7 @@ namespace BehaviorTreeMainProject.Log.Services
             {
                 var timestamp = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
                 var csvFilePath = $"WrittenLogs/TickTimingSummary_{timestamp}.csv";
-                
+
                 System.IO.File.WriteAllText(csvFilePath, csvContent, Encoding.UTF8);
                 WriteLog($"📄 CSV summary written to: {csvFilePath}");
             }
@@ -194,40 +194,38 @@ namespace BehaviorTreeMainProject.Log.Services
         /// Get the node type for categorization with planner-specific details
         /// </summary>
         private string GetNodeType(BTNodeBase node)
-{
-    string typeName = node.TypeName;
-    
-    // Categorize into main types
-    if (typeName.Contains("GenericBTAction"))
-        return "GenericBTAction";
-    else if (typeName.Contains("BTFlowNode_Composite"))
-        return "BTFlowNode_Composite";
-    else if (typeName.Contains("BTFlowNode_Dynamic"))
-    {
-        // For dynamic flow nodes, try to determine the planner type
-        try
         {
-            var flowNode = node as BTFlowNode_Dynamic;
-            if (flowNode?.PlanningService?.planningRequest != null)
-            {
-                // Use the existing GetPlannerTypeFromRequest function for consistent detection
-                var plannerType = BTServicePlanner.GetPlannerTypeFromRequest(flowNode.PlanningService.planningRequest);
-                return $"BTFlowNode_Dynamic_{plannerType}";
-            }
-        }
-        catch (Exception ex)
-        {
-            WriteLog($"⚠️ Error determining planner type for {node.DebugDisplayName}: {ex.Message}");
-        }
-        
-        
-        // Fallback to generic dynamic node
-        return "BTFlowNode_Dynamic_Unknown";
-    }
-    else
-        return typeName; // Use full type name for other types
-}
+            string typeName = node.TypeName;
 
+            // Categorize into main types
+            if (typeName.Contains("GenericBTAction"))
+                return "GenericBTAction";
+            else if (typeName.Contains("BTFlowNode_Composite"))
+                return "BTFlowNode_Composite";
+            else if (typeName.Contains("BTFlowNode_Dynamic"))
+            {
+                // For dynamic flow nodes, try to determine the planner type
+                try
+                {
+                    var flowNode = node as BTFlowNode_Dynamic;
+                    if (flowNode?.PlanningService?.planningRequest != null)
+                    {
+                        var plannerType = flowNode.PlanningService.CurrentPlanner?.DefaultPlannerName
+                            ?? flowNode.PlanningService.planningRequest.PlanningType;
+                        return $"BTFlowNode_Dynamic_{plannerType}";
+                    }
+                }
+                catch (Exception ex)
+                {
+                    WriteLog($"⚠️ Error determining planner type for {node.DebugDisplayName}: {ex.Message}");
+                }
+
+                // Fallback to generic dynamic node
+                return "BTFlowNode_Dynamic_Unknown";
+            }
+            else
+                return typeName; // Use full type name for other types
+        }
 
         /// <summary>
         /// Close the logger

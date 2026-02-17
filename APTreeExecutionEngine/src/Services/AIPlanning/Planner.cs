@@ -6,8 +6,9 @@ using System.Text;
 
 /// <summary>
 /// Base class for all planner output transformers.
-/// Subclasses only implement ParseRawOutput to extract (Name, Parameters[]) tuples
-/// from the planner-specific stdout format.
+/// Subclasses implement ParseRawOutput to extract (Name, Parameters[]) tuples
+/// from the planner-specific stdout format, and set their own default planning
+/// configuration via the properties below.
 /// </summary>
 public abstract class Planner
 {
@@ -47,6 +48,26 @@ public abstract class Planner
     /// Return all accepted aliases in uppercase.
     /// </summary>
     public abstract string[] PlannerNames { get; }
+
+    // ── Default planning configuration (each subclass sets its own values) ──
+
+    /// <summary>Path to the PDDL domain file used by this planner.</summary>
+    public abstract string DefaultDomainFile { get; }
+
+    /// <summary>Fallback PDDL problem file (overridden at runtime by generated problems).</summary>
+    public abstract string DefaultProblemFile { get; }
+
+    /// <summary>Command or path to invoke the planner (e.g. "ff", "lama-first", path to jar).</summary>
+    public abstract string DefaultPlannerPath { get; }
+
+    /// <summary>Canonical planner name passed to PDDLPlanningRequest (e.g. "FF", "ENHSP").</summary>
+    public abstract string DefaultPlannerName { get; }
+
+    /// <summary>Maximum seconds to wait for a plan.</summary>
+    public virtual int DefaultTimeoutSeconds => 30;
+
+    /// <summary>Maximum number of actions in a plan.</summary>
+    public virtual int DefaultMaxPlanLength => 20;
 
     // ── Public API ──
 

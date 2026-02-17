@@ -189,7 +189,7 @@ static string ToDisplayName(string rawName)
     if (string.IsNullOrWhiteSpace(rawName)) return rawName;
 
     // Strip common prefixes, then prettify.
-    var name = Regex.Replace(rawName, "^(BTDecorator_|BTService_|BTServicePlanner_|BTFlowNode_|BTFLowNode_|Call)", "");
+    var name = Regex.Replace(rawName, "^(BTDecorator_|BTService_|PlanningService_|BTFlowNode_|BTFLowNode_|Call)", "");
     name = name.Replace('_', ' ');
     name = Regex.Replace(name, @"(?<=[a-z0-9])([A-Z])", " $1");
     name = Regex.Replace(name, @"(?<=[A-Z])([A-Z][a-z])", " $1");

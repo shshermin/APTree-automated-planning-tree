@@ -13,9 +13,14 @@ using System.Text.RegularExpressions;
 ///   or simply:
 ///   0: TRAVELML R1 PR2 EP1
 /// </summary>
-public class MetricFF : Planner
+public class MetricFFPlanner : Planner
 {
     public override string[] PlannerNames => new[] { "FF", "METRIC-FF" };
+
+    public override string DefaultDomainFile => "Plannerinputs/static/DomainML.pddl";
+    public override string DefaultProblemFile => "Plannerinputs/static/bigproblem.pddl";
+    public override string DefaultPlannerPath => "ff";
+    public override string DefaultPlannerName => "FF";
 
     /// <summary>
     /// Parses raw FF stdout to extract ordered actions.

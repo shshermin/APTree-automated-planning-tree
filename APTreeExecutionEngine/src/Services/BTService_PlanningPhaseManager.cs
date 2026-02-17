@@ -78,7 +78,7 @@ public class BTService_PlanningPhaseManager : BTServiceBase
                 if (child is BTFlowNode_Dynamic dynamicNode)
                 {
                     // Check if this dynamic node has a planning service
-                    if (dynamicNode.PlanningService is BTServicePlanner plannerService)
+                    if (dynamicNode.PlanningService is PlanningService plannerService)
                     {
                         // Check if planning has generated a NodeGraph
                         if (!plannerService.HasGeneratedNodeGraph())

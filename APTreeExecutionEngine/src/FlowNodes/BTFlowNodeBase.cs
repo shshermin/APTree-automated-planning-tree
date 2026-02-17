@@ -24,7 +24,7 @@ public abstract class BTFlowNodeBase : BTNodeBase, IEnumerable
     int currentCount = 0;
 
     // Planning service for high-level actions
-    public BTServicePlanner PlanningService { get; protected set; }
+    public PlanningService PlanningService { get; protected set; }
     private readonly IBehaviorTree owningTree;
 
     // Node name property
@@ -277,7 +277,7 @@ public abstract class BTFlowNodeBase : BTNodeBase, IEnumerable
         LoggingService.LogInfo($"🔧 BTFlowNodeBase: Setting initial NodeGraph (HashCode: {graph?.GetHashCode()})");
         actionGraph = graph;
         
-        // Note: Action node final count is now tracked in BTServicePlanner after all actions are set up
+        // Note: Action node final count is now tracked in PlanningService after all actions are set up
     }
 
     /// <summary>
@@ -290,7 +290,7 @@ public abstract class BTFlowNodeBase : BTNodeBase, IEnumerable
             LoggingService.LogWarning($"🔄 BTFlowNodeBase: Clearing action graph (HashCode: {actionGraph.GetHashCode()}) for {DebugDisplayName}");
             
             // Use the new Clear() method to actually remove actions from the NodeGraph
-            actionGraph.Clear();
+            actionGraph.DestroyAllNodes();
             actionGraph = null;
         }
     }
@@ -319,13 +319,13 @@ public abstract class BTFlowNodeBase : BTNodeBase, IEnumerable
     /// Set the planning service for this flow node
     /// </summary>
     /// <param name="service">The planning service to use</param>
-    public void SetPlanningService(BTServicePlanner service)
+    public void SetPlanningService(PlanningService service)
     {
         LoggingService.LogInfo($"🔧 BTFlowNodeBase: SetPlanningService called for {DebugDisplayName} with service {service.GetType().Name}");
         PlanningService = service;
 
-        // If this is a BTServicePlanner, set the bidirectional reference
-        if (service is BTServicePlanner plannerService)
+        // If this is a PlanningService, set the bidirectional reference
+        if (service is PlanningService plannerService)
         {
             LoggingService.LogInfo($"🔧 BTFlowNodeBase: Setting bidirectional reference with planning service {service.GetType().Name}");
             plannerService.SetOwningFlowNode(this);
@@ -333,7 +333,7 @@ public abstract class BTFlowNodeBase : BTNodeBase, IEnumerable
         }
         else
         {
-            LoggingService.LogWarning($"⚠️ BTFlowNodeBase: Service {service.GetType().Name} is not a BTServicePlanner, cannot set bidirectional reference");
+            LoggingService.LogWarning($"⚠️ BTFlowNodeBase: Service {service.GetType().Name} is not a PlanningService, cannot set bidirectional reference");
         }
 
         // Add the planning service to the general services list so it gets ticked

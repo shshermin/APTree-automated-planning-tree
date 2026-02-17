@@ -5,7 +5,7 @@ using System.Linq;
 using System.IO;
 using BehaviorTreeMainProject.Services;
 using BehaviorTreeMainProject.Services.AIPlanning;
-using PlanningDataStructures;
+
 using AIPlanning;
 using ModelLoader.ParameterTypes;
 using BehaviorTreeMainProject.Log.Services;
@@ -16,7 +16,7 @@ namespace BehaviorTreeMainProject
     public class FullTreeTest
     {
         // Track all planner executions
-        private List<BTServicePlanner> allPlanners = new List<BTServicePlanner>();
+        private List<PlanningService> allPlanners = new List<PlanningService>();
         private DateTime testStartTime;
         private DateTime testEndTime;
         private IBTNode rootNode; // Store root node for monitoring
@@ -478,10 +478,10 @@ namespace BehaviorTreeMainProject
                 var pddlRequest3 = new PDDLPlanningRequest("./Plannerinputs/static/domain.pddl", "./Plannerinputs/static/problemC3.pddl", "/home/shermin/ENHSP-Public/enhsp.jar", "ENHSP");
                 var pddlRequest4 = new PDDLPlanningRequest("./Plannerinputs/static/domain.pddl", "./Plannerinputs/static/problemC4.pddl", "/home/shermin/ENHSP-Public/enhsp.jar", "ENHSP");
 
-                var pddlPlanner1 = new CallPDDLPlanner(behaviorTree, pddlRequest1);
-                var pddlPlanner2 = new CallPDDLPlanner(behaviorTree, pddlRequest2);
-                var pddlPlanner3 = new CallPDDLPlanner(behaviorTree, pddlRequest3);
-                var pddlPlanner4 = new CallPDDLPlanner(behaviorTree, pddlRequest4);
+                var pddlPlanner1 = new PDDLPlanningService(behaviorTree, pddlRequest1);
+                var pddlPlanner2 = new PDDLPlanningService(behaviorTree, pddlRequest2);
+                var pddlPlanner3 = new PDDLPlanningService(behaviorTree, pddlRequest3);
+                var pddlPlanner4 = new PDDLPlanningService(behaviorTree, pddlRequest4);
                 
                 // Track all planners for execution summary
                 allPlanners.Add(pddlPlanner1);
@@ -490,10 +490,10 @@ namespace BehaviorTreeMainProject
                 allPlanners.Add(pddlPlanner4);
                 
                 // Configure execution modes for the cassettes
-                pddlPlanner1.ExecutionMode = CallPDDLPlanner.ParallelExecutionMode.Parallel;    // Parallel execution
-                pddlPlanner2.ExecutionMode = CallPDDLPlanner.ParallelExecutionMode.Parallel;    // Parallel execution
-                pddlPlanner3.ExecutionMode = CallPDDLPlanner.ParallelExecutionMode.Parallel;    // Parallel execution
-                pddlPlanner4.ExecutionMode = CallPDDLPlanner.ParallelExecutionMode.Parallel;    // Parallel execution
+                pddlPlanner1.ExecutionMode = PDDLPlanningService.ParallelExecutionMode.Parallel;    // Parallel execution
+                pddlPlanner2.ExecutionMode = PDDLPlanningService.ParallelExecutionMode.Parallel;    // Parallel execution
+                pddlPlanner3.ExecutionMode = PDDLPlanningService.ParallelExecutionMode.Parallel;    // Parallel execution
+                pddlPlanner4.ExecutionMode = PDDLPlanningService.ParallelExecutionMode.Parallel;    // Parallel execution
 
                 LoggingService.LogInfo("ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ Created PDDL planners for all four cassettes");
                 LoggingService.LogInfo($"ÃƒÂ°Ã…Â¸Ã¢â‚¬ÂÃ‚Â§ Execution Modes:");
@@ -645,8 +645,8 @@ namespace BehaviorTreeMainProject
                             {
                                 LoggingService.LogInfo($"   ÃƒÂ°Ã…Â¸Ã¢â‚¬ÂÃ‚Â§ Planning Service: {dynamicNode.PlanningService.GetType().Name}");
                                 
-                                // Check if it's a BTServicePlanner
-                                if (dynamicNode.PlanningService is BTServicePlanner plannerService)
+                                // Check if it's a PlanningService
+                                if (dynamicNode.PlanningService is PlanningService plannerService)
                                 {
                                     LoggingService.LogInfo($"   ÃƒÂ°Ã…Â¸Ã¢â‚¬Å“Ã…Â  Has Generated NodeGraph: {plannerService.HasGeneratedNodeGraph()}");
                                     
@@ -919,7 +919,7 @@ namespace BehaviorTreeMainProject
                         LoggingService.LogInfo($"ÃƒÂ°Ã…Â¸Ã…Â½Ã‚Â¯ FLOW NODE {i + 1}: {dynamicNode.GetNodeName()}");
                         
                         // Check if planning service has generated a NodeGraph
-                        if (dynamicNode.PlanningService is BTServicePlanner plannerService && plannerService.HasGeneratedNodeGraph())
+                        if (dynamicNode.PlanningService is PlanningService plannerService && plannerService.HasGeneratedNodeGraph())
                         {
                             var generatedGraph = plannerService.GetGeneratedNodeGraph();
                             var actions = generatedGraph.GetAllActionNodes();
@@ -984,12 +984,8 @@ namespace BehaviorTreeMainProject
                                     {
                                         LoggingService.LogInfo($"      ÃƒÂ°Ã…Â¸Ã¢â‚¬ÂÃ‚Â§ Has SubtreeInjectionService: Yes");
                                         
-                                        // Get statistics from the service
-                                        var stats = subtreeService.GetStatistics();
-                                        LoggingService.LogInfo($"      ÃƒÂ°Ã…Â¸Ã¢â‚¬Å“Ã…Â  Service Stats: {stats.cachedSubtrees} cached subtrees, {stats.configurations} configurations, {stats.plannerMappings} planner mappings");
-                                        
                                         // Check if any problem files were generated
-                                        var generatedFiles = subtreeService.GetGeneratedProblemFiles();
+                                        var generatedFiles = PDDLPlanningService.GeneratedProblemFiles;
                                         if (generatedFiles.Count > 0)
                                         {
                                             LoggingService.LogInfo($"      ÃƒÂ°Ã…Â¸Ã¢â‚¬Å“Ã¢â‚¬Å¾ Generated Problem Files: {generatedFiles.Count}");
@@ -1071,7 +1067,7 @@ namespace BehaviorTreeMainProject
                                 LoggingService.LogInfo($"   ÃƒÂ°Ã…Â¸Ã¢â‚¬Å“Ã…Â  Flow Node Status: {dynamicNode.status}");
                                 
                                 // Check if planning service has generated a NodeGraph
-                                if (dynamicNode.PlanningService is BTServicePlanner plannerService && plannerService.HasGeneratedNodeGraph())
+                                if (dynamicNode.PlanningService is PlanningService plannerService && plannerService.HasGeneratedNodeGraph())
                                 {
                                     var generatedGraph = plannerService.GetGeneratedNodeGraph();
                                     var actions = generatedGraph.GetAllActionNodes();
@@ -1154,7 +1150,7 @@ namespace BehaviorTreeMainProject
                     if (child is BTFlowNode_Dynamic dynamicNode)
                     {
                         // Check if planning service has generated a NodeGraph
-                        if (dynamicNode.PlanningService is BTServicePlanner plannerService && plannerService.HasGeneratedNodeGraph())
+                        if (dynamicNode.PlanningService is PlanningService plannerService && plannerService.HasGeneratedNodeGraph())
                         {
                             var generatedGraph = plannerService.GetGeneratedNodeGraph();
                             var actions = generatedGraph.GetAllActionNodes();
@@ -1446,7 +1442,7 @@ namespace BehaviorTreeMainProject
                 {
                     if (child is BTFlowNode_Dynamic dynamicNode)
                     {
-                        if (dynamicNode.PlanningService is BTServicePlanner plannerService && plannerService.HasGeneratedNodeGraph())
+                        if (dynamicNode.PlanningService is PlanningService plannerService && plannerService.HasGeneratedNodeGraph())
                         {
                             var generatedGraph = plannerService.GetGeneratedNodeGraph();
                             var actions = generatedGraph.GetAllActionNodes();
@@ -1620,7 +1616,7 @@ namespace BehaviorTreeMainProject
                 {
                     if (child is BTFlowNode_Dynamic dynamicNode)
                     {
-                        if (dynamicNode.PlanningService is BTServicePlanner plannerService && plannerService.HasGeneratedNodeGraph())
+                        if (dynamicNode.PlanningService is PlanningService plannerService && plannerService.HasGeneratedNodeGraph())
                         {
                             var generatedGraph = plannerService.GetGeneratedNodeGraph();
                             var actions = generatedGraph.GetAllActionNodes();

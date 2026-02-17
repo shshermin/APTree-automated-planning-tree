@@ -1,6 +1,4 @@
 using System.Threading.Tasks;
-using PlanningDataStructures;
-
 namespace AIPlanning
 {
     public interface IPlannerCommunicator

@@ -10,9 +10,14 @@ using System.Linq;
 ///   pickupml lp2 fp9 r1 vg1 (1)
 ///   placeml lp2 pr3 r1 vg1 (1)
 /// </summary>
-public class LAMAFirst : Planner
+public class LAMAFirstPlanner : Planner
 {
     public override string[] PlannerNames => new[] { "LAMA-FIRST", "LAMA" };
+
+    public override string DefaultDomainFile => "Plannerinputs/static/DomainML.pddl";
+    public override string DefaultProblemFile => "Plannerinputs/static/problemC1.pddl";
+    public override string DefaultPlannerPath => "lama-first";
+    public override string DefaultPlannerName => "LAMA-FIRST";
 
     // Lines starting with these prefixes are diagnostic, not action lines
     private static readonly string[] SkipPrefixes = new[]

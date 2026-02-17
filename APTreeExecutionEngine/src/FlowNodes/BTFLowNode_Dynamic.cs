@@ -130,7 +130,7 @@ public class BTFlowNode_Dynamic : BTFlowNodeBase
             LoggingService.LogInfo($"🔄 FlowNode: Node {DebugDisplayName} was uninitialized, checking if planning is already completed");
 
             // Check if planning has already been completed by checking if NodeGraph exists
-            if (PlanningService is BTServicePlanner initPlannerService && initPlannerService.GetGeneratedNodeGraph() != null)
+            if (PlanningService is PlanningService initPlannerService && initPlannerService.GetGeneratedNodeGraph() != null)
             {
                 LoggingService.LogInfo($"🔄 FlowNode: Planning already completed (NodeGraph exists), setting planningCompleted = true");
                 planningCompleted = true;
@@ -145,7 +145,7 @@ public class BTFlowNode_Dynamic : BTFlowNodeBase
         }
 
         // Only reset planning if it hasn't completed yet (success or failure)
-        if (PlanningService is BTServicePlanner plannerService)
+        if (PlanningService is PlanningService plannerService)
         {
             // If planning has already completed (success or failure), don't reset it
             if (plannerService.HasCompleted)

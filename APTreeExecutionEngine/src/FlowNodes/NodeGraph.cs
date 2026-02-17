@@ -476,42 +476,10 @@ public class NodeGraph
     }
 
     /// <summary>
-    /// Reset the graph state
+    /// Destroys all GraphNodes and their owned action nodes, clearing the entire graph.
+    /// This is a composition teardown — after calling this, the graph is empty.
     /// </summary>
-    public void Reset()
-    {
-        LoggingService.LogWarning($"🔄 NodeGraph: RESET called! This will clear all completion statuses!");
-        LoggingService.LogWarning($"🔄 NodeGraph: Stack trace for Reset call:");
-        var stackTrace = Environment.StackTrace;
-        var stackLines = stackTrace.Split('\n');
-        for (int i = 0; i < Math.Min(10, stackLines.Length); i++)
-        {
-            LoggingService.LogWarning($"   {stackLines[i].Trim()}");
-        }
-        
-        // Track action deletion when resetting NodeGraph
-        var actionCount = nodes.Count;
-        if (actionCount > 0)
-        {
-            BehaviorTreeComponentLogger.TrackActionDeletion("NodeGraphReset", actionCount, "NodeGraph reset - all actions reset");
-        }
-        
-        elapsedTime = 0f;
-        foreach (var node in nodes)
-        {
-            LoggingService.LogWarning($"🔄 NodeGraph: Resetting node {node.ActionNode.InstanceName.ToString()} - IsCompleted: {node.IsCompleted} → false");
-            node.IsExecuting = false;
-            node.IsCompleted = false;
-            node.StartTime = 0f;
-            node.EndTime = 0f;
-        }
-        LoggingService.LogWarning($"🔄 NodeGraph: Reset completed - all {nodes.Count} nodes reset");
-    }
-
-    /// <summary>
-    /// Clear all actions from the NodeGraph (actually removes them)
-    /// </summary>
-    public void Clear()
+    public void DestroyAllNodes()
     {
         LoggingService.LogWarning($"🗑️ NodeGraph: CLEAR called! This will remove all actions from the graph!");
         LoggingService.LogWarning($"🗑️ NodeGraph: Stack trace for Clear call:");
@@ -529,12 +497,17 @@ public class NodeGraph
             BehaviorTreeComponentLogger.TrackActionDeletion("NodeGraphClear", actionCount, "NodeGraph clear - all actions removed");
         }
         
-        // Actually remove all actions from the graph
+        // Composition: each GraphNode destroys its owned action node
+        foreach (var node in nodes)
+        {
+            node.Destroy();
+        }
+        
         nodes.Clear();
         nodeMap.Clear();
         elapsedTime = 0f;
         
-        LoggingService.LogWarning($"🗑️ NodeGraph: Clear completed - removed {actionCount} actions from graph");
+        LoggingService.LogWarning($"🗑️ NodeGraph: Clear completed - destroyed {actionCount} actions from graph");
     }
 
     /// <summary>
@@ -547,6 +520,9 @@ public class NodeGraph
         if (nodeMap.TryGetValue(actionNode, out var graphNode))
         {
             LoggingService.LogInfo($"🗑️ NodeGraph: Removing action {actionNode.InstanceName.ToString()} from graph");
+            
+            // Composition: GraphNode destroys its owned action node and detaches relations
+            graphNode.Destroy();
             
             // Remove from both collections
             nodes.Remove(graphNode);

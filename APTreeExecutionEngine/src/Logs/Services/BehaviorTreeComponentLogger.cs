@@ -68,7 +68,7 @@ namespace BehaviorTreeMainProject.Log.Services
             flowNodeStats["BTDecorator_LowestCostExecution"] = new FlowNodeStats();
             
             // Initialize service tracking - use actual concrete service class names
-            flowNodeStats["CallPDDLPlanner"] = new FlowNodeStats();
+            flowNodeStats["PDDLPlanningService"] = new FlowNodeStats();
             flowNodeStats["CallGOAPPlanner"] = new FlowNodeStats();
             flowNodeStats["CallSCPlanner"] = new FlowNodeStats();
             flowNodeStats["BTService_PlanningPhaseManager"] = new FlowNodeStats();
@@ -84,10 +84,10 @@ namespace BehaviorTreeMainProject.Log.Services
                 "DecoratorBTDecorator_DynamicPlanningComplete", 
                 "DecoratorBTDecorator_LowestCostExecution", 
                 "DecoratorBTDecorator_PlanningComplete", 
-                "ServiceCallPDDLPlanner", 
+                "ServicePDDLPlanningService", 
                 "ServiceBTService_PlanningPhaseManager", 
                 "ServiceSubtreeInjectionService",
-                "CallPDDLPlanner"
+                "PDDLPlanningService"
             };
             
             foreach (var component in components)

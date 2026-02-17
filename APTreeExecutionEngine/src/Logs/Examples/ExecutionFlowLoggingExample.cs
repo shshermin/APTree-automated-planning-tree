@@ -31,7 +31,7 @@ namespace BehaviorTreeMainProject.Log.Examples
             
             // Log service ticks
             ExecutionFlowLogger.LogServiceTick("PlanningPhaseManager", "BTService_PlanningPhaseManager", "RootComposite", "SUCCESS");
-            ExecutionFlowLogger.LogServiceTick("PDDLPlanner", "CallPDDLPlanner", "Cassette1", "SUCCESS");
+            ExecutionFlowLogger.LogServiceTick("PDDLPlanner", "PDDLPlanningService", "Cassette1", "SUCCESS");
             ExecutionFlowLogger.LogServiceTick("SubtreeInjectionService", "SubtreeInjectionService", "TravelML", "SUCCESS");
             
             // Log decorator ticks

@@ -72,6 +72,150 @@ public class BTDecorator_DynamicPlanningComplete : BTDecoratorBase
         }
     }
 
+    // ───────────────────────────────────────────────────────────────
+    //  Static helpers – cassette-index lookup via tree traversal
+    // ───────────────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Set the cassette subtree completion flag for the cassette that contains the given action.
+    /// Called from SubtreeInjectionService after a subtree is injected.
+    /// </summary>
+    public static void SetCassetteSubtreeCompletedFlag(IBTNode root, PActionNode action, Blackboard<FastName> blackboard)
+    {
+        if (blackboard == null)
+        {
+            LoggingService.LogWarning("⚠️ DynamicPlanningCompleteDecorator: Blackboard is null, cannot set cassette flag");
+            return;
+        }
+
+        int cassetteIndex = FindCassetteIndexForAction(root, action);
+
+        if (cassetteIndex >= 0 && cassetteIndex < blackboard.CassetteSubtreeCompleted.Length)
+        {
+            blackboard.CassetteSubtreeCompleted[cassetteIndex] = true;
+            LoggingService.LogSuccess($"✅ DynamicPlanningCompleteDecorator: Set cassette{cassetteIndex + 1} subtree completion flag to true");
+        }
+        else
+        {
+            LoggingService.LogWarning($"⚠️ DynamicPlanningCompleteDecorator: Could not determine cassette index for action '{action.InstanceName.ToString()}'");
+        }
+    }
+
+    /// <summary>
+    /// Find which cassette flow node contains the given action by traversing the tree structure.
+    /// </summary>
+    /// <returns>The cassette index (0-based) or -1 if not found</returns>
+    public static int FindCassetteIndexForAction(IBTNode root, PActionNode action)
+    {
+        if (root == null)
+        {
+            LoggingService.LogWarning("⚠️ DynamicPlanningCompleteDecorator: Cannot traverse tree – root node is null");
+            return -1;
+        }
+
+        LoggingService.LogInfo($"🔍 DynamicPlanningCompleteDecorator: Searching for action '{action.InstanceName.ToString()}' in tree structure");
+
+        var cassetteIndex = TraverseTreeForAction(root, action);
+
+        if (cassetteIndex >= 0)
+        {
+            LoggingService.LogInfo($"🔍 DynamicPlanningCompleteDecorator: Found action '{action.InstanceName.ToString()}' in cassette{cassetteIndex + 1}");
+        }
+        else
+        {
+            LoggingService.LogWarning($"⚠️ DynamicPlanningCompleteDecorator: Action '{action.InstanceName.ToString()}' not found in any cassette");
+        }
+
+        return cassetteIndex;
+    }
+
+    /// <summary>
+    /// Recursively traverse the tree to find which cassette contains the given action.
+    /// </summary>
+    private static int TraverseTreeForAction(IBTNode node, PActionNode targetAction)
+    {
+        if (node == null) return -1;
+
+        // Check if this is a cassette flow node
+        if (node is BTFlowNode_Dynamic flowNode)
+        {
+            var nodeName = flowNode.GetNodeName().ToLower();
+            if (nodeName.StartsWith("cassette"))
+            {
+                if (int.TryParse(nodeName.Substring("cassette".Length), out int cassetteNumber))
+                {
+                    int cassetteIndex = cassetteNumber - 1;
+
+                    LoggingService.LogInfo($"🔍 DynamicPlanningCompleteDecorator: Checking cassette{cassetteNumber} (index {cassetteIndex}) for action '{targetAction.InstanceName.ToString()}'");
+
+                    if (ContainsAction(flowNode, targetAction))
+                    {
+                        LoggingService.LogSuccess($"✅ DynamicPlanningCompleteDecorator: Found action '{targetAction.InstanceName.ToString()}' in cassette{cassetteNumber}");
+                        return cassetteIndex;
+                    }
+                }
+            }
+        }
+
+        // If this node has children, recursively check them
+        if (node.HasChildren)
+        {
+            if (node is BTFlowNode_Composite compositeNode)
+            {
+                var children = compositeNode.GetChildren();
+                foreach (var child in children)
+                {
+                    var result = TraverseTreeForAction(child, targetAction);
+                    if (result >= 0) return result;
+                }
+            }
+            else if (node is BTFlowNode_Dynamic dynamicNode)
+            {
+                var actionGraph = dynamicNode.GetActionGraph();
+                if (actionGraph != null)
+                {
+                    var actionNodes = actionGraph.GetAllActionNodes();
+                    foreach (var actionNode in actionNodes)
+                    {
+                        if (actionNode == targetAction)
+                        {
+                            var dynName = dynamicNode.GetNodeName().ToLower();
+                            if (dynName.StartsWith("cassette"))
+                            {
+                                if (int.TryParse(dynName.Substring("cassette".Length), out int cassetteNumber))
+                                {
+                                    return cassetteNumber - 1;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return -1;
+    }
+
+    /// <summary>
+    /// Check if a flow node contains the given action.
+    /// </summary>
+    private static bool ContainsAction(BTFlowNode_Dynamic flowNode, PActionNode targetAction)
+    {
+        var actionGraph = flowNode.GetActionGraph();
+        if (actionGraph != null)
+        {
+            var actionNodes = actionGraph.GetAllActionNodes();
+            foreach (var actionNode in actionNodes)
+            {
+                if (actionNode == targetAction)
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     /// <summary>
     /// Gets the specific cassette flow nodes by name (cassette1, cassette2, cassette3, cassette4)
     /// Returns null for cassettes that don't exist

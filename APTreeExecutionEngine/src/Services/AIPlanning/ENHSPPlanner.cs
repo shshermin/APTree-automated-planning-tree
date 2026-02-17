@@ -7,9 +7,15 @@ using System.Linq;
 /// 
 /// ENHSP raw output lines:  "0.0: (travelml r1 pr2 ep1)"
 /// </summary>
-public class ENHSP : Planner
+public class ENHSPPlanner : Planner
 {
     public override string[] PlannerNames => new[] { "ENHSP" };
+
+    public override string DefaultDomainFile => "Plannerinputs/static/domain.pddl";
+    public override string DefaultProblemFile => "Plannerinputs/static/problemC1.pddl";
+    public override string DefaultPlannerPath => "/home/shermin/ENHSP-Public/enhsp.jar";
+    public override string DefaultPlannerName => "ENHSP";
+    public override int DefaultMaxPlanLength => 40;
 
     /// <summary>
     /// Parses raw ENHSP stdout to extract ordered actions.
