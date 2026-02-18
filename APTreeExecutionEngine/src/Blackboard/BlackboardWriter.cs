@@ -251,8 +251,8 @@ public class BlackboardWriter
     public void RegisterAllInstances(string actionInstancesFile)
     {
         // Use default file paths for parameters and predicates
-        string parameterInstancesFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "..", "APTreeDSL", "target", "LiveMatSetupObjects.json");
-        string predicateInstancesFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "..", "APTreeDSL", "target", "InitialStatePredicates.json");
+        string parameterInstancesFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "src", "ModelLoader", "LiveMatSetupObjects.json");
+        string predicateInstancesFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "src", "ModelLoader", "InitialStatePredicates.json");
         
         RegisterAllInstances(parameterInstancesFile, predicateInstancesFile, actionInstancesFile);
     }
@@ -279,8 +279,8 @@ public class BlackboardWriter
     public void CreateAndRegisterAllInstances(string[] actionDefinitionStrings)
     {
         // Use default file paths
-        string parameterInstancesFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "..", "APTreeDSL", "target", "LiveMatSetupObjects.json");
-        string predicateInstancesFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "..", "APTreeDSL", "target", "InitialStatePredicates.json");
+        string parameterInstancesFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "src", "ModelLoader", "LiveMatSetupObjects.json");
+        string predicateInstancesFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "src", "ModelLoader", "InitialStatePredicates.json");
         
         CreateAndRegisterAllInstances(parameterInstancesFile, predicateInstancesFile, actionDefinitionStrings);
     }
@@ -292,8 +292,8 @@ public class BlackboardWriter
     public void CreateAndRegisterAllInstancesFromFiles(string actionInstancesFile)
     {
         // Use default file paths for parameters and predicates
-        string parameterInstancesFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "..", "APTreeDSL", "target", "LiveMatSetupObjects.json");
-        string predicateInstancesFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "..", "APTreeDSL", "target", "InitialStatePredicates.json");
+        string parameterInstancesFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "src", "ModelLoader", "LiveMatSetupObjects.json");
+        string predicateInstancesFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "src", "ModelLoader", "InitialStatePredicates.json");
         
         // Read action definitions from file
         string[] actionDefinitionStrings = ReadActionDefinitionsFromFile(actionInstancesFile);
@@ -331,8 +331,8 @@ public class BlackboardWriter
     public void CreateAndRegisterAllInstancesWithNodeGraph(string actionInstancesFile, string nodeGraphFile)
     {
         // Use default file paths for parameters and predicates
-        string parameterInstancesFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "..", "APTreeDSL", "target", "LiveMatSetupObjects.json");
-        string predicateInstancesFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "..", "APTreeDSL", "target", "InitialStatePredicates.json");
+        string parameterInstancesFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "src", "ModelLoader", "LiveMatSetupObjects.json");
+        string predicateInstancesFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "src", "ModelLoader", "InitialStatePredicates.json");
         
         CreateAndRegisterAllInstancesWithNodeGraph(parameterInstancesFile, predicateInstancesFile, actionInstancesFile, nodeGraphFile);
     }

@@ -1,0 +1,102 @@
+{
+  "behaviorTrees": [
+    {
+      "root": {
+        "childType": "ALLFLOW",
+        "successCriteria": "ALL",
+        "name": "Main",
+        "type": "DynamicFlowNode",
+        "nodeGraph": {
+          "nodes": [
+            {
+              "childType": "ALLACTION",
+              "successCriteria": "ALL",
+              "name": "HandleCassette1",
+              "services": [
+                {
+                  "name": "mypddlplanner1",
+                  "plannerRef": "Enhsp1",
+                  "type": "ServicePDDLPlanner"
+                }
+              ],
+              "type": "DynamicFlowNode",
+              "nodeGraph": {
+                "nodes": [
+                  
+                ],
+                "nodeCount": 0,
+                "relationCount": 0
+              }
+            },
+            {
+              "childType": "ALLACTION",
+              "successCriteria": "ALL",
+              "name": "HandleCassette2",
+              "services": [
+                {
+                  "name": "mypddlplanner2",
+                  "plannerRef": "Enhsp2",
+                  "type": "ServicePDDLPlanner"
+                }
+              ],
+              "type": "DynamicFlowNode",
+              "nodeGraph": {
+                "nodes": [
+                  
+                ],
+                "nodeCount": 0,
+                "relationCount": 0
+              }
+            },
+            {
+              "childType": "ALLACTION",
+              "successCriteria": "ALL",
+              "name": "HandleCassette3",
+              "services": [
+                {
+                  "name": "mypddlplanner3",
+                  "plannerRef": "Enhsp3",
+                  "type": "ServicePDDLPlanner"
+                }
+              ],
+              "type": "DynamicFlowNode",
+              "nodeGraph": {
+                "nodes": [
+                  
+                ],
+                "nodeCount": 0,
+                "relationCount": 0
+              }
+            },
+            {
+              "childType": "ALLACTION",
+              "successCriteria": "ALL",
+              "name": "HandleCassette4",
+              "services": [
+                {
+                  "name": "mypddlplanner4",
+                  "plannerRef": "Enhsp4",
+                  "type": "ServicePDDLPlanner"
+                }
+              ],
+              "type": "DynamicFlowNode",
+              "nodeGraph": {
+                "nodes": [
+                  
+                ],
+                "nodeCount": 0,
+                "relationCount": 0
+              }
+            }
+          ],
+          "nodeCount": 4,
+          "relationCount": 0
+        }
+      },
+      "name": "LiveMat"
+    }
+  ],
+  "generatedAt": "2026-02-17T19:23:15.631161100",
+  "treeCount": 1,
+  "sourceFile": "src\/test\/resources\/valid\/behavior_trees\/APTreeLiveMat.bt"
+}

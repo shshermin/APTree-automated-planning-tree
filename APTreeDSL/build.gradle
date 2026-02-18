@@ -290,7 +290,7 @@ task runInitialStateJsonGenerator(type: JavaExec) {
   mainClass = 'InitialStateJsonGenerator'
   workingDir = projectDir
   args = [project.properties.get('modelName', 'LiveMatInitialState.bt'),
-      project.properties.get('outputName', 'target/InitialStatePredicates.json')]
+      project.properties.get('outputName', '../APTreeExecutionEngine/src/ModelLoader/InitialStatePredicates.json')]
 }
 
 task runAPTreeTool(type: JavaExec) {
@@ -323,6 +323,8 @@ task runLiveMatSetupObjectsGenerator(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'LiveMatSetupObjectsGenerator'
     workingDir = projectDir
+    args = ['src/test/resources/valid/CRFConcrete/LiveMatSetupObjects.bt',
+        '../APTreeExecutionEngine/src/ModelLoader/LiveMatSetupObjects.json']
 }
 
 task generateBTModelJson(type: JavaExec) {
@@ -334,7 +336,7 @@ task generateBTModelJson(type: JavaExec) {
     args = [
         project.properties.get('btModel', 'src/test/resources/valid/behavior_trees/APTreeLiveMat.bt'),
         project.properties.get('instances', 'src/test/resources/valid/CRFConcrete/LiveMatSetupObjects.bt'),
-        project.properties.get('outputName', 'target/BehaviorTreeModel.json')
+        project.properties.get('outputName', '../APTreeExecutionEngine/src/ModelLoader/BehaviorTreeModel.json')
     ]
 }
 

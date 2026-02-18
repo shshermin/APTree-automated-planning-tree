@@ -43,13 +43,13 @@ import planningservice._ast.ASTServicePDDLPlanner;
  * Defaults:
  *   btModelPath  = src/test/resources/valid/behavior_trees/APTreeLivematFinal.bt
  *   instancesPath = src/test/resources/valid/CRFConcrete/LiveMatSetupObjects.bt
- *   outputPath   = target/BehaviorTreeModel.json
+ *   outputPath   = ../APTreeExecutionEngine/src/ModelLoader/BehaviorTreeModel.json
  */
 public class BTInstanceJsonGenerator {
 
   private static final String DEFAULT_BT_MODEL = "src/test/resources/valid/behavior_trees/APTreeLiveMat.bt";
   private static final String DEFAULT_INSTANCES = "src/test/resources/valid/CRFConcrete/LiveMatSetupObjects.bt";
-  private static final String DEFAULT_OUTPUT = "target/BehaviorTreeModel.json";
+  private static final String DEFAULT_OUTPUT = "../APTreeExecutionEngine/src/ModelLoader/BehaviorTreeModel.json";
 
   // ──────────────────────────────────────────────────────────────────────────
   // Entry point

@@ -85,7 +85,7 @@ public class APTreeTool {
     loadConcreteInstancesIntoGlobalScope(instancesFile);
     
     // 2.5. Export property instances to JSON right after loading symbols
-    String outputJsonPath = "target/PropertyInstances.json";
+    String outputJsonPath = "../APTreeExecutionEngine/src/ModelLoader/PropertyInstances.json";
     exportPropertyInstancesToJSON(outputJsonPath);
     
     // 3. Configure Global Scope with symbol path

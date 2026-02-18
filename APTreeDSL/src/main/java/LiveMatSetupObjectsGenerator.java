@@ -51,7 +51,7 @@ public class LiveMatSetupObjectsGenerator {
     
     LiveMatSetupObjectsGenerator generator = new LiveMatSetupObjectsGenerator();
     String filePath = args.length > 0 ? args[0] : "src/test/resources/valid/CRFConcrete/LiveMatSetupObjects.bt";
-    String outputPath = args.length > 1 ? args[1] : "target/LiveMatSetupObjects.json";
+    String outputPath = args.length > 1 ? args[1] : "../APTreeExecutionEngine/src/ModelLoader/LiveMatSetupObjects.json";
     
     System.out.println("Processing LiveMatSetupObjects file: " + filePath);
     generator.parseAndExport(filePath, outputPath);

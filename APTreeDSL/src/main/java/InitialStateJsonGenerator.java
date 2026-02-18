@@ -45,7 +45,7 @@ public class InitialStateJsonGenerator {
 
     InitialStateJsonGenerator generator = new InitialStateJsonGenerator();
     String filePath = args.length > 0 ? args[0] : DEFAULT_FILE;
-    String outputPath = args.length > 1 ? args[1] : "target/InitialStatePredicates.json";
+    String outputPath = args.length > 1 ? args[1] : "../APTreeExecutionEngine/src/ModelLoader/InitialStatePredicates.json";
     String resolvedPath = resolveInputPath(filePath);
 
     System.out.println("Processing predicate model: " + resolvedPath);
