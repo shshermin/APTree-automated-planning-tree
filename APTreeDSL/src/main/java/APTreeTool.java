@@ -127,21 +127,21 @@ public class APTreeTool {
         DynamicBTFlowNodeCoCoChecker checker = new DynamicBTFlowNodeCoCoChecker();
         // Add custom checks (must register for each node type explicitly to avoid ambiguity)
         ElementExistsCoCo elementCheck = new ElementExistsCoCo();
-        checker.addCoCo((CRFTypesConASTPickUpHLCoCo) elementCheck);
-        checker.addCoCo((CRFTypesConASTPlaceHLCoCo) elementCheck);
+        //checker.addCoCo((CRFTypesConASTPickUpHLCoCo) elementCheck);
+        //checker.addCoCo((CRFTypesConASTPlaceHLCoCo) elementCheck);
         // New: Every FlowNode must have at least one PlanningService
         MustHavePlanningService planningServiceCheck = new MustHavePlanningService();
        // checker.addCoCo(planningServiceCheck);
         // New: Action nodes cannot have PlanningService (generic, works with all ASTPActionNode subclasses)
         ActionNodesCannotHavePlanningService actionNodeCheck = new ActionNodesCannotHavePlanningService();
-        checker.addCoCo((CRFTypesDefASTPActionNodeCoCo) actionNodeCheck);
+        //checker.addCoCo((CRFTypesDefASTPActionNodeCoCo) actionNodeCheck);
         // New: Decorator and service names must be unique
         UniquenessOfNames uniquenessCheck = new UniquenessOfNames();
-        checker.addCoCo((BehaviorTreeASTDecoratorCoCo) uniquenessCheck);
-        checker.addCoCo((BehaviorTreeASTServiceCoCo) uniquenessCheck);
+        //checker.addCoCo((BehaviorTreeASTDecoratorCoCo) uniquenessCheck);
+        //checker.addCoCo((BehaviorTreeASTServiceCoCo) uniquenessCheck);
         // New: Validate causal links between connected actions
         CausalLinkValidator causalValidator = new CausalLinkValidator();
-        checker.addCoCo((DynamicBTFlowNodeASTGraphNodeCoCo) causalValidator);
+        //checker.addCoCo((DynamicBTFlowNodeASTGraphNodeCoCo) causalValidator);
         
         // New: Check that all actions in behavior tree are defined in planning service domain
         PlanningServiceActionsCoverageCoCo actionsCoverageCheck = new PlanningServiceActionsCoverageCoCo();

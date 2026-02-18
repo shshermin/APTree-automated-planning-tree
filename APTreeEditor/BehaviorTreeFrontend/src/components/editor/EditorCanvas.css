@@ -153,7 +153,7 @@
   left: 14px;
   font-weight: 900;
   font-size: 1rem;
-  color: var(--text-primary);
+  color: #ffffff;
   text-decoration: underline;
   text-underline-offset: 5px;
   letter-spacing: 0.03em;
@@ -163,7 +163,7 @@
   position: absolute;
   top: 40px;
   left: 14px;
-  color: var(--text-muted);
+  color: #ffffff;
   font-weight: 600;
   font-size: 0.78rem;
 }
@@ -314,7 +314,7 @@
 }
 
 .canvas-node-action .canvas-node-params {
-  border-color: var(--action-border, rgba(0, 214, 255, 0.55));
+  border-color: var(--action-border, rgba(57, 255, 20, 0.55));
   background: color-mix(in srgb, rgba(6, 182, 212, 0.35) 65%, rgba(15, 23, 42, 0.92));
   color: #e6fdff;
 }
@@ -659,9 +659,9 @@
 }
 
 .canvas-node-actionInstance {
-  --action-border: rgba(244, 114, 182, 0.75);
-  --action-before: linear-gradient(120deg, rgba(244, 114, 182, 0.28), rgba(217, 70, 239, 0.38));
-  --action-glow: rgba(244, 114, 182, 0.38);
+  --action-border: rgba(0, 212, 255, 0.80);
+  --action-before: linear-gradient(120deg, rgba(0, 212, 255, 0.35), rgba(0, 160, 255, 0.45));
+  --action-glow: rgba(0, 212, 255, 0.45);
 }
 
 .canvas-node-behaviorNode {
@@ -697,9 +697,9 @@
 }
 
 .canvas-node-flow {
-  --node-border: 1px solid color-mix(in srgb, #22d3ee 65%, transparent);
-  --node-bg: linear-gradient(135deg, rgba(34, 211, 238, 0.18), rgba(59, 130, 246, 0.12));
-  --node-shadow: 0 0 16px rgba(34, 211, 238, 0.22);
+  --node-border: 1px solid color-mix(in srgb, #ff8c00 90%, transparent);
+  --node-bg: linear-gradient(135deg, rgba(255, 140, 0, 0.40), rgba(255, 200, 0, 0.22));
+  --node-shadow: 0 0 28px rgba(255, 140, 0, 0.50), 0 0 8px rgba(255, 200, 0, 0.28);
   border: var(--node-border);
   background: var(--node-bg);
   border-radius: var(--radius-md, 12px);
@@ -755,9 +755,9 @@
 }
 
 .canvas-node-action {
-  --node-border: 1px solid color-mix(in srgb, #f472b6 65%, transparent);
-  --node-bg: linear-gradient(135deg, rgba(244, 114, 182, 0.18), rgba(217, 70, 239, 0.12));
-  --node-shadow: 0 0 18px rgba(244, 114, 182, 0.22);
+  --node-border: 1px solid color-mix(in srgb, #00d4ff 85%, transparent);
+  --node-bg: linear-gradient(135deg, rgba(0, 212, 255, 0.32), rgba(0, 160, 255, 0.18));
+  --node-shadow: 0 0 28px rgba(0, 212, 255, 0.45), 0 0 8px rgba(0, 160, 255, 0.25);
   border: var(--node-border);
   background: var(--node-bg);
   border-radius: var(--radius-md, 12px);

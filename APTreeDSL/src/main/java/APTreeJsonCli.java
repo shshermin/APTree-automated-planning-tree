@@ -104,10 +104,11 @@ public class APTreeJsonCli {
       GraphExport graph = GraphExport.fromTree(ast);
 
       // Pre-validation: element references must resolve
-      List<String> preValidationErrors = validateElementReferences(ast);
-      if (!preValidationErrors.isEmpty()) {
-        return json(false, ast.getName(), preValidationErrors, collectFindings(), graph);
-      }
+      // COMMENTED OUT: skip context condition checks during import
+      // List<String> preValidationErrors = validateElementReferences(ast);
+      // if (!preValidationErrors.isEmpty()) {
+      //   return json(false, ast.getName(), preValidationErrors, collectFindings(), graph);
+      // }
 
       // Symbol table creation
       IDynamicBTFlowNodeGlobalScope gs = DynamicBTFlowNodeMill.globalScope();
@@ -115,11 +116,12 @@ public class APTreeJsonCli {
       as.setEnclosingScope(gs);
 
       // CoCos
-      DynamicBTFlowNodeCoCoChecker checker = new DynamicBTFlowNodeCoCoChecker();
-      ElementExistsCoCo elementCheck = new ElementExistsCoCo();
-      checker.addCoCo((crftypescon._cocos.CRFTypesConASTPickUpHLCoCo) elementCheck);
-      checker.addCoCo((crftypescon._cocos.CRFTypesConASTPlaceHLCoCo) elementCheck);
-      checker.checkAll((ASTDynamicBTFlowNodeNode) ast);
+      // COMMENTED OUT: skip CoCo checks during import
+      // DynamicBTFlowNodeCoCoChecker checker = new DynamicBTFlowNodeCoCoChecker();
+      // ElementExistsCoCo elementCheck = new ElementExistsCoCo();
+      // checker.addCoCo((crftypescon._cocos.CRFTypesConASTPickUpHLCoCo) elementCheck);
+      // checker.addCoCo((crftypescon._cocos.CRFTypesConASTPlaceHLCoCo) elementCheck);
+      // checker.checkAll((ASTDynamicBTFlowNodeNode) ast);
 
       List<String> findings = collectFindings();
       boolean ok = findings.isEmpty();

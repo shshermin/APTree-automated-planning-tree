@@ -1208,6 +1208,8 @@ function EditorCanvasInner(props: EditorCanvasProps) {
         onNodeDragStop={handleNodeDragStop}
         connectionLineType={ConnectionLineType.SmoothStep}
         proOptions={{ hideAttribution: true }}
+        minZoom={0.05}
+        maxZoom={4}
         panOnDrag
         fitView
         nodesDraggable
