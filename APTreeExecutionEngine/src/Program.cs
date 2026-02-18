@@ -4,8 +4,8 @@ using System.Text.Json;
 using System.Text.RegularExpressions;
 using BehaviorTreeMainProject;
 
-// Run the behavior tree test
-await FullTreeTest.RunTest();
+// Run the behavior tree test (disabled — uncomment to run before server starts)
+// await FullTreeTest.RunTest();
 
 var builder = WebApplication.CreateBuilder(args);
 
