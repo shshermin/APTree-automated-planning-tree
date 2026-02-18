@@ -27,7 +27,6 @@ public class BTFlowNodeComposite : FlowNode
     public CompositeTerminationPolicy TerminationPolicy { get; set; } = CompositeTerminationPolicy.NeverStop;
     public int MaxAttempts { get; set; } = 3;           // For StopAfterMaxAttempts policy
     private int currentAttempt = 0;                     // Track current attempt number
-    private int currentChildIndex = 0;                  // Track which child is currently active (strict sequence)
     
     public BTFlowNodeComposite(
         FastName nodeName,
@@ -128,9 +127,9 @@ public class BTFlowNodeComposite : FlowNode
     
     /// <summary>
     /// Execute the composite flow node logic
-    /// Children are executed in strict sequence: only the current child is ticked.
-    /// The next child does not start (no planning, no ticking) until the current child
-    /// finishes with Success or Failure.
+    /// Children are ticked strictly sequentially: each child is ticked and its result
+    /// is fully returned before the next child is ticked. This eliminates race conditions
+    /// where decorators on different children could see inconsistent blackboard state.
     /// </summary>
     protected override bool OnTick_NodeLogic(float inDeltaTime)
     {
@@ -139,71 +138,84 @@ public class BTFlowNodeComposite : FlowNode
         // If no children, fail immediately
         if (allChildren.Count == 0)
         {
-            return false;
+            // Let the base class handle failure tracking through OnTickReturn
+            return false; // This will trigger OnTickReturn with failed status
         }
         
-        // Only tick the current active child
-        while (currentChildIndex < allChildren.Count)
+        // Tick children SEQUENTIALLY: tick child i, wait for its result, then tick child i+1.
+        // Each child's Tick() fully completes (including all decorator evaluation, node logic,
+        // and post-processing) before the next child begins. This ensures that blackboard
+        // state changes made by one child's decorators (e.g. LowestCostExecution writing
+        // ChosenExecutingBranch) are fully visible to the next child's decorators
+        // (e.g. ExclusiveBranchGate reading ChosenExecutingBranch).
+        //
+        // Fair progress: if a branch is deprioritized (ahead of others), tick it LAST
+        // so the lagging branches get to run first.
+        int deprioritizedIndex = LinkedBlackboard.DeprioritizedBranchIndex;
+        var tickOrder = new List<int>();
+        for (int i = 0; i < allChildren.Count; i++)
         {
-            var child = allChildren[currentChildIndex];
+            if (i != deprioritizedIndex)
+                tickOrder.Add(i);
+        }
+        if (deprioritizedIndex >= 0 && deprioritizedIndex < allChildren.Count)
+        {
+            tickOrder.Add(deprioritizedIndex);
+            LoggingService.LogInfo($"⚖️ CompositeFlow: Branch {deprioritizedIndex + 1} deprioritized — ticking it last");
+        }
+
+        foreach (int i in tickOrder)
+        {
+            var child = allChildren[i];
+            
             var previousStatus = child.status;
             
-            LoggingService.LogInfo($"🎯 CompositeFlow: [{currentChildIndex + 1}/{allChildren.Count}] Ticking child: {child.DebugDisplayName} (current status: {previousStatus})");
+            LoggingService.LogInfo($"🎯 CompositeFlow: [{i + 1}/{allChildren.Count}] Ticking child: {child.DebugDisplayName} (current status: {previousStatus})");
             
-            // Tick only this child
+            // Tick the child - this call blocks until the child's full tick cycle completes
             child.Tick(inDeltaTime);
             
-            LoggingService.LogInfo($"📊 CompositeFlow: [{currentChildIndex + 1}/{allChildren.Count}] Child {child.DebugDisplayName}: {previousStatus} → {child.status}");
-            
-            if (child.status == BTNodeResult.Success)
-            {
-                LoggingService.LogSuccess($"✅ CompositeFlow: Child {child.DebugDisplayName} succeeded, advancing to next child");
-                currentChildIndex++;
-                // Continue the while loop to immediately tick the next child this same frame
-                continue;
-            }
-            else if (child.status == BTNodeResult.Failure)
-            {
-                LoggingService.LogError($"❌ CompositeFlow: Child {child.DebugDisplayName} failed");
-                
-                // Check termination policy
-                currentAttempt++;
-                bool shouldTerminate = ShouldTerminate(allChildren);
-                if (shouldTerminate)
-                {
-                    LoggingService.LogError($"❌ CompositeFlow: Termination policy triggered after {currentAttempt} attempts");
-                    return false;
-                }
-                else
-                {
-                    // Reset the failed child and retry it next tick
-                    child.Reset();
-                    LoggingService.LogInfo($"🔄 CompositeFlow: Reset failed child {child.DebugDisplayName} for retry (attempt {currentAttempt})");
-                    status = BTNodeResult.InProgress;
-                    return true;
-                }
-            }
-            else
-            {
-                // Child is still InProgress — wait for it, don't touch the next child
-                status = BTNodeResult.InProgress;
-                LoggingService.LogInfo($"⏳ CompositeFlow: Child {child.DebugDisplayName} still in progress, waiting...");
-                return true;
-            }
+            LoggingService.LogInfo($"📊 CompositeFlow: [{i + 1}/{allChildren.Count}] Child {child.DebugDisplayName}: {previousStatus} → {child.status}");
         }
         
-        // All children have been completed successfully
+        // Check if any child is still running
+        bool anyRunning = allChildren.Any(node => node.status != BTNodeResult.Success && node.status != BTNodeResult.Failure);
+        if (anyRunning)
+        {
+            status = BTNodeResult.InProgress;
+            LoggingService.LogInfo($"⏳ CompositeFlow: Some children still running, continuing next tick");
+            return true;
+        }
+
+        // All children finished (succeeded or failed) - evaluate using success criteria and termination policy
         currentAttempt++;
+        
+        // First check if we've achieved success criteria
         bool criteriaAchieved = EvaluateSuccessCriteria(allChildren);
         if (criteriaAchieved)
         {
             status = BTNodeResult.Success;
-            LoggingService.LogSuccess($"✅ CompositeFlow: All children completed — success criteria achieved on attempt {currentAttempt}");
+            LoggingService.LogSuccess($"✅ CompositeFlow: Success criteria achieved on attempt {currentAttempt}");
             return true;
         }
         
-        LoggingService.LogError($"❌ CompositeFlow: All children finished but success criteria not met");
-        return false;
+        // Success not achieved - check termination policy to decide if we should continue
+        bool shouldTerminate = ShouldTerminate(allChildren);
+        if (shouldTerminate)
+        {
+            LoggingService.LogError($"❌ CompositeFlow: Termination policy triggered after {currentAttempt} attempts");
+            
+            // Let the base class handle failure tracking through OnTickReturn
+            return false; // This will trigger OnTickReturn with failed status
+        }
+        else
+        {
+            // Reset failed children and try again
+            ResetFailedChildren(allChildren);
+            status = BTNodeResult.InProgress;
+            LoggingService.LogInfo($"🔄 CompositeFlow: Retrying - attempt {currentAttempt}, continuing execution");
+            return true;
+        }
     }
     
     /// <summary>
@@ -311,7 +323,6 @@ public class BTFlowNodeComposite : FlowNode
     /// </summary>
     public override void Reset()
     {
-        currentChildIndex = 0;
         base.Reset();
         
         // Reset the current count for maxCount mechanism

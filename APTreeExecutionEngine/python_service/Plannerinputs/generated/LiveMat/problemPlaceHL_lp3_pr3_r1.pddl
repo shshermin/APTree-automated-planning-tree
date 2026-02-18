@@ -224,6 +224,7 @@ lay3 - stack
 (not (holding r1 lp3))
 (clear lp3)
 (not (positionfree pr3))
+(vgempty r1)
     ) 
   )
 )

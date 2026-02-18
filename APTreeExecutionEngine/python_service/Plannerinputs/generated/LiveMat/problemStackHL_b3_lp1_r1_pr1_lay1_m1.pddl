@@ -273,6 +273,8 @@ lay3 - stack
 (not (holding r1 b3))
 (atplace b3 pr1)
 (not (clear lp1))
+(clear b3)
+(vgempty r1)
     ) 
   )
 )

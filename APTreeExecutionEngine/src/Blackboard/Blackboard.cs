@@ -35,15 +35,6 @@ public class Blackboard<T> : IDisposable where T : class
      Dictionary<FastName, State> StateValues = new();
     Dictionary<FastName, NodeGraph> NodeGraphValues = new();
     Dictionary<FastName, DynamicFlowNode> InjectedSubtreesValues = new();
-
-    /// <summary>
-    /// Global counter per base action key. Tracks how many instances of each
-    /// action signature have been created across all cassettes, so that
-    /// cross-cassette duplicates get unique _dup suffixes.
-    /// Key = base action key (e.g. "ChangeEndeffectorHL_robot1_staplergun1_gripper1")
-    /// Value = number of instances created so far
-    /// </summary>
-    public Dictionary<string, int> ActionInstanceCounts { get; } = new Dictionary<string, int>();
    
     private readonly EnvironmentGraph? _envGraph;
 
@@ -67,13 +58,28 @@ public class Blackboard<T> : IDisposable where T : class
     /// </summary>
     public bool[] CassetteSubtreeCompleted { get; set; } = new bool[4] { false, false, false, false };
 
+    /// <summary>
+    /// Tracks the number of completed actions per cassette branch.
+    /// Updated by BTDecoratorFairBranchProgress.
+    /// Index 0 = cassette1, Index 1 = cassette2, Index 2 = cassette3, Index 3 = cassette4
+    /// </summary>
+    public int[] BranchProgress { get; set; } = new int[4] { 0, 0, 0, 0 };
+
+    /// <summary>
+    /// Index of the branch that is currently deprioritized (most ahead).
+    /// Set by BTDecoratorFairBranchProgress. -1 means no deprioritization (all balanced).
+    /// The root composite ticks this branch LAST so other branches can catch up.
+    /// </summary>
+    public int DeprioritizedBranchIndex { get; set; } = -1;
+
     public Blackboard(string uri, string user, string password)
     {
         _envGraph = new EnvironmentGraph(uri, user, password);
     }
 
     /// <summary>
-    /// Constructor without Neo4j connection. The blackboard will work without graph database support.
+    /// Parameterless constructor that skips the Neo4j EnvironmentGraph.
+    /// Use this when Neo4j is not needed.
     /// </summary>
     public Blackboard()
     {
@@ -228,7 +234,7 @@ public class Blackboard<T> : IDisposable where T : class
         ElementValues[key] = value;
         // Ensure the element's NameKey matches its instance ID
         value.NameKey = key;  // This ensures the element keeps its instance ID
-        LoggingService.LogError($"Successfully added {value.GetType().Name} to Blackboard with key: {key}");
+        Console.WriteLine($"Successfully added {value.GetType().Name} to Blackboard with key: {key}");
         
         // Log new element instance created
         BlackboardTrackingLogger.LogNewInstance(key.ToString(), value.GetType().Name, "Blackboard", $"Element instance: {value.GetType().Name}");
@@ -465,14 +471,6 @@ public void SetActionInstance(FastName key, PActionNode actionInstance)
     }
 }
 
-/// <summary>
-/// Checks whether an action instance with the given key exists on the blackboard.
-/// </summary>
-public bool HasActionInstance(FastName key)
-{
-    return ActionValues.ContainsKey(key);
-}
-
 public ActionNode GetAction(FastName key)
     {
         if (!ActionValues.ContainsKey(key))
@@ -538,9 +536,9 @@ public List<PActionNode> GetAllActionInstances()
             // First check if predicates have the same name
             if (existingPredicate.PredicateName == newPredicate.PredicateName)
             {
-                LoggingService.LogError($"\nComparing predicates:");
-                LoggingService.LogError($"New: {newPredicate.PredicateName}");
-                LoggingService.LogError($"Existing: {existingPredicate.PredicateName}");
+                Console.WriteLine($"\nComparing predicates:");
+                Console.WriteLine($"New: {newPredicate.PredicateName}");
+                Console.WriteLine($"Existing: {existingPredicate.PredicateName}");
                 
                 // Get properties of both predicates
                 var existingParams = existingPredicate.GetAllProperties();
@@ -557,7 +555,7 @@ public List<PActionNode> GetAllActionInstances()
                     // If parameter doesn't exist in existing predicate
                     if (!existingParams.ContainsKey(param.Key))
                     {
-                        LoggingService.LogError($"Parameter {param.Key} not found in existing predicate");
+                        Console.WriteLine($"Parameter {param.Key} not found in existing predicate");
                         allParamsMatch = false;
                         break;
                     }
@@ -566,9 +564,9 @@ public List<PActionNode> GetAllActionInstances()
                     var existingValue = existingParams[param.Key];
                     var newValue = param.Value;
 
-                    LoggingService.LogError($"\nComparing parameter {param.Key}:");
-                    LoggingService.LogError($"Existing value: {existingValue}");
-                    LoggingService.LogError($"New value: {newValue}");
+                    Console.WriteLine($"\nComparing parameter {param.Key}:");
+                    Console.WriteLine($"Existing value: {existingValue}");
+                    Console.WriteLine($"New value: {newValue}");
 
                     // Get the instance identifiers for comparison
                     var existingId = existingValue?.GetType().GetProperty("InstanceId")?.GetValue(existingValue)?.ToString()
@@ -576,12 +574,12 @@ public List<PActionNode> GetAllActionInstances()
                     var newId = newValue?.GetType().GetProperty("InstanceId")?.GetValue(newValue)?.ToString()
                         ?? newValue?.ToString();
 
-                    LoggingService.LogError($"Existing ID: {existingId}");
-                    LoggingService.LogError($"New ID: {newId}");
+                    Console.WriteLine($"Existing ID: {existingId}");
+                    Console.WriteLine($"New ID: {newId}");
 
                     if (existingId != newId)
                     {
-                        LoggingService.LogInfo("IDs don't match");
+                        Console.WriteLine("IDs don't match");
                         allParamsMatch = false;
                         break;
                     }
@@ -589,7 +587,7 @@ public List<PActionNode> GetAllActionInstances()
                 
                 if (allParamsMatch)
                 {
-                    LoggingService.LogInfo("Found similar predicate!");
+                    Console.WriteLine("Found similar predicate!");
                     return true;
                 }
             }
@@ -700,7 +698,7 @@ public List<PActionNode> GetAllActionInstances()
         }
         catch (Exception ex)
         {
-            LoggingService.LogError($"Neo4j connection test failed: {ex.Message}");
+            Console.WriteLine($"Neo4j connection test failed: {ex.Message}");
             return false;
         }
     }
@@ -781,7 +779,7 @@ public List<PActionNode> GetAllActionInstances()
             BlackboardTrackingLogger.LogNewInstance(key.ToString(), value.GetType().Name, "Blackboard", $"State instance: {value.GetType().Name}");
         }
         StateValues[key] = value;
-        LoggingService.LogError($"Successfully added State to Blackboard with key: {key}");
+        Console.WriteLine($"Successfully added State to Blackboard with key: {key}");
     }
 
     // Get and Set methods for NodeGraphs
@@ -797,7 +795,7 @@ public List<PActionNode> GetAllActionInstances()
     public void SetNodeGraph(FastName key, NodeGraph value)
     {
         NodeGraphValues[key] = value;
-        LoggingService.LogError($"Successfully added NodeGraph to Blackboard with key: {key}");
+        Console.WriteLine($"Successfully added NodeGraph to Blackboard with key: {key}");
         
         // Log new node graph instance created
         BlackboardTrackingLogger.LogNewInstance(key.ToString(), value.GetType().Name, "Blackboard", $"NodeGraph instance: {value.GetType().Name}");
@@ -825,7 +823,7 @@ public List<PActionNode> GetAllActionInstances()
     public void SetInjectedSubtree(FastName key, DynamicFlowNode value)
     {
         InjectedSubtreesValues[key] = value;
-        LoggingService.LogError($"Successfully added injected subtree to Blackboard with key: {key}");
+        Console.WriteLine($"Successfully added injected subtree to Blackboard with key: {key}");
         
         // Log new injected subtree instance created
         BlackboardTrackingLogger.LogNewInstance(key.ToString(), value.GetType().Name, "Blackboard", $"Injected subtree instance: {value.GetType().Name}");
@@ -846,7 +844,7 @@ public List<PActionNode> GetAllActionInstances()
     public void ClearInjectedSubtrees()
     {
         InjectedSubtreesValues.Clear();
-        LoggingService.LogInfo("Cleared all injected subtrees from Blackboard");
+        Console.WriteLine("Cleared all injected subtrees from Blackboard");
     }
      public List<Predicate> GetAllPredicates()
     {

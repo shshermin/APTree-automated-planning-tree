@@ -21,6 +21,25 @@ public class DynamicFlowNode : FlowNode
     private const int MAX_TICKS_BEFORE_FAILURE = 10;
     private bool hasCompletedFirstRound = false;
 
+    /// <summary>
+    /// Number of children in this node's graph that have finished (Success or Failure).
+    /// Updated every time a child transitions to HasFinished during OnTick_Children.
+    /// BTDecoratorFairBranchProgress reads this to decide which branch to prioritize.
+    /// </summary>
+    public int Progress { get; private set; } = 0;
+
+    /// <summary>
+    /// The actionType of the most recently finished child in this node's graph.
+    /// Used by FairBranchProgress to batch consecutive same-type HL actions
+    /// (e.g. multiple GluingHL in a row) without releasing the branch lock.
+    /// </summary>
+    public string LastFinishedActionType { get; private set; } = null;
+
+    /// <summary>
+    /// Set of node names already counted towards Progress so we don't double-count.
+    /// </summary>
+    private HashSet<string> _finishedNodeNames = new HashSet<string>();
+
     public override string DebugDisplayName { get; protected set; } = "DynamicFlowNode";
 
     public DynamicFlowNode(
@@ -48,6 +67,13 @@ public class DynamicFlowNode : FlowNode
         // this post-processing decorator resets failed children and converts Failure → InProgress
         AddDecorator(new DecoratorRetryOnFailure(this));
         LoggingService.LogInfo($"🔧 DynamicFlowNode: Added RetryOnFailure decorator to {nodeName.ToString()}");
+
+        // Add ExclusiveBranchGate: enforces that only the chosen branch (set by
+        // FairBranchProgress) can proceed. Non-chosen cassettes are blocked here,
+        // which prevents their children's ServiceSubtreeInject from firing ML planning.
+        // During planning phase the gate allows all through (ChosenExecutingBranch is null).
+        AddDecorator(new BTDecoratorExclusiveBranchGate(this));
+        LoggingService.LogInfo($"🔧 DynamicFlowNode: Added ExclusiveBranchGate decorator to {nodeName.ToString()}");
         
     }
 
@@ -283,6 +309,21 @@ public class DynamicFlowNode : FlowNode
             else
             {
                 LoggingService.LogInfo($"   ⏳ Node {node.InstanceName.ToString()} still in progress");
+            }
+
+            // Update Progress counter when a child finishes for the first time
+            if (node.HasFinished && _finishedNodeNames.Add(node.InstanceName.ToString()))
+            {
+                Progress++;
+                if (node is PActionNode finishedAction)
+                {
+                    LastFinishedActionType = finishedAction.actionType.ToString();
+                    LoggingService.LogInfo($"   \ud83d\udcc8 Progress: {Progress} children finished in {DebugDisplayName} (latest: {node.InstanceName.ToString()}, type: {LastFinishedActionType})");
+                }
+                else
+                {
+                    LoggingService.LogInfo($"   \ud83d\udcc8 Progress: {Progress} children finished in {DebugDisplayName} (latest: {node.InstanceName.ToString()})");
+                }
             }
         }
         

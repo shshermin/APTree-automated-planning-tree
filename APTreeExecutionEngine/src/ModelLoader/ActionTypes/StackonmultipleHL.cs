@@ -42,13 +42,14 @@ namespace BehaviorTreeMainProject
             // Initialize preconditions
             preconditions = new State(StateType.Precondition, new FastName("stackonmultipleHL_preconditions"));
             preconditions.AddPredicate(new FastName("stackonmultipleHL_pre_0"), new Holding(client, plate, false));
-            preconditions.AddPredicate(new FastName("stackonmultipleHL_pre_1"), new AtPlace(plate, pos, true));
-            preconditions.AddPredicate(new FastName("stackonmultipleHL_pre_2"), new RobotEquipped(client, false));
+            preconditions.AddPredicate(new FastName("stackonmultipleHL_pre_1"), new Atplace(plate, pos, true));
+            preconditions.AddPredicate(new FastName("stackonmultipleHL_pre_2"), new Vgempty(client, true));
 
             // Initialize effects
             effects = new State(StateType.Effect, new FastName("stackonmultipleHL_effects"));
-            effects.AddPredicate(new FastName("stackonmultipleHL_eff_0"), new AtPlace(plate, pos, false));
-            effects.AddPredicate(new FastName("stackonmultipleHL_eff_1"), new Clear(plate, false));
+            effects.AddPredicate(new FastName("stackonmultipleHL_eff_0"), new Atplace(plate, pos, false));
+            effects.AddPredicate(new FastName("stackonmultipleHL_eff_1"), new Vgempty(client, false));
+            effects.AddPredicate(new FastName("stackonmultipleHL_eff_2"), new Clear(plate, false));
         }
 
         protected override State Preconditions => preconditions;
