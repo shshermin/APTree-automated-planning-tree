@@ -134,13 +134,31 @@ namespace BehaviorTreeMainProject
                     // 2. If it is not HL return true
                     return true;
                 }
+
+                // Guard: skip injection if subtree already exists and RePlan is not requested
+                bool subtreeAlreadyInjected = pendingAction.HighLevelSubtree != null;
+                bool rePlanRequested = subtreeAlreadyInjected && pendingAction.HighLevelSubtree.RePlan;
+
+                if (subtreeAlreadyInjected && !rePlanRequested)
+                {
+                    LogMessage($"🔍 ServiceSubtreeInject: Subtree already injected for {actionType} and RePlan=false — skipping");
+                    return true;
+                }
                 
-                // 3. If it is HL, then we Inject the subtree
-                LogMessage($"🔍 ServiceSubtreeInject: Detected high-level action: {actionType}");
+                // 3. If it is HL, then we Inject the subtree (first time or RePlan requested)
+                LogMessage($"🔍 ServiceSubtreeInject: {(rePlanRequested ? "RePlan requested" : "First injection")} for high-level action: {actionType}");
                 try
                 {
                     ProcessSubtreeInjection( null); // customParameters would be passed here if needed
                     LogMessage($"✅ ServiceSubtreeInject: Successfully injected subtree for {actionType}");
+
+                    // Reset the RePlan flag after successful re-injection
+                    if (rePlanRequested && pendingAction.HighLevelSubtree != null)
+                    {
+                        pendingAction.HighLevelSubtree.RePlan = false;
+                        LogMessage($"🔄 ServiceSubtreeInject: Reset RePlan flag to false for {actionType}");
+                    }
+
                     // 4. If the injection was successful return true
                     return true;
                 }
@@ -175,18 +193,21 @@ namespace BehaviorTreeMainProject
                 var actionType = pendingAction.actionType.ToString();
                 LogMessage($"🔧 ServiceSubtreeInject: Processing injection for {actionType}");
                 
-                // Always use FF_Default planner configuration
+                // Use FF planner for ML subtrees (with ML-specific domain file)
                 string configName = "FF_Default";
                 
                 // Create instance name from action
                 string instanceName = pendingAction.InstanceName.ToString();
                 
                 // Generate dynamic PDDL problem file via ServicePDDLPlanning
+                // This only runs when OnEvaluate() allows it (first injection or RePlan=true),
+                // so the problem file always reflects the current blackboard state.
                 string problemFileName = ServicePDDLPlanning.GenerateDynamicPDDLProblem(pendingAction, linkedBlackboard);
                 
                 // Merge custom parameters with the generated problem file
                 var mergedParameters = customParameters ?? new Dictionary<string, object>();
                 mergedParameters["problemFile"] = problemFileName;
+                mergedParameters["domainFile"] = "Plannerinputs/static/DomainML.pddl";
                 
                 LogMessage($"🔧 ServiceSubtreeInject: Using dynamic problem file: {problemFileName}");
                 LogMessage($"🔧 ServiceSubtreeInject: Merged parameters count: {mergedParameters.Count}");
