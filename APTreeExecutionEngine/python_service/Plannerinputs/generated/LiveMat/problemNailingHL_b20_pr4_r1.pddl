@@ -120,7 +120,7 @@ lay3 - stack
 (clear b24)
 (attool vg1 ep1)
 (attool gg1 ep2)
-(atagent r1 pr4)
+(atagent r1 pr3)
 (vgempty r1)
 (belongstolayer b1 lay1)
 (belongstolayer b2 lay1)
@@ -308,7 +308,6 @@ lay3 - stack
 (nailed b17)
 (nailed b16)
 (nailed b18)
-(nailed b20)
   )
   (:goal 
     (and

@@ -22,6 +22,13 @@ public class DynamicFlowNode : FlowNode
     private bool hasCompletedFirstRound = false;
 
     /// <summary>
+    /// When true, forces the subtree to regenerate its PDDL problem file and re-plan.
+    /// After re-planning completes, this flag is automatically reset to false.
+    /// Default is false — the problem file is generated only once on first injection.
+    /// </summary>
+    public bool RePlan { get; set; } = false;
+
+    /// <summary>
     /// Number of children in this node's graph that have finished (Success or Failure).
     /// Updated every time a child transitions to HasFinished during OnTick_Children.
     /// BTDecoratorFairBranchProgress reads this to decide which branch to prioritize.

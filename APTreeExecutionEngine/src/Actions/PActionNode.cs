@@ -15,8 +15,8 @@ public abstract class PActionNode : ActionNode
     public int cost;
 
     // High-level action support
-    public bool IsHighLevelAction { get; protected set; } = false;
-    public DynamicFlowNode HighLevelSubtree { get; protected set; }
+    public bool IsHighLevelAction { get; set; } = false;
+    public DynamicFlowNode HighLevelSubtree { get; set; }
     public Service ServicePlanning { get; protected set; }
 
     // ServiceSubtreeInject access
@@ -60,6 +60,9 @@ public abstract class PActionNode : ActionNode
         // Automatically add ServiceSubtreeInject to all actions
         InitializeSubtreeInjectionService();
         
+        // Automatically add ServiceLLSubtreeInject (only acts on ML actions)
+        InitializeLLSubtreeInjectionService();
+        
         LoggingService.LogInfo($"🔧 GenericBTAction: Constructor completed for {instanceName}");
     }
 
@@ -82,7 +85,7 @@ public abstract class PActionNode : ActionNode
             // AddDecorator(new BTDecoratorResetOnSubtreeSuccess(this));
 
             LoggingService.LogInfo($"🔧 GenericBTAction: Set {InstanceName.ToString()} as high-level action with subtree type: {subtree.GetType().Name}");
-            LoggingService.LogInfo($"🔧 GenericBTAction: ServicePlanning type: {planningService.GetType().Name}");
+            LoggingService.LogInfo($"🔧 GenericBTAction: ServicePlanning type: {planningService?.GetType().Name ?? "None"}");
             LoggingService.LogInfo($"🔧 GenericBTAction: Established parent-child relationship: {InstanceName.ToString()} ↔ {subtree.DebugDisplayName}");
         
     }
@@ -462,6 +465,45 @@ public abstract class PActionNode : ActionNode
         {
             subtreeService.SetOwiningTree(InOwningtree);
         }
+        var llService = GetLLSubtreeInjectionService();
+        if (llService != null)
+        {
+            llService.SetOwiningTree(InOwningtree);
+        }
+    }
+
+    /// <summary>
+    /// Initialize and add ServiceLLSubtreeInject to this action.
+    /// Only acts on ML-level actions (checked at tick time in OnEvaluate).
+    /// </summary>
+    private void InitializeLLSubtreeInjectionService()
+    {
+        try
+        {
+            var llService = new ServiceLLSubtreeInject(this);
+            AddService(llService, false);
+            LoggingService.LogInfo($"✅ GenericBTAction: Added ServiceLLSubtreeInject to {InstanceName.ToString()}");
+        }
+        catch (Exception ex)
+        {
+            LoggingService.LogError($"❌ GenericBTAction: Failed to add ServiceLLSubtreeInject for {InstanceName.ToString()}: {ex.Message}");
+        }
+    }
+
+    /// <summary>
+    /// Get the ServiceLLSubtreeInject associated with this action
+    /// </summary>
+    public ServiceLLSubtreeInject GetLLSubtreeInjectionService()
+    {
+        if (GenrealServices != null)
+        {
+            foreach (var service in GenrealServices)
+            {
+                if (service is ServiceLLSubtreeInject llService)
+                    return llService;
+            }
+        }
+        return null;
     }
 
     /// <summary>

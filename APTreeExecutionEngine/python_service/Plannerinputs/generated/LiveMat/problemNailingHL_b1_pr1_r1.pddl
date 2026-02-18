@@ -291,7 +291,6 @@ lay3 - stack
 (positionfree ep3)
 (activetool ng1)
 (nailed b2)
-(nailed b1)
   )
   (:goal 
     (and

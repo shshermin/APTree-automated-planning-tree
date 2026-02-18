@@ -7,25 +7,29 @@ namespace BehaviorTreeMainProject
 {
     public class NailingHL : PActionNode
     {
-        // Parameter: obj of type element
-        public Element obj { get; private set; }
+        // Parameter: obj1 of type Element
+        public Element obj1 { get; private set; }
 
-        // Parameter: pos of type positionOnRail
-        public PositionOnRail pos { get; private set; }
+        // Parameter: obj2 of type Element
+        public Element obj2 { get; private set; }
 
-        // Parameter: client of type robot
+        // Parameter: client of type Robot
         public Robot client { get; private set; }
+
+        // Parameter: s of type StaplerGun
+        public StaplerGun s { get; private set; }
 
         // Preconditions and Effects as State objects
         private State preconditions;
         private State effects;
 
-        public NailingHL(string actionType, string instanceName, Blackboard<FastName> blackboard, Element obj, PositionOnRail pos, Robot client)
+        public NailingHL(string actionType, string instanceName, Blackboard<FastName> blackboard, Element obj1, Element obj2, Robot client, StaplerGun s)
             : base(actionType, instanceName, blackboard)
         {
-            this.obj = obj;
-            this.pos = pos;
+            this.obj1 = obj1;
+            this.obj2 = obj2;
             this.client = client;
+            this.s = s;
             InitializePredicates();
         }
 
@@ -40,11 +44,11 @@ namespace BehaviorTreeMainProject
 
             // Initialize effects
             effects = new State(StateType.Effect, new FastName("nailingHL_effects"));
-            effects.AddPredicate(new FastName("nailingHL_eff_0"), new Nailed(obj, false));
+            effects.AddPredicate(new FastName("nailingHL_eff_0"), new Nailed(obj1, obj2, false));
+            effects.AddPredicate(new FastName("nailingHL_eff_1"), new Fixed(obj1, false));
         }
 
         protected override State Preconditions => preconditions;
         protected override State Effects => effects;
-
     }
 }

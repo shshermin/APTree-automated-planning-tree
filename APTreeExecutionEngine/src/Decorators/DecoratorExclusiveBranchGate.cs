@@ -11,12 +11,12 @@ using BehaviorTreeMainProject.Log.Services;
 /// Since this decorator is attached to injected subtrees (children of cassettes),
 /// it walks up the parent chain to check if the subtree belongs to the chosen cassette.
 /// </summary>
-public class BTDecoratorExclusiveBranchGate : Decorator
+public class DecoratorExclusiveBranchGate : Decorator
 {
     public override bool CanPostProcessTickResult => false;
     public override BTNodeResult PostProcessTickResult(BTNodeResult InResult) => InResult;
 
-    public BTDecoratorExclusiveBranchGate(DynamicFlowNode attachedNode) : base(false)
+    public DecoratorExclusiveBranchGate(DynamicFlowNode attachedNode) : base(false)
     {
         this.AttachedNode = attachedNode;
     }

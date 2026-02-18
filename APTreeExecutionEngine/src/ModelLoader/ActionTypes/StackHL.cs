@@ -7,37 +7,33 @@ namespace BehaviorTreeMainProject
 {
     public class StackHL : PActionNode
     {
-        // Parameter: obj1 of type element
-        public Element obj1 { get; private set; }
+        // Parameter: stackingobject of type Element
+        public Element stackingobject { get; private set; }
 
-        // Parameter: obj2 of type element
-        public Element obj2 { get; private set; }
+        // Parameter: existingobject of type Element
+        public Element existingobject { get; private set; }
 
-        // Parameter: client of type robot
+        // Parameter: client of type Robot
         public Robot client { get; private set; }
 
-        // Parameter: pr of type location
-        public Location pr { get; private set; }
+        // Parameter: objposition of type Location
+        public Location objposition { get; private set; }
 
-        // Parameter: lay of type stack
-        public Stack lay { get; private set; }
-
-        // Parameter: mod of type cassette
-        public Cassette mod { get; private set; }
+        // Parameter: g of type Gripper
+        public Gripper g { get; private set; }
 
         // Preconditions and Effects as State objects
         private State preconditions;
         private State effects;
 
-        public StackHL(string actionType, string instanceName, Blackboard<FastName> blackboard, Element obj1, Element obj2, Robot client, Location pr, Stack lay, Cassette mod)
+        public StackHL(string actionType, string instanceName, Blackboard<FastName> blackboard, Element stackingobject, Element existingobject, Robot client, Location objposition, Gripper g)
             : base(actionType, instanceName, blackboard)
         {
-            this.obj1 = obj1;
-            this.obj2 = obj2;
+            this.stackingobject = stackingobject;
+            this.existingobject = existingobject;
             this.client = client;
-            this.pr = pr;
-            this.lay = lay;
-            this.mod = mod;
+            this.objposition = objposition;
+            this.g = g;
             InitializePredicates();
         }
 
@@ -62,6 +58,5 @@ namespace BehaviorTreeMainProject
 
         protected override State Preconditions => preconditions;
         protected override State Effects => effects;
-
     }
 }
