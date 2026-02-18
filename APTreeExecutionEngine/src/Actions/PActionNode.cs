@@ -79,7 +79,7 @@ public abstract class PActionNode : ActionNode
             subtree.SetParentNode(this);
 
             // Attach decorator that handles planning state reset on subtree success
-            AddDecorator(new BTDecoratorResetOnSubtreeSuccess(this));
+            // AddDecorator(new BTDecoratorResetOnSubtreeSuccess(this));
 
             LoggingService.LogInfo($"🔧 GenericBTAction: Set {InstanceName.ToString()} as high-level action with subtree type: {subtree.GetType().Name}");
             LoggingService.LogInfo($"🔧 GenericBTAction: ServicePlanning type: {planningService.GetType().Name}");
@@ -233,7 +233,7 @@ public abstract class PActionNode : ActionNode
     ///   - If the predicate is negative (negated), the blackboard must either not contain it, or contain it as negated.
     /// </summary>
     /// <returns>True if all preconditions are met, false otherwise.</returns>
-    private bool CheckPreconditions()
+    public bool CheckPreconditions()
     {
         if (Preconditions == null)
         {

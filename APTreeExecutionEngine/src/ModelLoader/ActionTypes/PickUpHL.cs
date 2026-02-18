@@ -33,7 +33,7 @@ namespace BehaviorTreeMainProject
         {
             // Initialize preconditions
             preconditions = new State(StateType.Precondition, new FastName("pickUpHL_preconditions"));
-            preconditions.AddPredicate(new FastName("pickUpHL_pre_0"), new Robotequipped(client, true));
+            preconditions.AddPredicate(new FastName("pickUpHL_pre_0"), new Vgempty(client, false));
             preconditions.AddPredicate(new FastName("pickUpHL_pre_1"), new Atplace(obj, grabPos, false));
             preconditions.AddPredicate(new FastName("pickUpHL_pre_2"), new Holding(client, obj, true));
             preconditions.AddPredicate(new FastName("pickUpHL_pre_3"), new Positionfree(grabPos, true));
@@ -46,7 +46,7 @@ namespace BehaviorTreeMainProject
             effects.AddPredicate(new FastName("pickUpHL_eff_1"), new Atplace(obj, grabPos, true));
             effects.AddPredicate(new FastName("pickUpHL_eff_2"), new Clear(obj, true));
             effects.AddPredicate(new FastName("pickUpHL_eff_3"), new Positionfree(grabPos, false));
-            effects.AddPredicate(new FastName("pickUpHL_eff_4"), new Robotequipped(client, false));
+            effects.AddPredicate(new FastName("pickUpHL_eff_4"), new Vgempty(client, true));
         }
 
         protected override State Preconditions => preconditions;

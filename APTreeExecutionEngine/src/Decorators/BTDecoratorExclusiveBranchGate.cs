@@ -3,13 +3,13 @@ using BehaviorTreeMainProject.Log.Services;
 /// <summary>
 /// Gate decorator that enforces exclusive branch execution based on the blackboard's ChosenExecutingBranch.
 /// 
-/// - If a ChosenExecutingBranch is set on the blackboard, ONLY that branch is allowed to execute.
-///   All other branches are blocked.
-/// - If no ChosenExecutingBranch is set, all branches are allowed through (so LowestCost can pick one).
+/// - If a ChosenExecutingBranch is set on the blackboard, ONLY subtrees that belong to
+///   that branch (or ARE that branch) are allowed to execute. All other branches are blocked.
+/// - If no ChosenExecutingBranch is set, all branches are allowed through.
 /// 
-/// This decorator does NOT set or clear the chosen branch — that is the responsibility of 
-/// BTDecoratorLowestCostExecution. This decorator must be evaluated BEFORE LowestCost 
-/// (added to the decorator list first).
+/// The chosen branch is set by BTDecoratorFairBranchProgress at the cassette level.
+/// Since this decorator is attached to injected subtrees (children of cassettes),
+/// it walks up the parent chain to check if the subtree belongs to the chosen cassette.
 /// </summary>
 public class BTDecoratorExclusiveBranchGate : Decorator
 {
@@ -26,34 +26,55 @@ public class BTDecoratorExclusiveBranchGate : Decorator
         // Read the chosen branch from the blackboard
         var chosenBranch = LinkedBlackboard.ChosenExecutingBranch;
 
-        // If no branch is chosen yet, allow all through (LowestCost will pick one next)
+        // If no branch is chosen yet, allow all through
         if (chosenBranch == null)
         {
-            LoggingService.LogInfo($"🚪 ExclusiveBranchGate: No chosen branch set — ALLOW '{AttachedNode.InstanceName}' through to LowestCost evaluation");
+            LoggingService.LogInfo($"🚪 ExclusiveBranchGate: No chosen branch set — ALLOW '{AttachedNode.InstanceName}' through");
             return true;
         }
 
-        // If the chosen branch has already SUCCEEDED, it's stale — allow through so 
-        // LowestCost can clear it and pick a new branch. Without this, we deadlock:
-        // the old succeeded subtree never ticks again, so LowestCost never runs to clear it.
+        // If the chosen branch has already SUCCEEDED, it's stale — allow through so
+        // FairBranchProgress can clear it and pick a new branch on next tick.
         if (chosenBranch.status == BTNodeResult.Success)
         {
-            LoggingService.LogInfo($"🚪 ExclusiveBranchGate: Chosen branch '{chosenBranch.InstanceName}' already SUCCEEDED — ALLOW '{AttachedNode.InstanceName}' through so LowestCost can re-evaluate");
+            LoggingService.LogInfo($"🚪 ExclusiveBranchGate: Chosen branch '{chosenBranch.InstanceName}' already SUCCEEDED — ALLOW '{AttachedNode.InstanceName}' through for re-evaluation");
             return true;
         }
 
-        // A branch is actively chosen — only that branch may execute
-        bool isChosenBranch = (AttachedNode == chosenBranch);
+        // Check if this subtree IS the chosen branch or BELONGS TO the chosen branch
+        // (walk up the parent chain to find if chosenBranch is an ancestor)
+        bool belongsToChosenBranch = IsOrBelongsTo(AttachedNode, chosenBranch);
 
-        if (isChosenBranch)
+        if (belongsToChosenBranch)
         {
-            LoggingService.LogSuccess($"🚪 ExclusiveBranchGate: '{AttachedNode.InstanceName}' IS the chosen executing branch — ALLOW");
+            LoggingService.LogSuccess($"🚪 ExclusiveBranchGate: '{AttachedNode.InstanceName}' belongs to chosen branch '{chosenBranch.InstanceName}' — ALLOW");
             return true;
         }
         else
         {
-            LoggingService.LogInfo($"🚪 ExclusiveBranchGate: '{AttachedNode.InstanceName}' is NOT the chosen branch (chosen: '{chosenBranch.InstanceName}') — BLOCKING");
+            LoggingService.LogInfo($"🚪 ExclusiveBranchGate: '{AttachedNode.InstanceName}' does NOT belong to chosen branch '{chosenBranch.InstanceName}' — BLOCKING");
             return false;
         }
+    }
+
+    /// <summary>
+    /// Checks if 'node' is the target or is a descendant of 'target' by walking up the parent chain.
+    /// </summary>
+    private bool IsOrBelongsTo(DynamicFlowNode node, DynamicFlowNode target)
+    {
+        // Direct match
+        if (node == target)
+            return true;
+
+        // Walk up the parent chain
+        IBTNode current = node.ParentNode;
+        while (current != null)
+        {
+            if (current == target)
+                return true;
+            current = current.ParentNode;
+        }
+
+        return false;
     }
 }

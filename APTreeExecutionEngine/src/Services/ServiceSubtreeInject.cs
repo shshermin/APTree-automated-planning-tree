@@ -307,15 +307,9 @@ namespace BehaviorTreeMainProject
                     LogMessage($"💾 ServiceSubtreeInject: Cached subtree for '{cacheKey}'");
                 }
 
-                // Add the DynamicPlanningComplete decorator to the flow node
-                subtree.AddDecorator(new BTDecoratorDynamicPlanningComplete());
-                LogMessage($"🔧 ServiceSubtreeInject: Added DynamicPlanningComplete decorator to flow node '{subtree.DebugDisplayName}'");
-                // Add the ExclusiveBranchGate decorator BEFORE LowestCost — it evaluates first
-                subtree.AddDecorator(new BTDecoratorExclusiveBranchGate(subtree as DynamicFlowNode));
-                LogMessage($"🔧 ServiceSubtreeInject: Added ExclusiveBranchGate decorator to flow node '{subtree.DebugDisplayName}'");
-                // add the lowestcost decorator (evaluates after ExclusiveBranchGate)
-                subtree.AddDecorator(new BTDecoratorLowestCostExecution(subtree as DynamicFlowNode));
-                LogMessage($"🔧 ServiceSubtreeInject: Added LowestCostExecution decorator to flow node '{subtree.DebugDisplayName}'");
+                // ExclusiveBranchGate is now added in the DynamicFlowNode constructor
+                // so all DynamicFlowNodes (cassettes AND subtrees) get it automatically.
+                // No need to add it here — the subtree already has one from its constructor.
                 // DEBUG: Check if the decorator is actually in the list
                 var decoratorCount = subtree.GetType().GetField("Decorators", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.GetValue(subtree) as System.Collections.Generic.List<object>;
                 if (decoratorCount != null)

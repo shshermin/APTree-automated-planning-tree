@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,11 +23,15 @@ namespace BehaviorTreeMainProject
         
         public async Task RunFullTreeTest()
         {
-            // Initialize logging service
-            LoggingService.Initialize("FullTreeTest", enableConsole: true, enableFile: true);
+            // Silence all direct Console.WriteLine calls (factories, blackboard, etc.)
+            // File logging is unaffected — it uses its own StreamWriter via LogFileManager
+            Console.SetOut(TextWriter.Null);
+
+            // Initialize logging service (console disabled, file logging only)
+            LoggingService.Initialize("FullTreeTest", enableConsole: false, enableFile: true);
             
-            // Initialize execution flow logger
-            ExecutionFlowLogger.Initialize("FullTreeTest", enableConsole: true, enableFile: true);
+            // Initialize execution flow logger (console disabled, file logging only)
+            ExecutionFlowLogger.Initialize("FullTreeTest", enableConsole: false, enableFile: true);
             
             // BlackboardTrackingLogger is automatically initialized when first accessed
             // No need to call Initialize() explicitly
@@ -39,43 +43,33 @@ namespace BehaviorTreeMainProject
 
             try
             {
-                // Create blackboard instance and test Neo4j connection
-                using var blackboard = new Blackboard<FastName>("bolt://localhost:7687", "neo4j", "12345678");
-                
-                // Test Neo4j connection
-                LoggingService.LogInfo("ÃƒÂ°Ã…Â¸Ã¢â‚¬ÂÃ‚Â Testing Neo4j connection...");
-                bool connectionSuccess = await TestNeo4jConnection(blackboard);
+                // Create blackboard instance (no Neo4j dependency)
+                using var blackboard = new Blackboard<FastName>();
+                // Create BlackboardWriter for type registration
+                 var blackboardWriter = new BlackboardWriter(blackboard);
 
-                if (connectionSuccess)
-                {
-                    // Create BlackboardWriter for type registration
-                     var blackboardWriter = new BlackboardWriter(blackboard);
+                 // Register all types
+                LoggingService.LogSection("REGISTERING ALL TYPES");
+                blackboardWriter.RegisterAllTypes();
 
-                     // Register all types
-                    LoggingService.LogSection("REGISTERING ALL TYPES");
-                    blackboardWriter.RegisterAllTypes();
+                 // Register all instances from files
+                LoggingService.LogSection("REGISTERING ALL INSTANCES FROM FILES");
+                 string actionInstancesFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "src", "InputInstances", "ActionInstances.txt");
+                 blackboardWriter.RegisterAllInstances(actionInstancesFile);
 
-                     // Register all instances from files
-                    LoggingService.LogSection("REGISTERING ALL INSTANCES FROM FILES");
-                     string actionInstancesFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "src", "InputInstances", "ActionInstances.txt");
-                     blackboardWriter.RegisterAllInstances(actionInstancesFile);
+                 // Capture blackboard state before ticking starts
+                LoggingService.LogSection("CAPTURING BLACKBOARD STATE BEFORE TICKING");
+                BlackboardSummaryLogger.CaptureBlackboardState(blackboard);
 
-                     // Capture blackboard state before ticking starts
-                    LoggingService.LogSection("CAPTURING BLACKBOARD STATE BEFORE TICKING");
-                    BlackboardSummaryLogger.CaptureBlackboardState(blackboard);
+                 // making the tree
 
-                     // making the tree
+                                     // Inspect blackboard contents
+                LoggingService.LogSection("INSPECTING BLACKBOARD CONTENTS");
+                 await InspectBlackboard(blackboard);
 
-                                         // Inspect blackboard contents
-                    LoggingService.LogSection("INSPECTING BLACKBOARD CONTENTS");
-                     await InspectBlackboard(blackboard);
-
-                     // Create behavior tree with cassette flow nodes
-                    LoggingService.LogSection("CREATING BEHAVIOR TREE WITH CASSETTE FLOW NODES");
-                     await CreateCassetteBehaviorTree(blackboard);
-                     
-
-                }
+                 // Create behavior tree with cassette flow nodes
+                LoggingService.LogSection("CREATING BEHAVIOR TREE WITH CASSETTE FLOW NODES");
+                 await CreateCassetteBehaviorTree(blackboard);
 
                 testEndTime = DateTime.Now;
                 
@@ -135,32 +129,6 @@ namespace BehaviorTreeMainProject
             }
         }
 
-        // Test Neo4j connection
-        private async Task<bool> TestNeo4jConnection(Blackboard<FastName> blackboard)
-        {
-            try
-            {
-                // Try to connect to Neo4j
-                bool connected = await blackboard.TestNeo4jConnection();
-                if (connected)
-                {
-                    LoggingService.LogSuccess("ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ Successfully connected to Neo4j");
-                    return true;
-                }
-                else
-                {
-                    LoggingService.LogError("ÃƒÂ¢Ã‚ÂÃ…â€™ Neo4j connection test failed");
-                    return false;
-                }
-            }
-            catch (Exception ex)
-            {
-                LoggingService.LogError($"ÃƒÂ¢Ã‚ÂÃ…â€™ Failed to connect to Neo4j: {ex.Message}");
-                LoggingService.LogInfo("   Make sure Neo4j is running and accessible at bolt://localhost:7687");
-                LoggingService.LogInfo("   Check your Neo4j credentials (neo4j/12345678)");
-                return false;
-            }
-        }
 
         // Inspect blackboard contents
         private async Task InspectBlackboard(Blackboard<FastName> blackboard)
@@ -451,6 +419,10 @@ namespace BehaviorTreeMainProject
                 // Add planning phase management service to the root composite node
                 ((BTFlowNodeComposite)rootNode).AddPlanningPhaseService();
                 LoggingService.LogSuccess("ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ Added planning phase management service to root composite node");
+
+                // Add fair branch progress decorator for round-robin execution with cross-cassette tool batching
+                rootNode.AddDecorator(new BTDecoratorFairBranchProgress((BTFlowNodeComposite)rootNode));
+                LoggingService.LogSuccess("Added FairBranchProgress decorator to root composite node");
                 
                 
 

@@ -148,7 +148,23 @@ public class BTFlowNodeComposite : FlowNode
         // state changes made by one child's decorators (e.g. LowestCostExecution writing
         // ChosenExecutingBranch) are fully visible to the next child's decorators
         // (e.g. ExclusiveBranchGate reading ChosenExecutingBranch).
+        //
+        // Fair progress: if a branch is deprioritized (ahead of others), tick it LAST
+        // so the lagging branches get to run first.
+        int deprioritizedIndex = LinkedBlackboard.DeprioritizedBranchIndex;
+        var tickOrder = new List<int>();
         for (int i = 0; i < allChildren.Count; i++)
+        {
+            if (i != deprioritizedIndex)
+                tickOrder.Add(i);
+        }
+        if (deprioritizedIndex >= 0 && deprioritizedIndex < allChildren.Count)
+        {
+            tickOrder.Add(deprioritizedIndex);
+            LoggingService.LogInfo($"⚖️ CompositeFlow: Branch {deprioritizedIndex + 1} deprioritized — ticking it last");
+        }
+
+        foreach (int i in tickOrder)
         {
             var child = allChildren[i];
             

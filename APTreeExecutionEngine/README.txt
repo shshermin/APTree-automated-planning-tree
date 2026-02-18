@@ -46,7 +46,7 @@ sudo dockerd &
 # start the docker
 docker start  stupefied_hellman
 
-planutils activate
+
 
 
 To set up the python planning service, the following steps are required:
