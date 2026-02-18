@@ -2,7 +2,6 @@
 python_service/pddl_env/
 python_service/__pycache__/
 python_service/*.pyc
-python_service/Plannerinputs/
 
 # C# build outputs
 bin/
@@ -33,6 +32,4 @@ WrittenLogs/*.csv
 *.tmp
 *.temp
 
-# Ignore the entire plannerinputs folder
-plannerinputs/
 .fake
