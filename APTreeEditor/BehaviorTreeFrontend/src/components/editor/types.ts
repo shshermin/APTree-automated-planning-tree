@@ -22,12 +22,18 @@ export interface CanvasNode {
   isNegated?: boolean;
   successType?: FlowSuccessType;
   typeId?: string;
+  preconditions?: PredicateInstance[];
+  effects?: PredicateInstance[];
   /** Optional action arguments (e.g. beam1 fp2 r1) shown on the node card. */
   args?: string[];
   /** Render this node as a dashed subtree/container (used for NodeGraphs). */
   renderAsSubtree?: boolean;
   /** Optional title shown in the subtree container header. */
   subtreeTitle?: string;
+  /** Optional service label merged into flow nodes (import only). */
+  serviceLabel?: string;
+  /** Hide node in the canvas (import-only layout helpers). */
+  hidden?: boolean;
   /** True when the node has any outgoing connections (used for rendering ports/handles). */
   hasOutgoing?: boolean;
 }
@@ -64,6 +70,16 @@ export interface ActionParameterDetail {
   parameterName: string;
   parameterType?: string;
   parameterValue?: string;
+}
+
+export type PredicateGroup = "precondition" | "effect";
+
+export interface PredicateInstance {
+  id: string;
+  typeId: string;
+  typeName: string;
+  propertyValues: Record<string, string>;
+  isNegated?: boolean;
 }
 
 /** contract for the editor canvas so the parent app can control interactions. */
@@ -103,6 +119,7 @@ export interface EditorCanvasProps {
   onCycleFlowSuccessType?: (nodeId: string) => void;
   /** Sets the provided node id as the single Flow root node. */
   onSetRootNode?: (nodeId: string) => void;
+  onOpenPredicateModal?: (nodeId: string, group: PredicateGroup) => void;
   actionTypes?: ActionType[];
   actionInstances?: ActionInstance[];
 }

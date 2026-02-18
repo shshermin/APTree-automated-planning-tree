@@ -9,6 +9,8 @@ import type {
   CanvasSeparator,
   CanvasNode,
   NodeConnection,
+  PredicateGroup,
+  PredicateInstance,
 } from "./components/editor/types";
 import {
   DEFAULT_CANVAS_NODE_HEIGHT,
@@ -28,9 +30,13 @@ import {
   normalizeAptreeValidateResponse,
 } from "./utils/aptreeImport";
 import ActionParameterDetailsModal from "./components/editor/modals/ActionParameterDetailsModal.tsx";
+import ActionPredicateModal from "./components/editor/modals/ActionPredicateModal.tsx";
 import AptreeValidateModal from "./components/aptree/AptreeValidateModal";
 import { FLOW_SUCCESS_TYPES } from "./components/sidebar/utils/types";
-import type { ActionInstance, BehaviorNodeOption } from "./components/sidebar/utils/types";
+import type {
+  ActionInstance,
+  BehaviorNodeOption,
+} from "./components/sidebar/utils/types";
 
 type ThemeMode = "light" | "dark";
 
@@ -64,6 +70,56 @@ type PortValue = "top" | "right" | "bottom" | "left";
 
 const isPortValue = (value: unknown): value is PortValue =>
   value === "top" || value === "right" || value === "bottom" || value === "left";
+
+const normalizePredicateInstances = (
+  value: unknown
+): PredicateInstance[] => {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  const seen = new Set<string>();
+  const normalized: PredicateInstance[] = [];
+
+  for (const raw of value) {
+    if (!raw || typeof raw !== "object") {
+      continue;
+    }
+
+    const entry = raw as Partial<PredicateInstance>;
+    const typeId = typeof entry.typeId === "string" ? entry.typeId : "";
+    if (!typeId) {
+      continue;
+    }
+
+    const id = typeof entry.id === "string" ? entry.id : createId("predicate");
+    if (seen.has(id)) {
+      continue;
+    }
+    const typeName = typeof entry.typeName === "string" ? entry.typeName : "";
+    const propertyValues: Record<string, string> = {};
+
+    if (entry.propertyValues && typeof entry.propertyValues === "object") {
+      Object.entries(entry.propertyValues as Record<string, unknown>).forEach(
+        ([key, val]) => {
+          propertyValues[key] =
+            typeof val === "string" ? val : val == null ? "" : String(val);
+        }
+      );
+    }
+
+    normalized.push({
+      id,
+      typeId,
+      typeName,
+      propertyValues,
+      isNegated: typeof entry.isNegated === "boolean" ? entry.isNegated : undefined,
+    });
+    seen.add(id);
+  }
+
+  return normalized;
+};
 
 function normalizeImportedCanvasGraph(value: CanvasGraph): CanvasGraph {
   const seenNodeIds = new Set<string>();
@@ -101,6 +157,9 @@ function normalizeImportedCanvasGraph(value: CanvasGraph): CanvasGraph {
         ? node.height
         : DEFAULT_CANVAS_NODE_HEIGHT;
 
+    const preconditions = normalizePredicateInstances(node.preconditions);
+    const effects = normalizePredicateInstances(node.effects);
+
     normalizedNodes.push({
       id,
       sourceId,
@@ -115,6 +174,8 @@ function normalizeImportedCanvasGraph(value: CanvasGraph): CanvasGraph {
       isNegated: node.isNegated,
       successType: node.successType,
       typeId: node.typeId,
+      preconditions: preconditions.length > 0 ? preconditions : undefined,
+      effects: effects.length > 0 ? effects : undefined,
     });
     seenNodeIds.add(id);
   }
@@ -233,6 +294,10 @@ function App() {
   const [redoStack, setRedoStack] = useState<CanvasSnapshot[]>([]);
   const [parameterDetail, setParameterDetail] =
     useState<ActionParameterDetail | null>(null);
+  const [predicateModalState, setPredicateModalState] = useState<{
+    nodeId: string;
+    group: PredicateGroup;
+  } | null>(null);
   const [isValidateOpen, setIsValidateOpen] = useState(false);
   const sidebarManager = useSidebarManager();
   const {
@@ -242,6 +307,7 @@ function App() {
     openEditModal,
     addActionTypes,
     addActionInstances,
+    predicateTypes,
   } = sidebarManager;
 
   const rawActionInstances = useMemo(
@@ -330,6 +396,21 @@ function App() {
    */
   const handleCloseActionParameterDetail = useCallback(() => {
     setParameterDetail(null);
+  }, []);
+
+  const handleOpenPredicateModal = useCallback(
+    (nodeId: string, group: PredicateGroup) => {
+      setPredicateModalState({ nodeId, group });
+    },
+    []
+  );
+
+  const handleClosePredicateModal = useCallback(() => {
+    setPredicateModalState(null);
+  }, []);
+
+  const handleChangePredicateGroup = useCallback((group: PredicateGroup) => {
+    setPredicateModalState((prev) => (prev ? { ...prev, group } : prev));
   }, []);
 
   const graphRef = useRef(graph);
@@ -852,6 +933,9 @@ function App() {
    */
   const handleDropOnCanvas = useCallback(
     (item: DraggedSidebarItem, position: { x: number; y: number }) => {
+      const isAction =
+        item.kind === "actionType" || item.kind === "actionInstance";
+
       if (item.category === BT_NODES_KEY) {
         const option = behaviorNodeOptionMap.get(item.id);
 
@@ -883,6 +967,8 @@ function App() {
             height: DEFAULT_CANVAS_NODE_HEIGHT,
             isNegated: item.isNegated,
             typeId: item.typeId,
+            preconditions: isAction ? [] : undefined,
+            effects: isAction ? [] : undefined,
           },
         ],
       }));
@@ -1011,7 +1097,55 @@ function App() {
       ),
       rootNodeId: prev.rootNodeId === nodeId ? null : prev.rootNodeId,
     }));
+    setPredicateModalState((prev) =>
+      prev && prev.nodeId === nodeId ? null : prev
+    );
   }, [pushHistory]);
+
+  const handleAddPredicate = useCallback(
+    (nodeId: string, group: PredicateGroup, predicate: PredicateInstance) => {
+      pushHistory("add-predicate");
+      setGraph((prev) => ({
+        ...prev,
+        nodes: prev.nodes.map((node) => {
+          if (node.id !== nodeId) {
+            return node;
+          }
+
+          const key = group === "precondition" ? "preconditions" : "effects";
+          const existing = node[key] ?? [];
+          return {
+            ...node,
+            [key]: [...existing, predicate],
+          };
+        }),
+      }));
+    },
+    [pushHistory]
+  );
+
+  const handleRemovePredicate = useCallback(
+    (nodeId: string, group: PredicateGroup, predicateId: string) => {
+      pushHistory("remove-predicate");
+      setGraph((prev) => ({
+        ...prev,
+        nodes: prev.nodes.map((node) => {
+          if (node.id !== nodeId) {
+            return node;
+          }
+
+          const key = group === "precondition" ? "preconditions" : "effects";
+          const existing = node[key] ?? [];
+          return {
+            ...node,
+            [key]: existing.filter((entry) => entry.id !== predicateId),
+          };
+        }),
+      }));
+    },
+    [pushHistory]
+  );
+
 
   /**
    * handles adding a connection between two nodes.
@@ -1154,6 +1288,7 @@ function App() {
                 onShowActionParameterDetail={handleShowActionParameterDetail}
                 onCycleFlowSuccessType={handleCycleFlowSuccessType}
                 onSetRootNode={handleSetRootNode}
+                onOpenPredicateModal={handleOpenPredicateModal}
                 actionTypes={actionTypes}
                 actionInstances={actionInstances}
               />
@@ -1166,6 +1301,22 @@ function App() {
         detail={parameterDetail}
         onClose={handleCloseActionParameterDetail}
       />
+
+      {predicateModalState ? (
+        <ActionPredicateModal
+          isOpen
+          node={
+            graph.nodes.find((entry) => entry.id === predicateModalState.nodeId) ??
+            null
+          }
+          predicateTypes={predicateTypes}
+          activeGroup={predicateModalState.group}
+          onChangeGroup={handleChangePredicateGroup}
+          onClose={handleClosePredicateModal}
+          onAddPredicate={handleAddPredicate}
+          onRemovePredicate={handleRemovePredicate}
+      />
+      ) : null}
 
       <AptreeValidateModal
         isOpen={isValidateOpen}

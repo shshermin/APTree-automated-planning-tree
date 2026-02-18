@@ -37,6 +37,7 @@ import type {
   ActionParameterDetail,
   CanvasNode,
   EditorCanvasProps,
+  PredicateGroup,
 } from "./types";
 import {
   DEFAULT_CANVAS_NODE_HEIGHT,
@@ -80,6 +81,7 @@ interface BehaviorNodeData {
   onResizeNode?: (nodeId: string, size: { width: number; height: number }) => void;
   onMoveNode?: (nodeId: string, position: { x: number; y: number }) => void;
   onShowActionParameterDetail?: (detail: ActionParameterDetail) => void;
+  onOpenPredicateModal?: (nodeId: string, group: PredicateGroup) => void;
 }
 
 interface BehaviorEdgeData {
@@ -193,6 +195,7 @@ function BehaviorTreeNode({ id, data, selected }: NodeProps<BehaviorNodeData>) {
   const { node } = data;
 
   const isFlowNode = node.category === FLOW_NODES_KEY;
+  const isMergedFlow = isFlowNode && !!node.serviceLabel;
 
   const shouldRenderSourceHandles =
     isFlowNode ||
@@ -275,6 +278,9 @@ function BehaviorTreeNode({ id, data, selected }: NodeProps<BehaviorNodeData>) {
 
   if (node.category === FLOW_NODES_KEY) {
     nodeClasses.push("canvas-node-flow");
+    if (isMergedFlow) {
+      nodeClasses.push("canvas-node-flow-merged");
+    }
   } else if (node.category === DECORATOR_NODES_KEY) {
     nodeClasses.push("canvas-node-decorator");
   } else if (node.category === SERVICE_NODES_KEY) {
@@ -428,6 +434,13 @@ function BehaviorTreeNode({ id, data, selected }: NodeProps<BehaviorNodeData>) {
         </div>
       ) : null}
 
+      {isFlowNode && isMergedFlow ? (
+        <div className="canvas-node-flow-merged-header" aria-hidden="true">
+          <span className="canvas-node-flow-service">{node.serviceLabel}</span>
+          <span className="canvas-node-flow-divider" />
+        </div>
+      ) : null}
+
       {isFlowNode ? (
         <div className="canvas-node-arrow" aria-hidden="true" />
       ) : null}
@@ -478,8 +491,30 @@ function BehaviorTreeNode({ id, data, selected }: NodeProps<BehaviorNodeData>) {
 
       {isAction ? (
         <div className="canvas-node-pre-eff" aria-label="Preconditions and Effects">
-          <span className="canvas-node-pre-eff-box">Pre</span>
-          <span className="canvas-node-pre-eff-box">Eff</span>
+          <button
+            type="button"
+            className="canvas-node-pre-eff-box nodrag"
+            onMouseDown={(event) => event.stopPropagation()}
+            onClick={(event) => {
+              event.stopPropagation();
+              data.onOpenPredicateModal?.(id, "precondition");
+            }}
+            aria-label={`Edit preconditions for ${node.name}`}
+          >
+            Pre
+          </button>
+          <button
+            type="button"
+            className="canvas-node-pre-eff-box nodrag"
+            onMouseDown={(event) => event.stopPropagation()}
+            onClick={(event) => {
+              event.stopPropagation();
+              data.onOpenPredicateModal?.(id, "effect");
+            }}
+            aria-label={`Edit effects for ${node.name}`}
+          >
+            Eff
+          </button>
         </div>
       ) : null}
 
@@ -724,6 +759,7 @@ function EditorCanvasInner(props: EditorCanvasProps) {
     actionTypes,
     actionInstances,
     onShowActionParameterDetail,
+    onOpenPredicateModal,
   } = props;
 
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -801,22 +837,23 @@ function EditorCanvasInner(props: EditorCanvasProps) {
         const height = node.height ?? DEFAULT_CANVAS_NODE_HEIGHT;
 
         if (isStructuralSubtree(node)) {
-          return {
-            id: node.id,
-            type: "subtree" as const,
-            position: { x: node.x - width / 2, y: node.y - height / 2 },
-            data: { node },
-            draggable: false,
-            selectable: false,
-            focusable: false,
-            connectable: false,
-            width,
-            height,
-            style: {
-              width: `${width}px`,
-              height: `${height}px`,
-              zIndex: 0,
-              pointerEvents: "none",
+        return {
+          id: node.id,
+          type: "subtree" as const,
+          position: { x: node.x - width / 2, y: node.y - height / 2 },
+          data: { node },
+          draggable: false,
+          selectable: false,
+          focusable: false,
+          connectable: false,
+          hidden: !!node.hidden,
+          width,
+          height,
+          style: {
+            width: `${width}px`,
+            height: `${height}px`,
+            zIndex: 0,
+            pointerEvents: "none",
             },
           } satisfies FlowNode<SubtreeNodeData>;
         }
@@ -837,7 +874,9 @@ function EditorCanvasInner(props: EditorCanvasProps) {
             onResizeNode,
             onMoveNode,
             onShowActionParameterDetail,
+            onOpenPredicateModal,
           },
+          hidden: !!node.hidden,
           width,
           height,
         } satisfies FlowNode<BehaviorNodeData>;
@@ -858,6 +897,7 @@ function EditorCanvasInner(props: EditorCanvasProps) {
       onResizeNode,
       onMoveNode,
       onShowActionParameterDetail,
+      onOpenPredicateModal,
     ]
   );
 
