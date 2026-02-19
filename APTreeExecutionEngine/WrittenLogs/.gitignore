@@ -1,0 +1,4 @@
+# Keep this directory in the repo but ignore generated log artifacts.
+*
+!.gitignore
+!.gitkeep
