@@ -54,7 +54,7 @@ namespace BehaviorTreeMainProject
             var logMessage = $"[{timestamp}] {message}";
             
             // Write to console
-            Console.WriteLine(logMessage);
+            LoggingService.LogInfo(logMessage);
             
             // Write to file
             lock (LogLock)
@@ -65,7 +65,7 @@ namespace BehaviorTreeMainProject
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"[{timestamp}] ❌ Failed to write to log file: {ex.Message}");
+                    LoggingService.LogError($"[{timestamp}] ❌ Failed to write to log file: {ex.Message}");
                 }
             }
         }

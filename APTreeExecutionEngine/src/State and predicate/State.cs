@@ -1,3 +1,4 @@
+using BehaviorTreeMainProject.Log.Services;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -76,11 +77,11 @@ public class State
     // Debug method to print current state
     public void PrintState()
     {
-        Console.WriteLine("Current State:");
+        LoggingService.LogInfo("Current State:");
         foreach (var kvp in predicates)
         {
-            Console.WriteLine($"Object {kvp.Key}:");
-            Console.WriteLine($"  {kvp.Value}");
+            LoggingService.LogError($"Object {kvp.Key}:");
+            LoggingService.LogError($"  {kvp.Value}");
         }
         }
 

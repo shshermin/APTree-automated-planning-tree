@@ -3,6 +3,8 @@ using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using BehaviorTreeMainProject.Log.Services;
+
 namespace AIPlanning
 {
     public class RestPlannerCommunicator : IPlannerCommunicator
@@ -26,7 +28,7 @@ namespace AIPlanning
         {
             try
             {
-                Console.WriteLine($"🔧 RestPlannerCommunicator: Sending request to {_baseUrl}/plan");
+                LoggingService.LogInfo($"🔧 RestPlannerCommunicator: Sending request to {_baseUrl}/plan");
                 
                 // Serialize request to JSON with polymorphic support
                 var json = JsonSerializer.Serialize(request, request.GetType(), new JsonSerializerOptions 
@@ -35,7 +37,7 @@ namespace AIPlanning
                     PropertyNamingPolicy = JsonNamingPolicy.CamelCase
                 });
                 
-                Console.WriteLine($"🔧 RestPlannerCommunicator: Request JSON:\n{json}");
+                LoggingService.LogInfo($"🔧 RestPlannerCommunicator: Request JSON:\n{json}");
                 
                 // Create HTTP content
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
@@ -45,16 +47,16 @@ namespace AIPlanning
                 
                 // Read response
                 var responseJson = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"🔧 RestPlannerCommunicator: Response JSON:\n{responseJson}");
+                LoggingService.LogInfo($"🔧 RestPlannerCommunicator: Response JSON:\n{responseJson}");
                 
                 // DEBUG: Show the raw response structure
-                Console.WriteLine($"🔍 RestPlannerCommunicator: RAW PYTHON SERVICE RESPONSE:");
-                Console.WriteLine($"📋 Response length: {responseJson?.Length ?? 0} characters");
-                Console.WriteLine($"📋 Response preview: {responseJson?.Substring(0, Math.Min(500, responseJson.Length))}");
-                Console.WriteLine($"📋 Full response:");
-                Console.WriteLine("=".PadRight(80, '='));
-                Console.WriteLine(responseJson);
-                Console.WriteLine("=".PadRight(80, '='));
+                LoggingService.LogInfo($"🔍 RestPlannerCommunicator: RAW PYTHON SERVICE RESPONSE:");
+                LoggingService.LogInfo($"📋 Response length: {responseJson?.Length ?? 0} characters");
+                LoggingService.LogInfo($"📋 Response preview: {responseJson?.Substring(0, Math.Min(500, responseJson.Length))}");
+                LoggingService.LogInfo($"📋 Full response:");
+                LoggingService.LogInfo("=".PadRight(80, '='));
+                LoggingService.LogInfo(responseJson);
+                LoggingService.LogInfo("=".PadRight(80, '='));
                 
                 if (response.IsSuccessStatusCode)
                 {
@@ -65,26 +67,26 @@ namespace AIPlanning
                     });
                     
                     // DEBUG: Show what's in the PlanningResult
-                    Console.WriteLine($"🔍 RestPlannerCommunicator: PLANNING RESULT CONTENTS:");
-                    Console.WriteLine($"📋 Success: {result.Success}");
-                    Console.WriteLine($"📋 Plan length: {result.Plan?.Length ?? 0} characters");
-                    Console.WriteLine($"📋 Plan preview: {result.Plan?.Substring(0, Math.Min(300, result.Plan.Length))}");
-                    Console.WriteLine($"📋 Error: {result.Error ?? "None"}");
-                    Console.WriteLine($"📋 Planning time: {result.PlanningTimeSeconds} seconds");
-                    Console.WriteLine($"📋 Plan length: {result.PlanLength} actions");
-                    Console.WriteLine($"📋 Planner used: {result.PlannerUsed}");
-                    Console.WriteLine($"📋 Full Plan content:");
-                    Console.WriteLine("=".PadRight(80, '='));
-                    Console.WriteLine(result.Plan);
-                    Console.WriteLine("=".PadRight(80, '='));
+                    LoggingService.LogInfo($"🔍 RestPlannerCommunicator: PLANNING RESULT CONTENTS:");
+                    LoggingService.LogInfo($"📋 Success: {result.Success}");
+                    LoggingService.LogInfo($"📋 Plan length: {result.Plan?.Length ?? 0} characters");
+                    LoggingService.LogInfo($"📋 Plan preview: {result.Plan?.Substring(0, Math.Min(300, result.Plan.Length))}");
+                    LoggingService.LogInfo($"📋 Error: {result.Error ?? "None"}");
+                    LoggingService.LogInfo($"📋 Planning time: {result.PlanningTimeSeconds} seconds");
+                    LoggingService.LogInfo($"📋 Plan length: {result.PlanLength} actions");
+                    LoggingService.LogInfo($"📋 Planner used: {result.PlannerUsed}");
+                    LoggingService.LogInfo($"📋 Full Plan content:");
+                    LoggingService.LogInfo("=".PadRight(80, '='));
+                    LoggingService.LogInfo(result.Plan);
+                    LoggingService.LogInfo("=".PadRight(80, '='));
                     
-                    Console.WriteLine($"✅ RestPlannerCommunicator: Planning completed successfully");
+                    LoggingService.LogSuccess($"✅ RestPlannerCommunicator: Planning completed successfully");
                     return result;
                 }
                 else
                 {
                     // Handle HTTP error
-                    Console.WriteLine($"❌ RestPlannerCommunicator: HTTP {response.StatusCode}: {response.ReasonPhrase}");
+                    LoggingService.LogError($"❌ RestPlannerCommunicator: HTTP {response.StatusCode}: {response.ReasonPhrase}");
                     return new PlanningResult 
                     { 
                         Success = false, 
@@ -94,7 +96,7 @@ namespace AIPlanning
             }
             catch (TaskCanceledException ex)
             {
-                Console.WriteLine($"❌ RestPlannerCommunicator: Request timeout: {ex.Message}");
+                LoggingService.LogError($"❌ RestPlannerCommunicator: Request timeout: {ex.Message}");
                 return new PlanningResult 
                 { 
                     Success = false, 
@@ -103,7 +105,7 @@ namespace AIPlanning
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"❌ RestPlannerCommunicator: Error: {ex.Message}");
+                LoggingService.LogError($"❌ RestPlannerCommunicator: Error: {ex.Message}");
                 return new PlanningResult 
                 { 
                     Success = false, 

@@ -1,3 +1,4 @@
+﻿﻿using BehaviorTreeMainProject.Log.Services;
 
 using ModelLoader;
 using System;
@@ -32,7 +33,7 @@ public class BlackboardWriter
     /// </summary>
     public void RegisterParameterTypes()
     {
-        Console.WriteLine("Registering parameter types...");
+        LoggingService.LogInfo("Registering parameter types...");
         
         try
         {
@@ -47,30 +48,30 @@ public class BlackboardWriter
                 foreach (string file in csFiles)
                 {
                     string fileName = Path.GetFileNameWithoutExtension(file);
-                    Console.WriteLine($"Processing parameter type: {fileName}");
+                    LoggingService.LogInfo($"Processing parameter type: {fileName}");
                     
                     try
                     {
                         // Register the entity type
                         blackboard.RegisterEntityType(new FastName(fileName));
-                        Console.WriteLine($"Registered entity type: {fileName}");
+                        LoggingService.LogInfo($"Registered entity type: {fileName}");
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine($"Error processing parameter type {fileName}: {ex.Message}");
+                        LoggingService.LogInfo($"Error processing parameter type {fileName}: {ex.Message}");
                     }
                 }
                 
-                Console.WriteLine("Parameter types registration completed");
+                LoggingService.LogInfo("Parameter types registration completed");
             }
             else
             {
-                Console.WriteLine($"Warning: ParameterTypes folder not found at {parameterTypesPath}");
+                LoggingService.LogInfo($"Warning: ParameterTypes folder not found at {parameterTypesPath}");
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error registering parameter types: {ex.Message}");
+            LoggingService.LogInfo($"Error registering parameter types: {ex.Message}");
         }
     }
 
@@ -79,7 +80,7 @@ public class BlackboardWriter
     /// </summary>
     public void RegisterPredicateTypes()
     {
-        Console.WriteLine("Registering predicate types...");
+        LoggingService.LogInfo("Registering predicate types...");
         
         try
         {
@@ -94,30 +95,30 @@ public class BlackboardWriter
                 foreach (string file in csFiles)
                 {
                     string fileName = Path.GetFileNameWithoutExtension(file);
-                    Console.WriteLine($"Processing predicate type: {fileName}");
+                    LoggingService.LogInfo($"Processing predicate type: {fileName}");
                     
                     try
                     {
                         // Register the predicate type
                         blackboard.RegisterPredicateType(new FastName(fileName));
-                        Console.WriteLine($"Registered predicate type: {fileName}");
+                        LoggingService.LogInfo($"Registered predicate type: {fileName}");
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine($"Error processing predicate type {fileName}: {ex.Message}");
+                        LoggingService.LogInfo($"Error processing predicate type {fileName}: {ex.Message}");
                     }
                 }
                 
-                Console.WriteLine("Predicate types registration completed");
+                LoggingService.LogInfo("Predicate types registration completed");
             }
             else
             {
-                Console.WriteLine($"Warning: PredicateTypes folder not found at {predicateTypesPath}");
+                LoggingService.LogInfo($"Warning: PredicateTypes folder not found at {predicateTypesPath}");
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error registering predicate types: {ex.Message}");
+            LoggingService.LogInfo($"Error registering predicate types: {ex.Message}");
         }
     }
 
@@ -126,7 +127,7 @@ public class BlackboardWriter
     /// </summary>
     public void RegisterActionTypes()
     {
-        Console.WriteLine("Registering action types...");
+        LoggingService.LogInfo("Registering action types...");
         
         try
         {
@@ -141,30 +142,30 @@ public class BlackboardWriter
                 foreach (string file in csFiles)
                 {
                     string fileName = Path.GetFileNameWithoutExtension(file);
-                    Console.WriteLine($"Processing action type: {fileName}");
+                    LoggingService.LogInfo($"Processing action type: {fileName}");
                     
                     try
                     {
                         // Register the action type
                         blackboard.RegisterActionType(new FastName(fileName));
-                        Console.WriteLine($"Registered action type: {fileName}");
+                        LoggingService.LogInfo($"Registered action type: {fileName}");
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine($"Error processing action type {fileName}: {ex.Message}");
+                        LoggingService.LogInfo($"Error processing action type {fileName}: {ex.Message}");
                     }
                 }
                 
-                Console.WriteLine("Action types registration completed");
+                LoggingService.LogInfo("Action types registration completed");
             }
             else
             {
-                Console.WriteLine($"Warning: ActionTypes folder not found at {actionTypesPath}");
+                LoggingService.LogInfo($"Warning: ActionTypes folder not found at {actionTypesPath}");
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error registering action types: {ex.Message}");
+            LoggingService.LogInfo($"Error registering action types: {ex.Message}");
         }
     }
 
@@ -173,13 +174,13 @@ public class BlackboardWriter
     /// </summary>
     public void RegisterAllTypes()
     {
-        Console.WriteLine("Starting registration of all types...");
+        LoggingService.LogInfo("Starting registration of all types...");
         
         RegisterParameterTypes();
         RegisterPredicateTypes();
         RegisterActionTypes();
         
-        Console.WriteLine("All types registration completed");
+        LoggingService.LogInfo("All types registration completed");
     }
 
     /// <summary>
@@ -188,7 +189,7 @@ public class BlackboardWriter
     /// <param name="parameterInstancesFile">Path to the parameter instances file</param>
     public void RegisterParameterInstances(string parameterInstancesFile)
     {
-        Console.WriteLine("\n=== REGISTERING PARAMETER INSTANCES ===");
+        LoggingService.LogInfo("\n=== REGISTERING PARAMETER INSTANCES ===");
         var parameterInstances = ParseMontiCoreGrammarFile(parameterInstancesFile);
         foreach (var instance in parameterInstances)
         {
@@ -202,7 +203,7 @@ public class BlackboardWriter
     /// <param name="predicateInstancesFile">Path to the predicate instances file</param>
     public void RegisterPredicateInstances(string predicateInstancesFile)
     {
-        Console.WriteLine("\n=== REGISTERING PREDICATE INSTANCES ===");
+        LoggingService.LogInfo("\n=== REGISTERING PREDICATE INSTANCES ===");
         ParseAndRegisterMontiCorePredicateFile(predicateInstancesFile, blackboard);
     }
 
@@ -212,7 +213,7 @@ public class BlackboardWriter
     /// <param name="actionDefinitionStrings">Array of action definition strings</param>
     public void RegisterActionInstances(string[] actionDefinitionStrings)
     {
-        Console.WriteLine("\n=== REGISTERING ACTION INSTANCES ===");
+        LoggingService.LogInfo("\n=== REGISTERING ACTION INSTANCES ===");
         CreateAndRegisterActionInstances(actionDefinitionStrings);
     }
 
@@ -222,7 +223,7 @@ public class BlackboardWriter
     /// <param name="actionInstancesFile">Path to the action instances file</param>
     public void RegisterActionInstancesFromFile(string actionInstancesFile)
     {
-        Console.WriteLine("\n=== REGISTERING ACTION INSTANCES FROM FILE ===");
+        LoggingService.LogInfo("\n=== REGISTERING ACTION INSTANCES FROM FILE ===");
         string[] actionDefinitionStrings = ReadActionDefinitionsFromFile(actionInstancesFile);
         RegisterActionInstances(actionDefinitionStrings);
     }
@@ -235,13 +236,13 @@ public class BlackboardWriter
     /// <param name="actionInstancesFile">Path to the action instances file</param>
     public void RegisterAllInstances(string parameterInstancesFile, string predicateInstancesFile, string actionInstancesFile)
     {
-        Console.WriteLine("Starting registration of all instances...");
+        LoggingService.LogInfo("Starting registration of all instances...");
         
         RegisterParameterInstances(parameterInstancesFile);
         RegisterPredicateInstances(predicateInstancesFile);
         RegisterActionInstancesFromFile(actionInstancesFile);
         
-        Console.WriteLine("All instances registration completed");
+        LoggingService.LogInfo("All instances registration completed");
     }
 
     /// <summary>
@@ -263,13 +264,13 @@ public class BlackboardWriter
     /// <param name="actionDefinitionStrings">Array of action definition strings</param>
     public void CreateAndRegisterAllInstances(string parameterInstancesFile, string predicateInstancesFile, string[] actionDefinitionStrings)
     {
-        Console.WriteLine("Starting creation and registration of all instances...");
+        LoggingService.LogInfo("Starting creation and registration of all instances...");
         
         RegisterParameterInstances(parameterInstancesFile);
          RegisterPredicateInstances(predicateInstancesFile);
         RegisterActionInstances(actionDefinitionStrings);
         
-        Console.WriteLine("All instances creation and registration completed");
+        LoggingService.LogInfo("All instances creation and registration completed");
     }
 
     /// <summary>
@@ -310,7 +311,7 @@ public class BlackboardWriter
     /// <param name="nodeGraphFile">Path to the NodeGraph file</param>
     public void CreateAndRegisterAllInstancesWithNodeGraph(string parameterInstancesFile, string predicateInstancesFile, string actionInstancesFile, string nodeGraphFile)
     {
-        Console.WriteLine("Starting creation and registration of all instances with NodeGraph...");
+        LoggingService.LogInfo("Starting creation and registration of all instances with NodeGraph...");
         
         // Register parameters, predicates, and actions first
         RegisterParameterInstances(parameterInstancesFile);
@@ -320,7 +321,7 @@ public class BlackboardWriter
         // Parse and register the NodeGraph
         ParseAndRegisterNodeGraph(nodeGraphFile);
         
-        Console.WriteLine("All instances and NodeGraph registration completed");
+        LoggingService.LogInfo("All instances and NodeGraph registration completed");
     }
 
     /// <summary>
@@ -349,11 +350,11 @@ public class BlackboardWriter
         
         try
         {
-            Console.WriteLine($"Reading action definitions from: {filePath}");
+            LoggingService.LogInfo($"Reading action definitions from: {filePath}");
             
             if (!File.Exists(filePath))
             {
-                Console.WriteLine($"Warning: Action instances file not found at {filePath}");
+                LoggingService.LogInfo($"Warning: Action instances file not found at {filePath}");
                 return actionDefinitions.ToArray();
             }
             
@@ -369,11 +370,11 @@ public class BlackboardWriter
                 actionDefinitions.Add(line.Trim());
             }
             
-            Console.WriteLine($"Read {actionDefinitions.Count} action definitions from file");
+            LoggingService.LogInfo($"Read {actionDefinitions.Count} action definitions from file");
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error reading action instances file {filePath}: {ex.Message}");
+            LoggingService.LogInfo($"Error reading action instances file {filePath}: {ex.Message}");
         }
         
         return actionDefinitions.ToArray();
@@ -390,50 +391,50 @@ public class BlackboardWriter
             // Get the base type from the entity
             string baseTypeName = GetBaseTypeName(parameterInstance);
             
-            Console.WriteLine($"Registering {parameterInstance.GetType().Name} instance '{parameterInstance.ID}' as base type '{baseTypeName}'");
+            LoggingService.LogInfo($"Registering {parameterInstance.GetType().Name} instance '{parameterInstance.ID}' as base type '{baseTypeName}'");
             
             // Register the instance in the appropriate blackboard dictionary based on base type
             switch (baseTypeName.ToLower())
             {
                 case "element":
                     blackboard.RegisterEntityIfNotExists(parameterInstance);
-                    Console.WriteLine($"  ✅ Registered as Element: {parameterInstance.ID}");
+                    LoggingService.LogInfo($"  ✅ Registered as Element: {parameterInstance.ID}");
                     break;
                     
                 case "agent":
                     blackboard.RegisterEntityIfNotExists(parameterInstance);
-                    Console.WriteLine($"  ✅ Registered as Agent: {parameterInstance.ID}");
+                    LoggingService.LogInfo($"  ✅ Registered as Agent: {parameterInstance.ID}");
                     break;
                     
                 case "location":
                     blackboard.RegisterEntityIfNotExists(parameterInstance);
-                    Console.WriteLine($"  ✅ Registered as Location: {parameterInstance.ID}");
+                    LoggingService.LogInfo($"  ✅ Registered as Location: {parameterInstance.ID}");
                     break;
                     
                 case "tool":
                     blackboard.RegisterEntityIfNotExists(parameterInstance);
-                    Console.WriteLine($"  ✅ Registered as Tool: {parameterInstance.ID}");
+                    LoggingService.LogInfo($"  ✅ Registered as Tool: {parameterInstance.ID}");
                     break;
                     
                 case "layer":
                     blackboard.RegisterEntityIfNotExists(parameterInstance);
-                    Console.WriteLine($"  ✅ Registered as Layer: {parameterInstance.ID}");
+                    LoggingService.LogInfo($"  ✅ Registered as Layer: {parameterInstance.ID}");
                     break;
                     
                 case "module":
                     blackboard.RegisterEntityIfNotExists(parameterInstance);
-                    Console.WriteLine($"  ✅ Registered as Module: {parameterInstance.ID}");
+                    LoggingService.LogInfo($"  ✅ Registered as Module: {parameterInstance.ID}");
                     break;
                     
                 default:
-                    Console.WriteLine($"  ⚠️ Unknown base type '{baseTypeName}' for instance '{parameterInstance.ID}', registering as generic CustomProperty");
+                    LoggingService.LogInfo($"  ⚠️ Unknown base type '{baseTypeName}' for instance '{parameterInstance.ID}', registering as generic CustomProperty");
                     blackboard.RegisterEntityIfNotExists(parameterInstance);
                     break;
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"  ❌ Error registering instance '{parameterInstance.ID}': {ex.Message}");
+            LoggingService.LogInfo($"  ❌ Error registering instance '{parameterInstance.ID}': {ex.Message}");
         }
     }
 
@@ -488,11 +489,11 @@ public class BlackboardWriter
         
         try
         {
-            Console.WriteLine($"Parsing parameter instances JSON file: {filePath}");
+            LoggingService.LogInfo($"Parsing parameter instances JSON file: {filePath}");
             
             if (!File.Exists(filePath))
             {
-                Console.WriteLine($"❌ Error: File not found at {filePath}");
+                LoggingService.LogInfo($"❌ Error: File not found at {filePath}");
                 return createdInstances;
             }
             
@@ -502,7 +503,7 @@ public class BlackboardWriter
             
             if (!root.TryGetProperty("instances", out JsonElement instancesArray))
             {
-                Console.WriteLine($"❌ Error: JSON file does not contain an 'instances' array");
+                LoggingService.LogInfo($"❌ Error: JSON file does not contain an 'instances' array");
                 return createdInstances;
             }
             
@@ -510,7 +511,7 @@ public class BlackboardWriter
             int successCount = 0;
             int errorCount = 0;
             
-            Console.WriteLine($"📄 Found {totalCount} parameter entries in JSON");
+            LoggingService.LogInfo($"📄 Found {totalCount} parameter entries in JSON");
             
             int index = 0;
             foreach (JsonElement instanceElement in instancesArray.EnumerateArray())
@@ -524,7 +525,7 @@ public class BlackboardWriter
                     string extendsType = instanceElement.TryGetProperty("extends", out JsonElement extendsElement) 
                         ? extendsElement.GetString() : "";
                     
-                    Console.WriteLine($"\n🔍 Entry {index}: {typeName} '{instanceName}' (extends {extendsType})");
+                    LoggingService.LogInfo($"\n🔍 Entry {index}: {typeName} '{instanceName}' (extends {extendsType})");
                     
                     // Create the parameter instance using the factory
                     var instance = entityFactory.CreateParameter(typeName, instanceName);
@@ -533,25 +534,25 @@ public class BlackboardWriter
                     {
                         createdInstances.Add(instance);
                         successCount++;
-                        Console.WriteLine($"  ✅ Entry {index}: Created {instance.GetType().Name} instance '{instance.ID}'");
+                        LoggingService.LogInfo($"  ✅ Entry {index}: Created {instance.GetType().Name} instance '{instance.ID}'");
                     }
                 }
                 catch (Exception ex)
                 {
                     errorCount++;
-                    Console.WriteLine($"  ❌ Entry {index}: Error: {ex.Message}");
+                    LoggingService.LogInfo($"  ❌ Entry {index}: Error: {ex.Message}");
                 }
             }
             
-            Console.WriteLine($"\n📊 Parsing Summary:");
-            Console.WriteLine($"  ✅ Successfully created: {successCount} instances");
-            Console.WriteLine($"  ❌ Errors: {errorCount}");
-            Console.WriteLine($"  📄 Total entries processed: {index}");
+            LoggingService.LogInfo($"\n📊 Parsing Summary:");
+            LoggingService.LogInfo($"  ✅ Successfully created: {successCount} instances");
+            LoggingService.LogInfo($"  ❌ Errors: {errorCount}");
+            LoggingService.LogInfo($"  📄 Total entries processed: {index}");
             
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"❌ Error reading file {filePath}: {ex.Message}");
+            LoggingService.LogInfo($"❌ Error reading file {filePath}: {ex.Message}");
         }
         
         return createdInstances;
@@ -563,11 +564,11 @@ public class BlackboardWriter
     /// <param name="filePath">Path to the MontiCore grammar text file</param>
     public void ParseAndRegisterMontiCoreGrammarFile(string filePath)
     {
-        Console.WriteLine($"\n=== PARSING AND REGISTERING MONTICORE GRAMMAR FILE ===");
+        LoggingService.LogInfo($"\n=== PARSING AND REGISTERING MONTICORE GRAMMAR FILE ===");
         
         var instances = ParseMontiCoreGrammarFile(filePath);
         
-        Console.WriteLine($"\n=== REGISTERING {instances.Count} INSTANCES IN BLACKBOARD ===");
+        LoggingService.LogInfo($"\n=== REGISTERING {instances.Count} INSTANCES IN BLACKBOARD ===");
         
         int registeredCount = 0;
         int skippedCount = 0;
@@ -582,14 +583,14 @@ public class BlackboardWriter
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"  ❌ Error registering instance '{instance.ID}': {ex.Message}");
+                LoggingService.LogInfo($"  ❌ Error registering instance '{instance.ID}': {ex.Message}");
                 skippedCount++;
             }
         }
         
-        Console.WriteLine($"\n📊 Registration Summary:");
-        Console.WriteLine($"  ✅ Successfully registered: {registeredCount} instances");
-        Console.WriteLine($"  ⚠️ Skipped: {skippedCount} instances");
+        LoggingService.LogInfo($"\n📊 Registration Summary:");
+        LoggingService.LogInfo($"  ✅ Successfully registered: {registeredCount} instances");
+        LoggingService.LogInfo($"  ⚠️ Skipped: {skippedCount} instances");
     }
 
     /// <summary>
@@ -605,11 +606,11 @@ public class BlackboardWriter
         
         try
         {
-            Console.WriteLine($"Parsing predicate JSON file: {filePath}");
+            LoggingService.LogInfo($"Parsing predicate JSON file: {filePath}");
             
             if (!File.Exists(filePath))
             {
-                Console.WriteLine($"❌ Error: File not found at {filePath}");
+                LoggingService.LogInfo($"❌ Error: File not found at {filePath}");
                 return createdInstances;
             }
             
@@ -619,7 +620,7 @@ public class BlackboardWriter
             
             if (!root.TryGetProperty("predicates", out JsonElement predicatesArray))
             {
-                Console.WriteLine($"❌ Error: JSON file does not contain a 'predicates' array");
+                LoggingService.LogInfo($"❌ Error: JSON file does not contain a 'predicates' array");
                 return createdInstances;
             }
             
@@ -627,7 +628,7 @@ public class BlackboardWriter
             int successCount = 0;
             int errorCount = 0;
             
-            Console.WriteLine($"📄 Found {totalCount} predicate entries in JSON");
+            LoggingService.LogInfo($"📄 Found {totalCount} predicate entries in JSON");
             
             int index = 0;
             foreach (JsonElement predicateElement in predicatesArray.EnumerateArray())
@@ -638,7 +639,7 @@ public class BlackboardWriter
                 {
                     // Extract predicate type name
                     string predicateName = predicateElement.GetProperty("type").GetString();
-                    Console.WriteLine($"\n🔍 Entry {index}: Processing predicate type '{predicateName}'");
+                    LoggingService.LogInfo($"\n🔍 Entry {index}: Processing predicate type '{predicateName}'");
                     
                     // Build parameter mappings from the "properties" object
                     var parameterMappings = new List<ParameterMapping>();
@@ -650,7 +651,7 @@ public class BlackboardWriter
                             string paramName = prop.Name;
                             string paramValue = prop.Value.ToString();
                             parameterMappings.Add(new ParameterMapping(paramName, paramValue));
-                            Console.WriteLine($"  📝 Property: {paramName} = {paramValue}");
+                            LoggingService.LogInfo($"  📝 Property: {paramName} = {paramValue}");
                         }
                     }
                     
@@ -661,7 +662,7 @@ public class BlackboardWriter
                         isNegated = notElement.GetBoolean();
                     }
                     parameterMappings.Add(new ParameterMapping("isNegated", isNegated.ToString().ToLower()));
-                    Console.WriteLine($"  📝 isNegated: {isNegated}");
+                    LoggingService.LogInfo($"  📝 isNegated: {isNegated}");
                     
                     // Create the predicate instance using the factory
                     Predicate instance = predicateFactory.CreatePredicateInstance(predicateName, parameterMappings, blackboard);
@@ -670,46 +671,46 @@ public class BlackboardWriter
                     {
                         createdInstances.Add(instance);
                         successCount++;
-                        Console.WriteLine($"  ✅ Entry {index}: Created {instance.GetType().Name} instance '{instance.PredicateName}'");
+                        LoggingService.LogInfo($"  ✅ Entry {index}: Created {instance.GetType().Name} instance '{instance.PredicateName}'");
                         
                         // Verify the instance was actually registered
                         var allPredicates = blackboard.GetAllPredicates();
                         var foundInBlackboard = allPredicates.Any(p => p.PredicateName == instance.PredicateName);
-                        Console.WriteLine($"  🔍 Entry {index}: Predicate in blackboard: {foundInBlackboard}");
+                        LoggingService.LogInfo($"  🔍 Entry {index}: Predicate in blackboard: {foundInBlackboard}");
                         
                         if (!foundInBlackboard)
                         {
-                            Console.WriteLine($"  ⚠️ WARNING: Predicate {instance.PredicateName} was created but not found in blackboard!");
+                            LoggingService.LogInfo($"  ⚠️ WARNING: Predicate {instance.PredicateName} was created but not found in blackboard!");
                         }
                     }
                     else
                     {
-                        Console.WriteLine($"  ❌ Entry {index}: Factory returned null");
+                        LoggingService.LogInfo($"  ❌ Entry {index}: Factory returned null");
                         errorCount++;
                     }
                 }
                 catch (Exception ex)
                 {
                     errorCount++;
-                    Console.WriteLine($"  ❌ Entry {index}: Error: {ex.Message}");
-                    Console.WriteLine($"  📋 Exception details: {ex}");
+                    LoggingService.LogInfo($"  ❌ Entry {index}: Error: {ex.Message}");
+                    LoggingService.LogInfo($"  📋 Exception details: {ex}");
                 }
             }
             
-            Console.WriteLine($"\n📊 Parsing Summary:");
-            Console.WriteLine($"  ✅ Successfully created: {successCount} instances");
-            Console.WriteLine($"  ❌ Errors: {errorCount}");
-            Console.WriteLine($"  📄 Total entries processed: {index}");
+            LoggingService.LogInfo($"\n📊 Parsing Summary:");
+            LoggingService.LogInfo($"  ✅ Successfully created: {successCount} instances");
+            LoggingService.LogInfo($"  ❌ Errors: {errorCount}");
+            LoggingService.LogInfo($"  📄 Total entries processed: {index}");
             
             // Final verification
             var finalPredicates = blackboard.GetAllPredicates();
-            Console.WriteLine($"  📊 Final predicate count in blackboard: {finalPredicates.Count}");
+            LoggingService.LogInfo($"  📊 Final predicate count in blackboard: {finalPredicates.Count}");
             
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"❌ Error reading file {filePath}: {ex.Message}");
-            Console.WriteLine($"📋 Exception details: {ex}");
+            LoggingService.LogInfo($"❌ Error reading file {filePath}: {ex.Message}");
+            LoggingService.LogInfo($"📋 Exception details: {ex}");
         }
         
         return createdInstances;
@@ -722,32 +723,32 @@ public class BlackboardWriter
     /// <param name="blackboard">The blackboard to register predicates in</param>
     public void ParseAndRegisterMontiCorePredicateFile(string filePath, Blackboard<FastName> blackboard)
     {
-        Console.WriteLine($"\n=== PARSING AND REGISTERING MONTICORE PREDICATE FILE ===");
-        Console.WriteLine($"📁 File: {filePath}");
+        LoggingService.LogInfo($"\n=== PARSING AND REGISTERING MONTICORE PREDICATE FILE ===");
+        LoggingService.LogInfo($"📁 File: {filePath}");
         
         List<Predicate> instances = ParseMontiCorePredicateFile(filePath, blackboard);
         
-        Console.WriteLine($"\n=== PREDICATE INSTANCES CREATED AND REGISTERED ===");
-        Console.WriteLine($"  ✅ Successfully created: {instances.Count} predicates");
+        LoggingService.LogInfo($"\n=== PREDICATE INSTANCES CREATED AND REGISTERED ===");
+        LoggingService.LogInfo($"  ✅ Successfully created: {instances.Count} predicates");
         
         // Verify predicates are actually in blackboard
         var allPredicates = blackboard.GetAllPredicates();
-        Console.WriteLine($"  📊 Total predicates in blackboard: {allPredicates.Count}");
+        LoggingService.LogInfo($"  📊 Total predicates in blackboard: {allPredicates.Count}");
         
         if (allPredicates.Count > 0)
         {
-            Console.WriteLine($"  📋 Predicates in blackboard:");
+            LoggingService.LogInfo($"  📋 Predicates in blackboard:");
             foreach (var pred in allPredicates)
             {
-                Console.WriteLine($"    - {pred.PredicateName} ({pred.GetType().Name}) - isNegated: {pred.not}");
+                LoggingService.LogInfo($"    - {pred.PredicateName} ({pred.GetType().Name}) - isNegated: {pred.not}");
             }
         }
         else
         {
-            Console.WriteLine($"  ⚠️ WARNING: No predicates found in blackboard after registration!");
+            LoggingService.LogInfo($"  ⚠️ WARNING: No predicates found in blackboard after registration!");
         }
         
-        Console.WriteLine($"  📝 Note: Predicates are automatically registered by the factory");
+        LoggingService.LogInfo($"  📝 Note: Predicates are automatically registered by the factory");
     }
 
     /// <summary>
@@ -760,7 +761,7 @@ public class BlackboardWriter
     {
         List<PActionNode> createdActions = new List<PActionNode>();
         
-        Console.WriteLine($"\n=== CREATING AND REGISTERING {actionDefinitionStrings.Length} ACTION INSTANCES ===");
+        LoggingService.LogInfo($"\n=== CREATING AND REGISTERING {actionDefinitionStrings.Length} ACTION INSTANCES ===");
         
         int successCount = 0;
         int errorCount = 0;
@@ -769,7 +770,7 @@ public class BlackboardWriter
         {
             try
             {
-                Console.WriteLine($"\n🔧 Processing action definition: {actionDefinition}");
+                LoggingService.LogInfo($"\n🔧 Processing action definition: {actionDefinition}");
                 
                 // Create the action instance using FactoryAction
                 var actionInstance = actionFactory.CreateActionInstance(actionDefinition, blackboard);
@@ -786,27 +787,27 @@ public class BlackboardWriter
                     createdActions.Add(actionInstance);
                     successCount++;
                     
-                    Console.WriteLine($"  ✅ Successfully created and registered action: {actionInstance.GetType().Name}");
-                    Console.WriteLine($"  🔑 Registered with key: {actionKey}");
-                    Console.WriteLine($"  📝 Debug Display Name: {actionInstance.DebugDisplayName}");
+                    LoggingService.LogInfo($"  ✅ Successfully created and registered action: {actionInstance.GetType().Name}");
+                    LoggingService.LogInfo($"  🔑 Registered with key: {actionKey}");
+                    LoggingService.LogInfo($"  📝 Debug Display Name: {actionInstance.DebugDisplayName}");
                 }
                 else
                 {
                     errorCount++;
-                    Console.WriteLine($"  ❌ Failed to create action instance for: {actionDefinition}");
+                    LoggingService.LogInfo($"  ❌ Failed to create action instance for: {actionDefinition}");
                 }
             }
             catch (Exception ex)
             {
                 errorCount++;
-                Console.WriteLine($"  ❌ Error processing action definition '{actionDefinition}': {ex.Message}");
+                LoggingService.LogInfo($"  ❌ Error processing action definition '{actionDefinition}': {ex.Message}");
             }
         }
         
-        Console.WriteLine($"\n📊 Action Instance Creation Summary:");
-        Console.WriteLine($"  ✅ Successfully created and registered: {successCount} actions");
-        Console.WriteLine($"  ❌ Errors: {errorCount}");
-        Console.WriteLine($"  📄 Total definitions processed: {actionDefinitionStrings.Length}");
+        LoggingService.LogInfo($"\n📊 Action Instance Creation Summary:");
+        LoggingService.LogInfo($"  ✅ Successfully created and registered: {successCount} actions");
+        LoggingService.LogInfo($"  ❌ Errors: {errorCount}");
+        LoggingService.LogInfo($"  📄 Total definitions processed: {actionDefinitionStrings.Length}");
         
         return createdActions;
     }
@@ -874,8 +875,8 @@ public class BlackboardWriter
     /// <returns>The created NodeGraph instance</returns>
     public NodeGraph ParseAndRegisterNodeGraph(string nodeGraphFile)
     {
-        Console.WriteLine($"\n=== PARSING AND REGISTERING NODEGRAPH FROM FILE ===");
-        Console.WriteLine($"📁 File: {nodeGraphFile}");
+        LoggingService.LogInfo($"\n=== PARSING AND REGISTERING NODEGRAPH FROM FILE ===");
+        LoggingService.LogInfo($"📁 File: {nodeGraphFile}");
         
         try
         {
@@ -886,11 +887,11 @@ public class BlackboardWriter
             
             // Read the file content
             string content = File.ReadAllText(nodeGraphFile);
-            Console.WriteLine($"📄 File content length: {content.Length} characters");
+            LoggingService.LogInfo($"📄 File content length: {content.Length} characters");
             
             // Extract the NodeGraph name from the first line
             string nodeGraphName = ExtractNodeGraphName(content);
-            Console.WriteLine($"🔍 Extracted NodeGraph name: {nodeGraphName}");
+            LoggingService.LogInfo($"🔍 Extracted NodeGraph name: {nodeGraphName}");
             
             // Use the existing Parser to create the NodeGraph
             var (actionInstances, relations) = ServicePDDLPlanning.ParsePlannerOutput(content);
@@ -900,15 +901,15 @@ public class BlackboardWriter
             var fastNameKey = new FastName(nodeGraphName);
             blackboard.SetNodeGraph(fastNameKey, nodeGraph);
             
-            Console.WriteLine($"✅ Successfully created and registered NodeGraph: {nodeGraphName}");
-            Console.WriteLine($"📊 NodeGraph contains {nodeGraph.GetAllActionNodes().Count} action nodes");
-            Console.WriteLine($"📊 Execution order: {string.Join(" → ", nodeGraph.GetExecutionOrder().Select(a => a.InstanceName.ToString()))}");
+            LoggingService.LogInfo($"✅ Successfully created and registered NodeGraph: {nodeGraphName}");
+            LoggingService.LogInfo($"📊 NodeGraph contains {nodeGraph.GetAllActionNodes().Count} action nodes");
+            LoggingService.LogInfo($"📊 Execution order: {string.Join(" → ", nodeGraph.GetExecutionOrder().Select(a => a.InstanceName.ToString()))}");
             
             return nodeGraph;
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"❌ Error parsing NodeGraph file {nodeGraphFile}: {ex.Message}");
+            LoggingService.LogInfo($"❌ Error parsing NodeGraph file {nodeGraphFile}: {ex.Message}");
             throw;
         }
     }

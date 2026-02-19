@@ -38,7 +38,7 @@ public class FactoryParameter : Singleton<FactoryParameter>
         // Track creation timing for blackboard summary
         BlackboardSummaryLogger.TrackCreation("ParameterInstances", typeName, generationTime);
         
-        Console.WriteLine($"⏱️ FACTORY: Parameter creation took {generationTime.TotalMilliseconds:F2}ms");
+        LoggingService.LogError($"⏱️ FACTORY: Parameter creation took {generationTime.TotalMilliseconds:F2}ms");
 
         return instance;
     }
