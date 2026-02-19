@@ -154,7 +154,7 @@ export default function Sidebar({ manager, onCreateBehaviorNode }: SidebarProps)
   return (
     <div className="sidebar">
       <div className="sidebar-title">
-        <span className="sidebar-title-text">AI Planner</span>
+        <span className="sidebar-title-text">APTree</span>
       </div>
 
       <SidebarSection title="Canvas Tools" iconLabel="T" isOpen={false}>

@@ -19,7 +19,7 @@ DEFAULT_ENHSP_PATH = "/home/shermin/ENHSP-Public/enhsp.jar"  # Default path to E
 # Get the directory where this script is located
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 # The PDDL files are in the same directory as this script
-DEFAULT_DOMAIN_FILE_PATH = os.path.join(SCRIPT_DIR, "Plannerinputs/static/domain.pddl")  # Default path to domain file
+DEFAULT_DOMAIN_FILE_PATH = os.path.join(SCRIPT_DIR, "Plannerinputs/static/DomainHL.pddl")  # Default path to domain file
 DEFAULT_PROBLEM_FILE_PATH = os.path.join(SCRIPT_DIR, "Plannerinputs/static/problemC1.pddl")  # Default path to problem file
 DEFAULT_TIMEOUT_SECONDS = 120
 DEFAULT_PLANNER = "ENHSP"  # Default planner to use
