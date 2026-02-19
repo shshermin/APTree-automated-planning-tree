@@ -70,7 +70,7 @@ public class APTreeTool {
     
     APTreeTool tool = new APTreeTool();
     // If an argument is given, use it as a file; otherwise, default to valid/behavior_trees
-    String filePath = args.length > 0 ? args[0] : "src/test/resources/valid/behavior_trees/APTreeLivematFinal.bt";
+    String filePath = args.length > 0 ? args[0] : "src/test/resources/valid/behavior_trees/APTreeLiveMat.bt";
     tool.run(filePath);
   }
 

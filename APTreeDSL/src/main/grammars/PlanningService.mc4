@@ -3,12 +3,23 @@ grammar PlanningService extends CRFTypesCon {
  PWorld = (Problem| ServicePDDLPlanning | PlannerENHSP | Domain )*;
 //planning service
 abstract ServicePlanning  extends Service = name:Name planner:Planner;
+<<<<<<< HEAD
 ServicePDDLPlanning extends ServicePlanning = "ServicePlanning"  name:Name planner:Planner;
   
 // Planners
 abstract Planner ;
 abstract PlannerPDDL extends Planner =  "Domain" ":" domain:Name@Domain   ("Problem" ":" problem:Name@Problem)?;
 PlannerENHSP extends PlannerPDDL = "Enhsp"  "Domain" ":" domain:Name@Domain   ("Problem" ":" problem:Name@Problem)? ("Config" ":" config:FILEPATH)?;
+=======
+ServicePDDLPlanner extends ServicePlanning = "ServicePlanning"  name:Name planner:Planner ;
+  
+// 2. Planners
+abstract symbol Planner = name:Name;
+
+abstract symbol PlannerPDDL extends Planner = "PlannerPddl" name:Name "Domain" ":" domain:Name@Domain   ("Problem" ":" problem:Name@Problem)?;
+symbol ENHSPPlanner extends PlannerPDDL = "Enhsp" "Domain" ":" domain:Name@Domain   ("Problem" ":" problem:Name@Problem)?;
+
+>>>>>>> 59d884f (Update action node colors to pink, flow nodes to blue, rename sidebar title to APTree)
 symbol Domain = "Domain" name:Name  "LanguageVersion" ":" language:Double "Level" ":" actLev:ActionLevel "{" supportedActs:Name@PActionNode ("," supportedActs:Name@PActionNode)* "}";
 symbol Problem = "Problem" name:Name;
 }
