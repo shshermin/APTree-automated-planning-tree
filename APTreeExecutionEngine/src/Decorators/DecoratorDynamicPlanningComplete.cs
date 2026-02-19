@@ -5,11 +5,11 @@ using BehaviorTreeMainProject.Log.Services;
 /// Decorator that ensures dynamic planning is completed before allowing node execution.
 /// This decorator simply checks the PlanningPhaseDynamic flag on the blackboard.
 /// </summary>
-public class BTDecoratorDynamicPlanningComplete : Decorator
+public class DecoratorDynamicPlanningComplete : Decorator
 {
     public override bool CanPostProcessTickResult => false;
     public override BTNodeResult PostProcessTickResult(BTNodeResult InResult) => InResult;
-    public BTDecoratorDynamicPlanningComplete() : base(false)
+    public DecoratorDynamicPlanningComplete() : base(false)
     {
 
     }

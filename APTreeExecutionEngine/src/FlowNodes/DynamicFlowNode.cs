@@ -41,12 +41,12 @@ public class DynamicFlowNode : FlowNode
         BehaviorTreeComponentLogger.TrackFlowNodeInitialization(this.GetType().Name);
 
         // Automatically add PlanningComplete decorator to dynamic flow nodes
-        AddDecorator(new BTDecoratorPlanningComplete());
+        AddDecorator(new DecoratorPlanningComplete());
         LoggingService.LogInfo($"🔧 DynamicFlowNode: Added PlanningComplete decorator to {nodeName.ToString()}");
 
         // Add RetryOnFailure decorator: when all children finish but success criteria not met,
         // this post-processing decorator resets failed children and converts Failure → InProgress
-        AddDecorator(new BTDecoratorRetryOnFailure(this));
+        AddDecorator(new DecoratorRetryOnFailure(this));
         LoggingService.LogInfo($"🔧 DynamicFlowNode: Added RetryOnFailure decorator to {nodeName.ToString()}");
         
     }

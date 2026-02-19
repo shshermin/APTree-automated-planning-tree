@@ -308,13 +308,13 @@ namespace BehaviorTreeMainProject
                 }
 
                 // Add the DynamicPlanningComplete decorator to the flow node
-                subtree.AddDecorator(new BTDecoratorDynamicPlanningComplete());
+                subtree.AddDecorator(new DecoratorDynamicPlanningComplete());
                 LogMessage($"🔧 ServiceSubtreeInject: Added DynamicPlanningComplete decorator to flow node '{subtree.DebugDisplayName}'");
                 // Add the ExclusiveBranchGate decorator BEFORE LowestCost — it evaluates first
-                subtree.AddDecorator(new BTDecoratorExclusiveBranchGate(subtree as DynamicFlowNode));
+                subtree.AddDecorator(new DecoratorExclusiveBranchGate(subtree as DynamicFlowNode));
                 LogMessage($"🔧 ServiceSubtreeInject: Added ExclusiveBranchGate decorator to flow node '{subtree.DebugDisplayName}'");
                 // add the lowestcost decorator (evaluates after ExclusiveBranchGate)
-                subtree.AddDecorator(new BTDecoratorLowestCostExecution(subtree as DynamicFlowNode));
+                subtree.AddDecorator(new DecoratorLowestCostExecution(subtree as DynamicFlowNode));
                 LogMessage($"🔧 ServiceSubtreeInject: Added LowestCostExecution decorator to flow node '{subtree.DebugDisplayName}'");
                 // DEBUG: Check if the decorator is actually in the list
                 var decoratorCount = subtree.GetType().GetField("Decorators", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.GetValue(subtree) as System.Collections.Generic.List<object>;
@@ -360,7 +360,7 @@ namespace BehaviorTreeMainProject
             // NOTE: Subtrees are now added to blackboard after successful planning, not during injection
             
             // Set the corresponding cassette subtree completion flag
-            BTDecoratorDynamicPlanningComplete.SetCassetteSubtreeCompletedFlag(OwningTree.root, action, linkedBlackboard);
+            DecoratorDynamicPlanningComplete.SetCassetteSubtreeCompletedFlag(OwningTree.root, action, linkedBlackboard);
         }
 
         /// <summary>
