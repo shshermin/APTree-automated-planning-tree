@@ -309,6 +309,15 @@ task runConcreteBTInstanceParser(type: JavaExec) {
     workingDir = projectDir
 }
 
+task runBTModelParser(type: JavaExec) {
+    description = 'Parses a BehaviorTree .bt model using the BehaviorTree grammar'
+    dependsOn 'compileJava'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'BehaviorTreeModelParser'
+    workingDir = projectDir
+    args = [project.properties.get('modelName', 'BehaviorTree.bt')]
+}
+
 task generateInstanceSymbols(type: JavaExec) {
   description = 'Generates .sym files for each Element from CRFConcreteInstances.bt'
   dependsOn 'compileJava'
