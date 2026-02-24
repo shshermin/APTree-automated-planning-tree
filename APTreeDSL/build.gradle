@@ -258,12 +258,7 @@ task generateCRFPredicateTypeRules(type: JavaExec) {
     workingDir = projectDir
 }
 
-task runDynamicFlowNodeParser(type: JavaExec) {
-    dependsOn 'compileJava'
-    classpath = sourceSets.main.runtimeClasspath
-    mainClass = 'DynamicFlowNodeParserTest'
-    workingDir = projectDir
-}
+
 
 task runCRFConPropertyParser(type: JavaExec) {
     description = 'Parses concrete property instances (CRFTypesCon grammar)'
@@ -316,6 +311,15 @@ task runBTModelParser(type: JavaExec) {
     mainClass = 'BehaviorTreeModelParser'
     workingDir = projectDir
     args = [project.properties.get('modelName', 'BehaviorTree.bt')]
+}
+
+task runAPTreeModelParser(type: JavaExec) {
+    description = 'Parses an APTree .bt model using the DynamicBTFlowNode grammar'
+    dependsOn 'compileJava'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'APTreeModelParser'
+    workingDir = projectDir
+    args = [project.properties.get('modelName', 'APTreeLiveMat.bt')]
 }
 
 task generateInstanceSymbols(type: JavaExec) {

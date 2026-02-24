@@ -292,7 +292,6 @@ lay3 - stack
 (activetool ng1)
 (nailed b2)
 (nailed b1)
-(nailed b3)
   )
   (:goal 
     (and

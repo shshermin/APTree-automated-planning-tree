@@ -333,7 +333,6 @@ lay3 - stack
 (glued b13)
 (glued b17)
 (glued b22)
-(glued b24)
   )
   (:goal 
     (and

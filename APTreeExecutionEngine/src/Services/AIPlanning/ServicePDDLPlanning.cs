@@ -51,8 +51,52 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
                 planningStartTime = DateTime.Now;
                 planningStarted = true;
             }
-            
+
+            // Before each planning attempt, regenerate the PDDL problem file
+            // from the current blackboard state so re-plans use fresh data.
+            // Only regenerate if planning hasn't completed yet (the base guard
+            // in ServicePlanning.OnEvaluate will skip if HasCompleted is true).
+            if (!HasCompleted && !IsExecuting)
+            {
+                var parentAction = (OwningFlowNode as DynamicFlowNode)?.GetParentAction();
+                if (parentAction != null && blackboard != null)
+                {
+                    // Goal-satisfaction check: skip planning if all goals are already met
+                    var goalPredicates = parentAction.GetActionEffects();
+                    var currentState = blackboard.GetTruePredicates();
+
+                    bool allGoalsMet = goalPredicates.Count > 0 && goalPredicates.All(goal =>
+                        currentState.Any(init => init.PredicateName == goal.PredicateName
+                                              && init.not == goal.not));
+
+                    if (allGoalsMet)
+                    {
+                        LoggingService.LogInfo($"⏭️ ServicePDDLPlanning: All {goalPredicates.Count} goal predicates already satisfied in blackboard — skipping planning for {parentAction.InstanceName}");
+                        // Mark as completed successfully without calling the planner
+                        HasCompleted = true;
+                        WasSuccessful = true;
+                        HasPlanGenerated = false; // No plan needed
+                        return true;
+                    }
+
+                    // Regenerate the problem file with the current blackboard state
+                    string newProblemFile = GenerateDynamicPDDLProblem(parentAction, blackboard);
+                    PlanningRequest.ProblemFile = newProblemFile;
+                    LoggingService.LogInfo($"🔄 ServicePDDLPlanning: Regenerated problem file for re-plan: {newProblemFile}");
+                }
+            }
+
             return base.OnEvaluate(InDeltaTime);
+        }
+
+        /// <summary>
+        /// Reset the planning service state, including PDDL-specific tracking.
+        /// Called during cross-cassette reset to allow re-planning.
+        /// </summary>
+        public new void ResetPlanningService()
+        {
+            planningStarted = false;
+            base.ResetPlanningService();
         }
 
         protected override NodeGraph GenerateNodeGraphFromResult(PlanningResult result)

@@ -300,7 +300,6 @@ lay3 - stack
 (nailed b7)
 (nailed b9)
 (nailed b11)
-(nailed b10)
   )
   (:goal 
     (and

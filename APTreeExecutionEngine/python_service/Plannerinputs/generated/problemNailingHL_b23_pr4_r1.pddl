@@ -311,7 +311,6 @@ lay3 - stack
 (nailed b20)
 (nailed b19)
 (nailed b21)
-(nailed b23)
   )
   (:goal 
     (and

@@ -20,6 +20,9 @@ namespace BehaviorTreeMainProject
         // Action to be processed in the next tick
         private PActionNode pendingAction;
 
+        // Flag to ensure subtree is injected only once
+        private bool hasInjectedSubtree = false;
+
         // Logging system
         private static readonly string LogFilePath = "SubtreeInjectionService_Debug.log";
         private static readonly object LogLock = new object();
@@ -137,9 +140,20 @@ namespace BehaviorTreeMainProject
                 
                 // 3. If it is HL, then we Inject the subtree
                 LogMessage($"🔍 ServiceSubtreeInject: Detected high-level action: {actionType}");
+
+                // Guard: only inject once — re-planning is handled by ServicePDDLPlanning
+                if (hasInjectedSubtree)
+                {
+                    LogMessage($"⏭️ ServiceSubtreeInject: Subtree already injected for {actionType}, skipping (re-planning handled by ServicePDDLPlanning)");
+                    // Re-set the cassette completion flag (it may have been cleared by resetAfterSuccessFullExecution)
+                    DecoratorDynamicPlanningComplete.SetCassetteSubtreeCompletedFlag(OwningTree.root, pendingAction, linkedBlackboard);
+                    return true;
+                }
+
                 try
                 {
                     ProcessSubtreeInjection( null); // customParameters would be passed here if needed
+                    hasInjectedSubtree = true;
                     LogMessage($"✅ ServiceSubtreeInject: Successfully injected subtree for {actionType}");
                     // 4. If the injection was successful return true
                     return true;
@@ -181,14 +195,12 @@ namespace BehaviorTreeMainProject
                 // Create instance name from action
                 string instanceName = pendingAction.InstanceName.ToString();
                 
-                // Generate dynamic PDDL problem file via ServicePDDLPlanning
-                string problemFileName = ServicePDDLPlanning.GenerateDynamicPDDLProblem(pendingAction, linkedBlackboard);
+                // NOTE: Problem file generation has been moved to ServicePDDLPlanning.OnEvaluate()
+                // so that each planning/re-planning cycle uses a fresh blackboard snapshot.
+                // Here we only inject the subtree structure (DynamicFlowNode + ServicePDDLPlanning)
                 
-                // Merge custom parameters with the generated problem file
                 var mergedParameters = customParameters ?? new Dictionary<string, object>();
-                mergedParameters["problemFile"] = problemFileName;
                 
-                LogMessage($"🔧 ServiceSubtreeInject: Using dynamic problem file: {problemFileName}");
                 LogMessage($"🔧 ServiceSubtreeInject: Merged parameters count: {mergedParameters.Count}");
                 foreach (var param in mergedParameters)
                 {

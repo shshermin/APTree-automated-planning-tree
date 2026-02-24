@@ -55,10 +55,10 @@ public abstract class ServicePlanning : Service
     public DateTime StartTime { get; private set; }
     public DateTime PlannerEndTime { get; private set; } // Time when external planner finishes
     public DateTime EndTime { get; private set; } // Time when entire service finishes
-    public bool IsExecuting { get; private set; } = false;
-    public bool HasCompleted { get; private set; } = false;
-    public bool WasSuccessful { get; private set; } = false; // True if planning succeeded and plan was generated
-    public bool HasPlanGenerated { get; private set; } = false; // True if NodeGraph was successfully created
+    public bool IsExecuting { get; protected set; } = false;
+    public bool HasCompleted { get; protected set; } = false;
+    public bool WasSuccessful { get; protected set; } = false; // True if planning succeeded and plan was generated
+    public bool HasPlanGenerated { get; protected set; } = false; // True if NodeGraph was successfully created
     public string LastError { get; private set; } = null; // Last error message if planning failed
     public TimeSpan PlannerExecutionDuration => HasCompleted ? PlannerEndTime - StartTime : TimeSpan.Zero; // External planner time only
     public TimeSpan TotalExecutionDuration => HasCompleted ? EndTime - StartTime : TimeSpan.Zero; // Total service time

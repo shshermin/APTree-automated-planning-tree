@@ -6,25 +6,25 @@ BehaviorTree LiveMat {
         AllFlow
         NodeGraph {    
             FlowNode  Cassette1{
-                ServicePlanning mypddlplanner1 Enhsp1
+                ServicePlanning mypddlplanner1 Enhsp Domain:DomainHL Problem:ProblemC1
                 All
                 AllAction
                 NodeGraph { }
             } 
             FlowNode  Cassette2 {
-                ServicePlanning mypddlplanner2 Enhsp2
+                ServicePlanning mypddlplanner2 Enhsp Domain:DomainHL Problem:ProblemC2
                 All
                 AllAction
                 NodeGraph { }
             }
             FlowNode  Cassette3 {
-                ServicePlanning mypddlplanner3 Enhsp3
+                ServicePlanning mypddlplanner3 Enhsp Domain:DomainHL Problem:ProblemC3
                 All
                 AllAction
                 NodeGraph { }
             }
             FlowNode  Cassette4 {
-                ServicePlanning mypddlplanner4 Enhsp4
+                ServicePlanning mypddlplanner4 Enhsp Domain:DomainHL Problem:ProblemC4
                 All
                 AllAction
                 NodeGraph { }

@@ -148,7 +148,7 @@ lay3 - stack
 (clear b24)
 (attool vg1 ep1)
 (attool ng1 ep3)
-(atagent r1 pr2)
+(atagent r1 pr1)
 (vgempty r1)
 (belongstolayer b1 lay1)
 (belongstolayer b2 lay1)
@@ -219,7 +219,6 @@ lay3 - stack
 (positionfree ep2)
 (activetool gg1)
 (glued lp1)
-(glued lp2)
   )
   (:goal 
     (and

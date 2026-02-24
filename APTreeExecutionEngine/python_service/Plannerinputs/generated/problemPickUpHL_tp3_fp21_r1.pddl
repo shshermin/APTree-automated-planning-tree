@@ -86,7 +86,8 @@ lay2 - stack
 lay3 - stack 
   )
   (:init  
-    (atplace tp4 fp29)
+    (atplace tp3 fp21)
+(atplace tp4 fp29)
 (clear tp1)
 (clear b2)
 (clear b3)
@@ -99,6 +100,7 @@ lay3 - stack
 (clear b10)
 (clear b11)
 (clear b12)
+(clear tp3)
 (clear b13)
 (clear b14)
 (clear b15)
@@ -114,7 +116,8 @@ lay3 - stack
 (clear b24)
 (attool gg1 ep2)
 (attool ng1 ep3)
-(atagent r1 fp21)
+(atagent r1 pr2)
+(vgempty r1)
 (belongstolayer b1 lay1)
 (belongstolayer b2 lay1)
 (belongstolayer b3 lay1)
@@ -339,7 +342,6 @@ lay3 - stack
 (ontop tp2 b7)
 (atplace tp2 pr2)
 (stacked tp2)
-(holding r1 tp3)
   )
   (:goal 
     (and

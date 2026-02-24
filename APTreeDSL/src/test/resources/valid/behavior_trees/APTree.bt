@@ -5,7 +5,7 @@ BehaviorTree APTree {
         AllFlow
         NodeGraph {    
             FlowNode  HandlePlate {
-                ServicePlanning MyPlannerSrv1 Enhsp1 
+                ServicePlanning MyPlannerSrv1 Enhsp Domain:PickAndPlaceHL Problem:PlacePlate1
                 All
                 AllAction
                 NodeGraph {
@@ -16,7 +16,7 @@ BehaviorTree APTree {
                 }
             } 
             FlowNode BeamPlacement {
-                ServicePlanning MyPlannerSrv2 Enhsp1 
+                ServicePlanning MyPlannerSrv1 Enhsp Domain:PickAndPlaceHL Problem:handleBeams
                 All
                 AllAction
                 NodeGraph {
@@ -28,4 +28,8 @@ BehaviorTree APTree {
                                 --[Meets]--> PlaceBeam2;
                             }
                             Action PlaceHL PlaceBeam2 (beam2 pr3 r1) 
-                }}}}} 
+                }   
+            }
+        }
+    }
+} 
