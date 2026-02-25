@@ -100,6 +100,27 @@ def main():
 
     print(f"  Transitions:    {len(with_deltas)} (with replan), {len(without_deltas)} (without replan)")
 
+    # --- Bucket averages ---
+    def bucket_averages(deltas, label):
+        buckets = {"< 2000 ms": [], "2000–6000 ms": [], "> 6000 ms": []}
+        for d in deltas:
+            if d < 2000:
+                buckets["< 2000 ms"].append(d)
+            elif d < 6000:
+                buckets["2000–6000 ms"].append(d)
+            else:
+                buckets["> 6000 ms"].append(d)
+        print(f"\n  {label}:")
+        for name, vals in buckets.items():
+            if vals:
+                avg = sum(vals) / len(vals)
+                print(f"    {name}: count={len(vals)}, avg={avg:.1f} ms")
+            else:
+                print(f"    {name}: count=0")
+
+    bucket_averages(with_deltas, "With replanning")
+    bucket_averages(without_deltas, "Without replanning")
+
     # Plot
     fig, ax = plt.subplots(figsize=(16, 5.5))
 
@@ -108,7 +129,7 @@ def main():
         with_deltas,
         color="#5B9FD6",
         alpha=0.7,
-        s=18,
+        s=36,
         label="With replanning",
         edgecolors="none",
     )
@@ -117,7 +138,7 @@ def main():
         without_deltas,
         color="#F07040",
         alpha=0.7,
-        s=18,
+        s=36,
         label="Without replanning",
         edgecolors="none",
     )

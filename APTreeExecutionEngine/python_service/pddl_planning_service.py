@@ -347,11 +347,13 @@ def call_lama_first(domain_file, problem_file, timeout_seconds):
             except Exception as copy_err:
                 print(f"⚠️ Warning: Error piping {label} file: {copy_err}")
 
-        # Execute the LAMA-first planning command in the Docker container
+        # Execute the LAMA-first planning command in the Docker container.
+        # LAMA (Fast Downward) writes the plan to a file (sas_plan) instead of
+        # stdout, so we run the planner AND then cat the plan file in one command.
         lama_first_cmd = [
             'docker', 'exec', 'stupefied_hellman',
             'bash', '-c',
-            f'planutils activate && planutils run lama-first {domain_filename} {problem_filename}'
+            f'planutils activate && planutils run lama-first {domain_filename} {problem_filename} && cat sas_plan'
         ]
         
         print(f"Calling LAMA-first with command: {' '.join(lama_first_cmd)}")
