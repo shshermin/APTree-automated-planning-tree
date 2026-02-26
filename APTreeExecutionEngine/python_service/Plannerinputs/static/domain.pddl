@@ -28,7 +28,7 @@
     (stacked ?obj - element)     
     (glued ?obj - element) 
     (nailed ?obj - element)   
-    (vgempty ?vg -tool)
+    (vgempty ?vg - tool)
 )
 
   ; assigns the number of element that can be stacked on top of this module
