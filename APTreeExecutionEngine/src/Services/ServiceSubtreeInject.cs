@@ -189,9 +189,8 @@ namespace BehaviorTreeMainProject
                 var actionType = pendingAction.actionType.ToString();
                 LogMessage($"🔧 ServiceSubtreeInject: Processing injection for {actionType}");
                 
-                // Cassettes 3 & 4 (index 2 & 3) use LAMA-FIRST; cassettes 1 & 2 use FF
-                int cassetteIndex = DecoratorDynamicPlanningComplete.FindCassetteIndexForAction(OwningTree.root, pendingAction);
-                string configName = (cassetteIndex >= 2) ? "LAMA-FIRST_Default" : "FF_Default";
+                // Use FF for all subtree injections
+                string configName = "FF_Default";
                 
                 // Create instance name from action
                 string instanceName = pendingAction.InstanceName.ToString();
@@ -263,9 +262,24 @@ namespace BehaviorTreeMainProject
                 config.PlannerParameters["timeoutSeconds"] = planner.DefaultTimeoutSeconds;
                 config.PlannerParameters["maxPlanLength"] = planner.DefaultMaxPlanLength;
                 config.PlannerParameters["executionMode"] = ServicePDDLPlanning.ParallelExecutionMode.Sequential;
+                if (planner.HasEnhspConfig)
+                    config.PlannerParameters["enhspConfig"] = planner.DefaultEnhspConfig;
 
                 subtreeConfigurations[configName] = config;
                 LogMessage($"✅ ServiceSubtreeInject: Auto-registered config '{configName}' from {type.Name}");
+            }
+
+            // Register a dedicated ML-level ENHSP config that uses DomainML.pddl and opt-hmax.
+            // This is separate from ENHSP_Default (which uses DomainHL.pddl for HL cassette planning).
+            if (subtreeConfigurations.TryGetValue("ENHSP_Default", out var enhspDefault))
+            {
+                var mlConfig = new SubtreeConfiguration("ENHSP_ML_Default", "ENHSP", SuccessCriteria.ALL);
+                foreach (var kv in enhspDefault.PlannerParameters)
+                    mlConfig.PlannerParameters[kv.Key] = kv.Value;
+                mlConfig.PlannerParameters["domainFile"] = "Plannerinputs/static/DomainML.pddl";
+                mlConfig.PlannerParameters["enhspConfig"] = "opt-hmax";
+                subtreeConfigurations["ENHSP_ML_Default"] = mlConfig;
+                LogMessage("✅ ServiceSubtreeInject: Registered ENHSP_ML_Default (DomainML.pddl, opt-hmax)");
             }
 
             LogMessage("✅ ServiceSubtreeInject: Initialized default configurations");
@@ -392,7 +406,17 @@ namespace BehaviorTreeMainProject
                 // Must match the runtime DynamicFlowNode name so APTreeModelWriter can find it later
                 var flowNodeName = $"{config.Name}_DynamicFlow_{instanceName}";
                 var plannerServiceName = $"subtreeSrv_{instanceName}";
-                var plannerTypeName = config.PlannerName;
+
+                // Extract just the filename from the full paths (e.g. "Plannerinputs/static/DomainML.pddl" -> "DomainML.pddl")
+                string domainFilePath = config.PlannerParameters.TryGetValue("domainFile", out var dfObj) ? dfObj?.ToString() : null;
+                string domainFileName = string.IsNullOrWhiteSpace(domainFilePath)
+                    ? "DomainML.pddl"
+                    : System.IO.Path.GetFileName(domainFilePath);
+
+                string problemFilePath = config.PlannerParameters.TryGetValue("problemFile", out var pfObj) ? pfObj?.ToString() : null;
+                string problemFileName = string.IsNullOrWhiteSpace(problemFilePath)
+                    ? null
+                    : System.IO.Path.GetFileName(problemFilePath);
 
                 LogMessage($"🔧 ServiceSubtreeInject: Registering subtree BT model '{subtreeBTName}' for action '{instanceName}'");
 
@@ -401,7 +425,7 @@ namespace BehaviorTreeMainProject
 
                 // 2. Append the subtree BehaviorTree block after the main BT
                 BehaviorTreeMainProject.Services.AIPlanning.APTreeModelWriter.AppendSubtreeBTModel(
-                    subtreeBTName, flowNodeName, plannerServiceName, plannerTypeName);
+                    subtreeBTName, flowNodeName, plannerServiceName, config.PlannerName, domainFileName, problemFileName);
 
                 LogMessage($"✅ ServiceSubtreeInject: Registered subtree '{subtreeBTName}' in BT model for action '{instanceName}'");
             }
@@ -512,6 +536,8 @@ namespace BehaviorTreeMainProject
                 Convert.ToInt32(parameters["timeoutSeconds"]),
                 Convert.ToInt32(parameters["maxPlanLength"])
             );
+            if (parameters.TryGetValue("enhspConfig", out var enhspCfg) && enhspCfg != null)
+                pddlRequest.EnhspConfig = enhspCfg.ToString();
 
             var planner = new ServicePDDLPlanning(subtreeTree, pddlRequest);
             planner.ExecutionMode = (ServicePDDLPlanning.ParallelExecutionMode)parameters["executionMode"];

@@ -19,7 +19,7 @@ DEFAULT_ENHSP_PATH = "/home/ubuntu/ENHSP-Public/enhsp.jar"  # Default path to EN
 # Get the directory where this script is located
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 # The PDDL files are in the same directory as this script
-DEFAULT_DOMAIN_FILE_PATH = os.path.join(SCRIPT_DIR, "Plannerinputs/static/domain.pddl")  # Default path to domain file
+DEFAULT_DOMAIN_FILE_PATH = os.path.join(SCRIPT_DIR, "Plannerinputs/static/DomainHL.pddl")  # Default path to domain file
 DEFAULT_PROBLEM_FILE_PATH = os.path.join(SCRIPT_DIR, "Plannerinputs/static/problemC1.pddl")  # Default path to problem file
 DEFAULT_TIMEOUT_SECONDS = 120
 DEFAULT_PLANNER = "ENHSP"  # Default planner to use
@@ -62,6 +62,7 @@ def create_plan():
         timeout_seconds = data.get('timeoutSeconds', DEFAULT_TIMEOUT_SECONDS)
         max_plan_length = data.get('maxPlanLength', 20)
         planner_name = data.get('plannerName', DEFAULT_PLANNER).upper()  # New: planner selection
+        enhsp_config = data.get('enhspConfig', None)  # Optional ENHSP -planner config (e.g. 'opt-hmax')
         
         # Legacy format: use planner_config values if not specified in new format
         planner_config = data.get('plannerConfig', {})
@@ -166,7 +167,7 @@ def create_plan():
                     }
                 }), 500
             
-            plan_result = call_enhsp(domain_file, problem_file, planner_path, timeout_seconds)
+            plan_result = call_enhsp(domain_file, problem_file, planner_path, timeout_seconds, enhsp_config)
         elif planner_name == "FF":
             plan_result = call_ff(domain_file, problem_file, timeout_seconds)
         elif planner_name == "LAMA-FIRST":
@@ -210,16 +211,18 @@ def create_plan():
         }), 500
 
 
-def call_enhsp(domain_file, problem_file, planner_path, timeout_seconds):
+def call_enhsp(domain_file, problem_file, planner_path, timeout_seconds, enhsp_config=None):
     """Call ENHSP planner"""
     try:
         # Build ENHSP command (Java application)
+        planner_cfg = enhsp_config if enhsp_config else 'pt-blind'
         cmd = [
             'java', '-jar', planner_path,
             '-o', domain_file,
             '-f', problem_file,
-            '-planner', 'pt-blind'  # Use pt-blind configuration
+            '-planner', planner_cfg
         ]
+        print(f"ENHSP config: {planner_cfg}")
         
         print(f"Calling ENHSP with command: {' '.join(cmd)}")
         

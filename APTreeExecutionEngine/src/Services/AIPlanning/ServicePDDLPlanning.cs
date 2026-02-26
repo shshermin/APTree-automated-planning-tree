@@ -145,10 +145,21 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
                         LoggingService.LogSuccess($"✅ ServicePDDLPlanning: Execution Mode applied: {ExecutionMode}");
 
                         // Write the generated DSL plan back into APTreeLivematFinal.bt
-                        var cassetteName = OwningFlowNode?.GetNodeName();
-                        if (!string.IsNullOrEmpty(cassetteName))
+                        var flowNodeName = OwningFlowNode?.GetNodeName();
+                        if (!string.IsNullOrEmpty(flowNodeName))
                         {
-                            APTreeModelWriter.UpdateCassetteNodeGraph(cassetteName, dslPlanString);
+                            APTreeModelWriter.UpdateCassetteNodeGraph(flowNodeName, dslPlanString);
+
+                            // Patch the Problem: field now that the dynamic problem file is known.
+                            // Only applies to subtree FlowNodes (named "<config>_DynamicFlow_<instance>").
+                            const string dynMarker = "_DynamicFlow_";
+                            if (flowNodeName.Contains(dynMarker) && !string.IsNullOrWhiteSpace(PlanningRequest?.ProblemFile))
+                            {
+                                var instanceName = flowNodeName.Substring(flowNodeName.IndexOf(dynMarker) + dynMarker.Length);
+                                var plannerServiceName = $"subtreeSrv_{instanceName}";
+                                var problemFileName = System.IO.Path.GetFileName(PlanningRequest.ProblemFile);
+                                APTreeModelWriter.UpdateServicePlanningProblem(plannerServiceName, problemFileName);
+                            }
                         }
                     }
                     else

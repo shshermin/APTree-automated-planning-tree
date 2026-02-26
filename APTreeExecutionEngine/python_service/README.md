@@ -7,6 +7,7 @@ First, you need an SSH key to access the VM.
 ```bash
 ssh -i ~/.ssh/id_ed25519 ubuntu@193.196.52.17
 ```
+ssh -i C:\Users\sherk\.ssh\id_ed25519 ubuntu@193.196.52.17
 
 ## 1b) SSH Tunnel (for C# execution engine)
 
@@ -16,7 +17,7 @@ port from your local machine to the VM, open a separate terminal and run:
 ```bash
 ssh -L 5000:localhost:5000 -i ~/.ssh/id_ed25519 ubuntu@193.196.52.17
 ```
-
+ssh -L 5000:localhost:5000 -i C:\Users\sherk\.ssh\id_ed25519 ubuntu@193.196.52.17
 Keep this terminal open while running the execution engine.
 
 ## 2) Project directory on the VM
