@@ -12,13 +12,13 @@ using BehaviorTreeMainProject.Log.Services;
 /// This decorator only clears the chosen branch when it reaches SUCCESS — not Failure.
 /// This ensures a branch finishes all its ML children before another branch can be selected.
 /// </summary>
-public class BTDecoratorLowestCostExecution : Decorator
+public class DecoratorLowestCostExecution : Decorator
 {
     public override bool CanPostProcessTickResult => false;
     public override BTNodeResult PostProcessTickResult(BTNodeResult InResult) => InResult;
     public int lowestCost;
 
-    public BTDecoratorLowestCostExecution(DynamicFlowNode AttachedNode) : base(false)
+    public DecoratorLowestCostExecution(DynamicFlowNode AttachedNode) : base(false)
     {
         this.AttachedNode = AttachedNode;
     }

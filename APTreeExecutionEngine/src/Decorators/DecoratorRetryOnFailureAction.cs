@@ -14,13 +14,13 @@ using BehaviorTreeMainProject.Log.Services;
 /// The decorator does NOT interfere with pre-tick evaluation (OnEvaluate always returns true).
 /// It only acts in the post-processing phase via PostProcessTickResult.
 /// </summary>
-public class BTDecoratorRetryOnFailureAction : Decorator
+public class DecoratorRetryOnFailureAction : Decorator
 {
     public override bool CanPostProcessTickResult => true;
 
     private readonly PActionNode attachedAction;
 
-    public BTDecoratorRetryOnFailureAction(PActionNode action) : base(false)
+    public DecoratorRetryOnFailureAction(PActionNode action) : base(false)
     {
         AttachedAction = action;
         attachedAction = action;
@@ -47,7 +47,7 @@ public class BTDecoratorRetryOnFailureAction : Decorator
 
         if (attachedAction == null)
         {
-            LoggingService.LogWarning($"⚠️ BTDecoratorRetryOnFailureAction: No attached action set, cannot process");
+            LoggingService.LogWarning($"⚠️ DecoratorRetryOnFailureAction: No attached action set, cannot process");
             return InResult;
         }
 
@@ -61,7 +61,7 @@ public class BTDecoratorRetryOnFailureAction : Decorator
         // we simply convert it back to InProgress so the node can be re-evaluated next tick.
         // The action's Reset() will set it back to ReadyToTick.
 
-        LoggingService.LogInfo($"🔄 BTDecoratorRetryOnFailureAction: Failure detected on action '{attachedAction.InstanceName}', resetting to InProgress for retry");
+        LoggingService.LogInfo($"🔄 DecoratorRetryOnFailureAction: Failure detected on action '{attachedAction.InstanceName}', resetting to InProgress for retry");
         attachedAction.Reset();
 
         return BTNodeResult.InProgress;

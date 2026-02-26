@@ -12,7 +12,6 @@ namespace BehaviorTreeMainProject.Log.Services
         
         // Node tracking statistics
         private Dictionary<string, NodeExecutionInfo> nodeExecutionStats = new Dictionary<string, NodeExecutionInfo>();
-        private Dictionary<string, PlanningServiceInfo> planningServiceStats = new Dictionary<string, PlanningServiceInfo>();
         private int totalNodes = 0;
         private int flowNodeCount = 0;
         private int actionNodeCount = 0;
@@ -123,27 +122,6 @@ namespace BehaviorTreeMainProject.Log.Services
             }
         }
 
-        public static void TrackPlanningService(string serviceName, string plannerType, DateTime startTime, bool success, int actionsGenerated, DateTime? endTime = null)
-        {
-            Instance.TrackPlanningServiceInternal(serviceName, plannerType, startTime, success, actionsGenerated, endTime);
-        }
-
-        private void TrackPlanningServiceInternal(string serviceName, string plannerType, DateTime startTime, bool success, int actionsGenerated, DateTime? endTime)
-        {
-            var planningInfo = new PlanningServiceInfo(serviceName, plannerType, startTime, actionsGenerated);
-
-            if (endTime.HasValue)
-            {
-                planningInfo.Complete(endTime.Value, success);
-            }
-            else
-            {
-                planningInfo.Success = success;
-            }
-
-            planningServiceStats[serviceName] = planningInfo;
-        }
-
         public static void GenerateSummaryTable()
         {
             Instance.GenerateSummaryTableInternal();
@@ -176,21 +154,6 @@ namespace BehaviorTreeMainProject.Log.Services
             }
             WriteLog("");
 
-            // Planning Service Details
-            WriteSubsectionHeader("PLANNING SERVICE DETAILS");
-            WriteTableHeader("Service Name", "Planner Type", "Duration", "Success", "Actions Generated");
-            WriteTableSeparator(5);
-            
-            foreach (var planningInfo in planningServiceStats.Values)
-            {
-                string duration = planningInfo.Completed ? 
-                    LogFormatter.FormatDuration(planningInfo.PlanningTime) : "N/A";
-                string success = planningInfo.Success ? "✅ Yes" : "❌ No";
-                
-                WriteTableRow(planningInfo.ServiceName, planningInfo.PlannerType, duration, success, planningInfo.ActionsGenerated.ToString());
-            }
-            WriteLog("");
-
             // Summary Statistics
             WriteSubsectionHeader("SUMMARY STATISTICS");
             
@@ -202,20 +165,9 @@ namespace BehaviorTreeMainProject.Log.Services
                 .Where(n => n.Completed)
                 .Sum(n => n.CompletionTime.TotalMilliseconds);
             
-            var totalPlanningTime = planningServiceStats.Values
-                .Where(p => p.Completed)
-                .Sum(p => p.PlanningTime.TotalMilliseconds);
-            
-            int totalActionsGenerated = planningServiceStats.Values.Sum(p => p.ActionsGenerated);
-            int successfulPlanners = planningServiceStats.Values.Count(p => p.Success);
-            int totalPlanners = planningServiceStats.Count;
-
             WriteLog($"Node Completion Rate: {LogFormatter.FormatCounter(completedNodes, totalNodes)}");
             WriteLog($"Node Success Rate: {LogFormatter.FormatCounter(successfulNodes, completedNodes)}");
             WriteLog($"Total Execution Time: {LogFormatter.FormatDuration(TimeSpan.FromMilliseconds(totalExecutionTime))}");
-            WriteLog($"Total Planning Time: {LogFormatter.FormatDuration(TimeSpan.FromMilliseconds(totalPlanningTime))}");
-            WriteLog($"Total Actions Generated: {totalActionsGenerated}");
-            WriteLog($"Planning Success Rate: {LogFormatter.FormatCounter(successfulPlanners, totalPlanners)}");
             
             WriteSectionHeader("END OF SUMMARY REPORT");
         }

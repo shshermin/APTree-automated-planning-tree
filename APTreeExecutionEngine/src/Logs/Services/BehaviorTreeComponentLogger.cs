@@ -63,9 +63,9 @@ namespace BehaviorTreeMainProject.Log.Services
             flowNodeStats["BTFlowNodeComposite"] = new FlowNodeStats();
             
             // Initialize decorator tracking
-            flowNodeStats["BTDecoratorPlanningComplete"] = new FlowNodeStats();
-            flowNodeStats["BTDecoratorDynamicPlanningComplete"] = new FlowNodeStats();
-            flowNodeStats["BTDecoratorLowestCostExecution"] = new FlowNodeStats();
+            flowNodeStats["DecoratorPlanningComplete"] = new FlowNodeStats();
+            flowNodeStats["DecoratorDynamicPlanningComplete"] = new FlowNodeStats();
+            flowNodeStats["DecoratorLowestCostExecution"] = new FlowNodeStats();
             
             // Initialize service tracking - use actual concrete service class names
             flowNodeStats["ServicePDDLPlanning"] = new FlowNodeStats();
@@ -81,9 +81,9 @@ namespace BehaviorTreeMainProject.Log.Services
             var components = new[] { 
                 "GenericBTAction", 
                 "SubtreesInjected", 
-                "DecoratorBTDecoratorDynamicPlanningComplete", 
-                "DecoratorBTDecoratorLowestCostExecution", 
-                "DecoratorBTDecoratorPlanningComplete", 
+                "DecoratorDynamicPlanningComplete", 
+                "DecoratorLowestCostExecution", 
+                "DecoratorPlanningComplete", 
                 "ServicePDDLPlanningService", 
                 "ServiceBTServicePlanningPhaseManager", 
                 "ServiceSubtreeInjectionService",
@@ -763,7 +763,7 @@ namespace BehaviorTreeMainProject.Log.Services
                 WriteLog("🔍 DEBUG: All tracked component keys in flowNodeStats:");
                 foreach (var kvp in flowNodeStats)
                 {
-                    if (kvp.Key.StartsWith("BTFlowNode") || kvp.Key.StartsWith("BTDecorator") || kvp.Key.StartsWith("BTService") || kvp.Key.StartsWith("Call") || kvp.Key == "ServiceSubtreeInject" || kvp.Key == "GenericBTAction")
+                    if (kvp.Key.StartsWith("BTFlowNode") || kvp.Key.StartsWith("Decorator") || kvp.Key.StartsWith("BTService") || kvp.Key.StartsWith("Call") || kvp.Key == "ServiceSubtreeInject" || kvp.Key == "GenericBTAction")
                     {
                         WriteLog($"   Key: '{kvp.Key}' -> AdditionCount: {kvp.Value.AdditionCount}");
                     }
@@ -774,7 +774,7 @@ namespace BehaviorTreeMainProject.Log.Services
                 foreach (var kvp in flowNodeStats)
                 {
                     var componentType = kvp.Key;
-                    if (componentType.StartsWith("BTFlowNode") || componentType.StartsWith("BTDecorator") || componentType.StartsWith("BTService") || componentType.StartsWith("Call") || componentType == "ServiceSubtreeInject" || componentType == "GenericBTAction")
+                    if (componentType.StartsWith("BTFlowNode") || componentType.StartsWith("Decorator") || componentType.StartsWith("BTService") || componentType.StartsWith("Call") || componentType == "ServiceSubtreeInject" || componentType == "GenericBTAction")
                     {
                         data[componentType] = kvp.Value.AdditionCount;
                         WriteLog($"🔍 DEBUG: Added {componentType} = {kvp.Value.AdditionCount} to data (from AdditionCount)");

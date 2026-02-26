@@ -145,22 +145,22 @@ public abstract class FlowNode : BTNode, IEnumerable
     {
         var graph = new NodeGraph();
 
-        Console.WriteLine($"🔧 CreateNodeGraphFromActions: Input actionNodes count: {actionNodes?.Count ?? 0}");
+        LoggingService.LogError($"🔧 CreateNodeGraphFromActions: Input actionNodes count: {actionNodes?.Count ?? 0}");
 
         if (actionNodes == null || actionNodes.Count == 0)
         {
-            Console.WriteLine("🔧 CreateNodeGraphFromActions: No action nodes provided, returning empty graph");
+            LoggingService.LogInfo("🔧 CreateNodeGraphFromActions: No action nodes provided, returning empty graph");
             return graph;
         }
 
         // Add all action nodes to the graph
         foreach (var action in actionNodes)
         {
-            Console.WriteLine($"🔧 CreateNodeGraphFromActions: Adding action {action.InstanceName.ToString()} to graph");
+            LoggingService.LogError($"🔧 CreateNodeGraphFromActions: Adding action {action.InstanceName.ToString()} to graph");
             graph.AddNode(action);
         }
 
-        Console.WriteLine($"🔧 CreateNodeGraphFromActions: Added {actionNodes.Count} nodes to graph");
+        LoggingService.LogError($"🔧 CreateNodeGraphFromActions: Added {actionNodes.Count} nodes to graph");
 
         // Create default relations: sequential order with MEETS temporal constraint
         for (int i = 0; i < actionNodes.Count - 1; i++)
@@ -168,7 +168,7 @@ public abstract class FlowNode : BTNode, IEnumerable
             var currentAction = actionNodes[i];
             var nextAction = actionNodes[i + 1];
 
-            Console.WriteLine($"🔧 CreateNodeGraphFromActions: Creating relation {currentAction.InstanceName.ToString()} → {nextAction.InstanceName.ToString()}");
+            LoggingService.LogError($"🔧 CreateNodeGraphFromActions: Creating relation {currentAction.InstanceName.ToString()} → {nextAction.InstanceName.ToString()}");
 
             // Add order relation (sequential execution)
             graph.AddOrderRelation(currentAction, nextAction);
@@ -177,16 +177,16 @@ public abstract class FlowNode : BTNode, IEnumerable
             graph.AddTemporalConstraint(currentAction, nextAction, TemporalType.MEETS);
         }
 
-        Console.WriteLine($"🔧 CreateNodeGraphFromActions: Created {actionNodes.Count - 1} relations");
-        Console.WriteLine($"🔧 CreateNodeGraphFromActions: Final graph has {graph.GetAllActionNodes().Count} nodes");
+        LoggingService.LogError($"🔧 CreateNodeGraphFromActions: Created {actionNodes.Count - 1} relations");
+        LoggingService.LogError($"🔧 CreateNodeGraphFromActions: Final graph has {graph.GetAllActionNodes().Count} nodes");
 
         // Debug: Show final graph structure
-        Console.WriteLine("\n🔍 DEBUG: Final Graph Structure:");
+        LoggingService.LogInfo("\n🔍 DEBUG: Final Graph Structure:");
         var allNodes = graph.GetAllActionNodes();
         for (int i = 0; i < allNodes.Count; i++)
         {
             var node = allNodes[i];
-            Console.WriteLine($"   Node {i}: {node.InstanceName.ToString()}");
+            LoggingService.LogError($"   Node {i}: {node.InstanceName.ToString()}");
         }
 
         return graph;

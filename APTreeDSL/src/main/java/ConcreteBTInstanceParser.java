@@ -19,7 +19,7 @@ import java.util.Optional;
  */
 public class ConcreteBTInstanceParser {
 
-    private static final String DEFAULT_MODEL_PATH = "src/test/resources/valid/CRFConcrete/CRFConcreteInstances.bt";
+    private static final String DEFAULT_MODEL_PATH = "src/test/resources/valid/behavior_trees/CRFConcreteInstances.bt";
     
     public static void main(String[] args) {
         try {

@@ -1,3 +1,4 @@
+using BehaviorTreeMainProject.Log.Services;
 using Neo4j.Driver;
 using System;
 using System.Threading.Tasks;
@@ -110,7 +111,7 @@ public class EnvironmentGraph : IDisposable
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Neo4j connection test failed: {ex.Message}");
+            LoggingService.LogError($"Neo4j connection test failed: {ex.Message}");
             return false;
         }
     }

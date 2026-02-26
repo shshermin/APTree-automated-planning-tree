@@ -12,7 +12,7 @@
 
     robot -agent    
 
-    vacgripper -tool                               
+    vaccumgripper -tool                               
   )
  
   (:predicates
@@ -167,12 +167,27 @@
 ;robot nail an object
     ;works fine for now
       (:action nailingHL
-        :parameters (?obj - element ?p - positiononrail ?client - robot )
+        :parameters (?obj - plate ?p - positiononrail ?client - robot )
         :precondition (and 
         (vgempty ?client)
         (atplace ?obj ?p)
         (clear ?obj)
         (not (nailed ?obj))
+        )
+
+        :effect  
+        (nailed ?obj)              
+    )
+      
+          (:action nailingBeamHL
+        :parameters (?obj - beam ?p - positiononrail ?client - robot ?mod - module ?lay - layer)
+        :precondition (and 
+        (vgempty ?client)
+        (atplace ?obj ?p)
+        (clear ?obj)
+        (not (nailed ?obj))
+        (glued ?obj)
+        (allset ?lay ?mod)
         )
 
         :effect  

@@ -27,7 +27,7 @@ import dynamicbtflownode._ast.ASTFinalWorld;
 import dynamicbtflownode._ast.ASTGraphNode;
 import dynamicbtflownode._ast.ASTNodeGraph;
 import dynamicbtflownode._ast.ASTRelation;
-import planningservice._ast.ASTServicePDDLPlanner;
+import planningservice._ast.ASTServicePDDLPlanning;
 
 /**
  * BTInstanceJsonGenerator - Exports the full BT structure as JSON.
@@ -352,9 +352,9 @@ public class BTInstanceJsonGenerator {
       }
       sJson.put("type", serviceType);
 
-      // For ServicePDDLPlanner, extract planner reference
-      if (service instanceof ASTServicePDDLPlanner) {
-        ASTServicePDDLPlanner pddlService = (ASTServicePDDLPlanner) service;
+      // For ServicePDDLPlanning, extract planner reference
+      if (service instanceof ASTServicePDDLPlanning) {
+        ASTServicePDDLPlanning pddlService = (ASTServicePDDLPlanning) service;
         sJson.put("plannerRef", pddlService.getPlanner());
       }
 

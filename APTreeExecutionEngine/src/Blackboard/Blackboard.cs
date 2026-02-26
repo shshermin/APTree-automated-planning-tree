@@ -78,8 +78,7 @@ public class Blackboard<T> : IDisposable where T : class
     }
 
     /// <summary>
-    /// Parameterless constructor that skips the Neo4j EnvironmentGraph.
-    /// Use this when Neo4j is not needed.
+    /// Constructor without Neo4j connection. The blackboard will work without graph database support.
     /// </summary>
     public Blackboard()
     {
@@ -234,7 +233,7 @@ public class Blackboard<T> : IDisposable where T : class
         ElementValues[key] = value;
         // Ensure the element's NameKey matches its instance ID
         value.NameKey = key;  // This ensures the element keeps its instance ID
-        Console.WriteLine($"Successfully added {value.GetType().Name} to Blackboard with key: {key}");
+        LoggingService.LogError($"Successfully added {value.GetType().Name} to Blackboard with key: {key}");
         
         // Log new element instance created
         BlackboardTrackingLogger.LogNewInstance(key.ToString(), value.GetType().Name, "Blackboard", $"Element instance: {value.GetType().Name}");
@@ -536,9 +535,9 @@ public List<PActionNode> GetAllActionInstances()
             // First check if predicates have the same name
             if (existingPredicate.PredicateName == newPredicate.PredicateName)
             {
-                Console.WriteLine($"\nComparing predicates:");
-                Console.WriteLine($"New: {newPredicate.PredicateName}");
-                Console.WriteLine($"Existing: {existingPredicate.PredicateName}");
+                LoggingService.LogError($"\nComparing predicates:");
+                LoggingService.LogError($"New: {newPredicate.PredicateName}");
+                LoggingService.LogError($"Existing: {existingPredicate.PredicateName}");
                 
                 // Get properties of both predicates
                 var existingParams = existingPredicate.GetAllProperties();
@@ -555,7 +554,7 @@ public List<PActionNode> GetAllActionInstances()
                     // If parameter doesn't exist in existing predicate
                     if (!existingParams.ContainsKey(param.Key))
                     {
-                        Console.WriteLine($"Parameter {param.Key} not found in existing predicate");
+                        LoggingService.LogError($"Parameter {param.Key} not found in existing predicate");
                         allParamsMatch = false;
                         break;
                     }
@@ -564,9 +563,9 @@ public List<PActionNode> GetAllActionInstances()
                     var existingValue = existingParams[param.Key];
                     var newValue = param.Value;
 
-                    Console.WriteLine($"\nComparing parameter {param.Key}:");
-                    Console.WriteLine($"Existing value: {existingValue}");
-                    Console.WriteLine($"New value: {newValue}");
+                    LoggingService.LogError($"\nComparing parameter {param.Key}:");
+                    LoggingService.LogError($"Existing value: {existingValue}");
+                    LoggingService.LogError($"New value: {newValue}");
 
                     // Get the instance identifiers for comparison
                     var existingId = existingValue?.GetType().GetProperty("InstanceId")?.GetValue(existingValue)?.ToString()
@@ -574,12 +573,12 @@ public List<PActionNode> GetAllActionInstances()
                     var newId = newValue?.GetType().GetProperty("InstanceId")?.GetValue(newValue)?.ToString()
                         ?? newValue?.ToString();
 
-                    Console.WriteLine($"Existing ID: {existingId}");
-                    Console.WriteLine($"New ID: {newId}");
+                    LoggingService.LogError($"Existing ID: {existingId}");
+                    LoggingService.LogError($"New ID: {newId}");
 
                     if (existingId != newId)
                     {
-                        Console.WriteLine("IDs don't match");
+                        LoggingService.LogInfo("IDs don't match");
                         allParamsMatch = false;
                         break;
                     }
@@ -587,7 +586,7 @@ public List<PActionNode> GetAllActionInstances()
                 
                 if (allParamsMatch)
                 {
-                    Console.WriteLine("Found similar predicate!");
+                    LoggingService.LogInfo("Found similar predicate!");
                     return true;
                 }
             }
@@ -698,7 +697,7 @@ public List<PActionNode> GetAllActionInstances()
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Neo4j connection test failed: {ex.Message}");
+            LoggingService.LogError($"Neo4j connection test failed: {ex.Message}");
             return false;
         }
     }
@@ -779,7 +778,7 @@ public List<PActionNode> GetAllActionInstances()
             BlackboardTrackingLogger.LogNewInstance(key.ToString(), value.GetType().Name, "Blackboard", $"State instance: {value.GetType().Name}");
         }
         StateValues[key] = value;
-        Console.WriteLine($"Successfully added State to Blackboard with key: {key}");
+        LoggingService.LogError($"Successfully added State to Blackboard with key: {key}");
     }
 
     // Get and Set methods for NodeGraphs
@@ -795,7 +794,7 @@ public List<PActionNode> GetAllActionInstances()
     public void SetNodeGraph(FastName key, NodeGraph value)
     {
         NodeGraphValues[key] = value;
-        Console.WriteLine($"Successfully added NodeGraph to Blackboard with key: {key}");
+        LoggingService.LogError($"Successfully added NodeGraph to Blackboard with key: {key}");
         
         // Log new node graph instance created
         BlackboardTrackingLogger.LogNewInstance(key.ToString(), value.GetType().Name, "Blackboard", $"NodeGraph instance: {value.GetType().Name}");
@@ -823,7 +822,7 @@ public List<PActionNode> GetAllActionInstances()
     public void SetInjectedSubtree(FastName key, DynamicFlowNode value)
     {
         InjectedSubtreesValues[key] = value;
-        Console.WriteLine($"Successfully added injected subtree to Blackboard with key: {key}");
+        LoggingService.LogError($"Successfully added injected subtree to Blackboard with key: {key}");
         
         // Log new injected subtree instance created
         BlackboardTrackingLogger.LogNewInstance(key.ToString(), value.GetType().Name, "Blackboard", $"Injected subtree instance: {value.GetType().Name}");
@@ -844,7 +843,7 @@ public List<PActionNode> GetAllActionInstances()
     public void ClearInjectedSubtrees()
     {
         InjectedSubtreesValues.Clear();
-        Console.WriteLine("Cleared all injected subtrees from Blackboard");
+        LoggingService.LogInfo("Cleared all injected subtrees from Blackboard");
     }
      public List<Predicate> GetAllPredicates()
     {

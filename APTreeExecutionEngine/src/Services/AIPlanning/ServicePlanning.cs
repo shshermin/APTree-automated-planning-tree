@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using AIPlanning;
 using System.Collections.Generic;
 using BehaviorTreeMainProject.Services;
+using BehaviorTreeMainProject.Log;
 using BehaviorTreeMainProject.Log.Services;
 
 /// <summary>
@@ -54,10 +55,10 @@ public abstract class ServicePlanning : Service
     public DateTime StartTime { get; private set; }
     public DateTime PlannerEndTime { get; private set; } // Time when external planner finishes
     public DateTime EndTime { get; private set; } // Time when entire service finishes
-    public bool IsExecuting { get; private set; } = false;
-    public bool HasCompleted { get; private set; } = false;
-    public bool WasSuccessful { get; private set; } = false; // True if planning succeeded and plan was generated
-    public bool HasPlanGenerated { get; private set; } = false; // True if NodeGraph was successfully created
+    public bool IsExecuting { get; protected set; } = false;
+    public bool HasCompleted { get; protected set; } = false;
+    public bool WasSuccessful { get; protected set; } = false; // True if planning succeeded and plan was generated
+    public bool HasPlanGenerated { get; protected set; } = false; // True if NodeGraph was successfully created
     public string LastError { get; private set; } = null; // Last error message if planning failed
     public TimeSpan PlannerExecutionDuration => HasCompleted ? PlannerEndTime - StartTime : TimeSpan.Zero; // External planner time only
     public TimeSpan TotalExecutionDuration => HasCompleted ? EndTime - StartTime : TimeSpan.Zero; // Total service time
@@ -121,6 +122,11 @@ public abstract class ServicePlanning : Service
 
         LoggingService.LogInfo($"🚀 {GetType().Name}: Starting planning process at {StartTime:HH:mm:ss.fff}");
 
+        // Track this planner call
+        var hlActionName = (OwningFlowNode?.ParentNode as PActionNode)?.InstanceName.ToString() ?? OwningFlowNode?.GetNodeName() ?? "Unknown";
+        var problemFile = (planningRequest as PDDLPlanningRequest)?.ProblemFile ?? "Unknown";
+        var plannerCallId = PlannerCallLogger.LogCallStart(plannerType, hlActionName, problemFile);
+
         try
         {
             // Step 2: Send to external planner via communicator
@@ -144,6 +150,7 @@ public abstract class ServicePlanning : Service
                 LoggingService.LogInfo($"⏱️ {GetType().Name}: Total service time: {EndTime - StartTime:hh\\:mm\\:ss\\.fff}");
                 LoggingService.LogInfo($"📋 {GetType().Name}: Planning Status - Completed: {HasCompleted}, Successful: {WasSuccessful}, Plan Generated: {HasPlanGenerated}");
                 LoggingService.LogWarning($"🔄 {GetType().Name}: Planning failed - this node will fail. No retries will be attempted.");
+                PlannerCallLogger.LogCallFailed(plannerCallId, result.PlanningTimeSeconds, result.Error);
                 return false;
             }
 
@@ -163,6 +170,7 @@ public abstract class ServicePlanning : Service
                 LoggingService.LogInfo($"⏱️ {GetType().Name}: Execution time: {EndTime - StartTime:hh\\:mm\\:ss\\.fff}");
                 LoggingService.LogInfo($"📋 {GetType().Name}: Planning Status - Completed: {HasCompleted}, Successful: {WasSuccessful}, Plan Generated: {HasPlanGenerated}");
                 LoggingService.LogWarning($"🔄 {GetType().Name}: NodeGraph generation failed - this node will fail. No retries will be attempted.");
+                PlannerCallLogger.LogCallFailed(plannerCallId, result.PlanningTimeSeconds, "Failed to generate NodeGraph from planner result");
                 return false;
             }
 
@@ -225,6 +233,8 @@ public abstract class ServicePlanning : Service
             LoggingService.LogInfo($"📊 {GetType().Name}: Generated {generatedNodeGraph.GetAllActionNodes().Count} actions");
             LoggingService.LogInfo($"📋 {GetType().Name}: Planning Status - Completed: {HasCompleted}, Successful: {WasSuccessful}, Plan Generated: {HasPlanGenerated}");
 
+            PlannerCallLogger.LogCallEnd(plannerCallId, true, result.PlanningTimeSeconds, generatedNodeGraph.GetAllActionNodes().Count, result.PlanLength, result.PlannerUsed);
+
             return true;
         }
         catch (Exception ex)
@@ -240,6 +250,7 @@ public abstract class ServicePlanning : Service
             LoggingService.LogInfo($"⏱️ {GetType().Name}: Execution time: {EndTime - StartTime:hh\\:mm\\:ss\\.fff}");
             LoggingService.LogInfo($"📋 {GetType().Name}: Planning Status - Completed: {HasCompleted}, Successful: {WasSuccessful}, Plan Generated: {HasPlanGenerated}");
             LoggingService.LogWarning($"🔄 {GetType().Name}: Planning exception occurred - this node will fail. No retries will be attempted.");
+            PlannerCallLogger.LogCallFailed(plannerCallId, 0, ex.Message);
             return false;
         }
     }

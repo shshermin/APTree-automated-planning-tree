@@ -14,7 +14,7 @@ from datetime import datetime
 app = Flask(__name__)
 
 # Configuration - these will be overridden by request parameters
-DEFAULT_ENHSP_PATH = "/home/shermin/ENHSP-Public/enhsp.jar"  # Default path to ENHSP JAR file
+DEFAULT_ENHSP_PATH = "/home/ubuntu/ENHSP-Public/enhsp.jar"  # Default path to ENHSP JAR file
 
 # Get the directory where this script is located
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -23,6 +23,9 @@ DEFAULT_DOMAIN_FILE_PATH = os.path.join(SCRIPT_DIR, "Plannerinputs/static/Domain
 DEFAULT_PROBLEM_FILE_PATH = os.path.join(SCRIPT_DIR, "Plannerinputs/static/problemC1.pddl")  # Default path to problem file
 DEFAULT_TIMEOUT_SECONDS = 120
 DEFAULT_PLANNER = "ENHSP"  # Default planner to use
+
+# Docker container name for planutils-based planners (FF, LAMA-FIRST)
+DOCKER_CONTAINER_NAME = "planutils"
 
 # Supported planners
 SUPPORTED_PLANNERS = ["ENHSP", "FF", "LAMA-FIRST"]
@@ -59,6 +62,7 @@ def create_plan():
         timeout_seconds = data.get('timeoutSeconds', DEFAULT_TIMEOUT_SECONDS)
         max_plan_length = data.get('maxPlanLength', 20)
         planner_name = data.get('plannerName', DEFAULT_PLANNER).upper()  # New: planner selection
+        enhsp_config = data.get('enhspConfig', None)  # Optional ENHSP -planner config (e.g. 'opt-hmax')
         
         # Legacy format: use planner_config values if not specified in new format
         planner_config = data.get('plannerConfig', {})
@@ -81,6 +85,15 @@ def create_plan():
             domain_file_path = os.path.join(SCRIPT_DIR, domain_file_path)
         if problem_file_path.startswith("Plannerinputs/"):
             problem_file_path = os.path.join(SCRIPT_DIR, problem_file_path)
+
+        # If the C# side sent the file content inline, save it locally so the
+        # planner can read it (needed when the service runs on a remote VM).
+        problem_file_content = data.get('problemFileContent')
+        if problem_file_content:
+            os.makedirs(os.path.dirname(problem_file_path), exist_ok=True)
+            with open(problem_file_path, 'w', encoding='utf-8') as f:
+                f.write(problem_file_content)
+            print(f"✅ Saved inline problem file content to: {problem_file_path}")
         
         # Log extracted properties
         print(f"Extracted PDDL properties:")
@@ -154,7 +167,7 @@ def create_plan():
                     }
                 }), 500
             
-            plan_result = call_enhsp(domain_file, problem_file, planner_path, timeout_seconds)
+            plan_result = call_enhsp(domain_file, problem_file, planner_path, timeout_seconds, enhsp_config)
         elif planner_name == "FF":
             plan_result = call_ff(domain_file, problem_file, timeout_seconds)
         elif planner_name == "LAMA-FIRST":
@@ -198,16 +211,18 @@ def create_plan():
         }), 500
 
 
-def call_enhsp(domain_file, problem_file, planner_path, timeout_seconds):
+def call_enhsp(domain_file, problem_file, planner_path, timeout_seconds, enhsp_config=None):
     """Call ENHSP planner"""
     try:
         # Build ENHSP command (Java application)
+        planner_cfg = enhsp_config if enhsp_config else 'pt-blind'
         cmd = [
             'java', '-jar', planner_path,
             '-o', domain_file,
             '-f', problem_file,
-            '-planner', 'pt-blind'  # Use pt-blind configuration
+            '-planner', planner_cfg
         ]
+        print(f"ENHSP config: {planner_cfg}")
         
         print(f"Calling ENHSP with command: {' '.join(cmd)}")
         
@@ -238,7 +253,7 @@ def call_enhsp(domain_file, problem_file, planner_path, timeout_seconds):
 def call_ff(domain_file, problem_file, timeout_seconds):
     """Call FF planner using existing Docker container"""
     try:
-        print("🔍 Using existing Docker container: stupefied_hellman")
+        print(f"🔍 Using existing Docker container: {DOCKER_CONTAINER_NAME}")
         
         # Get the domain and problem file names (without path)
         domain_filename = os.path.basename(domain_file)
@@ -262,7 +277,7 @@ def call_ff(domain_file, problem_file, timeout_seconds):
                 with open(src_path, 'r') as f:
                     content = f.read()
                 pipe_result = subprocess.run(
-                    ['docker', 'exec', '-i', 'stupefied_hellman',
+                    ['docker', 'exec', '-i', DOCKER_CONTAINER_NAME,
                      'bash', '-c', f'cat > /root/{dest_name}'],
                     input=content, capture_output=True, text=True, timeout=30
                 )
@@ -275,7 +290,7 @@ def call_ff(domain_file, problem_file, timeout_seconds):
 
         # Execute the FF planning command in the Docker container
         ff_cmd = [
-            'docker', 'exec', 'stupefied_hellman',
+            'docker', 'exec', DOCKER_CONTAINER_NAME,
             'bash', '-c',
             f'planutils activate && planutils run ff {domain_filename} {problem_filename}'
         ]
@@ -312,7 +327,7 @@ def call_ff(domain_file, problem_file, timeout_seconds):
 def call_lama_first(domain_file, problem_file, timeout_seconds):
     """Call LAMA-first planner using existing Docker container"""
     try:
-        print("🔍 Using existing Docker container: stupefied_hellman")
+        print(f"🔍 Using existing Docker container: {DOCKER_CONTAINER_NAME}")
         
         # Get the domain and problem file names (without path)
         domain_filename = os.path.basename(domain_file)
@@ -336,7 +351,7 @@ def call_lama_first(domain_file, problem_file, timeout_seconds):
                 with open(src_path, 'r') as f:
                     content = f.read()
                 pipe_result = subprocess.run(
-                    ['docker', 'exec', '-i', 'stupefied_hellman',
+                    ['docker', 'exec', '-i', DOCKER_CONTAINER_NAME,
                      'bash', '-c', f'cat > /root/{dest_name}'],
                     input=content, capture_output=True, text=True, timeout=30
                 )
@@ -347,11 +362,13 @@ def call_lama_first(domain_file, problem_file, timeout_seconds):
             except Exception as copy_err:
                 print(f"⚠️ Warning: Error piping {label} file: {copy_err}")
 
-        # Execute the LAMA-first planning command in the Docker container
+        # Execute the LAMA-first planning command in the Docker container.
+        # LAMA (Fast Downward) writes the plan to a file (sas_plan) instead of
+        # stdout, so we run the planner AND then cat the plan file in one command.
         lama_first_cmd = [
-            'docker', 'exec', 'stupefied_hellman',
+            'docker', 'exec', DOCKER_CONTAINER_NAME,
             'bash', '-c',
-            f'planutils activate && planutils run lama-first {domain_filename} {problem_filename}'
+            f'planutils activate && planutils run lama-first {domain_filename} {problem_filename} && cat sas_plan'
         ]
         
         print(f"Calling LAMA-first with command: {' '.join(lama_first_cmd)}")

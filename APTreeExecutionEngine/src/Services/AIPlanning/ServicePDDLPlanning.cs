@@ -51,8 +51,59 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
                 planningStartTime = DateTime.Now;
                 planningStarted = true;
             }
-            
+
+            // Before each planning attempt, regenerate the PDDL problem file
+            // from the current blackboard state so re-plans use fresh data.
+            // Only regenerate if planning hasn't completed yet (the base guard
+            // in ServicePlanning.OnEvaluate will skip if HasCompleted is true).
+            if (!HasCompleted && !IsExecuting)
+            {
+                var parentAction = (OwningFlowNode as DynamicFlowNode)?.GetParentAction();
+                if (parentAction != null && blackboard != null)
+                {
+                    // Goal-satisfaction check: skip planning if all goals are already met
+                    var goalPredicates = parentAction.GetActionEffects();
+                    var currentState = blackboard.GetTruePredicates();
+
+                    bool allGoalsMet = goalPredicates.Count > 0 && goalPredicates.All(goal =>
+                        currentState.Any(init => init.PredicateName == goal.PredicateName
+                                              && init.not == goal.not));
+
+                    if (allGoalsMet)
+                    {
+                        LoggingService.LogInfo($"⏭️ ServicePDDLPlanning: All {goalPredicates.Count} goal predicates already satisfied in blackboard — skipping planning for {parentAction.InstanceName}");
+                        // Mark as completed successfully without calling the planner
+                        HasCompleted = true;
+                        WasSuccessful = true;
+                        HasPlanGenerated = false; // No plan needed
+                        return true;
+                    }
+
+                    // Regenerate the problem file with the current blackboard state
+                    string newProblemFile = GenerateDynamicPDDLProblem(parentAction, blackboard);
+                    PlanningRequest.ProblemFile = newProblemFile;
+
+                    // Send file content inline so the remote VM service doesn't need
+                    // to read a path that only exists on this (Windows) machine.
+                    string localPath = $"python_service/Plannerinputs/generated/{Path.GetFileName(newProblemFile)}";
+                    if (File.Exists(localPath))
+                        PlanningRequest.ProblemFileContent = File.ReadAllText(localPath, Encoding.UTF8);
+
+                    LoggingService.LogInfo($"🔄 ServicePDDLPlanning: Regenerated problem file for re-plan: {newProblemFile}");
+                }
+            }
+
             return base.OnEvaluate(InDeltaTime);
+        }
+
+        /// <summary>
+        /// Reset the planning service state, including PDDL-specific tracking.
+        /// Called during cross-cassette reset to allow re-planning.
+        /// </summary>
+        public new void ResetPlanningService()
+        {
+            planningStarted = false;
+            base.ResetPlanningService();
         }
 
         protected override NodeGraph GenerateNodeGraphFromResult(PlanningResult result)
@@ -94,10 +145,21 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
                         LoggingService.LogSuccess($"✅ ServicePDDLPlanning: Execution Mode applied: {ExecutionMode}");
 
                         // Write the generated DSL plan back into APTreeLivematFinal.bt
-                        var cassetteName = OwningFlowNode?.GetNodeName();
-                        if (!string.IsNullOrEmpty(cassetteName))
+                        var flowNodeName = OwningFlowNode?.GetNodeName();
+                        if (!string.IsNullOrEmpty(flowNodeName))
                         {
-                            APTreeModelWriter.UpdateCassetteNodeGraph(cassetteName, dslPlanString);
+                            APTreeModelWriter.UpdateCassetteNodeGraph(flowNodeName, dslPlanString);
+
+                            // Patch the Problem: field now that the dynamic problem file is known.
+                            // Only applies to subtree FlowNodes (named "<config>_DynamicFlow_<instance>").
+                            const string dynMarker = "_DynamicFlow_";
+                            if (flowNodeName.Contains(dynMarker) && !string.IsNullOrWhiteSpace(PlanningRequest?.ProblemFile))
+                            {
+                                var instanceName = flowNodeName.Substring(flowNodeName.IndexOf(dynMarker) + dynMarker.Length);
+                                var plannerServiceName = $"subtreeSrv_{instanceName}";
+                                var problemFileName = System.IO.Path.GetFileName(PlanningRequest.ProblemFile);
+                                APTreeModelWriter.UpdateServicePlanningProblem(plannerServiceName, problemFileName);
+                            }
                         }
                     }
                     else

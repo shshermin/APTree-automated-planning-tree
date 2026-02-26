@@ -1,3 +1,4 @@
+﻿﻿using BehaviorTreeMainProject.Log.Services;
 public static class BlackboardExtensions
 {
     public static bool HasElement<T>(this Blackboard<T> blackboard, FastName key) where T : class
@@ -158,7 +159,7 @@ public static bool RegisterEntityIfNotExists<T>(this Blackboard<T> blackboard, C
 
     if (alreadyExists)
     {
-        Console.WriteLine($"CustomProperty of type {entity.GetType().Name} with key {key} already exists in blackboard");
+        LoggingService.LogInfo($"CustomProperty of type {entity.GetType().Name} with key {key} already exists in blackboard");
         return false;
     }
 
@@ -167,27 +168,27 @@ public static bool RegisterEntityIfNotExists<T>(this Blackboard<T> blackboard, C
     {
         case Element element:
             blackboard.SetElement(key, element);
-            Console.WriteLine($"Registered Element: {key}");
+            LoggingService.LogInfo($"Registered Element: {key}");
             break;
         case Agent agent:
             blackboard.SetAgent(key, agent);
-            Console.WriteLine($"Registered Agent: {key}");
+            LoggingService.LogInfo($"Registered Agent: {key}");
             break;
         case Location location:
             blackboard.SetLocation(key, location);
-            Console.WriteLine($"Registered Location: {key}");
+            LoggingService.LogInfo($"Registered Location: {key}");
             break;
         case Layer layer:
             blackboard.SetLayer(key, layer);
-            Console.WriteLine($"Registered Layer: {key}");
+            LoggingService.LogInfo($"Registered Layer: {key}");
             break;
         case Module module:
             blackboard.SetModule(key, module);
-            Console.WriteLine($"Registered Module: {key}");
+            LoggingService.LogInfo($"Registered Module: {key}");
             break;
         case Tool tool:
             blackboard.SetTool(key, tool);
-            Console.WriteLine($"Registered Tool: {key}");
+            LoggingService.LogInfo($"Registered Tool: {key}");
             break;
         default:
             throw new ArgumentException($"Unsupported entity type: {entity.GetType().Name}");

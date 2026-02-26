@@ -1,56 +1,37 @@
 
 grammar CRFTypesDef extends BehaviorTree, de.monticore.types.MCBasicTypes {
-
-//////////property definition
 // Parameter Type definition
   // 1. Root container
  World = (PropertyTypeDefinition | Property | PredicateTypeDefinition | ActionTypeDefinition)*;
 
-// 2. The Type System (The "Types") including all the allowed types
+//  All the allowed custom super types
 
-interface CustomProperty = name:Name;
+    interface CustomProperty = name:Name; 
+    abstract symbol Layer    implements CustomProperty = name:Name;
+    abstract symbol Module   implements CustomProperty = name:Name;
+    abstract symbol Text     implements CustomProperty = name:Name; 
+    abstract symbol Location implements CustomProperty = name:Name;
+    abstract symbol Element  implements CustomProperty = name:Name;
+    abstract symbol Tool     implements CustomProperty = name:Name;
+    abstract symbol Agent    implements CustomProperty = name:Name;
 
-  
- abstract symbol Layer    implements CustomProperty = name:Name;
-abstract  symbol Module   implements CustomProperty = name:Name ;
- abstract symbol Text     implements CustomProperty = name:Name;
-  
-abstract symbol  Location implements CustomProperty = name:Name;
-abstract symbol  Element  implements CustomProperty = name:Name ;
-abstract symbol  Tool     implements CustomProperty = name:Name  ;
-abstract symbol  Agent    implements CustomProperty = name:Name ;
+// definition of a property - accepts any Name as type 
+    Property = name:Name ":" type:BasicType isList:["+"]? ;
+    PropertyTypeDefinition = superType:Name  name:Name  ("{" (Property)* "}")?;
 
-  // definition of a property - accepts any Name as type (validated by CoCos)
-     Property = name:Name ":" type:BasicType isList:["+"]? ;
- 
-  // 5. The Dynamic Definition rule
-     PropertyTypeDefinition = superType:Name  name:Name  ("{" (Property)* "}")?;
-
-
-//////// predicate definition
-
-// Predicate type definition
-      PredicateTypeDefinition = "Predicate" name:Name  "{" (Property)* "}";
-//predicateType
-////???????????????????? how can I use "!" in the concrete syntax?
-      abstract Predicate = not:["!"]?;
-
-// predicate Instances
-//////???????????? this is a dummy predicate because the Grammar does not allow abstract nonterminals without implementation if it is not a component grammar
-      Dummy extends Predicate = "Dummy" name:Name;
+// predicate definition
+    abstract Predicate = not:["!"]?;
+    PredicateTypeDefinition = "Predicate" name:Name  "{" (Property)* "}";
 
 // Action type definition
-
-abstract symbol PActionNode extends ActionNode = 
+    abstract symbol PActionNode extends ActionNode = 
     name:Name 
     actLevel: ActionLevel
     ("@" subtreeAnnotation:Name@BehaviorTree)? 
     ("{" (Decorator | Service)* "}")?
     ;
 
-
-enum ActionLevel = "HighLevel" | "MidLevel" | "LowLevel";
-
+    enum ActionLevel = "HighLevel" | "MidLevel" | "LowLevel";
     ActionTypeDefinition = 
     "Define" "Action" name:Name "{"
         "ActLevel:" actLevel:ActionLevel
@@ -59,11 +40,13 @@ enum ActionLevel = "HighLevel" | "MidLevel" | "LowLevel";
         "Effects" "{" effects:PredicateRef* "}"
     "}";
 
-// Simple predicate reference with Name arguments (comma-separated)
+// predicate reference with Name arguments (comma-separated)
 PredicateRef = "!"? name:Name  "(" (args:Name ("," args:Name)*)? ")";
 
 
  PlaceTimber extends PActionNode = "placetimber";
+ // predicate Instances
+    Dummy extends Predicate = "Dummy" name:Name;
 
 
 
