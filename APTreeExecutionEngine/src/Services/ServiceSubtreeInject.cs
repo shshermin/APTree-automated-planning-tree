@@ -189,8 +189,9 @@ namespace BehaviorTreeMainProject
                 var actionType = pendingAction.actionType.ToString();
                 LogMessage($"🔧 ServiceSubtreeInject: Processing injection for {actionType}");
                 
-                // Always use FF_Default planner configuration
-                string configName = "FF_Default";
+                // Cassettes 3 & 4 (index 2 & 3) use LAMA-FIRST; cassettes 1 & 2 use FF
+                int cassetteIndex = DecoratorDynamicPlanningComplete.FindCassetteIndexForAction(OwningTree.root, pendingAction);
+                string configName = (cassetteIndex >= 2) ? "LAMA-FIRST_Default" : "FF_Default";
                 
                 // Create instance name from action
                 string instanceName = pendingAction.InstanceName.ToString();
