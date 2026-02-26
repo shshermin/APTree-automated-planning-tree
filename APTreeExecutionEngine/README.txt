@@ -44,7 +44,7 @@ sudo systemctl start docker
 sudo dockerd &
 
 # start the docker
-docker start  stupefied_hellman
+docker start  planutils
 
 planutils activate
 

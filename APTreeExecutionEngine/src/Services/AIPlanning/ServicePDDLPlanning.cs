@@ -82,6 +82,13 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
                     // Regenerate the problem file with the current blackboard state
                     string newProblemFile = GenerateDynamicPDDLProblem(parentAction, blackboard);
                     PlanningRequest.ProblemFile = newProblemFile;
+
+                    // Send file content inline so the remote VM service doesn't need
+                    // to read a path that only exists on this (Windows) machine.
+                    string localPath = $"python_service/Plannerinputs/generated/{Path.GetFileName(newProblemFile)}";
+                    if (File.Exists(localPath))
+                        PlanningRequest.ProblemFileContent = File.ReadAllText(localPath, Encoding.UTF8);
+
                     LoggingService.LogInfo($"🔄 ServicePDDLPlanning: Regenerated problem file for re-plan: {newProblemFile}");
                 }
             }

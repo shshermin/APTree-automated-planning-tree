@@ -1,4 +1,4 @@
-(define (problem pickuphl)
+﻿(define (problem pickuphl)
   (:domain fit)
   (:objects 
     fp1 - firstposition
@@ -86,15 +86,13 @@ lay2 - stack
 lay3 - stack 
   )
   (:init  
-    (atplace lp1 fp1)
-(atplace tp1 fp5)
+    (atplace tp1 fp5)
 (atplace b1 fp2)
 (atplace b2 fp3)
 (atplace b3 fp4)
 (atplace b4 fp6)
 (atplace b5 fp7)
 (atplace b6 fp8)
-(atplace lp2 fp9)
 (atplace tp2 fp13)
 (atplace b7 fp10)
 (atplace b8 fp11)
@@ -150,7 +148,6 @@ lay3 - stack
 (clear b22)
 (clear b23)
 (clear b24)
-(attool vg1 ep1)
 (attool gg1 ep2)
 (attool ng1 ep3)
 (atagent r1 pr2)
@@ -211,10 +208,16 @@ lay3 - stack
 (belongstomodule b24 m4)
 (belongstomodule lp4 m4)
 (belongstomodule tp4 m4)
-(positionfree pr1)
-(positionfree pr2)
 (positionfree pr3)
 (positionfree pr4)
+(hastool r1 vg1)
+(robotequipped r1)
+(positionfree ep1)
+(activetool vg1)
+(positionfree fp1)
+(atplace lp1 pr1)
+(positionfree fp9)
+(atplace lp2 pr2)
   )
   (:goal 
     (and

@@ -5,6 +5,7 @@ namespace AIPlanning
         public string PlanningType => "PDDL";
         public string DomainFile { get; set; }
         public string ProblemFile { get; set; }
+        public string ProblemFileContent { get; set; }  // Inline content so the VM doesn't need to read a local path
         public string PlannerPath { get; set; }
         public string PlannerName { get; set; } = "ENHSP";  // New: planner selection
         public int TimeoutSeconds { get; set; } = 30;

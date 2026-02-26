@@ -1,4 +1,4 @@
-(define (problem pickuphl)
+﻿(define (problem pickuphl)
   (:domain fit)
   (:objects 
     fp1 - firstposition

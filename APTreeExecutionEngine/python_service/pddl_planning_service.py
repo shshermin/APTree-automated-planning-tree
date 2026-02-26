@@ -24,6 +24,9 @@ DEFAULT_PROBLEM_FILE_PATH = os.path.join(SCRIPT_DIR, "Plannerinputs/static/probl
 DEFAULT_TIMEOUT_SECONDS = 120
 DEFAULT_PLANNER = "ENHSP"  # Default planner to use
 
+# Docker container name for planutils-based planners (FF, LAMA-FIRST)
+DOCKER_CONTAINER_NAME = "planutils"
+
 # Supported planners
 SUPPORTED_PLANNERS = ["ENHSP", "FF", "LAMA-FIRST"]
 
@@ -81,6 +84,15 @@ def create_plan():
             domain_file_path = os.path.join(SCRIPT_DIR, domain_file_path)
         if problem_file_path.startswith("Plannerinputs/"):
             problem_file_path = os.path.join(SCRIPT_DIR, problem_file_path)
+
+        # If the C# side sent the file content inline, save it locally so the
+        # planner can read it (needed when the service runs on a remote VM).
+        problem_file_content = data.get('problemFileContent')
+        if problem_file_content:
+            os.makedirs(os.path.dirname(problem_file_path), exist_ok=True)
+            with open(problem_file_path, 'w', encoding='utf-8') as f:
+                f.write(problem_file_content)
+            print(f"✅ Saved inline problem file content to: {problem_file_path}")
         
         # Log extracted properties
         print(f"Extracted PDDL properties:")
@@ -238,7 +250,7 @@ def call_enhsp(domain_file, problem_file, planner_path, timeout_seconds):
 def call_ff(domain_file, problem_file, timeout_seconds):
     """Call FF planner using existing Docker container"""
     try:
-        print("🔍 Using existing Docker container: stupefied_hellman")
+        print(f"🔍 Using existing Docker container: {DOCKER_CONTAINER_NAME}")
         
         # Get the domain and problem file names (without path)
         domain_filename = os.path.basename(domain_file)
@@ -262,7 +274,7 @@ def call_ff(domain_file, problem_file, timeout_seconds):
                 with open(src_path, 'r') as f:
                     content = f.read()
                 pipe_result = subprocess.run(
-                    ['docker', 'exec', '-i', 'stupefied_hellman',
+                    ['docker', 'exec', '-i', DOCKER_CONTAINER_NAME,
                      'bash', '-c', f'cat > /root/{dest_name}'],
                     input=content, capture_output=True, text=True, timeout=30
                 )
@@ -275,7 +287,7 @@ def call_ff(domain_file, problem_file, timeout_seconds):
 
         # Execute the FF planning command in the Docker container
         ff_cmd = [
-            'docker', 'exec', 'stupefied_hellman',
+            'docker', 'exec', DOCKER_CONTAINER_NAME,
             'bash', '-c',
             f'planutils activate && planutils run ff {domain_filename} {problem_filename}'
         ]
@@ -312,7 +324,7 @@ def call_ff(domain_file, problem_file, timeout_seconds):
 def call_lama_first(domain_file, problem_file, timeout_seconds):
     """Call LAMA-first planner using existing Docker container"""
     try:
-        print("🔍 Using existing Docker container: stupefied_hellman")
+        print(f"🔍 Using existing Docker container: {DOCKER_CONTAINER_NAME}")
         
         # Get the domain and problem file names (without path)
         domain_filename = os.path.basename(domain_file)
@@ -336,7 +348,7 @@ def call_lama_first(domain_file, problem_file, timeout_seconds):
                 with open(src_path, 'r') as f:
                     content = f.read()
                 pipe_result = subprocess.run(
-                    ['docker', 'exec', '-i', 'stupefied_hellman',
+                    ['docker', 'exec', '-i', DOCKER_CONTAINER_NAME,
                      'bash', '-c', f'cat > /root/{dest_name}'],
                     input=content, capture_output=True, text=True, timeout=30
                 )
@@ -351,7 +363,7 @@ def call_lama_first(domain_file, problem_file, timeout_seconds):
         # LAMA (Fast Downward) writes the plan to a file (sas_plan) instead of
         # stdout, so we run the planner AND then cat the plan file in one command.
         lama_first_cmd = [
-            'docker', 'exec', 'stupefied_hellman',
+            'docker', 'exec', DOCKER_CONTAINER_NAME,
             'bash', '-c',
             f'planutils activate && planutils run lama-first {domain_filename} {problem_filename} && cat sas_plan'
         ]

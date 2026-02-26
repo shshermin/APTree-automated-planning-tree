@@ -1,18 +1,23 @@
-# Python Planning Service (VM Guide)
+# Python Planning Service (BW Cloud VM Guide)
 
 First, you need an SSH key to access the VM.
 
 ## 1) Connect to the VM
 
 ```bash
-ssh -i /path/to/key.pem ubuntu@<vm-ip>
+ssh -i ~/.ssh/id_ed25519 ubuntu@193.196.52.17
 ```
 
-Example:
+## 1b) SSH Tunnel (for C# execution engine)
+
+The C# execution engine connects to `http://localhost:5000`. To forward that
+port from your local machine to the VM, open a separate terminal and run:
 
 ```bash
-ssh -i /path/to/key.pem ubuntu@193.196.52.17
+ssh -L 5000:localhost:5000 -i ~/.ssh/id_ed25519 ubuntu@193.196.52.17
 ```
+
+Keep this terminal open while running the execution engine.
 
 ## 2) Project directory on the VM
 
@@ -65,7 +70,7 @@ The JAR must be present. We use:
 If you have it locally, copy it to the VM:
 
 ```bash
-scp -i /path/to/key.pem /path/to/enhsp.jar ubuntu@<vm-ip>:/home/ubuntu/ENHSP-Public/enhsp.jar
+scp -i ~/.ssh/id_ed25519 /path/to/enhsp.jar ubuntu@193.196.52.17:/home/ubuntu/ENHSP-Public/enhsp.jar
 ```
 
 ## 6) Default ENHSP path in the service
