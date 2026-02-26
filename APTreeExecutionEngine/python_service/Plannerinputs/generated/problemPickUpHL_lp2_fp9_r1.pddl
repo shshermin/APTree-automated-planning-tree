@@ -86,8 +86,7 @@ lay2 - stack
 lay3 - stack 
   )
   (:init  
-    (atplace lp1 fp1)
-(atplace tp1 fp5)
+    (atplace tp1 fp5)
 (atplace b1 fp2)
 (atplace b2 fp3)
 (atplace b3 fp4)
@@ -150,10 +149,9 @@ lay3 - stack
 (clear b22)
 (clear b23)
 (clear b24)
-(attool vg1 ep1)
 (attool gg1 ep2)
 (attool ng1 ep3)
-(atagent r1 pr2)
+(atagent r1 pr1)
 (vgempty r1)
 (belongstolayer b1 lay1)
 (belongstolayer b2 lay1)
@@ -211,10 +209,15 @@ lay3 - stack
 (belongstomodule b24 m4)
 (belongstomodule lp4 m4)
 (belongstomodule tp4 m4)
-(positionfree pr1)
 (positionfree pr2)
 (positionfree pr3)
 (positionfree pr4)
+(hastool r1 vg1)
+(robotequipped r1)
+(positionfree ep1)
+(activetool vg1)
+(positionfree fp1)
+(atplace lp1 pr1)
   )
   (:goal 
     (and
