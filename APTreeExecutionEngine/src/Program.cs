@@ -1,7 +1,7 @@
 ﻿using BehaviorTreeMainProject;
 
 // Run the behavior tree test (disabled — uncomment to run before server starts)
-// await FullTreeTest.RunTest();
+ await FullTreeTest.RunTest();
 
 // To run the JSON BT load test:
 // await JsonBTLoadTest.RunTest();
