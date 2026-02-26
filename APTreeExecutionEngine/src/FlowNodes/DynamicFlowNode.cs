@@ -79,7 +79,7 @@ public class DynamicFlowNode : FlowNode
         // FairBranchProgress) can proceed. Non-chosen cassettes are blocked here,
         // which prevents their children's ServiceSubtreeInject from firing ML planning.
         // During planning phase the gate allows all through (ChosenExecutingBranch is null).
-        AddDecorator(new BTDecoratorExclusiveBranchGate(this));
+        AddDecorator(new DecoratorExclusiveBranchGate(this));
         LoggingService.LogInfo($"🔧 DynamicFlowNode: Added ExclusiveBranchGate decorator to {nodeName.ToString()}");
         
     }

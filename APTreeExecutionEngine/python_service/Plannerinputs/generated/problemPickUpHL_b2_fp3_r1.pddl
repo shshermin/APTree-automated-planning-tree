@@ -229,7 +229,7 @@ lay3 - stack
 (not (atplace b2 fp3))
 (not (clear b2))
 (positionfree fp3)
-(robotequipped r1)
+(not (vgempty r1))
     ) 
   )
 )

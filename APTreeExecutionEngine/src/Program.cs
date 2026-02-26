@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 using BehaviorTreeMainProject;
 
 // Run the behavior tree test (disabled — uncomment to run before server starts)
-// await FullTreeTest.RunTest();
+ await FullTreeTest.RunTest();
 
 var builder = WebApplication.CreateBuilder(args);
 
