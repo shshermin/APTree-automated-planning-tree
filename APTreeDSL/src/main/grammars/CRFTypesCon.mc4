@@ -59,6 +59,9 @@ astrule GluingPlateHL = method public crftypesdef._ast.ASTActionLevel getActLeve
 GluingBeamHL extends PActionNode = "Action" "GluingBeamHL" name:Name "(" obj:Name@Beam pos:Name@PositionOnRail client:Name@Robot mod:Name@Cassette lay:Name@Stack ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
 astrule GluingBeamHL = method public crftypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=crftypesdef._ast.ASTActionLevel.HIGHLEVEL; } return actLevel; } ;
 
+NailingBeamHL extends PActionNode = "Action" "NailingBeamHL" name:Name "(" obj:Name@Beam pos:Name@PositionOnRail client:Name@Robot mod:Name@Cassette lay:Name@Stack ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
+astrule NailingBeamHL = method public crftypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=crftypesdef._ast.ASTActionLevel.HIGHLEVEL; } return actLevel; } ;
+
 NailingHL extends PActionNode = "Action" "NailingHL" name:Name "(" obj:Name@Element pos:Name@PositionOnRail client:Name@Robot ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
 astrule NailingHL = method public crftypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=crftypesdef._ast.ASTActionLevel.HIGHLEVEL; } return actLevel; } ;
 
@@ -94,6 +97,8 @@ astrule StackML = method public crftypesdef._ast.ASTActionLevel getActLevel() { 
 
 StackOnMultipleML extends PActionNode = "Action" "StackOnMultipleML" name:Name "(" plate:Name@Plate client:Name@Robot pos:Name@PositionOnRail vg:Name@VacGripper mod:Name@Cassette lay:Name@Stack ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
 astrule StackOnMultipleML = method public crftypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=crftypesdef._ast.ASTActionLevel.MIDLEVEL; } return actLevel; } ;
+
+
 // === END GENERATED ACTION RULES ===
 
 

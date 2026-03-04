@@ -157,7 +157,7 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
                             {
                                 var instanceName = flowNodeName.Substring(flowNodeName.IndexOf(dynMarker) + dynMarker.Length);
                                 var plannerServiceName = $"subtreeSrv_{instanceName}";
-                                var problemFileName = System.IO.Path.GetFileName(PlanningRequest.ProblemFile);
+                                var problemFileName = System.IO.Path.GetFileNameWithoutExtension(PlanningRequest.ProblemFile);
                                 APTreeModelWriter.UpdateServicePlanningProblem(plannerServiceName, problemFileName);
                             }
                         }

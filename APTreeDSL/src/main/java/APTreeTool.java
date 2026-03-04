@@ -16,16 +16,11 @@ import CoCos.DynamicBTFlowNode.PlanningServiceActionsCoverageCoCo;
 import CoCos.DynamicBTFlowNode.SharedResourceConflictCoCo;
 import CoCos.DynamicBTFlowNode.UniquenessOfNames;
 import behaviortree._ast.ASTActionNode;
-import behaviortree._cocos.BehaviorTreeASTDecoratorCoCo;
-import behaviortree._cocos.BehaviorTreeASTServiceCoCo;
 import crftypescon._ast.ASTPickUpHL;
 import crftypescon._ast.ASTPlaceHL;
 import crftypescon._ast.ASTWorld;
-import crftypescon._cocos.CRFTypesConASTPickUpHLCoCo;
-import crftypescon._cocos.CRFTypesConASTPlaceHLCoCo;
 import crftypescon._parser.CRFTypesConParser;
 import crftypescon._visitor.CRFTypesConVisitor2;
-import crftypesdef._cocos.CRFTypesDefASTPActionNodeCoCo;
 import crftypesdef._symboltable.ElementSymbol;
 import de.se_rwth.commons.logging.Log;
 import dynamicbtflownode.DynamicBTFlowNodeMill;
@@ -33,7 +28,6 @@ import dynamicbtflownode._ast.ASTAPTree;
 import dynamicbtflownode._ast.ASTDynamicBTFlowNodeNode;
 import dynamicbtflownode._ast.ASTFinalWorld;
 import dynamicbtflownode._ast.ASTGraphNode;
-import dynamicbtflownode._cocos.DynamicBTFlowNodeASTGraphNodeCoCo;
 import dynamicbtflownode._cocos.DynamicBTFlowNodeCoCoChecker;
 import dynamicbtflownode._symboltable.IDynamicBTFlowNodeArtifactScope;
 import dynamicbtflownode._symboltable.IDynamicBTFlowNodeGlobalScope;
@@ -70,7 +64,7 @@ public class APTreeTool {
     
     APTreeTool tool = new APTreeTool();
     // If an argument is given, use it as a file; otherwise, default to valid/behavior_trees
-    String filePath = args.length > 0 ? args[0] : "src/test/resources/valid/behavior_trees/APTreeLiveMat.bt";
+    String filePath = args.length > 0 ? args[0] : "src/test/resources/valid/behavior_trees/APTreeLivematFinal.bt";
     tool.run(filePath);
   }
 
