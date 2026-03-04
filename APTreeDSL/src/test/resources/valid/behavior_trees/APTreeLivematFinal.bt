@@ -1,5 +1,3 @@
-﻿
-
 BehaviorTree LiveMat {
     Root FlowNode Main {
         All
