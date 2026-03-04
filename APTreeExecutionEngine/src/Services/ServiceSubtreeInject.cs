@@ -427,8 +427,12 @@ namespace BehaviorTreeMainProject
                 var flowNodeName = $"{config.Name}_DynamicFlow_{instanceName}";
                 var plannerServiceName = $"subtreeSrv_{instanceName}";
 
+<<<<<<< HEAD
                 // Extract just the filename from the full paths, without .pddl extension
                 // (DSL model uses plain names like "DomainMLTruss", not "DomainMLTruss.pddl")
+=======
+                // Extract just the filename (without .pddl) from the full paths (e.g. "Plannerinputs/static/DomainML.pddl" -> "DomainML")
+>>>>>>> e2c4a07 (clean up)
                 string domainFilePath = config.PlannerParameters.TryGetValue("domainFile", out var dfObj) ? dfObj?.ToString() : null;
                 string domainFileName = string.IsNullOrWhiteSpace(domainFilePath)
                     ? "DomainML"

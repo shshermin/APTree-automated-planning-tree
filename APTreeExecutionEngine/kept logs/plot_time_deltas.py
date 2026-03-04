@@ -102,14 +102,12 @@ def main():
 
     # --- Bucket averages ---
     def bucket_averages(deltas, label):
-        buckets = {"< 2000 ms": [], "2000–6000 ms": [], "> 6000 ms": []}
+        buckets = {"< 500 ms": [], ">= 500 ms": []}
         for d in deltas:
-            if d < 2000:
-                buckets["< 2000 ms"].append(d)
-            elif d < 6000:
-                buckets["2000–6000 ms"].append(d)
+            if d < 500:
+                buckets["< 500 ms"].append(d)
             else:
-                buckets["> 6000 ms"].append(d)
+                buckets[">= 500 ms"].append(d)
         print(f"\n  {label}:")
         for name, vals in buckets.items():
             if vals:
