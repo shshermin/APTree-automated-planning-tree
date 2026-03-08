@@ -158,7 +158,7 @@ export default function Header({
     { kind: "label", label: "Model" },
     {
       kind: "file",
-      label: "Import APTree (.bt)",
+      label: "Import Behavior Tree (.bt)",
       hint: "BT upload (.bt)",
       accept: ".bt,text/plain",
       onFileSelect: (file) => onImportAptreeModel(file),

@@ -849,8 +849,15 @@ function App() {
           const errors = parsed.errors?.length
             ? parsed.errors
             : [`HTTP ${response.status}`];
-          const details = extraLogs.length ? `\n\n${extraLogs.join("\n")}` : "";
-          window.alert(`APTree import failed:\n- ${errors.join("\n- ")}${details}`);
+          const details = extraLogs.length ? extraLogs.join("\n") : "";
+          console.error("APTree import failed", {
+            status: response.status,
+            errors,
+            details,
+            responseText,
+            parsed,
+          });
+          window.alert("Parsing error. See console for details.");
           return;
         }
 
@@ -858,8 +865,14 @@ function App() {
           const errors = parsed.errors?.length
             ? parsed.errors
             : ["Model validation failed"];
-          const details = extraLogs.length ? `\n\n${extraLogs.join("\n")}` : "";
-          window.alert(`APTree validation failed:\n- ${errors.join("\n- ")}${details}`);
+          const details = extraLogs.length ? extraLogs.join("\n") : "";
+          console.error("APTree validation failed", {
+            errors,
+            details,
+            responseText,
+            parsed,
+          });
+          window.alert("Parsing error. See console for details.");
           return;
         }
 

@@ -1,11 +1,11 @@
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using BehaviorTreeMainProject;
 
 // Run the behavior tree test
-await FullTreeTest.RunTest();
+// await FullTreeTest.RunTest();
 
 var builder = WebApplication.CreateBuilder(args);
 

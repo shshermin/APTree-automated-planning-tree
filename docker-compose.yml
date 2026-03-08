@@ -1,0 +1,9 @@
+version: "3.8"
+
+services:
+  aptree:
+    build: .
+    container_name: aptree
+    ports:
+      - "5000:5000"
+      - "5254:5254"
