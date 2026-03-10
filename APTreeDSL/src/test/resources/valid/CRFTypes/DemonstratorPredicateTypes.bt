@@ -1,0 +1,88 @@
+// Predicate definitions for Demonstrator
+
+Predicate AtAgent {
+    client : Agent
+    agentLoc : Location
+}
+
+Predicate AtTool {
+    tool : Tool
+    toolLoc : Location
+}
+
+Predicate HasTool {
+    client : Agent
+    tool : Tool
+}
+
+Predicate RobotEquipped {
+    client : Agent
+}
+
+Predicate ActiveTool {
+    tool : Tool
+}
+
+Predicate Holding {
+    client : Agent
+    obj : Element
+}
+
+Predicate Clear {
+    obj : Element
+}
+
+Predicate GripperEmpty {
+    client : Agent
+}
+
+Predicate Glued {
+    obj : Element
+}
+
+Predicate Nailed {
+    obj1 : Element
+    obj2 : Element
+}
+
+Predicate Fixed {
+    obj : Element
+}
+
+Predicate PositionFree {
+    loc : Location
+}
+
+Predicate AllSet {
+    lay : Layer
+    mod : Module
+}
+
+Predicate BelongsToLayer {
+    obj : Element
+    lay : Layer
+}
+
+Predicate BelongsToModule {
+    obj : Element
+    mod : Module
+}
+
+Predicate Stacked {
+    obj1 : Element
+    obj2 : Element
+}
+
+Predicate AtFinalPosition {
+    obj : Element
+}
+
+Predicate ObjectFinalPosition {
+    obj : Element
+    pos : Location
+}
+
+Predicate AtPlace {
+    obj : Element
+    objLoc : Location
+}

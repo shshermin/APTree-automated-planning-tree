@@ -240,6 +240,7 @@ task generateCRFPropertyTypeRules(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'CRFPropertyTypeRuleGenerator'
     workingDir = projectDir
+    args = [project.properties.get('inputModel', 'src/test/resources/valid/CRFTypes/LiveMatPropertyTypes.bt')]
 }
 
 task generateCRFActionTypeRules(type: JavaExec) {
@@ -248,6 +249,7 @@ task generateCRFActionTypeRules(type: JavaExec) {
    classpath = sourceSets.main.runtimeClasspath
    mainClass = 'CRFActionTypeRuleGenerator'
    workingDir = projectDir
+   args = [project.properties.get('inputModel', 'src/test/resources/valid/CRFTypes/LiveMatActionTypes.bt')]
 }
 
 task generateCRFPredicateTypeRules(type: JavaExec) {
@@ -256,6 +258,7 @@ task generateCRFPredicateTypeRules(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'CRFPredicateTypeRuleGenerator'
     workingDir = projectDir
+    args = [project.properties.get('inputModel', 'src/test/resources/valid/CRFTypes/LiveMatPredicaetTypes.bt')]
 }
 
 

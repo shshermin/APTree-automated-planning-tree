@@ -1,0 +1,332 @@
+// ==================== HL (HighLevel) Actions ====================
+
+// Robot grabs an object from a location
+Define Action PickUpHL {
+    ActLevel: HighLevel
+    Properties {
+        obj: Element
+        p: Location
+        client: Robot
+    }
+    Preconditions {
+        GripperEmpty(client)
+        AtPlace(obj, p)
+        !Holding(client, obj)
+        !PositionFree(p)
+        Clear(obj)
+        !Fixed(obj)
+    }
+    Effects {
+        Holding(client, obj)
+        !AtPlace(obj, p)
+        !GripperEmpty(client)
+        !Clear(obj)
+        PositionFree(p)
+    }
+}
+
+// Robot stacks one element on another element
+Define Action StackHL {
+    ActLevel: HighLevel
+    Properties {
+        stackingobject: Element
+        existingobject: Element
+        client: Robot
+        objposition: Location
+    }
+    Preconditions {
+        !GripperEmpty(client)
+        Holding(client, stackingobject)
+        AtFinalPosition(existingobject)
+        !AtPlace(stackingobject, objposition)
+        ObjectFinalPosition(stackingobject, objposition)
+    }
+    Effects {
+        !Holding(client, stackingobject)
+        AtFinalPosition(stackingobject)
+        AtPlace(stackingobject, objposition)
+        GripperEmpty(client)
+        Clear(stackingobject)
+        Stacked(stackingobject, existingobject)
+    }
+}
+
+// Robot stacks one element on top of two elements
+Define Action StackOnTwoHL {
+    ActLevel: HighLevel
+    Properties {
+        stackingobj: Element
+        client: Robot
+        objposition: Location
+        existingobj1: Element
+        existingobj2: Element
+        layer1: Stack
+        layer2: Stack
+    }
+    Preconditions {
+        !GripperEmpty(client)
+        Holding(client, stackingobj)
+        AtFinalPosition(existingobj2)
+        AtFinalPosition(existingobj1)
+        Clear(existingobj1)
+        Clear(existingobj2)
+        BelongsToLayer(stackingobj, layer2)
+        BelongsToLayer(existingobj1, layer1)
+        BelongsToLayer(existingobj2, layer1)
+        ObjectFinalPosition(stackingobj, objposition)
+    }
+    Effects {
+        !Holding(client, stackingobj)
+        AtPlace(stackingobj, objposition)
+        GripperEmpty(client)
+        Clear(stackingobj)
+        Stacked(stackingobj, existingobj1)
+        Stacked(stackingobj, existingobj2)
+        AtFinalPosition(stackingobj)
+    }
+}
+
+// Robot nails one element to another
+Define Action NailingHL {
+    ActLevel: HighLevel
+    Properties {
+        obj1: Element
+        obj2: Element
+        client: Robot
+    }
+    Preconditions {
+        GripperEmpty(client)
+        AtFinalPosition(obj2)
+        AtFinalPosition(obj1)
+        Clear(obj1)
+        !Nailed(obj1, obj2)
+    }
+    Effects {
+        Nailed(obj1, obj2)
+        Fixed(obj1)
+    }
+}
+
+// ==================== ML (MidLevel) Actions ====================
+
+// Robot travels from one position to another
+Define Action TravelML {
+    ActLevel: MidLevel
+    Properties {
+        client: Robot
+        from: RobotPosition
+        to: RobotPosition
+    }
+    Preconditions {
+        AtAgent(client, from)
+    }
+    Effects {
+        !AtAgent(client, from)
+        AtAgent(client, to)
+    }
+}
+
+// Robot equips the end-effector
+Define Action EquipeML {
+    ActLevel: MidLevel
+    Properties {
+        client: Robot
+        too: Tool
+        rp: RobotPosition
+        ep: EquipLocation
+    }
+    Preconditions {
+        AtTool(too, ep)
+        !RobotEquipped(client)
+        AtAgent(client, rp)
+        !PositionFree(ep)
+    }
+    Effects {
+        HasTool(client, too)
+        RobotEquipped(client)
+        !AtTool(too, ep)
+        PositionFree(ep)
+    }
+}
+
+// Robot puts the end-effector down
+Define Action DeequipML {
+    ActLevel: MidLevel
+    Properties {
+        client: Robot
+        too: Tool
+        ep: EquipLocation
+        rp: RobotPosition
+    }
+    Preconditions {
+        AtAgent(client, rp)
+        HasTool(client, too)
+        !ActiveTool(too)
+        !AtTool(too, ep)
+        RobotEquipped(client)
+        PositionFree(ep)
+    }
+    Effects {
+        AtTool(too, ep)
+        !RobotEquipped(client)
+        !HasTool(client, too)
+        !PositionFree(ep)
+    }
+}
+
+// Turns on the tool (end-effector)
+Define Action InitializeML {
+    ActLevel: MidLevel
+    Properties {
+        client: Robot
+        too: Tool
+    }
+    Preconditions {
+        RobotEquipped(client)
+        HasTool(client, too)
+        !ActiveTool(too)
+    }
+    Effects {
+        ActiveTool(too)
+    }
+}
+
+// Turns off the tool
+Define Action CloseToolML {
+    ActLevel: MidLevel
+    Properties {
+        client: Robot
+        too: Tool
+    }
+    Preconditions {
+        ActiveTool(too)
+        HasTool(client, too)
+        GripperEmpty(client)
+        RobotEquipped(client)
+    }
+    Effects {
+        !ActiveTool(too)
+    }
+}
+
+// Robot grabs an object from a location
+Define Action PickUpML {
+    ActLevel: MidLevel
+    Properties {
+        obj: Element
+        p: Location
+        client: Robot
+        vg: Gripper
+        rp: RobotPosition
+    }
+    Preconditions {
+        HasTool(client, vg)
+        AtPlace(obj, p)
+        AtAgent(client, rp)
+        GripperEmpty(client)
+        !PositionFree(p)
+        Clear(obj)
+        !Fixed(obj)
+    }
+    Effects {
+        Holding(client, obj)
+        !AtPlace(obj, p)
+        !GripperEmpty(client)
+        !Clear(obj)
+        PositionFree(p)
+    }
+}
+
+// Robot stacks one object on another object
+Define Action StackML {
+    ActLevel: MidLevel
+    Properties {
+        stackingobject: Element
+        existingobject: Element
+        client: Robot
+        gripper: Gripper
+        objposition: Location
+        robotposition: RobotPosition
+    }
+    Preconditions {
+        !GripperEmpty(client)
+        AtAgent(client, robotposition)
+        HasTool(client, gripper)
+        Holding(client, stackingobject)
+        AtFinalPosition(existingobject)
+        !AtPlace(stackingobject, objposition)
+        ObjectFinalPosition(stackingobject, objposition)
+    }
+    Effects {
+        !Holding(client, stackingobject)
+        AtFinalPosition(stackingobject)
+        AtPlace(stackingobject, objposition)
+        GripperEmpty(client)
+        Clear(stackingobject)
+        Stacked(stackingobject, existingobject)
+    }
+}
+
+// Robot stacks one object on top of two objects
+Define Action StackOnTwoML {
+    ActLevel: MidLevel
+    Properties {
+        stackingobj: Element
+        client: Robot
+        objposition: Location
+        robotpos: RobotPosition
+        existingobj1: Element
+        existingobj2: Element
+        vg: Gripper
+        layer1: Stack
+        layer2: Stack
+    }
+    Preconditions {
+        !GripperEmpty(client)
+        Holding(client, stackingobj)
+        AtFinalPosition(existingobj2)
+        AtFinalPosition(existingobj1)
+        HasTool(client, vg)
+        AtAgent(client, robotpos)
+        Clear(existingobj1)
+        Clear(existingobj2)
+        BelongsToLayer(stackingobj, layer2)
+        BelongsToLayer(existingobj1, layer1)
+        BelongsToLayer(existingobj2, layer1)
+        ObjectFinalPosition(stackingobj, objposition)
+    }
+    Effects {
+        !Holding(client, stackingobj)
+        AtPlace(stackingobj, objposition)
+        GripperEmpty(client)
+        Clear(stackingobj)
+        Stacked(stackingobj, existingobj1)
+        Stacked(stackingobj, existingobj2)
+        AtFinalPosition(stackingobj)
+    }
+}
+
+// Robot nails two objects together
+Define Action NailingML {
+    ActLevel: MidLevel
+    Properties {
+        obj1: Element
+        obj2: Element
+        client: Robot
+        ng: StaplerGun
+        rp: RobotPosition
+    }
+    Preconditions {
+        AtAgent(client, rp)
+        AtFinalPosition(obj2)
+        AtFinalPosition(obj1)
+        Clear(obj1)
+        ActiveTool(ng)
+        HasTool(client, ng)
+        !Nailed(obj1, obj2)
+    }
+    Effects {
+        Nailed(obj1, obj2)
+        Fixed(obj1)
+    }
+}

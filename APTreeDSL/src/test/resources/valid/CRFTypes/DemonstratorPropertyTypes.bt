@@ -1,0 +1,54 @@
+Element Stick{
+    initLoc: Location
+    finalLoc: Location 
+    }
+
+Element Cube{
+    initLoc: Location
+    finalLoc: Location   
+    }
+Agent Robot{
+tool: Tool
+robothasTool: Boolean
+loc: RobotPosition
+
+}
+
+Location InitialLocation{
+    position: Coordinate 
+    orientation: Coordinate  
+}
+
+Location FinalLocation{
+    position: Coordinate  
+    orientation: Coordinate  
+} 
+
+Location EquipLocation{
+    position: Coordinate 
+    orientation: Coordinate  
+} 
+
+Location RobotPosition{
+    namedPos: Name
+}
+
+Layer Stack
+
+
+Module Demo 
+
+
+Tool Gripper {
+    isOpen: Boolean
+    gripperEmpty: Boolean
+    loc: Location
+}
+
+Tool StaplerGun {
+ readyToFire: Boolean
+ loc: Location
+}
+
+
+

@@ -87,42 +87,118 @@ public class CRFActionTypeRuleGenerator {
             Path grammarPath = Paths.get(outputPath);
             String grammarContent = new String(Files.readAllBytes(grammarPath));
 
-            // 5. Build the new action rules block
+            // 5. Merge new rules with existing ones (append new, overwrite same name)
+            int startPos = grammarContent.indexOf(START_MARKER);
+            int endPos = grammarContent.indexOf(END_MARKER);
+            
+            // Parse existing rules keyed by action name (each action = rule line + astrule line)
+            java.util.LinkedHashMap<String, String> mergedRules = new java.util.LinkedHashMap<>();
+            
+            if (startPos >= 0 && endPos > startPos) {
+                String existingBlock = grammarContent.substring(startPos + START_MARKER.length(), endPos).trim();
+                // Group lines by action name: rule line and its astrule line
+                String currentName = null;
+                StringBuilder currentGroup = new StringBuilder();
+                for (String line : existingBlock.split("\\r?\\n")) {
+                    String trimmed = line.trim();
+                    if (trimmed.isEmpty()) continue;
+                    
+                    if (trimmed.startsWith("astrule ")) {
+                        // Belongs to current action, append to group
+                        if (currentName != null) {
+                            currentGroup.append(trimmed).append("\n");
+                        }
+                    } else {
+                        // New rule line - save previous group first
+                        if (currentName != null) {
+                            mergedRules.put(currentName, currentGroup.toString().trim());
+                        }
+                        // Extract name: "ActionName extends PActionNode ..."
+                        String[] tokens = trimmed.split("\\s+");
+                        currentName = tokens.length > 0 ? tokens[0] : null;
+                        currentGroup = new StringBuilder();
+                        currentGroup.append(trimmed).append("\n");
+                    }
+                }
+                // Save last group
+                if (currentName != null) {
+                    mergedRules.put(currentName, currentGroup.toString().trim());
+                }
+            }
+            
+            // Merge new rules (overwrite same name, append new)
+            String currentNewName = null;
+            StringBuilder currentNewGroup = new StringBuilder();
+            for (String rule : rules) {
+                String trimmed = rule.trim();
+                if (trimmed.isEmpty()) {
+                    // Save current group on blank separator
+                    if (currentNewName != null) {
+                        if (mergedRules.containsKey(currentNewName)) {
+                            System.out.println("  Overwriting existing action: " + currentNewName);
+                        } else {
+                            System.out.println("  Adding new action: " + currentNewName);
+                        }
+                        mergedRules.put(currentNewName, currentNewGroup.toString().trim());
+                        currentNewName = null;
+                        currentNewGroup = new StringBuilder();
+                    }
+                    continue;
+                }
+                if (trimmed.startsWith("astrule ")) {
+                    currentNewGroup.append(trimmed).append("\n");
+                } else {
+                    // New rule line - save previous group
+                    if (currentNewName != null) {
+                        if (mergedRules.containsKey(currentNewName)) {
+                            System.out.println("  Overwriting existing action: " + currentNewName);
+                        } else {
+                            System.out.println("  Adding new action: " + currentNewName);
+                        }
+                        mergedRules.put(currentNewName, currentNewGroup.toString().trim());
+                    }
+                    String[] tokens = trimmed.split("\\s+");
+                    currentNewName = tokens.length > 0 ? tokens[0] : null;
+                    currentNewGroup = new StringBuilder();
+                    currentNewGroup.append(trimmed).append("\n");
+                }
+            }
+            // Save last new group
+            if (currentNewName != null) {
+                if (mergedRules.containsKey(currentNewName)) {
+                    System.out.println("  Overwriting existing action: " + currentNewName);
+                } else {
+                    System.out.println("  Adding new action: " + currentNewName);
+                }
+                mergedRules.put(currentNewName, currentNewGroup.toString().trim());
+            }
+            
+            // Build merged block
             StringBuilder newBlock = new StringBuilder();
             newBlock.append(START_MARKER).append("\n");
-            for (String rule : rules) {
-                if (rule.isEmpty()) {
-                    newBlock.append("\n");  // Add extra newline for blank lines
-                } else {
-                    newBlock.append(rule).append("\n");
-                }
+            boolean first = true;
+            for (String ruleGroup : mergedRules.values()) {
+                if (!first) newBlock.append("\n");
+                newBlock.append(ruleGroup).append("\n");
+                first = false;
             }
             newBlock.append(END_MARKER).append("\n");
 
-            // 6. Replace the generated section
-            // First, try to match if both markers exist
-            Pattern pattern = Pattern.compile(Pattern.quote(START_MARKER) + ".*?" + Pattern.quote(END_MARKER), Pattern.DOTALL);
-            String updatedContent = pattern.matcher(grammarContent).replaceFirst(newBlock.toString());
-            
-            // If no replacement happened (markers not yet present), find START_MARKER and replace to end of file
-            if (updatedContent.equals(grammarContent)) {
-                int startPos = grammarContent.indexOf(START_MARKER);
-                if (startPos != -1) {
-                    // Find the closing brace of the grammar (last char that matters)
-                    int endPos = grammarContent.lastIndexOf('}');
-                    if (endPos > startPos) {
-                        updatedContent = grammarContent.substring(0, startPos) 
-                            + newBlock.toString()
-                            + grammarContent.substring(endPos);
-                    }
+            // 6. Replace or insert the block
+            String updatedContent;
+            if (startPos >= 0 && endPos > startPos) {
+                updatedContent = grammarContent.substring(0, startPos) 
+                    + newBlock.toString()
+                    + grammarContent.substring(endPos + END_MARKER.length());
+            } else {
+                // Append before the last closing brace
+                int lastBrace = grammarContent.lastIndexOf('}');
+                if (lastBrace != -1) {
+                    updatedContent = grammarContent.substring(0, lastBrace) 
+                        + newBlock.toString()
+                        + grammarContent.substring(lastBrace);
                 } else {
-                    // If START_MARKER not found, just append before the closing brace
-                    int endPos = grammarContent.lastIndexOf('}');
-                    if (endPos != -1) {
-                        updatedContent = grammarContent.substring(0, endPos) 
-                            + newBlock.toString()
-                            + grammarContent.substring(endPos);
-                    }
+                    updatedContent = grammarContent + "\n" + newBlock.toString();
                 }
             }
 

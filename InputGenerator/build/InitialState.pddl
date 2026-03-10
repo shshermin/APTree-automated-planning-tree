@@ -1,0 +1,3 @@
+(:init
+    (clear Stick88)
+)
