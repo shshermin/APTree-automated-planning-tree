@@ -11,12 +11,12 @@
             {
               "childType": "ALLACTION",
               "successCriteria": "ALL",
-              "name": "HandleCassette1",
+              "name": "Layers1_2",
               "services": [
                 {
-                  "name": "mypddlplanner1",
-                  "plannerRef": "Enhsp1",
-                  "type": "ServicePDDLPlanner"
+                  "name": "planner1",
+                  "plannerRef": planningservice._ast.ASTPlannerENHSP@6b9651f3,
+                  "type": "ServicePDDLPlanning"
                 }
               ],
               "type": "DynamicFlowNode",
@@ -31,12 +31,12 @@
             {
               "childType": "ALLACTION",
               "successCriteria": "ALL",
-              "name": "HandleCassette2",
+              "name": "Layers3_4",
               "services": [
                 {
-                  "name": "mypddlplanner2",
-                  "plannerRef": "Enhsp2",
-                  "type": "ServicePDDLPlanner"
+                  "name": "planner2",
+                  "plannerRef": planningservice._ast.ASTPlannerENHSP@38bc8ab5,
+                  "type": "ServicePDDLPlanning"
                 }
               ],
               "type": "DynamicFlowNode",
@@ -51,12 +51,12 @@
             {
               "childType": "ALLACTION",
               "successCriteria": "ALL",
-              "name": "HandleCassette3",
+              "name": "Layers5_6",
               "services": [
                 {
-                  "name": "mypddlplanner3",
-                  "plannerRef": "Enhsp3",
-                  "type": "ServicePDDLPlanner"
+                  "name": "planner3",
+                  "plannerRef": planningservice._ast.ASTPlannerENHSP@687080dc,
+                  "type": "ServicePDDLPlanning"
                 }
               ],
               "type": "DynamicFlowNode",
@@ -71,12 +71,172 @@
             {
               "childType": "ALLACTION",
               "successCriteria": "ALL",
-              "name": "HandleCassette4",
+              "name": "Layers7_8",
               "services": [
                 {
-                  "name": "mypddlplanner4",
-                  "plannerRef": "Enhsp4",
-                  "type": "ServicePDDLPlanner"
+                  "name": "planner4",
+                  "plannerRef": planningservice._ast.ASTPlannerENHSP@23d2a7e8,
+                  "type": "ServicePDDLPlanning"
+                }
+              ],
+              "type": "DynamicFlowNode",
+              "nodeGraph": {
+                "nodes": [
+                  
+                ],
+                "nodeCount": 0,
+                "relationCount": 0
+              }
+            },
+            {
+              "childType": "ALLACTION",
+              "successCriteria": "ALL",
+              "name": "Layers9_10",
+              "services": [
+                {
+                  "name": "planner5",
+                  "plannerRef": planningservice._ast.ASTPlannerENHSP@7a9273a8,
+                  "type": "ServicePDDLPlanning"
+                }
+              ],
+              "type": "DynamicFlowNode",
+              "nodeGraph": {
+                "nodes": [
+                  
+                ],
+                "nodeCount": 0,
+                "relationCount": 0
+              }
+            },
+            {
+              "childType": "ALLACTION",
+              "successCriteria": "ALL",
+              "name": "Layers11_12",
+              "services": [
+                {
+                  "name": "planner6",
+                  "plannerRef": planningservice._ast.ASTPlannerENHSP@26a7b76d,
+                  "type": "ServicePDDLPlanning"
+                }
+              ],
+              "type": "DynamicFlowNode",
+              "nodeGraph": {
+                "nodes": [
+                  
+                ],
+                "nodeCount": 0,
+                "relationCount": 0
+              }
+            },
+            {
+              "childType": "ALLACTION",
+              "successCriteria": "ALL",
+              "name": "Layers13_14",
+              "services": [
+                {
+                  "name": "planner7",
+                  "plannerRef": planningservice._ast.ASTPlannerENHSP@4abdb505,
+                  "type": "ServicePDDLPlanning"
+                }
+              ],
+              "type": "DynamicFlowNode",
+              "nodeGraph": {
+                "nodes": [
+                  
+                ],
+                "nodeCount": 0,
+                "relationCount": 0
+              }
+            },
+            {
+              "childType": "ALLACTION",
+              "successCriteria": "ALL",
+              "name": "Layers15_16",
+              "services": [
+                {
+                  "name": "planner8",
+                  "plannerRef": planningservice._ast.ASTPlannerENHSP@7ce6a65d,
+                  "type": "ServicePDDLPlanning"
+                }
+              ],
+              "type": "DynamicFlowNode",
+              "nodeGraph": {
+                "nodes": [
+                  
+                ],
+                "nodeCount": 0,
+                "relationCount": 0
+              }
+            },
+            {
+              "childType": "ALLACTION",
+              "successCriteria": "ALL",
+              "name": "Layers17_18",
+              "services": [
+                {
+                  "name": "planner9",
+                  "plannerRef": planningservice._ast.ASTPlannerENHSP@1500955a,
+                  "type": "ServicePDDLPlanning"
+                }
+              ],
+              "type": "DynamicFlowNode",
+              "nodeGraph": {
+                "nodes": [
+                  
+                ],
+                "nodeCount": 0,
+                "relationCount": 0
+              }
+            },
+            {
+              "childType": "ALLACTION",
+              "successCriteria": "ALL",
+              "name": "Layers19_20",
+              "services": [
+                {
+                  "name": "planner10",
+                  "plannerRef": planningservice._ast.ASTPlannerENHSP@e874448,
+                  "type": "ServicePDDLPlanning"
+                }
+              ],
+              "type": "DynamicFlowNode",
+              "nodeGraph": {
+                "nodes": [
+                  
+                ],
+                "nodeCount": 0,
+                "relationCount": 0
+              }
+            },
+            {
+              "childType": "ALLACTION",
+              "successCriteria": "ALL",
+              "name": "Layers21_22",
+              "services": [
+                {
+                  "name": "planner11",
+                  "plannerRef": planningservice._ast.ASTPlannerENHSP@29b5cd00,
+                  "type": "ServicePDDLPlanning"
+                }
+              ],
+              "type": "DynamicFlowNode",
+              "nodeGraph": {
+                "nodes": [
+                  
+                ],
+                "nodeCount": 0,
+                "relationCount": 0
+              }
+            },
+            {
+              "childType": "ALLACTION",
+              "successCriteria": "ALL",
+              "name": "Layer23",
+              "services": [
+                {
+                  "name": "planner12",
+                  "plannerRef": planningservice._ast.ASTPlannerENHSP@60285225,
+                  "type": "ServicePDDLPlanning"
                 }
               ],
               "type": "DynamicFlowNode",
@@ -89,14 +249,71 @@
               }
             }
           ],
-          "nodeCount": 4,
-          "relationCount": 0
+          "nodeCount": 12,
+          "relationCount": 11,
+          "relations": [
+            {
+              "temporalType": "MEETS",
+              "from": "Layers1_2",
+              "to": "Layers3_4"
+            },
+            {
+              "temporalType": "MEETS",
+              "from": "Layers3_4",
+              "to": "Layers5_6"
+            },
+            {
+              "temporalType": "MEETS",
+              "from": "Layers5_6",
+              "to": "Layers7_8"
+            },
+            {
+              "temporalType": "MEETS",
+              "from": "Layers7_8",
+              "to": "Layers9_10"
+            },
+            {
+              "temporalType": "MEETS",
+              "from": "Layers9_10",
+              "to": "Layers11_12"
+            },
+            {
+              "temporalType": "MEETS",
+              "from": "Layers11_12",
+              "to": "Layers13_14"
+            },
+            {
+              "temporalType": "MEETS",
+              "from": "Layers13_14",
+              "to": "Layers15_16"
+            },
+            {
+              "temporalType": "MEETS",
+              "from": "Layers15_16",
+              "to": "Layers17_18"
+            },
+            {
+              "temporalType": "MEETS",
+              "from": "Layers17_18",
+              "to": "Layers19_20"
+            },
+            {
+              "temporalType": "MEETS",
+              "from": "Layers19_20",
+              "to": "Layers21_22"
+            },
+            {
+              "temporalType": "MEETS",
+              "from": "Layers21_22",
+              "to": "Layer23"
+            }
+          ]
         }
       },
-      "name": "LiveMat"
+      "name": "Demonstrator"
     }
   ],
-  "generatedAt": "2026-02-17T19:23:15.631161100",
+  "generatedAt": "2026-03-11T11:32:10.065058100",
   "treeCount": 1,
-  "sourceFile": "src\/test\/resources\/valid\/behavior_trees\/APTreeLiveMat.bt"
+  "sourceFile": "src\/test\/resources\/valid\/behavior_trees\/Demonstrator.bt"
 }

@@ -7,7 +7,7 @@ World = ( PropertyTypeDefinition | Property | PredicateTypeDefinition | ActionTy
 // === GENERATED RULES (DO NOT EDIT BELOW) ===
 symbol Beam extends Element = "Beam" name:Name "(" loc:Name@Location ")";
 symbol Plate extends Element = "Plate" name:Name "(" loc:Name@Location ")";
-symbol Robot extends Agent = "Robot" name:Name "(" tool:Name@Tool ")";
+symbol Robot extends Agent = "Robot" name:Name "(" tool:Name@Tool robothasTool:Boolean loc:Name@RobotPosition ")";
 symbol VacGripper extends Tool = "VacGripper" name:Name "(" loc:Name@Location isActive:Boolean ")";
 symbol FirstPos extends Location = "FirstPos" name:Name "(" ")";
 symbol NailGripper extends Tool = "NailGripper" name:Name "(" loc:Name@Location isActive:Boolean ")";
@@ -24,8 +24,8 @@ symbol FinalLocation extends Location = "FinalLocation" name:Name "(" position:C
 symbol EquipLocation extends Location = "EquipLocation" name:Name "(" position:Coordinate orientation:Coordinate ")";
 symbol RobotPosition extends Location = "RobotPosition" name:Name "(" namedPos:Name ")";
 symbol Demo extends Module = "Demo" name:Name "(" ")";
-symbol Gripper extends Tool = "Gripper" name:Name "(" isOpen:Boolean gripperEmpty:Boolean ")";
-symbol StaplerGun extends Tool = "StaplerGun" name:Name "(" readyToFire:Boolean ")";
+symbol Gripper extends Tool = "Gripper" name:Name "(" isOpen:Boolean gripperEmpty:Boolean loc:Name@Location ")";
+symbol StaplerGun extends Tool = "StaplerGun" name:Name "(" readyToFire:Boolean loc:Name@Location ")";
 // === END GENERATED RULES ===
 
 

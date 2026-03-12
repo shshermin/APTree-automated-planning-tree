@@ -1,0 +1,104 @@
+
+
+BehaviorTree Demonstrator {
+    Root FlowNode Main {
+        All
+        AllFlow
+        NodeGraph {
+            FlowNode Layers1_2 {
+                ServicePlanning planner1 Enhsp Domain:DomainTrussHL Problem:ProblemL1L2 Config:sat-hmrph
+                All
+                AllAction
+                NodeGraph { }
+            } {
+                --[Meets]--> Layers3_4;
+            }
+            FlowNode Layers3_4 {
+                ServicePlanning planner2 Enhsp Domain:DomainTrussHL Problem:ProblemL3L4 Config:sat-hmrph
+                All
+                AllAction
+                NodeGraph { }
+            } {
+                --[Meets]--> Layers5_6;
+            }
+            FlowNode Layers5_6 {
+                ServicePlanning planner3 Enhsp Domain:DomainTrussHL Problem:ProblemL5L6 Config:sat-hmrph
+                All
+                AllAction
+                NodeGraph { }
+            } {
+                --[Meets]--> Layers7_8;
+            }
+            FlowNode Layers7_8 {
+                ServicePlanning planner4 Enhsp Domain:DomainTrussHL Problem:ProblemL7L8 Config:sat-hmrph
+                All
+                AllAction
+                NodeGraph { }
+            } {
+                --[Meets]--> Layers9_10;
+            }
+            FlowNode Layers9_10 {
+                ServicePlanning planner5 Enhsp Domain:DomainTrussHL Problem:ProblemL9L10 Config:sat-hmrph
+                All
+                AllAction
+                NodeGraph { }
+            } {
+                --[Meets]--> Layers11_12;
+            }
+            FlowNode Layers11_12 {
+                ServicePlanning planner6 Enhsp Domain:DomainTrussHL Problem:ProblemL11L12 Config:sat-hmrph
+                All
+                AllAction
+                NodeGraph { }
+            } {
+                --[Meets]--> Layers13_14;
+            }
+            FlowNode Layers13_14 {
+                ServicePlanning planner7 Enhsp Domain:DomainTrussHL Problem:ProblemL13L14 Config:sat-hmrph
+                All
+                AllAction
+                NodeGraph { }
+            } {
+                --[Meets]--> Layers15_16;
+            }
+            FlowNode Layers15_16 {
+                ServicePlanning planner8 Enhsp Domain:DomainTrussHL Problem:ProblemL15L16 Config:sat-hmrph
+                All
+                AllAction
+                NodeGraph { }
+            } {
+                --[Meets]--> Layers17_18;
+            }
+            FlowNode Layers17_18 {
+                ServicePlanning planner9 Enhsp Domain:DomainTrussHL Problem:ProblemL17L18 Config:sat-hmrph
+                All
+                AllAction
+                NodeGraph { }
+            } {
+                --[Meets]--> Layers19_20;
+            }
+            FlowNode Layers19_20 {
+                ServicePlanning planner10 Enhsp Domain:DomainTrussHL Problem:ProblemL19L20 Config:sat-hmrph
+                All
+                AllAction
+                NodeGraph { }
+            } {
+                --[Meets]--> Layers21_22;
+            }
+            FlowNode Layers21_22 {
+                ServicePlanning planner11 Enhsp Domain:DomainTrussHL Problem:ProblemL21L22 Config:sat-hmrph
+                All
+                AllAction
+                NodeGraph { }
+            } {
+                --[Meets]--> Layer23;
+            }
+            FlowNode Layer23 {
+                ServicePlanning planner12 Enhsp Domain:DomainTrussHL Problem:ProblemL23 Config:sat-hmrph
+                All
+                AllAction
+                NodeGraph { }
+            }
+        }
+    }
+}

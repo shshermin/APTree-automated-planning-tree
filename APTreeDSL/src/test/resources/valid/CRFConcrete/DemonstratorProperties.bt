@@ -279,8 +279,17 @@ Stack layer23 ()
 Demo module1 ()
 
 // robot
-Robot robot1 (gripper1)
+Robot robot1 (gripper1 True homePos)
+
+// robot position
+RobotPosition homePos (home)
 
 // tools
-Gripper gripper1 (True True)
-StaplerGun staplergun1 (False)
+Gripper gripper1 (True True equipLocGripper)
+StaplerGun staplergun1 (False equipLocStapler)
+
+// tool equip locations
+EquipLocation equipLocGripper (0,0,0  0,0,0 )
+EquipLocation equipLocStapler (0,0,0  0,0,0 )
+
+Table table1 ()

@@ -1,3 +1,4 @@
 (:init
-    (clear Stick88)
+    (clear box3)
+    (clear box1)
 )

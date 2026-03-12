@@ -7,6 +7,8 @@ Element Cube{
     initLoc: Location
     finalLoc: Location   
     }
+    Element Table  
+    
 Agent Robot{
 tool: Tool
 robothasTool: Boolean

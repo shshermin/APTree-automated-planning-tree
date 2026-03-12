@@ -21,6 +21,15 @@ struct ElementEntry {
 struct RobotEntry {
     std::string name;       // e.g. "robot1"
     std::string tool;       // e.g. "gripper1"
+    bool hasTool;           // e.g. True/False
+    std::string loc;        // e.g. "homePos"
+};
+
+// Parsed tool from a properties .bt file (Gripper, StaplerGun, etc.)
+struct ToolEntry {
+    std::string type;       // e.g. "Gripper" or "StaplerGun"
+    std::string name;       // e.g. "gripper1"
+    std::string loc;        // e.g. "equipLocGripper"
 };
 
 // Generates DSL predicate instances from a DemonstratorProperties.bt file.
@@ -69,6 +78,24 @@ public:
     // Add Fixed predicates: Fixed(elementName) for every element.
     void addFixedPredicates();
 
+    // Add AtAgent predicates: AtAgent(robotName robotLoc)
+    void addAtAgentPredicates();
+
+    // Add AtTool predicates: AtTool(toolName toolLoc)
+    void addAtToolPredicates();
+
+    // Add HasTool predicates: HasTool(robotName toolName)
+    // Only generated if the robot has a tool (hasTool == true).
+    void addHasToolPredicates();
+
+    // Add RobotEquipped predicates: RobotEquipped(robotName)
+    // Only generated if the robot has a tool.
+    void addRobotEquippedPredicates();
+
+    // Add ActiveTool predicates: ActiveTool(toolName)
+    // Only generated for tools that a robot currently has.
+    void addActiveToolPredicates();
+
     // Run all predicate generators and write to outputPath.
     void generateAll(const std::string& outputPath);
 
@@ -87,6 +114,7 @@ private:
 
     std::vector<ElementEntry> elements_;
     std::vector<RobotEntry> robots_;
+    std::vector<ToolEntry> tools_;
     std::vector<std::string> predicates_;
 };
 

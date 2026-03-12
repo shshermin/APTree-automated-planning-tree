@@ -1,4 +1,4 @@
-
+﻿
 
 BehaviorTree LiveMat {
     Root FlowNode Main {
@@ -6,7 +6,7 @@ BehaviorTree LiveMat {
         AllFlow
         NodeGraph {
             FlowNode  Cassette1{
-                ServicePlanning mypddlplanner1 Enhsp Domain:DomainHL.pddl Problem:ProblemC1
+                ServicePlanning mypddlplanner1 Enhsp Domain:DomainHL Problem:ProblemC1
                 All
                 AllAction
                 NodeGraph {
@@ -101,7 +101,7 @@ BehaviorTree LiveMat {
                 }
             }
             FlowNode  Cassette2 {
-                ServicePlanning mypddlplanner2 Enhsp Domain:DomainHL.pddl Problem:ProblemC2
+                ServicePlanning mypddlplanner2 Enhsp Domain:DomainHL Problem:ProblemC2
                 All
                 AllAction
                 NodeGraph {
@@ -196,7 +196,7 @@ BehaviorTree LiveMat {
                 }
             }
             FlowNode  Cassette3 {
-                ServicePlanning mypddlplanner3 Enhsp Domain:DomainHL.pddl Problem:ProblemC3
+                ServicePlanning mypddlplanner3 Enhsp Domain:DomainHL Problem:ProblemC3
                 All
                 AllAction
                 NodeGraph {
@@ -291,7 +291,7 @@ BehaviorTree LiveMat {
                 }
             }
             FlowNode  Cassette4 {
-                ServicePlanning mypddlplanner4 Enhsp Domain:DomainHL.pddl Problem:ProblemC4
+                ServicePlanning mypddlplanner4 Enhsp Domain:DomainHL Problem:ProblemC4
                 AllAction
                 NodeGraph {
                     Action PickUpHL PickUpHL_lp4_fp25_r1 (lp4 fp25 r1) @PickUpHL_lp4_fp25_r1Subtree {

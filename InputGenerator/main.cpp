@@ -73,6 +73,19 @@ int main(int argc, char* argv[]) {
         goalStateOutput = argv[4];
     }
 
+    // Generate Init State predicates (append to existing BelongsToLayer content)
+    std::cout << std::endl << "=== DSL Init State Generation ===" << std::endl;
+    PredicateGenerator initGen(propertiesPath);
+    initGen.addAtPlacePredicates();
+    initGen.addGripperEmptyPredicates();
+    initGen.addObjectFinalPositionPredicates();
+    initGen.addAtAgentPredicates();
+    initGen.addAtToolPredicates();
+    initGen.addHasToolPredicates();
+    initGen.addRobotEquippedPredicates();
+    initGen.addActiveToolPredicates();
+    initGen.writeToFile(predicatesOutput);
+
     // Generate Goal State: Stacked predicates + AtPlace(final) + AtFinalPosition
     std::cout << std::endl << "=== DSL Goal State Generation ===" << std::endl;
     PredicateGenerator goalGen(propertiesPath);
@@ -82,6 +95,11 @@ int main(int argc, char* argv[]) {
     goalGen.addAtFinalPositionPredicates();
     goalGen.addFixedPredicates();
     goalGen.addGripperEmptyPredicates();
+    goalGen.addAtAgentPredicates();
+    goalGen.addAtToolPredicates();
+    goalGen.addHasToolPredicates();
+    goalGen.addRobotEquippedPredicates();
+    goalGen.addActiveToolPredicates();
     goalGen.writeToFileOverwrite(goalStateOutput);
 
     return 0;

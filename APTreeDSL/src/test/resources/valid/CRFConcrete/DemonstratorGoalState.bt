@@ -697,3 +697,19 @@ Fixed(cube18)
 // GripperEmpty predicates
 GripperEmpty(robot1)
 
+// AtAgent predicates
+AtAgent(robot1 homePos)
+
+// AtTool predicates
+AtTool(gripper1 equipLocGripper)
+AtTool(staplergun1 equipLocStapler)
+
+// HasTool predicates
+HasTool(robot1 gripper1)
+
+// RobotEquipped predicates
+RobotEquipped(robot1)
+
+// ActiveTool predicates
+ActiveTool(gripper1)
+
