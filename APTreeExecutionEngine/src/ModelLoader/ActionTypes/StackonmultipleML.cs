@@ -48,11 +48,11 @@ namespace BehaviorTreeMainProject
             preconditions.AddPredicate(new FastName("stackonmultipleML_pre_0"), new Holding(client, plate, false));
             preconditions.AddPredicate(new FastName("stackonmultipleML_pre_1"), new AtAgent(client, pos, false));
             preconditions.AddPredicate(new FastName("stackonmultipleML_pre_2"), new ActiveTool(vg, false));
-            preconditions.AddPredicate(new FastName("stackonmultipleML_pre_3"), new Atplace(plate, pos, true));
+            preconditions.AddPredicate(new FastName("stackonmultipleML_pre_3"), new AtPlace(plate, pos, true));
 
             // Initialize effects
             effects = new State(StateType.Effect, new FastName("stackonmultipleML_effects"));
-            effects.AddPredicate(new FastName("stackonmultipleML_eff_0"), new Atplace(plate, pos, false));
+            effects.AddPredicate(new FastName("stackonmultipleML_eff_0"), new AtPlace(plate, pos, false));
             effects.AddPredicate(new FastName("stackonmultipleML_eff_1"), new Vgempty(client, false));
             effects.AddPredicate(new FastName("stackonmultipleML_eff_2"), new Clear(plate, true));
         }

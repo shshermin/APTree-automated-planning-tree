@@ -5,8 +5,7 @@ namespace ModelLoader.ParameterTypes
 {
     public class Plate : Element
     {
-        public double Thickness { get; set; }
-        public string Material { get; set; }
+        public Location Loc { get; set; }
 
         // Empty constructor - required by CustomProperty
         public Plate() : base()
@@ -16,17 +15,15 @@ namespace ModelLoader.ParameterTypes
         }
 
         // Constructor with parameters
-        public Plate(double thickness, string material) : this()
+        public Plate(Location loc) : this()
         {
-            this.Thickness = thickness;
-            this.Material = material;
+            this.Loc = loc;
         }
 
         // Constructor with name and parameters
-        public Plate(string name, double thickness, string material) : base(name)
+        public Plate(string name, Location loc) : base(name)
         {
-            this.Thickness = thickness;
-            this.Material = material;
+            this.Loc = loc;
             BaseType = new FastName("Element");
             // TypeName is automatically set in base constructor
         }
@@ -37,16 +34,13 @@ namespace ModelLoader.ParameterTypes
             // Call base implementation first
             base.SetParameters(parameters);
 
-            // Set Thickness property
-            if (parameters.ContainsKey("thickness"))
+            // Set Loc property
+            if (parameters.ContainsKey("loc"))
             {
-                Thickness = Convert.ToDouble(parameters["thickness"]);
-            }
-
-            // Set Material property
-            if (parameters.ContainsKey("material"))
-            {
-                Material = parameters["material"].ToString();
+                if (parameters["loc"] is Location locValue)
+                {
+                    Loc = locValue;
+                }
             }
 
         }

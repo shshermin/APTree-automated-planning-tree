@@ -2,15 +2,15 @@ using System;
 
 namespace ModelLoader.PredicateTypes
 {
-    public class Belongstomodule : Predicate
+    public class BelongsToModule : Predicate
     {
-        public Element myObject { get; set; }
+        public Element obj { get; set; }
         public Module mod { get; set; }
 
-        public Belongstomodule(Element myObject, Module mod, bool isNegated) : base(isNegated)
+        public BelongsToModule(Element obj, Module mod, bool isNegated) : base(isNegated)
         {
             PredicateType = new FastName("belongstomodule");
-            this.myObject = myObject;
+            this.obj = obj;
             this.mod = mod;
             this.PredicateName = GetUniqueKey();
         }
@@ -19,7 +19,7 @@ namespace ModelLoader.PredicateTypes
         {
             return new List<string>
             {
-                myObject?.NameKey?.ToString() ?? "null",
+                obj?.NameKey?.ToString() ?? "null",
                 mod?.NameKey?.ToString() ?? "null"
             };
         }

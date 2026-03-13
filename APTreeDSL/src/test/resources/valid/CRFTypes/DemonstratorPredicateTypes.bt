@@ -86,3 +86,7 @@ Predicate AtPlace {
     obj : Element
     objLoc : Location
 }
+
+Predicate Accessible {
+    obj : Element
+}

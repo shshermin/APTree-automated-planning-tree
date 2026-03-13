@@ -7,10 +7,10 @@ namespace BehaviorTreeMainProject
 {
     public class InitializeML : PActionNode
     {
-        // Parameter: client of type robot
+        // Parameter: client of type Robot
         public Robot client { get; private set; }
 
-        // Parameter: too of type tool
+        // Parameter: too of type Tool
         public Tool too { get; private set; }
 
         // Preconditions and Effects as State objects
@@ -29,7 +29,7 @@ namespace BehaviorTreeMainProject
         {
             // Initialize preconditions
             preconditions = new State(StateType.Precondition, new FastName("initializeML_preconditions"));
-            preconditions.AddPredicate(new FastName("initializeML_pre_0"), new Robotequipped(client, false));
+            preconditions.AddPredicate(new FastName("initializeML_pre_0"), new RobotEquipped(client, false));
             preconditions.AddPredicate(new FastName("initializeML_pre_1"), new HasTool(client, too, false));
             preconditions.AddPredicate(new FastName("initializeML_pre_2"), new ActiveTool(too, true));
 
@@ -40,6 +40,5 @@ namespace BehaviorTreeMainProject
 
         protected override State Preconditions => preconditions;
         protected override State Effects => effects;
-
     }
 }

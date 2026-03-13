@@ -7,37 +7,33 @@ namespace BehaviorTreeMainProject
 {
     public class StackHL : PActionNode
     {
-        // Parameter: obj1 of type element
-        public Element obj1 { get; private set; }
+        // Parameter: stackingobject of type Element
+        public Element stackingobject { get; private set; }
 
-        // Parameter: obj2 of type element
-        public Element obj2 { get; private set; }
+        // Parameter: existingobject of type Element
+        public Element existingobject { get; private set; }
 
-        // Parameter: client of type robot
+        // Parameter: client of type Robot
         public Robot client { get; private set; }
 
-        // Parameter: pr of type location
-        public Location pr { get; private set; }
+        // Parameter: objposition of type Location
+        public Location objposition { get; private set; }
 
-        // Parameter: lay of type stack
-        public Stack lay { get; private set; }
-
-        // Parameter: mod of type cassette
-        public Cassette mod { get; private set; }
+        // Parameter: g of type Gripper
+        public Gripper g { get; private set; }
 
         // Preconditions and Effects as State objects
         private State preconditions;
         private State effects;
 
-        public StackHL(string actionType, string instanceName, Blackboard<FastName> blackboard, Element obj1, Element obj2, Robot client, Location pr, Stack lay, Cassette mod)
+        public StackHL(string actionType, string instanceName, Blackboard<FastName> blackboard, Element stackingobject, Element existingobject, Robot client, Location objposition, Gripper g)
             : base(actionType, instanceName, blackboard)
         {
-            this.obj1 = obj1;
-            this.obj2 = obj2;
+            this.stackingobject = stackingobject;
+            this.existingobject = existingobject;
             this.client = client;
-            this.pr = pr;
-            this.lay = lay;
-            this.mod = mod;
+            this.objposition = objposition;
+            this.g = g;
             InitializePredicates();
         }
 
@@ -45,21 +41,26 @@ namespace BehaviorTreeMainProject
         {
             // Initialize preconditions
             preconditions = new State(StateType.Precondition, new FastName("stackHL_preconditions"));
-            preconditions.AddPredicate(new FastName("stackHL_pre_0"), new Robotequipped(client, false));
-            preconditions.AddPredicate(new FastName("stackHL_pre_1"), new Holding(client, obj1, false));
-            preconditions.AddPredicate(new FastName("stackHL_pre_2"), new Atplace(obj2, pr, false));
+            preconditions.AddPredicate(new FastName("stackHL_pre_0"), new GripperEmpty(client, true));
+            preconditions.AddPredicate(new FastName("stackHL_pre_1"), new Holding(client, stackingobject, false));
+            preconditions.AddPredicate(new FastName("stackHL_pre_2"), new HasTool(client, g, false));
+            preconditions.AddPredicate(new FastName("stackHL_pre_3"), new AtFinalPosition(existingobject, false));
+            preconditions.AddPredicate(new FastName("stackHL_pre_4"), new AtPlace(stackingobject, objposition, true));
+            preconditions.AddPredicate(new FastName("stackHL_pre_5"), new ObjectFinalPosition(stackingobject, objposition, false));
 
             // Initialize effects
             effects = new State(StateType.Effect, new FastName("stackHL_effects"));
-            effects.AddPredicate(new FastName("stackHL_eff_0"), new Ontop(obj1, obj2, false));
-            effects.AddPredicate(new FastName("stackHL_eff_1"), new Stacked(obj1, false));
-            effects.AddPredicate(new FastName("stackHL_eff_2"), new Holding(client, obj1, true));
-            effects.AddPredicate(new FastName("stackHL_eff_3"), new Atplace(obj1, pr, false));
-            effects.AddPredicate(new FastName("stackHL_eff_4"), new Clear(obj2, true));
+            effects.AddPredicate(new FastName("stackHL_eff_0"), new Holding(client, stackingobject, true));
+            effects.AddPredicate(new FastName("stackHL_eff_1"), new AtFinalPosition(stackingobject, false));
+            effects.AddPredicate(new FastName("stackHL_eff_2"), new AtPlace(stackingobject, objposition, false));
+            effects.AddPredicate(new FastName("stackHL_eff_3"), new GripperEmpty(client, false));
+            effects.AddPredicate(new FastName("stackHL_eff_4"), new Clear(stackingobject, false));
+            effects.AddPredicate(new FastName("stackHL_eff_5"), new Accessible(existingobject, true));
+            effects.AddPredicate(new FastName("stackHL_eff_6"), new Accessible(stackingobject, false));
+            effects.AddPredicate(new FastName("stackHL_eff_7"), new Stacked(stackingobject, existingobject, false));
         }
 
         protected override State Preconditions => preconditions;
         protected override State Effects => effects;
-
     }
 }

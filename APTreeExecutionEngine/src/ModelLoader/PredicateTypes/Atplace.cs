@@ -2,16 +2,16 @@ using System;
 
 namespace ModelLoader.PredicateTypes
 {
-    public class Atplace : Predicate
+    public class AtPlace : Predicate
     {
-        public Element item { get; set; }
-        public Location loc { get; set; }
+        public Element obj { get; set; }
+        public Location objLoc { get; set; }
 
-        public Atplace(Element item, Location loc, bool isNegated) : base(isNegated)
+        public AtPlace(Element obj, Location objLoc, bool isNegated) : base(isNegated)
         {
             PredicateType = new FastName("atplace");
-            this.item = item;
-            this.loc = loc;
+            this.obj = obj;
+            this.objLoc = objLoc;
             this.PredicateName = GetUniqueKey();
         }
 
@@ -19,8 +19,8 @@ namespace ModelLoader.PredicateTypes
         {
             return new List<string>
             {
-                item?.NameKey?.ToString() ?? "null",
-                loc?.NameKey?.ToString() ?? "null"
+                obj?.NameKey?.ToString() ?? "null",
+                objLoc?.NameKey?.ToString() ?? "null"
             };
         }
     }

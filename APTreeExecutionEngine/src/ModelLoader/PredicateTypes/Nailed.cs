@@ -4,12 +4,14 @@ namespace ModelLoader.PredicateTypes
 {
     public class Nailed : Predicate
     {
-        public Element myObject { get; set; }
+        public Element obj1 { get; set; }
+        public Element obj2 { get; set; }
 
-        public Nailed(Element myObject, bool isNegated) : base(isNegated)
+        public Nailed(Element obj1, Element obj2, bool isNegated) : base(isNegated)
         {
             PredicateType = new FastName("nailed");
-            this.myObject = myObject;
+            this.obj1 = obj1;
+            this.obj2 = obj2;
             this.PredicateName = GetUniqueKey();
         }
 
@@ -17,7 +19,8 @@ namespace ModelLoader.PredicateTypes
         {
             return new List<string>
             {
-                myObject?.NameKey?.ToString() ?? "null"
+                obj1?.NameKey?.ToString() ?? "null",
+                obj2?.NameKey?.ToString() ?? "null"
             };
         }
     }

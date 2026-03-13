@@ -7,20 +7,20 @@ namespace BehaviorTreeMainProject
 {
     public class TravelML : PActionNode
     {
-        // Parameter: client of type robot
+        // Parameter: client of type Robot
         public Robot client { get; private set; }
 
-        // Parameter: from of type location
-        public Location from { get; private set; }
+        // Parameter: from of type RobotPosition
+        public RobotPosition from { get; private set; }
 
-        // Parameter: to of type location
-        public Location to { get; private set; }
+        // Parameter: to of type RobotPosition
+        public RobotPosition to { get; private set; }
 
         // Preconditions and Effects as State objects
         private State preconditions;
         private State effects;
 
-        public TravelML(string actionType, string instanceName, Blackboard<FastName> blackboard, Robot client, Location from, Location to)
+        public TravelML(string actionType, string instanceName, Blackboard<FastName> blackboard, Robot client, RobotPosition from, RobotPosition to)
             : base(actionType, instanceName, blackboard)
         {
             this.client = client;
@@ -43,6 +43,5 @@ namespace BehaviorTreeMainProject
 
         protected override State Preconditions => preconditions;
         protected override State Effects => effects;
-
     }
 }

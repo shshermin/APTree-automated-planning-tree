@@ -41,8 +41,8 @@ namespace BehaviorTreeMainProject
         {
             // Initialize preconditions
             preconditions = new State(StateType.Precondition, new FastName("gluingBeamHL_preconditions"));
-            preconditions.AddPredicate(new FastName("gluingBeamHL_pre_0"), new Robotequipped(client, true));
-            preconditions.AddPredicate(new FastName("gluingBeamHL_pre_1"), new Atplace(obj, pos, false));
+            preconditions.AddPredicate(new FastName("gluingBeamHL_pre_0"), new RobotEquipped(client, true));
+            preconditions.AddPredicate(new FastName("gluingBeamHL_pre_1"), new AtPlace(obj, pos, false));
             preconditions.AddPredicate(new FastName("gluingBeamHL_pre_2"), new Clear(obj, false));
             preconditions.AddPredicate(new FastName("gluingBeamHL_pre_3"), new Glued(obj, true));
 

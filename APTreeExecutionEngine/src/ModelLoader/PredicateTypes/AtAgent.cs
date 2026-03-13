@@ -4,14 +4,14 @@ namespace ModelLoader.PredicateTypes
 {
     public class AtAgent : Predicate
     {
-        public Agent agent { get; set; }
-        public Location location { get; set; }
+        public Agent client { get; set; }
+        public Location agentLoc { get; set; }
 
-        public AtAgent(Agent agent, Location location, bool isNegated) : base(isNegated)
+        public AtAgent(Agent client, Location agentLoc, bool isNegated) : base(isNegated)
         {
-            PredicateType = new FastName("atAgent");
-            this.agent = agent;
-            this.location = location;
+            PredicateType = new FastName("atagent");
+            this.client = client;
+            this.agentLoc = agentLoc;
             this.PredicateName = GetUniqueKey();
         }
 
@@ -19,8 +19,8 @@ namespace ModelLoader.PredicateTypes
         {
             return new List<string>
             {
-                agent?.NameKey?.ToString() ?? "null",
-                location?.NameKey?.ToString() ?? "null"
+                client?.NameKey?.ToString() ?? "null",
+                agentLoc?.NameKey?.ToString() ?? "null"
             };
         }
     }

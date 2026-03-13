@@ -8,7 +8,7 @@ namespace ModelLoader.PredicateTypes
 
         public ActiveTool(Tool tool, bool isNegated) : base(isNegated)
         {
-            PredicateType = new FastName("activeTool");
+            PredicateType = new FastName("activetool");
             this.tool = tool;
             this.PredicateName = GetUniqueKey();
         }

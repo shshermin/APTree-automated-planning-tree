@@ -2,7 +2,7 @@ grammar CRFTypesCon extends CRFTypesDef, de.monticore.MCBasics {
 
 ////////// ?????? I am not sure why do we get errors if we dont include this world thing!
 @Override
-World = ( PropertyTypeDefinition | Property | PredicateTypeDefinition | ActionTypeDefinition | Beam | Plate | FirstPos | Robot | VacGripper | Holding | AtPlace | AtTool | NailGripper | GlueGun | Stack | Cassette | PositionOnRail | EquipPosition | StackPosition | IsAt | AtAgent | HasTool | Clear | OnTop | AllSet | BelongsToLayer | BelongsToModule | PositionFree | Stacked | Glued | Nailed | VgEmpty | Stick | Cube | InitialLocation | FinalLocation | EquipLocation | RobotPosition | Demo | StaplerGun | RobotEquipped | ActiveTool | GripperEmpty | Fixed | AtFinalPosition | ObjectFinalPosition | Gripper)*;
+World = ( PropertyTypeDefinition | Property | PredicateTypeDefinition | ActionTypeDefinition | Beam | Plate | FirstPos | Robot | VacGripper | Holding | AtPlace | AtTool | NailGripper | GlueGun | Stack | Cassette | PositionOnRail | EquipPosition | StackPosition | IsAt | AtAgent | HasTool | Clear | OnTop | AllSet | BelongsToLayer | BelongsToModule | PositionFree | Stacked | Glued | Nailed | VgEmpty | Stick | Cube | InitialLocation | FinalLocation | EquipLocation | RobotPosition | Demo | StaplerGun | RobotEquipped | ActiveTool | GripperEmpty | Fixed | AtFinalPosition | ObjectFinalPosition | Gripper | Table | Accessible)*;
 
 // === GENERATED RULES (DO NOT EDIT BELOW) ===
 symbol Beam extends Element = "Beam" name:Name "(" loc:Name@Location ")";
@@ -26,6 +26,7 @@ symbol RobotPosition extends Location = "RobotPosition" name:Name "(" namedPos:N
 symbol Demo extends Module = "Demo" name:Name "(" ")";
 symbol Gripper extends Tool = "Gripper" name:Name "(" isOpen:Boolean gripperEmpty:Boolean loc:Name@Location ")";
 symbol StaplerGun extends Tool = "StaplerGun" name:Name "(" readyToFire:Boolean loc:Name@Location ")";
+symbol Table extends Element = "Table" name:Name "(" ")";
 // === END GENERATED RULES ===
 
 
@@ -52,17 +53,18 @@ GripperEmpty extends Predicate = not:["!"]? "GripperEmpty" "(" client:Name@Agent
 Fixed extends Predicate = not:["!"]? "Fixed" "(" obj:Name@Element ")";
 AtFinalPosition extends Predicate = not:["!"]? "AtFinalPosition" "(" obj:Name@Element ")";
 ObjectFinalPosition extends Predicate = not:["!"]? "ObjectFinalPosition" "(" obj:Name@Element pos:Name@Location ")";
+Accessible extends Predicate = not:["!"]? "Accessible" "(" obj:Name@Element ")";
 // === END GENERATED PREDICATE RULES ===
 
 
 // === GENERATED ACTION RULES (DO NOT EDIT BELOW) ===
-PickUpHL extends PActionNode = "Action" "PickUpHL" name:Name "(" obj:Name@Element grabPos:Name@Location client:Name@Robot ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
+PickUpHL extends PActionNode = "Action" "PickUpHL" name:Name "(" obj:Name@Element p:Name@Location client:Name@Robot g:Name@Gripper ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
 astrule PickUpHL = method public crftypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=crftypesdef._ast.ASTActionLevel.HIGHLEVEL; } return actLevel; } ;
 
 PlaceHL extends PActionNode = "Action" "PlaceHL" name:Name "(" obj:Name@Element placePos:Name@Location client:Name@Robot ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
 astrule PlaceHL = method public crftypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=crftypesdef._ast.ASTActionLevel.HIGHLEVEL; } return actLevel; } ;
 
-StackHL extends PActionNode = "Action" "StackHL" name:Name "(" obj1:Name@Element obj2:Name@Element client:Name@Robot pr:Name@Location lay:Name@Stack mod:Name@Cassette ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
+StackHL extends PActionNode = "Action" "StackHL" name:Name "(" stackingobject:Name@Element existingobject:Name@Element client:Name@Robot objposition:Name@Location g:Name@Gripper ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
 astrule StackHL = method public crftypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=crftypesdef._ast.ASTActionLevel.HIGHLEVEL; } return actLevel; } ;
 
 StackOnMultipleHL extends PActionNode = "Action" "StackOnMultipleHL" name:Name "(" plate:Name@Element client:Name@Robot pos:Name@Location mod:Name@Cassette lay:Name@Stack ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
@@ -74,7 +76,7 @@ astrule GluingPlateHL = method public crftypesdef._ast.ASTActionLevel getActLeve
 GluingBeamHL extends PActionNode = "Action" "GluingBeamHL" name:Name "(" obj:Name@Beam pos:Name@PositionOnRail client:Name@Robot mod:Name@Cassette lay:Name@Stack ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
 astrule GluingBeamHL = method public crftypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=crftypesdef._ast.ASTActionLevel.HIGHLEVEL; } return actLevel; } ;
 
-NailingHL extends PActionNode = "Action" "NailingHL" name:Name "(" obj:Name@Element pos:Name@PositionOnRail client:Name@Robot ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
+NailingHL extends PActionNode = "Action" "NailingHL" name:Name "(" obj1:Name@Element obj2:Name@Element client:Name@Robot s:Name@StaplerGun ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
 astrule NailingHL = method public crftypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=crftypesdef._ast.ASTActionLevel.HIGHLEVEL; } return actLevel; } ;
 
 TravelML extends PActionNode = "Action" "TravelML" name:Name "(" client:Name@Robot from:Name@RobotPosition to:Name@RobotPosition ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
@@ -112,7 +114,14 @@ astrule StackOnMultipleML = method public crftypesdef._ast.ASTActionLevel getAct
 
 StackOnTwoML extends PActionNode = "Action" "StackOnTwoML" name:Name "(" stackingobj:Name@Element client:Name@Robot objposition:Name@Location robotpos:Name@RobotPosition existingobj1:Name@Element existingobj2:Name@Element vg:Name@Gripper layer1:Name@Stack layer2:Name@Stack ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
 astrule StackOnTwoML = method public crftypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=crftypesdef._ast.ASTActionLevel.MIDLEVEL; } return actLevel; } ;
+
+StackOnTwoHL extends PActionNode = "Action" "StackOnTwoHL" name:Name "(" stackingobj:Name@Element client:Name@Robot objposition:Name@Location existingobj1:Name@Element existingobj2:Name@Element layer1:Name@Stack layer2:Name@Stack g:Name@Gripper ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
+astrule StackOnTwoHL = method public crftypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=crftypesdef._ast.ASTActionLevel.HIGHLEVEL; } return actLevel; } ;
+
+ChangeEndeffectorHL extends PActionNode = "Action" "ChangeEndeffectorHL" name:Name "(" client:Name@Robot oldtool:Name@Tool newtool:Name@Tool ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
+astrule ChangeEndeffectorHL = method public crftypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=crftypesdef._ast.ASTActionLevel.HIGHLEVEL; } return actLevel; } ;
 // === END GENERATED ACTION RULES ===
+
 
 
 

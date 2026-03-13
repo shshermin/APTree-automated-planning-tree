@@ -4,14 +4,14 @@ namespace ModelLoader.PredicateTypes
 {
     public class Holding : Predicate
     {
-        public Agent agent { get; set; }
-        public Element myObject { get; set; }
+        public Agent client { get; set; }
+        public Element obj { get; set; }
 
-        public Holding(Agent agent, Element myObject, bool isNegated) : base(isNegated)
+        public Holding(Agent client, Element obj, bool isNegated) : base(isNegated)
         {
             PredicateType = new FastName("holding");
-            this.agent = agent;
-            this.myObject = myObject;
+            this.client = client;
+            this.obj = obj;
             this.PredicateName = GetUniqueKey();
         }
 
@@ -19,8 +19,8 @@ namespace ModelLoader.PredicateTypes
         {
             return new List<string>
             {
-                agent?.NameKey?.ToString() ?? "null",
-                myObject?.NameKey?.ToString() ?? "null"
+                client?.NameKey?.ToString() ?? "null",
+                obj?.NameKey?.ToString() ?? "null"
             };
         }
     }

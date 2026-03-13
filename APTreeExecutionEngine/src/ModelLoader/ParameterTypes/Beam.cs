@@ -5,7 +5,7 @@ namespace ModelLoader.ParameterTypes
 {
     public class Beam : Element
     {
-        public double Length { get; set; }
+        public Location Loc { get; set; }
 
         // Empty constructor - required by CustomProperty
         public Beam() : base()
@@ -15,15 +15,15 @@ namespace ModelLoader.ParameterTypes
         }
 
         // Constructor with parameters
-        public Beam(double length) : this()
+        public Beam(Location loc) : this()
         {
-            this.Length = length;
+            this.Loc = loc;
         }
 
         // Constructor with name and parameters
-        public Beam(string name, double length) : base(name)
+        public Beam(string name, Location loc) : base(name)
         {
-            this.Length = length;
+            this.Loc = loc;
             BaseType = new FastName("Element");
             // TypeName is automatically set in base constructor
         }
@@ -34,10 +34,13 @@ namespace ModelLoader.ParameterTypes
             // Call base implementation first
             base.SetParameters(parameters);
 
-            // Set Length property
-            if (parameters.ContainsKey("length"))
+            // Set Loc property
+            if (parameters.ContainsKey("loc"))
             {
-                Length = Convert.ToDouble(parameters["length"]);
+                if (parameters["loc"] is Location locValue)
+                {
+                    Loc = locValue;
+                }
             }
 
         }

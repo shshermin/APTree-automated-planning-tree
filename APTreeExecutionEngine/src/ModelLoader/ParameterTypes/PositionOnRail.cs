@@ -13,7 +13,6 @@ namespace ModelLoader.ParameterTypes
             // TypeName is automatically set in base constructor
         }
 
-
         // Override SetParameters to set PositionOnRail-specific properties
         public override void SetParameters(Dictionary<string, object> parameters)
         {

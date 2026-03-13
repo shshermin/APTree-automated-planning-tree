@@ -33,14 +33,14 @@ namespace BehaviorTreeMainProject
         {
             // Initialize preconditions
             preconditions = new State(StateType.Precondition, new FastName("nailingHL_preconditions"));
-            preconditions.AddPredicate(new FastName("nailingHL_pre_0"), new Robotequipped(client, false));
-            preconditions.AddPredicate(new FastName("nailingHL_pre_1"), new Atplace(obj, pos, false));
+            preconditions.AddPredicate(new FastName("nailingHL_pre_0"), new RobotEquipped(client, false));
+            preconditions.AddPredicate(new FastName("nailingHL_pre_1"), new AtPlace(obj, pos, false));
             preconditions.AddPredicate(new FastName("nailingHL_pre_2"), new Clear(obj, false));
-            preconditions.AddPredicate(new FastName("nailingHL_pre_3"), new Nailed(obj, true));
+            preconditions.AddPredicate(new FastName("nailingHL_pre_3"), new Nailed(obj, obj, true));
 
             // Initialize effects
             effects = new State(StateType.Effect, new FastName("nailingHL_effects"));
-            effects.AddPredicate(new FastName("nailingHL_eff_0"), new Nailed(obj, false));
+            effects.AddPredicate(new FastName("nailingHL_eff_0"), new Nailed(obj, obj, false));
         }
 
         protected override State Preconditions => preconditions;

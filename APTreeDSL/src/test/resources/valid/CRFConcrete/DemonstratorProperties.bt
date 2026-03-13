@@ -282,7 +282,9 @@ Demo module1 ()
 Robot robot1 (gripper1 True homePos)
 
 // robot position
-RobotPosition homePos (home)
+RobotPosition rpPickup (rpPickup)
+RobotPosition rpManipulate (rpManipulate)
+RobotPosition rpToolchange (rpToolchange)
 
 // tools
 Gripper gripper1 (True True equipLocGripper)

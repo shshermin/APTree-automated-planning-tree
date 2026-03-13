@@ -2,15 +2,15 @@ using System;
 
 namespace ModelLoader.PredicateTypes
 {
-    public class Belongstolayer : Predicate
+    public class BelongsToLayer : Predicate
     {
-        public Element myObject { get; set; }
+        public Element obj { get; set; }
         public Layer lay { get; set; }
 
-        public Belongstolayer(Element myObject, Layer lay, bool isNegated) : base(isNegated)
+        public BelongsToLayer(Element obj, Layer lay, bool isNegated) : base(isNegated)
         {
             PredicateType = new FastName("belongstolayer");
-            this.myObject = myObject;
+            this.obj = obj;
             this.lay = lay;
             this.PredicateName = GetUniqueKey();
         }
@@ -19,7 +19,7 @@ namespace ModelLoader.PredicateTypes
         {
             return new List<string>
             {
-                myObject?.NameKey?.ToString() ?? "null",
+                obj?.NameKey?.ToString() ?? "null",
                 lay?.NameKey?.ToString() ?? "null"
             };
         }

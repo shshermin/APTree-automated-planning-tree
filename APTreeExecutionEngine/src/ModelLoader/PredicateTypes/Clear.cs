@@ -4,12 +4,12 @@ namespace ModelLoader.PredicateTypes
 {
     public class Clear : Predicate
     {
-        public Element myObject { get; set; }
+        public Element obj { get; set; }
 
-        public Clear(Element myObject, bool isNegated) : base(isNegated)
+        public Clear(Element obj, bool isNegated) : base(isNegated)
         {
             PredicateType = new FastName("clear");
-            this.myObject = myObject;
+            this.obj = obj;
             this.PredicateName = GetUniqueKey();
         }
 
@@ -17,7 +17,7 @@ namespace ModelLoader.PredicateTypes
         {
             return new List<string>
             {
-                myObject?.NameKey?.ToString() ?? "null"
+                obj?.NameKey?.ToString() ?? "null"
             };
         }
     }

@@ -4,13 +4,13 @@ namespace ModelLoader.PredicateTypes
 {
     public class HasTool : Predicate
     {
-        public Agent agent { get; set; }
+        public Agent client { get; set; }
         public Tool tool { get; set; }
 
-        public HasTool(Agent agent, Tool tool, bool isNegated) : base(isNegated)
+        public HasTool(Agent client, Tool tool, bool isNegated) : base(isNegated)
         {
-            PredicateType = new FastName("hasTool");
-            this.agent = agent;
+            PredicateType = new FastName("hastool");
+            this.client = client;
             this.tool = tool;
             this.PredicateName = GetUniqueKey();
         }
@@ -19,7 +19,7 @@ namespace ModelLoader.PredicateTypes
         {
             return new List<string>
             {
-                agent?.NameKey?.ToString() ?? "null",
+                client?.NameKey?.ToString() ?? "null",
                 tool?.NameKey?.ToString() ?? "null"
             };
         }

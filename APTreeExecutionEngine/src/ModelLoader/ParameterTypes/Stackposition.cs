@@ -3,18 +3,17 @@ using System.Collections.Generic;
 
 namespace ModelLoader.ParameterTypes
 {
-    public class Stackposition : Location
+    public class StackPosition : Location
     {
 
         // Empty constructor - required by CustomProperty
-        public Stackposition() : base()
+        public StackPosition() : base()
         {
             BaseType = new FastName("Location");
             // TypeName is automatically set in base constructor
         }
 
-
-        // Override SetParameters to set Stackposition-specific properties
+        // Override SetParameters to set StackPosition-specific properties
         public override void SetParameters(Dictionary<string, object> parameters)
         {
             // Call base implementation first

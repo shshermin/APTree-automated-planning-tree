@@ -21,8 +21,8 @@ import de.se_rwth.commons.logging.Log;
 public class CSharpPredicateGenerator {
 
     private static final String DEFAULT_INPUT_PATH = "src/test/resources/valid/CRFTypes/LiveMatPredicaetTypes.bt";
-    private static final String DEFAULT_OUTPUT_DIR = "generated_csharp/predicates/";
-    private static final String DEFAULT_NAMESPACE = "BehaviorTree.Predicates";
+    private static final String DEFAULT_OUTPUT_DIR = "../APTreeExecutionEngine/src/ModelLoader/PredicateTypes";
+    private static final String DEFAULT_NAMESPACE = "ModelLoader.PredicateTypes";
 
     public static void main(String[] args) {
         try {
@@ -66,29 +66,23 @@ public class CSharpPredicateGenerator {
             // Iterate over Predicate Type Definitions
             for (var def : world.getPredicateTypeDefinitionList()) {
                 String className = def.getName();
-                // Assuming all predicates extend a base Predicate class in C# or interface
                 String superType = "Predicate"; 
                 
                 StringBuilder cs = new StringBuilder();
 
-                // Namespace
-                cs.append("using System;\n");
-                cs.append("using System.Collections.Generic;\n");
-                cs.append("using BehaviorTree.Types;\n\n"); // Assuming Property Types are here
-                cs.append("namespace ").append(namespace).append(" {\n\n");
+                // Using statement
+                cs.append("using System;\n\n");
+
+                // Namespace (new-line brace style)
+                cs.append("namespace ").append(namespace).append("\n{\n");
 
                 // Class Declaration
-                cs.append("    public class ").append(className);
-                if (superType != null && !superType.isEmpty()) {
-                    cs.append(" : ").append(superType);
-                }
-                cs.append(" {\n");
+                cs.append("    public class ").append(className).append(" : ").append(superType).append("\n");
+                cs.append("    {\n");
 
-                // Add not property
-                cs.append("        public bool not { get; set; }\n");
-
-                // Properties/Arguments of the predicate
-                for (ASTProperty prop : def.getPropertyList()) {
+                // Properties/Arguments of the predicate (no redundant 'not' property)
+                java.util.List<ASTProperty> propertyList = def.getPropertyList();
+                for (ASTProperty prop : propertyList) {
                     String propName = prop.getName();
                     String propType = mapTypeToCSharp(prop.getType().getName());
                     boolean isList = prop.isIsList();
@@ -106,7 +100,6 @@ public class CSharpPredicateGenerator {
                 cs.append("\n        public ").append(className).append("(");
                 
                 // Constructor arguments
-                java.util.List<ASTProperty> propertyList = def.getPropertyList();
                 for (int i = 0; i < propertyList.size(); i++) {
                     ASTProperty prop = propertyList.get(i);
                     String propName = prop.getName();
@@ -146,13 +139,10 @@ public class CSharpPredicateGenerator {
 
                     cs.append("                ");
                     if (isList) {
-                         // Handling lists might be tricky with NameKey, assume robust ToString or similar
-                         // For now just outputting something basic or skipping deep list handling as per simple example
                          cs.append(propName).append("?.ToString() ?? \"null\"");
                     } else if (isBasicType) {
                          cs.append(propName).append(".ToString()");
                     } else {
-                         // Check if likely nullable or complex
                          cs.append(propName).append("?.NameKey?.ToString() ?? \"null\"");
                     }
                     

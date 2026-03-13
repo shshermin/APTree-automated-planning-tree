@@ -38,7 +38,7 @@ namespace BehaviorTreeMainProject
             // Initialize preconditions
             preconditions = new State(StateType.Precondition, new FastName("gluingML_preconditions"));
             preconditions.AddPredicate(new FastName("gluingML_pre_0"), new AtAgent(client, pos, false));
-            preconditions.AddPredicate(new FastName("gluingML_pre_1"), new Atplace(obj, pos, false));
+            preconditions.AddPredicate(new FastName("gluingML_pre_1"), new AtPlace(obj, pos, false));
             preconditions.AddPredicate(new FastName("gluingML_pre_2"), new Clear(obj, false));
             preconditions.AddPredicate(new FastName("gluingML_pre_3"), new ActiveTool(gg, false));
             preconditions.AddPredicate(new FastName("gluingML_pre_4"), new Glued(obj, true));

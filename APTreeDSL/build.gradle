@@ -201,6 +201,7 @@ task generateCSharpPropertyTypes(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'CSharopCodeGenerator'
     workingDir = projectDir
+    args = [project.properties.get('inputModel', 'src/test/resources/valid/CRFTypes/LiveMatPropertyTypes.bt')]
 }
 
 task generateCSharpPredicateTypes(type: JavaExec) {
@@ -208,6 +209,7 @@ task generateCSharpPredicateTypes(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'CSharpPredicateGenerator'
     workingDir = projectDir
+    args = [project.properties.get('inputModel', 'src/test/resources/valid/CRFTypes/LiveMatPredicaetTypes.bt')]
 }
 
 task generateCSharpActionTypes(type: JavaExec) {
@@ -215,6 +217,7 @@ task generateCSharpActionTypes(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'CSharpActionGenerator'
     workingDir = projectDir
+    args = [project.properties.get('inputModel', 'src/test/resources/valid/CRFTypes/LiveMatActionTypes.bt')]
 }
 
 

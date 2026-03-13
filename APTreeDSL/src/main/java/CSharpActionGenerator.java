@@ -6,6 +6,7 @@ import java.nio.file.Paths;
 import java.util.Optional;
 
 import crftypesdef.CRFTypesDefMill;
+import crftypesdef._ast.ASTPredicateRef;
 import crftypesdef._ast.ASTProperty;
 import crftypesdef._ast.ASTWorld;
 import crftypesdef._parser.CRFTypesDefParser;
@@ -21,7 +22,7 @@ import de.se_rwth.commons.logging.Log;
 public class CSharpActionGenerator {
 
     private static final String DEFAULT_INPUT_PATH = "src/test/resources/valid/CRFTypes/LiveMatActionTypes.bt";
-    private static final String DEFAULT_OUTPUT_DIR = "generated_csharp/actions/";
+    private static final String DEFAULT_OUTPUT_DIR = "../APTreeExecutionEngine/src/ModelLoader/ActionTypes";
     private static final String DEFAULT_NAMESPACE = "BehaviorTreeMainProject";
 
     public static void main(String[] args) {
@@ -128,16 +129,41 @@ public class CSharpActionGenerator {
                 cs.append("        }\n\n");
 
                 // InitializePredicates method
+                String camelName = Character.toLowerCase(className.charAt(0)) + className.substring(1);
                 cs.append("        private void InitializePredicates()\n");
                 cs.append("        {\n");
                 cs.append("            // Initialize preconditions\n");
-                cs.append("            preconditions = new State(StateType.Precondition, new FastName(\"").append(className.toLowerCase()).append("_preconditions\"));\n");
-                cs.append("            // TODO: Add preconditions as needed\n");
-                cs.append("            // Example: preconditions.AddPredicate(new FastName(\"pre_0\"), new PredicateName(param1, param2, false));\n\n");
-                cs.append("            // Initialize effects\n");
-                cs.append("            effects = new State(StateType.Effect, new FastName(\"").append(className.toLowerCase()).append("_effects\"));\n");
-                cs.append("            // TODO: Add effects as needed\n");
-                cs.append("            // Example: effects.AddPredicate(new FastName(\"eff_0\"), new PredicateName(param1, param2, true));\n");
+                cs.append("            preconditions = new State(StateType.Precondition, new FastName(\"").append(camelName).append("_preconditions\"));\n");
+
+                int preIdx = 0;
+                for (ASTPredicateRef precon : def.getPreconsList()) {
+                    String predName = precon.getName();
+                    boolean isNot = precon.isNot();
+                    cs.append("            preconditions.AddPredicate(new FastName(\"").append(camelName).append("_pre_").append(preIdx).append("\"), new ").append(predName).append("(");
+                    for (int i = 0; i < precon.sizeArgs(); i++) {
+                        if (i > 0) cs.append(", ");
+                        cs.append(precon.getArgs(i));
+                    }
+                    cs.append(", ").append(isNot).append("));\n");
+                    preIdx++;
+                }
+
+                cs.append("\n            // Initialize effects\n");
+                cs.append("            effects = new State(StateType.Effect, new FastName(\"").append(camelName).append("_effects\"));\n");
+
+                int effIdx = 0;
+                for (ASTPredicateRef effect : def.getEffectsList()) {
+                    String predName = effect.getName();
+                    boolean isNot = effect.isNot();
+                    cs.append("            effects.AddPredicate(new FastName(\"").append(camelName).append("_eff_").append(effIdx).append("\"), new ").append(predName).append("(");
+                    for (int i = 0; i < effect.sizeArgs(); i++) {
+                        if (i > 0) cs.append(", ");
+                        cs.append(effect.getArgs(i));
+                    }
+                    cs.append(", ").append(isNot).append("));\n");
+                    effIdx++;
+                }
+
                 cs.append("        }\n\n");
 
                 // Property overrides

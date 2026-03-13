@@ -7,12 +7,15 @@ Define Action PickUpHL {
         obj: Element
         p: Location
         client: Robot
+        g: Gripper
     }
     Preconditions {
         GripperEmpty(client)
+        HasTool(client, g)
         AtPlace(obj, p)
         !Holding(client, obj)
         !PositionFree(p)
+        !AtFinalPosition(obj)
         Clear(obj)
         !Fixed(obj)
     }
@@ -33,10 +36,12 @@ Define Action StackHL {
         existingobject: Element
         client: Robot
         objposition: Location
+        g: Gripper
     }
     Preconditions {
         !GripperEmpty(client)
         Holding(client, stackingobject)
+        HasTool(client, g)
         AtFinalPosition(existingobject)
         !AtPlace(stackingobject, objposition)
         ObjectFinalPosition(stackingobject, objposition)
@@ -47,6 +52,8 @@ Define Action StackHL {
         AtPlace(stackingobject, objposition)
         GripperEmpty(client)
         Clear(stackingobject)
+        !Accessible(existingobject)
+        Accessible(stackingobject)
         Stacked(stackingobject, existingobject)
     }
 }
@@ -62,10 +69,12 @@ Define Action StackOnTwoHL {
         existingobj2: Element
         layer1: Stack
         layer2: Stack
+        g: Gripper
     }
     Preconditions {
         !GripperEmpty(client)
         Holding(client, stackingobj)
+        HasTool(client, g)
         AtFinalPosition(existingobj2)
         AtFinalPosition(existingobj1)
         Clear(existingobj1)
@@ -80,9 +89,12 @@ Define Action StackOnTwoHL {
         AtPlace(stackingobj, objposition)
         GripperEmpty(client)
         Clear(stackingobj)
+        Accessible(stackingobj)
         Stacked(stackingobj, existingobj1)
         Stacked(stackingobj, existingobj2)
         AtFinalPosition(stackingobj)
+        !Accessible(existingobj1)
+        !Accessible(existingobj2)
     }
 }
 
@@ -93,17 +105,37 @@ Define Action NailingHL {
         obj1: Element
         obj2: Element
         client: Robot
+        s: StaplerGun
     }
     Preconditions {
         GripperEmpty(client)
+        HasTool(client, s)
         AtFinalPosition(obj2)
         AtFinalPosition(obj1)
-        Clear(obj1)
+        Accessible(obj1)
         !Nailed(obj1, obj2)
     }
     Effects {
         Nailed(obj1, obj2)
         Fixed(obj1)
+    }
+}
+
+// Robot changes its end effector
+Define Action ChangeEndeffectorHL {
+    ActLevel: HighLevel
+    Properties {
+        client: Robot
+        oldtool: Tool
+        newtool: Tool
+    }
+    Preconditions {
+        HasTool(client, oldtool)
+        GripperEmpty(client)
+    }
+    Effects {
+        !HasTool(client, oldtool)
+        HasTool(client, newtool)
     }
 }
 
@@ -263,6 +295,8 @@ Define Action StackML {
         AtPlace(stackingobject, objposition)
         GripperEmpty(client)
         Clear(stackingobject)
+        !Accessible(existingobject)
+        Accessible(stackingobject)
         Stacked(stackingobject, existingobject)
     }
 }
@@ -300,9 +334,12 @@ Define Action StackOnTwoML {
         AtPlace(stackingobj, objposition)
         GripperEmpty(client)
         Clear(stackingobj)
+        Accessible(stackingobj)
         Stacked(stackingobj, existingobj1)
         Stacked(stackingobj, existingobj2)
         AtFinalPosition(stackingobj)
+        !Accessible(existingobj1)
+        !Accessible(existingobj2)
     }
 }
 
@@ -320,7 +357,7 @@ Define Action NailingML {
         AtAgent(client, rp)
         AtFinalPosition(obj2)
         AtFinalPosition(obj1)
-        Clear(obj1)
+        Accessible(obj1)
         ActiveTool(ng)
         HasTool(client, ng)
         !Nailed(obj1, obj2)

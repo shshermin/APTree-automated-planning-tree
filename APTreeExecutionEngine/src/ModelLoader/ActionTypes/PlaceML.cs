@@ -42,15 +42,15 @@ namespace BehaviorTreeMainProject
             preconditions.AddPredicate(new FastName("placeML_pre_2"), new AtAgent(client, placepos, false));
             preconditions.AddPredicate(new FastName("placeML_pre_3"), new ActiveTool(vg, false));
             preconditions.AddPredicate(new FastName("placeML_pre_4"), new Clear(obj, true));
-            preconditions.AddPredicate(new FastName("placeML_pre_5"), new Positionfree(placepos, false));
+            preconditions.AddPredicate(new FastName("placeML_pre_5"), new PositionFree(placepos, false));
 
             // Initialize effects
             effects = new State(StateType.Effect, new FastName("placeML_effects"));
-            effects.AddPredicate(new FastName("placeML_eff_0"), new Atplace(obj, placepos, false));
+            effects.AddPredicate(new FastName("placeML_eff_0"), new AtPlace(obj, placepos, false));
             effects.AddPredicate(new FastName("placeML_eff_1"), new Holding(client, obj, true));
             effects.AddPredicate(new FastName("placeML_eff_2"), new Vgempty(client, false));
             effects.AddPredicate(new FastName("placeML_eff_3"), new Clear(obj, false));
-            effects.AddPredicate(new FastName("placeML_eff_4"), new Positionfree(placepos, true));
+            effects.AddPredicate(new FastName("placeML_eff_4"), new PositionFree(placepos, true));
         }
 
         protected override State Preconditions => preconditions;

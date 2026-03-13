@@ -5,7 +5,8 @@ namespace ModelLoader.ParameterTypes
 {
     public class GlueGun : Tool
     {
-        public string IsOn { get; set; }
+        public Location Loc { get; set; }
+        public bool IsActive { get; set; }
 
         // Empty constructor - required by CustomProperty
         public GlueGun() : base()
@@ -15,15 +16,17 @@ namespace ModelLoader.ParameterTypes
         }
 
         // Constructor with parameters
-        public GlueGun(string isOn) : this()
+        public GlueGun(Location loc, bool isActive) : this()
         {
-            this.IsOn = isOn;
+            this.Loc = loc;
+            this.IsActive = isActive;
         }
 
         // Constructor with name and parameters
-        public GlueGun(string name, string isOn) : base(name)
+        public GlueGun(string name, Location loc, bool isActive) : base(name)
         {
-            this.IsOn = isOn;
+            this.Loc = loc;
+            this.IsActive = isActive;
             BaseType = new FastName("Tool");
             // TypeName is automatically set in base constructor
         }
@@ -34,10 +37,19 @@ namespace ModelLoader.ParameterTypes
             // Call base implementation first
             base.SetParameters(parameters);
 
-            // Set IsOn property
-            if (parameters.ContainsKey("isOn"))
+            // Set Loc property
+            if (parameters.ContainsKey("loc"))
             {
-                IsOn = parameters["isOn"].ToString();
+                if (parameters["loc"] is Location locValue)
+                {
+                    Loc = locValue;
+                }
+            }
+
+            // Set IsActive property
+            if (parameters.ContainsKey("isActive"))
+            {
+                IsActive = Convert.ToBoolean(parameters["isActive"]);
             }
 
         }

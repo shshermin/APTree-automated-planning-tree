@@ -80,7 +80,8 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
                     }
 
                     // Regenerate the problem file with the current blackboard state
-                    string newProblemFile = GenerateDynamicPDDLProblem(parentAction, blackboard);
+                    string originalProblemFile = PlanningRequest.ProblemFile;
+                    string newProblemFile = GenerateDynamicPDDLProblem(parentAction, blackboard, originalProblemFile);
                     PlanningRequest.ProblemFile = newProblemFile;
 
                     // Send file content inline so the remote VM service doesn't need
@@ -331,7 +332,7 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
         /// <param name="action">The action whose effects become the PDDL goal</param>
         /// <param name="blackboard">The blackboard whose true predicates become the PDDL init</param>
         /// <returns>Relative path to the generated problem file (e.g. "Plannerinputs/generated/problemX.pddl")</returns>
-        public static string GenerateDynamicPDDLProblem(PActionNode action, Blackboard<FastName> blackboard)
+        public static string GenerateDynamicPDDLProblem(PActionNode action, Blackboard<FastName> blackboard, string originalProblemFile)
         {
             try
             {
@@ -383,7 +384,7 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
                 LoggingService.LogInfo($"🎯 ServicePDDLPlanning: Goal state PDDL: {goalstatepredicatesPDDL}");
 
                 // 3. Generate PDDL problem content
-                string pddlContent = GeneratePDDLProblemContent(actionFullName, initialstatepredicatesPDDL, goalstatepredicatesPDDL);
+                string pddlContent = GeneratePDDLProblemContent(actionFullName, initialstatepredicatesPDDL, goalstatepredicatesPDDL, originalProblemFile);
                 LoggingService.LogInfo($"🔧 ServicePDDLPlanning: Generated PDDL content length: {pddlContent?.Length ?? 0}");
 
                 // 4. Write to file
@@ -427,12 +428,12 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
         /// <summary>
         /// Generate PDDL problem content string from action type, initial predicates, and goal predicates.
         /// </summary>
-        private static string GeneratePDDLProblemContent(string actionType, string initialPredicates, string goalPredicates)
+        private static string GeneratePDDLProblemContent(string actionType, string initialPredicates, string goalPredicates, string parentProblemFile)
         {
             actionType = actionType.ToLower();
             initialPredicates = initialPredicates.ToLower();
             goalPredicates = goalPredicates.ToLower();
-            var objects = GetRelevantObjects(actionType);
+            var objects = GetRelevantObjects(parentProblemFile);
 
             return $@"(define (problem {actionType.ToLower()})
   (:domain fit)
@@ -451,27 +452,61 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
         }
 
         /// <summary>
-        /// Get relevant objects from ParameterInstances_PDDL.txt file.
+        /// Get objects from the parent (static) problem file's (:objects ...) section.
         /// </summary>
-        private static string GetRelevantObjects(string actionType)
+        private static string GetRelevantObjects(string parentProblemFile)
         {
             try
             {
-                string filePath = "python_service/Plannerinputs/static/ParameterInstances_PDDL.txt";
+                // Normalise the path: strip leading "./" and prepend "python_service/"
+                string normalised = parentProblemFile.TrimStart('.', '/', '\\');
+                string localPath = Path.Combine("python_service", normalised);
 
-                if (!File.Exists(filePath))
+                if (!File.Exists(localPath))
                 {
-                    LoggingService.LogError($"❌ ServicePDDLPlanning: ParameterInstances_PDDL.txt file not found at {filePath}");
+                    LoggingService.LogError($"❌ ServicePDDLPlanning: Parent problem file not found at {localPath}");
                     return string.Empty;
                 }
 
-                string content = File.ReadAllText(filePath);
-                LoggingService.LogInfo($"✅ ServicePDDLPlanning: Successfully read {content.Length} characters from ParameterInstances_PDDL.txt");
-                return content;
+                string content = File.ReadAllText(localPath);
+
+                // Extract the (:objects ... ) block
+                int objectsStart = content.IndexOf("(:objects", StringComparison.OrdinalIgnoreCase);
+                if (objectsStart < 0)
+                {
+                    LoggingService.LogError($"❌ ServicePDDLPlanning: No (:objects) section found in {localPath}");
+                    return string.Empty;
+                }
+
+                // Find the matching closing parenthesis
+                int depth = 0;
+                int objectsBodyStart = -1;
+                for (int i = objectsStart; i < content.Length; i++)
+                {
+                    if (content[i] == '(')
+                    {
+                        depth++;
+                        if (depth == 1)
+                            objectsBodyStart = i + "(:objects".Length;
+                    }
+                    else if (content[i] == ')')
+                    {
+                        depth--;
+                        if (depth == 0)
+                        {
+                            string objects = content.Substring(objectsBodyStart, i - objectsBodyStart).Trim();
+                            LoggingService.LogInfo($"✅ ServicePDDLPlanning: Extracted {objects.Split('\n').Length} object lines from {localPath}");
+                            return objects;
+                        }
+                    }
+                }
+
+                LoggingService.LogError($"❌ ServicePDDLPlanning: Malformed (:objects) section in {localPath} — no closing parenthesis");
+                return string.Empty;
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"❌ ServicePDDLPlanning: Error reading ParameterInstances_PDDL.txt: {ex.Message}");
+                LoggingService.LogError($"❌ ServicePDDLPlanning: Error reading parent problem file: {ex.Message}");
                 return string.Empty;
             }
         }

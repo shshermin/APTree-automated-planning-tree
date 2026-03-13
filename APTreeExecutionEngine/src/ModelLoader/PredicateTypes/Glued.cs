@@ -4,12 +4,12 @@ namespace ModelLoader.PredicateTypes
 {
     public class Glued : Predicate
     {
-        public Element myObject { get; set; }
+        public Element obj { get; set; }
 
-        public Glued(Element myObject, bool isNegated) : base(isNegated)
+        public Glued(Element obj, bool isNegated) : base(isNegated)
         {
             PredicateType = new FastName("glued");
-            this.myObject = myObject;
+            this.obj = obj;
             this.PredicateName = GetUniqueKey();
         }
 
@@ -17,7 +17,7 @@ namespace ModelLoader.PredicateTypes
         {
             return new List<string>
             {
-                myObject?.NameKey?.ToString() ?? "null"
+                obj?.NameKey?.ToString() ?? "null"
             };
         }
     }

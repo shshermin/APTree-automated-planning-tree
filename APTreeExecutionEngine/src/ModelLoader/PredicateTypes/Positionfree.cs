@@ -2,14 +2,14 @@ using System;
 
 namespace ModelLoader.PredicateTypes
 {
-    public class Positionfree : Predicate
+    public class PositionFree : Predicate
     {
-        public Location pos { get; set; }
+        public Location loc { get; set; }
 
-        public Positionfree(Location pos, bool isNegated) : base(isNegated)
+        public PositionFree(Location loc, bool isNegated) : base(isNegated)
         {
             PredicateType = new FastName("positionfree");
-            this.pos = pos;
+            this.loc = loc;
             this.PredicateName = GetUniqueKey();
         }
 
@@ -17,7 +17,7 @@ namespace ModelLoader.PredicateTypes
         {
             return new List<string>
             {
-                pos?.NameKey?.ToString() ?? "null"
+                loc?.NameKey?.ToString() ?? "null"
             };
         }
     }

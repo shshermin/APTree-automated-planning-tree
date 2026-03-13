@@ -5,8 +5,9 @@ namespace ModelLoader.ParameterTypes
 {
     public class Robot : Agent
     {
-        public string Type { get; set; }
-        public double Speed { get; set; }
+        public Tool Tool { get; set; }
+        public bool RobothasTool { get; set; }
+        public RobotPosition Loc { get; set; }
 
         // Empty constructor - required by CustomProperty
         public Robot() : base()
@@ -16,17 +17,19 @@ namespace ModelLoader.ParameterTypes
         }
 
         // Constructor with parameters
-        public Robot(string type, double speed) : this()
+        public Robot(Tool tool, bool robothasTool, RobotPosition loc) : this()
         {
-            this.Type = type;
-            this.Speed = speed;
+            this.Tool = tool;
+            this.RobothasTool = robothasTool;
+            this.Loc = loc;
         }
 
         // Constructor with name and parameters
-        public Robot(string name, string type, double speed) : base(name)
+        public Robot(string name, Tool tool, bool robothasTool, RobotPosition loc) : base(name)
         {
-            this.Type = type;
-            this.Speed = speed;
+            this.Tool = tool;
+            this.RobothasTool = robothasTool;
+            this.Loc = loc;
             BaseType = new FastName("Agent");
             // TypeName is automatically set in base constructor
         }
@@ -37,16 +40,28 @@ namespace ModelLoader.ParameterTypes
             // Call base implementation first
             base.SetParameters(parameters);
 
-            // Set Type property
-            if (parameters.ContainsKey("type"))
+            // Set Tool property
+            if (parameters.ContainsKey("tool"))
             {
-                Type = parameters["type"].ToString();
+                if (parameters["tool"] is Tool toolValue)
+                {
+                    Tool = toolValue;
+                }
             }
 
-            // Set Speed property
-            if (parameters.ContainsKey("speed"))
+            // Set RobothasTool property
+            if (parameters.ContainsKey("robothasTool"))
             {
-                Speed = Convert.ToDouble(parameters["speed"]);
+                RobothasTool = Convert.ToBoolean(parameters["robothasTool"]);
+            }
+
+            // Set Loc property
+            if (parameters.ContainsKey("loc"))
+            {
+                if (parameters["loc"] is RobotPosition locValue)
+                {
+                    Loc = locValue;
+                }
             }
 
         }

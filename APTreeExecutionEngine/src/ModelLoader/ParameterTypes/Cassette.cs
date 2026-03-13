@@ -5,7 +5,7 @@ namespace ModelLoader.ParameterTypes
 {
     public class Cassette : Module
     {
-        public string Layers { get; set; }
+        public List<Layer> Layers { get; set; }
 
         // Empty constructor - required by CustomProperty
         public Cassette() : base()
@@ -15,13 +15,13 @@ namespace ModelLoader.ParameterTypes
         }
 
         // Constructor with parameters
-        public Cassette(string layers) : this()
+        public Cassette(List<Layer> layers) : this()
         {
             this.Layers = layers;
         }
 
         // Constructor with name and parameters
-        public Cassette(string name, string layers) : base(name)
+        public Cassette(string name, List<Layer> layers) : base(name)
         {
             this.Layers = layers;
             BaseType = new FastName("Module");
@@ -37,7 +37,10 @@ namespace ModelLoader.ParameterTypes
             // Set Layers property
             if (parameters.ContainsKey("layers"))
             {
-                Layers = parameters["layers"].ToString();
+                if (parameters["layers"] is List<Layer> layersValue)
+                {
+                    Layers = layersValue;
+                }
             }
 
         }
