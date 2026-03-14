@@ -523,6 +523,7 @@ export function aptreeGraphToCanvasGraph(
   const ROOT_TO_FLOW_GAP_Y = 220;
   const FLOW_TO_SUBTREE_GAP_Y = 145;
   const SERVICE_FLOW_EXTRA_GAP_Y = 24;
+  const NO_SERVICE_FLOW_EXTRA_GAP_Y = 5;
   const TREE_GAP_X = 320; // Horizontal gap for plain BT (child-edge) layout
   const TREE_GAP_Y = 120; // Vertical gap for plain BT (child-edge) layout
   const SERVICE_OFFSET_Y = 55; // Service box offset above flow node
@@ -786,6 +787,9 @@ export function aptreeGraphToCanvasGraph(
     }
 
     const actionMembers = getActionMembersForFlow(flowId);
+    const flowToSubtreeExtraGapY = hasService
+      ? SERVICE_FLOW_EXTRA_GAP_Y
+      : NO_SERVICE_FLOW_EXTRA_GAP_Y;
 
     // Build MEETS pairs for action layout
     const actionIds = actionMembers
@@ -843,7 +847,7 @@ export function aptreeGraphToCanvasGraph(
     const actionStartY =
       flowY +
       FLOW_TO_SUBTREE_GAP_Y +
-      (hasService ? SERVICE_FLOW_EXTRA_GAP_Y : 0) +
+      flowToSubtreeExtraGapY +
       Math.max(84, maxActionH * 0.55 + 26);
     const leftX = baseX - actionColGapX / 2;
     const rightX = baseX + actionColGapX / 2;
