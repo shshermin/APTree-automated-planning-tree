@@ -5,43 +5,26 @@ BehaviorTree LiveMat {
         All
         AllFlow
         NodeGraph {    
-<<<<<<< HEAD
-            FlowNode  Cassette1{
-                ServicePlanning mypddlplanner1 Enhsp Domain:DomainHL Problem:ProblemC1
-=======
             FlowNode  Cassette1 {
                 ServicePlanning mypddlplanner1 Enhsp Domain:DomainHL Problem:problemC1
->>>>>>> 59d884f (Update action node colors to pink, flow nodes to blue, rename sidebar title to APTree)
                 All
                 AllAction
                 NodeGraph { }
             } 
             FlowNode  Cassette2 {
-<<<<<<< HEAD
-                ServicePlanning mypddlplanner2 Enhsp Domain:DomainHL Problem:ProblemC2
-=======
                 ServicePlanning mypddlplanner2 Enhsp Domain:DomainHL Problem:problemC2
->>>>>>> 59d884f (Update action node colors to pink, flow nodes to blue, rename sidebar title to APTree)
                 All
                 AllAction
                 NodeGraph { }
             }
             FlowNode  Cassette3 {
-<<<<<<< HEAD
-                ServicePlanning mypddlplanner3 Enhsp Domain:DomainHL Problem:ProblemC3
-=======
                 ServicePlanning mypddlplanner3 Enhsp Domain:DomainHL Problem:problemC3
->>>>>>> 59d884f (Update action node colors to pink, flow nodes to blue, rename sidebar title to APTree)
                 All
                 AllAction
                 NodeGraph { }
             }
             FlowNode  Cassette4 {
-<<<<<<< HEAD
-                ServicePlanning mypddlplanner4 Enhsp Domain:DomainHL Problem:ProblemC4
-=======
                 ServicePlanning mypddlplanner4 Enhsp Domain:DomainHL Problem:problemC4
->>>>>>> 59d884f (Update action node colors to pink, flow nodes to blue, rename sidebar title to APTree)
                 All
                 AllAction
                 NodeGraph { }

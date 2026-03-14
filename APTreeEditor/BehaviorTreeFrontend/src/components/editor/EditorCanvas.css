@@ -729,10 +729,14 @@
 }
 
 .canvas-node-flow-service {
+  display: block;
+  max-width: 100%;
   font-size: 0.85rem;
   font-weight: 700;
   color: var(--text-primary);
   letter-spacing: 0.02em;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .canvas-node-flow-divider {

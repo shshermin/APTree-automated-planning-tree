@@ -101,7 +101,13 @@ public class APTreeJsonCli {
       ASTFinalWorld world = parsedWorld.get();
       ASTAPTree ast = world.getAPTree(0);
 
-      GraphExport graph = GraphExport.fromTree(ast);
+      List<GraphExport> graphs = new ArrayList<>();
+      List<String> treeNames = new ArrayList<>();
+      for (ASTAPTree tree : world.getAPTreeList()) {
+        graphs.add(GraphExport.fromTree(tree));
+        treeNames.add(tree.getName());
+      }
+      GraphExport graph = graphs.get(0);
 
       // Pre-validation: element references must resolve
       // COMMENTED OUT: skip context condition checks during import
@@ -125,7 +131,7 @@ public class APTreeJsonCli {
 
       List<String> findings = collectFindings();
       boolean ok = findings.isEmpty();
-      return json(ok, ast.getName(), new ArrayList<>(), findings, graph);
+      return json(ok, ast.getName(), new ArrayList<>(), findings, graph, graphs, treeNames);
 
     } catch (Exception e) {
       return errorJson("Exception: " + safe(e.getMessage()));
@@ -229,7 +235,14 @@ public class APTreeJsonCli {
     return out;
   }
 
-  private static String json(boolean ok, String treeName, List<String> errors, List<String> findings, GraphExport graph) {
+  private static String json(
+      boolean ok,
+      String treeName,
+      List<String> errors,
+      List<String> findings,
+      GraphExport graph,
+      List<GraphExport> graphs,
+      List<String> treeNames) {
     StringBuilder sb = new StringBuilder();
     sb.append("{");
     sb.append("\"ok\":").append(ok);
@@ -241,6 +254,17 @@ public class APTreeJsonCli {
     if (graph != null) {
       sb.append(",\"graph\":").append(graph.toJson());
     }
+    if (graphs != null && !graphs.isEmpty()) {
+      sb.append(",\"graphs\":[");
+      for (int i = 0; i < graphs.size(); i++) {
+        if (i > 0) sb.append(",");
+        sb.append(graphs.get(i).toJson());
+      }
+      sb.append("]");
+    }
+    if (treeNames != null && !treeNames.isEmpty()) {
+      sb.append(",\"treeNames\":").append(stringArray(treeNames));
+    }
     sb.append("}");
     return sb.toString();
   }
@@ -250,13 +274,13 @@ public class APTreeJsonCli {
     if (error != null && !error.isBlank()) {
       errors.add(error);
     }
-    return json(ok, treeName, errors, findings, null);
+    return json(ok, treeName, errors, findings, null, null, null);
   }
 
   private static String errorJson(String message) {
     List<String> errors = new ArrayList<>();
     errors.add(message);
-    return json(false, null, errors, new ArrayList<>(), null);
+    return json(false, null, errors, new ArrayList<>(), null, null, null);
   }
 
   /**

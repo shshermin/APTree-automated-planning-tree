@@ -43,34 +43,6 @@ namespace BehaviorTreeMainProject
 
             try
             {
-<<<<<<< HEAD
-                // Create blackboard instance (without Neo4j)
-                using var blackboard = new Blackboard<FastName>();
-
-                // Create BlackboardWriter for type registration
-                var blackboardWriter = new BlackboardWriter(blackboard);
-
-                // Register all types
-                LoggingService.LogSection("REGISTERING ALL TYPES");
-                blackboardWriter.RegisterAllTypes();
-
-                // Register all instances from files
-                LoggingService.LogSection("REGISTERING ALL INSTANCES FROM FILES");
-                string actionInstancesFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "src", "InputInstances", "ActionInstances.txt");
-                blackboardWriter.RegisterAllInstances(actionInstancesFile);
-
-                // Capture blackboard state before ticking starts
-                LoggingService.LogSection("CAPTURING BLACKBOARD STATE BEFORE TICKING");
-                BlackboardSummaryLogger.CaptureBlackboardState(blackboard);
-
-                // Inspect blackboard contents
-                LoggingService.LogSection("INSPECTING BLACKBOARD CONTENTS");
-                await InspectBlackboard(blackboard);
-
-                // Create behavior tree with cassette flow nodes
-                LoggingService.LogSection("CREATING BEHAVIOR TREE WITH CASSETTE FLOW NODES");
-                await CreateCassetteBehaviorTree(blackboard);
-=======
                 // Create blackboard instance (no Neo4j dependency)
                 using var blackboard = new Blackboard<FastName>();
                 // Create BlackboardWriter for type registration
@@ -98,7 +70,6 @@ namespace BehaviorTreeMainProject
                  // Create behavior tree with cassette flow nodes
                 LoggingService.LogSection("CREATING BEHAVIOR TREE WITH CASSETTE FLOW NODES");
                  await CreateCassetteBehaviorTree(blackboard);
->>>>>>> 3505327 (optimizing the speed with new decorators)
 
                 testEndTime = DateTime.Now;
                 
@@ -161,10 +132,6 @@ namespace BehaviorTreeMainProject
             }
         }
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 3505327 (optimizing the speed with new decorators)
         // Inspect blackboard contents
         private async Task InspectBlackboard(Blackboard<FastName> blackboard)
         {
@@ -453,15 +420,11 @@ namespace BehaviorTreeMainProject
 
                 // Add planning phase management service to the root composite node
                 ((BTFlowNodeComposite)rootNode).AddPlanningPhaseService();
-<<<<<<< HEAD
-                LoggingService.LogSuccess("ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ Added planning phase management service to root composite node");
-=======
                 LoggingService.LogSuccess("ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ Added planning phase management service to root composite node");
 
                 // Add fair branch progress decorator for round-robin execution with cross-cassette tool batching
                 rootNode.AddDecorator(new BTDecoratorFairBranchProgress((BTFlowNodeComposite)rootNode));
                 LoggingService.LogSuccess("Added FairBranchProgress decorator to root composite node");
->>>>>>> 3505327 (optimizing the speed with new decorators)
                 
                 
 
@@ -472,17 +435,10 @@ namespace BehaviorTreeMainProject
 
                 // Create PDDL planners for all four cassettes (after behavior tree is created)
                 // Different planners and problem files for each cassette
-<<<<<<< HEAD
-                var pddlRequest1 = new PDDLPlanningRequest("./Plannerinputs/static/DomainHL.pddl", "./Plannerinputs/static/problemC1.pddl", "/home/ubuntu/ENHSP-Public/enhsp.jar", "ENHSP");
-                var pddlRequest2 = new PDDLPlanningRequest("./Plannerinputs/static/DomainHL.pddl", "./Plannerinputs/static/problemC2.pddl", "/home/ubuntu/ENHSP-Public/enhsp.jar", "ENHSP");
-                var pddlRequest3 = new PDDLPlanningRequest("./Plannerinputs/static/DomainHL.pddl", "./Plannerinputs/static/problemC3.pddl", "/home/ubuntu/ENHSP-Public/enhsp.jar", "ENHSP");
-                var pddlRequest4 = new PDDLPlanningRequest("./Plannerinputs/static/DomainHL.pddl", "./Plannerinputs/static/problemC4.pddl", "/home/ubuntu/ENHSP-Public/enhsp.jar", "ENHSP");
-=======
                 var pddlRequest1 = new PDDLPlanningRequest("./Plannerinputs/static/DomainHL.pddl", "./Plannerinputs/static/problemC1.pddl", "/home/shermin/ENHSP-Public/enhsp.jar", "ENHSP");
                 var pddlRequest2 = new PDDLPlanningRequest("./Plannerinputs/static/DomainHL.pddl", "./Plannerinputs/static/problemC2.pddl", "/home/shermin/ENHSP-Public/enhsp.jar", "ENHSP");
                 var pddlRequest3 = new PDDLPlanningRequest("./Plannerinputs/static/DomainHL.pddl", "./Plannerinputs/static/problemC3.pddl", "/home/shermin/ENHSP-Public/enhsp.jar", "ENHSP");
                 var pddlRequest4 = new PDDLPlanningRequest("./Plannerinputs/static/DomainHL.pddl", "./Plannerinputs/static/problemC4.pddl", "/home/shermin/ENHSP-Public/enhsp.jar", "ENHSP");
->>>>>>> 59d884f (Update action node colors to pink, flow nodes to blue, rename sidebar title to APTree)
 
                 var pddlPlanner1 = new ServicePDDLPlanning(behaviorTree, pddlRequest1);
                 var pddlPlanner2 = new ServicePDDLPlanning(behaviorTree, pddlRequest2);

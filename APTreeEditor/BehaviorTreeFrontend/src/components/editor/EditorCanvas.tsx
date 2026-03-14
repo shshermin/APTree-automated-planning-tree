@@ -5,6 +5,7 @@ import {
   BackgroundVariant,
   BaseEdge,
   EdgeLabelRenderer,
+  getBezierPath,
   getSmoothStepPath,
   Handle,
   MarkerType,
@@ -167,8 +168,8 @@ const TARGET_HANDLE_STYLES: Record<PortSide, CSSProperties> = {
 };
 
 const CANVAS_EXTENT: [[number, number], [number, number]] = [
-  [-4000, -4000],
-  [4000, 4000],
+  [-200000, -200000],
+  [200000, 200000],
 ];
 
 const PARAM_BOX_HEIGHT = 24;
@@ -579,19 +580,29 @@ function BehaviorEdge({
   data,
   selected,
 }: EdgeProps<BehaviorEdgeData>) {
-  const [edgePath, midX, midY] = getSmoothStepPath({
-    sourceX,
-    sourceY,
-    targetX,
-    targetY,
-    sourcePosition,
-    targetPosition,
-  });
-
   const isMeetsEdge =
     data?.kind === "relation" &&
     typeof data?.label === "string" &&
     data.label.toLowerCase().includes("meet");
+
+  const [edgePath, midX, midY] = isMeetsEdge
+    ? getBezierPath({
+        sourceX,
+        sourceY,
+        targetX,
+        targetY,
+        sourcePosition,
+        targetPosition,
+        curvature: 0.3,
+      })
+    : getSmoothStepPath({
+        sourceX,
+        sourceY,
+        targetX,
+        targetY,
+        sourcePosition,
+        targetPosition,
+      });
 
   const edgeLabel = isMeetsEdge ? "MEET" : null;
 
@@ -879,6 +890,10 @@ function EditorCanvasInner(props: EditorCanvasProps) {
           hidden: !!node.hidden,
           width,
           height,
+          style: {
+            width: `${width}px`,
+            height: `${height}px`,
+          },
         } satisfies FlowNode<BehaviorNodeData>;
       };
 
