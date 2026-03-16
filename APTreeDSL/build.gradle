@@ -342,8 +342,8 @@ task runLiveMatSetupObjectsGenerator(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'LiveMatSetupObjectsGenerator'
     workingDir = projectDir
-    args = ['src/test/resources/valid/CRFConcrete/LiveMatSetupObjects.bt',
-        '../APTreeExecutionEngine/src/ModelLoader/LiveMatSetupObjects.json']
+    args = [project.properties.get('modelName', 'src/test/resources/valid/CRFConcrete/LiveMatSetupObjects.bt'),
+        project.properties.get('outputName', '../APTreeExecutionEngine/src/ModelLoader/LiveMatSetupObjects.json')]
 }
 
 task generateBTModelJson(type: JavaExec) {

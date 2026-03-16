@@ -15,7 +15,7 @@
    
     stack -layer
 
-    demo - module 
+    ;demo - module 
 
     robot - agent    
 
@@ -35,7 +35,7 @@
     (fixed ?obj - element)   ;an object is fixed
     (positionfree ?pos - location)
     (belongstolayer ?obj - element ?lay - layer)
-    (belongstomodule ?obj - element ?mod - module) 
+    ;(belongstomodule ?obj - element ?mod - module) 
     (stacked ?obj1 - element ?obj2 - element) 
     (atfinalposition ?obj - element)
     (objectfinalposition ?obj - element ?pos - finalposition)
@@ -156,7 +156,7 @@
       
 
       (:action stackML ; for stacking one object on another object 
-    :parameters (?stackingobject - element ?existingobject - element ?client - robot ?gripper - gripper ?objposition - location ?robotposition - rpmanipulate)
+    :parameters (?stackingobject - element ?existingobject - element ?client - robot ?gripper - gripper ?objposition - finalposition ?robotposition - rpmanipulate)
     
     :precondition (and
       (not(gripperempty ?client))
@@ -185,7 +185,7 @@
     )
       
       (:action stackOnTwoML ; for stacking one object on two objects
-    :parameters (?stackingobj - element ?client - robot ?objposition - location ?robotpos - rpmanipulate  ?existingobj1 - element ?existingobj2 - element ?vg - gripper ?layer1 - layer ?layer2 - layer)
+    :parameters (?stackingobj - element ?client - robot ?objposition - finalposition ?robotpos - rpmanipulate  ?existingobj1 - element ?existingobj2 - element ?vg - gripper ?layer1 - layer ?layer2 - layer)
     :precondition (and 
       (not (gripperempty ?client))  
       (holding ?client ?stackingobj) 

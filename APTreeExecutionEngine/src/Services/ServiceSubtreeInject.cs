@@ -14,9 +14,17 @@ namespace BehaviorTreeMainProject
   
     public class ServiceSubtreeInject : Service
     {
-        private readonly Dictionary<string, SubtreeConfiguration> subtreeConfigurations;
-        private readonly Dictionary<string, DynamicFlowNode> cachedSubtrees;
-        
+        private static readonly Dictionary<string, SubtreeConfiguration> subtreeConfigurations = new Dictionary<string, SubtreeConfiguration>();
+        private static readonly Dictionary<string, DynamicFlowNode> cachedSubtrees = new Dictionary<string, DynamicFlowNode>();
+        private static bool _defaultConfigsInitialized = false;
+
+        /// <summary>
+        /// The config name used by ProcessSubtreeInjection for ML-level subtrees.
+        /// Defaults to "FF_Default". Override before running the tree to use a
+        /// scenario-specific config (e.g. "FF_Demonstrator").
+        /// </summary>
+        public static string DefaultSubtreeConfigName { get; set; } = "FF_Default";
+
         // Action to be processed in the next tick
         private PActionNode pendingAction;
 
@@ -29,8 +37,6 @@ namespace BehaviorTreeMainProject
 
         public ServiceSubtreeInject(IBehaviorTree owningTree, PActionNode action) : base(owningTree)
         {
-            subtreeConfigurations = new Dictionary<string, SubtreeConfiguration>();
-            cachedSubtrees = new Dictionary<string, DynamicFlowNode>();
             pendingAction = action;
             
             InitializeDefaultConfigurations();
@@ -41,8 +47,6 @@ namespace BehaviorTreeMainProject
         /// </summary>
         public ServiceSubtreeInject(PActionNode action) : base(null)
         {
-            subtreeConfigurations = new Dictionary<string, SubtreeConfiguration>();
-            cachedSubtrees = new Dictionary<string, DynamicFlowNode>();
             pendingAction = action;
             
             InitializeDefaultConfigurations();
@@ -189,8 +193,8 @@ namespace BehaviorTreeMainProject
                 var actionType = pendingAction.actionType.ToString();
                 LogMessage($"🔧 ServiceSubtreeInject: Processing injection for {actionType}");
                 
-                // Use FF for all subtree injections
-                string configName = "FF_Default";
+                // Use the globally configured subtree config (settable per scenario)
+                string configName = DefaultSubtreeConfigName;
                 
                 // Create instance name from action
                 string instanceName = pendingAction.InstanceName.ToString();
@@ -248,6 +252,9 @@ namespace BehaviorTreeMainProject
         /// </summary>
         private void InitializeDefaultConfigurations()
         {
+            if (_defaultConfigsInitialized) return;
+            _defaultConfigsInitialized = true;
+
             var assembly = typeof(Planner).Assembly;
             foreach (var type in assembly.GetTypes()
                 .Where(t => t.IsSubclassOf(typeof(Planner)) && !t.IsAbstract))
@@ -286,12 +293,21 @@ namespace BehaviorTreeMainProject
         }
 
         /// <summary>
-        /// Register a custom subtree configuration
+        /// Register a custom subtree configuration (instance method)
         /// </summary>
         public void RegisterConfiguration(string configName, SubtreeConfiguration configuration)
         {
             subtreeConfigurations[configName] = configuration;
             LogMessage($"✅ ServiceSubtreeInject: Registered configuration '{configName}'");
+        }
+
+        /// <summary>
+        /// Register a custom subtree configuration globally (static, available to all instances).
+        /// Call this before the tree starts ticking.
+        /// </summary>
+        public static void RegisterGlobalConfiguration(string configName, SubtreeConfiguration configuration)
+        {
+            subtreeConfigurations[configName] = configuration;
         }
 
         /// <summary>
@@ -334,15 +350,9 @@ namespace BehaviorTreeMainProject
                     LogMessage($"💾 ServiceSubtreeInject: Cached subtree for '{cacheKey}'");
                 }
 
-                // Add the DynamicPlanningComplete decorator to the flow node
-                subtree.AddDecorator(new DecoratorDynamicPlanningComplete());
-                LogMessage($"🔧 ServiceSubtreeInject: Added DynamicPlanningComplete decorator to flow node '{subtree.DebugDisplayName}'");
-                // Add the ExclusiveBranchGate decorator BEFORE LowestCost — it evaluates first
+                // Add the ExclusiveBranchGate decorator
                 subtree.AddDecorator(new DecoratorExclusiveBranchGate(subtree as DynamicFlowNode));
                 LogMessage($"🔧 ServiceSubtreeInject: Added ExclusiveBranchGate decorator to flow node '{subtree.DebugDisplayName}'");
-                // add the lowestcost decorator (evaluates after ExclusiveBranchGate)
-                subtree.AddDecorator(new DecoratorLowestCostExecution(subtree as DynamicFlowNode));
-                LogMessage($"🔧 ServiceSubtreeInject: Added LowestCostExecution decorator to flow node '{subtree.DebugDisplayName}'");
                 // DEBUG: Check if the decorator is actually in the list
                 var decoratorCount = subtree.GetType().GetField("Decorators", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.GetValue(subtree) as System.Collections.Generic.List<object>;
                 if (decoratorCount != null)

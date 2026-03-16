@@ -34,8 +34,8 @@ namespace BehaviorTreeMainProject
 
         public async Task RunDemonstratorTreeTest()
         {
-            LoggingService.Initialize("DemonstratorTreeTest", enableConsole: false, enableFile: true);
-            ExecutionFlowLogger.Initialize("DemonstratorTreeTest", enableConsole: false, enableFile: true);
+            LoggingService.Initialize("DemonstratorTreeTest", enableConsole: true, enableFile: true);
+            ExecutionFlowLogger.Initialize("DemonstratorTreeTest", enableConsole: true, enableFile: true);
 
             testStartTime = DateTime.Now;
             LoggingService.LogSection("DEMONSTRATOR BEHAVIOR TREE TEST");
@@ -54,7 +54,13 @@ namespace BehaviorTreeMainProject
                 string actionInstancesFile = Path.Combine(
                     AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..",
                     "src", "InputInstances", "ActionInstances.txt");
-                blackboardWriter.RegisterAllInstances(actionInstancesFile);
+                string setupObjectsFile = Path.Combine(
+                    AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..",
+                    "src", "ModelLoader", "DemonstratorSetupObjects.json");
+                string initialStateFile = Path.Combine(
+                    AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..",
+                    "src", "ModelLoader", "DemonstratorInitialStatePredicates.json");
+                blackboardWriter.RegisterAllInstances(setupObjectsFile, initialStateFile, actionInstancesFile);
 
                 BlackboardSummaryLogger.CaptureBlackboardState(blackboard);
 
@@ -74,10 +80,27 @@ namespace BehaviorTreeMainProject
                     CompositeTerminationPolicy.NeverStop);
                 LoggingService.LogSuccess("Created root composite flow node: Main (All / AllFlow)");
 
-                // Planning phase
-                blackboard.PlanningPhase = true;
+                // Planning phase not used — with strict sequential execution each child plans
+                // and executes independently before the next child starts.
+                blackboard.PlanningPhase = false;
                 blackboard.CassetteSubtreeCompleted = new bool[12];
                 for (int i = 0; i < 12; i++) blackboard.CassetteSubtreeCompleted[i] = false;
+
+                // ── Register Demonstrator-specific ML subtree config ──
+                // When HL actions are decomposed, ServiceSubtreeInject should use
+                // DomainMLTruss.pddl from the Demonstrator folder instead of the
+                // generic DomainML.pddl.
+                var demoMLConfig = new ServiceSubtreeInject.SubtreeConfiguration(
+                    "FF_Demonstrator", "FF", SuccessCriteria.ALL);
+                demoMLConfig.PlannerParameters["domainFile"] = "./Plannerinputs/static/Demonstrator/DomainMLTruss.pddl";
+                demoMLConfig.PlannerParameters["problemFile"] = "./Plannerinputs/static/Demonstrator/ProblemL1L2.pddl";
+                demoMLConfig.PlannerParameters["plannerPath"] = "ff";
+                demoMLConfig.PlannerParameters["timeoutSeconds"] = 30;
+                demoMLConfig.PlannerParameters["maxPlanLength"] = 20;
+                demoMLConfig.PlannerParameters["executionMode"] = ServicePDDLPlanning.ParallelExecutionMode.Sequential;
+                ServiceSubtreeInject.RegisterGlobalConfiguration("FF_Demonstrator", demoMLConfig);
+                ServiceSubtreeInject.DefaultSubtreeConfigName = "FF_Demonstrator";
+                LoggingService.LogSuccess("Registered FF_Demonstrator subtree config (DomainMLTruss.pddl)");
 
                 // ── 4. Create 12 DynamicFlowNodes (Layers1_2 through Layer23) ──
                 // Each has: All / AllAction / ServicePlanning Enhsp
@@ -198,9 +221,9 @@ namespace BehaviorTreeMainProject
                 }
                 LoggingService.LogSuccess("Added all 12 flow nodes to root composite (sequential MEETS order)");
 
-                // ── 6. Add planning phase management service ──
-                ((BTFlowNodeComposite)rootNode).AddPlanningPhaseService();
-                LoggingService.LogSuccess("Added planning phase management service to root");
+                // NOTE: AddPlanningPhaseService() is NOT used here.
+                // With strict sequential execution, each child plans and executes
+                // independently — there is no global planning phase.
 
                 // ── 7. Set root on behavior tree ──
                 behaviorTree.root = (BTFlowNodeComposite)rootNode;
@@ -210,7 +233,7 @@ namespace BehaviorTreeMainProject
                 // ── 8. Create PDDL planners for each flow node ──
                 LoggingService.LogSection("CREATING PDDL PLANNERS");
 
-                string domainFile = "./Plannerinputs/static/DomainTrussHL.pddl";
+                string domainFile = "./Plannerinputs/static/Demonstrator/DomainHLTruss.pddl";
                 string enhspJar = "/home/ubuntu/ENHSP-Public/enhsp.jar";
 
                 var pddlRequests = new PDDLPlanningRequest[12];
@@ -218,73 +241,73 @@ namespace BehaviorTreeMainProject
 
                 // ── planner1: Layers1_2 → ProblemL1L2 ──
                 pddlRequests[0] = new PDDLPlanningRequest(domainFile,
-                    "./Plannerinputs/static/ProblemL1L2.pddl", enhspJar, "ENHSP");
+                    "./Plannerinputs/static/Demonstrator/ProblemL1L2.pddl", enhspJar, "ENHSP") { EnhspConfig = "sat-hmrph" };
                 pddlPlanners[0] = new ServicePDDLPlanning(behaviorTree, pddlRequests[0]);
                 LoggingService.LogInfo("  planner1: Layers1_2 -> DomainTrussHL / ProblemL1L2 (ENHSP)");
 
                 // ── planner2: Layers3_4 → ProblemL3L4 ──
                 pddlRequests[1] = new PDDLPlanningRequest(domainFile,
-                    "./Plannerinputs/static/ProblemL3L4.pddl", enhspJar, "ENHSP");
+                    "./Plannerinputs/static/Demonstrator/ProblemL3L4.pddl", enhspJar, "ENHSP") { EnhspConfig = "sat-hmrph" };
                 pddlPlanners[1] = new ServicePDDLPlanning(behaviorTree, pddlRequests[1]);
                 LoggingService.LogInfo("  planner2: Layers3_4 -> DomainTrussHL / ProblemL3L4 (ENHSP)");
 
                 // ── planner3: Layers5_6 → ProblemL5L6 ──
                 pddlRequests[2] = new PDDLPlanningRequest(domainFile,
-                    "./Plannerinputs/static/ProblemL5L6.pddl", enhspJar, "ENHSP");
+                    "./Plannerinputs/static/Demonstrator/ProblemL5L6.pddl", enhspJar, "ENHSP") { EnhspConfig = "sat-hmrph" };
                 pddlPlanners[2] = new ServicePDDLPlanning(behaviorTree, pddlRequests[2]);
                 LoggingService.LogInfo("  planner3: Layers5_6 -> DomainTrussHL / ProblemL5L6 (ENHSP)");
 
                 // ── planner4: Layers7_8 → ProblemL7L8 ──
                 pddlRequests[3] = new PDDLPlanningRequest(domainFile,
-                    "./Plannerinputs/static/ProblemL7L8.pddl", enhspJar, "ENHSP");
+                    "./Plannerinputs/static/Demonstrator/ProblemL7L8.pddl", enhspJar, "ENHSP") { EnhspConfig = "sat-hmrph" };
                 pddlPlanners[3] = new ServicePDDLPlanning(behaviorTree, pddlRequests[3]);
                 LoggingService.LogInfo("  planner4: Layers7_8 -> DomainTrussHL / ProblemL7L8 (ENHSP)");
 
                 // ── planner5: Layers9_10 → ProblemL9L10 ──
                 pddlRequests[4] = new PDDLPlanningRequest(domainFile,
-                    "./Plannerinputs/static/ProblemL9L10.pddl", enhspJar, "ENHSP");
+                    "./Plannerinputs/static/Demonstrator/ProblemL9L10.pddl", enhspJar, "ENHSP") { EnhspConfig = "sat-hmrph" };
                 pddlPlanners[4] = new ServicePDDLPlanning(behaviorTree, pddlRequests[4]);
                 LoggingService.LogInfo("  planner5: Layers9_10 -> DomainTrussHL / ProblemL9L10 (ENHSP)");
 
                 // ── planner6: Layers11_12 → ProblemL11L12 ──
                 pddlRequests[5] = new PDDLPlanningRequest(domainFile,
-                    "./Plannerinputs/static/ProblemL11L12.pddl", enhspJar, "ENHSP");
+                    "./Plannerinputs/static/Demonstrator/ProblemL11L12.pddl", enhspJar, "ENHSP") { EnhspConfig = "sat-hmrph" };
                 pddlPlanners[5] = new ServicePDDLPlanning(behaviorTree, pddlRequests[5]);
                 LoggingService.LogInfo("  planner6: Layers11_12 -> DomainTrussHL / ProblemL11L12 (ENHSP)");
 
                 // ── planner7: Layers13_14 → ProblemL13L14 ──
                 pddlRequests[6] = new PDDLPlanningRequest(domainFile,
-                    "./Plannerinputs/static/ProblemL13L14.pddl", enhspJar, "ENHSP");
+                    "./Plannerinputs/static/Demonstrator/ProblemL13L14.pddl", enhspJar, "ENHSP") { EnhspConfig = "sat-hmrph" };
                 pddlPlanners[6] = new ServicePDDLPlanning(behaviorTree, pddlRequests[6]);
                 LoggingService.LogInfo("  planner7: Layers13_14 -> DomainTrussHL / ProblemL13L14 (ENHSP)");
 
                 // ── planner8: Layers15_16 → ProblemL15L16 ──
                 pddlRequests[7] = new PDDLPlanningRequest(domainFile,
-                    "./Plannerinputs/static/ProblemL15L16.pddl", enhspJar, "ENHSP");
+                    "./Plannerinputs/static/Demonstrator/ProblemL15L16.pddl", enhspJar, "ENHSP") { EnhspConfig = "sat-hmrph" };
                 pddlPlanners[7] = new ServicePDDLPlanning(behaviorTree, pddlRequests[7]);
                 LoggingService.LogInfo("  planner8: Layers15_16 -> DomainTrussHL / ProblemL15L16 (ENHSP)");
 
                 // ── planner9: Layers17_18 → ProblemL17L18 ──
                 pddlRequests[8] = new PDDLPlanningRequest(domainFile,
-                    "./Plannerinputs/static/ProblemL17L18.pddl", enhspJar, "ENHSP");
+                    "./Plannerinputs/static/Demonstrator/ProblemL17L18.pddl", enhspJar, "ENHSP") { EnhspConfig = "sat-hmrph" };
                 pddlPlanners[8] = new ServicePDDLPlanning(behaviorTree, pddlRequests[8]);
                 LoggingService.LogInfo("  planner9: Layers17_18 -> DomainTrussHL / ProblemL17L18 (ENHSP)");
 
                 // ── planner10: Layers19_20 → ProblemL19L20 ──
                 pddlRequests[9] = new PDDLPlanningRequest(domainFile,
-                    "./Plannerinputs/static/ProblemL19L20.pddl", enhspJar, "ENHSP");
+                    "./Plannerinputs/static/Demonstrator/ProblemL19L20.pddl", enhspJar, "ENHSP") { EnhspConfig = "sat-hmrph" };
                 pddlPlanners[9] = new ServicePDDLPlanning(behaviorTree, pddlRequests[9]);
                 LoggingService.LogInfo("  planner10: Layers19_20 -> DomainTrussHL / ProblemL19L20 (ENHSP)");
 
                 // ── planner11: Layers21_22 → ProblemL21L22 ──
                 pddlRequests[10] = new PDDLPlanningRequest(domainFile,
-                    "./Plannerinputs/static/ProblemL21L22.pddl", enhspJar, "ENHSP");
+                    "./Plannerinputs/static/Demonstrator/ProblemL21L22.pddl", enhspJar, "ENHSP") { EnhspConfig = "sat-hmrph" };
                 pddlPlanners[10] = new ServicePDDLPlanning(behaviorTree, pddlRequests[10]);
                 LoggingService.LogInfo("  planner11: Layers21_22 -> DomainTrussHL / ProblemL21L22 (ENHSP)");
 
                 // ── planner12: Layer23 → ProblemL23 ──
                 pddlRequests[11] = new PDDLPlanningRequest(domainFile,
-                    "./Plannerinputs/static/ProblemL23.pddl", enhspJar, "ENHSP");
+                    "./Plannerinputs/static/Demonstrator/ProblemL23.pddl", enhspJar, "ENHSP") { EnhspConfig = "sat-hmrph" };
                 pddlPlanners[11] = new ServicePDDLPlanning(behaviorTree, pddlRequests[11]);
                 LoggingService.LogInfo("  planner12: Layer23 -> DomainTrussHL / ProblemL23 (ENHSP)");
 

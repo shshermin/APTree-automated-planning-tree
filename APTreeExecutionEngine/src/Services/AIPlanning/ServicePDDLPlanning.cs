@@ -94,7 +94,46 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
                 }
             }
 
+            // Always send domain and problem file contents inline so the VM
+            // gets the latest versions from this machine, overriding whatever
+            // is already on disk there.
+            PopulateInlineFileContents();
+
             return base.OnEvaluate(InDeltaTime);
+        }
+
+        /// <summary>
+        /// Reads domain and problem files from local disk and attaches their
+        /// contents to the planning request so the Python service can save
+        /// them on the VM before invoking the planner.
+        /// </summary>
+        private void PopulateInlineFileContents()
+        {
+            // Domain file
+            if (!string.IsNullOrWhiteSpace(PlanningRequest.DomainFile))
+            {
+                string domainLocalPath = PlanningRequest.DomainFile.TrimStart('.', '/');
+                string domainFullPath = Path.Combine("python_service", domainLocalPath);
+                if (File.Exists(domainFullPath))
+                {
+                    PlanningRequest.DomainFileContent = File.ReadAllText(domainFullPath, Encoding.UTF8);
+                    LoggingService.LogInfo($"📄 ServicePDDLPlanning: Loaded domain file inline: {domainFullPath}");
+                }
+            }
+
+            // Problem file — only if not already set (generated ML files are
+            // populated earlier in OnEvaluate)
+            if (string.IsNullOrWhiteSpace(PlanningRequest.ProblemFileContent)
+                && !string.IsNullOrWhiteSpace(PlanningRequest.ProblemFile))
+            {
+                string problemLocalPath = PlanningRequest.ProblemFile.TrimStart('.', '/');
+                string problemFullPath = Path.Combine("python_service", problemLocalPath);
+                if (File.Exists(problemFullPath))
+                {
+                    PlanningRequest.ProblemFileContent = File.ReadAllText(problemFullPath, Encoding.UTF8);
+                    LoggingService.LogInfo($"📄 ServicePDDLPlanning: Loaded problem file inline: {problemFullPath}");
+                }
+            }
         }
 
         /// <summary>
@@ -431,17 +470,23 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
         private static string GeneratePDDLProblemContent(string actionType, string initialPredicates, string goalPredicates, string parentProblemFile)
         {
             actionType = actionType.ToLower();
-            initialPredicates = initialPredicates.ToLower();
             goalPredicates = goalPredicates.ToLower();
             var objects = GetRelevantObjects(parentProblemFile);
 
+            // Parse declared object names from the objects block
+            var declaredObjects = ParseDeclaredObjectNames(objects);
+            LoggingService.LogInfo($"🔧 ServicePDDLPlanning: Declared objects count: {declaredObjects.Count}");
+
+            // Filter init predicates to only include those referencing declared objects
+            string filteredPredicates = FilterPredicatesByDeclaredObjects(initialPredicates, declaredObjects);
+
             return $@"(define (problem {actionType.ToLower()})
-  (:domain fit)
+  (:domain trussml)
   (:objects 
     {objects}
   )
   (:init  
-    {initialPredicates}
+    {filteredPredicates}
   )
   (:goal 
     (and
@@ -449,6 +494,104 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
     ) 
   )
 )";
+        }
+
+        /// <summary>
+        /// Parse object names from the (:objects ...) block content.
+        /// Each line looks like: "stick1 - stick" or "robot1 - robot"
+        /// </summary>
+        private static HashSet<string> ParseDeclaredObjectNames(string objectsBlock)
+        {
+            var names = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            if (string.IsNullOrWhiteSpace(objectsBlock))
+                return names;
+
+            foreach (var line in objectsBlock.Split('\n'))
+            {
+                var trimmed = line.Trim();
+                if (string.IsNullOrEmpty(trimmed) || trimmed.StartsWith(";"))
+                    continue;
+
+                // Format: "name - type" or "name1 name2 ... - type"
+                var dashIndex = trimmed.IndexOf(" - ");
+                if (dashIndex < 0)
+                    continue;
+
+                var namesPart = trimmed.Substring(0, dashIndex).Trim();
+                foreach (var name in namesPart.Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    names.Add(name.Trim());
+                }
+            }
+
+            return names;
+        }
+
+        /// <summary>
+        /// Filter PDDL predicate lines to only keep those whose parameters all reference declared objects.
+        /// Each line looks like: "(predicatename param1 param2)" or "(not (predicatename param1))"
+        /// Boolean predicates with no object references (unlikely) are kept.
+        /// </summary>
+        private static string FilterPredicatesByDeclaredObjects(string predicatesBlock, HashSet<string> declaredObjects)
+        {
+            if (string.IsNullOrWhiteSpace(predicatesBlock))
+                return predicatesBlock;
+
+            var filtered = new List<string>();
+            var lines = predicatesBlock.Split('\n');
+            int removedCount = 0;
+
+            foreach (var line in lines)
+            {
+                var trimmed = line.Trim().ToLower();
+                if (string.IsNullOrEmpty(trimmed))
+                    continue;
+
+                // Extract the inner predicate content: strip outer (not (...)) if present
+                var inner = trimmed;
+                if (inner.StartsWith("(not "))
+                {
+                    // "(not (pred p1 p2))" → "(pred p1 p2)"
+                    inner = inner.Substring(5, inner.Length - 6).Trim();
+                }
+
+                // "(predicatename p1 p2 ...)" → extract tokens
+                if (inner.StartsWith("(") && inner.EndsWith(")"))
+                {
+                    inner = inner.Substring(1, inner.Length - 2).Trim();
+                }
+
+                var tokens = inner.Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+                if (tokens.Length <= 1)
+                {
+                    // Predicate with no parameters — keep it
+                    filtered.Add(trimmed);
+                    continue;
+                }
+
+                // tokens[0] is the predicate name, tokens[1..] are parameter values
+                bool allDeclared = true;
+                for (int i = 1; i < tokens.Length; i++)
+                {
+                    if (!declaredObjects.Contains(tokens[i]))
+                    {
+                        allDeclared = false;
+                        break;
+                    }
+                }
+
+                if (allDeclared)
+                {
+                    filtered.Add(trimmed);
+                }
+                else
+                {
+                    removedCount++;
+                }
+            }
+
+            LoggingService.LogInfo($"🔧 ServicePDDLPlanning: Filtered init predicates — kept {filtered.Count}, removed {removedCount}");
+            return string.Join("\n", filtered);
         }
 
         /// <summary>

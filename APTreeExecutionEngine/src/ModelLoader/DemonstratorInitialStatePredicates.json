@@ -1,0 +1,3388 @@
+{
+  "predicates": [
+    {
+      "type": "AtFinalPosition",
+      "properties": {
+        "not": false,
+        "obj": "table1"
+      }
+    },
+    {
+      "type": "RobotEquipped",
+      "properties": {
+        "not": false,
+        "client": "robot1"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick1",
+        "obj": "stick1"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick2",
+        "obj": "stick2"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick3",
+        "obj": "stick3"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick4",
+        "obj": "stick4"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick5",
+        "obj": "stick5"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick6",
+        "obj": "stick6"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick7",
+        "obj": "stick7"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick8",
+        "obj": "stick8"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick9",
+        "obj": "stick9"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick10",
+        "obj": "stick10"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick11",
+        "obj": "stick11"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick12",
+        "obj": "stick12"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick13",
+        "obj": "stick13"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick14",
+        "obj": "stick14"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick15",
+        "obj": "stick15"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick16",
+        "obj": "stick16"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick17",
+        "obj": "stick17"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick18",
+        "obj": "stick18"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick19",
+        "obj": "stick19"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick20",
+        "obj": "stick20"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick21",
+        "obj": "stick21"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick22",
+        "obj": "stick22"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick23",
+        "obj": "stick23"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick24",
+        "obj": "stick24"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick25",
+        "obj": "stick25"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick26",
+        "obj": "stick26"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick27",
+        "obj": "stick27"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick28",
+        "obj": "stick28"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick29",
+        "obj": "stick29"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick30",
+        "obj": "stick30"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick31",
+        "obj": "stick31"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick32",
+        "obj": "stick32"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick33",
+        "obj": "stick33"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick34",
+        "obj": "stick34"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick35",
+        "obj": "stick35"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick36",
+        "obj": "stick36"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick37",
+        "obj": "stick37"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick38",
+        "obj": "stick38"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick39",
+        "obj": "stick39"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick40",
+        "obj": "stick40"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick41",
+        "obj": "stick41"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick42",
+        "obj": "stick42"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick43",
+        "obj": "stick43"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick44",
+        "obj": "stick44"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick45",
+        "obj": "stick45"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick46",
+        "obj": "stick46"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick47",
+        "obj": "stick47"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick48",
+        "obj": "stick48"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick49",
+        "obj": "stick49"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick50",
+        "obj": "stick50"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick51",
+        "obj": "stick51"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick52",
+        "obj": "stick52"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick53",
+        "obj": "stick53"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick54",
+        "obj": "stick54"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick55",
+        "obj": "stick55"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick56",
+        "obj": "stick56"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick57",
+        "obj": "stick57"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick58",
+        "obj": "stick58"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick59",
+        "obj": "stick59"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick60",
+        "obj": "stick60"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick61",
+        "obj": "stick61"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick62",
+        "obj": "stick62"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick63",
+        "obj": "stick63"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick64",
+        "obj": "stick64"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick65",
+        "obj": "stick65"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick66",
+        "obj": "stick66"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick67",
+        "obj": "stick67"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick68",
+        "obj": "stick68"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick69",
+        "obj": "stick69"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick70",
+        "obj": "stick70"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick71",
+        "obj": "stick71"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick72",
+        "obj": "stick72"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick73",
+        "obj": "stick73"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick74",
+        "obj": "stick74"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick75",
+        "obj": "stick75"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick76",
+        "obj": "stick76"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick77",
+        "obj": "stick77"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick78",
+        "obj": "stick78"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick79",
+        "obj": "stick79"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick80",
+        "obj": "stick80"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick81",
+        "obj": "stick81"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick82",
+        "obj": "stick82"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick83",
+        "obj": "stick83"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick84",
+        "obj": "stick84"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick85",
+        "obj": "stick85"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick86",
+        "obj": "stick86"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick87",
+        "obj": "stick87"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finallocstick88",
+        "obj": "stick88"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finloccube1",
+        "obj": "cube1"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finloccube2",
+        "obj": "cube2"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finloccube3",
+        "obj": "cube3"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finloccube4",
+        "obj": "cube4"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finloccube5",
+        "obj": "cube5"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finloccube6",
+        "obj": "cube6"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finloccube7",
+        "obj": "cube7"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finloccube8",
+        "obj": "cube8"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finloccube9",
+        "obj": "cube9"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finloccube10",
+        "obj": "cube10"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finloccube11",
+        "obj": "cube11"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finloccube12",
+        "obj": "cube12"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finloccube13",
+        "obj": "cube13"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finloccube14",
+        "obj": "cube14"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finloccube15",
+        "obj": "cube15"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finloccube16",
+        "obj": "cube16"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finloccube17",
+        "obj": "cube17"
+      }
+    },
+    {
+      "type": "ObjectFinalPosition",
+      "properties": {
+        "not": false,
+        "pos": "finloccube18",
+        "obj": "cube18"
+      }
+    },
+    {
+      "type": "PositionFree",
+      "properties": {
+        "loc": "equiplocgripper",
+        "not": false
+      }
+    },
+    {
+      "type": "GripperEmpty",
+      "properties": {
+        "not": false,
+        "client": "robot1"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer0",
+        "obj": "table1"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer1",
+        "obj": "stick1"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer1",
+        "obj": "stick2"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer1",
+        "obj": "stick3"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer1",
+        "obj": "stick4"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer1",
+        "obj": "stick5"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer2",
+        "obj": "stick6"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer2",
+        "obj": "stick7"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer2",
+        "obj": "stick8"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer2",
+        "obj": "stick9"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer2",
+        "obj": "cube1"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer2",
+        "obj": "cube2"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer3",
+        "obj": "stick10"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer3",
+        "obj": "stick11"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer3",
+        "obj": "stick12"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer3",
+        "obj": "stick13"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer3",
+        "obj": "stick14"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer4",
+        "obj": "stick15"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer4",
+        "obj": "stick16"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer4",
+        "obj": "stick17"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer4",
+        "obj": "stick18"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer4",
+        "obj": "cube3"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer4",
+        "obj": "cube4"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer5",
+        "obj": "stick19"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer5",
+        "obj": "stick20"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer5",
+        "obj": "stick21"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer5",
+        "obj": "stick22"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer5",
+        "obj": "stick23"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer6",
+        "obj": "stick24"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer6",
+        "obj": "stick25"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer6",
+        "obj": "stick26"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer6",
+        "obj": "stick27"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer6",
+        "obj": "cube5"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer6",
+        "obj": "cube6"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer7",
+        "obj": "stick28"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer7",
+        "obj": "stick29"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer7",
+        "obj": "stick30"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer7",
+        "obj": "stick31"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer7",
+        "obj": "stick32"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer8",
+        "obj": "stick33"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer8",
+        "obj": "stick34"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer8",
+        "obj": "stick35"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer8",
+        "obj": "stick36"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer8",
+        "obj": "cube7"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer8",
+        "obj": "cube8"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer9",
+        "obj": "stick37"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer9",
+        "obj": "stick38"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer9",
+        "obj": "stick39"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer9",
+        "obj": "stick40"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer9",
+        "obj": "stick41"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer10",
+        "obj": "stick42"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer10",
+        "obj": "stick43"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer10",
+        "obj": "stick44"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer10",
+        "obj": "stick45"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer10",
+        "obj": "cube9"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer10",
+        "obj": "cube10"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer11",
+        "obj": "stick46"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer11",
+        "obj": "stick47"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer11",
+        "obj": "stick48"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer11",
+        "obj": "stick49"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer11",
+        "obj": "stick50"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer12",
+        "obj": "stick51"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer12",
+        "obj": "stick52"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer12",
+        "obj": "stick53"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer12",
+        "obj": "stick54"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer12",
+        "obj": "cube11"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer12",
+        "obj": "cube12"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer13",
+        "obj": "stick55"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer13",
+        "obj": "stick56"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer13",
+        "obj": "stick57"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer13",
+        "obj": "stick58"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer13",
+        "obj": "stick59"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer14",
+        "obj": "stick60"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer14",
+        "obj": "stick61"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer14",
+        "obj": "stick62"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer14",
+        "obj": "stick63"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer14",
+        "obj": "cube13"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer14",
+        "obj": "cube14"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer15",
+        "obj": "stick64"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer15",
+        "obj": "stick65"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer15",
+        "obj": "stick66"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer15",
+        "obj": "stick67"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer15",
+        "obj": "stick68"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer16",
+        "obj": "stick69"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer16",
+        "obj": "stick70"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer16",
+        "obj": "stick71"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer16",
+        "obj": "stick72"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer16",
+        "obj": "cube15"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer17",
+        "obj": "stick73"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer17",
+        "obj": "stick74"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer17",
+        "obj": "stick75"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer17",
+        "obj": "stick76"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer18",
+        "obj": "stick77"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer18",
+        "obj": "stick78"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer18",
+        "obj": "stick79"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer18",
+        "obj": "cube16"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer19",
+        "obj": "stick80"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer19",
+        "obj": "stick81"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer19",
+        "obj": "stick82"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer20",
+        "obj": "stick83"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer20",
+        "obj": "stick84"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer20",
+        "obj": "cube17"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer21",
+        "obj": "stick85"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer21",
+        "obj": "stick86"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer22",
+        "obj": "stick87"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer22",
+        "obj": "cube18"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "layer23",
+        "obj": "stick88"
+      }
+    },
+    {
+      "type": "HasTool",
+      "properties": {
+        "not": false,
+        "client": "robot1",
+        "tool": "gripper1"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick1"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick2"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick3"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick4"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick5"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick6"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick7"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick8"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick9"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick10"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick11"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick12"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick13"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick14"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick15"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick16"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick17"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick18"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick19"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick20"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick21"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick22"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick23"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick24"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick25"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick26"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick27"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick28"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick29"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick30"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick31"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick32"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick33"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick34"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick35"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick36"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick37"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick38"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick39"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick40"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick41"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick42"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick43"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick44"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick45"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick46"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick47"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick48"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick49"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick50"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick51"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick52"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick53"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick54"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick55"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick56"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick57"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick58"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick59"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick60"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick61"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick62"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick63"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick64"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick65"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick66"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick67"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick68"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick69"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick70"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick71"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick72"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick73"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick74"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick75"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick76"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick77"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick78"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick79"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick80"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick81"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick82"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick83"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick84"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick85"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick86"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick87"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "stick88"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "cube1"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "cube2"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "cube3"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "cube4"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "cube5"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "cube6"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "cube7"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "cube8"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "cube9"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "cube10"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "cube11"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "cube12"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "cube13"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "cube14"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "cube15"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "cube16"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "cube17"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "obj": "cube18"
+      }
+    },
+    {
+      "type": "AtTool",
+      "properties": {
+        "not": false,
+        "toolLoc": "equiplocgripper",
+        "tool": "gripper1"
+      }
+    },
+    {
+      "type": "AtTool",
+      "properties": {
+        "not": false,
+        "toolLoc": "equiplocstapler",
+        "tool": "staplergun1"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick1",
+        "objLoc": "initlocstick1"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick2",
+        "objLoc": "initlocstick2"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick3",
+        "objLoc": "initlocstick3"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick4",
+        "objLoc": "initlocstick4"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick5",
+        "objLoc": "initlocstick5"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick6",
+        "objLoc": "initlocstick6"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick7",
+        "objLoc": "initlocstick7"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick8",
+        "objLoc": "initlocstick8"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick9",
+        "objLoc": "initlocstick9"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick10",
+        "objLoc": "initlocstick10"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick11",
+        "objLoc": "initlocstick11"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick12",
+        "objLoc": "initlocstick12"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick13",
+        "objLoc": "initlocstick13"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick14",
+        "objLoc": "initlocstick14"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick15",
+        "objLoc": "initlocstick15"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick16",
+        "objLoc": "initlocstick16"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick17",
+        "objLoc": "initlocstick17"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick18",
+        "objLoc": "initlocstick18"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick19",
+        "objLoc": "initlocstick19"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick20",
+        "objLoc": "initlocstick20"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick21",
+        "objLoc": "initlocstick21"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick22",
+        "objLoc": "initlocstick22"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick23",
+        "objLoc": "initlocstick23"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick24",
+        "objLoc": "initlocstick24"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick25",
+        "objLoc": "initlocstick25"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick26",
+        "objLoc": "initlocstick26"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick27",
+        "objLoc": "initlocstick27"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick28",
+        "objLoc": "initlocstick28"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick29",
+        "objLoc": "initlocstick29"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick30",
+        "objLoc": "initlocstick30"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick31",
+        "objLoc": "initlocstick31"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick32",
+        "objLoc": "initlocstick32"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick33",
+        "objLoc": "initlocstick33"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick34",
+        "objLoc": "initlocstick34"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick35",
+        "objLoc": "initlocstick35"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick36",
+        "objLoc": "initlocstick36"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick37",
+        "objLoc": "initlocstick37"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick38",
+        "objLoc": "initlocstick38"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick39",
+        "objLoc": "initlocstick39"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick40",
+        "objLoc": "initlocstick40"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick41",
+        "objLoc": "initlocstick41"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick42",
+        "objLoc": "initlocstick42"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick43",
+        "objLoc": "initlocstick43"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick44",
+        "objLoc": "initlocstick44"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick45",
+        "objLoc": "initlocstick45"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick46",
+        "objLoc": "initlocstick46"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick47",
+        "objLoc": "initlocstick47"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick48",
+        "objLoc": "initlocstick48"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick49",
+        "objLoc": "initlocstick49"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick50",
+        "objLoc": "initlocstick50"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick51",
+        "objLoc": "initlocstick51"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick52",
+        "objLoc": "initlocstick52"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick53",
+        "objLoc": "initlocstick53"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick54",
+        "objLoc": "initlocstick54"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick55",
+        "objLoc": "initlocstick55"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick56",
+        "objLoc": "initlocstick56"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick57",
+        "objLoc": "initlocstick57"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick58",
+        "objLoc": "initlocstick58"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick59",
+        "objLoc": "initlocstick59"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick60",
+        "objLoc": "initlocstick60"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick61",
+        "objLoc": "initlocstick61"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick62",
+        "objLoc": "initlocstick62"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick63",
+        "objLoc": "initlocstick63"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick64",
+        "objLoc": "initlocstick64"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick65",
+        "objLoc": "initlocstick65"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick66",
+        "objLoc": "initlocstick66"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick67",
+        "objLoc": "initlocstick67"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick68",
+        "objLoc": "initlocstick68"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick69",
+        "objLoc": "initlocstick69"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick70",
+        "objLoc": "initlocstick70"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick71",
+        "objLoc": "initlocstick71"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick72",
+        "objLoc": "initlocstick72"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick73",
+        "objLoc": "initlocstick73"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick74",
+        "objLoc": "initlocstick74"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick75",
+        "objLoc": "initlocstick75"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick76",
+        "objLoc": "initlocstick76"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick77",
+        "objLoc": "initlocstick77"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick78",
+        "objLoc": "initlocstick78"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick79",
+        "objLoc": "initlocstick79"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick80",
+        "objLoc": "initlocstick80"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick81",
+        "objLoc": "initlocstick81"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick82",
+        "objLoc": "initlocstick82"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick83",
+        "objLoc": "initlocstick83"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick84",
+        "objLoc": "initlocstick84"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick85",
+        "objLoc": "initlocstick85"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick86",
+        "objLoc": "initlocstick86"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick87",
+        "objLoc": "initlocstick87"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "stick88",
+        "objLoc": "initlocstick88"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "cube1",
+        "objLoc": "initloccube1"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "cube2",
+        "objLoc": "initloccube2"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "cube3",
+        "objLoc": "initloccube3"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "cube4",
+        "objLoc": "initloccube4"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "cube5",
+        "objLoc": "initloccube5"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "cube6",
+        "objLoc": "initloccube6"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "cube7",
+        "objLoc": "initloccube7"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "cube8",
+        "objLoc": "initloccube8"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "cube9",
+        "objLoc": "initloccube9"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "cube10",
+        "objLoc": "initloccube10"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "cube11",
+        "objLoc": "initloccube11"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "cube12",
+        "objLoc": "initloccube12"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "cube13",
+        "objLoc": "initloccube13"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "cube14",
+        "objLoc": "initloccube14"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "cube15",
+        "objLoc": "initloccube15"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "cube16",
+        "objLoc": "initloccube16"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "cube17",
+        "objLoc": "initloccube17"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "cube18",
+        "objLoc": "initloccube18"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "not": false,
+        "obj": "table1",
+        "objLoc": "mp5"
+      }
+    },
+    {
+      "type": "AtAgent",
+      "properties": {
+        "not": false,
+        "client": "robot1",
+        "agentLoc": "rppickup"
+      }
+    },
+    {
+      "type": "Accessible",
+      "properties": {
+        "not": false,
+        "obj": "table1"
+      }
+    },
+    {
+      "type": "Fixed",
+      "properties": {
+        "not": false,
+        "obj": "table1"
+      }
+    },
+    {
+      "type": "ActiveTool",
+      "properties": {
+        "not": false,
+        "tool": "gripper1"
+      }
+    }
+  ],
+  "count": 437
+}

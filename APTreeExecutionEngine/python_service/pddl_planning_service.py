@@ -86,8 +86,16 @@ def create_plan():
         if problem_file_path.startswith("Plannerinputs/"):
             problem_file_path = os.path.join(SCRIPT_DIR, problem_file_path)
 
-        # If the C# side sent the file content inline, save it locally so the
+        # If the C# side sent file content inline, save it locally so the
         # planner can read it (needed when the service runs on a remote VM).
+        # This overrides whatever is already on disk.
+        domain_file_content = data.get('domainFileContent')
+        if domain_file_content:
+            os.makedirs(os.path.dirname(domain_file_path), exist_ok=True)
+            with open(domain_file_path, 'w', encoding='utf-8') as f:
+                f.write(domain_file_content)
+            print(f"✅ Saved inline domain file content to: {domain_file_path}")
+
         problem_file_content = data.get('problemFileContent')
         if problem_file_content:
             os.makedirs(os.path.dirname(problem_file_path), exist_ok=True)
@@ -103,6 +111,7 @@ def create_plan():
         print(f"  - Planner name: {planner_name}")
         print(f"  - Timeout: {timeout_seconds} seconds")
         print(f"  - Max plan length: {max_plan_length}")
+        print(f"  - ENHSP config: {enhsp_config}")
         
         if planning_type != 'PDDL':
             return jsonify({

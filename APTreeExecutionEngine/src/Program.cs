@@ -1,7 +1,10 @@
 ﻿using BehaviorTreeMainProject;
 
+// To run the Demonstrator behavior tree test:
+await DemonstratorTreeTest.RunTest();
+
 // To run the JSON BT load test:
-await JsonBTLoadTest.RunTest();
+// await JsonBTLoadTest.RunTest();
 
 // To run the full behavior tree test:
 // await FullTreeTest.RunTest();

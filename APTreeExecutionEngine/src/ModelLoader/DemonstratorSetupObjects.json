@@ -1,0 +1,3064 @@
+{
+  "instances": [
+    {
+      "extends": "Tool",
+      "name": "staplergun1",
+      "type": "StaplerGun",
+      "properties": {
+        "loc": "equiplocstapler"
+      }
+    },
+    {
+      "extends": "Module",
+      "name": "module1",
+      "type": "Demo"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer0",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer1",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer2",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer3",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer4",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer5",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer6",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer7",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer8",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer9",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer10",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer11",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer12",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer13",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer14",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer15",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer16",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer17",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer18",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer19",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer20",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer21",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer22",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer23",
+      "type": "Stack"
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick1",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "-1,0,0",
+        "position": "-500.9477115928189,-649.050042109885,6.8826329708099365"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick2",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "-1,0,0",
+        "position": "-597.7358862336434,-649.050042109885,6.8826329708099365"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick3",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "-1,1.6053941148722602E-15,1.7763568394002497E-15",
+        "position": "-597.8500311212598,-187.6214410601846,6.8826329708099365"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick4",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "-1,1.3378284290602168E-15,1.7763568394002497E-15",
+        "position": "-497.8500256214272,-187.6214410601846,6.8826329708099365"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick5",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick6",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick7",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick8",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick9",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick10",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick11",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick12",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick13",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick14",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick15",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick16",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick17",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick18",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick19",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick20",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick21",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick22",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick23",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick24",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick25",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick26",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick27",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick28",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick29",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick30",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick31",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick32",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick33",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick34",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick35",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick36",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick37",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick38",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick39",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick40",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick41",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick42",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick43",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick44",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick45",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick46",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick47",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick48",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick49",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick50",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick51",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick52",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick53",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick54",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick55",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick56",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick57",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick58",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick59",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick60",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick61",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick62",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick63",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick64",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick65",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick66",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick67",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick68",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick69",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick70",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick71",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick72",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick73",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick74",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick75",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick76",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick77",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick78",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick79",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick80",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick81",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick82",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick83",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick84",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick85",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick86",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick87",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick88",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initloccube1",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "-1,0,0",
+        "position": "-500.9477115928189,-649.050042109885,6.8826329708099365"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initloccube2",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "-1,0,0",
+        "position": "-597.7358862336434,-649.050042109885,6.8826329708099365"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initloccube3",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "-1,1.6053941148722602E-15,1.7763568394002497E-15",
+        "position": "-597.8500311212598,-187.6214410601846,6.8826329708099365"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initloccube4",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "-1,1.3378284290602168E-15,1.7763568394002497E-15",
+        "position": "-497.8500256214272,-187.6214410601846,6.8826329708099365"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initloccube5",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initloccube6",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initloccube7",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initloccube8",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initloccube9",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initloccube10",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initloccube11",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initloccube12",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initloccube13",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initloccube14",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initloccube15",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initloccube16",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initloccube17",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initloccube18",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "table1",
+      "type": "Table"
+    },
+    {
+      "extends": "Location",
+      "name": "equiplocgripper",
+      "type": "EquipLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "equiplocstapler",
+      "type": "EquipLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick1",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick1",
+        "finalLoc": "finallocstick1"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick2",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick2",
+        "finalLoc": "finallocstick2"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick3",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick3",
+        "finalLoc": "finallocstick3"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick4",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick4",
+        "finalLoc": "finallocstick4"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick5",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick5",
+        "finalLoc": "finallocstick5"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick6",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick6",
+        "finalLoc": "finallocstick6"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick7",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick7",
+        "finalLoc": "finallocstick7"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick8",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick8",
+        "finalLoc": "finallocstick8"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick9",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick9",
+        "finalLoc": "finallocstick9"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick10",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick10",
+        "finalLoc": "finallocstick10"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick11",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick11",
+        "finalLoc": "finallocstick11"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick12",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick12",
+        "finalLoc": "finallocstick12"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick13",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick13",
+        "finalLoc": "finallocstick13"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick14",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick14",
+        "finalLoc": "finallocstick14"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick15",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick15",
+        "finalLoc": "finallocstick15"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick16",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick16",
+        "finalLoc": "finallocstick16"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick17",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick17",
+        "finalLoc": "finallocstick17"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick18",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick18",
+        "finalLoc": "finallocstick18"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick19",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick19",
+        "finalLoc": "finallocstick19"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick20",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick20",
+        "finalLoc": "finallocstick20"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick21",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick21",
+        "finalLoc": "finallocstick21"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick22",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick22",
+        "finalLoc": "finallocstick22"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick23",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick23",
+        "finalLoc": "finallocstick23"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick24",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick24",
+        "finalLoc": "finallocstick24"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick25",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick25",
+        "finalLoc": "finallocstick25"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick26",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick26",
+        "finalLoc": "finallocstick26"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick27",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick27",
+        "finalLoc": "finallocstick27"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick28",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick28",
+        "finalLoc": "finallocstick28"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick29",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick29",
+        "finalLoc": "finallocstick29"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick30",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick30",
+        "finalLoc": "finallocstick30"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick31",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick31",
+        "finalLoc": "finallocstick31"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick32",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick32",
+        "finalLoc": "finallocstick32"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick33",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick33",
+        "finalLoc": "finallocstick33"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick34",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick34",
+        "finalLoc": "finallocstick34"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick35",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick35",
+        "finalLoc": "finallocstick35"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick36",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick36",
+        "finalLoc": "finallocstick36"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick37",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick37",
+        "finalLoc": "finallocstick37"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick38",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick38",
+        "finalLoc": "finallocstick38"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick39",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick39",
+        "finalLoc": "finallocstick39"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick40",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick40",
+        "finalLoc": "finallocstick40"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick41",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick41",
+        "finalLoc": "finallocstick41"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick42",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick42",
+        "finalLoc": "finallocstick42"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick43",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick43",
+        "finalLoc": "finallocstick43"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick44",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick44",
+        "finalLoc": "finallocstick44"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick45",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick45",
+        "finalLoc": "finallocstick45"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick46",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick46",
+        "finalLoc": "finallocstick46"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick47",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick47",
+        "finalLoc": "finallocstick47"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick48",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick48",
+        "finalLoc": "finallocstick48"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick49",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick49",
+        "finalLoc": "finallocstick49"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick50",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick50",
+        "finalLoc": "finallocstick50"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick51",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick51",
+        "finalLoc": "finallocstick51"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick52",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick52",
+        "finalLoc": "finallocstick52"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick53",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick53",
+        "finalLoc": "finallocstick53"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick54",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick54",
+        "finalLoc": "finallocstick54"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick55",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick55",
+        "finalLoc": "finallocstick55"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick56",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick56",
+        "finalLoc": "finallocstick56"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick57",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick57",
+        "finalLoc": "finallocstick57"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick58",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick58",
+        "finalLoc": "finallocstick58"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick59",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick59",
+        "finalLoc": "finallocstick59"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick60",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick60",
+        "finalLoc": "finallocstick60"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick61",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick61",
+        "finalLoc": "finallocstick61"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick62",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick62",
+        "finalLoc": "finallocstick62"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick63",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick63",
+        "finalLoc": "finallocstick63"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick64",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick64",
+        "finalLoc": "finallocstick64"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick65",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick65",
+        "finalLoc": "finallocstick65"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick66",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick66",
+        "finalLoc": "finallocstick66"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick67",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick67",
+        "finalLoc": "finallocstick67"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick68",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick68",
+        "finalLoc": "finallocstick68"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick69",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick69",
+        "finalLoc": "finallocstick69"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick70",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick70",
+        "finalLoc": "finallocstick70"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick71",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick71",
+        "finalLoc": "finallocstick71"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick72",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick72",
+        "finalLoc": "finallocstick72"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick73",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick73",
+        "finalLoc": "finallocstick73"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick74",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick74",
+        "finalLoc": "finallocstick74"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick75",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick75",
+        "finalLoc": "finallocstick75"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick76",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick76",
+        "finalLoc": "finallocstick76"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick77",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick77",
+        "finalLoc": "finallocstick77"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick78",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick78",
+        "finalLoc": "finallocstick78"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick79",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick79",
+        "finalLoc": "finallocstick79"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick80",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick80",
+        "finalLoc": "finallocstick80"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick81",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick81",
+        "finalLoc": "finallocstick81"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick82",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick82",
+        "finalLoc": "finallocstick82"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick83",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick83",
+        "finalLoc": "finallocstick83"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick84",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick84",
+        "finalLoc": "finallocstick84"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick85",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick85",
+        "finalLoc": "finallocstick85"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick86",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick86",
+        "finalLoc": "finallocstick86"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick87",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick87",
+        "finalLoc": "finallocstick87"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "stick88",
+      "type": "Stick",
+      "properties": {
+        "initLoc": "initlocstick88",
+        "finalLoc": "finallocstick88"
+      }
+    },
+    {
+      "extends": "Agent",
+      "name": "robot1",
+      "type": "Robot",
+      "properties": {
+        "loc": "homepos",
+        "tool": "gripper1"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "cube1",
+      "type": "Cube",
+      "properties": {
+        "initLoc": "initloccube1",
+        "finalLoc": "finloccube1"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "cube2",
+      "type": "Cube",
+      "properties": {
+        "initLoc": "initloccube2",
+        "finalLoc": "finloccube2"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "cube3",
+      "type": "Cube",
+      "properties": {
+        "initLoc": "initloccube3",
+        "finalLoc": "finloccube3"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "cube4",
+      "type": "Cube",
+      "properties": {
+        "initLoc": "initloccube4",
+        "finalLoc": "finloccube4"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "cube5",
+      "type": "Cube",
+      "properties": {
+        "initLoc": "initloccube5",
+        "finalLoc": "finloccube5"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "cube6",
+      "type": "Cube",
+      "properties": {
+        "initLoc": "initloccube6",
+        "finalLoc": "finloccube6"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "cube7",
+      "type": "Cube",
+      "properties": {
+        "initLoc": "initloccube7",
+        "finalLoc": "finloccube7"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "cube8",
+      "type": "Cube",
+      "properties": {
+        "initLoc": "initloccube8",
+        "finalLoc": "finloccube8"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "cube9",
+      "type": "Cube",
+      "properties": {
+        "initLoc": "initloccube9",
+        "finalLoc": "finloccube9"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "cube10",
+      "type": "Cube",
+      "properties": {
+        "initLoc": "initloccube10",
+        "finalLoc": "finloccube10"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "cube11",
+      "type": "Cube",
+      "properties": {
+        "initLoc": "initloccube11",
+        "finalLoc": "finloccube11"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "cube12",
+      "type": "Cube",
+      "properties": {
+        "initLoc": "initloccube12",
+        "finalLoc": "finloccube12"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "cube13",
+      "type": "Cube",
+      "properties": {
+        "initLoc": "initloccube13",
+        "finalLoc": "finloccube13"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "cube14",
+      "type": "Cube",
+      "properties": {
+        "initLoc": "initloccube14",
+        "finalLoc": "finloccube14"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "cube15",
+      "type": "Cube",
+      "properties": {
+        "initLoc": "initloccube15",
+        "finalLoc": "finloccube15"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "cube16",
+      "type": "Cube",
+      "properties": {
+        "initLoc": "initloccube16",
+        "finalLoc": "finloccube16"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "cube17",
+      "type": "Cube",
+      "properties": {
+        "initLoc": "initloccube17",
+        "finalLoc": "finloccube17"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "cube18",
+      "type": "Cube",
+      "properties": {
+        "initLoc": "initloccube18",
+        "finalLoc": "finloccube18"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick1",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.25881904510251846,-0.965925826289069,0",
+        "position": "-10.701805994667325,-1103.6002609332354,70"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick2",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.1908089953765512,-0.9816271834476626,0",
+        "position": "-13.24542616060177,-1114.6178889888438,109.99999999999997"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick3",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.1218693434051493,-0.9925461516413219,0",
+        "position": "-15.01429870173223,-1125.7861328125,150"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick4",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.052335956242927514,-0.9986295347545746,0",
+        "position": "-15.999806766079232,-1137.0505289061807,190.00000000000003"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick5",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.01745240643728036,-0.9998476951563914,-0",
+        "position": "-16.19714867278153,-1148.3562333352563,230"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick6",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.08715574274764341,-0.9961946980917469,-0",
+        "position": "-15.605363226701126,-1159.6481765649642,270"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick7",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.15643446504022934,-0.9876883405951381,-0",
+        "position": "-14.227333236340598,-1170.8713354335964,309.99999999999994"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick8",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.22495105434387455,-0.9743700647852331,-0",
+        "position": "-12.06977231590924,-1181.971047052541,350"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick9",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.9455185755993173,-0.3255681544571556,-0",
+        "position": "93.03613851218711,-1298.7029554869332,30.00000000000001"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick10",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.9659258262890684,-0.25881904510252046,-0",
+        "position": "103.84949255755342,-1302.00896054039,70"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick11",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.9816271834476642,-0.19080899537654306,-0",
+        "position": "114.86712044919886,-1304.5525512695312,109.99999999999996"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick12",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.9925461516413222,-0.12186934340514649,-0",
+        "position": "126.035344232528,-1306.3214228057384,150"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick13",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.9986295347545739,-0.05233595624294273,-0",
+        "position": "137.29975290685934,-1307.3069308700856,190.00000000000006"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick14",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.9998476951563913,0.017452406437283397,-0",
+        "position": "148.60546875,-1307.5042724609375,230"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick15",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.9961946980917453,0.08715574274766033,-0",
+        "position": "159.8974089718485,-1306.9124755859375,270"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick16",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.9876883405951375,0.15643446504023167,-0",
+        "position": "171.12056065377698,-1305.534482061232,309.99999999999994"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick17",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.4067366509916156,-0.9135454541182527,-0",
+        "position": "-2.2161857795508766,-1211.4202837004855,10"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick18",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.4694715704365757,-0.8829475887909854,-0",
+        "position": "2.740668480022009,-1221.5833232776856,49.99999999999999"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick19",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.5299192715814964,-0.8480480915647037,-0",
+        "position": "8.394386432845963,-1231.3758682360453,90.00000000000001"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick20",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.587785259302555,-0.8090169892818247,-0",
+        "position": "14.717426192112008,-1240.7501582468576,130"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick21",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.6427876163242597,-0.7660444375492691,-0",
+        "position": "21.678978744745805,-1249.6605224609375,170.00000000000006"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick22",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.6946583766920241,-0.7193397943194869,-0",
+        "position": "29.245132200888833,-1258.0636032639532,209.99999999999997"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick23",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.7431448312753638,-0.6691305999195606,-0",
+        "position": "37.37901982781739,-1265.9183959960938,250.0000000000001"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick24",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.788010758941389,-0.6156614684975962,-0",
+        "position": "46.04101996755047,-1273.1867065429688,290.0000000000001"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick25",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.8290375774004122,-0.5591928962871897,-0",
+        "position": "55.1889286656373,-1279.8330337787115,329.9999999999998"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick26",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.9135454541182533,0.40673665099161443,-0",
+        "position": "177.41156030254245,-1308.775938604213,10"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick27",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.8829475887909887,0.46947157043656984,-0",
+        "position": "188.72203769522474,-1306.1716395153558,49.99999999999999"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick28",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.848048091564712,0.5299192715814836,-0",
+        "position": "199.823295018857,-1302.7847290039062,90"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick29",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.8090169892818255,0.5877852593025541,-0",
+        "position": "210.66125405017152,-1298.6316528320312,129.99999999999994"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick30",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.7660444375492652,0.6427876163242646,-0",
+        "position": "221.18310168378147,-1293.7327024460283,170"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick31",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.7193397943194799,0.6946583766920315,-0",
+        "position": "231.33759307861328,-1288.1116540332432,209.99999999999994"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick32",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.6691305999195588,0.7431448312753653,-0",
+        "position": "241.07524871826172,-1281.7960645530181,250"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick33",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.6156614684976024,0.788010758941384,-0",
+        "position": "250.34861554971053,-1274.8165118850175,290"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick34",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.9135454541182532,0.40673665099161516,0",
+        "position": "-257.24861907958984,-1320.6917938950746,10"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick35",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.882947588790985,0.4694715704365768,0",
+        "position": "-270.416748046875,-1313.347082872956,49.99999999999999"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick36",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.8480480915647132,0.5299192715814816,0",
+        "position": "-282.9095857344216,-1304.8750086975606,90.00000000000001"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick37",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.8090169892818267,0.5877852593025523,0",
+        "position": "-294.6346420999082,-1295.335109098469,130"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick38",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.7660444375492594,0.6427876163242714,0",
+        "position": "-305.5045269191007,-1284.7943135916282,170.00000000000006"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick39",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.7193397943194774,0.6946583766920343,0",
+        "position": "-315.4375,-1273.326447035749,209.99999999999997"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick40",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.6691305999195513,0.7431448312753723,0",
+        "position": "-324.3580278929051,-1261.0117610608338,250.0000000000001"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick41",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.615661468497601,0.788010758941385,0",
+        "position": "-332.19729331738085,-1247.936573001739,289.99999999999994"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick42",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.5591928962871945,0.8290375774004088,0",
+        "position": "-338.89361793175715,-1234.192556862115,329.99999999999994"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick43",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.49999999249594856,0.8660254081169046,0",
+        "position": "-344.392938294841,-1219.8761766550638,370"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick44",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.4383711390010941,0.8987940500976201,0",
+        "position": "-348.6490845287269,-1205.0882122552935,410.0000000000001"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick45",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.3746065853819152,0.9271838578127328,0",
+        "position": "-351.6241946023242,-1189.932890719584,450.00000000000017"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick46",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.4067366509916108,0.9135454541182548,-0",
+        "position": "-330.2161865234375,-1110.8734741210938,10"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick47",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.4694715704365757,0.8829475887909854,-0",
+        "position": "-325.25933772038877,-1100.7103959030712,49.99999999999999"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick48",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.5299192715814882,0.8480480915647088,-0",
+        "position": "-319.605612969321,-1090.9179077148438,90.00000000000001"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick49",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.5877852593025513,0.8090169892818274,-0",
+        "position": "-313.28258192095177,-1081.5436004204305,130"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick50",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.6427876163242632,0.7660444375492664,-0",
+        "position": "-306.3210220336914,-1072.6332092285156,170.00000000000006"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick51",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.6946583766920301,0.7193397943194814,-0",
+        "position": "-298.75487518310547,-1064.2301635742188,209.99999999999997"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick52",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.7431448312753663,0.6691305999195577,-0",
+        "position": "-290.6209793228062,-1056.3753356933594,250.0000000000001"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick53",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.788010758941389,0.6156614684975962,-0",
+        "position": "-281.95898191958753,-1049.1070621682493,290.0000000000001"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick54",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.8290375774004122,0.5591928962871897,-0",
+        "position": "-272.8110713343627,-1042.460717577886,329.9999999999998"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick55",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.8660254081169058,0.49999999249594684,-0",
+        "position": "-263.2218246459961,-1036.4686763947543,369.9999999999999"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick56",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.8987940500976257,0.43837113900108277,-0",
+        "position": "-253.23794665401422,-1031.1601690009384,410"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick57",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.32556815445714404,0.9455185755993212,0",
+        "position": "-335.39583138292767,-1229.5068676112255,30.00000000000001"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick58",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.25881904510251846,0.965925826289069,0",
+        "position": "-338.7018059946673,-1218.6934904233622,70"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick59",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.1908089953765512,0.9816271834476626,0",
+        "position": "-341.2454258543596,-1207.6758422851562,109.99999999999997"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick60",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.1218693434051493,0.9925461516413219,0",
+        "position": "-343.01429748535156,-1196.507638748387,150"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick61",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.052335956242927514,0.9986295347545746,0",
+        "position": "-343.9998117888093,-1185.2432577677107,190.00000000000003"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick62",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.01745240643728036,0.9998476951563914,-0",
+        "position": "-344.19714843436293,-1173.9375,230"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick63",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.08715574274764341,0.9961946980917469,-0",
+        "position": "-343.60537019725695,-1162.6455688476562,270"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick64",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.15643446504022934,0.9876883405951381,-0",
+        "position": "-342.22734029731475,-1151.4224217802357,309.99999999999994"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick65",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.2249510543438718,0.9743700647852336,-0",
+        "position": "-340.0697694548863,-1140.3227479724455,350"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick66",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.2923717047227518,0.9563047559630309,-0",
+        "position": "-337.1431990081654,-1129.4006020834377,390"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick67",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.358367949545296,0.9335804264972033,-0",
+        "position": "-333.46185302734375,-1118.709221499218,430"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick68",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.9135454541182544,-0.4067366509916121,0",
+        "position": "-116.33048516511917,-1028.770441549596,10"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick69",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.8829475887909862,-0.4694715704365746,0",
+        "position": "-106.16742766700818,-1033.727294921875,49.99999999999999"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick70",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.8480480915647123,-0.529919271581483,0",
+        "position": "-96.37490013963719,-1039.3810324248125,90"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick71",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.8090169892818255,-0.5877852593025541,0",
+        "position": "-87.00061012882475,-1045.704052853097,129.99999999999994"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick72",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.7660444375492598,-0.6427876163242711,0",
+        "position": "-78.09023189544678,-1052.6656351823108,170"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick73",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.7193397943194795,-0.6946583766920318,0",
+        "position": "-69.68716526031494,-1060.2317540770982,209.99999999999997"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick74",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.6691305999195593,-0.7431448312753651,0",
+        "position": "-61.832361137464375,-1068.365655631678,250"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick75",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.6156614684976024,-0.788010758941384,0",
+        "position": "-54.56407918733364,-1077.0276472201422,290"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick76",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.5591928962871847,-0.8290375774004153,0",
+        "position": "-47.91773509979248,-1086.1755676269531,329.9999999999998"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick77",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.49999999249594895,-0.8660254081169046,0",
+        "position": "-41.925706632960285,-1095.76480633241,370"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick78",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.9455185755993176,0.3255681544571544,-0",
+        "position": "-234.9638614878129,-1023.5907880640572,30.00000000000001"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick79",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.9659258262890684,0.25881904510252046,-0",
+        "position": "-224.15050888061523,-1020.2848455731403,70"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick80",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.9816271834476642,0.19080899537654344,-0",
+        "position": "-213.13287938683845,-1017.7411945793413,109.99999999999996"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick81",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.9925461516413222,0.12186934340514649,-0",
+        "position": "-201.96465576747198,-1015.9723285508592,150"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick82",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.9986295347545739,0.052335956242941274,-0",
+        "position": "-190.70025138467508,-1014.9868336636744,190.00000000000006"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick83",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.9998476951563913,-0.01745240643728482,0",
+        "position": "-179.3945323223117,-1014.7894711463994,230"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick84",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.9961946980917453,-0.08715574274766079,0",
+        "position": "-168.1025910281515,-1015.3812600794297,270"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick85",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.9876883405951375,-0.15643446504023167,0",
+        "position": "-156.8794387993207,-1016.7592939403407,309.99999999999994"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick86",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.974370064785235,-0.22495105434386575,0",
+        "position": "-145.7797565460205,-1018.9168486581436,350"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick87",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.9563047559630365,-0.2923717047227331,0",
+        "position": "-134.85761095919122,-1021.8434634652285,390"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick88",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.23177381193904834,-0.9727697055825919,0",
+        "position": "-7.395830490513617,-1092.7869408631252,30.00000000000001"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finloccube1",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.9135454541182579,0.40673665099160405,0",
+        "position": "-186.44884144349706,-1352.2138926258435,30"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finloccube2",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.9135454541182515,-0.4067366509916184,0",
+        "position": "232.22428804246357,-1284.3717351596904,30"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finloccube3",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.88294758879099,0.4694715704365675,0",
+        "position": "-205.2993612191039,-1347.9706087270874,69.99999999999999"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finloccube4",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.8829475887909891,-0.4694715704365689,0",
+        "position": "241.69889302268382,-1278.0033452891616,70"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finloccube5",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.8480480915647157,0.5299192715814773,0",
+        "position": "-223.54621932489184,-1341.9693577082649,109.99999999999997"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finloccube6",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.8480480915647174,-0.5299192715814749,0",
+        "position": "250.70618192056872,-1270.9895534627435,109.99999999999999"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finloccube7",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.8090169892818209,0.5877852593025605,0",
+        "position": "-241.03726962516916,-1334.2758940490235,149.99999999999994"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finloccube8",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.8090169892818241,-0.587785259302556,0",
+        "position": "259.2022721300164,-1263.3645301691931,149.99999999999991"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finloccube9",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.7660444375492693,0.6427876163242598,0",
+        "position": "-257.6267495722716,-1324.9685396118946,190.00000000000006"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finloccube10",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.7660444375492642,-0.6427876163242657,0",
+        "position": "267.14577155355124,-1255.1654237555285,189.99999999999997"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finloccube11",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.7193397943194789,0.6946583766920325,0",
+        "position": "-273.176285330362,-1314.1376030972692,229.99999999999994"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finloccube12",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.7193397943194859,-0.6946583766920252,0",
+        "position": "274.4979802604589,-1246.4321794440293,230"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finloccube13",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.669130599919552,0.7431448312753716,0",
+        "position": "-287.55584630425693,-1301.8847210074166,270.00000000000006"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finloccube14",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.6691305999195604,-0.743144831275364,0",
+        "position": "281.22307902896137,-1237.2073447231169,269.99999999999994"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finloccube15",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.6156614684975984,0.7880107589413868,0",
+        "position": "-300.64464305687886,-1288.322124397485,309.99999999999994"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finloccube16",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.5591928962872046,0.829037577400402,0",
+        "position": "-312.3319629525511,-1273.5718361457807,349.9999999999999"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finloccube17",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.4999999924959522,0.8660254081169027,0",
+        "position": "-322.51793825077743,-1257.764803901097,390"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finloccube18",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.4383711390010918,0.8987940500976213,0",
+        "position": "-331.11424179416184,-1241.039974259198,430.0000000000001"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "mp5",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "rppickup",
+      "type": "RobotPosition"
+    },
+    {
+      "extends": "Location",
+      "name": "rpmanipulate",
+      "type": "RobotPosition"
+    },
+    {
+      "extends": "Location",
+      "name": "rptoolchange",
+      "type": "RobotPosition"
+    },
+    {
+      "extends": "Tool",
+      "name": "gripper1",
+      "type": "Gripper",
+      "properties": {
+        "loc": "equiplocgripper"
+      }
+    }
+  ],
+  "count": 353
+}

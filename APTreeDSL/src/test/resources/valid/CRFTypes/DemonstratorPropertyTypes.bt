@@ -31,9 +31,7 @@ Location EquipLocation{
     orientation: Coordinate  
 } 
 
-Location RobotPosition{
-    namedPos: Name
-}
+Location RobotPosition
 
 Layer Stack
 

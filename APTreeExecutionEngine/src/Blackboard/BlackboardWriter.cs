@@ -229,10 +229,10 @@ public class BlackboardWriter
     }
 
     /// <summary>
-    /// Registers all instances (parameters, predicates, and actions) using file paths
+    /// Registers all instances using specified file paths
     /// </summary>
-    /// <param name="parameterInstancesFile">Path to the parameter instances file</param>
-    /// <param name="predicateInstancesFile">Path to the predicate instances file</param>
+    /// <param name="parameterInstancesFile">Path to the setup objects JSON file</param>
+    /// <param name="predicateInstancesFile">Path to the initial state predicates JSON file</param>
     /// <param name="actionInstancesFile">Path to the action instances file</param>
     public void RegisterAllInstances(string parameterInstancesFile, string predicateInstancesFile, string actionInstancesFile)
     {
