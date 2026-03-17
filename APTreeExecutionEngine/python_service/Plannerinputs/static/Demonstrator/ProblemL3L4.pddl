@@ -132,9 +132,9 @@
 
     ;; GripperEmpty
     (gripperempty robot1)
-    (atagent robot1 rppickup)
-    (hastool robot1 gripper1)
-    (attool staplergun1 equiplocstapler)
+    (atagent robot1 rpmanipulate)
+    (hastool robot1 staplergun1)
+    (attool gripper1 equiplocgripper)
 
     ;; ObjectFinalPosition (active elements)
     (objectfinalposition stick10 finallocstick10)

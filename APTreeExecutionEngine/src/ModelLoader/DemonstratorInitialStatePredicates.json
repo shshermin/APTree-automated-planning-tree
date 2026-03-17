@@ -2486,14 +2486,6 @@
       "type": "AtTool",
       "properties": {
         "not": false,
-        "toolLoc": "equiplocgripper",
-        "tool": "gripper1"
-      }
-    },
-    {
-      "type": "AtTool",
-      "properties": {
-        "not": false,
         "toolLoc": "equiplocstapler",
         "tool": "staplergun1"
       }

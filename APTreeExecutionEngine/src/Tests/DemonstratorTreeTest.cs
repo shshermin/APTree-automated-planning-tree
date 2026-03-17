@@ -91,16 +91,17 @@ namespace BehaviorTreeMainProject
                 // DomainMLTruss.pddl from the Demonstrator folder instead of the
                 // generic DomainML.pddl.
                 var demoMLConfig = new ServiceSubtreeInject.SubtreeConfiguration(
-                    "FF_Demonstrator", "FF", SuccessCriteria.ALL);
+                    "ENHSP_Demonstrator", "ENHSP", SuccessCriteria.ALL);
                 demoMLConfig.PlannerParameters["domainFile"] = "./Plannerinputs/static/Demonstrator/DomainMLTruss.pddl";
                 demoMLConfig.PlannerParameters["problemFile"] = "./Plannerinputs/static/Demonstrator/ProblemL1L2.pddl";
-                demoMLConfig.PlannerParameters["plannerPath"] = "ff";
+                demoMLConfig.PlannerParameters["plannerPath"] = "/home/ubuntu/ENHSP-Public/enhsp.jar";
                 demoMLConfig.PlannerParameters["timeoutSeconds"] = 30;
                 demoMLConfig.PlannerParameters["maxPlanLength"] = 20;
                 demoMLConfig.PlannerParameters["executionMode"] = ServicePDDLPlanning.ParallelExecutionMode.Sequential;
-                ServiceSubtreeInject.RegisterGlobalConfiguration("FF_Demonstrator", demoMLConfig);
-                ServiceSubtreeInject.DefaultSubtreeConfigName = "FF_Demonstrator";
-                LoggingService.LogSuccess("Registered FF_Demonstrator subtree config (DomainMLTruss.pddl)");
+                demoMLConfig.PlannerParameters["enhspConfig"] = "opt-hmax";
+                ServiceSubtreeInject.RegisterGlobalConfiguration("ENHSP_Demonstrator", demoMLConfig);
+                ServiceSubtreeInject.DefaultSubtreeConfigName = "ENHSP_Demonstrator";
+                LoggingService.LogSuccess("Registered ENHSP_Demonstrator subtree config (DomainMLTruss.pddl, opt-hmax)");
 
                 // ── 4. Create 12 DynamicFlowNodes (Layers1_2 through Layer23) ──
                 // Each has: All / AllAction / ServicePlanning Enhsp

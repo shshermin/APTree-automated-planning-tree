@@ -777,9 +777,33 @@ public class BlackboardWriter
                 
                 if (actionInstance != null)
                 {
-                    // Generate a unique key for the action instance
-                    string actionKey = GenerateActionInstanceKey(actionDefinition);
-                    var fastNameKey = new FastName(actionKey);
+                    // Generate the base key from the MontiCore definition
+                    string baseKey = GenerateActionInstanceKey(actionDefinition);
+                    
+                    // Global dedup: use ActionInstanceCounts on the blackboard
+                    // to assign a globally unique _dup suffix across all cassettes.
+                    string uniqueKey;
+                    if (blackboard.ActionInstanceCounts.TryGetValue(baseKey, out int count))
+                    {
+                        // Already seen this base key — increment and append _dup
+                        blackboard.ActionInstanceCounts[baseKey] = count + 1;
+                        uniqueKey = $"{baseKey}_dup{count + 1}";
+                        LoggingService.LogInfo($"  🔄 Global dedup: {baseKey} seen {count} time(s) before -> {uniqueKey}");
+                    }
+                    else
+                    {
+                        // First time — no suffix needed
+                        blackboard.ActionInstanceCounts[baseKey] = 1;
+                        uniqueKey = baseKey;
+                    }
+                    
+                    // Update the action's instance name if it was disambiguated
+                    if (uniqueKey != baseKey)
+                    {
+                        actionInstance.UpdateInstanceName(uniqueKey);
+                    }
+                    
+                    var fastNameKey = new FastName(uniqueKey);
                     
                     // Register the action instance on the blackboard
                     blackboard.SetActionType(fastNameKey, actionInstance);
@@ -788,7 +812,7 @@ public class BlackboardWriter
                     successCount++;
                     
                     LoggingService.LogInfo($"  ✅ Successfully created and registered action: {actionInstance.GetType().Name}");
-                    LoggingService.LogInfo($"  🔑 Registered with key: {actionKey}");
+                    LoggingService.LogInfo($"  🔑 Registered with key: {uniqueKey}");
                     LoggingService.LogInfo($"  📝 Debug Display Name: {actionInstance.DebugDisplayName}");
                 }
                 else

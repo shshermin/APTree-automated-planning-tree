@@ -21,6 +21,16 @@ public abstract class ActionNode :BTNode
         this.debugDisplayName = instanceName; // Set the debug display name
     }
 
+    /// <summary>
+    /// Updates the instance name after construction.
+    /// Used by BlackboardWriter to disambiguate duplicate action instances.
+    /// </summary>
+    public void UpdateInstanceName(string newName)
+    {
+        this.instanceName = new FastName(newName);
+        this.debugDisplayName = newName;
+    }
+
     public override bool HasChildren => false;
    
     protected override bool OnTick_Children (float InDeltaTime)

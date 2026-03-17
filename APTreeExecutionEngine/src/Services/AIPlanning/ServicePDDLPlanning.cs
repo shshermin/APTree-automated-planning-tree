@@ -15,6 +15,7 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
     {
         private DateTime planningStartTime;
         private bool planningStarted = false;
+        private bool hlProblemPatched = false;
 
         private readonly Blackboard<FastName> blackboard;
         private readonly FactoryAction actionFactory;
@@ -22,6 +23,22 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
         public List<PActionNode> TempActionList = new List<PActionNode>();
         public PDDLPlanningRequest PlanningRequest;
         
+        /// <summary>
+        /// Predicate types whose values represent transient robot state and must
+        /// be carried forward from the blackboard into static HL problem files
+        /// so that cross-cassette planning starts from the actual robot state
+        /// rather than the assumptions baked into the file.
+        /// </summary>
+        private static readonly HashSet<string> RobotStatePredicateTypes = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "gripperempty",
+            "atagent",
+            "hastool",
+            "attool",
+            "positionfree",
+            "activetool"
+        };
+
         // Parallel execution configuration
         public enum ParallelExecutionMode
         {
@@ -99,6 +116,22 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
             // is already on disk there.
             PopulateInlineFileContents();
 
+            // For HL-level planning (no parentAction), patch the static problem
+            // file with live robot-state predicates from the blackboard so that
+            // cross-cassette transitions start from the actual robot state.
+            if (!HasCompleted && !IsExecuting)
+            {
+                var parentAction2 = (OwningFlowNode as DynamicFlowNode)?.GetParentAction();
+                if (parentAction2 == null && blackboard != null
+                    && !string.IsNullOrEmpty(PlanningRequest.ProblemFileContent)
+                    && !hlProblemPatched)
+                {
+                    PlanningRequest.ProblemFileContent = PatchRobotStatePredicates(
+                        PlanningRequest.ProblemFileContent, blackboard);
+                    hlProblemPatched = true;
+                }
+            }
+
             return base.OnEvaluate(InDeltaTime);
         }
 
@@ -112,12 +145,15 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
             // Domain file
             if (!string.IsNullOrWhiteSpace(PlanningRequest.DomainFile))
             {
-                string domainLocalPath = PlanningRequest.DomainFile.TrimStart('.', '/');
-                string domainFullPath = Path.Combine("python_service", domainLocalPath);
-                if (File.Exists(domainFullPath))
+                string resolvedDomain = ResolveLocalFilePath(PlanningRequest.DomainFile);
+                if (resolvedDomain != null)
                 {
-                    PlanningRequest.DomainFileContent = File.ReadAllText(domainFullPath, Encoding.UTF8);
-                    LoggingService.LogInfo($"📄 ServicePDDLPlanning: Loaded domain file inline: {domainFullPath}");
+                    PlanningRequest.DomainFileContent = File.ReadAllText(resolvedDomain, Encoding.UTF8);
+                    LoggingService.LogInfo($"📄 ServicePDDLPlanning: Loaded domain file inline: {resolvedDomain}");
+                }
+                else
+                {
+                    LoggingService.LogWarning($"⚠️ ServicePDDLPlanning: Could not find domain file locally: {PlanningRequest.DomainFile} — VM will use its own copy (may be outdated)");
                 }
             }
 
@@ -126,14 +162,118 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
             if (string.IsNullOrWhiteSpace(PlanningRequest.ProblemFileContent)
                 && !string.IsNullOrWhiteSpace(PlanningRequest.ProblemFile))
             {
-                string problemLocalPath = PlanningRequest.ProblemFile.TrimStart('.', '/');
-                string problemFullPath = Path.Combine("python_service", problemLocalPath);
-                if (File.Exists(problemFullPath))
+                string resolvedProblem = ResolveLocalFilePath(PlanningRequest.ProblemFile);
+                if (resolvedProblem != null)
                 {
-                    PlanningRequest.ProblemFileContent = File.ReadAllText(problemFullPath, Encoding.UTF8);
-                    LoggingService.LogInfo($"📄 ServicePDDLPlanning: Loaded problem file inline: {problemFullPath}");
+                    PlanningRequest.ProblemFileContent = File.ReadAllText(resolvedProblem, Encoding.UTF8);
+                    LoggingService.LogInfo($"📄 ServicePDDLPlanning: Loaded problem file inline: {resolvedProblem}");
+                }
+                else
+                {
+                    LoggingService.LogWarning($"⚠️ ServicePDDLPlanning: Could not find problem file locally: {PlanningRequest.ProblemFile} — VM will use its own copy (may be outdated)");
                 }
             }
+        }
+
+        /// <summary>
+        /// Tries multiple path resolution strategies to find a PDDL file on the
+        /// local machine. Returns the first path that exists, or null if none found.
+        /// This accounts for different working directories (project root, bin output, etc.).
+        /// </summary>
+        private static string ResolveLocalFilePath(string requestPath)
+        {
+            string stripped = requestPath.TrimStart('.', '/', '\\');
+
+            // Build a list of candidate paths from most to least likely
+            var candidates = new List<string>
+            {
+                // 1. python_service/ + stripped path (CWD = project dir, path = "Plannerinputs/...")
+                Path.Combine("python_service", stripped),
+                // 2. Stripped path directly (CWD = project dir, path already includes full relative)
+                stripped,
+                // 3. Original path as-is
+                requestPath,
+            };
+
+            // 4. Try from the executable's directory (handles bin/Debug/... or Docker /app/ scenarios)
+            string exeDir = AppContext.BaseDirectory;
+            candidates.Add(Path.Combine(exeDir, "python_service", stripped));
+            candidates.Add(Path.Combine(exeDir, stripped));
+
+            // 5. Walk up from executable dir looking for python_service folder
+            string searchDir = exeDir;
+            for (int i = 0; i < 6; i++)
+            {
+                string parent = Path.GetDirectoryName(searchDir);
+                if (parent == null || parent == searchDir) break;
+                searchDir = parent;
+                string candidate = Path.Combine(searchDir, "python_service", stripped);
+                candidates.Add(candidate);
+            }
+
+            foreach (var candidate in candidates)
+            {
+                if (File.Exists(candidate))
+                    return Path.GetFullPath(candidate);
+            }
+
+            // Log all tried paths for debugging
+            LoggingService.LogWarning($"⚠️ ServicePDDLPlanning: File not found at any candidate path for '{requestPath}':");
+            foreach (var c in candidates)
+                LoggingService.LogWarning($"   tried: {c}");
+            LoggingService.LogWarning($"   CWD: {Environment.CurrentDirectory}");
+            LoggingService.LogWarning($"   ExeDir: {exeDir}");
+
+            return null;
+        }
+
+        /// <summary>
+        /// Replaces the robot-state predicates inside a PDDL problem file's (:init ...)
+        /// section with their current values from the blackboard.
+        /// This ensures HL planning after a cassette transition uses the actual
+        /// robot state rather than the static assumptions in the file.
+        /// </summary>
+        private string PatchRobotStatePredicates(string problemContent, Blackboard<FastName> bb)
+        {
+            // 1. Collect live robot-state predicates from the blackboard
+            var livePredicates = bb.GetTruePredicates()
+                .Where(p => RobotStatePredicateTypes.Contains(p.PredicateTypeName))
+                .ToList();
+
+            if (livePredicates.Count == 0)
+            {
+                LoggingService.LogWarning("⚠️ ServicePDDLPlanning: No robot-state predicates found on blackboard — skipping patch");
+                return problemContent;
+            }
+
+            // 2. Remove existing robot-state lines from the (:init ...) block
+            //    Each line looks like "    (gripperempty robot1)" etc.
+            var pattern = new Regex(
+                @"^[ \t]*\(" + "(" + string.Join("|", RobotStatePredicateTypes) + @")\b[^\)]*\)\s*$",
+                RegexOptions.Multiline | RegexOptions.IgnoreCase);
+
+            string patched = pattern.Replace(problemContent, "");
+
+            // 3. Build replacement lines from live blackboard predicates
+            var replacementLines = new StringBuilder();
+            foreach (var pred in livePredicates)
+            {
+                string pddl = ConvertPredicateToPDDL(pred);
+                if (!string.IsNullOrEmpty(pddl))
+                    replacementLines.AppendLine($"    {pddl}");
+            }
+
+            // 4. Insert the live predicates right after the (:init line
+            var initMarker = Regex.Match(patched, @"\(:init\b[^\n]*\n", RegexOptions.IgnoreCase);
+            if (initMarker.Success)
+            {
+                int insertPos = initMarker.Index + initMarker.Length;
+                patched = patched.Insert(insertPos,
+                    "    ;; Robot state (carried forward from blackboard)\n" + replacementLines);
+            }
+
+            LoggingService.LogInfo($"🔄 ServicePDDLPlanning: Patched {livePredicates.Count} robot-state predicates into HL problem file");
+            return patched;
         }
 
         /// <summary>
@@ -143,6 +283,7 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
         public new void ResetPlanningService()
         {
             planningStarted = false;
+            hlProblemPatched = false;
             base.ResetPlanningService();
         }
 
@@ -687,10 +828,13 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
             var montiCoreActionStrings = ConvertToMontiCoreFormat(actionInstanceStrings);
             
             // Step 2: Create action instances
+            // Use the original DSL name (which may contain _dup<N>) as the dictionary key
+            // so that duplicate actions with the same parameters get separate entries.
             LoggingService.LogInfo($"🔧 ParseNodeGraph: Step 2 - Creating action instances from {montiCoreActionStrings.Count} MontiCore action strings");
             
-            foreach (var actionString in montiCoreActionStrings)
+            for (int idx = 0; idx < montiCoreActionStrings.Count; idx++)
             {
+                var actionString = montiCoreActionStrings[idx];
                 LoggingService.LogInfo($"🔧 ParseNodeGraph: Processing action string: {actionString}");
                 
                 try
@@ -702,7 +846,9 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
                     
                     if (actionInstance != null)
                     {
-                        string actionKey = GetActionInstanceName(actionString);
+                        // Use the original DSL instance name (with _dup suffix) as the key
+                        // so duplicates don't overwrite each other in the dictionary.
+                        string actionKey = ExtractDslInstanceName(actionInstanceStrings[idx]);
                         actionInstances[actionKey] = actionInstance;
                         LoggingService.LogSuccess($"✅ ParseNodeGraph: Created action instance: {actionKey} -> {actionInstance.InstanceName.ToString()}");
                     }
@@ -868,6 +1014,18 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
         }
 
         /// <summary>
+        /// Extracts the DSL instance name from an "ActionInstance: TypeName_p1_p2[_dupN]" string.
+        /// This preserves any _dup suffix so each duplicate gets a unique dictionary key.
+        /// </summary>
+        private static string ExtractDslInstanceName(string actionInstanceLine)
+        {
+            const string prefix = "ActionInstance:";
+            if (actionInstanceLine.StartsWith(prefix))
+                return actionInstanceLine.Substring(prefix.Length).Trim();
+            return actionInstanceLine.Trim();
+        }
+
+        /// <summary>
         /// Parses a relation definition like "source --[MEETS]--> target"
         /// Updated to handle simplified action names (without ActionInstance: prefix)
         /// </summary>
@@ -954,35 +1112,50 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
         }
 
         /// <summary>
-        /// Finds an action instance by simplified name using the InstanceName property
+        /// Finds an action instance by simplified name.
+        /// First checks the dictionary key (DSL instance name, may include _dup suffix),
+        /// then falls back to matching by PActionNode.InstanceName.
         /// </summary>
         private static PActionNode FindActionInstanceBySimplifiedName(string simplifiedName, Dictionary<string, PActionNode> actionInstances)
         {
             LoggingService.LogInfo($"🔧 FindActionInstanceBySimplifiedName called with: {simplifiedName}");
             
-            // Search through all action instances and match by InstanceName property
+            // 1. Direct dictionary key lookup (handles _dup suffixed names)
+            if (actionInstances.TryGetValue(simplifiedName, out var directMatch))
+            {
+                LoggingService.LogInfo($"🔧 FindActionInstanceBySimplifiedName: Found direct key match: {simplifiedName}");
+                return directMatch;
+            }
+            
+            // 2. Case-insensitive dictionary key lookup
             foreach (var kvp in actionInstances)
             {
-                var actionInstance = kvp.Value;
-                string instanceName = actionInstance.InstanceName.ToString();
-                
-                if (instanceName == simplifiedName)
+                if (string.Equals(kvp.Key, simplifiedName, StringComparison.OrdinalIgnoreCase))
                 {
-                    LoggingService.LogInfo($"🔧 FindActionInstanceBySimplifiedName: Found exact match: {simplifiedName}");
-                    return actionInstance;
+                    LoggingService.LogInfo($"🔧 FindActionInstanceBySimplifiedName: Found case-insensitive key match: {simplifiedName} -> {kvp.Key}");
+                    return kvp.Value;
                 }
             }
             
-            // Try case-insensitive matching as fallback
+            // 3. Match by PActionNode.InstanceName (legacy fallback)
             foreach (var kvp in actionInstances)
             {
-                var actionInstance = kvp.Value;
-                string instanceName = actionInstance.InstanceName.ToString();
-                
+                string instanceName = kvp.Value.InstanceName.ToString();
+                if (instanceName == simplifiedName)
+                {
+                    LoggingService.LogInfo($"🔧 FindActionInstanceBySimplifiedName: Found InstanceName match: {simplifiedName}");
+                    return kvp.Value;
+                }
+            }
+            
+            // 4. Case-insensitive InstanceName fallback
+            foreach (var kvp in actionInstances)
+            {
+                string instanceName = kvp.Value.InstanceName.ToString();
                 if (string.Equals(instanceName, simplifiedName, StringComparison.OrdinalIgnoreCase))
                 {
-                    LoggingService.LogInfo($"🔧 FindActionInstanceBySimplifiedName: Found case-insensitive match: {simplifiedName} -> {instanceName}");
-                    return actionInstance;
+                    LoggingService.LogInfo($"🔧 FindActionInstanceBySimplifiedName: Found case-insensitive InstanceName match: {simplifiedName} -> {instanceName}");
+                    return kvp.Value;
                 }
             }
             
@@ -1123,6 +1296,11 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
             
             string actionPart = actionString.Substring("ActionInstance:".Length).Trim();
             
+            // Strip the planner's local _dup<N> suffix — it is only valid within
+            // a single plan.  Global cross-cassette disambiguation is handled by
+            // BlackboardWriter using ActionInstanceCounts on the blackboard.
+            actionPart = System.Text.RegularExpressions.Regex.Replace(actionPart, @"_dup\d+$", "");
+
             // Split by underscore to get action type and parameters
             string[] parts = actionPart.Split('_');
             if (parts.Length < 1)

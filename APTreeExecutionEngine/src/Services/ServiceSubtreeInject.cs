@@ -205,6 +205,16 @@ namespace BehaviorTreeMainProject
                 
                 var mergedParameters = customParameters ?? new Dictionary<string, object>();
                 
+                // Inherit the HL-level problem file so the ML subtree uses the correct
+                // cassette-specific objects (e.g. ProblemL3L4.pddl instead of ProblemL1L2.pddl)
+                if (pendingAction.ParentNode is FlowNode hlFlowNode
+                    && hlFlowNode.ServicePlanning is ServicePDDLPlanning hlPlanner
+                    && !string.IsNullOrEmpty(hlPlanner.PlanningRequest.ProblemFile))
+                {
+                    mergedParameters["problemFile"] = hlPlanner.PlanningRequest.ProblemFile;
+                    LogMessage($"🔧 ServiceSubtreeInject: Inherited HL problem file: {hlPlanner.PlanningRequest.ProblemFile}");
+                }
+                
                 LogMessage($"🔧 ServiceSubtreeInject: Merged parameters count: {mergedParameters.Count}");
                 foreach (var param in mergedParameters)
                 {

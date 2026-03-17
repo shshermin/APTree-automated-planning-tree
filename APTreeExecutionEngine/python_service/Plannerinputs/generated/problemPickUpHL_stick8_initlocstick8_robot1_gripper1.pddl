@@ -107,7 +107,6 @@
 (clear stick9)
 (clear cube1)
 (clear cube2)
-(attool gripper1 equiplocgripper)
 (attool staplergun1 equiplocstapler)
 (atplace stick6 initlocstick6)
 (atplace stick7 initlocstick7)

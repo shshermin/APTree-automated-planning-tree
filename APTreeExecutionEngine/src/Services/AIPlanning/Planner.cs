@@ -112,13 +112,27 @@ public abstract class Planner
     {
         var sb = new StringBuilder();
         var entries = new List<(string Type, string InstanceName, string[] Params)>();
+        var instanceNameCounts = new Dictionary<string, int>();
 
         foreach (var action in actions)
         {
             var type = NormalizeActionName(action.Name);
             var paramSuffix = string.Join("_", action.Parameters);
-            var instanceName = string.IsNullOrEmpty(paramSuffix) ? type : $"{type}_{paramSuffix}";
-            entries.Add((type, instanceName, action.Parameters));
+            var baseName = string.IsNullOrEmpty(paramSuffix) ? type : $"{type}_{paramSuffix}";
+
+            // Disambiguate duplicate instance names by appending _dup2, _dup3, etc.
+            // The "dup" marker lets downstream parsing distinguish the counter
+            // from real parameters (which are never "dup<N>").
+            if (instanceNameCounts.TryGetValue(baseName, out var count))
+            {
+                instanceNameCounts[baseName] = count + 1;
+                entries.Add((type, $"{baseName}_dup{count + 1}", action.Parameters));
+            }
+            else
+            {
+                instanceNameCounts[baseName] = 1;
+                entries.Add((type, baseName, action.Parameters));
+            }
         }
 
         sb.AppendLine("NodeGraph {");

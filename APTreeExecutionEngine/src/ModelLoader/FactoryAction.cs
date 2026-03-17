@@ -31,7 +31,7 @@ public class FactoryAction : Singleton<FactoryAction>
             throw new ArgumentException($"Unknown action type: {actionTypeName}");
         }
         
-        LoggingService.LogError($"✅ Found action type: {actionType.Name}");
+        LoggingService.LogError($"\u2705 Found action type: {actionType.Name}");
 
         // Get the constructor that matches our expected signature
         var constructors = actionType.GetConstructors();
@@ -53,7 +53,6 @@ public class FactoryAction : Singleton<FactoryAction>
         LoggingService.LogError($"✅ Found constructor with {targetConstructor.GetParameters().Length} parameters");
 
         // Build constructor arguments in the correct order
-        // Note: The constructor will automatically set actionType to the actual class name
         var constructorArgs = new List<object> { actionTypeName, instanceName, blackboard };
         
         // Get constructor parameters (skip the first 3: actionType, instanceName, blackboard)

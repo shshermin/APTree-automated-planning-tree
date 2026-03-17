@@ -35,6 +35,15 @@ public class Blackboard<T> : IDisposable where T : class
      Dictionary<FastName, State> StateValues = new();
     Dictionary<FastName, NodeGraph> NodeGraphValues = new();
     Dictionary<FastName, DynamicFlowNode> InjectedSubtreesValues = new();
+
+    /// <summary>
+    /// Global counter per base action key. Tracks how many instances of each
+    /// action signature have been created across all cassettes, so that
+    /// cross-cassette duplicates get unique _dup suffixes.
+    /// Key = base action key (e.g. "ChangeEndeffectorHL_robot1_staplergun1_gripper1")
+    /// Value = number of instances created so far
+    /// </summary>
+    public Dictionary<string, int> ActionInstanceCounts { get; } = new Dictionary<string, int>();
    
     private readonly EnvironmentGraph? _envGraph;
 
@@ -454,6 +463,14 @@ public void SetActionInstance(FastName key, PActionNode actionInstance)
         var generationTime = DateTime.Now - startTime;
         BlackboardSummaryLogger.TrackCreation("ActionInstances", actionInstance.GetType().Name, generationTime);
     }
+}
+
+/// <summary>
+/// Checks whether an action instance with the given key exists on the blackboard.
+/// </summary>
+public bool HasActionInstance(FastName key)
+{
+    return ActionValues.ContainsKey(key);
 }
 
 public ActionNode GetAction(FastName key)
