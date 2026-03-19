@@ -29,6 +29,7 @@ export type AptreeValidateResponse = {
 };
 
 export type AptreeGraph = {
+  name?: string;
   rootId: string | null;
   nodes: AptreeGraphNode[];
   edges: AptreeGraphEdge[];
@@ -44,6 +45,7 @@ export type AptreeGraphNode = {
   successType?: string;
   paramNames?: string[];
   paramValues?: string[];
+  subtreeRef?: string;
 };
 
 export type AptreeGraphEdge = {
@@ -95,6 +97,8 @@ export function normalizeAptreeValidateResponse(
 function normalizeGraph(
   value: Record<string, unknown>,
 ): AptreeGraph | undefined {
+  const name = typeof value.name === "string" ? value.name : undefined;
+
   const rootId =
     typeof value.rootId === "string"
       ? value.rootId
@@ -118,6 +122,7 @@ function normalizeGraph(
         paramValues: Array.isArray(node.paramValues)
           ? (node.paramValues.filter((v) => v != null).map((v) => String(v)) as string[])
           : undefined,
+        subtreeRef: typeof node.subtreeRef === "string" ? node.subtreeRef : undefined,
       })) as AptreeGraphNode[])
     : [];
 
@@ -132,10 +137,10 @@ function normalizeGraph(
     : [];
 
   if (!nodes.length) {
-    return { rootId, nodes: [], edges: [] };
+    return { name, rootId, nodes: [], edges: [] };
   }
 
-  return { rootId, nodes, edges };
+  return { name, rootId, nodes, edges };
 }
 
 type CanvasGraph = {
@@ -209,6 +214,15 @@ export function aptreeGraphsToCanvasGraph(
   const discoveredActionTypeMap = new Map<string, ActionType>();
   const discoveredActionInstanceMap = new Map<string, ActionInstance>();
 
+  // Maps subtree name → X anchor of the action node that references it (filled from graph 0)
+  const subtreeRefToAnchorX = new Map<string, number>();
+  // Tracks already-placed subtrees for overlap avoidance
+  const placedSubtrees: Array<{ left: number; right: number; bottom: number }> = [];
+  // Y at which subtree columns begin (set after graph 0 is placed)
+  let subtreeBaseY = 0;
+  // Fallback Y for subtrees with no matching anchor
+  let fallbackNextY = 0;
+
   for (let index = 0; index < graphs.length; index++) {
     const graph = graphs[index];
     const effectiveActionTypes = [
@@ -230,9 +244,58 @@ export function aptreeGraphsToCanvasGraph(
     }
 
     const bounds = canvasBounds(sectionResult.graph.nodes);
-    const sectionOffsetY = nextTopY - bounds.top;
     const idPrefix = `bt-tree-${index}-`;
     const idMap = new Map<string, string>();
+
+    let sectionOffsetX = 0;
+    let sectionOffsetY: number;
+
+    if (index === 0) {
+      // Main tree: position normally and collect subtreeRef → action node X
+      sectionOffsetY = nextTopY - bounds.top;
+
+      const canvasById = new Map(sectionResult.graph.nodes.map((n) => [n.id, n]));
+      for (const graphNode of graph.nodes) {
+        if (graphNode.subtreeRef) {
+          const canvasId = "bt-import-" + graphNode.id;
+          const cn = canvasById.get(canvasId);
+          if (cn) {
+            subtreeRefToAnchorX.set(graphNode.subtreeRef, cn.x);
+          }
+        }
+      }
+
+      subtreeBaseY = nextTopY + bounds.height + TREE_SECTION_GAP_Y;
+      fallbackNextY = subtreeBaseY;
+      nextTopY += bounds.height + TREE_SECTION_GAP_Y;
+    } else {
+      // Subtree: place below its action node, or fall back to stacking
+      const anchorX = graph.name ? subtreeRefToAnchorX.get(graph.name) : undefined;
+
+      if (anchorX !== undefined) {
+        const sectionCenterX = bounds.left + bounds.width / 2;
+        sectionOffsetX = anchorX - sectionCenterX;
+
+        const subtreeLeft = anchorX - bounds.width / 2;
+        const subtreeRight = anchorX + bounds.width / 2;
+
+        // Find lowest Y that doesn't overlap any already-placed subtree
+        let startY = subtreeBaseY;
+        for (const placed of placedSubtrees) {
+          const overlapsX = placed.right > subtreeLeft && placed.left < subtreeRight;
+          if (overlapsX) {
+            startY = Math.max(startY, placed.bottom + TREE_SECTION_GAP_Y);
+          }
+        }
+
+        sectionOffsetY = startY - bounds.top;
+        placedSubtrees.push({ left: subtreeLeft, right: subtreeRight, bottom: startY + bounds.height });
+      } else {
+        sectionOffsetX = 0;
+        sectionOffsetY = fallbackNextY - bounds.top;
+        fallbackNextY += bounds.height + TREE_SECTION_GAP_Y;
+      }
+    }
 
     for (const node of sectionResult.graph.nodes) {
       const remappedId = `${idPrefix}${node.id}`;
@@ -240,7 +303,9 @@ export function aptreeGraphsToCanvasGraph(
       mergedNodes.push({
         ...node,
         id: remappedId,
+        x: node.x + sectionOffsetX,
         y: node.y + sectionOffsetY,
+        graphName: graph.name,
       });
     }
 
@@ -260,8 +325,6 @@ export function aptreeGraphsToCanvasGraph(
     if (!mergedRootNodeId && sectionResult.graph.rootNodeId) {
       mergedRootNodeId = idMap.get(sectionResult.graph.rootNodeId) ?? null;
     }
-
-    nextTopY += bounds.height + TREE_SECTION_GAP_Y;
   }
 
   return {
@@ -446,6 +509,7 @@ export function aptreeGraphToCanvasGraph(
         height: DEFAULT_CANVAS_NODE_HEIGHT,
         args: paramValues,
         hasOutgoing,
+        subtreeRef: n.subtreeRef,
       };
     } else if (n.kind === "service") {
       canvasNode = {

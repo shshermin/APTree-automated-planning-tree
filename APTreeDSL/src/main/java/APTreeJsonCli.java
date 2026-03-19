@@ -298,9 +298,10 @@ public class APTreeJsonCli {
       final String successType;
       final List<String> paramNames;
       final List<String> paramValues;
+      final String subtreeRef;
 
       Node(String id, String kind, String label, String name, String astType, Integer line, String successType,
-           List<String> paramNames, List<String> paramValues) {
+           List<String> paramNames, List<String> paramValues, String subtreeRef) {
         this.id = id;
         this.kind = kind;
         this.label = label;
@@ -310,6 +311,7 @@ public class APTreeJsonCli {
         this.successType = successType;
         this.paramNames = paramNames;
         this.paramValues = paramValues;
+        this.subtreeRef = subtreeRef;
       }
     }
 
@@ -329,11 +331,13 @@ public class APTreeJsonCli {
       }
     }
 
+    final String name;
     final String rootId;
     final List<Node> nodes;
     final List<Edge> edges;
 
-    GraphExport(String rootId, List<Node> nodes, List<Edge> edges) {
+    GraphExport(String name, String rootId, List<Node> nodes, List<Edge> edges) {
+      this.name = name;
       this.rootId = rootId;
       this.nodes = nodes;
       this.edges = edges;
@@ -341,18 +345,21 @@ public class APTreeJsonCli {
 
     static GraphExport fromTree(ASTAPTree tree) {
       if (tree == null || tree.getRoot() == null) {
-        return new GraphExport(null, new ArrayList<>(), new ArrayList<>());
+        return new GraphExport(null, null, new ArrayList<>(), new ArrayList<>());
       }
 
       Builder b = new Builder();
       String root = b.ensureNode(tree.getRoot());
       b.visitFlowNode(tree.getRoot());
-      return new GraphExport(root, b.nodes, b.edges);
+      return new GraphExport(tree.getName(), root, b.nodes, b.edges);
     }
 
     String toJson() {
       StringBuilder sb = new StringBuilder();
       sb.append("{");
+      if (name != null) {
+        sb.append("\"name\":\"").append(escape(name)).append("\",");
+      }
       if (rootId != null) {
         sb.append("\"rootId\":\"").append(escape(rootId)).append("\",");
       } else {
@@ -375,6 +382,9 @@ public class APTreeJsonCli {
         }
         if (n.paramValues != null && !n.paramValues.isEmpty()) {
           sb.append(",\"paramValues\":").append(stringArray(n.paramValues));
+        }
+        if (n.subtreeRef != null) {
+          sb.append(",\"subtreeRef\":\"").append(escape(n.subtreeRef)).append("\"");
         }
         sb.append("}");
       }
@@ -421,6 +431,7 @@ public class APTreeJsonCli {
         String successType = tryGetSuccessType(astNode);
         List<String> paramNames = null;
         List<String> paramValues = null;
+        String subtreeRef = null;
         if (astNode instanceof behaviortree._ast.ASTActionNode) {
           List<ParamPair> params = extractActionParamPairs(astNode);
           if (!params.isEmpty()) {
@@ -431,8 +442,21 @@ public class APTreeJsonCli {
               paramValues.add(pair.value);
             }
           }
+          try {
+            java.lang.reflect.Method isPresent = astNode.getClass().getMethod("isPresentSubtreeAnnotation");
+            Boolean present = (Boolean) isPresent.invoke(astNode);
+            if (Boolean.TRUE.equals(present)) {
+              java.lang.reflect.Method getter = astNode.getClass().getMethod("getSubtreeAnnotation");
+              Object val = getter.invoke(astNode);
+              if (val != null && !val.toString().isBlank()) {
+                subtreeRef = val.toString();
+              }
+            }
+          } catch (Exception ignored) {
+            // not all action nodes have a subtreeAnnotation
+          }
         }
-        nodes.add(new Node(id, kind, label, name, astType, line, successType, paramNames, paramValues));
+        nodes.add(new Node(id, kind, label, name, astType, line, successType, paramNames, paramValues, subtreeRef));
         return id;
       }
 

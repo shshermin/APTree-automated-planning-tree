@@ -1,0 +1,61 @@
+.subtree-focus-panel {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 420px;
+  height: calc(100% - 32px);
+  background: var(--surface-panel);
+  border-radius: var(--radius-xl, 18px);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.18), inset 0 0 0 1px var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+  overflow: hidden;
+}
+
+.subtree-focus-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+}
+
+.subtree-focus-panel__title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.subtree-focus-panel__close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-secondary);
+  font-size: 14px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.subtree-focus-panel__close:hover {
+  background: var(--surface-hover, rgba(99, 102, 241, 0.1));
+  color: var(--text-primary);
+}
+
+.subtree-focus-panel__canvas {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+}
+
+.subtree-focus-panel__canvas .editor-canvas {
+  height: 100%;
+  border-radius: 0;
+  box-shadow: none;
+}

@@ -771,6 +771,7 @@ function EditorCanvasInner(props: EditorCanvasProps) {
     actionInstances,
     onShowActionParameterDetail,
     onOpenPredicateModal,
+    onNodeClick,
   } = props;
 
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -1198,6 +1199,14 @@ function EditorCanvasInner(props: EditorCanvasProps) {
     []
   );
 
+  const handleNodeClick = useCallback(
+    (_event: React.MouseEvent, node: FlowNode) => {
+      if (node.type === "separator" || node.type === "subtree") return;
+      onNodeClick?.(node.id);
+    },
+    [onNodeClick]
+  );
+
   return (
     <div
       ref={wrapperRef}
@@ -1216,6 +1225,7 @@ function EditorCanvasInner(props: EditorCanvasProps) {
         onConnect={handleConnect}
         onEdgeMouseEnter={handleEdgeMouseEnter}
         onEdgeMouseLeave={handleEdgeMouseLeave}
+        onNodeClick={handleNodeClick}
         onNodeMouseEnter={handleNodeMouseEnter}
         onNodeMouseLeave={handleNodeMouseLeave}
         onNodeDragStart={handleNodeDragStart}

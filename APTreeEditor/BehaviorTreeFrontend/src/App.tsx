@@ -33,6 +33,7 @@ import {
 import ActionParameterDetailsModal from "./components/editor/modals/ActionParameterDetailsModal.tsx";
 import ActionPredicateModal from "./components/editor/modals/ActionPredicateModal.tsx";
 import AptreeValidateModal from "./components/aptree/AptreeValidateModal";
+import SubtreeFocusPanel from "./components/editor/SubtreeFocusPanel.tsx";
 import { FLOW_SUCCESS_TYPES } from "./components/sidebar/utils/types";
 import type {
   ActionInstance,
@@ -300,6 +301,7 @@ function App() {
     group: PredicateGroup;
   } | null>(null);
   const [isValidateOpen, setIsValidateOpen] = useState(false);
+  const [focusedSubtreeRef, setFocusedSubtreeRef] = useState<string | null>(null);
   const sidebarManager = useSidebarManager();
   const {
     importActionInstancesFromText,
@@ -380,6 +382,34 @@ function App() {
 
     return hasChanges ? reconciled : rawActionInstances;
   }, [rawActionInstances, actionTypes]);
+
+  const subtreeGraphMap = useMemo(() => {
+    const nodeIdSet = new Map<string, string>(); // nodeId → graphName
+    for (const node of graph.nodes) {
+      if (node.graphName) nodeIdSet.set(node.id, node.graphName);
+    }
+    const map = new Map<string, { nodes: CanvasNode[]; connections: NodeConnection[] }>();
+    for (const node of graph.nodes) {
+      if (!node.graphName) continue;
+      if (!map.has(node.graphName)) map.set(node.graphName, { nodes: [], connections: [] });
+      map.get(node.graphName)!.nodes.push(node);
+    }
+    for (const conn of graph.connections) {
+      const gName = nodeIdSet.get(conn.sourceNodeId) ?? nodeIdSet.get(conn.targetNodeId);
+      if (gName && map.has(gName)) map.get(gName)!.connections.push(conn);
+    }
+    return map;
+  }, [graph.nodes, graph.connections]);
+
+  const handleNodeClickOnCanvas = useCallback(
+    (nodeId: string) => {
+      const node = graph.nodes.find((n) => n.id === nodeId);
+      if (node?.subtreeRef) {
+        setFocusedSubtreeRef(node.subtreeRef);
+      }
+    },
+    [graph.nodes]
+  );
 
   /**
    * shows the action parameter detail modal with the provided detail.
@@ -1292,7 +1322,7 @@ function App() {
             onOpenValidate={() => setIsValidateOpen(true)}
           />
           <div className="editor" role="main">
-            <div className="editor-canvas-wrap">
+            <div className="editor-canvas-wrap" style={{ position: "relative" }}>
               <EditorCanvas
                 nodes={graph.nodes}
                 separators={separators}
@@ -1314,9 +1344,18 @@ function App() {
                 onCycleFlowSuccessType={handleCycleFlowSuccessType}
                 onSetRootNode={handleSetRootNode}
                 onOpenPredicateModal={handleOpenPredicateModal}
+                onNodeClick={handleNodeClickOnCanvas}
                 actionTypes={actionTypes}
                 actionInstances={actionInstances}
               />
+              {focusedSubtreeRef && subtreeGraphMap.has(focusedSubtreeRef) && (
+                <SubtreeFocusPanel
+                  subtreeName={focusedSubtreeRef}
+                  nodes={subtreeGraphMap.get(focusedSubtreeRef)!.nodes}
+                  connections={subtreeGraphMap.get(focusedSubtreeRef)!.connections}
+                  onClose={() => setFocusedSubtreeRef(null)}
+                />
+              )}
             </div>
           </div>
         </div>
