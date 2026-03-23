@@ -13,6 +13,7 @@ namespace RobotCommand
     {
         private readonly RestRobotCommandCommunicator _communicator;
         private readonly RobotCommandRequest _request;
+        private readonly ExeAction _ownerAction;
 
         public DateTime StartTime { get; private set; }
         public DateTime EndTime { get; private set; }
@@ -22,21 +23,23 @@ namespace RobotCommand
         public string LastError { get; private set; }
         public RobotCommandResult LastResult { get; private set; }
 
-        public ServiceRobotCommand(IBehaviorTree owningTree, RestRobotCommandCommunicator communicator, RobotCommandRequest request)
+        public ServiceRobotCommand(IBehaviorTree owningTree, RestRobotCommandCommunicator communicator, RobotCommandRequest request, ExeAction ownerAction = null)
             : base(owningTree)
         {
             _communicator = communicator ?? throw new ArgumentNullException(nameof(communicator));
             _request = request ?? throw new ArgumentNullException(nameof(request));
+            _ownerAction = ownerAction;
         }
 
         /// <summary>
         /// Alternative constructor that allows setting the tree later (via SetOwiningTree).
         /// </summary>
-        public ServiceRobotCommand(RestRobotCommandCommunicator communicator, RobotCommandRequest request)
+        public ServiceRobotCommand(RestRobotCommandCommunicator communicator, RobotCommandRequest request, ExeAction ownerAction = null)
             : base(null)
         {
             _communicator = communicator ?? throw new ArgumentNullException(nameof(communicator));
             _request = request ?? throw new ArgumentNullException(nameof(request));
+            _ownerAction = ownerAction;
         }
 
         public override bool OnEvaluate(float InDeltaTime)
@@ -45,6 +48,13 @@ namespace RobotCommand
             {
                 LoggingService.LogInfo($"⏭️ ServiceRobotCommand: Command already completed (Success: {WasSuccessful})");
                 return WasSuccessful;
+            }
+
+            // Don't send until the node has entered (OnEnter with operator confirmation runs first)
+            if (_ownerAction != null && (_ownerAction.status == BTNodeResult.ReadyToTick || _ownerAction.status == BTNodeResult.Uninitialized))
+            {
+                LoggingService.LogInfo($"⏳ ServiceRobotCommand: Waiting for node to enter before sending command");
+                return true;
             }
 
             if (IsExecuting)

@@ -15,7 +15,6 @@ public class CloseGripperLL : ExeAction
         string robotIp = null
     ) : base("CloseGripperLL", instanceName, blackboard, flaskBaseUrl, robotIp)
     {
-        InitializeRobotCommandService();
         LoggingService.LogInfo($"🤖 CloseGripperLL: Created '{instanceName}'");
     }
 

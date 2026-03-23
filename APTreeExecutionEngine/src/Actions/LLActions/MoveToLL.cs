@@ -33,8 +33,6 @@ public class MoveToLL : ExeAction
         Acceleration = acceleration;
         MoveType = moveType;
 
-        InitializeRobotCommandService();
-
         LoggingService.LogInfo($"🤖 MoveToLL: Created '{instanceName}' — {initialPosition} → {finalPosition}");
     }
 

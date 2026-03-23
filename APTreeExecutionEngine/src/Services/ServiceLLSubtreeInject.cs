@@ -152,7 +152,7 @@ namespace BehaviorTreeMainProject
 
             // ── TravelML ──
             var travel = new LLSubtreeTemplate("TravelML");
-            travel.Steps.Add(new LLStep("MoveTo") { Parameters = { ["target"] = "{to}", ["robot"] = "{client}" } });
+            travel.Steps.Add(new LLStep("MoveToLL", MoveType.MoveJ) { Parameters = { ["target"] = "{to}", ["robot"] = "{client}" } });
             _templates["TravelML"] = travel;
 
             // ── NailingML ──
@@ -265,9 +265,10 @@ namespace BehaviorTreeMainProject
         private void InjectLLSubtree(PActionNode mlAction, LLSubtreeTemplate template)
         {
             // Collect parameter values from the ML action via reflection
-            var mlParams = ExtractMLActionParameters(mlAction);
-            LogMessage($"🔧 ServiceLLSubtreeInject: ML action '{mlAction.InstanceName}' has {mlParams.Count} parameters");
-            foreach (var kv in mlParams)
+            var mlParamStrings = ExtractMLActionParameters(mlAction);
+            var mlParamObjects = ExtractMLActionParameterObjects(mlAction);
+            LogMessage($"🔧 ServiceLLSubtreeInject: ML action '{mlAction.InstanceName}' has {mlParamStrings.Count} parameters");
+            foreach (var kv in mlParamStrings)
                 LogMessage($"   {kv.Key} = {kv.Value}");
 
             // Create the subtree
@@ -284,10 +285,15 @@ namespace BehaviorTreeMainProject
             var llActions = new List<PActionNode>();
             foreach (var step in template.Steps)
             {
-                var resolvedParams = ResolveParameters(step.Parameters, mlParams);
+                var resolvedParams = ResolveParameters(step.Parameters, mlParamStrings);
+                var resolvedObjects = ResolveParameterObjects(step.Parameters, mlParamObjects);
                 var stepName = $"{step.ActionName}_{mlAction.InstanceName}";
 
-                PActionNode llNode = CreateLLNode(step, stepName, resolvedParams, linkedBlackboard);
+                PActionNode llNode = CreateLLNode(step, stepName, resolvedParams, resolvedObjects, linkedBlackboard);
+
+                // Set the owning tree so services can access the blackboard
+                llNode.SetOwiningTree(subtreeTree);
+                llNode.SetTreeForAllServices(subtreeTree);
 
                 llActions.Add(llNode);
                 LogMessage($"   ➕ Added LL step: {step.ActionName} → {stepName}");
@@ -309,17 +315,21 @@ namespace BehaviorTreeMainProject
         /// <summary>
         /// Creates the correct ExeAction (or falls back to LLActionNode) for a template step.
         /// </summary>
-        private PActionNode CreateLLNode(LLStep step, string stepName, Dictionary<string, string> resolvedParams, Blackboard<FastName> blackboard)
+        private PActionNode CreateLLNode(LLStep step, string stepName, Dictionary<string, string> resolvedParams, Dictionary<string, object> resolvedObjects, Blackboard<FastName> blackboard)
         {
             switch (step.ActionName)
             {
                 case "MoveToLL":
                     var target = resolvedParams.GetValueOrDefault("target", "unknown");
                     var moveType = step.MoveType ?? MoveType.MoveJ;
-                    return new MoveToLL(stepName, "", target, blackboard, moveType);
+                    var moveNode = new MoveToLL(stepName, "", target, blackboard, moveType);
+                    moveNode.MLInputs = resolvedObjects;
+                    return moveNode;
 
                 case "CloseGripper":
-                    return new CloseGripperLL(stepName, blackboard);
+                    var gripNode = new CloseGripperLL(stepName, blackboard);
+                    gripNode.MLInputs = resolvedObjects;
+                    return gripNode;
 
                 default:
                     // Fallback: generic LLActionNode for steps not yet mapped to ExeAction
@@ -334,16 +344,14 @@ namespace BehaviorTreeMainProject
         }
 
         /// <summary>
-        /// Uses reflection to extract named parameter values from an ML action.
-        /// ML actions (e.g. PickUpML) have typed properties like Element obj, Robot client, etc.
-        /// All parameter types inherit from CustomProperty which has an ID (string) field.
+        /// Extracts named parameter values as strings (IDs) from an ML action.
+        /// Used for placeholder resolution in step templates.
         /// </summary>
         private Dictionary<string, string> ExtractMLActionParameters(PActionNode mlAction)
         {
             var result = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             var actionType = mlAction.GetType();
 
-            // Get all public instance properties declared on the concrete ML action class
             var props = actionType.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
             foreach (var prop in props)
             {
@@ -359,6 +367,51 @@ namespace BehaviorTreeMainProject
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Extracts actual parameter objects from an ML action via reflection.
+        /// Returns the full CustomProperty objects (RobotPosition, Robot, Element, etc.)
+        /// so LL actions can access typed data (joints, poses, IPs) directly.
+        /// </summary>
+        private Dictionary<string, object> ExtractMLActionParameterObjects(PActionNode mlAction)
+        {
+            var result = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
+            var actionType = mlAction.GetType();
+
+            var props = actionType.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+            foreach (var prop in props)
+            {
+                var value = prop.GetValue(mlAction);
+                if (value != null)
+                {
+                    result[prop.Name] = value;
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Resolves step parameter placeholders to actual objects from the ML action.
+        /// E.g. template has {to} → resolves to the actual RobotPosition object.
+        /// </summary>
+        private Dictionary<string, object> ResolveParameterObjects(Dictionary<string, string> stepParams, Dictionary<string, object> mlParams)
+        {
+            var resolved = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
+            foreach (var kv in stepParams)
+            {
+                string value = kv.Value;
+                if (value.StartsWith("{") && value.EndsWith("}"))
+                {
+                    string paramName = value.Substring(1, value.Length - 2);
+                    if (mlParams.TryGetValue(paramName, out var mlValue))
+                    {
+                        resolved[kv.Key] = mlValue;
+                    }
+                }
+            }
+            return resolved;
         }
 
         /// <summary>
