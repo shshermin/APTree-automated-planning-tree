@@ -107,6 +107,10 @@ public abstract class ExeAction : PActionNode
         LoggingService.LogSuccess($"▶️ ExeAction: Operator confirmed '{InstanceName}' ({actionName}) — proceeding");
     }
 
+    // LL actions never have children — short-circuit the inherited PActionNode logic
+    public override bool HasChildren => false;
+    protected override bool OnTick_Children(float InDeltaTime) => true;
+
     /// <summary>
     /// Resolves position data from blackboard and sends the robot command via REST.
     /// Called after OnEnter (operator has already confirmed).
@@ -128,6 +132,15 @@ public abstract class ExeAction : PActionNode
 
         // Resolve inputs from ML action objects into the command request
         ResolveInputs();
+
+        // Debug: log what we're about to send
+        LoggingService.LogInfo($"🔍 ExeAction: Pre-send state for '{InstanceName}': " +
+            $"Pose={CommandRequest.Pose?.Length ?? 0} elements, " +
+            $"Joints={CommandRequest.Joints?.Length ?? 0} elements, " +
+            $"MLInputs count={MLInputs?.Count ?? 0}");
+        if (MLInputs != null)
+            foreach (var kv in MLInputs)
+                LoggingService.LogInfo($"   MLInput: '{kv.Key}' = {kv.Value?.GetType().Name ?? "null"} ({kv.Value})");
 
         // Send the robot command
         var communicator = new RestRobotCommandCommunicator(FlaskBaseUrl);
@@ -195,7 +208,22 @@ public abstract class ExeAction : PActionNode
                     break;
 
                 case Location loc:
-                    LoggingService.LogInfo($"ℹ️ ExeAction: ML input '{kv.Key}' is Location '{loc.ID}'");
+                    if (kv.Key.Equals("target", StringComparison.OrdinalIgnoreCase) && loc is InitialLocation il && il.Position != null)
+                    {
+                        var ori = GetManipulateOrientation();
+                        CommandRequest.Pose = new[] { il.Position.X, il.Position.Y, il.Position.Z, ori[0], ori[1], ori[2] };
+                        LoggingService.LogInfo($"✅ ExeAction: Resolved InitialLocation target '{il.ID}' → Pose=[{il.Position.X}, {il.Position.Y}, {il.Position.Z}, {ori[0]}, {ori[1]}, {ori[2]}]");
+                    }
+                    else if (kv.Key.Equals("target", StringComparison.OrdinalIgnoreCase) && loc is FinalLocation fl && fl.Position != null)
+                    {
+                        var ori = GetManipulateOrientation();
+                        CommandRequest.Pose = new[] { fl.Position.X, fl.Position.Y, fl.Position.Z, ori[0], ori[1], ori[2] };
+                        LoggingService.LogInfo($"✅ ExeAction: Resolved FinalLocation target '{fl.ID}' → Pose=[{fl.Position.X}, {fl.Position.Y}, {fl.Position.Z}, {ori[0]}, {ori[1]}, {ori[2]}]");
+                    }
+                    else
+                    {
+                        LoggingService.LogInfo($"ℹ️ ExeAction: ML input '{kv.Key}' is Location '{loc.ID}'");
+                    }
                     break;
 
                 default:
@@ -243,4 +271,25 @@ public abstract class ExeAction : PActionNode
     /// Build the command-specific request. Each subclass defines what data to send.
     /// </summary>
     protected abstract RobotCommandRequest BuildCommandRequest();
+
+    /// <summary>
+    /// Gets the TCP orientation (rx, ry, rz) from rpmanipulate.
+    /// Used so that InitialLocation/FinalLocation moves keep the same end-effector orientation.
+    /// </summary>
+    private double[] GetManipulateOrientation()
+    {
+        try
+        {
+            var bb = OwningTree?.linkedBlackboard;
+            if (bb != null)
+            {
+                var manip = bb.GetLocation(new FastName("rpmanipulate")) as RobotPosition;
+                if (manip?.TcpOrinetation != null)
+                    return new[] { manip.TcpOrinetation.X, manip.TcpOrinetation.Y, manip.TcpOrinetation.Z };
+            }
+        }
+        catch { }
+        // Fallback: rpmanipulate orientation from DemonstratorSetupObjects
+        return new[] { 3.137544, -0.07093, 0.006593 };
+    }
 }

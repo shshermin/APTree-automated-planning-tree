@@ -23,8 +23,8 @@ public class MoveToLL : ExeAction
         MoveType moveType = MoveType.MoveJ,
         string flaskBaseUrl = null,
         string robotIp = null,
-        double velocity = 0.5,
-        double acceleration = 1.0
+        double velocity = 0.3,
+        double acceleration = 0.3
     ) : base("MoveToLL", instanceName, blackboard, flaskBaseUrl, robotIp)
     {
         InitialPosition = initialPosition;

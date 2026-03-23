@@ -230,6 +230,18 @@ public class CSharopCodeGenerator {
                 return "                " + pascalName + " = Convert.ToBoolean(parameters[\"" + camelName + "\"]);\n";
             case "string":
                 return "                " + pascalName + " = parameters[\"" + camelName + "\"].ToString();\n";
+            case "Coordinate":
+                // Coordinate may arrive as an object or as a CSV string from JSON
+                return "                if (parameters[\"" + camelName + "\"] is Coordinate " + camelName + "Value)\n"
+                     + "                    " + pascalName + " = " + camelName + "Value;\n"
+                     + "                else if (parameters[\"" + camelName + "\"] is string " + camelName + "Str)\n"
+                     + "                    " + pascalName + " = Coordinate.Parse(" + camelName + "Str);\n";
+            case "RobotJoints":
+                // RobotJoints may arrive as an object or as a CSV string from JSON
+                return "                if (parameters[\"" + camelName + "\"] is RobotJoints " + camelName + "Value)\n"
+                     + "                    " + pascalName + " = " + camelName + "Value;\n"
+                     + "                else if (parameters[\"" + camelName + "\"] is string " + camelName + "Str && !string.IsNullOrWhiteSpace(" + camelName + "Str))\n"
+                     + "                    " + pascalName + " = RobotJoints.Parse(" + camelName + "Str);\n";
             default:
                 // Custom type - use cast
                 return "                if (parameters[\"" + camelName + "\"] is " + csharpType + " " + camelName + "Value)\n"

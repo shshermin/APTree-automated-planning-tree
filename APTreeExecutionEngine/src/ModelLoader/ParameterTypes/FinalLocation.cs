@@ -41,18 +41,18 @@ namespace ModelLoader.ParameterTypes
             if (parameters.ContainsKey("position"))
             {
                 if (parameters["position"] is Coordinate positionValue)
-                {
                     Position = positionValue;
-                }
+                else if (parameters["position"] is string posStr)
+                    Position = Coordinate.Parse(posStr);
             }
 
             // Set Orientation property
             if (parameters.ContainsKey("orientation"))
             {
                 if (parameters["orientation"] is Coordinate orientationValue)
-                {
                     Orientation = orientationValue;
-                }
+                else if (parameters["orientation"] is string oriStr)
+                    Orientation = Coordinate.Parse(oriStr);
             }
 
         }

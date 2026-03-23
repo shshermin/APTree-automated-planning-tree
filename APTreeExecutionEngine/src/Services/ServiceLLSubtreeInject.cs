@@ -119,17 +119,16 @@ namespace BehaviorTreeMainProject
             _templatesInitialized = true;
 
             // ── PickUpML ──
+            // Target is {p} = the stick's InitialLocation (position where the stick sits)
             var pickUp = new LLSubtreeTemplate("PickUpML");
-            pickUp.Steps.Add(new LLStep("MoveToLL", MoveType.MoveJ) { Parameters = { ["target"] = "{rp}", ["robot"] = "{client}" } });
+            pickUp.Steps.Add(new LLStep("MoveToLL", MoveType.MoveJ) { Parameters = { ["target"] = "{p}", ["robot"] = "{client}" } });
+            pickUp.Steps.Add(new LLStep("CloseGripperLL") { Parameters = { ["robot"] = "{client}" } });
             pickUp.Steps.Add(new LLStep("MoveToLL", MoveType.MoveL) { Parameters = { ["target"] = "{p}", ["robot"] = "{client}" } });
-            pickUp.Steps.Add(new LLStep("CloseGripper") { Parameters = { ["robot"] = "{client}" } });
-            pickUp.Steps.Add(new LLStep("MoveToLL", MoveType.MoveL) { Parameters = { ["target"] = "{rp}", ["robot"] = "{client}" } });
             _templates["PickUpML"] = pickUp;
 
             // ── StackML ──
             var stack = new LLSubtreeTemplate("StackML");
             stack.Steps.Add(new LLStep("MoveTo") { Parameters = { ["target"] = "{pos}", ["robot"] = "{client}" } });
-            stack.Steps.Add(new LLStep("Lower") { Parameters = { ["robot"] = "{client}", ["obj"] = "{obj}" } });
             stack.Steps.Add(new LLStep("OpenGripper") { Parameters = { ["robot"] = "{client}" } });
             stack.Steps.Add(new LLStep("Retract") { Parameters = { ["robot"] = "{client}" } });
             _templates["StackML"] = stack;
@@ -305,8 +304,12 @@ namespace BehaviorTreeMainProject
 
             subtreeTree.root = flowNode;
 
-            // Attach to the ML action
-            mlAction.SetAsHighLevelAction(flowNode, null);
+            // Attach LL subtree to the ML action WITHOUT adding DecoratorResetOnSubtreeSuccess.
+            // That decorator is intended for HL actions only — if it fires on ML actions it
+            // clears the parent ML-level NodeGraph and causes a NullRef on the next ML action.
+            mlAction.IsHighLevelAction = true;
+            mlAction.HighLevelSubtree = flowNode;
+            flowNode.SetParentNode(mlAction);
             LogMessage($"✅ ServiceLLSubtreeInject: Attached LL subtree ({template.Steps.Count} steps) to {mlAction.InstanceName}");
         }
 
@@ -326,7 +329,7 @@ namespace BehaviorTreeMainProject
                     moveNode.MLInputs = resolvedObjects;
                     return moveNode;
 
-                case "CloseGripper":
+                case "CloseGripperLL":
                     var gripNode = new CloseGripperLL(stepName, blackboard);
                     gripNode.MLInputs = resolvedObjects;
                     return gripNode;

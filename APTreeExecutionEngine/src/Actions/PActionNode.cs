@@ -15,8 +15,8 @@ public abstract class PActionNode : ActionNode
     public int cost;
 
     // High-level action support
-    public bool IsHighLevelAction { get; protected set; } = false;
-    public DynamicFlowNode HighLevelSubtree { get; protected set; }
+    public bool IsHighLevelAction { get; set; } = false;
+    public DynamicFlowNode HighLevelSubtree { get; set; }
     public Service ServicePlanning { get; protected set; }
 
     // ServiceSubtreeInject access

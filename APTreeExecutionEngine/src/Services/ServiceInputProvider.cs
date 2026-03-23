@@ -55,10 +55,32 @@ public class ServiceInputProvider : Service
                     $"✅ ServiceInputProvider: Resolved '{positionName}' → Joints={rp.Joints}, " +
                     $"TcpPose={rp.TcpPose}, TcpOrientation={rp.TcpOrinetation}");
             }
+            else if (location is InitialLocation il && il.Position != null)
+            {
+                // InitialLocation: use Position for XYZ, TCP orientation from rpmanipulate
+                var ori = GetManipulateOrientation();
+                request.Pose = new[] { il.Position.X, il.Position.Y, il.Position.Z, ori[0], ori[1], ori[2] };
+                _resolved = true;
+
+                LoggingService.LogInfo(
+                    $"✅ ServiceInputProvider: Resolved InitialLocation '{positionName}' → " +
+                    $"Position={il.Position}, Orientation from rpmanipulate");
+            }
+            else if (location is FinalLocation fl && fl.Position != null)
+            {
+                // FinalLocation: use Position for XYZ, TCP orientation from rpmanipulate
+                var ori = GetManipulateOrientation();
+                request.Pose = new[] { fl.Position.X, fl.Position.Y, fl.Position.Z, ori[0], ori[1], ori[2] };
+                _resolved = true;
+
+                LoggingService.LogInfo(
+                    $"✅ ServiceInputProvider: Resolved FinalLocation '{positionName}' → " +
+                    $"Position={fl.Position}, Orientation from rpmanipulate");
+            }
             else
             {
                 LoggingService.LogWarning(
-                    $"⚠️ ServiceInputProvider: '{positionName}' is not a RobotPosition " +
+                    $"⚠️ ServiceInputProvider: '{positionName}' could not be resolved " +
                     $"(type: {location?.GetType().Name ?? "null"})");
             }
         }
@@ -69,5 +91,22 @@ public class ServiceInputProvider : Service
         }
 
         return true;
+    }
+
+    /// <summary>
+    /// Gets the TCP orientation (rx, ry, rz) from rpmanipulate on the blackboard.
+    /// Used so that InitialLocation/FinalLocation moves keep the same end-effector orientation.
+    /// </summary>
+    private double[] GetManipulateOrientation()
+    {
+        try
+        {
+            var manip = linkedBlackboard.GetLocation(new FastName("rpmanipulate")) as RobotPosition;
+            if (manip?.TcpOrinetation != null)
+                return new[] { manip.TcpOrinetation.X, manip.TcpOrinetation.Y, manip.TcpOrinetation.Z };
+        }
+        catch { }
+        // Fallback: rpmanipulate orientation from DemonstratorSetupObjects
+        return new[] { 3.137544, -0.07093, 0.006593 };
     }
 }

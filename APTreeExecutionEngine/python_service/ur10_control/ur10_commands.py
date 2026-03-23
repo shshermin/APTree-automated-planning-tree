@@ -187,10 +187,18 @@ def move_to_pose(robot_ip: str, name: str, position: dict = None, velocity: floa
     """
     if position is None:
         position = get_position(name)
-    joints = position["joints"]
-    cmd = f"movej({joints}, a={acceleration}, v={velocity})\n"
-    _send_urscript(robot_ip, cmd)
-    return f"movej to '{name}' with joints={joints}"
+    if "joints" in position:
+        joints = position["joints"]
+        cmd = f"movej({joints}, a={acceleration}, v={velocity})\n"
+        _send_urscript(robot_ip, cmd)
+        return f"movej to '{name}' with joints={joints}"
+    elif "pose" in position:
+        pose = position["pose"]
+        cmd = f"movej(p{pose}, a={acceleration}, v={velocity})\n"
+        _send_urscript(robot_ip, cmd)
+        return f"movej to '{name}' with pose={pose}"
+    else:
+        raise ValueError(f"Position '{name}' has neither 'joints' nor 'pose'")
 
 
 def move_to_pose_l(robot_ip: str, name: str, position: dict = None, velocity: float = 0.25, acceleration: float = 1.2) -> str:
