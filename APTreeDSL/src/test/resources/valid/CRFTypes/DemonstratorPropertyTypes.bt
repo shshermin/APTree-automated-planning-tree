@@ -31,7 +31,11 @@ Location EquipLocation{
     orientation: Coordinate  
 } 
 
-Location RobotPosition
+Location RobotPosition{
+    joints: RobotJoints
+    tcpPose: Coordinate
+    tcpOrinetation: Coordinate
+}
 
 Layer Stack
 

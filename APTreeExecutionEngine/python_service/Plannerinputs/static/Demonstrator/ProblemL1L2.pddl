@@ -110,7 +110,7 @@
 
     ;; GripperEmpty
     (gripperempty robot1)
-    (atagent robot1 rppickup)
+    (atagent robot1 rpmanipulate)
     (hastool robot1 gripper1)
     (attool staplergun1 equiplocstapler)
 

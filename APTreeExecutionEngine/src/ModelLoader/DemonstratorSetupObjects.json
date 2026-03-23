@@ -1,1113 +1,12 @@
 {
   "instances": [
     {
-      "extends": "Tool",
-      "name": "staplergun1",
-      "type": "StaplerGun",
-      "properties": {
-        "loc": "equiplocstapler"
-      }
-    },
-    {
-      "extends": "Module",
-      "name": "module1",
-      "type": "Demo"
-    },
-    {
-      "extends": "Layer",
-      "name": "layer0",
-      "type": "Stack"
-    },
-    {
-      "extends": "Layer",
-      "name": "layer1",
-      "type": "Stack"
-    },
-    {
-      "extends": "Layer",
-      "name": "layer2",
-      "type": "Stack"
-    },
-    {
-      "extends": "Layer",
-      "name": "layer3",
-      "type": "Stack"
-    },
-    {
-      "extends": "Layer",
-      "name": "layer4",
-      "type": "Stack"
-    },
-    {
-      "extends": "Layer",
-      "name": "layer5",
-      "type": "Stack"
-    },
-    {
-      "extends": "Layer",
-      "name": "layer6",
-      "type": "Stack"
-    },
-    {
-      "extends": "Layer",
-      "name": "layer7",
-      "type": "Stack"
-    },
-    {
-      "extends": "Layer",
-      "name": "layer8",
-      "type": "Stack"
-    },
-    {
-      "extends": "Layer",
-      "name": "layer9",
-      "type": "Stack"
-    },
-    {
-      "extends": "Layer",
-      "name": "layer10",
-      "type": "Stack"
-    },
-    {
-      "extends": "Layer",
-      "name": "layer11",
-      "type": "Stack"
-    },
-    {
-      "extends": "Layer",
-      "name": "layer12",
-      "type": "Stack"
-    },
-    {
-      "extends": "Layer",
-      "name": "layer13",
-      "type": "Stack"
-    },
-    {
-      "extends": "Layer",
-      "name": "layer14",
-      "type": "Stack"
-    },
-    {
-      "extends": "Layer",
-      "name": "layer15",
-      "type": "Stack"
-    },
-    {
-      "extends": "Layer",
-      "name": "layer16",
-      "type": "Stack"
-    },
-    {
-      "extends": "Layer",
-      "name": "layer17",
-      "type": "Stack"
-    },
-    {
-      "extends": "Layer",
-      "name": "layer18",
-      "type": "Stack"
-    },
-    {
-      "extends": "Layer",
-      "name": "layer19",
-      "type": "Stack"
-    },
-    {
-      "extends": "Layer",
-      "name": "layer20",
-      "type": "Stack"
-    },
-    {
-      "extends": "Layer",
-      "name": "layer21",
-      "type": "Stack"
-    },
-    {
-      "extends": "Layer",
-      "name": "layer22",
-      "type": "Stack"
-    },
-    {
-      "extends": "Layer",
-      "name": "layer23",
-      "type": "Stack"
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick1",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "-1,0,0",
-        "position": "-500.9477115928189,-649.050042109885,6.8826329708099365"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick2",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "-1,0,0",
-        "position": "-597.7358862336434,-649.050042109885,6.8826329708099365"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick3",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "-1,1.6053941148722602E-15,1.7763568394002497E-15",
-        "position": "-597.8500311212598,-187.6214410601846,6.8826329708099365"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick4",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "-1,1.3378284290602168E-15,1.7763568394002497E-15",
-        "position": "-497.8500256214272,-187.6214410601846,6.8826329708099365"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick5",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick6",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick7",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick8",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick9",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick10",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick11",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick12",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick13",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick14",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick15",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick16",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick17",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick18",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick19",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick20",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick21",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick22",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick23",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick24",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick25",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick26",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick27",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick28",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick29",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick30",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick31",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick32",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick33",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick34",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick35",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick36",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick37",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick38",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick39",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick40",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick41",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick42",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick43",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick44",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick45",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick46",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick47",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick48",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick49",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick50",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick51",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick52",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick53",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick54",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick55",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick56",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick57",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick58",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick59",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick60",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick61",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick62",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick63",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick64",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick65",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick66",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick67",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick68",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick69",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick70",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick71",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick72",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick73",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick74",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick75",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick76",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick77",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick78",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick79",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick80",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick81",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick82",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick83",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick84",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick85",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick86",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick87",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick88",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initloccube1",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "-1,0,0",
-        "position": "-500.9477115928189,-649.050042109885,6.8826329708099365"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initloccube2",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "-1,0,0",
-        "position": "-597.7358862336434,-649.050042109885,6.8826329708099365"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initloccube3",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "-1,1.6053941148722602E-15,1.7763568394002497E-15",
-        "position": "-597.8500311212598,-187.6214410601846,6.8826329708099365"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initloccube4",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "-1,1.3378284290602168E-15,1.7763568394002497E-15",
-        "position": "-497.8500256214272,-187.6214410601846,6.8826329708099365"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initloccube5",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initloccube6",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initloccube7",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initloccube8",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initloccube9",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initloccube10",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initloccube11",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initloccube12",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initloccube13",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initloccube14",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initloccube15",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initloccube16",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initloccube17",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initloccube18",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Element",
-      "name": "table1",
-      "type": "Table"
-    },
-    {
-      "extends": "Location",
-      "name": "equiplocgripper",
-      "type": "EquipLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "equiplocstapler",
-      "type": "EquipLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0,0,0"
+      "extends": "Agent",
+      "name": "robot1",
+      "type": "Robot",
+      "properties": {
+        "loc": "homepos",
+        "tool": "gripper1"
       }
     },
     {
@@ -1900,177 +799,6 @@
       "properties": {
         "initLoc": "initlocstick88",
         "finalLoc": "finallocstick88"
-      }
-    },
-    {
-      "extends": "Agent",
-      "name": "robot1",
-      "type": "Robot",
-      "properties": {
-        "loc": "homepos",
-        "tool": "gripper1"
-      }
-    },
-    {
-      "extends": "Element",
-      "name": "cube1",
-      "type": "Cube",
-      "properties": {
-        "initLoc": "initloccube1",
-        "finalLoc": "finloccube1"
-      }
-    },
-    {
-      "extends": "Element",
-      "name": "cube2",
-      "type": "Cube",
-      "properties": {
-        "initLoc": "initloccube2",
-        "finalLoc": "finloccube2"
-      }
-    },
-    {
-      "extends": "Element",
-      "name": "cube3",
-      "type": "Cube",
-      "properties": {
-        "initLoc": "initloccube3",
-        "finalLoc": "finloccube3"
-      }
-    },
-    {
-      "extends": "Element",
-      "name": "cube4",
-      "type": "Cube",
-      "properties": {
-        "initLoc": "initloccube4",
-        "finalLoc": "finloccube4"
-      }
-    },
-    {
-      "extends": "Element",
-      "name": "cube5",
-      "type": "Cube",
-      "properties": {
-        "initLoc": "initloccube5",
-        "finalLoc": "finloccube5"
-      }
-    },
-    {
-      "extends": "Element",
-      "name": "cube6",
-      "type": "Cube",
-      "properties": {
-        "initLoc": "initloccube6",
-        "finalLoc": "finloccube6"
-      }
-    },
-    {
-      "extends": "Element",
-      "name": "cube7",
-      "type": "Cube",
-      "properties": {
-        "initLoc": "initloccube7",
-        "finalLoc": "finloccube7"
-      }
-    },
-    {
-      "extends": "Element",
-      "name": "cube8",
-      "type": "Cube",
-      "properties": {
-        "initLoc": "initloccube8",
-        "finalLoc": "finloccube8"
-      }
-    },
-    {
-      "extends": "Element",
-      "name": "cube9",
-      "type": "Cube",
-      "properties": {
-        "initLoc": "initloccube9",
-        "finalLoc": "finloccube9"
-      }
-    },
-    {
-      "extends": "Element",
-      "name": "cube10",
-      "type": "Cube",
-      "properties": {
-        "initLoc": "initloccube10",
-        "finalLoc": "finloccube10"
-      }
-    },
-    {
-      "extends": "Element",
-      "name": "cube11",
-      "type": "Cube",
-      "properties": {
-        "initLoc": "initloccube11",
-        "finalLoc": "finloccube11"
-      }
-    },
-    {
-      "extends": "Element",
-      "name": "cube12",
-      "type": "Cube",
-      "properties": {
-        "initLoc": "initloccube12",
-        "finalLoc": "finloccube12"
-      }
-    },
-    {
-      "extends": "Element",
-      "name": "cube13",
-      "type": "Cube",
-      "properties": {
-        "initLoc": "initloccube13",
-        "finalLoc": "finloccube13"
-      }
-    },
-    {
-      "extends": "Element",
-      "name": "cube14",
-      "type": "Cube",
-      "properties": {
-        "initLoc": "initloccube14",
-        "finalLoc": "finloccube14"
-      }
-    },
-    {
-      "extends": "Element",
-      "name": "cube15",
-      "type": "Cube",
-      "properties": {
-        "initLoc": "initloccube15",
-        "finalLoc": "finloccube15"
-      }
-    },
-    {
-      "extends": "Element",
-      "name": "cube16",
-      "type": "Cube",
-      "properties": {
-        "initLoc": "initloccube16",
-        "finalLoc": "finloccube16"
-      }
-    },
-    {
-      "extends": "Element",
-      "name": "cube17",
-      "type": "Cube",
-      "properties": {
-        "initLoc": "initloccube17",
-        "finalLoc": "finloccube17"
-      }
-    },
-    {
-      "extends": "Element",
-      "name": "cube18",
-      "type": "Cube",
-      "properties": {
-        "initLoc": "initloccube18",
-        "finalLoc": "finloccube18"
       }
     },
     {
@@ -3037,26 +1765,1313 @@
       }
     },
     {
-      "extends": "Location",
-      "name": "rppickup",
-      "type": "RobotPosition"
-    },
-    {
-      "extends": "Location",
-      "name": "rpmanipulate",
-      "type": "RobotPosition"
-    },
-    {
-      "extends": "Location",
-      "name": "rptoolchange",
-      "type": "RobotPosition"
-    },
-    {
       "extends": "Tool",
       "name": "gripper1",
       "type": "Gripper",
       "properties": {
         "loc": "equiplocgripper"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "table1",
+      "type": "Table"
+    },
+    {
+      "extends": "Element",
+      "name": "cube1",
+      "type": "Cube",
+      "properties": {
+        "initLoc": "initloccube1",
+        "finalLoc": "finloccube1"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "cube2",
+      "type": "Cube",
+      "properties": {
+        "initLoc": "initloccube2",
+        "finalLoc": "finloccube2"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "cube3",
+      "type": "Cube",
+      "properties": {
+        "initLoc": "initloccube3",
+        "finalLoc": "finloccube3"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "cube4",
+      "type": "Cube",
+      "properties": {
+        "initLoc": "initloccube4",
+        "finalLoc": "finloccube4"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "cube5",
+      "type": "Cube",
+      "properties": {
+        "initLoc": "initloccube5",
+        "finalLoc": "finloccube5"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "cube6",
+      "type": "Cube",
+      "properties": {
+        "initLoc": "initloccube6",
+        "finalLoc": "finloccube6"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "cube7",
+      "type": "Cube",
+      "properties": {
+        "initLoc": "initloccube7",
+        "finalLoc": "finloccube7"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "cube8",
+      "type": "Cube",
+      "properties": {
+        "initLoc": "initloccube8",
+        "finalLoc": "finloccube8"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "cube9",
+      "type": "Cube",
+      "properties": {
+        "initLoc": "initloccube9",
+        "finalLoc": "finloccube9"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "cube10",
+      "type": "Cube",
+      "properties": {
+        "initLoc": "initloccube10",
+        "finalLoc": "finloccube10"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "cube11",
+      "type": "Cube",
+      "properties": {
+        "initLoc": "initloccube11",
+        "finalLoc": "finloccube11"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "cube12",
+      "type": "Cube",
+      "properties": {
+        "initLoc": "initloccube12",
+        "finalLoc": "finloccube12"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "cube13",
+      "type": "Cube",
+      "properties": {
+        "initLoc": "initloccube13",
+        "finalLoc": "finloccube13"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "cube14",
+      "type": "Cube",
+      "properties": {
+        "initLoc": "initloccube14",
+        "finalLoc": "finloccube14"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "cube15",
+      "type": "Cube",
+      "properties": {
+        "initLoc": "initloccube15",
+        "finalLoc": "finloccube15"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "cube16",
+      "type": "Cube",
+      "properties": {
+        "initLoc": "initloccube16",
+        "finalLoc": "finloccube16"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "cube17",
+      "type": "Cube",
+      "properties": {
+        "initLoc": "initloccube17",
+        "finalLoc": "finloccube17"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "cube18",
+      "type": "Cube",
+      "properties": {
+        "initLoc": "initloccube18",
+        "finalLoc": "finloccube18"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick1",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "-1,0,0",
+        "position": "-500.9477115928189,-649.050042109885,6.8826329708099365"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick2",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "-1,0,0",
+        "position": "-597.7358862336434,-649.050042109885,6.8826329708099365"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick3",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "-1,1.6053941148722602E-15,1.7763568394002497E-15",
+        "position": "-597.8500311212598,-187.6214410601846,6.8826329708099365"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick4",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "-1,1.3378284290602168E-15,1.7763568394002497E-15",
+        "position": "-497.8500256214272,-187.6214410601846,6.8826329708099365"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick5",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick6",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick7",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick8",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick9",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick10",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick11",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick12",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick13",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick14",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick15",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick16",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick17",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick18",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick19",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick20",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick21",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick22",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick23",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick24",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick25",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick26",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick27",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick28",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick29",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick30",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick31",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick32",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick33",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick34",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick35",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick36",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick37",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick38",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick39",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick40",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick41",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick42",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick43",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick44",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick45",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick46",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick47",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick48",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick49",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick50",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick51",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick52",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick53",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick54",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick55",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick56",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick57",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick58",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick59",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick60",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick61",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick62",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick63",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick64",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick65",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick66",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick67",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick68",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick69",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick70",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick71",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick72",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick73",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick74",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick75",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick76",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick77",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick78",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick79",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick80",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick81",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick82",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick83",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick84",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick85",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick86",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick87",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initlocstick88",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initloccube1",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "-1,0,0",
+        "position": "-500.9477115928189,-649.050042109885,6.8826329708099365"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initloccube2",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "-1,0,0",
+        "position": "-597.7358862336434,-649.050042109885,6.8826329708099365"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initloccube3",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "-1,1.6053941148722602E-15,1.7763568394002497E-15",
+        "position": "-597.8500311212598,-187.6214410601846,6.8826329708099365"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initloccube4",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "-1,1.3378284290602168E-15,1.7763568394002497E-15",
+        "position": "-497.8500256214272,-187.6214410601846,6.8826329708099365"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initloccube5",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initloccube6",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initloccube7",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initloccube8",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initloccube9",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initloccube10",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initloccube11",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initloccube12",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initloccube13",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initloccube14",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initloccube15",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initloccube16",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initloccube17",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "initloccube18",
+      "type": "InitialLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Module",
+      "name": "module1",
+      "type": "Demo"
+    },
+    {
+      "extends": "Tool",
+      "name": "staplergun1",
+      "type": "StaplerGun",
+      "properties": {
+        "loc": "equiplocstapler"
+      }
+    },
+    {
+      "extends": "Layer",
+      "name": "layer0",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer1",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer2",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer3",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer4",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer5",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer6",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer7",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer8",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer9",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer10",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer11",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer12",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer13",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer14",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer15",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer16",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer17",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer18",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer19",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer20",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer21",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer22",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer23",
+      "type": "Stack"
+    },
+    {
+      "extends": "Location",
+      "name": "equiplocgripper",
+      "type": "EquipLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "equiplocstapler",
+      "type": "EquipLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "rpmanipulate",
+      "type": "RobotPosition",
+      "properties": {
+        "tcpPose": "0.133772,0.34874,0.490062",
+        "joints": "1.689459,-0.942758,-2.22138,-1.551921,1.549635,0.160935",
+        "tcpOrinetation": "3.137544,-0.07093,0.006593"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "rppickup",
+      "type": "RobotPosition",
+      "properties": {
+        "tcpPose": "0.59937,-0.193137,0.349881",
+        "joints": "-0.030077,-1.543035,-2.092812,-1.071979,1.552743,-1.616215",
+        "tcpOrinetation": "3.138425,0.006595,0.006684"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "rptoolchange",
+      "type": "RobotPosition",
+      "properties": {
+        "tcpPose": "0.59937,-0.193137,0.349881",
+        "joints": "-0.030077,-1.543035,-2.092812,-1.071979,1.552743,-1.616215",
+        "tcpOrinetation": "3.138425,0.006595,0.006684"
       }
     }
   ],

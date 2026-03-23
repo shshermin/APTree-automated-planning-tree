@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace ModelLoader.ParameterTypes
 {
@@ -18,6 +19,21 @@ namespace ModelLoader.ParameterTypes
             X = x;
             Y = y;
             Z = z;
+        }
+
+        /// <summary>
+        /// Parses a comma-separated string of exactly 3 values into a Coordinate.
+        /// </summary>
+        public static Coordinate Parse(string csv)
+        {
+            var parts = csv.Split(',');
+            if (parts.Length != 3)
+                throw new FormatException($"Coordinate expects 3 values, got {parts.Length}: '{csv}'");
+            return new Coordinate(
+                double.Parse(parts[0].Trim(), CultureInfo.InvariantCulture),
+                double.Parse(parts[1].Trim(), CultureInfo.InvariantCulture),
+                double.Parse(parts[2].Trim(), CultureInfo.InvariantCulture)
+            );
         }
 
         public override string ToString()

@@ -363,6 +363,15 @@ Stack layer12 ()
 Stack layer13 ()
 Stack layer14 ()
 Stack layer15 ()
+
+
+// robot positions
+
+RobotPosition rpmanipulate (1.689459,-0.942758,-2.22138,-1.551921,1.549635,0.160935  0.133772,0.34874,0.490062 3.137544,-0.07093,0.006593)
+RobotPosition rppickup (-0.030077,-1.543035,-2.092812,-1.071979,1.552743,-1.616215  0.59937,-0.193137,0.349881 3.138425,0.006595,0.006684)
+RobotPosition rptoolchange (-0.030077,-1.543035,-2.092812,-1.071979,1.552743,-1.616215  0.59937,-0.193137,0.349881 3.138425,0.006595,0.006684)
+
+
 Stack layer16 ()
 Stack layer17 ()
 Stack layer18 ()
@@ -380,10 +389,7 @@ Demo module1 ()
 // robot
 Robot robot1 (gripper1 True homepos)
 
-// robot position
-RobotPosition rppickup ()
-RobotPosition rpmanipulate ()
-RobotPosition rptoolchange ()
+
 
 // tools
 Gripper gripper1 (True True equiplocgripper)

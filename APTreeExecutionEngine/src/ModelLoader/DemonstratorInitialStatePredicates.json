@@ -3351,7 +3351,7 @@
       "properties": {
         "not": false,
         "client": "robot1",
-        "agentLoc": "rppickup"
+        "agentLoc": "rpmanipulate"
       }
     },
     {

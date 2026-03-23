@@ -23,6 +23,7 @@
  
   (:predicates
    
+    (atagent ?client - robot ?pp - robotposition) 
     (hastool ?client - robot ?tool - tool)
     (attool ?tool - tool ?ep - equipposition)
     (atplace ?obj - element ?p - location) ; object is at position p                                                                                              

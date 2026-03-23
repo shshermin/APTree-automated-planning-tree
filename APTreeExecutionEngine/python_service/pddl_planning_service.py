@@ -80,6 +80,13 @@ def create_plan():
             if planner_name == DEFAULT_PLANNER:
                 planner_name = planner_config.get('plannerName', planner_name).upper()
         
+        # Normalise relative paths: strip leading "./" so they consistently
+        # start with "Plannerinputs/" before we join them with SCRIPT_DIR.
+        if domain_file_path.startswith("./"):
+            domain_file_path = domain_file_path[2:]
+        if problem_file_path.startswith("./"):
+            problem_file_path = problem_file_path[2:]
+
         # Convert relative paths to absolute paths if they start with "Plannerinputs/"
         if domain_file_path.startswith("Plannerinputs/"):
             domain_file_path = os.path.join(SCRIPT_DIR, domain_file_path)

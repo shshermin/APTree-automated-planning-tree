@@ -29,6 +29,7 @@
 
   // Token definitions
   token Coordinate = ('-')? DIGIT+ ('.' DIGIT+)? ('E' ('-')? DIGIT+)? ',' ('-')? DIGIT+ ('.' DIGIT+)? ('E' ('-')? DIGIT+)? ',' ('-')? DIGIT+ ('.' DIGIT+)? ('E' ('-')? DIGIT+)?;
+  token RobotJoints = ('-')? DIGIT+ ('.' DIGIT+)? ('E' ('-')? DIGIT+)? ',' ('-')? DIGIT+ ('.' DIGIT+)? ('E' ('-')? DIGIT+)? ',' ('-')? DIGIT+ ('.' DIGIT+)? ('E' ('-')? DIGIT+)? ',' ('-')? DIGIT+ ('.' DIGIT+)? ('E' ('-')? DIGIT+)? ',' ('-')? DIGIT+ ('.' DIGIT+)? ('E' ('-')? DIGIT+)? ',' ('-')? DIGIT+ ('.' DIGIT+)? ('E' ('-')? DIGIT+)?;
   token Double  = ('-')? DIGIT+ '.' DIGIT+;
   token Integer = ('-')?  DIGIT+;
   token FILEPATH = (ALPHA | DIGIT | SYMBOL)+;

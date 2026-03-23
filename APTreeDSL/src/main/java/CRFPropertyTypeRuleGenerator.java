@@ -178,7 +178,8 @@ public class CRFPropertyTypeRuleGenerator {
                typeName.equals("Name") ||
                typeName.equals("String") ||
                typeName.equals("Double") ||
-               typeName.equals("Coordinate");
+               typeName.equals("Coordinate") ||
+               typeName.equals("RobotJoints");
     }
     
     private static void updateGrammarFile(String grammarPath, List<String> newRules, List<String> typeNames) throws IOException {

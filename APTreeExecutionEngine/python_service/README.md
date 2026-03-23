@@ -15,7 +15,7 @@ The C# execution engine connects to `http://localhost:5000`. To forward that
 port from your local machine to the VM, open a separate terminal and run:
 
 ```bash
-ssh -L 5000:localhost:5000 -i ~/.ssh/id_ed25519 ubuntu@193.196.52.17
+
 ```
 ssh -L 5000:localhost:5000 -i C:\Users\sherk\.ssh\id_ed25519 ubuntu@193.196.52.17
 Keep this terminal open while running the execution engine.

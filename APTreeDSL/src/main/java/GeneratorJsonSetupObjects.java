@@ -14,7 +14,7 @@ import crftypescon._parser.CRFTypesConParser;
 import de.se_rwth.commons.logging.Log;
 
 /**
- * LiveMatSetupObjectsGenerator - Parses LiveMatSetupObjects.bt using MontiCore grammar
+ * GeneratorJsonSetupObjects - Parses LiveMatSetupObjects.bt using MontiCore grammar
  * 
  * Reads a LiveMatSetupObjects file in APTreeDSL CRFTypesCon grammar format and exports 
  * all parameter instances to JSON format.
@@ -25,7 +25,7 @@ import de.se_rwth.commons.logging.Log;
  *            Robot r1 ()
  *            Beam b1 (fp1)
  */
-public class LiveMatSetupObjectsGenerator {
+public class GeneratorJsonSetupObjects {
 
   private static class ParameterInstance {
     String name;
@@ -49,7 +49,7 @@ public class LiveMatSetupObjectsGenerator {
     Log.init();
     Log.enableFailQuick(false);
     
-    LiveMatSetupObjectsGenerator generator = new LiveMatSetupObjectsGenerator();
+    GeneratorJsonSetupObjects generator = new GeneratorJsonSetupObjects();
     String filePath = args.length > 0 ? args[0] : "src/test/resources/valid/CRFConcrete/LiveMatSetupObjects.bt";
     String outputPath = args.length > 1 ? args[1] : "../APTreeExecutionEngine/src/ModelLoader/LiveMatSetupObjects.json";
     

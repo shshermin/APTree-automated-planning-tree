@@ -336,11 +336,11 @@ task generateInstanceSymbols(type: JavaExec) {
   workingDir = projectDir
 }
 
-task runLiveMatSetupObjectsGenerator(type: JavaExec) {
+task runObjectsJsonGenerator(type: JavaExec) {
     description = 'Parses LiveMatSetupObjects.bt and generates JSON file with parameter instances'
     dependsOn 'compileJava'
     classpath = sourceSets.main.runtimeClasspath
-    mainClass = 'LiveMatSetupObjectsGenerator'
+    mainClass = 'GeneratorJsonSetupObjects'
     workingDir = projectDir
     args = [project.properties.get('modelName', 'src/test/resources/valid/CRFConcrete/LiveMatSetupObjects.bt'),
         project.properties.get('outputName', '../APTreeExecutionEngine/src/ModelLoader/LiveMatSetupObjects.json')]
