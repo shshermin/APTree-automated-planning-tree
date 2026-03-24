@@ -216,9 +216,11 @@ public abstract class ExeAction : PActionNode
                     }
                     else if (kv.Key.Equals("target", StringComparison.OrdinalIgnoreCase) && loc is FinalLocation fl && fl.Position != null)
                     {
-                        var ori = GetManipulateOrientation();
+                        var ori = fl.Orientation != null
+                            ? new[] { fl.Orientation.X, fl.Orientation.Y, fl.Orientation.Z }
+                            : GetManipulateOrientation();
                         CommandRequest.Pose = new[] { fl.Position.X, fl.Position.Y, fl.Position.Z, ori[0], ori[1], ori[2] };
-                        LoggingService.LogInfo($"✅ ExeAction: Resolved FinalLocation target '{fl.ID}' → Pose=[{fl.Position.X}, {fl.Position.Y}, {fl.Position.Z}, {ori[0]}, {ori[1]}, {ori[2]}]");
+                        LoggingService.LogInfo($"✅ ExeAction: Resolved FinalLocation target '{fl.ID}' → Pose=[{fl.Position.X}, {fl.Position.Y}, {fl.Position.Z}, {ori[0]}, {ori[1]}, {ori[2]}] (orientation source: {(fl.Orientation != null ? "FinalLocation" : "rpmanipulate")})");
                     }
                     else
                     {
@@ -290,6 +292,6 @@ public abstract class ExeAction : PActionNode
         }
         catch { }
         // Fallback: rpmanipulate orientation from DemonstratorSetupObjects
-        return new[] { 3.137544, -0.07093, 0.006593 };
+        return new[] { 3.138454, 0.010236, 0.006714 };
     }
 }

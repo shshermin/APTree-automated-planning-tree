@@ -272,13 +272,51 @@ def set_digital_out_sequence(robot_ip: str) -> str:
     """
     cmd = (
         "def gripper_seq():\n"
-        "  set_digital_out(1, True)\n"
+        "  set_tool_digital_out(1, True)\n"
         "  sleep(2)\n"
-        "  set_digital_out(0, True)\n"
+        "  set_tool_digital_out(0, False)\n"
         "end\n"
     )
     _send_urscript(robot_ip, cmd)
-    return "Digital out sequence: DO1=True, wait 2s, DO0=True"
+    return "Tool digital out sequence: TDO1=True, wait 2s, TDO0=False"
+
+
+def lift_z(robot_ip: str, height: float = 0.1, velocity: float = 0.1, acceleration: float = 0.3) -> str:
+    """Move the TCP straight up by `height` meters from the current pose.
+
+    Reads the actual TCP pose on the robot controller and does a movel
+    to the same x,y with z + height.
+
+    Input:  robot_ip     (str)   — IP address of the UR10.
+            height       (float) — Distance to lift in meters (default: 0.1 = 10 cm).
+            velocity     (float) — TCP velocity in m/s (default: 0.1).
+            acceleration (float) — TCP acceleration in m/s² (default: 0.3).
+    Output: str — Confirmation message.
+    """
+    cmd = (
+        "def lift_up():\n"
+        "  local curr = get_actual_tcp_pose()\n"
+        f"  local target = p[curr[0], curr[1], curr[2]+{height}, curr[3], curr[4], curr[5]]\n"
+        f"  movel(target, a={acceleration}, v={velocity})\n"
+        "end\n"
+    )
+    _send_urscript(robot_ip, cmd)
+    return f"Lift: moved TCP up {height}m from current pose"
+
+
+def set_tool_digital_out_open(robot_ip: str) -> str:
+    """Open the gripper by setting tool digital output 0 to True.
+
+    Input:  robot_ip (str) — IP address of the UR10.
+    Output: str — Confirmation message.
+    """
+    cmd = (
+        "def gripper_open():\n"
+        "  set_tool_digital_out(0, True)\n"
+        "end\n"
+    )
+    _send_urscript(robot_ip, cmd)
+    return "Tool digital out: TDO0=True (open)"
 
 
 if __name__ == "__main__":

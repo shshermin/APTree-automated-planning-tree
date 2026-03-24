@@ -107,6 +107,6 @@ public class ServiceInputProvider : Service
         }
         catch { }
         // Fallback: rpmanipulate orientation from DemonstratorSetupObjects
-        return new[] { 3.137544, -0.07093, 0.006593 };
+        return new[] { 3.138454, 0.010236, 0.006714 };
     }
 }

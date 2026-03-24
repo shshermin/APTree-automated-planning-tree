@@ -121,33 +121,28 @@ namespace BehaviorTreeMainProject
             // ── PickUpML ──
             // Target is {p} = the stick's InitialLocation (position where the stick sits)
             var pickUp = new LLSubtreeTemplate("PickUpML");
-            pickUp.Steps.Add(new LLStep("MoveToLL", MoveType.MoveJ) { Parameters = { ["target"] = "{p}", ["robot"] = "{client}" } });
-            pickUp.Steps.Add(new LLStep("CloseGripperLL") { Parameters = { ["robot"] = "{client}" } });
             pickUp.Steps.Add(new LLStep("MoveToLL", MoveType.MoveL) { Parameters = { ["target"] = "{p}", ["robot"] = "{client}" } });
+            pickUp.Steps.Add(new LLStep("CloseGripperLL") { Parameters = { ["robot"] = "{client}" } });
+            pickUp.Steps.Add(new LLStep("LiftLL") { Parameters = { ["robot"] = "{client}" } });
+            pickUp.Steps.Add(new LLStep("MoveToLL", MoveType.MoveJ) { Parameters = { ["target"] = "{rp}", ["robot"] = "{client}" } });
             _templates["PickUpML"] = pickUp;
 
             // ── StackML ──
             var stack = new LLSubtreeTemplate("StackML");
-            stack.Steps.Add(new LLStep("MoveTo") { Parameters = { ["target"] = "{pos}", ["robot"] = "{client}" } });
-            stack.Steps.Add(new LLStep("OpenGripper") { Parameters = { ["robot"] = "{client}" } });
-            stack.Steps.Add(new LLStep("Retract") { Parameters = { ["robot"] = "{client}" } });
+            stack.Steps.Add(new LLStep("MoveToLL", MoveType.MoveL) { Parameters = { ["target"] = "{objposition}", ["robot"] = "{client}" } });
+            stack.Steps.Add(new LLStep("OpenGripperLL") { Parameters = { ["robot"] = "{client}" } });
+            stack.Steps.Add(new LLStep("LiftLL") { Parameters = { ["robot"] = "{client}" } });
+            stack.Steps.Add(new LLStep("MoveToLL", MoveType.MoveJ) { Parameters = { ["target"] = "{robotposition}", ["robot"] = "{client}" } });
             _templates["StackML"] = stack;
 
             // ── StackOnTwoML ──
             var stackTwo = new LLSubtreeTemplate("StackOnTwoML");
-            stackTwo.Steps.Add(new LLStep("MoveTo") { Parameters = { ["target"] = "{pos}", ["robot"] = "{client}" } });
-            stackTwo.Steps.Add(new LLStep("Lower") { Parameters = { ["robot"] = "{client}", ["obj"] = "{obj}" } });
-            stackTwo.Steps.Add(new LLStep("OpenGripper") { Parameters = { ["robot"] = "{client}" } });
-            stackTwo.Steps.Add(new LLStep("Retract") { Parameters = { ["robot"] = "{client}" } });
+            stackTwo.Steps.Add(new LLStep("MoveToLL", MoveType.MoveL) { Parameters = { ["target"] = "{objposition}", ["robot"] = "{client}" } });
+            stackTwo.Steps.Add(new LLStep("OpenGripperLL") { Parameters = { ["robot"] = "{client}" } });
+            stackTwo.Steps.Add(new LLStep("LiftLL") { Parameters = { ["robot"] = "{client}" } });
+            stackTwo.Steps.Add(new LLStep("MoveToLL", MoveType.MoveJ) { Parameters = { ["target"] = "{robotpos}", ["robot"] = "{client}" } });
             _templates["StackOnTwoML"] = stackTwo;
 
-            // ── StackOnMultipleML ──
-            var stackMulti = new LLSubtreeTemplate("StackOnMultipleML");
-            stackMulti.Steps.Add(new LLStep("MoveTo") { Parameters = { ["target"] = "{pos}", ["robot"] = "{client}" } });
-            stackMulti.Steps.Add(new LLStep("Lower") { Parameters = { ["robot"] = "{client}", ["obj"] = "{obj}" } });
-            stackMulti.Steps.Add(new LLStep("OpenGripper") { Parameters = { ["robot"] = "{client}" } });
-            stackMulti.Steps.Add(new LLStep("Retract") { Parameters = { ["robot"] = "{client}" } });
-            _templates["StackOnMultipleML"] = stackMulti;
 
             // ── TravelML ──
             var travel = new LLSubtreeTemplate("TravelML");
@@ -179,7 +174,7 @@ namespace BehaviorTreeMainProject
             var place = new LLSubtreeTemplate("PlaceML");
             place.Steps.Add(new LLStep("MoveTo") { Parameters = { ["target"] = "{pos}", ["robot"] = "{client}" } });
             place.Steps.Add(new LLStep("Lower") { Parameters = { ["robot"] = "{client}", ["obj"] = "{obj}" } });
-            place.Steps.Add(new LLStep("OpenGripper") { Parameters = { ["robot"] = "{client}" } });
+            place.Steps.Add(new LLStep("OpenGripperLL") { Parameters = { ["robot"] = "{client}" } });
             place.Steps.Add(new LLStep("Retract") { Parameters = { ["robot"] = "{client}" } });
             _templates["PlaceML"] = place;
 
@@ -333,6 +328,16 @@ namespace BehaviorTreeMainProject
                     var gripNode = new CloseGripperLL(stepName, blackboard);
                     gripNode.MLInputs = resolvedObjects;
                     return gripNode;
+
+                case "OpenGripperLL":
+                    var openGripNode = new OpenGripperLL(stepName, blackboard);
+                    openGripNode.MLInputs = resolvedObjects;
+                    return openGripNode;
+
+                case "LiftLL":
+                    var liftNode = new LiftLL(stepName, blackboard);
+                    liftNode.MLInputs = resolvedObjects;
+                    return liftNode;
 
                 default:
                     // Fallback: generic LLActionNode for steps not yet mapped to ExeAction

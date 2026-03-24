@@ -30,9 +30,9 @@ namespace ModelLoader.ParameterTypes
             if (parts.Length != 3)
                 throw new FormatException($"Coordinate expects 3 values, got {parts.Length}: '{csv}'");
             return new Coordinate(
-                double.Parse(parts[0].Trim(), CultureInfo.InvariantCulture),
-                double.Parse(parts[1].Trim(), CultureInfo.InvariantCulture),
-                double.Parse(parts[2].Trim(), CultureInfo.InvariantCulture)
+                double.Parse(parts[0].Trim().Replace(" ", ""), CultureInfo.InvariantCulture),
+                double.Parse(parts[1].Trim().Replace(" ", ""), CultureInfo.InvariantCulture),
+                double.Parse(parts[2].Trim().Replace(" ", ""), CultureInfo.InvariantCulture)
             );
         }
 

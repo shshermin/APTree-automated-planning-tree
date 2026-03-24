@@ -44,6 +44,9 @@ def robot_gripper():
 
         if command_type == 'close_gripper':
             result_msg = set_digital_out_sequence(robot_ip)
+        elif command_type == 'open_gripper':
+            from ur10_control.ur10_commands import set_tool_digital_out_open
+            result_msg = set_tool_digital_out_open(robot_ip)
         else:
             return jsonify({'success': False, 'error': f"Unsupported gripper commandType '{command_type}'"}), 400
 
@@ -57,6 +60,36 @@ def robot_gripper():
 
     except Exception as e:
         print(f"Gripper command failed: {str(e)}")
+        return jsonify({
+            'success': False,
+            'error': str(e),
+            'executionTimeSeconds': 0
+        }), 500
+
+
+@app.route('/lift', methods=['POST'])
+def robot_lift():
+    """Lift the TCP straight up from the current pose."""
+    try:
+        data = request.json
+        print(f"Received lift request: {json.dumps(data, indent=2)}")
+
+        robot_ip = data.get('robotIp', DEFAULT_ROBOT_IP)
+        height = data.get('height', 0.1)
+
+        from ur10_control.ur10_commands import lift_z
+        start_time = time.time()
+        result_msg = lift_z(robot_ip, height=height)
+        elapsed = time.time() - start_time
+
+        print(f"Lift completed: {result_msg} ({elapsed:.2f}s)")
+        return jsonify({
+            'success': True,
+            'message': result_msg,
+            'executionTimeSeconds': elapsed
+        })
+    except Exception as e:
+        print(f"Lift command failed: {str(e)}")
         return jsonify({
             'success': False,
             'error': str(e),
