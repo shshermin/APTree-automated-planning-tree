@@ -251,19 +251,8 @@ export function aptreeGraphsToCanvasGraph(
     let sectionOffsetY: number;
 
     if (index === 0) {
-      // Main tree: position normally and collect subtreeRef → action node X
+      // Main tree: position normally
       sectionOffsetY = nextTopY - bounds.top;
-
-      const canvasById = new Map(sectionResult.graph.nodes.map((n) => [n.id, n]));
-      for (const graphNode of graph.nodes) {
-        if (graphNode.subtreeRef) {
-          const canvasId = "bt-import-" + graphNode.id;
-          const cn = canvasById.get(canvasId);
-          if (cn) {
-            subtreeRefToAnchorX.set(graphNode.subtreeRef, cn.x);
-          }
-        }
-      }
 
       subtreeBaseY = nextTopY + bounds.height + TREE_SECTION_GAP_Y;
       fallbackNextY = subtreeBaseY;
@@ -300,13 +289,19 @@ export function aptreeGraphsToCanvasGraph(
     for (const node of sectionResult.graph.nodes) {
       const remappedId = `${idPrefix}${node.id}`;
       idMap.set(node.id, remappedId);
+      const finalX = node.x + sectionOffsetX;
       mergedNodes.push({
         ...node,
         id: remappedId,
-        x: node.x + sectionOffsetX,
+        x: finalX,
         y: node.y + sectionOffsetY,
         graphName: graph.name,
       });
+
+      // Register subtreeRef anchors from every level so deeper trees are also anchored
+      if (node.subtreeRef) {
+        subtreeRefToAnchorX.set(node.subtreeRef, finalX);
+      }
     }
 
     for (const connection of sectionResult.graph.connections) {
