@@ -28,7 +28,7 @@ DEFAULT_PLANNER = "ENHSP"  # Default planner to use
 DOCKER_CONTAINER_NAME = "planutils"
 
 # Supported planners
-SUPPORTED_PLANNERS = ["ENHSP", "FF", "LAMA-FIRST"]
+SUPPORTED_PLANNERS = ["ENHSP", "FF", "LAMA-FIRST", "SCORPION", "DOWNWARD", "OPTIC", "POPF", "PYPERPLAN"]
 
 @app.route('/health', methods=['GET'])
 def health_check():
@@ -182,12 +182,23 @@ def create_plan():
                         'details': f'ENHSP not found at {planner_path}'
                     }
                 }), 500
-            
+
             plan_result = call_enhsp(domain_file, problem_file, planner_path, timeout_seconds, enhsp_config)
         elif planner_name == "FF":
             plan_result = call_ff(domain_file, problem_file, timeout_seconds)
         elif planner_name == "LAMA-FIRST":
             plan_result = call_lama_first(domain_file, problem_file, timeout_seconds)
+        elif planner_name == "SCORPION":
+            plan_result = call_scorpion(domain_file, problem_file, timeout_seconds)
+        elif planner_name == "DOWNWARD":
+            fd_config = enhsp_config  # reuse enhspConfig field for FD search string
+            plan_result = call_downward(domain_file, problem_file, timeout_seconds, fd_config)
+        elif planner_name == "OPTIC":
+            plan_result = call_optic(domain_file, problem_file, timeout_seconds)
+        elif planner_name == "POPF":
+            plan_result = call_popf(domain_file, problem_file, timeout_seconds)
+        elif planner_name == "PYPERPLAN":
+            plan_result = call_pyperplan(domain_file, problem_file, timeout_seconds)
         else:
             return jsonify({
                 'success': False,
@@ -415,6 +426,155 @@ def call_lama_first(domain_file, problem_file, timeout_seconds):
         return {'success': False, 'error': 'LAMA-first planning timed out'}
     except Exception as e:
         return {'success': False, 'error': f'Error calling LAMA-first: {str(e)}'}
+
+def _pipe_files_to_container(domain_file, problem_file):
+    """Pipes domain and problem files into the planutils Docker container."""
+    domain_filename = os.path.basename(domain_file)
+    problem_filename = os.path.basename(problem_file)
+    for label, src_path, dest_name in [
+        ('domain', domain_file, domain_filename),
+        ('problem', problem_file, problem_filename),
+    ]:
+        try:
+            with open(src_path, 'r') as f:
+                content = f.read()
+            pipe_result = subprocess.run(
+                ['docker', 'exec', '-i', DOCKER_CONTAINER_NAME,
+                 'bash', '-c', f'cat > /root/{dest_name}'],
+                input=content, capture_output=True, text=True, timeout=30
+            )
+            if pipe_result.returncode != 0:
+                print(f"⚠️ Warning: Failed to pipe {label} file: {pipe_result.stderr}")
+            else:
+                print(f"✅ {label.capitalize()} file piped successfully to /root/{dest_name}")
+        except Exception as copy_err:
+            print(f"⚠️ Warning: Error piping {label} file: {copy_err}")
+    return domain_filename, problem_filename
+
+
+def _run_planutils_sas(package_name, domain_file, problem_file, timeout_seconds, extra_args=""):
+    """
+    Runs a Fast Downward-based planner via planutils and returns the sas_plan content.
+    Used by all FD-derived planners (scorpion, downward, etc.).
+    """
+    domain_filename, problem_filename = _pipe_files_to_container(domain_file, problem_file)
+    args = extra_args + " " if extra_args else ""
+    cmd = [
+        'docker', 'exec', DOCKER_CONTAINER_NAME,
+        'bash', '-c',
+        f'planutils activate && planutils run {package_name} {domain_filename} {problem_filename} {args}&& cat sas_plan'
+    ]
+    print(f"Calling {package_name} with command: {' '.join(cmd)}")
+    result = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout_seconds)
+    print(f"{package_name} stdout: {result.stdout}")
+    print(f"{package_name} stderr: {result.stderr}")
+    if result.returncode == 0:
+        return {'success': True, 'raw_output': result.stdout}
+    return {'success': False, 'error': f'{package_name} failed (code {result.returncode}): {result.stderr}'}
+
+
+def _run_planutils_stdout(package_name, domain_file, problem_file, timeout_seconds, extra_args=""):
+    """
+    Runs a planner via planutils whose plan is printed directly to stdout.
+    Used by temporal planners (optic, popf) that do not write sas_plan.
+    """
+    domain_filename, problem_filename = _pipe_files_to_container(domain_file, problem_file)
+    args = extra_args + " " if extra_args else ""
+    cmd = [
+        'docker', 'exec', DOCKER_CONTAINER_NAME,
+        'bash', '-c',
+        f'planutils activate && planutils run {package_name} {domain_filename} {problem_filename} {args}'
+    ]
+    print(f"Calling {package_name} with command: {' '.join(cmd)}")
+    result = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout_seconds)
+    print(f"{package_name} stdout: {result.stdout}")
+    print(f"{package_name} stderr: {result.stderr}")
+    if result.returncode == 0:
+        return {'success': True, 'raw_output': result.stdout}
+    return {'success': False, 'error': f'{package_name} failed (code {result.returncode}): {result.stderr}'}
+
+
+def call_scorpion(domain_file, problem_file, timeout_seconds):
+    """Call Scorpion optimal classical planner via planutils Docker container."""
+    try:
+        return _run_planutils_sas('scorpion', domain_file, problem_file, timeout_seconds)
+    except subprocess.TimeoutExpired:
+        return {'success': False, 'error': 'Scorpion planning timed out'}
+    except Exception as e:
+        return {'success': False, 'error': f'Error calling Scorpion: {str(e)}'}
+
+
+def call_downward(domain_file, problem_file, timeout_seconds, fd_config=None):
+    """
+    Call Fast Downward via planutils Docker container.
+    fd_config maps to a --search argument shorthand:
+      'astar-lmcut'  → --search "astar(lmcut())"       (optimal)
+      'astar-blind'  → --search "astar(blind())"        (optimal)
+      'lazy-ff'      → --search "lazy_greedy([ff()])"   (satisficing)
+      None/default   → --search "lazy_greedy([ff(), cea()])"  (satisficing)
+    """
+    search_map = {
+        'astar-lmcut': 'astar(lmcut())',
+        'astar-blind': 'astar(blind())',
+        'astar-ipdb':  'astar(ipdb())',
+        'lazy-ff':     'lazy_greedy([ff()])',
+        'lazy-cea':    'lazy_greedy([cea()])',
+    }
+    search = search_map.get(fd_config, 'lazy_greedy([ff(), cea()])')
+    extra_args = f'--search "{search}"'
+    try:
+        return _run_planutils_sas('downward', domain_file, problem_file, timeout_seconds, extra_args)
+    except subprocess.TimeoutExpired:
+        return {'success': False, 'error': 'Fast Downward planning timed out'}
+    except Exception as e:
+        return {'success': False, 'error': f'Error calling Fast Downward: {str(e)}'}
+
+
+def call_optic(domain_file, problem_file, timeout_seconds):
+    """Call OPTIC temporal planner via planutils Docker container."""
+    try:
+        return _run_planutils_stdout('optic', domain_file, problem_file, timeout_seconds)
+    except subprocess.TimeoutExpired:
+        return {'success': False, 'error': 'OPTIC planning timed out'}
+    except Exception as e:
+        return {'success': False, 'error': f'Error calling OPTIC: {str(e)}'}
+
+
+def call_popf(domain_file, problem_file, timeout_seconds):
+    """Call POPF2 temporal planner via planutils Docker container."""
+    try:
+        return _run_planutils_stdout('popf', domain_file, problem_file, timeout_seconds)
+    except subprocess.TimeoutExpired:
+        return {'success': False, 'error': 'POPF planning timed out'}
+    except Exception as e:
+        return {'success': False, 'error': f'Error calling POPF: {str(e)}'}
+
+
+def call_pyperplan(domain_file, problem_file, timeout_seconds):
+    """
+    Call Pyperplan via planutils Docker container.
+    Pyperplan writes the plan to <problem>.soln; we cat it after planning.
+    """
+    domain_filename, problem_filename = _pipe_files_to_container(domain_file, problem_file)
+    soln_file = problem_filename.replace('.pddl', '.soln')
+    cmd = [
+        'docker', 'exec', DOCKER_CONTAINER_NAME,
+        'bash', '-c',
+        f'planutils activate && planutils run pyperplan {domain_filename} {problem_filename} && cat {soln_file}'
+    ]
+    print(f"Calling pyperplan with command: {' '.join(cmd)}")
+    try:
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout_seconds)
+        print(f"pyperplan stdout: {result.stdout}")
+        print(f"pyperplan stderr: {result.stderr}")
+        if result.returncode == 0:
+            return {'success': True, 'raw_output': result.stdout}
+        return {'success': False, 'error': f'Pyperplan failed (code {result.returncode}): {result.stderr}'}
+    except subprocess.TimeoutExpired:
+        return {'success': False, 'error': 'Pyperplan planning timed out'}
+    except Exception as e:
+        return {'success': False, 'error': f'Error calling Pyperplan: {str(e)}'}
+
 
 if __name__ == '__main__':
     print("Starting PDDL Planning Service...")
