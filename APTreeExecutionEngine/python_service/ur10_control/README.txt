@@ -10,7 +10,9 @@ python -c "from ur10_control.ur10_commands import play_program; print(play_progr
 // setting a named position 
 python -c "from ur10_control.ur10_commands import save_position; pos = save_position('192.168.1.100', 'home'); print(pos)"
 
-// moving between named positions 
+// getting robot coordinates
+cd c:\Users\sherk\Documents\BehaviorTreeMainProject\APTreeExecutionEngine\python_service
+python -c "from ur10_control.ur10_commands import get_current_pose; print(get_current_pose('192.168.1.100'))"
 
 
 
@@ -55,5 +57,8 @@ python -c "from ur10_control.ur10_commands import play_program; print(play_progr
 
 step#3: go to the rpmanipulate
 
+
 cd ..
 Invoke-RestMethod -Method Post -Uri "http://localhost:5001/move" -ContentType "application/json" -Body '{"commandType": "movel", "finalPosition": "rpmanipulate", "robotIp": "192.168.1.100", "pose": [0.133772, 0.34874, 0.490062, 3.137544, -0.07093, 0.006593], "velocity": 0.1, "acceleration": 0.1}'
+
+

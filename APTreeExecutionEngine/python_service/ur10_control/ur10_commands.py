@@ -13,6 +13,12 @@ DASHBOARD_PORT = 29999
 REALTIME_PORT = 30003
 POSITIONS_FILE = os.path.join(os.path.dirname(__file__), "positions.json")
 
+# TCP offsets (flange → tool tip) for each tool, in meters and radians.
+# Format: [x, y, z, rx, ry, rz]
+TCP_OFFSETS = {
+    "gripper": [0.01, 0.0, 0.148, 0, 0, 0],
+}
+
 # Note: The Dashboard Server is a simple TCP server that accepts text commands and returns responses.
 def dashboard_command(robot_ip: str, command: str) -> str:
     """Send a single dashboard command to the robot and return its text response.
@@ -147,6 +153,31 @@ def save_position(robot_ip: str, name: str) -> dict:
     return position
 
 
+def get_current_pose(robot_ip: str) -> dict:
+    """Read the robot's current joint angles and TCP pose without saving."""
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.settimeout(5)
+    sock.connect((robot_ip, REALTIME_PORT))
+    data = b""
+    while len(data) < 1116:
+        chunk = sock.recv(4096)
+        if not chunk:
+            break
+        data += chunk
+    sock.close()
+
+    if len(data) < 1116:
+        raise ConnectionError(f"Could not read robot state (got {len(data)} bytes)")
+
+    joints = list(struct.unpack("!6d", data[252:300]))
+    tcp_pose = list(struct.unpack("!6d", data[444:492]))
+
+    return {
+        "joints": [round(v, 6) for v in joints],
+        "tcp_pose": [round(v, 6) for v in tcp_pose],
+    }
+
+
 def get_position(name: str) -> dict:
     """Retrieve a previously saved position by name.
 
@@ -175,7 +206,31 @@ def _send_urscript(robot_ip: str, cmd: str):
     sock.close()
 
 
-def move_to_pose(robot_ip: str, name: str, position: dict = None, velocity: float = 0.5, acceleration: float = 1.0) -> str:
+def _resolve_tcp(tcp):
+    """Resolve a tcp argument: None, a list, or a tool name from TCP_OFFSETS."""
+    if tcp is None:
+        return None
+    if isinstance(tcp, str):
+        if tcp not in TCP_OFFSETS:
+            raise KeyError(f"Unknown tool '{tcp}'. Available: {list(TCP_OFFSETS.keys())}")
+        return TCP_OFFSETS[tcp]
+    return list(tcp)
+
+
+def _wrap_with_tcp(move_cmd: str, tcp) -> str:
+    """Wrap a move command in a program that sets the TCP first."""
+    tcp = _resolve_tcp(tcp)
+    if tcp is None:
+        return move_cmd
+    return (
+        "def move_with_tcp():\n"
+        f"  set_tcp(p{tcp})\n"
+        f"  {move_cmd.strip()}\n"
+        "end\n"
+    )
+
+
+def move_to_pose(robot_ip: str, name: str, position: dict = None, velocity: float = 0.5, acceleration: float = 1.0, tcp=None) -> str:
     """Move the robot to a pose using movej (joint-space interpolation).
 
     Input:  robot_ip     (str)   — IP address of the UR10.
@@ -183,25 +238,26 @@ def move_to_pose(robot_ip: str, name: str, position: dict = None, velocity: floa
             position     (dict)  — Position dict with "joints" key. If None, looks up from positions.json.
             velocity     (float) — Joint velocity in rad/s (default: 0.5).
             acceleration (float) — Joint acceleration in rad/s² (default: 1.0).
+            tcp          — Tool name (str), offset list [x,y,z,rx,ry,rz], or None.
     Output: str — Confirmation message.
     """
     if position is None:
         position = get_position(name)
     if "joints" in position:
         joints = position["joints"]
-        cmd = f"movej({joints}, a={acceleration}, v={velocity})\n"
+        cmd = _wrap_with_tcp(f"movej({joints}, a={acceleration}, v={velocity})\n", tcp)
         _send_urscript(robot_ip, cmd)
         return f"movej to '{name}' with joints={joints}"
     elif "pose" in position:
         pose = position["pose"]
-        cmd = f"movej(p{pose}, a={acceleration}, v={velocity})\n"
+        cmd = _wrap_with_tcp(f"movej(p{pose}, a={acceleration}, v={velocity})\n", tcp)
         _send_urscript(robot_ip, cmd)
         return f"movej to '{name}' with pose={pose}"
     else:
         raise ValueError(f"Position '{name}' has neither 'joints' nor 'pose'")
 
 
-def move_to_pose_l(robot_ip: str, name: str, position: dict = None, velocity: float = 0.25, acceleration: float = 1.2) -> str:
+def move_to_pose_l(robot_ip: str, name: str, position: dict = None, velocity: float = 0.25, acceleration: float = 1.2, tcp=None) -> str:
     """Move the robot to a pose using movel (linear TCP interpolation).
 
     Input:  robot_ip     (str)   — IP address of the UR10.
@@ -209,17 +265,18 @@ def move_to_pose_l(robot_ip: str, name: str, position: dict = None, velocity: fl
             position     (dict)  — Position dict with "pose" key (x,y,z,rx,ry,rz). If None, looks up from positions.json.
             velocity     (float) — TCP velocity in m/s (default: 0.25).
             acceleration (float) — TCP acceleration in m/s² (default: 1.2).
+            tcp          — Tool name (str), offset list [x,y,z,rx,ry,rz], or None.
     Output: str — Confirmation message.
     """
     if position is None:
         position = get_position(name)
     pose = position["pose"]
-    cmd = f"movel(p{pose}, a={acceleration}, v={velocity})\n"
+    cmd = _wrap_with_tcp(f"movel(p{pose}, a={acceleration}, v={velocity})\n", tcp)
     _send_urscript(robot_ip, cmd)
     return f"movel to '{name}' with pose={pose}"
 
 
-def move_to_pose_p(robot_ip: str, name: str, position: dict = None, velocity: float = 0.25, acceleration: float = 1.2, blend_radius: float = 0.05) -> str:
+def move_to_pose_p(robot_ip: str, name: str, position: dict = None, velocity: float = 0.25, acceleration: float = 1.2, blend_radius: float = 0.05, tcp=None) -> str:
     """Move the robot to a pose using movep (process / blend move).
 
     Input:  robot_ip     (str)   — IP address of the UR10.
@@ -228,17 +285,18 @@ def move_to_pose_p(robot_ip: str, name: str, position: dict = None, velocity: fl
             velocity     (float) — TCP velocity in m/s (default: 0.25).
             acceleration (float) — TCP acceleration in m/s² (default: 1.2).
             blend_radius (float) — Blend radius in m (default: 0.05).
+            tcp          — Tool name (str), offset list [x,y,z,rx,ry,rz], or None.
     Output: str — Confirmation message.
     """
     if position is None:
         position = get_position(name)
     pose = position["pose"]
-    cmd = f"movep(p{pose}, a={acceleration}, v={velocity}, r={blend_radius})\n"
+    cmd = _wrap_with_tcp(f"movep(p{pose}, a={acceleration}, v={velocity}, r={blend_radius})\n", tcp)
     _send_urscript(robot_ip, cmd)
     return f"movep to '{name}' with pose={pose}"
 
 
-def move_to_pose_c(robot_ip: str, via_name: str, end_name: str, via_position: dict = None, end_position: dict = None, velocity: float = 0.25, acceleration: float = 1.2) -> str:
+def move_to_pose_c(robot_ip: str, via_name: str, end_name: str, via_position: dict = None, end_position: dict = None, velocity: float = 0.25, acceleration: float = 1.2, tcp=None) -> str:
     """Move the robot along a circular arc using movec (via-point → end-point).
 
     Input:  robot_ip     (str)   — IP address of the UR10.
@@ -248,6 +306,7 @@ def move_to_pose_c(robot_ip: str, via_name: str, end_name: str, via_position: di
             end_position (dict)  — End position dict with "pose" key. If None, looks up from positions.json.
             velocity     (float) — TCP velocity in m/s (default: 0.25).
             acceleration (float) — TCP acceleration in m/s² (default: 1.2).
+            tcp          — Tool name (str), offset list [x,y,z,rx,ry,rz], or None.
     Output: str — Confirmation message.
     """
     if via_position is None:
@@ -256,7 +315,7 @@ def move_to_pose_c(robot_ip: str, via_name: str, end_name: str, via_position: di
         end_position = get_position(end_name)
     via_pose = via_position["pose"]
     end_pose = end_position["pose"]
-    cmd = f"movec(p{via_pose}, p{end_pose}, a={acceleration}, v={velocity})\n"
+    cmd = _wrap_with_tcp(f"movec(p{via_pose}, p{end_pose}, a={acceleration}, v={velocity})\n", tcp)
     _send_urscript(robot_ip, cmd)
     return f"movec via '{via_name}' to '{end_name}'"
 

@@ -124,7 +124,7 @@ namespace BehaviorTreeMainProject
             pickUp.Steps.Add(new LLStep("MoveToLL", MoveType.MoveL) { Parameters = { ["target"] = "{p}", ["robot"] = "{client}" } });
             pickUp.Steps.Add(new LLStep("CloseGripperLL") { Parameters = { ["robot"] = "{client}" } });
             pickUp.Steps.Add(new LLStep("LiftLL") { Parameters = { ["robot"] = "{client}" } });
-            pickUp.Steps.Add(new LLStep("MoveToLL", MoveType.MoveJ) { Parameters = { ["target"] = "{rp}", ["robot"] = "{client}" } });
+            pickUp.Steps.Add(new LLStep("MoveToLL", MoveType.MoveJ) { Parameters = { ["target"] = "{rp}", ["robot"] = "{client}", ["velocity"] = "1.0", ["acceleration"] = "0.3" } });
             _templates["PickUpML"] = pickUp;
 
             // ── StackML ──
@@ -132,7 +132,7 @@ namespace BehaviorTreeMainProject
             stack.Steps.Add(new LLStep("MoveToLL", MoveType.MoveL) { Parameters = { ["target"] = "{objposition}", ["robot"] = "{client}" } });
             stack.Steps.Add(new LLStep("OpenGripperLL") { Parameters = { ["robot"] = "{client}" } });
             stack.Steps.Add(new LLStep("LiftLL") { Parameters = { ["robot"] = "{client}" } });
-            stack.Steps.Add(new LLStep("MoveToLL", MoveType.MoveJ) { Parameters = { ["target"] = "{robotposition}", ["robot"] = "{client}" } });
+            stack.Steps.Add(new LLStep("MoveToLL", MoveType.MoveJ) { Parameters = { ["target"] = "{robotposition}", ["robot"] = "{client}", ["velocity"] = "1.0", ["acceleration"] = "0.3" } });
             _templates["StackML"] = stack;
 
             // ── StackOnTwoML ──
@@ -140,13 +140,13 @@ namespace BehaviorTreeMainProject
             stackTwo.Steps.Add(new LLStep("MoveToLL", MoveType.MoveL) { Parameters = { ["target"] = "{objposition}", ["robot"] = "{client}" } });
             stackTwo.Steps.Add(new LLStep("OpenGripperLL") { Parameters = { ["robot"] = "{client}" } });
             stackTwo.Steps.Add(new LLStep("LiftLL") { Parameters = { ["robot"] = "{client}" } });
-            stackTwo.Steps.Add(new LLStep("MoveToLL", MoveType.MoveJ) { Parameters = { ["target"] = "{robotpos}", ["robot"] = "{client}" } });
+            stackTwo.Steps.Add(new LLStep("MoveToLL", MoveType.MoveJ) { Parameters = { ["target"] = "{robotpos}", ["robot"] = "{client}", ["velocity"] = "1.0", ["acceleration"] = "0.3" } });
             _templates["StackOnTwoML"] = stackTwo;
 
 
             // ── TravelML ──
             var travel = new LLSubtreeTemplate("TravelML");
-            travel.Steps.Add(new LLStep("MoveToLL", MoveType.MoveJ) { Parameters = { ["target"] = "{to}", ["robot"] = "{client}" } });
+            travel.Steps.Add(new LLStep("MoveToLL", MoveType.MoveJ) { Parameters = { ["target"] = "{to}", ["robot"] = "{client}", ["velocity"] = "1.0", ["acceleration"] = "0.3" } });
             _templates["TravelML"] = travel;
 
             // ── NailingML ──
@@ -320,7 +320,9 @@ namespace BehaviorTreeMainProject
                 case "MoveToLL":
                     var target = resolvedParams.GetValueOrDefault("target", "unknown");
                     var moveType = step.MoveType ?? MoveType.MoveJ;
-                    var moveNode = new MoveToLL(stepName, "", target, blackboard, moveType);
+                    double vel = step.Parameters.TryGetValue("velocity", out var vStr) && double.TryParse(vStr, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var vParsed) ? vParsed : 0.3;
+                    double acc = step.Parameters.TryGetValue("acceleration", out var aStr) && double.TryParse(aStr, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var aParsed) ? aParsed : 0.3;
+                    var moveNode = new MoveToLL(stepName, "", target, blackboard, moveType, velocity: vel, acceleration: acc);
                     moveNode.MLInputs = resolvedObjects;
                     return moveNode;
 

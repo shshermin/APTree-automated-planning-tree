@@ -216,11 +216,23 @@ public abstract class ExeAction : PActionNode
                     }
                     else if (kv.Key.Equals("target", StringComparison.OrdinalIgnoreCase) && loc is FinalLocation fl && fl.Position != null)
                     {
-                        var ori = fl.Orientation != null
-                            ? new[] { fl.Orientation.X, fl.Orientation.Y, fl.Orientation.Z }
-                            : GetManipulateOrientation();
+                        // Convert piece direction vector (dx,dy,0) to UR TCP rotation vector.
+                        // Base orientation is Rot(X, π) (tool pointing down). To rotate by θ around Z,
+                        // the combined rotation vector is (π·cos(θ/2), π·sin(θ/2), 0)
+                        // where θ = atan2(dy, dx).
+                        double[] ori;
+                        if (fl.Orientation != null)
+                        {
+                            double theta = Math.Atan2(fl.Orientation.Y, fl.Orientation.X) - Math.PI / 2.0;
+                            double halfTheta = theta / 2.0;
+                            ori = new[] { Math.PI * Math.Cos(halfTheta), Math.PI * Math.Sin(halfTheta), 0.0 };
+                        }
+                        else
+                        {
+                            ori = GetManipulateOrientation();
+                        }
                         CommandRequest.Pose = new[] { fl.Position.X, fl.Position.Y, fl.Position.Z, ori[0], ori[1], ori[2] };
-                        LoggingService.LogInfo($"✅ ExeAction: Resolved FinalLocation target '{fl.ID}' → Pose=[{fl.Position.X}, {fl.Position.Y}, {fl.Position.Z}, {ori[0]}, {ori[1]}, {ori[2]}] (orientation source: {(fl.Orientation != null ? "FinalLocation" : "rpmanipulate")})");
+                        LoggingService.LogInfo($"✅ ExeAction: Resolved FinalLocation target '{fl.ID}' → Pose=[{fl.Position.X}, {fl.Position.Y}, {fl.Position.Z}, {ori[0]}, {ori[1]}, {ori[2]}] (orientation source: {(fl.Orientation != null ? "FinalLocation (piece dir → TCP)" : "rpmanipulate")})");
                     }
                     else
                     {
