@@ -15,7 +15,7 @@ namespace RobotCommand
         public RestRobotCommandCommunicator(string baseUrl)
         {
             _httpClient = new HttpClient();
-            _httpClient.Timeout = TimeSpan.FromSeconds(60);
+            _httpClient.Timeout = TimeSpan.FromSeconds(180);
             _baseUrl = baseUrl ?? throw new ArgumentNullException(nameof(baseUrl));
         }
 

@@ -14,15 +14,20 @@ import os
 import sys
 import json
 import time
+import math
+import requests as http_requests
 
 app = Flask(__name__)
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(SCRIPT_DIR, "ur10_control"))
 from ur10_commands import move_to_pose, move_to_pose_l, move_to_pose_p, move_to_pose_c, set_digital_out_sequence
+from ur10_commands import play_program, dashboard_command
 
 DEFAULT_ROBOT_IP = "192.168.1.100"
-SUPPORTED_MOVE_TYPES = ['movej', 'movel', 'movep', 'movec']
+MOVEIT_BRIDGE_URL = "http://localhost:5002"
+EXTERNAL_CONTROL_PROGRAM = "external_control.urp"
+SUPPORTED_MOVE_TYPES = ['movej', 'movel', 'movep', 'movec', 'planned']
 
 
 @app.route('/health', methods=['GET'])
@@ -166,6 +171,45 @@ def robot_move():
                 velocity=velocity if velocity is not None else 0.25,
                 acceleration=acceleration if acceleration is not None else 1.2,
             )
+        elif command_type == 'planned':
+            # Forward to MoveIt bridge service running in WSL
+            pose = inline_pose
+            if not pose or len(pose) < 6:
+                return jsonify({'success': False, 'error': 'pose [x,y,z,rx,ry,rz] is required for planned moves'}), 400
+
+            # Step 1: Load and play the External Control program on the pendant
+            print(f"Loading External Control program: {EXTERNAL_CONTROL_PROGRAM}")
+            load_resp = dashboard_command(robot_ip, f"load {EXTERNAL_CONTROL_PROGRAM}")
+            print(f"Load response: {load_resp}")
+            if "File not found" in load_resp:
+                return jsonify({'success': False, 'error': f"External Control program not found: {EXTERNAL_CONTROL_PROGRAM}"}), 500
+            dashboard_command(robot_ip, "play")
+            time.sleep(3)  # Give the external control driver time to connect
+
+            # Step 2: Convert rotation vector (rx, ry) to yaw in degrees
+            rx, ry = pose[3], pose[4]
+            half_theta = math.atan2(ry, rx)
+            yaw_deg = 2.0 * half_theta * (180.0 / math.pi)
+            moveit_payload = {
+                'x': -pose[0],
+                'y': -pose[1],
+                'z': pose[2],
+                'yaw': round(yaw_deg, 2),
+                'end_effector_type': 'gripper',
+                'no_object': True
+            }
+            print(f"Forwarding to MoveIt bridge: {json.dumps(moveit_payload, indent=2)}")
+            resp = http_requests.post(f"{MOVEIT_BRIDGE_URL}/plan_and_execute", json=moveit_payload, timeout=130)
+            resp_data = resp.json()
+
+            # Step 3: Stop the External Control program so direct URScript commands work again
+            print("Stopping External Control program")
+            dashboard_command(robot_ip, "stop")
+
+            if resp_data.get('success'):
+                result_msg = resp_data.get('message', 'MoveIt execution completed')
+            else:
+                return jsonify({'success': False, 'error': resp_data.get('error', 'MoveIt execution failed')}), 500
 
         elapsed = time.time() - start_time
 

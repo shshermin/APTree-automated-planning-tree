@@ -304,6 +304,16 @@ public abstract class ExeAction : PActionNode
         }
         catch { }
         // Fallback: rpmanipulate orientation from DemonstratorSetupObjects
-        return new[] { 3.138454, 0.010236, 0.006714 };
+        return new[] {0.0, -3.14159, 0.0};
+    }
+
+    /// <summary>
+    /// Converts a piece direction vector (dx, dy) to the equivalent pendant Rz angle in degrees.
+    /// theta = atan2(dy, dx) - 90°, i.e. the gripper Z-rotation perpendicular to the stick.
+    /// </summary>
+    private static double OrientationToDegrees(double dx, double dy)
+    {
+        double theta = Math.Atan2(dy, dx) - Math.PI / 2.0;
+        return theta * (180.0 / Math.PI);
     }
 }

@@ -129,7 +129,7 @@ namespace BehaviorTreeMainProject
 
             // ── StackML ──
             var stack = new LLSubtreeTemplate("StackML");
-            stack.Steps.Add(new LLStep("MoveToLL", MoveType.MoveL) { Parameters = { ["target"] = "{objposition}", ["robot"] = "{client}" } });
+            stack.Steps.Add(new LLStep("MoveToLL", MoveType.Planned) { Parameters = { ["target"] = "{objposition}", ["robot"] = "{client}" } });
             stack.Steps.Add(new LLStep("OpenGripperLL") { Parameters = { ["robot"] = "{client}" } });
             stack.Steps.Add(new LLStep("LiftLL") { Parameters = { ["robot"] = "{client}" } });
             stack.Steps.Add(new LLStep("MoveToLL", MoveType.MoveJ) { Parameters = { ["target"] = "{robotposition}", ["robot"] = "{client}", ["velocity"] = "1.0", ["acceleration"] = "0.3" } });
@@ -137,7 +137,7 @@ namespace BehaviorTreeMainProject
 
             // ── StackOnTwoML ──
             var stackTwo = new LLSubtreeTemplate("StackOnTwoML");
-            stackTwo.Steps.Add(new LLStep("MoveToLL", MoveType.MoveL) { Parameters = { ["target"] = "{objposition}", ["robot"] = "{client}" } });
+            stackTwo.Steps.Add(new LLStep("MoveToLL", MoveType.Planned) { Parameters = { ["target"] = "{objposition}", ["robot"] = "{client}" } });
             stackTwo.Steps.Add(new LLStep("OpenGripperLL") { Parameters = { ["robot"] = "{client}" } });
             stackTwo.Steps.Add(new LLStep("LiftLL") { Parameters = { ["robot"] = "{client}" } });
             stackTwo.Steps.Add(new LLStep("MoveToLL", MoveType.MoveJ) { Parameters = { ["target"] = "{robotpos}", ["robot"] = "{client}", ["velocity"] = "1.0", ["acceleration"] = "0.3" } });

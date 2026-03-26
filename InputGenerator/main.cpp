@@ -45,6 +45,29 @@ int main(int argc, char* argv[]) {
     }
     std::cout << "  Total: " << stacked.size() << " stacked pairs" << std::endl;
 
+    // Test Stack Contact Centroids
+    std::cout << std::endl << "=== Stack Contact Centroids (Y-up) ===" << std::endl;
+    auto contacts = FindAllStackedWithContact(scene, UpAxis::Y);
+    for (const auto& c : contacts) {
+        std::cout << "  " << c.topName << " on " << c.bottomName
+                  << " | centroid: (" << c.centroid.x() << ", "
+                  << c.centroid.y() << ", " << c.centroid.z() << ")"
+                  << " | area: " << c.area << std::endl;
+    }
+    std::cout << "  Total: " << contacts.size() << " contact surfaces" << std::endl;
+
+    // Write contact centroids to file
+    {
+        std::ofstream contactFile("StackContactCentroids.csv");
+        contactFile << "top,bottom,centroid_x,centroid_y,centroid_z,area" << std::endl;
+        for (const auto& c : contacts) {
+            contactFile << c.topName << "," << c.bottomName << ","
+                        << c.centroid.x() << "," << c.centroid.y() << ","
+                        << c.centroid.z() << "," << c.area << std::endl;
+        }
+        std::cout << std::endl << "Written contact centroids to StackContactCentroids.csv" << std::endl;
+    }
+
     // Generate PDDL predicates
     PDDLPredicateGenerator pddl(scene, UpAxis::Y);
     pddl.addClearPredicate();

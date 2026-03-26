@@ -268,3 +268,72 @@ std::vector<std::pair<std::string, std::string>> FindAllStacked(
     }
     return result;
 }
+
+bool ComputeStackContactCentroid(const SpatialObject& top,
+                                 const SpatialObject& bottom,
+                                 const std::vector<SpatialObject>& scene,
+                                 StackContactInfo& info,
+                                 UpAxis upAxis) {
+    if (!IsStackedOn(top, bottom, scene, upAxis)) return false;
+
+    const auto& a = top.bbox;
+    const auto& b = bottom.bbox;
+
+    // Contact height: midpoint between bottom's upper face and top's lower face
+    double contactHeight = (getUpMax(b, upAxis) + getUpMin(a, upAxis)) / 2.0;
+
+    double cx, cy, cz, area;
+
+    if (upAxis == UpAxis::Y) {
+        // Footprint is in XZ plane
+        double xlo = std::max(a.xmin(), b.xmin());
+        double xhi = std::min(a.xmax(), b.xmax());
+        double zlo = std::max(a.zmin(), b.zmin());
+        double zhi = std::min(a.zmax(), b.zmax());
+        cx = (xlo + xhi) / 2.0;
+        cy = contactHeight;
+        cz = (zlo + zhi) / 2.0;
+        area = (xhi - xlo) * (zhi - zlo);
+    } else if (upAxis == UpAxis::Z) {
+        // Footprint is in XY plane
+        double xlo = std::max(a.xmin(), b.xmin());
+        double xhi = std::min(a.xmax(), b.xmax());
+        double ylo = std::max(a.ymin(), b.ymin());
+        double yhi = std::min(a.ymax(), b.ymax());
+        cx = (xlo + xhi) / 2.0;
+        cy = (ylo + yhi) / 2.0;
+        cz = contactHeight;
+        area = (xhi - xlo) * (yhi - ylo);
+    } else { // UpAxis::X
+        // Footprint is in YZ plane
+        double ylo = std::max(a.ymin(), b.ymin());
+        double yhi = std::min(a.ymax(), b.ymax());
+        double zlo = std::max(a.zmin(), b.zmin());
+        double zhi = std::min(a.zmax(), b.zmax());
+        cx = contactHeight;
+        cy = (ylo + yhi) / 2.0;
+        cz = (zlo + zhi) / 2.0;
+        area = (yhi - ylo) * (zhi - zlo);
+    }
+
+    info.topName = top.name;
+    info.bottomName = bottom.name;
+    info.centroid = Point_3(cx, cy, cz);
+    info.area = area;
+    return true;
+}
+
+std::vector<StackContactInfo> FindAllStackedWithContact(
+    const std::vector<SpatialObject>& scene,
+    UpAxis upAxis) {
+    std::vector<StackContactInfo> result;
+    for (const auto& top : scene) {
+        for (const auto& bottom : scene) {
+            StackContactInfo info;
+            if (ComputeStackContactCentroid(top, bottom, scene, info, upAxis)) {
+                result.push_back(info);
+            }
+        }
+    }
+    return result;
+}

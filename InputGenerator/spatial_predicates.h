@@ -66,4 +66,27 @@ std::vector<std::pair<std::string, std::string>> FindAllStacked(
     const std::vector<SpatialObject>& scene,
     UpAxis upAxis = UpAxis::Y);
 
+// Info about the contact surface between two stacked objects.
+struct StackContactInfo {
+    std::string topName;
+    std::string bottomName;
+    Point_3 centroid;   // centroid of the shared footprint, at contact height
+    double area;        // area of the shared footprint rectangle
+};
+
+// Compute the contact surface centroid between two stacked objects.
+// Returns true and fills 'info' if 'top' is stacked on 'bottom' and their
+// footprints overlap. The centroid lies on the contact plane (bottom's upper
+// face) at the center of the bounding-box footprint intersection.
+bool ComputeStackContactCentroid(const SpatialObject& top,
+                                 const SpatialObject& bottom,
+                                 const std::vector<SpatialObject>& scene,
+                                 StackContactInfo& info,
+                                 UpAxis upAxis = UpAxis::Y);
+
+// Returns contact info for every stacked pair in the scene.
+std::vector<StackContactInfo> FindAllStackedWithContact(
+    const std::vector<SpatialObject>& scene,
+    UpAxis upAxis = UpAxis::Y);
+
 #endif // SPATIAL_PREDICATES_H
