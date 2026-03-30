@@ -38,9 +38,10 @@ def plan_and_execute():
         x               (float) — target X position
         y               (float) — target Y position
         z               (float) — target Z position
-        yaw             (float) — target yaw in degrees (pendant Rz equivalent)
-        end_effector_type (str) — "gripper" or other end effector (default: "gripper")
+        yaw             (float) — target yaw in degrees (for gripper only)
+        end_effector_type (str) — "gripper" or "nailgun" (default: "gripper")
         no_object       (bool)  — if true, pass --no_object flag (default: true)
+        both_loaded     (bool)  — if true, pass --both_loaded flag (for nailgun)
     """
     try:
         data = request.json
@@ -52,9 +53,13 @@ def plan_and_execute():
         yaw = data.get('yaw')
         end_effector_type = data.get('end_effector_type', 'gripper')
         no_object = data.get('no_object', True)
+        both_loaded = data.get('both_loaded', False)
 
-        if x is None or y is None or z is None or yaw is None:
-            return jsonify({'success': False, 'error': 'x, y, z, and yaw are required'}), 400
+        if x is None or y is None or z is None:
+            return jsonify({'success': False, 'error': 'x, y, and z are required'}), 400
+
+        if end_effector_type != 'nailgun' and yaw is None:
+            return jsonify({'success': False, 'error': 'yaw is required for non-nailgun moves'}), 400
 
         # Build the command
         cmd = [
@@ -62,11 +67,14 @@ def plan_and_execute():
             "--x", str(x),
             "--y", str(y),
             "--z", str(z),
-            "--yaw", str(yaw),
             "--end_effector_type", end_effector_type,
         ]
+        if yaw is not None:
+            cmd.extend(["--yaw", str(yaw)])
         if no_object:
             cmd.append("--no_object")
+        if both_loaded:
+            cmd.append("--both_loaded")
 
         print(f"Running MoveIt command: {' '.join(cmd)}")
         print(f"Working directory: {MOVEIT_WS}")
@@ -133,5 +141,5 @@ if __name__ == '__main__':
     print("Starting MoveIt Bridge Service...")
     print(f"MoveIt workspace: {MOVEIT_WS}")
     print(f"Move script: {MOVE_SCRIPT}")
-    print("Listening on http://0.0.0.0:5002")
-    app.run(host='0.0.0.0', port=5002, debug=True)
+    print("Listening on http://127.0.0.1:5002")
+    app.run(host='127.0.0.1', port=5002, debug=True)

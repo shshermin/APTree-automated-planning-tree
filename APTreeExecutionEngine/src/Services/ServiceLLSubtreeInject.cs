@@ -123,7 +123,7 @@ namespace BehaviorTreeMainProject
             var pickUp = new LLSubtreeTemplate("PickUpML");
             pickUp.Steps.Add(new LLStep("MoveToLL", MoveType.MoveL) { Parameters = { ["target"] = "{p}", ["robot"] = "{client}" } });
             pickUp.Steps.Add(new LLStep("CloseGripperLL") { Parameters = { ["robot"] = "{client}" } });
-            pickUp.Steps.Add(new LLStep("LiftLL") { Parameters = { ["robot"] = "{client}" } });
+            // pickUp.Steps.Add(new LLStep("LiftLL") { Parameters = { ["robot"] = "{client}" } });
             pickUp.Steps.Add(new LLStep("MoveToLL", MoveType.MoveJ) { Parameters = { ["target"] = "{rp}", ["robot"] = "{client}", ["velocity"] = "1.0", ["acceleration"] = "0.3" } });
             _templates["PickUpML"] = pickUp;
 
@@ -151,23 +151,18 @@ namespace BehaviorTreeMainProject
 
             // ── NailingML ──
             var nailing = new LLSubtreeTemplate("NailingML");
-            nailing.Steps.Add(new LLStep("MoveTo") { Parameters = { ["target"] = "{obj}", ["robot"] = "{client}" } });
-            nailing.Steps.Add(new LLStep("ActivateTool") { Parameters = { ["robot"] = "{client}", ["tool"] = "{tool}" } });
-            nailing.Steps.Add(new LLStep("Nail") { Parameters = { ["obj"] = "{obj}", ["target"] = "{base}", ["tool"] = "{tool}" } });
-            nailing.Steps.Add(new LLStep("DeactivateTool") { Parameters = { ["robot"] = "{client}", ["tool"] = "{tool}" } });
+            nailing.Steps.Add(new LLStep("NailingLL") { Parameters = { ["obj"] = "{obj1}", ["base"] = "{obj2}", ["robot"] = "{client}", ["tool"] = "{ng}", ["coordinate"] = "{nailCoordinate}" } });
             _templates["NailingML"] = nailing;
 
 
             // ── EquipeML (tool change — equip) ──
             var equip = new LLSubtreeTemplate("EquipeML");
-            equip.Steps.Add(new LLStep("MoveTo") { Parameters = { ["target"] = "{toolLoc}", ["robot"] = "{client}" } });
-            equip.Steps.Add(new LLStep("EquipTool") { Parameters = { ["robot"] = "{client}", ["tool"] = "{tool}" } });
+            equip.Steps.Add(new LLStep("EquipToolLL") { Parameters = { ["robot"] = "{client}", ["tool"] = "{too}" } });
             _templates["EquipeML"] = equip;
 
             // ── DeequipML (tool change — de-equip) ──
             var deequip = new LLSubtreeTemplate("DeequipML");
-            deequip.Steps.Add(new LLStep("MoveTo") { Parameters = { ["target"] = "{toolLoc}", ["robot"] = "{client}" } });
-            deequip.Steps.Add(new LLStep("DeequipTool") { Parameters = { ["robot"] = "{client}", ["tool"] = "{tool}" } });
+            deequip.Steps.Add(new LLStep("DeequipToolLL") { Parameters = { ["robot"] = "{client}", ["tool"] = "{too}" } });
             _templates["DeequipML"] = deequip;
 
             // ── PlaceML ──
@@ -340,6 +335,21 @@ namespace BehaviorTreeMainProject
                     var liftNode = new LiftLL(stepName, blackboard);
                     liftNode.MLInputs = resolvedObjects;
                     return liftNode;
+
+                case "EquipToolLL":
+                    var equipNode = new EquipToolLL(stepName, blackboard);
+                    equipNode.MLInputs = resolvedObjects;
+                    return equipNode;
+
+                case "DeequipToolLL":
+                    var deequipNode = new DeequipToolLL(stepName, blackboard);
+                    deequipNode.MLInputs = resolvedObjects;
+                    return deequipNode;
+
+                case "NailingLL":
+                    var nailingNode = new NailingLL(stepName, blackboard);
+                    nailingNode.MLInputs = resolvedObjects;
+                    return nailingNode;
 
                 default:
                     // Fallback: generic LLActionNode for steps not yet mapped to ExeAction

@@ -185,7 +185,7 @@
     )
       
       (:action stackOnTwoML ; for stacking one object on two objects
-    :parameters (?stackingobj - element ?client - robot ?objposition - finalposition ?robotpos - rpmanipulate  ?existingobj1 - element ?existingobj2 - element ?vg - gripper ?layer1 - layer ?layer2 - layer)
+    :parameters (?stackingobj - stick ?client - robot ?objposition - finalposition ?robotpos - rpmanipulate  ?existingobj1 - element ?existingobj2 - element ?vg - gripper ?layer1 - layer ?layer2 - layer)
     :precondition (and 
       (not (gripperempty ?client))  
       (holding ?client ?stackingobj) 

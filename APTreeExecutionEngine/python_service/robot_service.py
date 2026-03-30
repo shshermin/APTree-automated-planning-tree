@@ -22,10 +22,10 @@ app = Flask(__name__)
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(SCRIPT_DIR, "ur10_control"))
 from ur10_commands import move_to_pose, move_to_pose_l, move_to_pose_p, move_to_pose_c, set_digital_out_sequence
-from ur10_commands import play_program, dashboard_command
+from ur10_commands import play_program, dashboard_command, set_payload, set_tcp
 
 DEFAULT_ROBOT_IP = "192.168.1.100"
-MOVEIT_BRIDGE_URL = "http://localhost:5002"
+MOVEIT_BRIDGE_URL = "http://127.0.0.1:5002"
 EXTERNAL_CONTROL_PROGRAM = "external_control.urp"
 SUPPORTED_MOVE_TYPES = ['movej', 'movel', 'movep', 'movec', 'planned']
 
@@ -95,6 +95,68 @@ def robot_lift():
         })
     except Exception as e:
         print(f"Lift command failed: {str(e)}")
+        return jsonify({
+            'success': False,
+            'error': str(e),
+            'executionTimeSeconds': 0
+        }), 500
+
+
+@app.route('/play_program', methods=['POST'])
+def robot_play_program():
+    """Execute a .urp program on the UR10 robot.
+
+    Expected JSON body:
+        programName  (str)   — name of the program (e.g. "equipdemo.urp")
+        robotIp      (str)   — robot IP (optional, default 192.168.1.100)
+        speed        (int)   — speed slider percentage (optional, default 30)
+        payload      (float) — payload mass in kg to set after program finishes (optional)
+    """
+    try:
+        data = request.json
+        print(f"Received play_program request: {json.dumps(data, indent=2)}")
+
+        program_name = data.get('programName')
+        if not program_name:
+            return jsonify({'success': False, 'error': 'programName is required'}), 400
+
+        robot_ip = data.get('robotIp', DEFAULT_ROBOT_IP)
+        speed = data.get('speed', 30)
+        payload_mass = data.get('payload')
+        payload_cog = data.get('payloadCog')
+
+        start_time = time.time()
+        result_msg = play_program(robot_ip, program_name, speed=speed)
+
+        # Set TCP after program completes if specified
+        tcp_values = data.get('tcp')
+        tcp_msg = None
+        if tcp_values is not None:
+            tcp_msg = set_tcp(robot_ip, tcp_values)
+            print(f"TCP set: {tcp_msg}")
+
+        # Set payload after program completes if specified
+        payload_msg = None
+        if payload_mass is not None:
+            payload_msg = set_payload(robot_ip, float(payload_mass), cog=payload_cog)
+            print(f"Payload set: {payload_msg}")
+
+        elapsed = time.time() - start_time
+
+        print(f"Program '{program_name}' completed: {result_msg} ({elapsed:.2f}s)")
+        response = {
+            'success': True,
+            'message': result_msg,
+            'programName': program_name,
+            'executionTimeSeconds': elapsed
+        }
+        if tcp_msg:
+            response['tcp'] = tcp_msg
+        if payload_msg:
+            response['payload'] = payload_msg
+        return jsonify(response)
+    except Exception as e:
+        print(f"Play program failed: {str(e)}")
         return jsonify({
             'success': False,
             'error': str(e),
@@ -190,14 +252,19 @@ def robot_move():
             rx, ry = pose[3], pose[4]
             half_theta = math.atan2(ry, rx)
             yaw_deg = 2.0 * half_theta * (180.0 / math.pi)
+
+            end_effector = data.get('endEffectorType') or 'gripper'
             moveit_payload = {
                 'x': -pose[0],
                 'y': -pose[1],
                 'z': pose[2],
-                'yaw': round(yaw_deg, 2),
-                'end_effector_type': 'gripper',
-                'no_object': True
+                'end_effector_type': end_effector,
+                'no_object': True,
+                'both_loaded': True,
             }
+
+            if end_effector != 'nailgun':
+                moveit_payload['yaw'] = round(yaw_deg, 2)
             print(f"Forwarding to MoveIt bridge: {json.dumps(moveit_payload, indent=2)}")
             resp = http_requests.post(f"{MOVEIT_BRIDGE_URL}/plan_and_execute", json=moveit_payload, timeout=130)
             resp_data = resp.json()
@@ -233,4 +300,4 @@ if __name__ == '__main__':
     print("Starting Robot Execution Service...")
     print(f"Robot IP: {DEFAULT_ROBOT_IP}")
     print(f"Supported move types: {', '.join(SUPPORTED_MOVE_TYPES)}")
-    app.run(host='0.0.0.0', port=5001, debug=True)
+    app.run(host='127.0.0.1', port=5001, debug=True)

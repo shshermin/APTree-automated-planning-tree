@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using ModelLoader;
 using ModelLoader.ParameterTypes;
 using ModelLoader.PredicateTypes;
 
@@ -22,6 +23,9 @@ namespace BehaviorTreeMainProject
         // Parameter: rp of type RobotPosition
         public RobotPosition rp { get; private set; }
 
+        // Nail coordinate looked up from NailCoordinates static table
+        public Coordinate nailCoordinate { get; private set; }
+
         // Preconditions and Effects as State objects
         private State preconditions;
         private State effects;
@@ -34,6 +38,9 @@ namespace BehaviorTreeMainProject
             this.client = client;
             this.ng = ng;
             this.rp = rp;
+            this.nailCoordinate = NailCoordinates.Lookup(
+                obj1?.NameKey?.ToString() ?? "",
+                obj2?.NameKey?.ToString() ?? "");
             InitializePredicates();
         }
 
@@ -47,11 +54,11 @@ namespace BehaviorTreeMainProject
             preconditions.AddPredicate(new FastName("nailingML_pre_3"), new Accessible(obj1, false));
             preconditions.AddPredicate(new FastName("nailingML_pre_4"), new ActiveTool(ng, false));
             preconditions.AddPredicate(new FastName("nailingML_pre_5"), new HasTool(client, ng, false));
-            preconditions.AddPredicate(new FastName("nailingML_pre_6"), new Nailed(obj1, obj2, true));
+            preconditions.AddPredicate(new FastName("nailingML_pre_6"), new Nailed(obj1, obj2, true, nailCoordinate));
 
             // Initialize effects
             effects = new State(StateType.Effect, new FastName("nailingML_effects"));
-            effects.AddPredicate(new FastName("nailingML_eff_0"), new Nailed(obj1, obj2, false));
+            effects.AddPredicate(new FastName("nailingML_eff_0"), new Nailed(obj1, obj2, false, nailCoordinate));
             effects.AddPredicate(new FastName("nailingML_eff_1"), new Fixed(obj1, false));
         }
 

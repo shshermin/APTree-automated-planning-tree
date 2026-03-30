@@ -53,6 +53,8 @@ step#3: go to the rpmanipulate
 Invoke-RestMethod -Method Post -Uri "http://localhost:5001/move" -ContentType "application/json" -Body '{"commandType": "movel", "finalPosition": "rpmanipulate", "robotIp": "192.168.1.100", "pose": [0.133772, 0.34874, 0.490062, 0.0, -3.14159, 0.0], "velocity": 0.05, "acceleration": 0.1}'
 
 
+rppickupInvoke-RestMethod -Method Post -Uri "http://localhost:5001/move" -ContentType "application/json" -Body '{"commandType": "movel", "finalPosition": "rppickup", "robotIp": "192.168.1.100", "pose": [0.602835, -0.254902, 0.339901, 0.0, -3.14159, 0.0], "velocity": 0.05, "acceleration": 0.1}'
+
 cd ..
 Invoke-RestMethod -Method Post -Uri "http://localhost:5001/move" -ContentType "application/json" -Body '{"commandType": "movel", "finalPosition": "rpmanipulate", "robotIp": "192.168.1.100", "pose": [0.133772, 0.34874, 0.490062, 3.137544, -0.07093, 0.006593], "velocity": 0.1, "acceleration": 0.1}'
 

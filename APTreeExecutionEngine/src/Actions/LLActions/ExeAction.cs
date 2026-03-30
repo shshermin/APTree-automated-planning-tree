@@ -241,10 +241,35 @@ public abstract class ExeAction : PActionNode
                     break;
 
                 default:
-                    if (kv.Value is CustomProperty cp)
+                    if (kv.Value is NailGripper or StaplerGun)
+                    {
+                        CommandRequest.EndEffectorType = "nailgun";
+                        LoggingService.LogInfo($"✅ ExeAction: Detected end effector type 'nailgun' from {kv.Value.GetType().Name} param '{kv.Key}'");
+                    }
+                    else if (kv.Value is Gripper)
+                    {
+                        CommandRequest.EndEffectorType = "gripper";
+                        LoggingService.LogInfo($"✅ ExeAction: Detected end effector type 'gripper' from Gripper param '{kv.Key}'");
+                    }
+                    else if (kv.Value is Robot robot && robot.Tool != null)
+                    {
+                        if (robot.Tool is NailGripper or StaplerGun)
+                            CommandRequest.EndEffectorType = "nailgun";
+                        else if (robot.Tool is Gripper)
+                            CommandRequest.EndEffectorType = "gripper";
+                        LoggingService.LogInfo($"✅ ExeAction: Detected end effector type '{CommandRequest.EndEffectorType}' from Robot '{robot.ID}'");
+                    }
+                    else if (kv.Value is CustomProperty cp)
                         LoggingService.LogInfo($"ℹ️ ExeAction: ML input '{kv.Key}' = {cp.GetType().Name} '{cp.ID}'");
                     break;
             }
+        }
+
+        // Default to gripper if no end effector type was detected (e.g. StackML only has Robot param without Tool set)
+        if (CommandRequest.EndEffectorType == null && CommandRequest.CommandType == "planned")
+        {
+            CommandRequest.EndEffectorType = "gripper";
+            LoggingService.LogInfo($"ℹ️ ExeAction: No end effector detected, defaulting to 'gripper' for planned move");
         }
     }
 

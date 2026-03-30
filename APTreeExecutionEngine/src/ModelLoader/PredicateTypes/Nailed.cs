@@ -1,4 +1,5 @@
 using System;
+using ModelLoader.ParameterTypes;
 
 namespace ModelLoader.PredicateTypes
 {
@@ -6,12 +7,14 @@ namespace ModelLoader.PredicateTypes
     {
         public Element obj1 { get; set; }
         public Element obj2 { get; set; }
+        public Coordinate coordinate { get; set; }
 
-        public Nailed(Element obj1, Element obj2, bool isNegated) : base(isNegated)
+        public Nailed(Element obj1, Element obj2, bool isNegated, Coordinate coordinate = null) : base(isNegated)
         {
             PredicateType = new FastName("nailed");
             this.obj1 = obj1;
             this.obj2 = obj2;
+            this.coordinate = coordinate;
             this.PredicateName = GetUniqueKey();
         }
 

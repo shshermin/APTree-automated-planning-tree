@@ -16,7 +16,8 @@ POSITIONS_FILE = os.path.join(os.path.dirname(__file__), "positions.json")
 # TCP offsets (flange → tool tip) for each tool, in meters and radians.
 # Format: [x, y, z, rx, ry, rz]
 TCP_OFFSETS = {
-    "gripper": [0.01, 0.0, 0.148, 0, 0, 0],
+    "gripper": [0.003, 0.0, 0.148, 0, 0, 0],
+    "nailgun": [-0.095, 0.0, 0.3165, 0, 0, 0],
 }
 
 # Note: The Dashboard Server is a simple TCP server that accepts text commands and returns responses.
@@ -197,6 +198,34 @@ def get_position(name: str) -> dict:
 SECONDARY_PORT = 30002  # URScript commands port
 
 
+def set_tcp(robot_ip: str, tcp: list) -> str:
+    """Set the active TCP offset via URScript (persists until changed again).
+
+    Input:  robot_ip (str)  — IP address of the UR10.
+            tcp      (list) — TCP offset [x, y, z, rx, ry, rz] in meters/radians.
+    Output: str — Confirmation message.
+    """
+    cmd = f"set_tcp(p[{tcp[0]}, {tcp[1]}, {tcp[2]}, {tcp[3]}, {tcp[4]}, {tcp[5]}])\n"
+    _send_urscript(robot_ip, cmd)
+    return f"TCP set to {tcp}"
+
+
+def set_payload(robot_ip: str, mass: float, cog: list = None) -> str:
+    """Set the robot payload via URScript (persists until changed again).
+
+    Input:  robot_ip (str)   — IP address of the UR10.
+            mass     (float) — Payload mass in kg.
+            cog      (list)  — Optional center of gravity [cx, cy, cz] in meters.
+    Output: str — Confirmation message.
+    """
+    if cog:
+        cmd = f"set_payload({mass}, [{cog[0]}, {cog[1]}, {cog[2]}])\n"
+    else:
+        cmd = f"set_payload({mass})\n"
+    _send_urscript(robot_ip, cmd)
+    return f"Payload set to {mass} kg"
+
+
 def _send_urscript(robot_ip: str, cmd: str):
     """Send a raw URScript command to the robot via the secondary port."""
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -332,12 +361,12 @@ def set_digital_out_sequence(robot_ip: str) -> str:
     cmd = (
         "def gripper_seq():\n"
         "  set_tool_digital_out(1, True)\n"
-        "  sleep(2)\n"
+        "  sleep(0.5)\n"
         "  set_tool_digital_out(0, False)\n"
         "end\n"
     )
     _send_urscript(robot_ip, cmd)
-    return "Tool digital out sequence: TDO1=True, wait 2s, TDO0=False"
+    return "Tool digital out sequence: TDO1=True, wait 0.5s, TDO0=False"
 
 
 def lift_z(robot_ip: str, height: float = 0.1, velocity: float = 0.1, acceleration: float = 0.3) -> str:
@@ -372,10 +401,11 @@ def set_tool_digital_out_open(robot_ip: str) -> str:
     cmd = (
         "def gripper_open():\n"
         "  set_tool_digital_out(0, True)\n"
+        "  sleep(0.5)\n"
         "end\n"
     )
     _send_urscript(robot_ip, cmd)
-    return "Tool digital out: TDO0=True (open)"
+    return "Tool digital out: TDO0=True (open), wait 0.5s"
 
 
 if __name__ == "__main__":
