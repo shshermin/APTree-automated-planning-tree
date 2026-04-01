@@ -57,25 +57,25 @@ public class ServiceInputProvider : Service
             }
             else if (location is InitialLocation il && il.Position != null)
             {
-                // InitialLocation: use Position for XYZ, TCP orientation from rpmanipulate
+                // InitialLocation: use Position for XYZ, TCP orientation from rppickup
                 var ori = GetManipulateOrientation();
                 request.Pose = new[] { il.Position.X, il.Position.Y, il.Position.Z, ori[0], ori[1], ori[2] };
                 _resolved = true;
 
                 LoggingService.LogInfo(
                     $"✅ ServiceInputProvider: Resolved InitialLocation '{positionName}' → " +
-                    $"Position={il.Position}, Orientation from rpmanipulate");
+                    $"Position={il.Position}, Orientation from rppickup");
             }
             else if (location is FinalLocation fl && fl.Position != null)
             {
-                // FinalLocation: use Position for XYZ, TCP orientation from rpmanipulate
+                // FinalLocation: use Position for XYZ, TCP orientation from rppickup
                 var ori = GetManipulateOrientation();
                 request.Pose = new[] { fl.Position.X, fl.Position.Y, fl.Position.Z, ori[0], ori[1], ori[2] };
                 _resolved = true;
 
                 LoggingService.LogInfo(
                     $"✅ ServiceInputProvider: Resolved FinalLocation '{positionName}' → " +
-                    $"Position={fl.Position}, Orientation from rpmanipulate");
+                    $"Position={fl.Position}, Orientation from rppickup");
             }
             else
             {
@@ -94,19 +94,19 @@ public class ServiceInputProvider : Service
     }
 
     /// <summary>
-    /// Gets the TCP orientation (rx, ry, rz) from rpmanipulate on the blackboard.
+    /// Gets the TCP orientation (rx, ry, rz) from rppickup on the blackboard.
     /// Used so that InitialLocation/FinalLocation moves keep the same end-effector orientation.
     /// </summary>
     private double[] GetManipulateOrientation()
     {
         try
         {
-            var manip = linkedBlackboard.GetLocation(new FastName("rpmanipulate")) as RobotPosition;
-            if (manip?.TcpOrinetation != null)
-                return new[] { manip.TcpOrinetation.X, manip.TcpOrinetation.Y, manip.TcpOrinetation.Z };
+            var pickup = linkedBlackboard.GetLocation(new FastName("rppickup")) as RobotPosition;
+            if (pickup?.TcpOrinetation != null)
+                return new[] { pickup.TcpOrinetation.X, pickup.TcpOrinetation.Y, pickup.TcpOrinetation.Z };
         }
         catch { }
-        // Fallback: rpmanipulate orientation from DemonstratorSetupObjects
-        return new[] { 3.138454, 0.010236, 0.006714 };
+        // Fallback: rppickup orientation from DemonstratorSetupObjects
+        return new[] {0.0, -3.14159, 0.0};
     }
 }

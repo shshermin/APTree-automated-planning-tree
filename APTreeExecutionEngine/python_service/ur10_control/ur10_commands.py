@@ -16,8 +16,8 @@ POSITIONS_FILE = os.path.join(os.path.dirname(__file__), "positions.json")
 # TCP offsets (flange → tool tip) for each tool, in meters and radians.
 # Format: [x, y, z, rx, ry, rz]
 TCP_OFFSETS = {
-    "gripper": [0.003, 0.0, 0.148, 0, 0, 0],
-    "nailgun": [-0.095, 0.0, 0.3165, 0, 0, 0],
+    "gripper": [0.00723, 0.00095, 0.1465, 0, 0, 0],
+    "nailgun": [-0.09515, -0.00026, 0.3165, 0, 0, 0],
 }
 
 # Note: The Dashboard Server is a simple TCP server that accepts text commands and returns responses.

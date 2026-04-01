@@ -61,9 +61,9 @@ public class EquipToolLL : ExeAction
             foreach (var kv in MLInputs)
             {
                 if (kv.Value is NailGripper or StaplerGun)
-                    return 8.0;
+                    return 8.25;
                 if (kv.Value is Gripper)
-                    return 1.0;
+                    return 0.95;
             }
         }
         return null;
@@ -76,7 +76,9 @@ public class EquipToolLL : ExeAction
             foreach (var kv in MLInputs)
             {
                 if (kv.Value is NailGripper or StaplerGun)
-                    return new[] { 0.0, 0.0, 0.12 };  // Cz = 120mm
+                    return new[] { -0.013, 0.001, 0.151 };  // Cx=-13mm, Cy=1mm, Cz=151mm
+                if (kv.Value is Gripper)
+                    return new[] { -0.001, 0.015, 0.028 };
             }
         }
         return null;
@@ -89,9 +91,9 @@ public class EquipToolLL : ExeAction
             foreach (var kv in MLInputs)
             {
                 if (kv.Value is NailGripper or StaplerGun)
-                    return new[] { -0.095, 0.0, 0.3165, 0.0, 0.0, 0.0 };
+                    return new[] { -0.09515, -0.00026, 0.3165, 0.0, 0.0, 0.0 };
                 if (kv.Value is Gripper)
-                    return new[] { 0.003, 0.0, 0.148, 0.0, 0.0, 0.0 };
+                    return new[] { 0.00723, 0.00095, 0.1465, 0.0, 0.0, 0.0 };
             }
         }
         return null;

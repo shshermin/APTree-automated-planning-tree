@@ -232,7 +232,7 @@ public abstract class ExeAction : PActionNode
                             ori = GetManipulateOrientation();
                         }
                         CommandRequest.Pose = new[] { fl.Position.X, fl.Position.Y, fl.Position.Z, ori[0], ori[1], ori[2] };
-                        LoggingService.LogInfo($"✅ ExeAction: Resolved FinalLocation target '{fl.ID}' → Pose=[{fl.Position.X}, {fl.Position.Y}, {fl.Position.Z}, {ori[0]}, {ori[1]}, {ori[2]}] (orientation source: {(fl.Orientation != null ? "FinalLocation (piece dir → TCP)" : "rpmanipulate")})");
+                        LoggingService.LogInfo($"✅ ExeAction: Resolved FinalLocation target '{fl.ID}' → Pose=[{fl.Position.X}, {fl.Position.Y}, {fl.Position.Z}, {ori[0]}, {ori[1]}, {ori[2]}] (orientation source: {(fl.Orientation != null ? "FinalLocation (piece dir → TCP)" : "rppickup")})");
                     }
                     else
                     {
@@ -312,7 +312,7 @@ public abstract class ExeAction : PActionNode
     protected abstract RobotCommandRequest BuildCommandRequest();
 
     /// <summary>
-    /// Gets the TCP orientation (rx, ry, rz) from rpmanipulate.
+    /// Gets the TCP orientation (rx, ry, rz) from rppickup.
     /// Used so that InitialLocation/FinalLocation moves keep the same end-effector orientation.
     /// </summary>
     private double[] GetManipulateOrientation()
@@ -322,13 +322,13 @@ public abstract class ExeAction : PActionNode
             var bb = OwningTree?.linkedBlackboard;
             if (bb != null)
             {
-                var manip = bb.GetLocation(new FastName("rpmanipulate")) as RobotPosition;
-                if (manip?.TcpOrinetation != null)
-                    return new[] { manip.TcpOrinetation.X, manip.TcpOrinetation.Y, manip.TcpOrinetation.Z };
+                var pickup = bb.GetLocation(new FastName("rppickup")) as RobotPosition;
+                if (pickup?.TcpOrinetation != null)
+                    return new[] { pickup.TcpOrinetation.X, pickup.TcpOrinetation.Y, pickup.TcpOrinetation.Z };
             }
         }
         catch { }
-        // Fallback: rpmanipulate orientation from DemonstratorSetupObjects
+        // Fallback: rppickup orientation from DemonstratorSetupObjects
         return new[] {0.0, -3.14159, 0.0};
     }
 

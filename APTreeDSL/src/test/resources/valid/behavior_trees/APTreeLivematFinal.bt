@@ -3064,7 +3064,7 @@ BehaviorTree PickUpHL_stick12_initlocstick12_robot1_gripper1Subtree {
         All
         AllAction
         NodeGraph {
-            Action TravelML TravelML_robot1_rpmanipulate_rppickup (robot1 rpmanipulate rppickup) {
+            Action TravelML TravelML_robot1_rptoolchange_rppickup (robot1 rptoolchange rppickup) {
                 --[Meets]--> PickUpML_stick12_initlocstick12_robot1_gripper1_rppickup;
             }
             Action PickUpML PickUpML_stick12_initlocstick12_robot1_gripper1_rppickup (stick12 initlocstick12 robot1 gripper1 rppickup)
@@ -3176,6 +3176,12 @@ BehaviorTree NailingHL_stick12_stick7_robot1_staplergun1Subtree {
         All
         AllAction
         NodeGraph {
+            Action InitializeML InitializeML_robot1_staplergun1 (robot1 staplergun1) {
+                --[Meets]--> TravelML_robot1_rptoolchange_rpmanipulate;
+            }
+            Action TravelML TravelML_robot1_rptoolchange_rpmanipulate (robot1 rptoolchange rpmanipulate) {
+                --[Meets]--> NailingML_stick12_stick7_robot1_staplergun1_rpmanipulate;
+            }
             Action NailingML NailingML_stick12_stick7_robot1_staplergun1_rpmanipulate (stick12 stick7 robot1 staplergun1 rpmanipulate)
         }
     }
@@ -8464,6 +8470,48 @@ BehaviorTree ChangeEndeffectorHL_robot1_gripper1_staplergun1_dup29Subtree {
                 --[Meets]--> EquipeML_robot1_staplergun1_rptoolchange_equiplocstapler;
             }
             Action EquipeML EquipeML_robot1_staplergun1_rptoolchange_equiplocstapler (robot1 staplergun1 rptoolchange equiplocstapler)
+        }
+    }
+}
+
+BehaviorTree StackOnTwoHL_stick6_robot1_finallocstick6_stick2_stick1_layer1_layer2_gripper1Subtree {
+    Root FlowNode ENHSP_Demonstrator_DynamicFlow_StackOnTwoHL_stick6_robot1_finallocstick6_stick2_stick1_layer1_layer2_gripper1 {
+        ServicePlanning subtreeSrv_StackOnTwoHL_stick6_robot1_finallocstick6_stick2_stick1_layer1_layer2_gripper1 ENHSP Domain:DomainMLTruss.pddl Problem:problemStackOnTwoHL_stick6_robot1_finallocstick6_stick2_stick1_layer1_layer2_gripper1.pddl
+        All
+        AllAction
+        NodeGraph {
+            Action TravelML TravelML_robot1_rppickup_rpmanipulate (robot1 rppickup rpmanipulate) {
+                --[Meets]--> StackOnTwoML_stick6_robot1_finallocstick6_rpmanipulate_stick1_stick2_gripper1_layer1_layer2;
+            }
+            Action StackOnTwoML StackOnTwoML_stick6_robot1_finallocstick6_rpmanipulate_stick1_stick2_gripper1_layer1_layer2 (stick6 robot1 finallocstick6 rpmanipulate stick1 stick2 gripper1 layer1 layer2)
+        }
+    }
+}
+
+BehaviorTree StackOnTwoHL_stick8_robot1_finallocstick8_stick3_stick4_layer1_layer2_gripper1Subtree {
+    Root FlowNode ENHSP_Demonstrator_DynamicFlow_StackOnTwoHL_stick8_robot1_finallocstick8_stick3_stick4_layer1_layer2_gripper1 {
+        ServicePlanning subtreeSrv_StackOnTwoHL_stick8_robot1_finallocstick8_stick3_stick4_layer1_layer2_gripper1 ENHSP Domain:DomainMLTruss.pddl Problem:problemStackOnTwoHL_stick8_robot1_finallocstick8_stick3_stick4_layer1_layer2_gripper1.pddl
+        All
+        AllAction
+        NodeGraph {
+            Action TravelML TravelML_robot1_rppickup_rpmanipulate (robot1 rppickup rpmanipulate) {
+                --[Meets]--> StackOnTwoML_stick8_robot1_finallocstick8_rpmanipulate_stick3_stick4_gripper1_layer1_layer2;
+            }
+            Action StackOnTwoML StackOnTwoML_stick8_robot1_finallocstick8_rpmanipulate_stick3_stick4_gripper1_layer1_layer2 (stick8 robot1 finallocstick8 rpmanipulate stick3 stick4 gripper1 layer1 layer2)
+        }
+    }
+}
+
+BehaviorTree StackOnTwoHL_stick12_robot1_finallocstick12_stick8_stick7_layer2_layer3_gripper1Subtree {
+    Root FlowNode ENHSP_Demonstrator_DynamicFlow_StackOnTwoHL_stick12_robot1_finallocstick12_stick8_stick7_layer2_layer3_gripper1 {
+        ServicePlanning subtreeSrv_StackOnTwoHL_stick12_robot1_finallocstick12_stick8_stick7_layer2_layer3_gripper1 ENHSP Domain:DomainMLTruss.pddl Problem:problemStackOnTwoHL_stick12_robot1_finallocstick12_stick8_stick7_layer2_layer3_gripper1.pddl
+        All
+        AllAction
+        NodeGraph {
+            Action TravelML TravelML_robot1_rppickup_rpmanipulate (robot1 rppickup rpmanipulate) {
+                --[Meets]--> StackOnTwoML_stick12_robot1_finallocstick12_rpmanipulate_stick8_stick7_gripper1_layer2_layer3;
+            }
+            Action StackOnTwoML StackOnTwoML_stick12_robot1_finallocstick12_rpmanipulate_stick8_stick7_gripper1_layer2_layer3 (stick12 robot1 finallocstick12 rpmanipulate stick8 stick7 gripper1 layer2 layer3)
         }
     }
 }

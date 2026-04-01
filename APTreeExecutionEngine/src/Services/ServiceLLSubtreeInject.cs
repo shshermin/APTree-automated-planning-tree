@@ -152,6 +152,7 @@ namespace BehaviorTreeMainProject
             // ── NailingML ──
             var nailing = new LLSubtreeTemplate("NailingML");
             nailing.Steps.Add(new LLStep("NailingLL") { Parameters = { ["obj"] = "{obj1}", ["base"] = "{obj2}", ["robot"] = "{client}", ["tool"] = "{ng}", ["coordinate"] = "{nailCoordinate}" } });
+            nailing.Steps.Add(new LLStep("LiftLL") { Parameters = { ["robot"] = "{client}" } });
             _templates["NailingML"] = nailing;
 
 
