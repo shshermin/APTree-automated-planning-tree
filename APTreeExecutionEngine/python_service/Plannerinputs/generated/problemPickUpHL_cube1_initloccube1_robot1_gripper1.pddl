@@ -120,11 +120,6 @@
 (atagent robot1 rpmanipulate)
 (fixed table1)
 (activetool gripper1)
-(positionfree initlocstick1)
-(atfinalposition stick1)
-(atplace stick1 finallocstick1)
-(accessible stick1)
-(stacked stick1 table1)
 (positionfree initlocstick2)
 (atfinalposition stick2)
 (atplace stick2 finallocstick2)
@@ -135,6 +130,11 @@
 (atplace stick4 finallocstick4)
 (accessible stick4)
 (stacked stick4 table1)
+(positionfree initlocstick1)
+(atfinalposition stick1)
+(atplace stick1 finallocstick1)
+(accessible stick1)
+(stacked stick1 table1)
   )
   (:goal 
     (and

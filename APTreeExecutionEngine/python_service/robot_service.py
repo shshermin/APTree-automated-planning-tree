@@ -29,6 +29,11 @@ MOVEIT_BRIDGE_URL = "http://127.0.0.1:5002"
 EXTERNAL_CONTROL_PROGRAM = "external_control.urp"
 SUPPORTED_MOVE_TYPES = ['movej', 'movel', 'movep', 'movec', 'planned']
 
+# Active tool state — set by /play_program (equip/deequip), re-applied on every move
+_active_tcp = None          # list [x, y, z, rx, ry, rz] or None
+_active_payload = None      # float (kg) or None
+_active_payload_cog = None  # list [cx, cy, cz] or None
+
 
 @app.route('/health', methods=['GET'])
 def health():
@@ -128,18 +133,27 @@ def robot_play_program():
         start_time = time.time()
         result_msg = play_program(robot_ip, program_name, speed=speed)
 
-        # Set TCP after program completes if specified
+        # Set TCP after program completes if specified, and remember it
+        global _active_tcp, _active_payload, _active_payload_cog
         tcp_values = data.get('tcp')
         tcp_msg = None
         if tcp_values is not None:
+            _active_tcp = tcp_values
             tcp_msg = set_tcp(robot_ip, tcp_values)
-            print(f"TCP set: {tcp_msg}")
+            print(f"TCP set and stored: {tcp_msg}")
+        else:
+            _active_tcp = None
 
-        # Set payload after program completes if specified
+        # Set payload after program completes if specified, and remember it
         payload_msg = None
         if payload_mass is not None:
+            _active_payload = float(payload_mass)
+            _active_payload_cog = payload_cog
             payload_msg = set_payload(robot_ip, float(payload_mass), cog=payload_cog)
-            print(f"Payload set: {payload_msg}")
+            print(f"Payload set and stored: {payload_msg}")
+        else:
+            _active_payload = None
+            _active_payload_cog = None
 
         elapsed = time.time() - start_time
 
@@ -206,23 +220,35 @@ def robot_move():
 
         start_time = time.time()
 
+        # Re-apply stored TCP/payload with every move command
+        tcp_for_move = _active_tcp
+        payload_for_move = _active_payload
+        payload_cog_for_move = _active_payload_cog
+        if tcp_for_move:
+            print(f"Re-applying stored TCP: {tcp_for_move}")
+        if payload_for_move:
+            print(f"Re-applying stored payload: {payload_for_move} kg, COG: {payload_cog_for_move}")
+
         if command_type == 'movej':
             result_msg = move_to_pose(
                 robot_ip=robot_ip, name=final_position, position=position_data,
                 velocity=velocity if velocity is not None else 0.5,
                 acceleration=acceleration if acceleration is not None else 1.0,
+                tcp=tcp_for_move, payload=payload_for_move, payload_cog=payload_cog_for_move,
             )
         elif command_type == 'movel':
             result_msg = move_to_pose_l(
                 robot_ip=robot_ip, name=final_position, position=position_data,
                 velocity=velocity if velocity is not None else 0.25,
                 acceleration=acceleration if acceleration is not None else 1.2,
+                tcp=tcp_for_move, payload=payload_for_move, payload_cog=payload_cog_for_move,
             )
         elif command_type == 'movep':
             result_msg = move_to_pose_p(
                 robot_ip=robot_ip, name=final_position, position=position_data,
                 velocity=velocity if velocity is not None else 0.25,
                 acceleration=acceleration if acceleration is not None else 1.2,
+                tcp=tcp_for_move, payload=payload_for_move, payload_cog=payload_cog_for_move,
             )
         elif command_type == 'movec':
             initial_position = data.get('initialPosition')
@@ -232,12 +258,22 @@ def robot_move():
                 robot_ip=robot_ip, via_name=initial_position, end_name=final_position,
                 velocity=velocity if velocity is not None else 0.25,
                 acceleration=acceleration if acceleration is not None else 1.2,
+                tcp=tcp_for_move, payload=payload_for_move, payload_cog=payload_cog_for_move,
             )
         elif command_type == 'planned':
             # Forward to MoveIt bridge service running in WSL
             pose = inline_pose
             if not pose or len(pose) < 6:
                 return jsonify({'success': False, 'error': 'pose [x,y,z,rx,ry,rz] is required for planned moves'}), 400
+
+            # Step 0: Set payload and TCP on the robot BEFORE starting external_control
+            # This prevents protective stops caused by incorrect payload during MoveIt motion
+            if payload_for_move is not None:
+                payload_msg = set_payload(robot_ip, payload_for_move, cog=payload_cog_for_move)
+                print(f"Pre-MoveIt payload set: {payload_msg}")
+            if tcp_for_move is not None:
+                tcp_msg = set_tcp(robot_ip, tcp_for_move)
+                print(f"Pre-MoveIt TCP set: {tcp_msg}")
 
             # Step 1: Load and play the External Control program on the pendant
             print(f"Loading External Control program: {EXTERNAL_CONTROL_PROGRAM}")

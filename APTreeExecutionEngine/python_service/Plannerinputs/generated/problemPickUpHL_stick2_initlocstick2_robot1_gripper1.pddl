@@ -108,6 +108,7 @@
 (clear cube1)
 (clear cube2)
 (attool staplergun1 equiplocstapler)
+(atplace stick1 initlocstick1)
 (atplace stick2 initlocstick2)
 (atplace stick3 initlocstick3)
 (atplace stick4 initlocstick4)
@@ -120,13 +121,9 @@
 (atplace cube2 initloccube2)
 (atplace table1 mp5)
 (atagent robot1 rpmanipulate)
+(accessible table1)
 (fixed table1)
 (activetool gripper1)
-(positionfree initlocstick1)
-(atfinalposition stick1)
-(atplace stick1 finallocstick1)
-(accessible stick1)
-(stacked stick1 table1)
   )
   (:goal 
     (and
