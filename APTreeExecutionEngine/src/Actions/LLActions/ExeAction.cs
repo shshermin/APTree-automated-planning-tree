@@ -71,10 +71,6 @@ public abstract class ExeAction : PActionNode
         _emptyEffects = new State(StateType.Effect, new FastName($"{instanceName}_eff"));
     }
 
-    /// <summary>
-    /// Shows a blocking confirmation dialog before the LL action executes.
-    /// The BT pauses until the operator presses OK (proceed) or Cancel (abort).
-    /// </summary>
     protected override void OnEnter()
     {
         base.OnEnter();
@@ -83,28 +79,7 @@ public abstract class ExeAction : PActionNode
         CommandRequest = BuildCommandRequest();
 
         var actionName = GetType().Name;
-        var details = CommandRequest != null
-            ? $"Command: {CommandRequest.CommandType}\nTarget: {CommandRequest.FinalPosition}"
-            : "No command details";
-
-        var message = $"About to execute LL action:\n\n" +
-                      $"  Action:   {actionName}\n" +
-                      $"  Instance: {InstanceName}\n" +
-                      $"  {details}\n\n" +
-                      $"Press OK to proceed, Cancel to abort.";
-
-        LoggingService.LogInfo($"⏸️ ExeAction: Waiting for operator confirmation for '{InstanceName}' ({actionName})");
-
-        int result = MessageBoxW(IntPtr.Zero, message, $"Confirm: {actionName}", MB_OKCANCEL | MB_ICONWARNING | MB_TOPMOST);
-
-        if (result != IDOK)
-        {
-            LoggingService.LogWarning($"🛑 ExeAction: Operator CANCELLED '{InstanceName}' ({actionName})");
-            status = BTNodeResult.Failure;
-            return;
-        }
-
-        LoggingService.LogSuccess($"▶️ ExeAction: Operator confirmed '{InstanceName}' ({actionName}) — proceeding");
+        LoggingService.LogInfo($"▶️ ExeAction: Entering '{InstanceName}' ({actionName})");
     }
 
     // LL actions never have children — short-circuit the inherited PActionNode logic
@@ -273,36 +248,10 @@ public abstract class ExeAction : PActionNode
         }
     }
 
-    /// <summary>
-    /// After the LL action finishes, shows a blocking dialog asking the operator
-    /// whether the action executed successfully.
-    /// </summary>
     protected override void OnExit()
     {
         var actionName = GetType().Name;
-        var statusBefore = status;
-
-        var message = $"LL action completed:\n\n" +
-                      $"  Action:   {actionName}\n" +
-                      $"  Instance: {InstanceName}\n" +
-                      $"  Status:   {statusBefore}\n\n" +
-                      $"Did the action execute successfully?\n" +
-                      $"Press OK to proceed, Cancel to mark as FAILED.";
-
-        LoggingService.LogInfo($"⏸️ ExeAction: Waiting for operator verification for '{InstanceName}' ({actionName}), status={statusBefore}");
-
-        int result = MessageBoxW(IntPtr.Zero, message, $"Verify: {actionName}", MB_OKCANCEL | MB_ICONWARNING | MB_TOPMOST);
-
-        if (result != IDOK)
-        {
-            LoggingService.LogWarning($"🛑 ExeAction: Operator marked '{InstanceName}' ({actionName}) as FAILED");
-            status = BTNodeResult.Failure;
-        }
-        else
-        {
-            LoggingService.LogSuccess($"▶️ ExeAction: Operator verified '{InstanceName}' ({actionName}) — proceeding");
-        }
-
+        LoggingService.LogInfo($"✅ ExeAction: Exiting '{InstanceName}' ({actionName}), status={status}");
         base.OnExit();
     }
 
