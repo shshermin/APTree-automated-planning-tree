@@ -427,16 +427,17 @@ namespace BehaviorTreeMainProject
                 var flowNodeName = $"{config.Name}_DynamicFlow_{instanceName}";
                 var plannerServiceName = $"subtreeSrv_{instanceName}";
 
-                // Extract just the filename from the full paths (e.g. "Plannerinputs/static/DomainML.pddl" -> "DomainML.pddl")
+                // Extract just the filename from the full paths, without .pddl extension
+                // (DSL model uses plain names like "DomainMLTruss", not "DomainMLTruss.pddl")
                 string domainFilePath = config.PlannerParameters.TryGetValue("domainFile", out var dfObj) ? dfObj?.ToString() : null;
                 string domainFileName = string.IsNullOrWhiteSpace(domainFilePath)
-                    ? "DomainML.pddl"
-                    : System.IO.Path.GetFileName(domainFilePath);
+                    ? "DomainML"
+                    : System.IO.Path.GetFileNameWithoutExtension(domainFilePath);
 
                 string problemFilePath = config.PlannerParameters.TryGetValue("problemFile", out var pfObj) ? pfObj?.ToString() : null;
                 string problemFileName = string.IsNullOrWhiteSpace(problemFilePath)
                     ? null
-                    : System.IO.Path.GetFileName(problemFilePath);
+                    : System.IO.Path.GetFileNameWithoutExtension(problemFilePath);
 
                 LogMessage($"🔧 ServiceSubtreeInject: Registering subtree BT model '{subtreeBTName}' for action '{instanceName}'");
 

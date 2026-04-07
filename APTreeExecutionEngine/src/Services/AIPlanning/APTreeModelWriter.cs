@@ -151,11 +151,31 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
             {
                 var content = File.ReadAllText(filePath);
 
-                // Check if this subtree BT already exists
-                if (content.Contains($"BehaviorTree {subtreeBTName}"))
+                // If this subtree BT already exists, remove it so we can replace with fresh data
+                var existingMarker = $"BehaviorTree {subtreeBTName}";
+                if (content.Contains(existingMarker))
                 {
-                    LoggingService.LogInfo($"ℹ️ APTreeModelWriter: Subtree BT '{subtreeBTName}' already exists, skipping");
-                    return;
+                    int btStart = content.IndexOf(existingMarker);
+                    // Walk backwards to include any preceding blank lines
+                    while (btStart > 0 && content[btStart - 1] == '\n') btStart--;
+                    while (btStart > 0 && content[btStart - 1] == '\r') btStart--;
+
+                    // Find the matching closing brace (top-level BehaviorTree block)
+                    int braceStart = content.IndexOf('{', content.IndexOf(existingMarker));
+                    int depth = 1;
+                    int pos = braceStart + 1;
+                    while (pos < content.Length && depth > 0)
+                    {
+                        if (content[pos] == '{') depth++;
+                        else if (content[pos] == '}') depth--;
+                        pos++;
+                    }
+                    // pos is now one past the closing '}'
+                    // Also consume any trailing newlines
+                    while (pos < content.Length && (content[pos] == '\r' || content[pos] == '\n')) pos++;
+
+                    content = content.Substring(0, btStart) + content.Substring(pos);
+                    LoggingService.LogInfo($"ℹ️ APTreeModelWriter: Removed existing subtree BT '{subtreeBTName}' for replacement");
                 }
 
                 // Build the subtree BT model following the APTree grammar:
