@@ -235,9 +235,15 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
         /// </summary>
         private string PatchRobotStatePredicates(string problemContent, Blackboard<FastName> bb)
         {
+            // HL problems do not declare the position/tool-location objects needed by
+            // atagent and attool, so exclude those predicates from the HL patch.
+            // They are only relevant for ML problem files (handled in GeneratePDDLProblemContent).
+            var hlExcludedTypes = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "atagent", "attool" };
+
             // 1. Collect live robot-state predicates from the blackboard
             var livePredicates = bb.GetTruePredicates()
-                .Where(p => RobotStatePredicateTypes.Contains(p.PredicateTypeName))
+                .Where(p => RobotStatePredicateTypes.Contains(p.PredicateTypeName)
+                         && !hlExcludedTypes.Contains(p.PredicateTypeName))
                 .ToList();
 
             if (livePredicates.Count == 0)
@@ -614,11 +620,25 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
             goalPredicates = goalPredicates.ToLower();
             var objects = GetRelevantObjects(parentProblemFile);
 
+            // HARDCODED: Append ML-only objects that are commented out in HL problem files.
+            // These are needed by the ML domain (trussml) but not by the HL domain (trusshl).
+            // TODO: Find a more dynamic solution for injecting ML-specific objects.
+            const string hardcodedMLObjects =
+                "\n    ;; HARDCODED ML-only objects (not in HL problem files)" +
+                "\n    equiplocgripper - equipposition" +
+                "\n    equiplocstapler - equipposition" +
+                "\n    rppickup - rppickup" +
+                "\n    rpmanipulate - rpmanipulate" +
+                "\n    rptoolchange - rptoolchange";
+            objects = objects.TrimEnd() + hardcodedMLObjects;
+
             // Parse declared object names from the objects block
             var declaredObjects = ParseDeclaredObjectNames(objects);
             LoggingService.LogInfo($"🔧 ServicePDDLPlanning: Declared objects count: {declaredObjects.Count}");
 
-            // Filter init predicates to only include those referencing declared objects
+            // Filter init predicates to only include those referencing declared objects.
+            // Note: atagent and attool predicates from the blackboard will now pass through
+            // because the hardcoded ML objects above declare their referenced positions/tools.
             string filteredPredicates = FilterPredicatesByDeclaredObjects(initialPredicates, declaredObjects);
 
             return $@"(define (problem {actionType.ToLower()})

@@ -8,7 +8,7 @@
     
     firstposition finalposition equipposition - location      
 
-    rppickup rpmanipulate rptoolchange - robotposition                                                              
+    ;rppickup rpmanipulate rptoolchange - robotposition                                                              
                                                        
     table stick cube - element
    
@@ -23,9 +23,9 @@
  
   (:predicates
    
-    (atagent ?client - robot ?pp - robotposition) 
+    ;(atagent ?client - robot ?pp - robotposition) 
     (hastool ?client - robot ?tool - tool)
-    (attool ?tool - tool ?ep - equipposition)
+    ;(attool ?tool - tool ?ep - equipposition)
     (atplace ?obj - element ?p - location) ; object is at position p                                                                                              
     (holding ?client - robot ?obj - element)      ; a robot is holding an object
     (clear ?obj - element)   ;an object is clear

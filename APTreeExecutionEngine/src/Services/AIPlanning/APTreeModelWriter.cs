@@ -17,7 +17,7 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
         private static readonly string DefaultBtFilePath = Path.GetFullPath(
             Path.Combine(AppDomain.CurrentDomain.BaseDirectory,
             "..", "..", "..", "..", "APTreeDSL", "src", "test", "resources",
-            "valid", "behavior_trees", "APTreeLivematFinal.bt"));
+            "valid", "behavior_trees", "DemonstratorFinal.bt"));
 
         /// <summary>
         /// Replaces the empty "NodeGraph { }" inside the FlowNode matching <paramref name="cassetteName"/>

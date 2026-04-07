@@ -32,13 +32,13 @@
     staplergun1 - staplergun
 
     ;; Equip Positions
-    equiplocgripper - equipposition
-    equiplocstapler - equipposition
+    ;equiplocgripper - equipposition
+    ;equiplocstapler - equipposition
 
-    ;; Robot Positions
-    rppickup - rppickup
-    rpmanipulate - rpmanipulate
-    rptoolchange - rptoolchange
+  ;; Robot Positions
+   ; rppickup - rppickup
+   ; rpmanipulate - rpmanipulate
+   ; rptoolchange - rptoolchange
 
     ;; Locations - Initial (first positions)
     initlocstick1 - firstposition
@@ -110,9 +110,9 @@
 
     ;; GripperEmpty
     (gripperempty robot1)
-    (atagent robot1 rpmanipulate)
+    ;(atagent robot1 rpmanipulate)
     (hastool robot1 gripper1)
-    (attool staplergun1 equiplocstapler)
+    ;(attool staplergun1 equiplocstapler)
 
     ;; ObjectFinalPosition
     (objectfinalposition stick1 finallocstick1)
