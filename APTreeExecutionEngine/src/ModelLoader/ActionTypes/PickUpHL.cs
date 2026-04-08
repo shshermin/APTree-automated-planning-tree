@@ -47,17 +47,10 @@ namespace BehaviorTreeMainProject
             // Initialize effects
             effects = new State(StateType.Effect, new FastName("pickUpHL_effects"));
             effects.AddPredicate(new FastName("pickUpHL_eff_0"), new Holding(client, obj, false));
-<<<<<<< HEAD
-            effects.AddPredicate(new FastName("pickUpHL_eff_1"), new AtPlace(obj, p, true));
-            effects.AddPredicate(new FastName("pickUpHL_eff_2"), new GripperEmpty(client, true));
-            effects.AddPredicate(new FastName("pickUpHL_eff_3"), new Clear(obj, true));
-            effects.AddPredicate(new FastName("pickUpHL_eff_4"), new PositionFree(p, false));
-=======
             effects.AddPredicate(new FastName("pickUpHL_eff_1"), new Atplace(obj, grabPos, true));
             effects.AddPredicate(new FastName("pickUpHL_eff_2"), new Clear(obj, true));
             effects.AddPredicate(new FastName("pickUpHL_eff_3"), new Positionfree(grabPos, false));
             effects.AddPredicate(new FastName("pickUpHL_eff_4"), new Vgempty(client, true));
->>>>>>> 3505327 (optimizing the speed with new decorators)
         }
 
         protected override State Preconditions => preconditions;

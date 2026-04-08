@@ -43,12 +43,8 @@ namespace BehaviorTreeMainProject
             effects.AddPredicate(new FastName("placeHL_eff_0"), new AtPlace(obj, placePos, false));
             effects.AddPredicate(new FastName("placeHL_eff_1"), new Holding(client, obj, true));
             effects.AddPredicate(new FastName("placeHL_eff_2"), new Clear(obj, false));
-<<<<<<< HEAD
-            effects.AddPredicate(new FastName("placeHL_eff_3"), new PositionFree(placePos, true));
-=======
             effects.AddPredicate(new FastName("placeHL_eff_3"), new Positionfree(placePos, true));
             effects.AddPredicate(new FastName("placeHL_eff_4"), new Vgempty(client, false));
->>>>>>> 3505327 (optimizing the speed with new decorators)
         }
 
         protected override State Preconditions => preconditions;
