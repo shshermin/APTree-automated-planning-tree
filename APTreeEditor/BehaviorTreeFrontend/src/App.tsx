@@ -1,4 +1,70 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+
+/**
+ * Connects to the backend WebSocket at /ws/tick and returns a live map of
+ * nodeName → latest tick status ("Running" | "Success" | "Failure").
+ * Statuses expire after EXPIRE_MS milliseconds so nodes don't stay highlighted forever.
+ */
+function useTickStatus(expireMs = 2000): Record<string, string> {
+  const [tickStatus, setTickStatus] = useState<Record<string, string>>({});
+  const timersRef = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
+  const wsRef = useRef<WebSocket | null>(null);
+
+  useEffect(() => {
+    let active = true;
+
+    function connect() {
+      if (!active) return;
+      const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+      const ws = new WebSocket(`${protocol}//${window.location.host}/ws/tick`);
+      wsRef.current = ws;
+
+      ws.onmessage = (event) => {
+        if (!active) return;
+        try {
+          const { nodeName, status } = JSON.parse(event.data as string) as {
+            nodeName: string;
+            status: string;
+          };
+          setTickStatus((prev) => ({ ...prev, [nodeName]: status }));
+
+          const existing = timersRef.current.get(nodeName);
+          if (existing) clearTimeout(existing);
+
+          const timer = setTimeout(() => {
+            setTickStatus((prev) => {
+              const next = { ...prev };
+              delete next[nodeName];
+              return next;
+            });
+            timersRef.current.delete(nodeName);
+          }, expireMs);
+
+          timersRef.current.set(nodeName, timer);
+        } catch {
+          // ignore malformed messages
+        }
+      };
+
+      ws.onclose = () => {
+        // Reconnect after 2s if still mounted
+        if (active) setTimeout(connect, 2000);
+      };
+    }
+
+    connect();
+
+    return () => {
+      active = false;
+      wsRef.current?.close();
+      wsRef.current = null;
+      timersRef.current.forEach(clearTimeout);
+      timersRef.current.clear();
+    };
+  }, [expireMs]);
+
+  return tickStatus;
+}
 import "./App.css";
 import Header from "./components/header/Header.tsx";
 import Sidebar from "./components/sidebar/Sidebar.tsx";
@@ -27,11 +93,13 @@ import {
 } from "./components/sidebar/utils/constants";
 import {
   aptreeGraphToCanvasGraph,
+  aptreeGraphsToCanvasGraph,
   normalizeAptreeValidateResponse,
 } from "./utils/aptreeImport";
 import ActionParameterDetailsModal from "./components/editor/modals/ActionParameterDetailsModal.tsx";
 import ActionPredicateModal from "./components/editor/modals/ActionPredicateModal.tsx";
 import AptreeValidateModal from "./components/aptree/AptreeValidateModal";
+import SubtreeFocusPanel from "./components/editor/SubtreeFocusPanel.tsx";
 import { FLOW_SUCCESS_TYPES } from "./components/sidebar/utils/types";
 import type {
   ActionInstance,
@@ -276,6 +344,7 @@ function getInitialTheme(): ThemeMode {
  * @returns main application element
  */
 function App() {
+  const tickStatus = useTickStatus();
   const [theme, setTheme] = useState<ThemeMode>(getInitialTheme);
   const [userLockedTheme, setUserLockedTheme] = useState<boolean>(() => {
     if (typeof window === "undefined") {
@@ -299,6 +368,7 @@ function App() {
     group: PredicateGroup;
   } | null>(null);
   const [isValidateOpen, setIsValidateOpen] = useState(false);
+  const [focusedSubtreeRef, setFocusedSubtreeRef] = useState<string | null>(null);
   const sidebarManager = useSidebarManager();
   const {
     importActionInstancesFromText,
@@ -379,6 +449,34 @@ function App() {
 
     return hasChanges ? reconciled : rawActionInstances;
   }, [rawActionInstances, actionTypes]);
+
+  const subtreeGraphMap = useMemo(() => {
+    const nodeIdSet = new Map<string, string>(); // nodeId → graphName
+    for (const node of graph.nodes) {
+      if (node.graphName) nodeIdSet.set(node.id, node.graphName);
+    }
+    const map = new Map<string, { nodes: CanvasNode[]; connections: NodeConnection[] }>();
+    for (const node of graph.nodes) {
+      if (!node.graphName) continue;
+      if (!map.has(node.graphName)) map.set(node.graphName, { nodes: [], connections: [] });
+      map.get(node.graphName)!.nodes.push(node);
+    }
+    for (const conn of graph.connections) {
+      const gName = nodeIdSet.get(conn.sourceNodeId) ?? nodeIdSet.get(conn.targetNodeId);
+      if (gName && map.has(gName)) map.get(gName)!.connections.push(conn);
+    }
+    return map;
+  }, [graph.nodes, graph.connections]);
+
+  const handleNodeClickOnCanvas = useCallback(
+    (nodeId: string) => {
+      const node = graph.nodes.find((n) => n.id === nodeId);
+      if (node?.subtreeRef) {
+        setFocusedSubtreeRef(node.subtreeRef);
+      }
+    },
+    [graph.nodes]
+  );
 
   /**
    * shows the action parameter detail modal with the provided detail.
@@ -876,7 +974,15 @@ function App() {
           return;
         }
 
-        if (!parsed.graph || parsed.graph.nodes.length === 0) {
+        const candidateGraphs =
+          parsed.graphs && parsed.graphs.length > 0
+            ? parsed.graphs
+            : parsed.graph
+              ? [parsed.graph]
+              : [];
+
+        const hasAnyNodes = candidateGraphs.some((candidate) => candidate.nodes.length > 0);
+        if (candidateGraphs.length === 0 || !hasAnyNodes) {
           window.alert(
             "APTree import succeeded, but no graph data was returned by the tool. Build the MontiCore tool jar with: (cd APTreeDSL && gradle shadowJar)."
           );
@@ -884,7 +990,10 @@ function App() {
           
         }
 
-        const importResult = aptreeGraphToCanvasGraph(parsed.graph, actionTypes ?? []);
+        const importResult =
+          candidateGraphs.length > 1
+            ? aptreeGraphsToCanvasGraph(candidateGraphs, actionTypes ?? [])
+            : aptreeGraphToCanvasGraph(candidateGraphs[0]!, actionTypes ?? []);
 
         // Add discovered action types to the sidebar
         if (importResult.discoveredActionTypes.length > 0) {
@@ -1280,7 +1389,7 @@ function App() {
             onOpenValidate={() => setIsValidateOpen(true)}
           />
           <div className="editor" role="main">
-            <div className="editor-canvas-wrap">
+            <div className="editor-canvas-wrap" style={{ position: "relative" }}>
               <EditorCanvas
                 nodes={graph.nodes}
                 separators={separators}
@@ -1302,9 +1411,19 @@ function App() {
                 onCycleFlowSuccessType={handleCycleFlowSuccessType}
                 onSetRootNode={handleSetRootNode}
                 onOpenPredicateModal={handleOpenPredicateModal}
+                onNodeClick={handleNodeClickOnCanvas}
                 actionTypes={actionTypes}
                 actionInstances={actionInstances}
+                tickStatus={tickStatus}
               />
+              {focusedSubtreeRef && subtreeGraphMap.has(focusedSubtreeRef) && (
+                <SubtreeFocusPanel
+                  subtreeName={focusedSubtreeRef}
+                  nodes={subtreeGraphMap.get(focusedSubtreeRef)!.nodes}
+                  connections={subtreeGraphMap.get(focusedSubtreeRef)!.connections}
+                  onClose={() => setFocusedSubtreeRef(null)}
+                />
+              )}
             </div>
           </div>
         </div>

@@ -142,10 +142,32 @@ public class BTFlowNodeComposite : FlowNode
             return false;
         }
         
-        // Only tick the current active child
-        while (currentChildIndex < allChildren.Count)
+        // Tick children SEQUENTIALLY: tick child i, wait for its result, then tick child i+1.
+        // Each child's Tick() fully completes (including all decorator evaluation, node logic,
+        // and post-processing) before the next child begins. This ensures that blackboard
+        // state changes made by one child's decorators (e.g. LowestCostExecution writing
+        // ChosenExecutingBranch) are fully visible to the next child's decorators
+        // (e.g. ExclusiveBranchGate reading ChosenExecutingBranch).
+        //
+        // Fair progress: if a branch is deprioritized (ahead of others), tick it LAST
+        // so the lagging branches get to run first.
+        int deprioritizedIndex = LinkedBlackboard.DeprioritizedBranchIndex;
+        var tickOrder = new List<int>();
+        for (int i = 0; i < allChildren.Count; i++)
         {
-            var child = allChildren[currentChildIndex];
+            if (i != deprioritizedIndex)
+                tickOrder.Add(i);
+        }
+        if (deprioritizedIndex >= 0 && deprioritizedIndex < allChildren.Count)
+        {
+            tickOrder.Add(deprioritizedIndex);
+            LoggingService.LogInfo($"⚖️ CompositeFlow: Branch {deprioritizedIndex + 1} deprioritized — ticking it last");
+        }
+
+        foreach (int i in tickOrder)
+        {
+            var child = allChildren[i];
+            
             var previousStatus = child.status;
             
             LoggingService.LogInfo($"🎯 CompositeFlow: [{currentChildIndex + 1}/{allChildren.Count}] Ticking child: {child.DebugDisplayName} (current status: {previousStatus})");

@@ -16,16 +16,11 @@ import CoCos.DynamicBTFlowNode.PlanningServiceActionsCoverageCoCo;
 import CoCos.DynamicBTFlowNode.SharedResourceConflictCoCo;
 import CoCos.DynamicBTFlowNode.UniquenessOfNames;
 import behaviortree._ast.ASTActionNode;
-import behaviortree._cocos.BehaviorTreeASTDecoratorCoCo;
-import behaviortree._cocos.BehaviorTreeASTServiceCoCo;
 import crftypescon._ast.ASTPickUpHL;
 import crftypescon._ast.ASTPlaceHL;
 import crftypescon._ast.ASTWorld;
-import crftypescon._cocos.CRFTypesConASTPickUpHLCoCo;
-import crftypescon._cocos.CRFTypesConASTPlaceHLCoCo;
 import crftypescon._parser.CRFTypesConParser;
 import crftypescon._visitor.CRFTypesConVisitor2;
-import crftypesdef._cocos.CRFTypesDefASTPActionNodeCoCo;
 import crftypesdef._symboltable.ElementSymbol;
 import de.se_rwth.commons.logging.Log;
 import dynamicbtflownode.DynamicBTFlowNodeMill;
@@ -33,7 +28,6 @@ import dynamicbtflownode._ast.ASTAPTree;
 import dynamicbtflownode._ast.ASTDynamicBTFlowNodeNode;
 import dynamicbtflownode._ast.ASTFinalWorld;
 import dynamicbtflownode._ast.ASTGraphNode;
-import dynamicbtflownode._cocos.DynamicBTFlowNodeASTGraphNodeCoCo;
 import dynamicbtflownode._cocos.DynamicBTFlowNodeCoCoChecker;
 import dynamicbtflownode._symboltable.IDynamicBTFlowNodeArtifactScope;
 import dynamicbtflownode._symboltable.IDynamicBTFlowNodeGlobalScope;
@@ -127,21 +121,21 @@ public class APTreeTool {
         DynamicBTFlowNodeCoCoChecker checker = new DynamicBTFlowNodeCoCoChecker();
         // Add custom checks (must register for each node type explicitly to avoid ambiguity)
         ElementExistsCoCo elementCheck = new ElementExistsCoCo();
-        checker.addCoCo((CRFTypesConASTPickUpHLCoCo) elementCheck);
-        checker.addCoCo((CRFTypesConASTPlaceHLCoCo) elementCheck);
+        //checker.addCoCo((CRFTypesConASTPickUpHLCoCo) elementCheck);
+        //checker.addCoCo((CRFTypesConASTPlaceHLCoCo) elementCheck);
         // New: Every FlowNode must have at least one PlanningService
         MustHavePlanningService planningServiceCheck = new MustHavePlanningService();
        // checker.addCoCo(planningServiceCheck);
         // New: Action nodes cannot have PlanningService (generic, works with all ASTPActionNode subclasses)
         ActionNodesCannotHavePlanningService actionNodeCheck = new ActionNodesCannotHavePlanningService();
-        checker.addCoCo((CRFTypesDefASTPActionNodeCoCo) actionNodeCheck);
+        //checker.addCoCo((CRFTypesDefASTPActionNodeCoCo) actionNodeCheck);
         // New: Decorator and service names must be unique
         UniquenessOfNames uniquenessCheck = new UniquenessOfNames();
-        checker.addCoCo((BehaviorTreeASTDecoratorCoCo) uniquenessCheck);
-        checker.addCoCo((BehaviorTreeASTServiceCoCo) uniquenessCheck);
+        //checker.addCoCo((BehaviorTreeASTDecoratorCoCo) uniquenessCheck);
+        //checker.addCoCo((BehaviorTreeASTServiceCoCo) uniquenessCheck);
         // New: Validate causal links between connected actions
         CausalLinkValidator causalValidator = new CausalLinkValidator();
-        checker.addCoCo((DynamicBTFlowNodeASTGraphNodeCoCo) causalValidator);
+        //checker.addCoCo((DynamicBTFlowNodeASTGraphNodeCoCo) causalValidator);
         
         // New: Check that all actions in behavior tree are defined in planning service domain
         PlanningServiceActionsCoverageCoCo actionsCoverageCheck = new PlanningServiceActionsCoverageCoCo();

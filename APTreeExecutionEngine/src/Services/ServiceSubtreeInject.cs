@@ -360,9 +360,9 @@ namespace BehaviorTreeMainProject
                     LogMessage($"💾 ServiceSubtreeInject: Cached subtree for '{cacheKey}'");
                 }
 
-                // Add the ExclusiveBranchGate decorator
-                subtree.AddDecorator(new DecoratorExclusiveBranchGate(subtree as DynamicFlowNode));
-                LogMessage($"🔧 ServiceSubtreeInject: Added ExclusiveBranchGate decorator to flow node '{subtree.DebugDisplayName}'");
+                // ExclusiveBranchGate is now added in the DynamicFlowNode constructor
+                // so all DynamicFlowNodes (cassettes AND subtrees) get it automatically.
+                // No need to add it here — the subtree already has one from its constructor.
                 // DEBUG: Check if the decorator is actually in the list
                 var decoratorCount = subtree.GetType().GetField("Decorators", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.GetValue(subtree) as System.Collections.Generic.List<object>;
                 if (decoratorCount != null)
@@ -427,8 +427,7 @@ namespace BehaviorTreeMainProject
                 var flowNodeName = $"{config.Name}_DynamicFlow_{instanceName}";
                 var plannerServiceName = $"subtreeSrv_{instanceName}";
 
-                // Extract just the filename from the full paths, without .pddl extension
-                // (DSL model uses plain names like "DomainMLTruss", not "DomainMLTruss.pddl")
+                // Extract just the filename (without .pddl) from the full paths (e.g. "Plannerinputs/static/DomainML.pddl" -> "DomainML")
                 string domainFilePath = config.PlannerParameters.TryGetValue("domainFile", out var dfObj) ? dfObj?.ToString() : null;
                 string domainFileName = string.IsNullOrWhiteSpace(domainFilePath)
                     ? "DomainML"
@@ -445,8 +444,11 @@ namespace BehaviorTreeMainProject
                 BehaviorTreeMainProject.Services.AIPlanning.APTreeModelWriter.AnnotateActionWithSubtree(instanceName, subtreeBTName);
 
                 // 2. Append the subtree BehaviorTree block after the main BT
+                // Use GrammarKeyword (e.g. "Enhsp") instead of PlannerName ("ENHSP") because
+                // the DSL grammar defines the keyword with specific casing.
+                string grammarKeyword = Planner.FromName(config.PlannerName).GrammarKeyword;
                 BehaviorTreeMainProject.Services.AIPlanning.APTreeModelWriter.AppendSubtreeBTModel(
-                    subtreeBTName, flowNodeName, plannerServiceName, config.PlannerName, domainFileName, problemFileName);
+                    subtreeBTName, flowNodeName, plannerServiceName, grammarKeyword, domainFileName, problemFileName);
 
                 LogMessage($"✅ ServiceSubtreeInject: Registered subtree '{subtreeBTName}' in BT model for action '{instanceName}'");
             }

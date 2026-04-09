@@ -36,6 +36,10 @@ export interface CanvasNode {
   hidden?: boolean;
   /** True when the node has any outgoing connections (used for rendering ports/handles). */
   hasOutgoing?: boolean;
+  /** For action nodes: the name of the subtree graph this node references (import only). */
+  subtreeRef?: string;
+  /** Which graph this node belongs to — used to filter nodes for the subtree focus panel (import only). */
+  graphName?: string;
 }
 
 export const DEFAULT_CANVAS_NODE_WIDTH = 240;
@@ -120,6 +124,9 @@ export interface EditorCanvasProps {
   /** Sets the provided node id as the single Flow root node. */
   onSetRootNode?: (nodeId: string) => void;
   onOpenPredicateModal?: (nodeId: string, group: PredicateGroup) => void;
+  onNodeClick?: (nodeId: string) => void;
   actionTypes?: ActionType[];
   actionInstances?: ActionInstance[];
+  /** Real-time tick status from the backend, keyed by node name. Values: "Running" | "Success" | "Failure" */
+  tickStatus?: Record<string, string>;
 }

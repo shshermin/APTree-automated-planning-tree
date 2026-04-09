@@ -33,7 +33,7 @@ namespace BehaviorTreeMainProject
         {
             // Initialize preconditions
             preconditions = new State(StateType.Precondition, new FastName("gluingPLateHL_preconditions"));
-            preconditions.AddPredicate(new FastName("gluingPLateHL_pre_0"), new RobotEquipped(client, true));
+            preconditions.AddPredicate(new FastName("gluingPLateHL_pre_0"), new Vgempty(client, false));
             preconditions.AddPredicate(new FastName("gluingPLateHL_pre_1"), new AtPlace(obj, pos, false));
             preconditions.AddPredicate(new FastName("gluingPLateHL_pre_2"), new Clear(obj, false));
             preconditions.AddPredicate(new FastName("gluingPLateHL_pre_3"), new Glued(obj, true));

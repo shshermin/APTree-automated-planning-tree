@@ -1,7 +1,11 @@
-﻿using BehaviorTreeMainProject;
+﻿﻿using System.Diagnostics;
+using System.Text;
+using System.Text.Json;
+using System.Text.RegularExpressions;
+using BehaviorTreeMainProject;
 
-// To run the Demonstrator behavior tree test:
-await DemonstratorTreeTest.RunTest();
+// Run the behavior tree test (disabled — uncomment to run before server starts)
+//await FullTreeTest.RunTest();
 
 // To run the JSON BT load test:
 // await JsonBTLoadTest.RunTest();
@@ -10,4 +14,4 @@ await DemonstratorTreeTest.RunTest();
 // await FullTreeTest.RunTest();
 
 // Start the frontend API server
-// await FrontendServer.Run(args);
+await FrontendServer.Run(args);

@@ -67,13 +67,28 @@ public class Blackboard<T> : IDisposable where T : class
     /// </summary>
     public bool[] CassetteSubtreeCompleted { get; set; } = new bool[4] { false, false, false, false };
 
+    /// <summary>
+    /// Tracks the number of completed actions per cassette branch.
+    /// Updated by BTDecoratorFairBranchProgress.
+    /// Index 0 = cassette1, Index 1 = cassette2, Index 2 = cassette3, Index 3 = cassette4
+    /// </summary>
+    public int[] BranchProgress { get; set; } = new int[4] { 0, 0, 0, 0 };
+
+    /// <summary>
+    /// Index of the branch that is currently deprioritized (most ahead).
+    /// Set by BTDecoratorFairBranchProgress. -1 means no deprioritization (all balanced).
+    /// The root composite ticks this branch LAST so other branches can catch up.
+    /// </summary>
+    public int DeprioritizedBranchIndex { get; set; } = -1;
+
     public Blackboard(string uri, string user, string password)
     {
         _envGraph = new EnvironmentGraph(uri, user, password);
     }
 
     /// <summary>
-    /// Constructor without Neo4j connection. The blackboard will work without graph database support.
+    /// Parameterless constructor that skips the Neo4j EnvironmentGraph.
+    /// Use this when Neo4j is not needed.
     /// </summary>
     public Blackboard()
     {

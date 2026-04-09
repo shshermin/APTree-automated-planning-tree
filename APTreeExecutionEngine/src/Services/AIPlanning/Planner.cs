@@ -63,6 +63,12 @@ public abstract class Planner
     /// <summary>Canonical planner name passed to PDDLPlanningRequest (e.g. "FF", "ENHSP").</summary>
     public abstract string DefaultPlannerName { get; }
 
+    /// <summary>
+    /// The keyword used in the APTree DSL grammar for this planner type (e.g. "Enhsp").
+    /// Defaults to DefaultPlannerName. Override when the DSL keyword differs from the planner name.
+    /// </summary>
+    public virtual string GrammarKeyword => DefaultPlannerName;
+
     /// <summary>Maximum seconds to wait for a plan.</summary>
     public virtual int DefaultTimeoutSeconds => 30;
 

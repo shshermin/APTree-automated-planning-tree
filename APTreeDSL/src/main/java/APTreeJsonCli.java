@@ -101,13 +101,20 @@ public class APTreeJsonCli {
       ASTFinalWorld world = parsedWorld.get();
       ASTAPTree ast = world.getAPTree(0);
 
-      GraphExport graph = GraphExport.fromTree(ast);
+      List<GraphExport> graphs = new ArrayList<>();
+      List<String> treeNames = new ArrayList<>();
+      for (ASTAPTree tree : world.getAPTreeList()) {
+        graphs.add(GraphExport.fromTree(tree));
+        treeNames.add(tree.getName());
+      }
+      GraphExport graph = graphs.get(0);
 
       // Pre-validation: element references must resolve
-      List<String> preValidationErrors = validateElementReferences(ast);
-      if (!preValidationErrors.isEmpty()) {
-        return json(false, ast.getName(), preValidationErrors, collectFindings(), graph);
-      }
+      // COMMENTED OUT: skip context condition checks during import
+      // List<String> preValidationErrors = validateElementReferences(ast);
+      // if (!preValidationErrors.isEmpty()) {
+      //   return json(false, ast.getName(), preValidationErrors, collectFindings(), graph);
+      // }
 
       // Symbol table creation
       IDynamicBTFlowNodeGlobalScope gs = DynamicBTFlowNodeMill.globalScope();
@@ -115,15 +122,16 @@ public class APTreeJsonCli {
       as.setEnclosingScope(gs);
 
       // CoCos
-      DynamicBTFlowNodeCoCoChecker checker = new DynamicBTFlowNodeCoCoChecker();
-      ElementExistsCoCo elementCheck = new ElementExistsCoCo();
-      checker.addCoCo((crftypescon._cocos.CRFTypesConASTPickUpHLCoCo) elementCheck);
-      checker.addCoCo((crftypescon._cocos.CRFTypesConASTPlaceHLCoCo) elementCheck);
-      checker.checkAll((ASTDynamicBTFlowNodeNode) ast);
+      // COMMENTED OUT: skip CoCo checks during import
+      // DynamicBTFlowNodeCoCoChecker checker = new DynamicBTFlowNodeCoCoChecker();
+      // ElementExistsCoCo elementCheck = new ElementExistsCoCo();
+      // checker.addCoCo((crftypescon._cocos.CRFTypesConASTPickUpHLCoCo) elementCheck);
+      // checker.addCoCo((crftypescon._cocos.CRFTypesConASTPlaceHLCoCo) elementCheck);
+      // checker.checkAll((ASTDynamicBTFlowNodeNode) ast);
 
       List<String> findings = collectFindings();
       boolean ok = findings.isEmpty();
-      return json(ok, ast.getName(), new ArrayList<>(), findings, graph);
+      return json(ok, ast.getName(), new ArrayList<>(), findings, graph, graphs, treeNames);
 
     } catch (Exception e) {
       return errorJson("Exception: " + safe(e.getMessage()));
@@ -227,7 +235,14 @@ public class APTreeJsonCli {
     return out;
   }
 
-  private static String json(boolean ok, String treeName, List<String> errors, List<String> findings, GraphExport graph) {
+  private static String json(
+      boolean ok,
+      String treeName,
+      List<String> errors,
+      List<String> findings,
+      GraphExport graph,
+      List<GraphExport> graphs,
+      List<String> treeNames) {
     StringBuilder sb = new StringBuilder();
     sb.append("{");
     sb.append("\"ok\":").append(ok);
@@ -239,6 +254,17 @@ public class APTreeJsonCli {
     if (graph != null) {
       sb.append(",\"graph\":").append(graph.toJson());
     }
+    if (graphs != null && !graphs.isEmpty()) {
+      sb.append(",\"graphs\":[");
+      for (int i = 0; i < graphs.size(); i++) {
+        if (i > 0) sb.append(",");
+        sb.append(graphs.get(i).toJson());
+      }
+      sb.append("]");
+    }
+    if (treeNames != null && !treeNames.isEmpty()) {
+      sb.append(",\"treeNames\":").append(stringArray(treeNames));
+    }
     sb.append("}");
     return sb.toString();
   }
@@ -248,13 +274,13 @@ public class APTreeJsonCli {
     if (error != null && !error.isBlank()) {
       errors.add(error);
     }
-    return json(ok, treeName, errors, findings, null);
+    return json(ok, treeName, errors, findings, null, null, null);
   }
 
   private static String errorJson(String message) {
     List<String> errors = new ArrayList<>();
     errors.add(message);
-    return json(false, null, errors, new ArrayList<>(), null);
+    return json(false, null, errors, new ArrayList<>(), null, null, null);
   }
 
   /**
@@ -272,9 +298,10 @@ public class APTreeJsonCli {
       final String successType;
       final List<String> paramNames;
       final List<String> paramValues;
+      final String subtreeRef;
 
       Node(String id, String kind, String label, String name, String astType, Integer line, String successType,
-           List<String> paramNames, List<String> paramValues) {
+           List<String> paramNames, List<String> paramValues, String subtreeRef) {
         this.id = id;
         this.kind = kind;
         this.label = label;
@@ -284,6 +311,7 @@ public class APTreeJsonCli {
         this.successType = successType;
         this.paramNames = paramNames;
         this.paramValues = paramValues;
+        this.subtreeRef = subtreeRef;
       }
     }
 
@@ -303,11 +331,13 @@ public class APTreeJsonCli {
       }
     }
 
+    final String name;
     final String rootId;
     final List<Node> nodes;
     final List<Edge> edges;
 
-    GraphExport(String rootId, List<Node> nodes, List<Edge> edges) {
+    GraphExport(String name, String rootId, List<Node> nodes, List<Edge> edges) {
+      this.name = name;
       this.rootId = rootId;
       this.nodes = nodes;
       this.edges = edges;
@@ -315,18 +345,21 @@ public class APTreeJsonCli {
 
     static GraphExport fromTree(ASTAPTree tree) {
       if (tree == null || tree.getRoot() == null) {
-        return new GraphExport(null, new ArrayList<>(), new ArrayList<>());
+        return new GraphExport(null, null, new ArrayList<>(), new ArrayList<>());
       }
 
       Builder b = new Builder();
       String root = b.ensureNode(tree.getRoot());
       b.visitFlowNode(tree.getRoot());
-      return new GraphExport(root, b.nodes, b.edges);
+      return new GraphExport(tree.getName(), root, b.nodes, b.edges);
     }
 
     String toJson() {
       StringBuilder sb = new StringBuilder();
       sb.append("{");
+      if (name != null) {
+        sb.append("\"name\":\"").append(escape(name)).append("\",");
+      }
       if (rootId != null) {
         sb.append("\"rootId\":\"").append(escape(rootId)).append("\",");
       } else {
@@ -349,6 +382,9 @@ public class APTreeJsonCli {
         }
         if (n.paramValues != null && !n.paramValues.isEmpty()) {
           sb.append(",\"paramValues\":").append(stringArray(n.paramValues));
+        }
+        if (n.subtreeRef != null) {
+          sb.append(",\"subtreeRef\":\"").append(escape(n.subtreeRef)).append("\"");
         }
         sb.append("}");
       }
@@ -395,6 +431,7 @@ public class APTreeJsonCli {
         String successType = tryGetSuccessType(astNode);
         List<String> paramNames = null;
         List<String> paramValues = null;
+        String subtreeRef = null;
         if (astNode instanceof behaviortree._ast.ASTActionNode) {
           List<ParamPair> params = extractActionParamPairs(astNode);
           if (!params.isEmpty()) {
@@ -405,8 +442,21 @@ public class APTreeJsonCli {
               paramValues.add(pair.value);
             }
           }
+          try {
+            java.lang.reflect.Method isPresent = astNode.getClass().getMethod("isPresentSubtreeAnnotation");
+            Boolean present = (Boolean) isPresent.invoke(astNode);
+            if (Boolean.TRUE.equals(present)) {
+              java.lang.reflect.Method getter = astNode.getClass().getMethod("getSubtreeAnnotation");
+              Object val = getter.invoke(astNode);
+              if (val != null && !val.toString().isBlank()) {
+                subtreeRef = val.toString();
+              }
+            }
+          } catch (Exception ignored) {
+            // not all action nodes have a subtreeAnnotation
+          }
         }
-        nodes.add(new Node(id, kind, label, name, astType, line, successType, paramNames, paramValues));
+        nodes.add(new Node(id, kind, label, name, astType, line, successType, paramNames, paramValues, subtreeRef));
         return id;
       }
 

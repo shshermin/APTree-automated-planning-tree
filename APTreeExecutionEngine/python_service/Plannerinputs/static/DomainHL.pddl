@@ -12,7 +12,7 @@
 
     robot -agent    
 
-    vaccumgripper -tool                               
+    vacgripper -tool                               
   )
  
   (:predicates
@@ -28,7 +28,7 @@
     (stacked ?obj - element)     
     (glued ?obj - element) 
     (nailed ?obj - element)   
-    (vgempty ?vg -tool)
+    (vgempty ?vg - tool)
 )
 
   ; assigns the number of element that can be stacked on top of this module
@@ -167,7 +167,11 @@
 ;robot nail an object
     ;works fine for now
       (:action nailingHL
+<<<<<<< HEAD
         :parameters (?obj - plate ?p - positiononrail ?client - robot )
+=======
+        :parameters (?obj - element ?p - positiononrail ?client - robot )
+>>>>>>> 59d884f (Update action node colors to pink, flow nodes to blue, rename sidebar title to APTree)
         :precondition (and 
         (vgempty ?client)
         (atplace ?obj ?p)
@@ -178,6 +182,7 @@
         :effect  
         (nailed ?obj)              
     )
+<<<<<<< HEAD
       
           (:action nailingBeamHL
         :parameters (?obj - beam ?p - positiononrail ?client - robot ?mod - module ?lay - layer)
@@ -193,6 +198,8 @@
         :effect  
         (nailed ?obj)              
     )
+=======
+>>>>>>> 59d884f (Update action node colors to pink, flow nodes to blue, rename sidebar title to APTree)
 )
      
   

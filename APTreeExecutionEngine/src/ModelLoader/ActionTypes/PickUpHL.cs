@@ -37,22 +37,20 @@ namespace BehaviorTreeMainProject
         {
             // Initialize preconditions
             preconditions = new State(StateType.Precondition, new FastName("pickUpHL_preconditions"));
-            preconditions.AddPredicate(new FastName("pickUpHL_pre_0"), new GripperEmpty(client, false));
-            preconditions.AddPredicate(new FastName("pickUpHL_pre_1"), new HasTool(client, g, false));
-            preconditions.AddPredicate(new FastName("pickUpHL_pre_2"), new AtPlace(obj, p, false));
-            preconditions.AddPredicate(new FastName("pickUpHL_pre_3"), new Holding(client, obj, true));
-            preconditions.AddPredicate(new FastName("pickUpHL_pre_4"), new PositionFree(p, true));
-            preconditions.AddPredicate(new FastName("pickUpHL_pre_5"), new AtFinalPosition(obj, true));
-            preconditions.AddPredicate(new FastName("pickUpHL_pre_6"), new Clear(obj, false));
-            preconditions.AddPredicate(new FastName("pickUpHL_pre_7"), new Fixed(obj, true));
+            preconditions.AddPredicate(new FastName("pickUpHL_pre_0"), new Vgempty(client, false));
+            preconditions.AddPredicate(new FastName("pickUpHL_pre_1"), new AtPlace(obj, p, false));
+            preconditions.AddPredicate(new FastName("pickUpHL_pre_2"), new Holding(client, obj, true));
+            preconditions.AddPredicate(new FastName("pickUpHL_pre_3"), new PositionFree(p, true));
+            preconditions.AddPredicate(new FastName("pickUpHL_pre_4"), new Clear(obj, false));
+            preconditions.AddPredicate(new FastName("pickUpHL_pre_5"), new Stacked(obj, null, true));
 
             // Initialize effects
             effects = new State(StateType.Effect, new FastName("pickUpHL_effects"));
             effects.AddPredicate(new FastName("pickUpHL_eff_0"), new Holding(client, obj, false));
             effects.AddPredicate(new FastName("pickUpHL_eff_1"), new AtPlace(obj, p, true));
-            effects.AddPredicate(new FastName("pickUpHL_eff_2"), new GripperEmpty(client, true));
-            effects.AddPredicate(new FastName("pickUpHL_eff_3"), new Clear(obj, true));
-            effects.AddPredicate(new FastName("pickUpHL_eff_4"), new PositionFree(p, false));
+            effects.AddPredicate(new FastName("pickUpHL_eff_2"), new Clear(obj, true));
+            effects.AddPredicate(new FastName("pickUpHL_eff_3"), new PositionFree(p, false));
+            effects.AddPredicate(new FastName("pickUpHL_eff_4"), new Vgempty(client, true));
         }
 
         protected override State Preconditions => preconditions;

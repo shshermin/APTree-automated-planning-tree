@@ -37,12 +37,9 @@ namespace BehaviorTreeMainProject
         {
             // Initialize preconditions
             preconditions = new State(StateType.Precondition, new FastName("nailingHL_preconditions"));
-            preconditions.AddPredicate(new FastName("nailingHL_pre_0"), new GripperEmpty(client, false));
-            preconditions.AddPredicate(new FastName("nailingHL_pre_1"), new HasTool(client, s, false));
-            preconditions.AddPredicate(new FastName("nailingHL_pre_2"), new AtFinalPosition(obj2, false));
-            preconditions.AddPredicate(new FastName("nailingHL_pre_3"), new AtFinalPosition(obj1, false));
-            preconditions.AddPredicate(new FastName("nailingHL_pre_4"), new Accessible(obj1, false));
-            preconditions.AddPredicate(new FastName("nailingHL_pre_5"), new Nailed(obj1, obj2, true));
+            preconditions.AddPredicate(new FastName("nailingHL_pre_0"), new Vgempty(client, false));
+            preconditions.AddPredicate(new FastName("nailingHL_pre_1"), new Clear(obj1, false));
+            preconditions.AddPredicate(new FastName("nailingHL_pre_2"), new Nailed(obj1, obj2, true));
 
             // Initialize effects
             effects = new State(StateType.Effect, new FastName("nailingHL_effects"));
