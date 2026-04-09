@@ -38,9 +38,8 @@ namespace BehaviorTreeMainProject
             // Initialize preconditions
             preconditions = new State(StateType.Precondition, new FastName("nailingHL_preconditions"));
             preconditions.AddPredicate(new FastName("nailingHL_pre_0"), new Vgempty(client, false));
-            preconditions.AddPredicate(new FastName("nailingHL_pre_1"), new Atplace(obj, pos, false));
-            preconditions.AddPredicate(new FastName("nailingHL_pre_2"), new Clear(obj, false));
-            preconditions.AddPredicate(new FastName("nailingHL_pre_3"), new Nailed(obj, true));
+            preconditions.AddPredicate(new FastName("nailingHL_pre_1"), new Clear(obj1, false));
+            preconditions.AddPredicate(new FastName("nailingHL_pre_2"), new Nailed(obj1, obj2, true));
 
             // Initialize effects
             effects = new State(StateType.Effect, new FastName("nailingHL_effects"));

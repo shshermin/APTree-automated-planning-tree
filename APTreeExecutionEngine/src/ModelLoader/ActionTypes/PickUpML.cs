@@ -55,7 +55,7 @@ namespace BehaviorTreeMainProject
             effects.AddPredicate(new FastName("pickUpML_eff_1"), new AtPlace(obj, p, true));
             effects.AddPredicate(new FastName("pickUpML_eff_2"), new GripperEmpty(client, true));
             effects.AddPredicate(new FastName("pickUpML_eff_3"), new Clear(obj, true));
-            effects.AddPredicate(new FastName("pickUpML_eff_4"), new Positionfree(pos, false));
+            effects.AddPredicate(new FastName("pickUpML_eff_4"), new PositionFree(p, false));
         }
 
         protected override State Preconditions => preconditions;

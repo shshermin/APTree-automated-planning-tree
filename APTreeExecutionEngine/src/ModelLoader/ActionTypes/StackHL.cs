@@ -42,17 +42,17 @@ namespace BehaviorTreeMainProject
             // Initialize preconditions
             preconditions = new State(StateType.Precondition, new FastName("stackHL_preconditions"));
             preconditions.AddPredicate(new FastName("stackHL_pre_0"), new Vgempty(client, true));
-            preconditions.AddPredicate(new FastName("stackHL_pre_1"), new Holding(client, obj1, false));
-            preconditions.AddPredicate(new FastName("stackHL_pre_2"), new Atplace(obj2, pr, false));
+            preconditions.AddPredicate(new FastName("stackHL_pre_1"), new Holding(client, stackingobject, false));
+            preconditions.AddPredicate(new FastName("stackHL_pre_2"), new AtPlace(existingobject, objposition, false));
 
             // Initialize effects
             effects = new State(StateType.Effect, new FastName("stackHL_effects"));
-            effects.AddPredicate(new FastName("stackHL_eff_0"), new Ontop(obj1, obj2, false));
-            effects.AddPredicate(new FastName("stackHL_eff_1"), new Stacked(obj1, false));
-            effects.AddPredicate(new FastName("stackHL_eff_2"), new Holding(client, obj1, true));
-            effects.AddPredicate(new FastName("stackHL_eff_3"), new Atplace(obj1, pr, false));
-            effects.AddPredicate(new FastName("stackHL_eff_4"), new Clear(obj2, true));
-            effects.AddPredicate(new FastName("stackHL_eff_5"), new Clear(obj1, false));
+            effects.AddPredicate(new FastName("stackHL_eff_0"), new Ontop(stackingobject, existingobject, false));
+            effects.AddPredicate(new FastName("stackHL_eff_1"), new Stacked(stackingobject, existingobject, false));
+            effects.AddPredicate(new FastName("stackHL_eff_2"), new Holding(client, stackingobject, true));
+            effects.AddPredicate(new FastName("stackHL_eff_3"), new AtPlace(stackingobject, objposition, false));
+            effects.AddPredicate(new FastName("stackHL_eff_4"), new Clear(existingobject, true));
+            effects.AddPredicate(new FastName("stackHL_eff_5"), new Clear(stackingobject, false));
             effects.AddPredicate(new FastName("stackHL_eff_6"), new Vgempty(client, false));
         }
 

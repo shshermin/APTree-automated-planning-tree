@@ -36,14 +36,14 @@ namespace BehaviorTreeMainProject
             preconditions.AddPredicate(new FastName("placeHL_pre_0"), new Vgempty(client, true));
             preconditions.AddPredicate(new FastName("placeHL_pre_1"), new Holding(client, obj, false));
             preconditions.AddPredicate(new FastName("placeHL_pre_2"), new Clear(obj, true));
-            preconditions.AddPredicate(new FastName("placeHL_pre_3"), new Positionfree(placePos, false));
+            preconditions.AddPredicate(new FastName("placeHL_pre_3"), new PositionFree(placePos, false));
 
             // Initialize effects
             effects = new State(StateType.Effect, new FastName("placeHL_effects"));
             effects.AddPredicate(new FastName("placeHL_eff_0"), new AtPlace(obj, placePos, false));
             effects.AddPredicate(new FastName("placeHL_eff_1"), new Holding(client, obj, true));
             effects.AddPredicate(new FastName("placeHL_eff_2"), new Clear(obj, false));
-            effects.AddPredicate(new FastName("placeHL_eff_3"), new Positionfree(placePos, true));
+            effects.AddPredicate(new FastName("placeHL_eff_3"), new PositionFree(placePos, true));
             effects.AddPredicate(new FastName("placeHL_eff_4"), new Vgempty(client, false));
         }
 
