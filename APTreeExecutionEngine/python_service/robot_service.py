@@ -281,6 +281,15 @@ def robot_move():
             if not pose or len(pose) < 6:
                 return jsonify({'success': False, 'error': 'pose [x,y,z,rx,ry,rz] is required for planned moves'}), 400
 
+            # Step 0: Set payload and TCP on the robot BEFORE starting external_control
+            # This prevents protective stops caused by incorrect payload during MoveIt motion
+           # if payload_for_move is not None:
+              #  payload_msg = set_payload(robot_ip, payload_for_move, cog=payload_cog_for_move)
+              #  print(f"Pre-MoveIt payload set: {payload_msg}")
+           # if tcp_for_move is not None:
+             #   tcp_msg = set_tcp(robot_ip, tcp_for_move)
+             #   print(f"Pre-MoveIt TCP set: {tcp_msg}")
+
             # Step 1: Load and play the External Control program on the pendant
             print(f"Loading External Control program: {EXTERNAL_CONTROL_PROGRAM}")
             load_resp = dashboard_command(robot_ip, f"load {EXTERNAL_CONTROL_PROGRAM}")

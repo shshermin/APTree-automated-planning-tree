@@ -12,6 +12,7 @@ public abstract class PActionNode : ActionNode
     public override string TypeName => "GenericBTAction";
     public readonly FastName actionType;
     private readonly Blackboard<FastName> blackboard;
+    public Blackboard<FastName> Blackboard => blackboard;
     public int cost;
 
     // High-level action support

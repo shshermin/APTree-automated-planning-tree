@@ -32,13 +32,13 @@
     staplergun1 - staplergun
 
     ;; Equip Positions
-    equiplocgripper - equipposition
-    equiplocstapler - equipposition
+    ;equiplocgripper - equipposition
+    ;equiplocstapler - equipposition
 
-    ;; Robot Positions
-    rppickup - rppickup
-    rpmanipulate - rpmanipulate
-    rptoolchange - rptoolchange
+  ;; Robot Positions
+   ; rppickup - rppickup
+   ; rpmanipulate - rpmanipulate
+   ; rptoolchange - rptoolchange
 
     ;; Locations - Initial (first positions)
     initlocstick1 - firstposition
@@ -66,6 +66,12 @@
     finallocstick9 - finalposition
     finloccube1 - finalposition
     finloccube2 - finalposition
+    ;; HARDCODED ML-only objects (not in HL problem files)
+    equiplocgripper - equipposition
+    equiplocstapler - equipposition
+    rppickup - rppickup
+    rpmanipulate - rpmanipulate
+    rptoolchange - rptoolchange
   )
   (:init  
     (atfinalposition table1)
@@ -109,35 +115,43 @@
 (clear cube2)
 (attool staplergun1 equiplocstapler)
 (atplace stick3 initlocstick3)
-(atplace stick5 initlocstick5)
 (atplace stick6 initlocstick6)
 (atplace stick7 initlocstick7)
 (atplace stick8 initlocstick8)
-(atplace stick9 initlocstick9)
-(atplace cube2 initloccube2)
+(atplace cube1 initloccube1)
 (atplace table1 mp5)
 (atagent robot1 rpmanipulate)
 (fixed table1)
 (activetool gripper1)
+(positionfree initlocstick4)
+(atfinalposition stick4)
+(atplace stick4 finallocstick4)
+(stacked stick4 table1)
+(positionfree initlocstick5)
+(atfinalposition stick5)
+(atplace stick5 finallocstick5)
+(stacked stick5 table1)
 (positionfree initlocstick2)
 (atfinalposition stick2)
 (atplace stick2 finallocstick2)
 (accessible stick2)
 (stacked stick2 table1)
-(positionfree initlocstick4)
-(atfinalposition stick4)
-(atplace stick4 finallocstick4)
-(accessible stick4)
-(stacked stick4 table1)
+(positionfree initlocstick9)
+(atplace stick9 finallocstick9)
+(accessible stick9)
+(stacked stick9 stick5)
+(stacked stick9 stick4)
+(atfinalposition stick9)
+(positionfree initloccube2)
+(atfinalposition cube2)
+(atplace cube2 finloccube2)
+(accessible cube2)
+(stacked cube2 stick5)
 (positionfree initlocstick1)
 (atfinalposition stick1)
 (atplace stick1 finallocstick1)
+(accessible stick1)
 (stacked stick1 table1)
-(positionfree initloccube1)
-(atfinalposition cube1)
-(atplace cube1 finloccube1)
-(accessible cube1)
-(stacked cube1 stick1)
   )
   (:goal 
     (and

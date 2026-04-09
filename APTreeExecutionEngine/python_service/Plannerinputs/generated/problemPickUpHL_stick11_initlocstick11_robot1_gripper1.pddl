@@ -37,13 +37,13 @@
     staplergun1 - staplergun
 
     ;; Equip Positions
-    equiplocgripper - equipposition
-    equiplocstapler - equipposition
+    ;equiplocgripper - equipposition
+    ;equiplocstapler - equipposition
 
     ;; Robot Positions
-    rppickup - rppickup
-    rpmanipulate - rpmanipulate
-    rptoolchange - rptoolchange
+    ;rppickup - rppickup
+    ;rpmanipulate - rpmanipulate
+    ;rptoolchange - rptoolchange
 
     ;; Locations - Initial (active elements only)
     initlocstick10 - firstposition
@@ -76,6 +76,12 @@
     finallocstick18 - finalposition
     finloccube3 - finalposition
     finloccube4 - finalposition
+    ;; HARDCODED ML-only objects (not in HL problem files)
+    equiplocgripper - equipposition
+    equiplocstapler - equipposition
+    rppickup - rppickup
+    rpmanipulate - rpmanipulate
+    rptoolchange - rptoolchange
   )
   (:init  
     (robotequipped robot1)
@@ -145,31 +151,31 @@
 (atplace stick18 initlocstick18)
 (atplace cube3 initloccube3)
 (atplace cube4 initloccube4)
-(atplace stick8 finallocstick8)
-(accessible stick8)
-(atfinalposition stick8)
-(atagent robot1 rptoolchange)
-(fixed stick8)
-(atplace stick6 finallocstick6)
-(accessible stick6)
-(atfinalposition stick6)
-(atplace cube1 finloccube1)
-(accessible cube1)
-(atfinalposition cube1)
-(atplace stick7 finallocstick7)
-(accessible stick7)
-(atfinalposition stick7)
-(atplace cube2 finloccube2)
-(accessible cube2)
-(atfinalposition cube2)
 (atplace stick9 finallocstick9)
 (accessible stick9)
 (atfinalposition stick9)
+(atfinalposition cube2)
+(atplace cube2 finloccube2)
+(accessible cube2)
+(atfinalposition cube1)
+(atplace cube1 finloccube1)
+(accessible cube1)
+(atplace stick7 finallocstick7)
+(accessible stick7)
+(atfinalposition stick7)
+(atplace stick8 finallocstick8)
+(accessible stick8)
+(atfinalposition stick8)
+(atplace stick6 finallocstick6)
+(accessible stick6)
+(atfinalposition stick6)
+(atagent robot1 rptoolchange)
+(fixed stick6)
+(fixed stick7)
+(fixed stick8)
 (fixed stick9)
 (fixed cube1)
 (fixed cube2)
-(fixed stick6)
-(fixed stick7)
   )
   (:goal 
     (and

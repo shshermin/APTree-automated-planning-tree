@@ -13,10 +13,33 @@ DASHBOARD_PORT = 29999
 REALTIME_PORT = 30003
 POSITIONS_FILE = os.path.join(os.path.dirname(__file__), "positions.json")
 
+# Safety mode constants — UR real-time interface, byte offset 812 (CB3 firmware 3.10+)
+SAFETY_MODE_NORMAL = 1
+SAFETY_MODE_REDUCED = 2
+SAFETY_MODE_PROTECTIVE_STOP = 3
+SAFETY_MODE_RECOVERY = 4
+SAFETY_MODE_SAFEGUARD_STOP = 5
+SAFETY_MODE_SYSTEM_EMERGENCY_STOP = 6
+SAFETY_MODE_ROBOT_EMERGENCY_STOP = 7
+SAFETY_MODE_VIOLATION = 8
+SAFETY_MODE_FAULT = 9
+
+SAFETY_MODE_NAMES = {
+    1: "NORMAL", 2: "REDUCED", 3: "PROTECTIVE_STOP", 4: "RECOVERY",
+    5: "SAFEGUARD_STOP", 6: "SYSTEM_EMERGENCY_STOP", 7: "ROBOT_EMERGENCY_STOP",
+    8: "VIOLATION", 9: "FAULT",
+}
+
+
+class RobotSafetyError(Exception):
+    """Raised when the robot enters a safety stop state (protective stop, e-stop, etc.)."""
+    pass
+
+
 # TCP offsets (flange → tool tip) for each tool, in meters and radians.
 # Format: [x, y, z, rx, ry, rz]
 TCP_OFFSETS = {
-    "gripper": [0.00723, 0.00095, 0.1475, 0, 0, 0],
+    "gripper": [0.00723, 0.00095, 0.148, 0, 0, 0],
     "nailgun": [-0.09515, -0.00026, 0.3165, 0, 0, 0],
 }
 
@@ -238,9 +261,8 @@ def _send_urscript(robot_ip: str, cmd: str):
 def _wait_for_motion_complete(robot_ip: str, timeout: float = 60.0, settle_time: float = 0.3, velocity_threshold: float = 0.001):
     """Block until the robot has finished moving by polling joint velocities.
 
-    After sending a URScript move command, call this to wait for completion.
-    Reads joint velocities from the real-time interface (port 30003) and waits
-    until all velocities stay below the threshold for settle_time seconds.
+    Also monitors safety mode from the real-time data packet (offset 812).
+    Raises RobotSafetyError if a protective stop, e-stop, or fault is detected.
 
     Input:  robot_ip           (str)   — IP address of the UR10.
             timeout            (float) — Max wait time in seconds (default: 60).
@@ -267,6 +289,20 @@ def _wait_for_motion_complete(robot_ip: str, timeout: float = 60.0, settle_time:
                 data += chunk
             sock.close()
 
+            # Check safety mode first (byte offset 812, 8-byte double)
+            if len(data) >= 820:
+                safety_mode = int(round(struct.unpack("!d", data[812:820])[0]))
+                if safety_mode == SAFETY_MODE_PROTECTIVE_STOP:
+                    mode_name = SAFETY_MODE_NAMES.get(safety_mode, str(safety_mode))
+                    print(f"ERROR: Robot entered {mode_name} during motion!")
+                    raise RobotSafetyError(f"Protective stop detected during motion")
+                elif safety_mode in (SAFETY_MODE_SYSTEM_EMERGENCY_STOP, SAFETY_MODE_ROBOT_EMERGENCY_STOP):
+                    raise RobotSafetyError(f"Emergency stop detected during motion")
+                elif safety_mode == SAFETY_MODE_FAULT:
+                    raise RobotSafetyError(f"Safety fault detected during motion")
+                elif safety_mode == SAFETY_MODE_VIOLATION:
+                    raise RobotSafetyError(f"Safety violation detected during motion")
+
             if len(data) >= 348:
                 # Joint velocities (qd_actual) are at bytes 300:348 — 6 doubles, big-endian
                 velocities = struct.unpack("!6d", data[300:348])
@@ -279,6 +315,8 @@ def _wait_for_motion_complete(robot_ip: str, timeout: float = 60.0, settle_time:
                         return  # motion complete
                 else:
                     settled_since = None
+        except RobotSafetyError:
+            raise  # don't swallow safety errors
         except (socket.error, ConnectionError):
             pass  # brief connection hiccup, retry
 

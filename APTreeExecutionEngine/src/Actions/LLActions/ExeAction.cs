@@ -49,6 +49,12 @@ public abstract class ExeAction : PActionNode
 
     private bool _hasExecuted = false;
 
+    public override void Reset()
+    {
+        base.Reset();
+        _hasExecuted = false;
+    }
+
     // Empty PDDL states — LL execution nodes have no preconditions/effects
     private readonly State _emptyPreconditions;
     private readonly State _emptyEffects;

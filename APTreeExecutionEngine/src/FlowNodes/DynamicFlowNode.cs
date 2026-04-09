@@ -28,7 +28,8 @@ public class DynamicFlowNode : FlowNode
         IBehaviorTree owningTree,
         SuccessCriteria successCriteria = SuccessCriteria.ALL,
         float threshold = 1.0f,
-        bool addLowestCostDecorator = false)  // New parameter to control decorator addition
+        bool addLowestCostDecorator = false,
+        bool addRetryDecorator = true)
         : base(nodeName, successCriteria, threshold)
     {
         this.OwningTree = owningTree;
@@ -44,10 +45,12 @@ public class DynamicFlowNode : FlowNode
         AddDecorator(new DecoratorPlanningComplete());
         LoggingService.LogInfo($"🔧 DynamicFlowNode: Added PlanningComplete decorator to {nodeName.ToString()}");
 
-        // Add RetryOnFailure decorator: when all children finish but success criteria not met,
-        // this post-processing decorator resets failed children and converts Failure → InProgress
-        AddDecorator(new DecoratorRetryOnFailure(this));
-        LoggingService.LogInfo($"🔧 DynamicFlowNode: Added RetryOnFailure decorator to {nodeName.ToString()}");
+        // Add RetryOnFailure decorator (skipped for LL FlowNodes so failures propagate to ML level)
+        if (addRetryDecorator)
+        {
+            AddDecorator(new DecoratorRetryOnFailure(this));
+            LoggingService.LogInfo($"🔧 DynamicFlowNode: Added RetryOnFailure decorator to {nodeName.ToString()}");
+        }
         
     }
 
@@ -224,6 +227,18 @@ public class DynamicFlowNode : FlowNode
         }
         
         LoggingService.LogInfo($"🔄 FlowNode: Reset completed - ready for next round of execution");
+    }
+
+    /// <summary>
+    /// Lightweight reset for retry scenarios.
+    /// Resets only status and tick count — does NOT touch actionGraph or planning state.
+    /// Use this when you want to re-execute the same plan with the same nodes.
+    /// </summary>
+    public void ResetForRetry()
+    {
+        LoggingService.LogInfo($"🔄 FlowNode: ResetForRetry called for {DebugDisplayName} — preserving actionGraph");
+        status = BTNodeResult.ReadyToTick;
+        tickCount = 0;
     }
 
     protected override bool OnTick_Children(float inDeltaTime)

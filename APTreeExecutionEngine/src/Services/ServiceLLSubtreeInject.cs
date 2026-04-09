@@ -124,7 +124,7 @@ namespace BehaviorTreeMainProject
             pickUp.Steps.Add(new LLStep("MoveToLL", MoveType.MoveL) { Parameters = { ["target"] = "{p}", ["robot"] = "{client}" } });
             pickUp.Steps.Add(new LLStep("CloseGripperLL") { Parameters = { ["robot"] = "{client}" } });
             // pickUp.Steps.Add(new LLStep("LiftLL") { Parameters = { ["robot"] = "{client}" } });
-            pickUp.Steps.Add(new LLStep("MoveToLL", MoveType.MoveJ) { Parameters = { ["target"] = "{rp}", ["robot"] = "{client}", ["velocity"] = "1.0", ["acceleration"] = "0.3" } });
+            pickUp.Steps.Add(new LLStep("MoveToLL", MoveType.MoveL) { Parameters = { ["target"] = "{rp}", ["robot"] = "{client}", ["velocity"] = "1.0", ["acceleration"] = "0.3" } });
             _templates["PickUpML"] = pickUp;
 
             // ── StackML ──
@@ -268,7 +268,8 @@ namespace BehaviorTreeMainProject
             var flowNode = new DynamicFlowNode(
                 new FastName($"LL_DynamicFlow_{mlAction.InstanceName}"),
                 subtreeTree,
-                SuccessCriteria.ALL
+                SuccessCriteria.ALL,
+                addRetryDecorator: false
             );
 
             // Build executable LL action nodes for the NodeGraph
@@ -301,7 +302,11 @@ namespace BehaviorTreeMainProject
             mlAction.IsHighLevelAction = true;
             mlAction.HighLevelSubtree = flowNode;
             flowNode.SetParentNode(mlAction);
-            LogMessage($"✅ ServiceLLSubtreeInject: Attached LL subtree ({template.Steps.Count} steps) to {mlAction.InstanceName}");
+
+            // Attach recovery decorator so operator can retry/replan on LL failure
+            mlAction.AddDecorator(new DecoratorRecovery(mlAction));
+
+            LogMessage($"✅ ServiceLLSubtreeInject: Attached LL subtree ({template.Steps.Count} steps) + recovery decorator to {mlAction.InstanceName}");
         }
 
         // ──────────────────── LL node factory ────────────────────

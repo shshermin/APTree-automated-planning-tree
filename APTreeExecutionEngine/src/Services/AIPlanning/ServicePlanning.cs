@@ -64,6 +64,22 @@ public abstract class ServicePlanning : Service
     public TimeSpan TotalExecutionDuration => HasCompleted ? EndTime - StartTime : TimeSpan.Zero; // Total service time
     public string PlannerName => GetType().Name;
 
+    // Communication retry tracking
+    private int communicationRetryCount = 0;
+    private const int MAX_COMMUNICATION_RETRIES = 3;
+
+    /// <summary>
+    /// Returns true if the error string indicates a transient communication failure
+    /// (connection refused, timeout, tunnel down) rather than a planner-level rejection.
+    /// </summary>
+    private static bool IsCommunicationError(string error)
+    {
+        if (string.IsNullOrEmpty(error)) return false;
+        return error.Contains("Failed to communicate with planning service")
+            || error.Contains("Planning request timed out")
+            || error.Contains("An error occurred while sending the request");
+    }
+
 
 
     protected ServicePlanning(IBehaviorTree InOwningTree, IPlannerCommunicator communicator, IPlanningRequest InPlanningRequest)
@@ -140,7 +156,6 @@ public abstract class ServicePlanning : Service
             {
                 EndTime = DateTime.Now;
                 IsExecuting = false;
-                HasCompleted = true; // Mark as completed even on failure to prevent infinite retries
                 WasSuccessful = false;
                 HasPlanGenerated = false;
                 LastError = result.Error;
@@ -148,8 +163,20 @@ public abstract class ServicePlanning : Service
                 LoggingService.LogError($"⚠️ {GetType().Name}: Planning failed at {EndTime:HH:mm:ss.fff} - {result.Error}");
                 LoggingService.LogInfo($"⏱️ {GetType().Name}: Planner execution time: {PlannerEndTime - StartTime:hh\\:mm\\:ss\\.fff}");
                 LoggingService.LogInfo($"⏱️ {GetType().Name}: Total service time: {EndTime - StartTime:hh\\:mm\\:ss\\.fff}");
+
+                // Communication error (connection refused, timeout, tunnel down):
+                // allow retry on next tick instead of permanently failing.
+                if (IsCommunicationError(result.Error) && communicationRetryCount < MAX_COMMUNICATION_RETRIES)
+                {
+                    communicationRetryCount++;
+                    LoggingService.LogWarning($"🔄 {GetType().Name}: Communication error — will retry on next tick (attempt {communicationRetryCount}/{MAX_COMMUNICATION_RETRIES})");
+                    // HasCompleted stays false, so next tick will re-enter the planning path
+                    return false;
+                }
+
+                HasCompleted = true; // Permanent failure — planner rejected or retries exhausted
                 LoggingService.LogInfo($"📋 {GetType().Name}: Planning Status - Completed: {HasCompleted}, Successful: {WasSuccessful}, Plan Generated: {HasPlanGenerated}");
-                LoggingService.LogWarning($"🔄 {GetType().Name}: Planning failed - this node will fail. No retries will be attempted.");
+                LoggingService.LogWarning($"🔄 {GetType().Name}: Planning failed permanently. No more retries.");
                 PlannerCallLogger.LogCallFailed(plannerCallId, result.PlanningTimeSeconds, result.Error);
                 return false;
             }
@@ -241,16 +268,27 @@ public abstract class ServicePlanning : Service
         {
             EndTime = DateTime.Now;
             IsExecuting = false;
-            HasCompleted = true; // Mark as completed even on failure to prevent infinite retries
             WasSuccessful = false;
             HasPlanGenerated = false;
             LastError = ex.Message;
 
-            LoggingService.LogError($"❌ {GetType().Name}: Error during planning process at {EndTime:HH:mm:ss.fff}: {ex.Message}");
+            // AggregateException from Task.Run wraps the inner HttpRequestException
+            var errorMsg = ex is AggregateException agg ? agg.InnerException?.Message ?? ex.Message : ex.Message;
+
+            LoggingService.LogError($"❌ {GetType().Name}: Error during planning process at {EndTime:HH:mm:ss.fff}: {errorMsg}");
             LoggingService.LogInfo($"⏱️ {GetType().Name}: Execution time: {EndTime - StartTime:hh\\:mm\\:ss\\.fff}");
+
+            if (IsCommunicationError(errorMsg) && communicationRetryCount < MAX_COMMUNICATION_RETRIES)
+            {
+                communicationRetryCount++;
+                LoggingService.LogWarning($"🔄 {GetType().Name}: Communication exception — will retry on next tick (attempt {communicationRetryCount}/{MAX_COMMUNICATION_RETRIES})");
+                return false;
+            }
+
+            HasCompleted = true;
             LoggingService.LogInfo($"📋 {GetType().Name}: Planning Status - Completed: {HasCompleted}, Successful: {WasSuccessful}, Plan Generated: {HasPlanGenerated}");
-            LoggingService.LogWarning($"🔄 {GetType().Name}: Planning exception occurred - this node will fail. No retries will be attempted.");
-            PlannerCallLogger.LogCallFailed(plannerCallId, 0, ex.Message);
+            LoggingService.LogWarning($"🔄 {GetType().Name}: Planning exception occurred — no more retries.");
+            PlannerCallLogger.LogCallFailed(plannerCallId, 0, errorMsg);
             return false;
         }
     }
@@ -425,6 +463,7 @@ public abstract class ServicePlanning : Service
         WasSuccessful = false;
         HasPlanGenerated = false;
         LastError = null;
+        communicationRetryCount = 0;
         LoggingService.LogWarning($"🔄 {GetType().Name}: Planning service reset");
     }
 

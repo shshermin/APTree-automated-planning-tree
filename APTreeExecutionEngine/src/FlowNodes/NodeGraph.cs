@@ -476,6 +476,48 @@ public class NodeGraph
     }
 
     /// <summary>
+    /// Reset the IsCompleted / IsExecuting flags for a single node so it can be re-executed.
+    /// Used by DecoratorRecovery when retrying LL actions.
+    /// </summary>
+    public void ResetNodeFlags(ActionNode actionNode)
+    {
+        if (nodeMap.TryGetValue(actionNode, out var graphNode))
+        {
+            graphNode.IsCompleted = false;
+            graphNode.IsExecuting = false;
+            graphNode.StartTime = 0f;
+            graphNode.EndTime = 0f;
+        }
+    }
+
+    /// <summary>
+    /// Reset every node in the graph to ReadyToTick and clear its GraphNode execution flags.
+    /// This keeps the graph structure (nodes + relations) intact — no destruction or nullification.
+    /// Used for retry scenarios where we want to re-execute the same plan.
+    /// </summary>
+    public void ResetAllNodeStatuses()
+    {
+        LoggingService.LogInfo($"🔄 NodeGraph: ResetAllNodeStatuses called — resetting {nodes.Count} nodes in-place");
+
+        foreach (var graphNode in nodes)
+        {
+            // Reset the GraphNode scheduling flags
+            graphNode.IsCompleted = false;
+            graphNode.IsExecuting = false;
+            graphNode.StartTime = 0f;
+            graphNode.EndTime = 0f;
+
+            // Reset the action node status
+            graphNode.ActionNode?.Reset();
+        }
+
+        // Reset elapsed time so temporal constraints evaluate from scratch
+        elapsedTime = 0f;
+
+        LoggingService.LogInfo($"🔄 NodeGraph: ResetAllNodeStatuses complete — all {nodes.Count} nodes set to ReadyToTick");
+    }
+
+    /// <summary>
     /// Destroys only unexecuted GraphNodes (ReadyToTick or Uninitialized status).
     /// Nodes that are InProgress, Success, or Failure are kept in the graph.
     /// </summary>

@@ -93,7 +93,7 @@ public class EquipToolLL : ExeAction
                 if (kv.Value is NailGripper or StaplerGun)
                     return new[] { -0.09515, -0.00026, 0.3165, 0.0, 0.0, 0.0 };
                 if (kv.Value is Gripper)
-                    return new[] { 0.00723, 0.00095, 0.1465, 0.0, 0.0, 0.0 };
+                    return new[] { 0.00723, 0.00095, 0.148, 0.0, 0.0, 0.0 };
             }
         }
         return null;
