@@ -127,4 +127,6 @@ export interface EditorCanvasProps {
   onNodeClick?: (nodeId: string) => void;
   actionTypes?: ActionType[];
   actionInstances?: ActionInstance[];
+  /** Real-time tick status from the backend, keyed by node name. Values: "Running" | "Success" | "Failure" */
+  tickStatus?: Record<string, string>;
 }

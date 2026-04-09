@@ -1,4 +1,70 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+
+/**
+ * Connects to the backend WebSocket at /ws/tick and returns a live map of
+ * nodeName → latest tick status ("Running" | "Success" | "Failure").
+ * Statuses expire after EXPIRE_MS milliseconds so nodes don't stay highlighted forever.
+ */
+function useTickStatus(expireMs = 2000): Record<string, string> {
+  const [tickStatus, setTickStatus] = useState<Record<string, string>>({});
+  const timersRef = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
+  const wsRef = useRef<WebSocket | null>(null);
+
+  useEffect(() => {
+    let active = true;
+
+    function connect() {
+      if (!active) return;
+      const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+      const ws = new WebSocket(`${protocol}//${window.location.host}/ws/tick`);
+      wsRef.current = ws;
+
+      ws.onmessage = (event) => {
+        if (!active) return;
+        try {
+          const { nodeName, status } = JSON.parse(event.data as string) as {
+            nodeName: string;
+            status: string;
+          };
+          setTickStatus((prev) => ({ ...prev, [nodeName]: status }));
+
+          const existing = timersRef.current.get(nodeName);
+          if (existing) clearTimeout(existing);
+
+          const timer = setTimeout(() => {
+            setTickStatus((prev) => {
+              const next = { ...prev };
+              delete next[nodeName];
+              return next;
+            });
+            timersRef.current.delete(nodeName);
+          }, expireMs);
+
+          timersRef.current.set(nodeName, timer);
+        } catch {
+          // ignore malformed messages
+        }
+      };
+
+      ws.onclose = () => {
+        // Reconnect after 2s if still mounted
+        if (active) setTimeout(connect, 2000);
+      };
+    }
+
+    connect();
+
+    return () => {
+      active = false;
+      wsRef.current?.close();
+      wsRef.current = null;
+      timersRef.current.forEach(clearTimeout);
+      timersRef.current.clear();
+    };
+  }, [expireMs]);
+
+  return tickStatus;
+}
 import "./App.css";
 import Header from "./components/header/Header.tsx";
 import Sidebar from "./components/sidebar/Sidebar.tsx";
@@ -278,6 +344,7 @@ function getInitialTheme(): ThemeMode {
  * @returns main application element
  */
 function App() {
+  const tickStatus = useTickStatus();
   const [theme, setTheme] = useState<ThemeMode>(getInitialTheme);
   const [userLockedTheme, setUserLockedTheme] = useState<boolean>(() => {
     if (typeof window === "undefined") {
@@ -1347,6 +1414,7 @@ function App() {
                 onNodeClick={handleNodeClickOnCanvas}
                 actionTypes={actionTypes}
                 actionInstances={actionInstances}
+                tickStatus={tickStatus}
               />
               {focusedSubtreeRef && subtreeGraphMap.has(focusedSubtreeRef) && (
                 <SubtreeFocusPanel

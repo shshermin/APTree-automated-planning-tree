@@ -83,6 +83,8 @@ interface BehaviorNodeData {
   onMoveNode?: (nodeId: string, position: { x: number; y: number }) => void;
   onShowActionParameterDetail?: (detail: ActionParameterDetail) => void;
   onOpenPredicateModal?: (nodeId: string, group: PredicateGroup) => void;
+  /** Real-time tick status: "Running" | "Success" | "Failure" | undefined */
+  tickStatus?: string;
 }
 
 interface BehaviorEdgeData {
@@ -268,6 +270,14 @@ function BehaviorTreeNode({ id, data, selected }: NodeProps<BehaviorNodeData>) {
   const isRootNode = !!data.rootNodeId && data.rootNodeId === id;
   if (isRootNode) {
     nodeClasses.push("canvas-node-rooted");
+  }
+
+  if (data.tickStatus === "Running") {
+    nodeClasses.push("canvas-node-tick-running");
+  } else if (data.tickStatus === "Success") {
+    nodeClasses.push("canvas-node-tick-success");
+  } else if (data.tickStatus === "Failure") {
+    nodeClasses.push("canvas-node-tick-failure");
   }
   const shouldRenderActions =
     !!data.onEditNode || !!data.onRemoveNode;
@@ -772,6 +782,7 @@ function EditorCanvasInner(props: EditorCanvasProps) {
     onShowActionParameterDetail,
     onOpenPredicateModal,
     onNodeClick,
+    tickStatus,
   } = props;
 
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -877,6 +888,7 @@ function EditorCanvasInner(props: EditorCanvasProps) {
           data: {
             node,
             rootNodeId,
+            tickStatus: tickStatus?.[node.name],
             actionTypeMap,
             actionInstanceMap,
             onRemoveNode,
@@ -904,6 +916,7 @@ function EditorCanvasInner(props: EditorCanvasProps) {
     [
       nodes,
       rootNodeId,
+      tickStatus,
       actionTypeMap,
       actionInstanceMap,
       onRemoveNode,
