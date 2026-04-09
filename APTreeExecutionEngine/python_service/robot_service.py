@@ -148,6 +148,17 @@ def robot_play_program():
         start_time = time.time()
         result_msg = play_program(robot_ip, program_name, speed=speed)
 
+        # Check if the program actually failed to play
+        if result_msg and ("File not found" in result_msg or "Failed" in result_msg):
+            elapsed = time.time() - start_time
+            print(f"Program '{program_name}' FAILED: {result_msg} ({elapsed:.2f}s)")
+            return jsonify({
+                'success': False,
+                'error': result_msg,
+                'programName': program_name,
+                'executionTimeSeconds': elapsed
+            }), 500
+
         # Set TCP after program completes if specified, and remember it
         global _active_tcp, _active_payload, _active_payload_cog
         tcp_values = data.get('tcp')
@@ -244,6 +255,14 @@ def robot_move():
         if payload_for_move:
             print(f"Re-applying stored payload: {payload_for_move} kg, COG: {payload_cog_for_move}")
 
+        # Stop external_control.urp before URScript moves to avoid fieldbus disconnect
+        if command_type in ('movej', 'movel', 'movep', 'movec'):
+            state = dashboard_command(robot_ip, "programState")
+            if "PLAYING" in state.upper():
+                print("Stopping external_control before URScript move")
+                dashboard_command(robot_ip, "stop")
+                time.sleep(0.5)
+
         if command_type == 'movej':
             result_msg = move_to_pose(
                 robot_ip=robot_ip, name=final_position, position=position_data,
@@ -281,39 +300,34 @@ def robot_move():
             if not pose or len(pose) < 6:
                 return jsonify({'success': False, 'error': 'pose [x,y,z,rx,ry,rz] is required for planned moves'}), 400
 
-            # Step 0: Set payload and TCP on the robot BEFORE starting external_control
-            # This prevents protective stops caused by incorrect payload during MoveIt motion
-           # if payload_for_move is not None:
-              #  payload_msg = set_payload(robot_ip, payload_for_move, cog=payload_cog_for_move)
-              #  print(f"Pre-MoveIt payload set: {payload_msg}")
-           # if tcp_for_move is not None:
-             #   tcp_msg = set_tcp(robot_ip, tcp_for_move)
-             #   print(f"Pre-MoveIt TCP set: {tcp_msg}")
+            # Step 1: Reuse external_control if already running, otherwise load+play
+            state = dashboard_command(robot_ip, "programState")
+            if "PLAYING" in state.upper():
+                print(f"External Control already running — skipping load/play")
+            else:
+                print(f"Loading External Control program: {EXTERNAL_CONTROL_PROGRAM}")
+                load_resp = dashboard_command(robot_ip, f"load {EXTERNAL_CONTROL_PROGRAM}")
+                print(f"Load response: {load_resp}")
+                if "File not found" in load_resp:
+                    return jsonify({'success': False, 'error': f"External Control program not found: {EXTERNAL_CONTROL_PROGRAM}"}), 500
+                dashboard_command(robot_ip, "play")
 
-            # Step 1: Load and play the External Control program on the pendant
-            print(f"Loading External Control program: {EXTERNAL_CONTROL_PROGRAM}")
-            load_resp = dashboard_command(robot_ip, f"load {EXTERNAL_CONTROL_PROGRAM}")
-            print(f"Load response: {load_resp}")
-            if "File not found" in load_resp:
-                return jsonify({'success': False, 'error': f"External Control program not found: {EXTERNAL_CONTROL_PROGRAM}"}), 500
-            dashboard_command(robot_ip, "play")
-
-            # Wait for External Control program to reach PLAYING state,
-            # then allow extra time for the URCap ↔ ROS2 driver handshake.
-            waited = 0.0
-            playing = False
-            while waited < 15.0:
-                time.sleep(0.5)
-                waited += 0.5
-                state = dashboard_command(robot_ip, "programState")
-                if "PLAYING" in state.upper():
-                    playing = True
-                    print(f"External Control program running after {waited:.1f}s")
-                    break
-            if not playing:
-                print(f"WARNING: program did not reach PLAYING after {waited:.1f}s, proceeding anyway")
-            # Extra settle time for the driver connection to fully establish
-            time.sleep(2)
+                # Wait for External Control program to reach PLAYING state,
+                # then allow extra time for the URCap ↔ ROS2 driver handshake.
+                waited = 0.0
+                playing = False
+                while waited < 15.0:
+                    time.sleep(0.5)
+                    waited += 0.5
+                    state = dashboard_command(robot_ip, "programState")
+                    if "PLAYING" in state.upper():
+                        playing = True
+                        print(f"External Control program running after {waited:.1f}s")
+                        break
+                if not playing:
+                    print(f"WARNING: program did not reach PLAYING after {waited:.1f}s, proceeding anyway")
+                # Extra settle time for the driver connection to fully establish
+                time.sleep(2)
 
             # Step 2: Convert rotation vector (rx, ry) to yaw in degrees
             rx, ry = pose[3], pose[4]
@@ -335,19 +349,17 @@ def robot_move():
             print(f"Forwarding to MoveIt bridge: {json.dumps(moveit_payload, indent=2)}")
             resp = http_requests.post(f"{MOVEIT_BRIDGE_URL}/plan_and_execute", json=moveit_payload, timeout=130)
             resp_data = resp.json()
+            print(f"MoveIt response: {json.dumps(resp_data, indent=2)}")
 
-            # Step 3: Stop the External Control program so direct URScript commands work again
-            print("Stopping External Control program")
-            dashboard_command(robot_ip, "stop")
-
-            # Step 4: Re-apply payload/TCP after stopping, so subsequent
-            # direct URScript commands also run with correct settings.
-            _reapply_robot_settings(robot_ip)
+            # external_control.urp stays running — the lift is now handled
+            # inside move_to_task.py via MoveIt, so no need to stop/reload.
 
             if resp_data.get('success'):
                 result_msg = resp_data.get('message', 'MoveIt execution completed')
             else:
-                return jsonify({'success': False, 'error': resp_data.get('error', 'MoveIt execution failed')}), 500
+                error_msg = resp_data.get('error', 'MoveIt execution failed')
+                print(f"MoveIt FAILED: {error_msg}")
+                return jsonify({'success': False, 'error': error_msg}), 500
 
         elapsed = time.time() - start_time
 
