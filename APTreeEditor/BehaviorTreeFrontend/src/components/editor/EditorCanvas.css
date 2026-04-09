@@ -56,23 +56,32 @@
 /* Real-time tick status highlighting */
 .canvas-node-tick-running {
   border-color: #f59e0b !important;
-  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.35), 0 10px 24px rgba(15, 23, 42, 0.18) !important;
-  animation: tick-pulse 0.9s ease-in-out infinite;
+  border-width: 3px !important;
+  box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.5), 0 0 20px 4px rgba(245, 158, 11, 0.3), 0 10px 24px rgba(15, 23, 42, 0.18) !important;
+  animation: tick-pulse 0.7s ease-in-out infinite;
 }
 
 .canvas-node-tick-success {
   border-color: #22c55e !important;
-  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.35), 0 10px 24px rgba(15, 23, 42, 0.18) !important;
+  border-width: 3px !important;
+  box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.5), 0 0 20px 4px rgba(34, 197, 94, 0.3), 0 10px 24px rgba(15, 23, 42, 0.18) !important;
 }
 
 .canvas-node-tick-failure {
   border-color: #ef4444 !important;
-  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.35), 0 10px 24px rgba(15, 23, 42, 0.18) !important;
+  border-width: 3px !important;
+  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.5), 0 0 20px 4px rgba(239, 68, 68, 0.3), 0 10px 24px rgba(15, 23, 42, 0.18) !important;
 }
 
 @keyframes tick-pulse {
-  0%, 100% { box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.35), 0 10px 24px rgba(15, 23, 42, 0.18); }
-  50%       { box-shadow: 0 0 0 6px rgba(245, 158, 11, 0.15), 0 10px 24px rgba(15, 23, 42, 0.18); }
+  0%, 100% {
+    box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.6), 0 0 20px 4px rgba(245, 158, 11, 0.3), 0 10px 24px rgba(15, 23, 42, 0.18);
+    border-color: #f59e0b;
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(245, 158, 11, 0.2), 0 0 32px 8px rgba(245, 158, 11, 0.5), 0 10px 24px rgba(15, 23, 42, 0.18);
+    border-color: #fbbf24;
+  }
 }
 
 .canvas-node-label {
@@ -675,15 +684,15 @@
 }
 
 .canvas-node-actionType {
-  --action-border: rgba(34, 211, 238, 0.7);
-  --action-before: linear-gradient(120deg, rgba(34, 211, 238, 0.28), rgba(14, 116, 144, 0.45));
-  --action-glow: rgba(34, 211, 238, 0.35);
+  --action-border: rgba(168, 85, 247, 0.7);
+  --action-before: linear-gradient(120deg, rgba(168, 85, 247, 0.28), rgba(109, 40, 217, 0.45));
+  --action-glow: rgba(168, 85, 247, 0.35);
 }
 
 .canvas-node-actionInstance {
-  --action-border: rgba(0, 212, 255, 0.80);
-  --action-before: linear-gradient(120deg, rgba(0, 212, 255, 0.35), rgba(0, 160, 255, 0.45));
-  --action-glow: rgba(0, 212, 255, 0.45);
+  --action-border: rgba(168, 85, 247, 0.80);
+  --action-before: linear-gradient(120deg, rgba(168, 85, 247, 0.35), rgba(109, 40, 217, 0.45));
+  --action-glow: rgba(168, 85, 247, 0.45);
 }
 
 .canvas-node-behaviorNode {
@@ -781,9 +790,9 @@
 }
 
 .canvas-node-action {
-  --node-border: 1px solid color-mix(in srgb, #ff69b4 85%, transparent);
-  --node-bg: linear-gradient(135deg, rgba(255, 105, 180, 0.32), rgba(219, 39, 119, 0.18));
-  --node-shadow: 0 0 28px rgba(255, 105, 180, 0.45), 0 0 8px rgba(219, 39, 119, 0.25);
+  --node-border: 1px solid color-mix(in srgb, #a855f7 85%, transparent);
+  --node-bg: linear-gradient(135deg, rgba(168, 85, 247, 0.32), rgba(109, 40, 217, 0.18));
+  --node-shadow: 0 0 28px rgba(168, 85, 247, 0.45), 0 0 8px rgba(109, 40, 217, 0.25);
   border: var(--node-border);
   background: var(--node-bg);
   border-radius: var(--radius-md, 12px);
