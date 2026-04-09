@@ -203,7 +203,7 @@ BehaviorTree Demonstrator {
 
 BehaviorTree PickUpHL_stick4_initlocstick4_robot1_gripper1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_PickUpHL_stick4_initlocstick4_robot1_gripper1 {
-        ServicePlanning subtreeSrv_PickUpHL_stick4_initlocstick4_robot1_gripper1 ENHSP Domain:DomainMLTruss Problem:problemPickUpHL_stick4_initlocstick4_robot1_gripper1
+        ServicePlanning subtreeSrv_PickUpHL_stick4_initlocstick4_robot1_gripper1 Enhsp Domain:DomainMLTruss Problem:problemPickUpHL_stick4_initlocstick4_robot1_gripper1
         All
         AllAction
         NodeGraph {
@@ -217,7 +217,7 @@ BehaviorTree PickUpHL_stick4_initlocstick4_robot1_gripper1Subtree {
 
 BehaviorTree StackHL_stick4_table1_robot1_finallocstick4_gripper1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_StackHL_stick4_table1_robot1_finallocstick4_gripper1 {
-        ServicePlanning subtreeSrv_StackHL_stick4_table1_robot1_finallocstick4_gripper1 ENHSP Domain:DomainMLTruss Problem:problemStackHL_stick4_table1_robot1_finallocstick4_gripper1
+        ServicePlanning subtreeSrv_StackHL_stick4_table1_robot1_finallocstick4_gripper1 Enhsp Domain:DomainMLTruss Problem:problemStackHL_stick4_table1_robot1_finallocstick4_gripper1
         All
         AllAction
         NodeGraph {

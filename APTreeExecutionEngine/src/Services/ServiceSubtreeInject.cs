@@ -444,8 +444,11 @@ namespace BehaviorTreeMainProject
                 BehaviorTreeMainProject.Services.AIPlanning.APTreeModelWriter.AnnotateActionWithSubtree(instanceName, subtreeBTName);
 
                 // 2. Append the subtree BehaviorTree block after the main BT
+                // Use GrammarKeyword (e.g. "Enhsp") instead of PlannerName ("ENHSP") because
+                // the DSL grammar defines the keyword with specific casing.
+                string grammarKeyword = Planner.FromName(config.PlannerName).GrammarKeyword;
                 BehaviorTreeMainProject.Services.AIPlanning.APTreeModelWriter.AppendSubtreeBTModel(
-                    subtreeBTName, flowNodeName, plannerServiceName, config.PlannerName, domainFileName, problemFileName);
+                    subtreeBTName, flowNodeName, plannerServiceName, grammarKeyword, domainFileName, problemFileName);
 
                 LogMessage($"✅ ServiceSubtreeInject: Registered subtree '{subtreeBTName}' in BT model for action '{instanceName}'");
             }
