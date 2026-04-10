@@ -20,6 +20,17 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
             "valid", "behavior_trees", "DemonstratorFinal.bt"));
 
         /// <summary>
+        /// Publicly readable resolved path to the active .bt model file.
+        /// </summary>
+        public static string ActiveBtFilePath => DefaultBtFilePath;
+
+        /// <summary>
+        /// Fired whenever the .bt model file is written (structure or NodeGraph update).
+        /// FrontendServer subscribes to this to push live model updates to connected clients.
+        /// </summary>
+        public static event Action? ModelUpdated;
+
+        /// <summary>
         /// Replaces the empty "NodeGraph { }" inside the FlowNode matching <paramref name="cassetteName"/>
         /// with the generated <paramref name="nodeGraphDsl"/> string.
         /// The match is case-insensitive.
@@ -111,6 +122,7 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
                 var updated = content.Substring(0, lineStart) + indented + content.Substring(nodeGraphEnd);
 
                 File.WriteAllText(filePath, updated);
+                ModelUpdated?.Invoke();
 
                 LoggingService.LogSuccess($"✅ APTreeModelWriter: Updated NodeGraph for FlowNode '{cassetteName}' in {Path.GetFileName(filePath)}");
             }
@@ -199,6 +211,7 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
                 content = content.TrimEnd() + Environment.NewLine + sb.ToString();
 
                 File.WriteAllText(filePath, content);
+                ModelUpdated?.Invoke();
 
                 LoggingService.LogSuccess($"✅ APTreeModelWriter: Appended subtree BT '{subtreeBTName}' to {Path.GetFileName(filePath)}");
             }
@@ -258,6 +271,7 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
                         + content.Substring(match.Index + match.Length);
 
                 File.WriteAllText(filePath, content);
+                ModelUpdated?.Invoke();
 
                 LoggingService.LogSuccess($"✅ APTreeModelWriter: Annotated action '{actionInstanceName}' with @{subtreeBTName}");
             }
@@ -308,6 +322,7 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
                 content = content.Substring(0, match.Index) + replacement + content.Substring(match.Index + match.Length);
 
                 File.WriteAllText(filePath, content);
+                ModelUpdated?.Invoke();
                 LoggingService.LogSuccess($"✅ APTreeModelWriter: Updated Problem for '{plannerServiceName}' → Problem:{problemFileName}");
             }
             catch (Exception ex)

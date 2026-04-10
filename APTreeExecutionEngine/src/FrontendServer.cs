@@ -19,7 +19,18 @@ namespace BehaviorTreeMainProject
             // Subscribe to BTNode tick events and broadcast to all WebSocket clients
             BTNode.NodeTicked += (nodeName, status) =>
             {
-                var message = JsonSerializer.Serialize(new { nodeName, status });
+                var message = JsonSerializer.Serialize(new { type = "tick", nodeName, status });
+                lock (_subscribersLock)
+                {
+                    foreach (var writer in _tickSubscribers)
+                        writer.TryWrite(message);
+                }
+            };
+
+            // Subscribe to model file updates and notify all WebSocket clients
+            BehaviorTreeMainProject.Services.AIPlanning.APTreeModelWriter.ModelUpdated += () =>
+            {
+                var message = JsonSerializer.Serialize(new { type = "modelUpdated" });
                 lock (_subscribersLock)
                 {
                     foreach (var writer in _tickSubscribers)
@@ -55,6 +66,16 @@ namespace BehaviorTreeMainProject
             app.UseSwaggerUI();
 
             app.MapGet("/health", () => Results.Ok(new { ok = true }));
+
+            // Returns the current .bt model file text so the frontend can re-validate after live updates.
+            app.MapGet("/api/tree/model", () =>
+            {
+                var path = BehaviorTreeMainProject.Services.AIPlanning.APTreeModelWriter.ActiveBtFilePath;
+                if (!File.Exists(path))
+                    return Results.NotFound(new { error = $"Model file not found: {path}" });
+                var text = File.ReadAllText(path);
+                return Results.Text(text, "text/plain", Encoding.UTF8);
+            }).WithName("GetTreeModel");
 
             // WebSocket endpoint: streams real-time BTNode tick events to the frontend
             app.Map("/ws/tick", async (HttpContext context) =>

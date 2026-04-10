@@ -1,14 +1,21 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 /**
- * Connects to the backend WebSocket at /ws/tick and returns a live map of
- * nodeName → latest tick status ("Running" | "Success" | "Failure").
- * Statuses expire after EXPIRE_MS milliseconds so nodes don't stay highlighted forever.
+ * Connects to the backend WebSocket at /ws/tick.
+ * Returns a live map of nodeName → tick status ("Running" | "Success" | "Failure").
+ * Calls onModelUpdated() whenever the backend broadcasts a modelUpdated message.
  */
-function useTickStatus(expireMs = 2000): Record<string, string> {
+function useTickStatus(
+  onModelUpdated: () => void,
+  expireMs = 2000,
+): Record<string, string> {
   const [tickStatus, setTickStatus] = useState<Record<string, string>>({});
   const timersRef = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
   const wsRef = useRef<WebSocket | null>(null);
+  const onModelUpdatedRef = useRef(onModelUpdated);
+  useEffect(() => {
+    onModelUpdatedRef.current = onModelUpdated;
+  });
 
   useEffect(() => {
     let active = true;
@@ -22,10 +29,17 @@ function useTickStatus(expireMs = 2000): Record<string, string> {
       ws.onmessage = (event) => {
         if (!active) return;
         try {
-          const { nodeName, status } = JSON.parse(event.data as string) as {
-            nodeName: string;
-            status: string;
-          };
+          const msg = JSON.parse(event.data as string) as Record<string, unknown>;
+
+          if (msg.type === "modelUpdated") {
+            onModelUpdatedRef.current();
+            return;
+          }
+
+          const nodeName = msg.nodeName as string | undefined;
+          const status = msg.status as string | undefined;
+          if (!nodeName || !status) return;
+
           setTickStatus((prev) => ({ ...prev, [nodeName]: status }));
 
           const existing = timersRef.current.get(nodeName);
@@ -343,7 +357,6 @@ function getInitialTheme(): ThemeMode {
  * @returns main application element
  */
 function App() {
-  const tickStatus = useTickStatus();
   const [theme, setTheme] = useState<ThemeMode>(getInitialTheme);
   const [userLockedTheme, setUserLockedTheme] = useState<boolean>(() => {
     if (typeof window === "undefined") {
@@ -377,6 +390,71 @@ function App() {
     addActionInstances,
     predicateTypes,
   } = sidebarManager;
+
+  const actionTypesRef = useRef(actionTypes);
+  useEffect(() => {
+    actionTypesRef.current = actionTypes;
+  });
+
+  const handleModelUpdated = useCallback(async () => {
+    try {
+      const modelRes = await fetch("/api/tree/model");
+      if (!modelRes.ok) return;
+      const modelText = await modelRes.text();
+
+      const validateRes = await fetch("/api/aptree/validate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ modelText, instancesText: null, jarPath: null }),
+      });
+      if (!validateRes.ok) return;
+
+      const json: unknown = await validateRes.json().catch(() => null);
+      const parsed = normalizeAptreeValidateResponse(json);
+      if (!parsed.ok) return;
+
+      const candidateGraphs =
+        parsed.graphs && parsed.graphs.length > 0
+          ? parsed.graphs
+          : parsed.graph
+            ? [parsed.graph]
+            : [];
+      if (!candidateGraphs.length) return;
+
+      const importResult =
+        candidateGraphs.length > 1
+          ? aptreeGraphsToCanvasGraph(candidateGraphs, actionTypesRef.current ?? [])
+          : aptreeGraphToCanvasGraph(candidateGraphs[0]!, actionTypesRef.current ?? []);
+
+      if (importResult.discoveredActionTypes.length > 0) {
+        addActionTypes(importResult.discoveredActionTypes);
+      }
+      if (importResult.discoveredActionInstances.length > 0) {
+        addActionInstances(importResult.discoveredActionInstances);
+      }
+
+      // Merge: preserve positions of existing nodes, add newly planned nodes
+      setGraph((prev) => {
+        const existingById = new Map(prev.nodes.map((n) => [n.id, n]));
+        const mergedNodes = importResult.graph.nodes.map((newNode) => {
+          const existing = existingById.get(newNode.id);
+          if (existing) {
+            return { ...newNode, x: existing.x, y: existing.y, width: existing.width, height: existing.height };
+          }
+          return newNode;
+        });
+        return {
+          nodes: mergedNodes,
+          connections: importResult.graph.connections,
+          rootNodeId: importResult.graph.rootNodeId ?? prev.rootNodeId,
+        };
+      });
+    } catch {
+      // silently ignore — live model updates are best-effort
+    }
+  }, [addActionTypes, addActionInstances]);
+
+  const tickStatus = useTickStatus(handleModelUpdated);
 
   const rawActionInstances = useMemo(
     () => getItemsForCategory(ACTION_INSTANCES_KEY) as ActionInstance[],
