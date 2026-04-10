@@ -167,8 +167,8 @@ const TARGET_HANDLE_STYLES: Record<PortSide, CSSProperties> = {
 };
 
 const CANVAS_EXTENT: [[number, number], [number, number]] = [
-  [-4000, -4000],
-  [4000, 4000],
+  [-200000, -200000],
+  [200000, 200000],
 ];
 
 const PARAM_BOX_HEIGHT = 24;
@@ -879,6 +879,10 @@ function EditorCanvasInner(props: EditorCanvasProps) {
           hidden: !!node.hidden,
           width,
           height,
+          style: {
+            width: `${width}px`,
+            height: `${height}px`,
+          },
         } satisfies FlowNode<BehaviorNodeData>;
       };
 
@@ -1208,6 +1212,8 @@ function EditorCanvasInner(props: EditorCanvasProps) {
         onNodeDragStop={handleNodeDragStop}
         connectionLineType={ConnectionLineType.SmoothStep}
         proOptions={{ hideAttribution: true }}
+        minZoom={0.05}
+        maxZoom={4}
         panOnDrag
         fitView
         nodesDraggable

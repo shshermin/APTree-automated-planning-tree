@@ -27,6 +27,7 @@ import {
 } from "./components/sidebar/utils/constants";
 import {
   aptreeGraphToCanvasGraph,
+  aptreeGraphsToCanvasGraph,
   normalizeAptreeValidateResponse,
 } from "./utils/aptreeImport";
 import ActionParameterDetailsModal from "./components/editor/modals/ActionParameterDetailsModal.tsx";
@@ -876,15 +877,25 @@ function App() {
           return;
         }
 
-        if (!parsed.graph || parsed.graph.nodes.length === 0) {
+        const candidateGraphs =
+          parsed.graphs && parsed.graphs.length > 0
+            ? parsed.graphs
+            : parsed.graph
+              ? [parsed.graph]
+              : [];
+
+        const hasAnyNodes = candidateGraphs.some((candidate) => candidate.nodes.length > 0);
+        if (candidateGraphs.length === 0 || !hasAnyNodes) {
           window.alert(
             "APTree import succeeded, but no graph data was returned by the tool. Build the MontiCore tool jar with: (cd APTreeDSL && gradle shadowJar)."
           );
           return;
-          
         }
 
-        const importResult = aptreeGraphToCanvasGraph(parsed.graph, actionTypes ?? []);
+        const importResult =
+          candidateGraphs.length > 1
+            ? aptreeGraphsToCanvasGraph(candidateGraphs, actionTypes ?? [])
+            : aptreeGraphToCanvasGraph(candidateGraphs[0]!, actionTypes ?? []);
 
         // Add discovered action types to the sidebar
         if (importResult.discoveredActionTypes.length > 0) {
