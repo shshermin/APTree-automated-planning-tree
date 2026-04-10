@@ -203,7 +203,10 @@ namespace ModelLoader
         public static Coordinate Lookup(string obj1Name, string obj2Name)
         {
             var key = (obj1Name.ToLowerInvariant(), obj2Name.ToLowerInvariant());
-            return _coords.TryGetValue(key, out var coord) ? coord : null;
+            if (_coords.TryGetValue(key, out var coord))
+                return coord;
+            var reversed = (obj2Name.ToLowerInvariant(), obj1Name.ToLowerInvariant());
+            return _coords.TryGetValue(reversed, out coord) ? coord : null;
         }
     }
 }

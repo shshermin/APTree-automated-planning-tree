@@ -26,7 +26,8 @@ from ur10_commands import play_program, dashboard_command, set_payload, set_tcp
 
 DEFAULT_ROBOT_IP = "192.168.1.100"
 MOVEIT_BRIDGE_URL = "http://127.0.0.1:5002"
-EXTERNAL_CONTROL_PROGRAM = "external_control.urp"
+EXTERNAL_CONTROL_NAILGUN = "external_control_n.urp"
+EXTERNAL_CONTROL_GRIPPER = "external_control_g.urp"
 SUPPORTED_MOVE_TYPES = ['movej', 'movel', 'movep', 'movec', 'planned']
 
 # Active tool state — set by /play_program (equip/deequip), re-applied on every move
@@ -300,16 +301,20 @@ def robot_move():
             if not pose or len(pose) < 6:
                 return jsonify({'success': False, 'error': 'pose [x,y,z,rx,ry,rz] is required for planned moves'}), 400
 
+            # Determine which external_control program to use based on end effector
+            end_effector = data.get('endEffectorType') or 'gripper'
+            ext_program = EXTERNAL_CONTROL_NAILGUN if end_effector == 'nailgun' else EXTERNAL_CONTROL_GRIPPER
+
             # Step 1: Reuse external_control if already running, otherwise load+play
             state = dashboard_command(robot_ip, "programState")
             if "PLAYING" in state.upper():
                 print(f"External Control already running — skipping load/play")
             else:
-                print(f"Loading External Control program: {EXTERNAL_CONTROL_PROGRAM}")
-                load_resp = dashboard_command(robot_ip, f"load {EXTERNAL_CONTROL_PROGRAM}")
+                print(f"Loading External Control program: {ext_program}")
+                load_resp = dashboard_command(robot_ip, f"load {ext_program}")
                 print(f"Load response: {load_resp}")
                 if "File not found" in load_resp:
-                    return jsonify({'success': False, 'error': f"External Control program not found: {EXTERNAL_CONTROL_PROGRAM}"}), 500
+                    return jsonify({'success': False, 'error': f"External Control program not found: {ext_program}"}), 500
                 dashboard_command(robot_ip, "play")
 
                 # Wait for External Control program to reach PLAYING state,
@@ -334,7 +339,6 @@ def robot_move():
             half_theta = math.atan2(ry, rx)
             yaw_deg = 2.0 * half_theta * (180.0 / math.pi)
 
-            end_effector = data.get('endEffectorType') or 'gripper'
             moveit_payload = {
                 'x': -pose[0],
                 'y': -pose[1],
