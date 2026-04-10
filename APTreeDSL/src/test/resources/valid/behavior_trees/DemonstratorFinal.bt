@@ -338,7 +338,7 @@ BehaviorTree Demonstrator {
     }
 }BehaviorTree PickUpHL_stick5_initlocstick5_robot1_gripper1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_PickUpHL_stick5_initlocstick5_robot1_gripper1 {
-        ServicePlanning subtreeSrv_PickUpHL_stick5_initlocstick5_robot1_gripper1 ENHSP Domain:DomainMLTruss Problem:problemPickUpHL_stick5_initlocstick5_robot1_gripper1
+        ServicePlanning subtreeSrv_PickUpHL_stick5_initlocstick5_robot1_gripper1 Enhsp Domain:DomainMLTruss Problem:problemPickUpHL_stick5_initlocstick5_robot1_gripper1
         All
         AllAction
         NodeGraph {
@@ -352,7 +352,7 @@ BehaviorTree Demonstrator {
 
 BehaviorTree StackHL_stick5_table1_robot1_finallocstick5_gripper1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_StackHL_stick5_table1_robot1_finallocstick5_gripper1 {
-        ServicePlanning subtreeSrv_StackHL_stick5_table1_robot1_finallocstick5_gripper1 ENHSP Domain:DomainMLTruss Problem:problemStackHL_stick5_table1_robot1_finallocstick5_gripper1
+        ServicePlanning subtreeSrv_StackHL_stick5_table1_robot1_finallocstick5_gripper1 Enhsp Domain:DomainMLTruss Problem:problemStackHL_stick5_table1_robot1_finallocstick5_gripper1
         All
         AllAction
         NodeGraph {
@@ -366,7 +366,7 @@ BehaviorTree StackHL_stick5_table1_robot1_finallocstick5_gripper1Subtree {
 
 BehaviorTree PickUpHL_stick2_initlocstick2_robot1_gripper1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_PickUpHL_stick2_initlocstick2_robot1_gripper1 {
-        ServicePlanning subtreeSrv_PickUpHL_stick2_initlocstick2_robot1_gripper1 ENHSP Domain:DomainMLTruss Problem:problemPickUpHL_stick2_initlocstick2_robot1_gripper1
+        ServicePlanning subtreeSrv_PickUpHL_stick2_initlocstick2_robot1_gripper1 Enhsp Domain:DomainMLTruss Problem:problemPickUpHL_stick2_initlocstick2_robot1_gripper1
         All
         AllAction
         NodeGraph {
@@ -380,7 +380,7 @@ BehaviorTree PickUpHL_stick2_initlocstick2_robot1_gripper1Subtree {
 
 BehaviorTree StackHL_stick2_table1_robot1_finallocstick2_gripper1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_StackHL_stick2_table1_robot1_finallocstick2_gripper1 {
-        ServicePlanning subtreeSrv_StackHL_stick2_table1_robot1_finallocstick2_gripper1 ENHSP Domain:DomainMLTruss Problem:problemStackHL_stick2_table1_robot1_finallocstick2_gripper1
+        ServicePlanning subtreeSrv_StackHL_stick2_table1_robot1_finallocstick2_gripper1 Enhsp Domain:DomainMLTruss Problem:problemStackHL_stick2_table1_robot1_finallocstick2_gripper1
         All
         AllAction
         NodeGraph {
@@ -394,7 +394,7 @@ BehaviorTree StackHL_stick2_table1_robot1_finallocstick2_gripper1Subtree {
 
 BehaviorTree PickUpHL_stick9_initlocstick9_robot1_gripper1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_PickUpHL_stick9_initlocstick9_robot1_gripper1 {
-        ServicePlanning subtreeSrv_PickUpHL_stick9_initlocstick9_robot1_gripper1 ENHSP Domain:DomainMLTruss Problem:problemPickUpHL_stick9_initlocstick9_robot1_gripper1
+        ServicePlanning subtreeSrv_PickUpHL_stick9_initlocstick9_robot1_gripper1 Enhsp Domain:DomainMLTruss Problem:problemPickUpHL_stick9_initlocstick9_robot1_gripper1
         All
         AllAction
         NodeGraph {
@@ -408,7 +408,7 @@ BehaviorTree PickUpHL_stick9_initlocstick9_robot1_gripper1Subtree {
 
 BehaviorTree StackOnTwoHL_stick9_robot1_finallocstick9_stick5_stick4_layer1_layer2_gripper1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_StackOnTwoHL_stick9_robot1_finallocstick9_stick5_stick4_layer1_layer2_gripper1 {
-        ServicePlanning subtreeSrv_StackOnTwoHL_stick9_robot1_finallocstick9_stick5_stick4_layer1_layer2_gripper1 ENHSP Domain:DomainMLTruss Problem:problemStackOnTwoHL_stick9_robot1_finallocstick9_stick5_stick4_layer1_layer2_gripper1
+        ServicePlanning subtreeSrv_StackOnTwoHL_stick9_robot1_finallocstick9_stick5_stick4_layer1_layer2_gripper1 Enhsp Domain:DomainMLTruss Problem:problemStackOnTwoHL_stick9_robot1_finallocstick9_stick5_stick4_layer1_layer2_gripper1
         All
         AllAction
         NodeGraph {
@@ -422,7 +422,7 @@ BehaviorTree StackOnTwoHL_stick9_robot1_finallocstick9_stick5_stick4_layer1_laye
 
 BehaviorTree PickUpHL_cube2_initloccube2_robot1_gripper1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_PickUpHL_cube2_initloccube2_robot1_gripper1 {
-        ServicePlanning subtreeSrv_PickUpHL_cube2_initloccube2_robot1_gripper1 ENHSP Domain:DomainMLTruss Problem:problemPickUpHL_cube2_initloccube2_robot1_gripper1
+        ServicePlanning subtreeSrv_PickUpHL_cube2_initloccube2_robot1_gripper1 Enhsp Domain:DomainMLTruss Problem:problemPickUpHL_cube2_initloccube2_robot1_gripper1
         All
         AllAction
         NodeGraph {
@@ -436,7 +436,7 @@ BehaviorTree PickUpHL_cube2_initloccube2_robot1_gripper1Subtree {
 
 BehaviorTree StackHL_cube2_stick5_robot1_finloccube2_gripper1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_StackHL_cube2_stick5_robot1_finloccube2_gripper1 {
-        ServicePlanning subtreeSrv_StackHL_cube2_stick5_robot1_finloccube2_gripper1 ENHSP Domain:DomainMLTruss Problem:problemStackHL_cube2_stick5_robot1_finloccube2_gripper1
+        ServicePlanning subtreeSrv_StackHL_cube2_stick5_robot1_finloccube2_gripper1 Enhsp Domain:DomainMLTruss Problem:problemStackHL_cube2_stick5_robot1_finloccube2_gripper1
         All
         AllAction
         NodeGraph {
@@ -450,7 +450,7 @@ BehaviorTree StackHL_cube2_stick5_robot1_finloccube2_gripper1Subtree {
 
 BehaviorTree PickUpHL_stick1_initlocstick1_robot1_gripper1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_PickUpHL_stick1_initlocstick1_robot1_gripper1 {
-        ServicePlanning subtreeSrv_PickUpHL_stick1_initlocstick1_robot1_gripper1 ENHSP Domain:DomainMLTruss Problem:problemPickUpHL_stick1_initlocstick1_robot1_gripper1
+        ServicePlanning subtreeSrv_PickUpHL_stick1_initlocstick1_robot1_gripper1 Enhsp Domain:DomainMLTruss Problem:problemPickUpHL_stick1_initlocstick1_robot1_gripper1
         All
         AllAction
         NodeGraph {
@@ -464,7 +464,7 @@ BehaviorTree PickUpHL_stick1_initlocstick1_robot1_gripper1Subtree {
 
 BehaviorTree StackHL_stick1_table1_robot1_finallocstick1_gripper1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_StackHL_stick1_table1_robot1_finallocstick1_gripper1 {
-        ServicePlanning subtreeSrv_StackHL_stick1_table1_robot1_finallocstick1_gripper1 ENHSP Domain:DomainMLTruss Problem:problemStackHL_stick1_table1_robot1_finallocstick1_gripper1
+        ServicePlanning subtreeSrv_StackHL_stick1_table1_robot1_finallocstick1_gripper1 Enhsp Domain:DomainMLTruss Problem:problemStackHL_stick1_table1_robot1_finallocstick1_gripper1
         All
         AllAction
         NodeGraph {
@@ -478,7 +478,7 @@ BehaviorTree StackHL_stick1_table1_robot1_finallocstick1_gripper1Subtree {
 
 BehaviorTree PickUpHL_stick3_initlocstick3_robot1_gripper1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_PickUpHL_stick3_initlocstick3_robot1_gripper1 {
-        ServicePlanning subtreeSrv_PickUpHL_stick3_initlocstick3_robot1_gripper1 ENHSP Domain:DomainMLTruss Problem:problemPickUpHL_stick3_initlocstick3_robot1_gripper1
+        ServicePlanning subtreeSrv_PickUpHL_stick3_initlocstick3_robot1_gripper1 Enhsp Domain:DomainMLTruss Problem:problemPickUpHL_stick3_initlocstick3_robot1_gripper1
         All
         AllAction
         NodeGraph {
@@ -492,7 +492,7 @@ BehaviorTree PickUpHL_stick3_initlocstick3_robot1_gripper1Subtree {
 
 BehaviorTree StackHL_stick3_table1_robot1_finallocstick3_gripper1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_StackHL_stick3_table1_robot1_finallocstick3_gripper1 {
-        ServicePlanning subtreeSrv_StackHL_stick3_table1_robot1_finallocstick3_gripper1 ENHSP Domain:DomainMLTruss Problem:problemStackHL_stick3_table1_robot1_finallocstick3_gripper1
+        ServicePlanning subtreeSrv_StackHL_stick3_table1_robot1_finallocstick3_gripper1 Enhsp Domain:DomainMLTruss Problem:problemStackHL_stick3_table1_robot1_finallocstick3_gripper1
         All
         AllAction
         NodeGraph {
@@ -506,7 +506,7 @@ BehaviorTree StackHL_stick3_table1_robot1_finallocstick3_gripper1Subtree {
 
 BehaviorTree PickUpHL_cube1_initloccube1_robot1_gripper1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_PickUpHL_cube1_initloccube1_robot1_gripper1 {
-        ServicePlanning subtreeSrv_PickUpHL_cube1_initloccube1_robot1_gripper1 ENHSP Domain:DomainMLTruss Problem:problemPickUpHL_cube1_initloccube1_robot1_gripper1
+        ServicePlanning subtreeSrv_PickUpHL_cube1_initloccube1_robot1_gripper1 Enhsp Domain:DomainMLTruss Problem:problemPickUpHL_cube1_initloccube1_robot1_gripper1
         All
         AllAction
         NodeGraph {
@@ -520,7 +520,7 @@ BehaviorTree PickUpHL_cube1_initloccube1_robot1_gripper1Subtree {
 
 BehaviorTree StackHL_cube1_stick1_robot1_finloccube1_gripper1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_StackHL_cube1_stick1_robot1_finloccube1_gripper1 {
-        ServicePlanning subtreeSrv_StackHL_cube1_stick1_robot1_finloccube1_gripper1 ENHSP Domain:DomainMLTruss Problem:problemStackHL_cube1_stick1_robot1_finloccube1_gripper1
+        ServicePlanning subtreeSrv_StackHL_cube1_stick1_robot1_finloccube1_gripper1 Enhsp Domain:DomainMLTruss Problem:problemStackHL_cube1_stick1_robot1_finloccube1_gripper1
         All
         AllAction
         NodeGraph {
@@ -534,7 +534,7 @@ BehaviorTree StackHL_cube1_stick1_robot1_finloccube1_gripper1Subtree {
 
 BehaviorTree PickUpHL_stick7_initlocstick7_robot1_gripper1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_PickUpHL_stick7_initlocstick7_robot1_gripper1 {
-        ServicePlanning subtreeSrv_PickUpHL_stick7_initlocstick7_robot1_gripper1 ENHSP Domain:DomainMLTruss Problem:problemPickUpHL_stick7_initlocstick7_robot1_gripper1
+        ServicePlanning subtreeSrv_PickUpHL_stick7_initlocstick7_robot1_gripper1 Enhsp Domain:DomainMLTruss Problem:problemPickUpHL_stick7_initlocstick7_robot1_gripper1
         All
         AllAction
         NodeGraph {
@@ -548,7 +548,7 @@ BehaviorTree PickUpHL_stick7_initlocstick7_robot1_gripper1Subtree {
 
 BehaviorTree StackOnTwoHL_stick7_robot1_finallocstick7_stick3_stick2_layer1_layer2_gripper1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_StackOnTwoHL_stick7_robot1_finallocstick7_stick3_stick2_layer1_layer2_gripper1 {
-        ServicePlanning subtreeSrv_StackOnTwoHL_stick7_robot1_finallocstick7_stick3_stick2_layer1_layer2_gripper1 ENHSP Domain:DomainMLTruss Problem:problemStackOnTwoHL_stick7_robot1_finallocstick7_stick3_stick2_layer1_layer2_gripper1
+        ServicePlanning subtreeSrv_StackOnTwoHL_stick7_robot1_finallocstick7_stick3_stick2_layer1_layer2_gripper1 Enhsp Domain:DomainMLTruss Problem:problemStackOnTwoHL_stick7_robot1_finallocstick7_stick3_stick2_layer1_layer2_gripper1
         All
         AllAction
         NodeGraph {
@@ -562,7 +562,7 @@ BehaviorTree StackOnTwoHL_stick7_robot1_finallocstick7_stick3_stick2_layer1_laye
 
 BehaviorTree PickUpHL_stick8_initlocstick8_robot1_gripper1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_PickUpHL_stick8_initlocstick8_robot1_gripper1 {
-        ServicePlanning subtreeSrv_PickUpHL_stick8_initlocstick8_robot1_gripper1 ENHSP Domain:DomainMLTruss Problem:problemPickUpHL_stick8_initlocstick8_robot1_gripper1
+        ServicePlanning subtreeSrv_PickUpHL_stick8_initlocstick8_robot1_gripper1 Enhsp Domain:DomainMLTruss Problem:problemPickUpHL_stick8_initlocstick8_robot1_gripper1
         All
         AllAction
         NodeGraph {
@@ -576,7 +576,7 @@ BehaviorTree PickUpHL_stick8_initlocstick8_robot1_gripper1Subtree {
 
 BehaviorTree StackOnTwoHL_stick8_robot1_finallocstick8_stick3_stick4_layer1_layer2_gripper1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_StackOnTwoHL_stick8_robot1_finallocstick8_stick3_stick4_layer1_layer2_gripper1 {
-        ServicePlanning subtreeSrv_StackOnTwoHL_stick8_robot1_finallocstick8_stick3_stick4_layer1_layer2_gripper1 ENHSP Domain:DomainMLTruss Problem:problemStackOnTwoHL_stick8_robot1_finallocstick8_stick3_stick4_layer1_layer2_gripper1
+        ServicePlanning subtreeSrv_StackOnTwoHL_stick8_robot1_finallocstick8_stick3_stick4_layer1_layer2_gripper1 Enhsp Domain:DomainMLTruss Problem:problemStackOnTwoHL_stick8_robot1_finallocstick8_stick3_stick4_layer1_layer2_gripper1
         All
         AllAction
         NodeGraph {
@@ -590,7 +590,7 @@ BehaviorTree StackOnTwoHL_stick8_robot1_finallocstick8_stick3_stick4_layer1_laye
 
 BehaviorTree PickUpHL_stick6_initlocstick6_robot1_gripper1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_PickUpHL_stick6_initlocstick6_robot1_gripper1 {
-        ServicePlanning subtreeSrv_PickUpHL_stick6_initlocstick6_robot1_gripper1 ENHSP Domain:DomainMLTruss Problem:problemPickUpHL_stick6_initlocstick6_robot1_gripper1
+        ServicePlanning subtreeSrv_PickUpHL_stick6_initlocstick6_robot1_gripper1 Enhsp Domain:DomainMLTruss Problem:problemPickUpHL_stick6_initlocstick6_robot1_gripper1
         All
         AllAction
         NodeGraph {
@@ -604,7 +604,7 @@ BehaviorTree PickUpHL_stick6_initlocstick6_robot1_gripper1Subtree {
 
 BehaviorTree StackOnTwoHL_stick6_robot1_finallocstick6_stick2_stick1_layer1_layer2_gripper1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_StackOnTwoHL_stick6_robot1_finallocstick6_stick2_stick1_layer1_layer2_gripper1 {
-        ServicePlanning subtreeSrv_StackOnTwoHL_stick6_robot1_finallocstick6_stick2_stick1_layer1_layer2_gripper1 ENHSP Domain:DomainMLTruss Problem:problemStackOnTwoHL_stick6_robot1_finallocstick6_stick2_stick1_layer1_layer2_gripper1
+        ServicePlanning subtreeSrv_StackOnTwoHL_stick6_robot1_finallocstick6_stick2_stick1_layer1_layer2_gripper1 Enhsp Domain:DomainMLTruss Problem:problemStackOnTwoHL_stick6_robot1_finallocstick6_stick2_stick1_layer1_layer2_gripper1
         All
         AllAction
         NodeGraph {
@@ -618,7 +618,7 @@ BehaviorTree StackOnTwoHL_stick6_robot1_finallocstick6_stick2_stick1_layer1_laye
 
 BehaviorTree ChangeEndeffectorHL_robot1_gripper1_staplergun1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_ChangeEndeffectorHL_robot1_gripper1_staplergun1 {
-        ServicePlanning subtreeSrv_ChangeEndeffectorHL_robot1_gripper1_staplergun1 ENHSP Domain:DomainMLTruss Problem:problemChangeEndeffectorHL_robot1_gripper1_staplergun1
+        ServicePlanning subtreeSrv_ChangeEndeffectorHL_robot1_gripper1_staplergun1 Enhsp Domain:DomainMLTruss Problem:problemChangeEndeffectorHL_robot1_gripper1_staplergun1
         All
         AllAction
         NodeGraph {
@@ -638,7 +638,7 @@ BehaviorTree ChangeEndeffectorHL_robot1_gripper1_staplergun1Subtree {
 
 BehaviorTree NailingHL_stick6_stick1_robot1_staplergun1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_NailingHL_stick6_stick1_robot1_staplergun1 {
-        ServicePlanning subtreeSrv_NailingHL_stick6_stick1_robot1_staplergun1 ENHSP Domain:DomainMLTruss Problem:problemNailingHL_stick6_stick1_robot1_staplergun1
+        ServicePlanning subtreeSrv_NailingHL_stick6_stick1_robot1_staplergun1 Enhsp Domain:DomainMLTruss Problem:problemNailingHL_stick6_stick1_robot1_staplergun1
         All
         AllAction
         NodeGraph {
@@ -655,7 +655,7 @@ BehaviorTree NailingHL_stick6_stick1_robot1_staplergun1Subtree {
 
 BehaviorTree NailingHL_stick6_stick2_robot1_staplergun1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_NailingHL_stick6_stick2_robot1_staplergun1 {
-        ServicePlanning subtreeSrv_NailingHL_stick6_stick2_robot1_staplergun1 ENHSP Domain:DomainMLTruss Problem:problemNailingHL_stick6_stick2_robot1_staplergun1
+        ServicePlanning subtreeSrv_NailingHL_stick6_stick2_robot1_staplergun1 Enhsp Domain:DomainMLTruss Problem:problemNailingHL_stick6_stick2_robot1_staplergun1
         All
         AllAction
         NodeGraph {
@@ -666,7 +666,7 @@ BehaviorTree NailingHL_stick6_stick2_robot1_staplergun1Subtree {
 
 BehaviorTree NailingHL_stick7_stick2_robot1_staplergun1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_NailingHL_stick7_stick2_robot1_staplergun1 {
-        ServicePlanning subtreeSrv_NailingHL_stick7_stick2_robot1_staplergun1 ENHSP Domain:DomainMLTruss Problem:problemNailingHL_stick7_stick2_robot1_staplergun1
+        ServicePlanning subtreeSrv_NailingHL_stick7_stick2_robot1_staplergun1 Enhsp Domain:DomainMLTruss Problem:problemNailingHL_stick7_stick2_robot1_staplergun1
         All
         AllAction
         NodeGraph {
@@ -677,7 +677,7 @@ BehaviorTree NailingHL_stick7_stick2_robot1_staplergun1Subtree {
 
 BehaviorTree NailingHL_stick7_stick3_robot1_staplergun1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_NailingHL_stick7_stick3_robot1_staplergun1 {
-        ServicePlanning subtreeSrv_NailingHL_stick7_stick3_robot1_staplergun1 ENHSP Domain:DomainMLTruss Problem:problemNailingHL_stick7_stick3_robot1_staplergun1
+        ServicePlanning subtreeSrv_NailingHL_stick7_stick3_robot1_staplergun1 Enhsp Domain:DomainMLTruss Problem:problemNailingHL_stick7_stick3_robot1_staplergun1
         All
         AllAction
         NodeGraph {
@@ -688,7 +688,7 @@ BehaviorTree NailingHL_stick7_stick3_robot1_staplergun1Subtree {
 
 BehaviorTree NailingHL_stick8_stick3_robot1_staplergun1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_NailingHL_stick8_stick3_robot1_staplergun1 {
-        ServicePlanning subtreeSrv_NailingHL_stick8_stick3_robot1_staplergun1 ENHSP Domain:DomainMLTruss Problem:problemNailingHL_stick8_stick3_robot1_staplergun1
+        ServicePlanning subtreeSrv_NailingHL_stick8_stick3_robot1_staplergun1 Enhsp Domain:DomainMLTruss Problem:problemNailingHL_stick8_stick3_robot1_staplergun1
         All
         AllAction
         NodeGraph {
@@ -699,7 +699,7 @@ BehaviorTree NailingHL_stick8_stick3_robot1_staplergun1Subtree {
 
 BehaviorTree NailingHL_stick8_stick4_robot1_staplergun1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_NailingHL_stick8_stick4_robot1_staplergun1 {
-        ServicePlanning subtreeSrv_NailingHL_stick8_stick4_robot1_staplergun1 ENHSP Domain:DomainMLTruss Problem:problemNailingHL_stick8_stick4_robot1_staplergun1
+        ServicePlanning subtreeSrv_NailingHL_stick8_stick4_robot1_staplergun1 Enhsp Domain:DomainMLTruss Problem:problemNailingHL_stick8_stick4_robot1_staplergun1
         All
         AllAction
         NodeGraph {
@@ -710,7 +710,7 @@ BehaviorTree NailingHL_stick8_stick4_robot1_staplergun1Subtree {
 
 BehaviorTree NailingHL_stick9_stick4_robot1_staplergun1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_NailingHL_stick9_stick4_robot1_staplergun1 {
-        ServicePlanning subtreeSrv_NailingHL_stick9_stick4_robot1_staplergun1 ENHSP Domain:DomainMLTruss Problem:problemNailingHL_stick9_stick4_robot1_staplergun1
+        ServicePlanning subtreeSrv_NailingHL_stick9_stick4_robot1_staplergun1 Enhsp Domain:DomainMLTruss Problem:problemNailingHL_stick9_stick4_robot1_staplergun1
         All
         AllAction
         NodeGraph {
@@ -721,7 +721,7 @@ BehaviorTree NailingHL_stick9_stick4_robot1_staplergun1Subtree {
 
 BehaviorTree NailingHL_stick9_stick5_robot1_staplergun1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_NailingHL_stick9_stick5_robot1_staplergun1 {
-        ServicePlanning subtreeSrv_NailingHL_stick9_stick5_robot1_staplergun1 ENHSP Domain:DomainMLTruss Problem:problemNailingHL_stick9_stick5_robot1_staplergun1
+        ServicePlanning subtreeSrv_NailingHL_stick9_stick5_robot1_staplergun1 Enhsp Domain:DomainMLTruss Problem:problemNailingHL_stick9_stick5_robot1_staplergun1
         All
         AllAction
         NodeGraph {
@@ -732,7 +732,7 @@ BehaviorTree NailingHL_stick9_stick5_robot1_staplergun1Subtree {
 
 BehaviorTree NailingHL_cube1_stick1_robot1_staplergun1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_NailingHL_cube1_stick1_robot1_staplergun1 {
-        ServicePlanning subtreeSrv_NailingHL_cube1_stick1_robot1_staplergun1 ENHSP Domain:DomainMLTruss Problem:problemNailingHL_cube1_stick1_robot1_staplergun1
+        ServicePlanning subtreeSrv_NailingHL_cube1_stick1_robot1_staplergun1 Enhsp Domain:DomainMLTruss Problem:problemNailingHL_cube1_stick1_robot1_staplergun1
         All
         AllAction
         NodeGraph {
@@ -743,7 +743,7 @@ BehaviorTree NailingHL_cube1_stick1_robot1_staplergun1Subtree {
 
 BehaviorTree NailingHL_cube2_stick5_robot1_staplergun1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_NailingHL_cube2_stick5_robot1_staplergun1 {
-        ServicePlanning subtreeSrv_NailingHL_cube2_stick5_robot1_staplergun1 ENHSP Domain:DomainMLTruss Problem:problemNailingHL_cube2_stick5_robot1_staplergun1
+        ServicePlanning subtreeSrv_NailingHL_cube2_stick5_robot1_staplergun1 Enhsp Domain:DomainMLTruss Problem:problemNailingHL_cube2_stick5_robot1_staplergun1
         All
         AllAction
         NodeGraph {
@@ -754,7 +754,7 @@ BehaviorTree NailingHL_cube2_stick5_robot1_staplergun1Subtree {
 
 BehaviorTree ChangeEndeffectorHL_robot1_staplergun1_gripper1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_ChangeEndeffectorHL_robot1_staplergun1_gripper1 {
-        ServicePlanning subtreeSrv_ChangeEndeffectorHL_robot1_staplergun1_gripper1 ENHSP Domain:DomainMLTruss Problem:problemChangeEndeffectorHL_robot1_staplergun1_gripper1
+        ServicePlanning subtreeSrv_ChangeEndeffectorHL_robot1_staplergun1_gripper1 Enhsp Domain:DomainMLTruss Problem:problemChangeEndeffectorHL_robot1_staplergun1_gripper1
         All
         AllAction
         NodeGraph {
@@ -774,7 +774,7 @@ BehaviorTree ChangeEndeffectorHL_robot1_staplergun1_gripper1Subtree {
 
 BehaviorTree PickUpHL_stick11_initlocstick11_robot1_gripper1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_PickUpHL_stick11_initlocstick11_robot1_gripper1 {
-        ServicePlanning subtreeSrv_PickUpHL_stick11_initlocstick11_robot1_gripper1 ENHSP Domain:DomainMLTruss Problem:problemPickUpHL_stick11_initlocstick11_robot1_gripper1
+        ServicePlanning subtreeSrv_PickUpHL_stick11_initlocstick11_robot1_gripper1 Enhsp Domain:DomainMLTruss Problem:problemPickUpHL_stick11_initlocstick11_robot1_gripper1
         All
         AllAction
         NodeGraph {
@@ -788,7 +788,7 @@ BehaviorTree PickUpHL_stick11_initlocstick11_robot1_gripper1Subtree {
 
 BehaviorTree StackOnTwoHL_stick11_robot1_finallocstick11_stick6_stick7_layer2_layer3_gripper1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_StackOnTwoHL_stick11_robot1_finallocstick11_stick6_stick7_layer2_layer3_gripper1 {
-        ServicePlanning subtreeSrv_StackOnTwoHL_stick11_robot1_finallocstick11_stick6_stick7_layer2_layer3_gripper1 ENHSP Domain:DomainMLTruss Problem:problemStackOnTwoHL_stick11_robot1_finallocstick11_stick6_stick7_layer2_layer3_gripper1
+        ServicePlanning subtreeSrv_StackOnTwoHL_stick11_robot1_finallocstick11_stick6_stick7_layer2_layer3_gripper1 Enhsp Domain:DomainMLTruss Problem:problemStackOnTwoHL_stick11_robot1_finallocstick11_stick6_stick7_layer2_layer3_gripper1
         All
         AllAction
         NodeGraph {
@@ -802,7 +802,7 @@ BehaviorTree StackOnTwoHL_stick11_robot1_finallocstick11_stick6_stick7_layer2_la
 
 BehaviorTree PickUpHL_stick10_initlocstick10_robot1_gripper1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_PickUpHL_stick10_initlocstick10_robot1_gripper1 {
-        ServicePlanning subtreeSrv_PickUpHL_stick10_initlocstick10_robot1_gripper1 ENHSP Domain:DomainMLTruss Problem:problemPickUpHL_stick10_initlocstick10_robot1_gripper1
+        ServicePlanning subtreeSrv_PickUpHL_stick10_initlocstick10_robot1_gripper1 Enhsp Domain:DomainMLTruss Problem:problemPickUpHL_stick10_initlocstick10_robot1_gripper1
         All
         AllAction
         NodeGraph {
@@ -816,7 +816,7 @@ BehaviorTree PickUpHL_stick10_initlocstick10_robot1_gripper1Subtree {
 
 BehaviorTree StackOnTwoHL_stick10_robot1_finallocstick10_stick6_cube1_layer2_layer3_gripper1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_StackOnTwoHL_stick10_robot1_finallocstick10_stick6_cube1_layer2_layer3_gripper1 {
-        ServicePlanning subtreeSrv_StackOnTwoHL_stick10_robot1_finallocstick10_stick6_cube1_layer2_layer3_gripper1 ENHSP Domain:DomainMLTruss Problem:problemStackOnTwoHL_stick10_robot1_finallocstick10_stick6_cube1_layer2_layer3_gripper1
+        ServicePlanning subtreeSrv_StackOnTwoHL_stick10_robot1_finallocstick10_stick6_cube1_layer2_layer3_gripper1 Enhsp Domain:DomainMLTruss Problem:problemStackOnTwoHL_stick10_robot1_finallocstick10_stick6_cube1_layer2_layer3_gripper1
         All
         AllAction
         NodeGraph {
@@ -830,7 +830,7 @@ BehaviorTree StackOnTwoHL_stick10_robot1_finallocstick10_stick6_cube1_layer2_lay
 
 BehaviorTree PickUpHL_stick13_initlocstick13_robot1_gripper1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_PickUpHL_stick13_initlocstick13_robot1_gripper1 {
-        ServicePlanning subtreeSrv_PickUpHL_stick13_initlocstick13_robot1_gripper1 ENHSP Domain:DomainMLTruss Problem:problemPickUpHL_stick13_initlocstick13_robot1_gripper1
+        ServicePlanning subtreeSrv_PickUpHL_stick13_initlocstick13_robot1_gripper1 Enhsp Domain:DomainMLTruss Problem:problemPickUpHL_stick13_initlocstick13_robot1_gripper1
         All
         AllAction
         NodeGraph {
@@ -844,7 +844,7 @@ BehaviorTree PickUpHL_stick13_initlocstick13_robot1_gripper1Subtree {
 
 BehaviorTree StackOnTwoHL_stick13_robot1_finallocstick13_stick8_stick9_layer2_layer3_gripper1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_StackOnTwoHL_stick13_robot1_finallocstick13_stick8_stick9_layer2_layer3_gripper1 {
-        ServicePlanning subtreeSrv_StackOnTwoHL_stick13_robot1_finallocstick13_stick8_stick9_layer2_layer3_gripper1 ENHSP Domain:DomainMLTruss Problem:problemStackOnTwoHL_stick13_robot1_finallocstick13_stick8_stick9_layer2_layer3_gripper1
+        ServicePlanning subtreeSrv_StackOnTwoHL_stick13_robot1_finallocstick13_stick8_stick9_layer2_layer3_gripper1 Enhsp Domain:DomainMLTruss Problem:problemStackOnTwoHL_stick13_robot1_finallocstick13_stick8_stick9_layer2_layer3_gripper1
         All
         AllAction
         NodeGraph {
@@ -858,7 +858,7 @@ BehaviorTree StackOnTwoHL_stick13_robot1_finallocstick13_stick8_stick9_layer2_la
 
 BehaviorTree PickUpHL_stick14_initlocstick14_robot1_gripper1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_PickUpHL_stick14_initlocstick14_robot1_gripper1 {
-        ServicePlanning subtreeSrv_PickUpHL_stick14_initlocstick14_robot1_gripper1 ENHSP Domain:DomainMLTruss Problem:problemPickUpHL_stick14_initlocstick14_robot1_gripper1
+        ServicePlanning subtreeSrv_PickUpHL_stick14_initlocstick14_robot1_gripper1 Enhsp Domain:DomainMLTruss Problem:problemPickUpHL_stick14_initlocstick14_robot1_gripper1
         All
         AllAction
         NodeGraph {
@@ -872,7 +872,7 @@ BehaviorTree PickUpHL_stick14_initlocstick14_robot1_gripper1Subtree {
 
 BehaviorTree StackOnTwoHL_stick14_robot1_finallocstick14_cube2_stick9_layer2_layer3_gripper1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_StackOnTwoHL_stick14_robot1_finallocstick14_cube2_stick9_layer2_layer3_gripper1 {
-        ServicePlanning subtreeSrv_StackOnTwoHL_stick14_robot1_finallocstick14_cube2_stick9_layer2_layer3_gripper1 ENHSP Domain:DomainMLTruss Problem:problemStackOnTwoHL_stick14_robot1_finallocstick14_cube2_stick9_layer2_layer3_gripper1
+        ServicePlanning subtreeSrv_StackOnTwoHL_stick14_robot1_finallocstick14_cube2_stick9_layer2_layer3_gripper1 Enhsp Domain:DomainMLTruss Problem:problemStackOnTwoHL_stick14_robot1_finallocstick14_cube2_stick9_layer2_layer3_gripper1
         All
         AllAction
         NodeGraph {
@@ -886,7 +886,7 @@ BehaviorTree StackOnTwoHL_stick14_robot1_finallocstick14_cube2_stick9_layer2_lay
 
 BehaviorTree PickUpHL_stick12_initlocstick12_robot1_gripper1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_PickUpHL_stick12_initlocstick12_robot1_gripper1 {
-        ServicePlanning subtreeSrv_PickUpHL_stick12_initlocstick12_robot1_gripper1 ENHSP Domain:DomainMLTruss Problem:problemPickUpHL_stick12_initlocstick12_robot1_gripper1
+        ServicePlanning subtreeSrv_PickUpHL_stick12_initlocstick12_robot1_gripper1 Enhsp Domain:DomainMLTruss Problem:problemPickUpHL_stick12_initlocstick12_robot1_gripper1
         All
         AllAction
         NodeGraph {
@@ -900,7 +900,7 @@ BehaviorTree PickUpHL_stick12_initlocstick12_robot1_gripper1Subtree {
 
 BehaviorTree StackOnTwoHL_stick12_robot1_finallocstick12_stick8_stick7_layer2_layer3_gripper1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_StackOnTwoHL_stick12_robot1_finallocstick12_stick8_stick7_layer2_layer3_gripper1 {
-        ServicePlanning subtreeSrv_StackOnTwoHL_stick12_robot1_finallocstick12_stick8_stick7_layer2_layer3_gripper1 ENHSP Domain:DomainMLTruss Problem:problemStackOnTwoHL_stick12_robot1_finallocstick12_stick8_stick7_layer2_layer3_gripper1
+        ServicePlanning subtreeSrv_StackOnTwoHL_stick12_robot1_finallocstick12_stick8_stick7_layer2_layer3_gripper1 Enhsp Domain:DomainMLTruss Problem:problemStackOnTwoHL_stick12_robot1_finallocstick12_stick8_stick7_layer2_layer3_gripper1
         All
         AllAction
         NodeGraph {
@@ -914,7 +914,7 @@ BehaviorTree StackOnTwoHL_stick12_robot1_finallocstick12_stick8_stick7_layer2_la
 
 BehaviorTree ChangeEndeffectorHL_robot1_gripper1_staplergun1_dup2Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_ChangeEndeffectorHL_robot1_gripper1_staplergun1_dup2 {
-        ServicePlanning subtreeSrv_ChangeEndeffectorHL_robot1_gripper1_staplergun1_dup2 ENHSP Domain:DomainMLTruss Problem:problemChangeEndeffectorHL_robot1_gripper1_staplergun1_dup2
+        ServicePlanning subtreeSrv_ChangeEndeffectorHL_robot1_gripper1_staplergun1_dup2 Enhsp Domain:DomainMLTruss Problem:problemChangeEndeffectorHL_robot1_gripper1_staplergun1_dup2
         All
         AllAction
         NodeGraph {
@@ -931,7 +931,7 @@ BehaviorTree ChangeEndeffectorHL_robot1_gripper1_staplergun1_dup2Subtree {
 
 BehaviorTree NailingHL_stick10_stick6_robot1_staplergun1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_NailingHL_stick10_stick6_robot1_staplergun1 {
-        ServicePlanning subtreeSrv_NailingHL_stick10_stick6_robot1_staplergun1 ENHSP Domain:DomainMLTruss Problem:problemNailingHL_stick10_stick6_robot1_staplergun1
+        ServicePlanning subtreeSrv_NailingHL_stick10_stick6_robot1_staplergun1 Enhsp Domain:DomainMLTruss Problem:problemNailingHL_stick10_stick6_robot1_staplergun1
         All
         AllAction
         NodeGraph {
@@ -948,7 +948,7 @@ BehaviorTree NailingHL_stick10_stick6_robot1_staplergun1Subtree {
 
 BehaviorTree NailingHL_stick13_stick8_robot1_staplergun1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_NailingHL_stick13_stick8_robot1_staplergun1 {
-        ServicePlanning subtreeSrv_NailingHL_stick13_stick8_robot1_staplergun1 ENHSP Domain:DomainMLTruss Problem:problemNailingHL_stick13_stick8_robot1_staplergun1
+        ServicePlanning subtreeSrv_NailingHL_stick13_stick8_robot1_staplergun1 Enhsp Domain:DomainMLTruss Problem:problemNailingHL_stick13_stick8_robot1_staplergun1
         All
         AllAction
         NodeGraph {
@@ -959,7 +959,7 @@ BehaviorTree NailingHL_stick13_stick8_robot1_staplergun1Subtree {
 
 BehaviorTree NailingHL_stick10_cube1_robot1_staplergun1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_NailingHL_stick10_cube1_robot1_staplergun1 {
-        ServicePlanning subtreeSrv_NailingHL_stick10_cube1_robot1_staplergun1 ENHSP Domain:DomainMLTruss Problem:problemNailingHL_stick10_cube1_robot1_staplergun1
+        ServicePlanning subtreeSrv_NailingHL_stick10_cube1_robot1_staplergun1 Enhsp Domain:DomainMLTruss Problem:problemNailingHL_stick10_cube1_robot1_staplergun1
         All
         AllAction
         NodeGraph {
@@ -970,7 +970,7 @@ BehaviorTree NailingHL_stick10_cube1_robot1_staplergun1Subtree {
 
 BehaviorTree NailingHL_stick11_stick6_robot1_staplergun1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_NailingHL_stick11_stick6_robot1_staplergun1 {
-        ServicePlanning subtreeSrv_NailingHL_stick11_stick6_robot1_staplergun1 ENHSP Domain:DomainMLTruss Problem:problemNailingHL_stick11_stick6_robot1_staplergun1
+        ServicePlanning subtreeSrv_NailingHL_stick11_stick6_robot1_staplergun1 Enhsp Domain:DomainMLTruss Problem:problemNailingHL_stick11_stick6_robot1_staplergun1
         All
         AllAction
         NodeGraph {
@@ -981,7 +981,7 @@ BehaviorTree NailingHL_stick11_stick6_robot1_staplergun1Subtree {
 
 BehaviorTree NailingHL_stick11_stick7_robot1_staplergun1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_NailingHL_stick11_stick7_robot1_staplergun1 {
-        ServicePlanning subtreeSrv_NailingHL_stick11_stick7_robot1_staplergun1 ENHSP Domain:DomainMLTruss Problem:problemNailingHL_stick11_stick7_robot1_staplergun1
+        ServicePlanning subtreeSrv_NailingHL_stick11_stick7_robot1_staplergun1 Enhsp Domain:DomainMLTruss Problem:problemNailingHL_stick11_stick7_robot1_staplergun1
         All
         AllAction
         NodeGraph {
@@ -992,7 +992,7 @@ BehaviorTree NailingHL_stick11_stick7_robot1_staplergun1Subtree {
 
 BehaviorTree NailingHL_stick12_stick7_robot1_staplergun1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_NailingHL_stick12_stick7_robot1_staplergun1 {
-        ServicePlanning subtreeSrv_NailingHL_stick12_stick7_robot1_staplergun1 ENHSP Domain:DomainMLTruss Problem:problemNailingHL_stick12_stick7_robot1_staplergun1
+        ServicePlanning subtreeSrv_NailingHL_stick12_stick7_robot1_staplergun1 Enhsp Domain:DomainMLTruss Problem:problemNailingHL_stick12_stick7_robot1_staplergun1
         All
         AllAction
         NodeGraph {
@@ -1003,7 +1003,7 @@ BehaviorTree NailingHL_stick12_stick7_robot1_staplergun1Subtree {
 
 BehaviorTree NailingHL_stick12_stick8_robot1_staplergun1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_NailingHL_stick12_stick8_robot1_staplergun1 {
-        ServicePlanning subtreeSrv_NailingHL_stick12_stick8_robot1_staplergun1 ENHSP Domain:DomainMLTruss Problem:problemNailingHL_stick12_stick8_robot1_staplergun1
+        ServicePlanning subtreeSrv_NailingHL_stick12_stick8_robot1_staplergun1 Enhsp Domain:DomainMLTruss Problem:problemNailingHL_stick12_stick8_robot1_staplergun1
         All
         AllAction
         NodeGraph {
@@ -1014,7 +1014,7 @@ BehaviorTree NailingHL_stick12_stick8_robot1_staplergun1Subtree {
 
 BehaviorTree NailingHL_stick13_stick9_robot1_staplergun1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_NailingHL_stick13_stick9_robot1_staplergun1 {
-        ServicePlanning subtreeSrv_NailingHL_stick13_stick9_robot1_staplergun1 ENHSP Domain:DomainMLTruss Problem:problemNailingHL_stick13_stick9_robot1_staplergun1
+        ServicePlanning subtreeSrv_NailingHL_stick13_stick9_robot1_staplergun1 Enhsp Domain:DomainMLTruss Problem:problemNailingHL_stick13_stick9_robot1_staplergun1
         All
         AllAction
         NodeGraph {
@@ -1025,7 +1025,7 @@ BehaviorTree NailingHL_stick13_stick9_robot1_staplergun1Subtree {
 
 BehaviorTree NailingHL_stick14_cube2_robot1_staplergun1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_NailingHL_stick14_cube2_robot1_staplergun1 {
-        ServicePlanning subtreeSrv_NailingHL_stick14_cube2_robot1_staplergun1 ENHSP Domain:DomainMLTruss Problem:problemNailingHL_stick14_cube2_robot1_staplergun1
+        ServicePlanning subtreeSrv_NailingHL_stick14_cube2_robot1_staplergun1 Enhsp Domain:DomainMLTruss Problem:problemNailingHL_stick14_cube2_robot1_staplergun1
         All
         AllAction
         NodeGraph {
@@ -1036,7 +1036,7 @@ BehaviorTree NailingHL_stick14_cube2_robot1_staplergun1Subtree {
 
 BehaviorTree NailingHL_stick14_stick9_robot1_staplergun1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_NailingHL_stick14_stick9_robot1_staplergun1 {
-        ServicePlanning subtreeSrv_NailingHL_stick14_stick9_robot1_staplergun1 ENHSP Domain:DomainMLTruss Problem:problemNailingHL_stick14_stick9_robot1_staplergun1
+        ServicePlanning subtreeSrv_NailingHL_stick14_stick9_robot1_staplergun1 Enhsp Domain:DomainMLTruss Problem:problemNailingHL_stick14_stick9_robot1_staplergun1
         All
         AllAction
         NodeGraph {
@@ -1047,7 +1047,7 @@ BehaviorTree NailingHL_stick14_stick9_robot1_staplergun1Subtree {
 
 BehaviorTree ChangeEndeffectorHL_robot1_staplergun1_gripper1_dup2Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_ChangeEndeffectorHL_robot1_staplergun1_gripper1_dup2 {
-        ServicePlanning subtreeSrv_ChangeEndeffectorHL_robot1_staplergun1_gripper1_dup2 ENHSP Domain:DomainMLTruss Problem:problemChangeEndeffectorHL_robot1_staplergun1_gripper1_dup2
+        ServicePlanning subtreeSrv_ChangeEndeffectorHL_robot1_staplergun1_gripper1_dup2 Enhsp Domain:DomainMLTruss Problem:problemChangeEndeffectorHL_robot1_staplergun1_gripper1_dup2
         All
         AllAction
         NodeGraph {
@@ -1067,7 +1067,7 @@ BehaviorTree ChangeEndeffectorHL_robot1_staplergun1_gripper1_dup2Subtree {
 
 BehaviorTree PickUpHL_stick15_initlocstick15_robot1_gripper1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_PickUpHL_stick15_initlocstick15_robot1_gripper1 {
-        ServicePlanning subtreeSrv_PickUpHL_stick15_initlocstick15_robot1_gripper1 ENHSP Domain:DomainMLTruss Problem:problemPickUpHL_stick15_initlocstick15_robot1_gripper1
+        ServicePlanning subtreeSrv_PickUpHL_stick15_initlocstick15_robot1_gripper1 Enhsp Domain:DomainMLTruss Problem:problemPickUpHL_stick15_initlocstick15_robot1_gripper1
         All
         AllAction
         NodeGraph {
@@ -1081,7 +1081,7 @@ BehaviorTree PickUpHL_stick15_initlocstick15_robot1_gripper1Subtree {
 
 BehaviorTree StackOnTwoHL_stick15_robot1_finallocstick15_stick11_stick10_layer3_layer4_gripper1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_StackOnTwoHL_stick15_robot1_finallocstick15_stick11_stick10_layer3_layer4_gripper1 {
-        ServicePlanning subtreeSrv_StackOnTwoHL_stick15_robot1_finallocstick15_stick11_stick10_layer3_layer4_gripper1 ENHSP Domain:DomainMLTruss Problem:problemStackOnTwoHL_stick15_robot1_finallocstick15_stick11_stick10_layer3_layer4_gripper1
+        ServicePlanning subtreeSrv_StackOnTwoHL_stick15_robot1_finallocstick15_stick11_stick10_layer3_layer4_gripper1 Enhsp Domain:DomainMLTruss Problem:problemStackOnTwoHL_stick15_robot1_finallocstick15_stick11_stick10_layer3_layer4_gripper1
         All
         AllAction
         NodeGraph {
@@ -1095,7 +1095,7 @@ BehaviorTree StackOnTwoHL_stick15_robot1_finallocstick15_stick11_stick10_layer3_
 
 BehaviorTree PickUpHL_cube4_initloccube4_robot1_gripper1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_PickUpHL_cube4_initloccube4_robot1_gripper1 {
-        ServicePlanning subtreeSrv_PickUpHL_cube4_initloccube4_robot1_gripper1 ENHSP Domain:DomainMLTruss Problem:problemPickUpHL_cube4_initloccube4_robot1_gripper1
+        ServicePlanning subtreeSrv_PickUpHL_cube4_initloccube4_robot1_gripper1 Enhsp Domain:DomainMLTruss Problem:problemPickUpHL_cube4_initloccube4_robot1_gripper1
         All
         AllAction
         NodeGraph {
@@ -1109,7 +1109,7 @@ BehaviorTree PickUpHL_cube4_initloccube4_robot1_gripper1Subtree {
 
 BehaviorTree StackHL_cube4_stick14_robot1_finloccube4_gripper1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_StackHL_cube4_stick14_robot1_finloccube4_gripper1 {
-        ServicePlanning subtreeSrv_StackHL_cube4_stick14_robot1_finloccube4_gripper1 ENHSP Domain:DomainMLTruss Problem:problemStackHL_cube4_stick14_robot1_finloccube4_gripper1
+        ServicePlanning subtreeSrv_StackHL_cube4_stick14_robot1_finloccube4_gripper1 Enhsp Domain:DomainMLTruss Problem:problemStackHL_cube4_stick14_robot1_finloccube4_gripper1
         All
         AllAction
         NodeGraph {
@@ -1123,7 +1123,7 @@ BehaviorTree StackHL_cube4_stick14_robot1_finloccube4_gripper1Subtree {
 
 BehaviorTree PickUpHL_stick18_initlocstick18_robot1_gripper1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_PickUpHL_stick18_initlocstick18_robot1_gripper1 {
-        ServicePlanning subtreeSrv_PickUpHL_stick18_initlocstick18_robot1_gripper1 ENHSP Domain:DomainMLTruss Problem:problemPickUpHL_stick18_initlocstick18_robot1_gripper1
+        ServicePlanning subtreeSrv_PickUpHL_stick18_initlocstick18_robot1_gripper1 Enhsp Domain:DomainMLTruss Problem:problemPickUpHL_stick18_initlocstick18_robot1_gripper1
         All
         AllAction
         NodeGraph {
@@ -1137,7 +1137,7 @@ BehaviorTree PickUpHL_stick18_initlocstick18_robot1_gripper1Subtree {
 
 BehaviorTree StackOnTwoHL_stick18_robot1_finallocstick18_stick13_stick14_layer3_layer4_gripper1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_StackOnTwoHL_stick18_robot1_finallocstick18_stick13_stick14_layer3_layer4_gripper1 {
-        ServicePlanning subtreeSrv_StackOnTwoHL_stick18_robot1_finallocstick18_stick13_stick14_layer3_layer4_gripper1 ENHSP Domain:DomainMLTruss Problem:problemStackOnTwoHL_stick18_robot1_finallocstick18_stick13_stick14_layer3_layer4_gripper1
+        ServicePlanning subtreeSrv_StackOnTwoHL_stick18_robot1_finallocstick18_stick13_stick14_layer3_layer4_gripper1 Enhsp Domain:DomainMLTruss Problem:problemStackOnTwoHL_stick18_robot1_finallocstick18_stick13_stick14_layer3_layer4_gripper1
         All
         AllAction
         NodeGraph {
@@ -1151,7 +1151,7 @@ BehaviorTree StackOnTwoHL_stick18_robot1_finallocstick18_stick13_stick14_layer3_
 
 BehaviorTree PickUpHL_cube3_initloccube3_robot1_gripper1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_PickUpHL_cube3_initloccube3_robot1_gripper1 {
-        ServicePlanning subtreeSrv_PickUpHL_cube3_initloccube3_robot1_gripper1 ENHSP Domain:DomainMLTruss Problem:problemPickUpHL_cube3_initloccube3_robot1_gripper1
+        ServicePlanning subtreeSrv_PickUpHL_cube3_initloccube3_robot1_gripper1 Enhsp Domain:DomainMLTruss Problem:problemPickUpHL_cube3_initloccube3_robot1_gripper1
         All
         AllAction
         NodeGraph {
@@ -1165,7 +1165,7 @@ BehaviorTree PickUpHL_cube3_initloccube3_robot1_gripper1Subtree {
 
 BehaviorTree StackHL_cube3_stick10_robot1_finloccube3_gripper1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_StackHL_cube3_stick10_robot1_finloccube3_gripper1 {
-        ServicePlanning subtreeSrv_StackHL_cube3_stick10_robot1_finloccube3_gripper1 ENHSP Domain:DomainMLTruss Problem:problemStackHL_cube3_stick10_robot1_finloccube3_gripper1
+        ServicePlanning subtreeSrv_StackHL_cube3_stick10_robot1_finloccube3_gripper1 Enhsp Domain:DomainMLTruss Problem:problemStackHL_cube3_stick10_robot1_finloccube3_gripper1
         All
         AllAction
         NodeGraph {
@@ -1179,7 +1179,7 @@ BehaviorTree StackHL_cube3_stick10_robot1_finloccube3_gripper1Subtree {
 
 BehaviorTree PickUpHL_stick17_initlocstick17_robot1_gripper1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_PickUpHL_stick17_initlocstick17_robot1_gripper1 {
-        ServicePlanning subtreeSrv_PickUpHL_stick17_initlocstick17_robot1_gripper1 ENHSP Domain:DomainMLTruss Problem:problemPickUpHL_stick17_initlocstick17_robot1_gripper1
+        ServicePlanning subtreeSrv_PickUpHL_stick17_initlocstick17_robot1_gripper1 Enhsp Domain:DomainMLTruss Problem:problemPickUpHL_stick17_initlocstick17_robot1_gripper1
         All
         AllAction
         NodeGraph {
@@ -1193,7 +1193,7 @@ BehaviorTree PickUpHL_stick17_initlocstick17_robot1_gripper1Subtree {
 
 BehaviorTree StackOnTwoHL_stick17_robot1_finallocstick17_stick13_stick12_layer3_layer4_gripper1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_StackOnTwoHL_stick17_robot1_finallocstick17_stick13_stick12_layer3_layer4_gripper1 {
-        ServicePlanning subtreeSrv_StackOnTwoHL_stick17_robot1_finallocstick17_stick13_stick12_layer3_layer4_gripper1 ENHSP Domain:DomainMLTruss Problem:problemStackOnTwoHL_stick17_robot1_finallocstick17_stick13_stick12_layer3_layer4_gripper1
+        ServicePlanning subtreeSrv_StackOnTwoHL_stick17_robot1_finallocstick17_stick13_stick12_layer3_layer4_gripper1 Enhsp Domain:DomainMLTruss Problem:problemStackOnTwoHL_stick17_robot1_finallocstick17_stick13_stick12_layer3_layer4_gripper1
         All
         AllAction
         NodeGraph {
@@ -1207,7 +1207,7 @@ BehaviorTree StackOnTwoHL_stick17_robot1_finallocstick17_stick13_stick12_layer3_
 
 BehaviorTree PickUpHL_stick16_initlocstick16_robot1_gripper1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_PickUpHL_stick16_initlocstick16_robot1_gripper1 {
-        ServicePlanning subtreeSrv_PickUpHL_stick16_initlocstick16_robot1_gripper1 ENHSP Domain:DomainMLTruss Problem:problemPickUpHL_stick16_initlocstick16_robot1_gripper1
+        ServicePlanning subtreeSrv_PickUpHL_stick16_initlocstick16_robot1_gripper1 Enhsp Domain:DomainMLTruss Problem:problemPickUpHL_stick16_initlocstick16_robot1_gripper1
         All
         AllAction
         NodeGraph {
@@ -1221,7 +1221,7 @@ BehaviorTree PickUpHL_stick16_initlocstick16_robot1_gripper1Subtree {
 
 BehaviorTree StackOnTwoHL_stick16_robot1_finallocstick16_stick12_stick11_layer3_layer4_gripper1Subtree {
     Root FlowNode ENHSP_Demonstrator_DynamicFlow_StackOnTwoHL_stick16_robot1_finallocstick16_stick12_stick11_layer3_layer4_gripper1 {
-        ServicePlanning subtreeSrv_StackOnTwoHL_stick16_robot1_finallocstick16_stick12_stick11_layer3_layer4_gripper1 ENHSP Domain:DomainMLTruss Problem:problemStackOnTwoHL_stick16_robot1_finallocstick16_stick12_stick11_layer3_layer4_gripper1
+        ServicePlanning subtreeSrv_StackOnTwoHL_stick16_robot1_finallocstick16_stick12_stick11_layer3_layer4_gripper1 Enhsp Domain:DomainMLTruss Problem:problemStackOnTwoHL_stick16_robot1_finallocstick16_stick12_stick11_layer3_layer4_gripper1
         All
         AllAction
         NodeGraph {
@@ -1232,9 +1232,10 @@ BehaviorTree StackOnTwoHL_stick16_robot1_finallocstick16_stick12_stick11_layer3_
         }
     }
 }
-BehaviorTree StackHL_stick4_table1_robot1_finallocstick4_gripper1Subtree {
-    Root FlowNode ENHSP_Demonstrator_DynamicFlow_StackHL_stick4_table1_robot1_finallocstick4_gripper1 {
-        ServicePlanning subtreeSrv_StackHL_stick4_table1_robot1_finallocstick4_gripper1 ENHSP Domain:DomainMLTruss Problem:problemStackHL_stick4_table1_robot1_finallocstick4_gripper1
+
+BehaviorTree PickUpHL_stick4_initlocstick4_robot1_gripper1Subtree {
+    Root FlowNode ENHSP_Demonstrator_DynamicFlow_PickUpHL_stick4_initlocstick4_robot1_gripper1 {
+        ServicePlanning subtreeSrv_PickUpHL_stick4_initlocstick4_robot1_gripper1 ENHSP Domain:DomainMLTruss Problem:problemPickUpHL_stick4_initlocstick4_robot1_gripper1
         All
         AllAction
         NodeGraph {
@@ -1246,9 +1247,9 @@ BehaviorTree StackHL_stick4_table1_robot1_finallocstick4_gripper1Subtree {
     }
 }
 
-BehaviorTree PickUpHL_stick4_initlocstick4_robot1_gripper1Subtree {
-    Root FlowNode ENHSP_Demonstrator_DynamicFlow_PickUpHL_stick4_initlocstick4_robot1_gripper1 {
-        ServicePlanning subtreeSrv_PickUpHL_stick4_initlocstick4_robot1_gripper1 Enhsp Domain:DomainMLTruss Problem:problemPickUpHL_stick4_initlocstick4_robot1_gripper1
+BehaviorTree StackHL_stick4_table1_robot1_finallocstick4_gripper1Subtree {
+    Root FlowNode ENHSP_Demonstrator_DynamicFlow_StackHL_stick4_table1_robot1_finallocstick4_gripper1 {
+        ServicePlanning subtreeSrv_StackHL_stick4_table1_robot1_finallocstick4_gripper1 ENHSP Domain:DomainMLTruss Problem:problemStackHL_stick4_table1_robot1_finallocstick4_gripper1
         All
         AllAction
         NodeGraph {

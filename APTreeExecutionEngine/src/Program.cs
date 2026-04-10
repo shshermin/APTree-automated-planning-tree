@@ -1,13 +1,22 @@
-﻿using BehaviorTreeMainProject;
+﻿﻿using BehaviorTreeMainProject;
 
-// To run the Demonstrator behavior tree test:
-await DemonstratorTreeTest.RunTest();
+// Usage: dotnet run [--server | --test | --loadtest]
+//   --server   : frontend API server only  (default)
+//   --test     : FullTreeTest only
+//   --loadtest : JsonBTLoadTest only
 
-// To run the JSON BT load test:
-// await JsonBTLoadTest.RunTest();
+var mode = args.FirstOrDefault(a => a.StartsWith("--")) ?? "--server";
+var remainingArgs = args.Where(a => !a.StartsWith("--")).ToArray();
 
-// To run the full behavior tree test:
-// await FullTreeTest.RunTest();
-
-// Start the frontend API server
-// await FrontendServer.Run(args);
+switch (mode)
+{
+    case "--test":
+        await FullTreeTest.RunTest();
+        break;
+    case "--loadtest":
+        await JsonBTLoadTest.RunTest();
+        break;
+    default:
+        await FrontendServer.Run(remainingArgs);
+        break;
+}

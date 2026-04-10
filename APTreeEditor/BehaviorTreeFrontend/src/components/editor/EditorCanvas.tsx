@@ -82,6 +82,8 @@ interface BehaviorNodeData {
   onMoveNode?: (nodeId: string, position: { x: number; y: number }) => void;
   onShowActionParameterDetail?: (detail: ActionParameterDetail) => void;
   onOpenPredicateModal?: (nodeId: string, group: PredicateGroup) => void;
+  /** Real-time tick status: "Running" | "Success" | "Failure" | undefined */
+  tickStatus?: string;
 }
 
 interface BehaviorEdgeData {
@@ -167,8 +169,8 @@ const TARGET_HANDLE_STYLES: Record<PortSide, CSSProperties> = {
 };
 
 const CANVAS_EXTENT: [[number, number], [number, number]] = [
-  [-4000, -4000],
-  [4000, 4000],
+  [-200000, -200000],
+  [200000, 200000],
 ];
 
 const PARAM_BOX_HEIGHT = 24;
@@ -267,6 +269,14 @@ function BehaviorTreeNode({ id, data, selected }: NodeProps<BehaviorNodeData>) {
   const isRootNode = !!data.rootNodeId && data.rootNodeId === id;
   if (isRootNode) {
     nodeClasses.push("canvas-node-rooted");
+  }
+
+  if (data.tickStatus === "Running") {
+    nodeClasses.push("canvas-node-tick-running");
+  } else if (data.tickStatus === "Success") {
+    nodeClasses.push("canvas-node-tick-success");
+  } else if (data.tickStatus === "Failure") {
+    nodeClasses.push("canvas-node-tick-failure");
   }
   const shouldRenderActions =
     !!data.onEditNode || !!data.onRemoveNode;
@@ -760,6 +770,7 @@ function EditorCanvasInner(props: EditorCanvasProps) {
     actionInstances,
     onShowActionParameterDetail,
     onOpenPredicateModal,
+    tickStatus,
   } = props;
 
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -865,6 +876,7 @@ function EditorCanvasInner(props: EditorCanvasProps) {
           data: {
             node,
             rootNodeId,
+            tickStatus: tickStatus?.[node.name],
             actionTypeMap,
             actionInstanceMap,
             onRemoveNode,
@@ -879,6 +891,10 @@ function EditorCanvasInner(props: EditorCanvasProps) {
           hidden: !!node.hidden,
           width,
           height,
+          style: {
+            width: `${width}px`,
+            height: `${height}px`,
+          },
         } satisfies FlowNode<BehaviorNodeData>;
       };
 
@@ -888,6 +904,7 @@ function EditorCanvasInner(props: EditorCanvasProps) {
     [
       nodes,
       rootNodeId,
+      tickStatus,
       actionTypeMap,
       actionInstanceMap,
       onRemoveNode,
@@ -1208,6 +1225,8 @@ function EditorCanvasInner(props: EditorCanvasProps) {
         onNodeDragStop={handleNodeDragStop}
         connectionLineType={ConnectionLineType.SmoothStep}
         proOptions={{ hideAttribution: true }}
+        minZoom={0.05}
+        maxZoom={4}
         panOnDrag
         fitView
         nodesDraggable

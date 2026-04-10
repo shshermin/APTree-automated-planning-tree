@@ -1,14 +1,42 @@
+using System.Collections.Concurrent;
 using System.Diagnostics;
+using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using System.Threading.Channels;
 
 namespace BehaviorTreeMainProject
 {
     public static class FrontendServer
     {
+        // One channel writer per connected WebSocket client
+        private static readonly object _subscribersLock = new();
+        private static readonly List<ChannelWriter<string>> _tickSubscribers = new();
+
         public static async Task Run(string[] args)
         {
+            // Subscribe to BTNode tick events and broadcast to all WebSocket clients
+            BTNode.NodeTicked += (nodeName, status) =>
+            {
+                var message = JsonSerializer.Serialize(new { type = "tick", nodeName, status });
+                lock (_subscribersLock)
+                {
+                    foreach (var writer in _tickSubscribers)
+                        writer.TryWrite(message);
+                }
+            };
+
+            // Subscribe to model file updates and notify all WebSocket clients
+            BehaviorTreeMainProject.Services.AIPlanning.APTreeModelWriter.ModelUpdated += () =>
+            {
+                var message = JsonSerializer.Serialize(new { type = "modelUpdated" });
+                lock (_subscribersLock)
+                {
+                    foreach (var writer in _tickSubscribers)
+                        writer.TryWrite(message);
+                }
+            };
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddEndpointsApiExplorer();
@@ -31,12 +59,84 @@ namespace BehaviorTreeMainProject
 
             var utf8NoBom = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
 
+            app.UseWebSockets();
             app.UseCors("frontend-dev");
 
             app.UseSwagger();
             app.UseSwaggerUI();
 
             app.MapGet("/health", () => Results.Ok(new { ok = true }));
+
+            // Returns the current .bt model file text so the frontend can re-validate after live updates.
+            app.MapGet("/api/tree/model", () =>
+            {
+                var path = BehaviorTreeMainProject.Services.AIPlanning.APTreeModelWriter.ActiveBtFilePath;
+                if (!File.Exists(path))
+                    return Results.NotFound(new { error = $"Model file not found: {path}" });
+                var text = File.ReadAllText(path);
+                return Results.Text(text, "text/plain", Encoding.UTF8);
+            }).WithName("GetTreeModel");
+
+            // WebSocket endpoint: streams real-time BTNode tick events to the frontend
+            app.Map("/ws/tick", async (HttpContext context) =>
+            {
+                if (!context.WebSockets.IsWebSocketRequest)
+                {
+                    context.Response.StatusCode = 400;
+                    return;
+                }
+
+                using var ws = await context.WebSockets.AcceptWebSocketAsync();
+                var channel = Channel.CreateBounded<string>(new BoundedChannelOptions(200)
+                {
+                    FullMode = BoundedChannelFullMode.DropOldest,
+                });
+
+                lock (_subscribersLock)
+                    _tickSubscribers.Add(channel.Writer);
+
+                using var cts = new CancellationTokenSource();
+
+                // Detect client disconnect by reading incoming frames
+                _ = Task.Run(async () =>
+                {
+                    var buf = new byte[256];
+                    try
+                    {
+                        while (ws.State == WebSocketState.Open)
+                        {
+                            var result = await ws.ReceiveAsync(new ArraySegment<byte>(buf), cts.Token);
+                            if (result.MessageType == WebSocketMessageType.Close)
+                                break;
+                        }
+                    }
+                    catch { }
+                    finally { cts.Cancel(); }
+                });
+
+                try
+                {
+                    await foreach (var message in channel.Reader.ReadAllAsync(cts.Token))
+                    {
+                        if (ws.State != WebSocketState.Open) break;
+                        var bytes = Encoding.UTF8.GetBytes(message);
+                        await ws.SendAsync(new ArraySegment<byte>(bytes), WebSocketMessageType.Text, true, CancellationToken.None);
+                    }
+                }
+                catch (OperationCanceledException) { }
+                finally
+                {
+                    lock (_subscribersLock)
+                        _tickSubscribers.Remove(channel.Writer);
+                    channel.Writer.TryComplete();
+
+                    if (ws.State == WebSocketState.Open || ws.State == WebSocketState.CloseReceived)
+                    {
+                        try { await ws.CloseAsync(WebSocketCloseStatus.NormalClosure, "Done", CancellationToken.None); }
+                        catch { }
+                    }
+                }
+            });
 
             app.MapGet("/api/catalog/decorators", () =>
                 Results.Ok(BuildNodeCatalog(typeof(Decorator), kind: "decorator", typeLabel: "Decorator")))
@@ -129,7 +229,7 @@ namespace BehaviorTreeMainProject
             })
             .WithName("ValidateAptree");
 
-            app.Run();
+            await app.RunAsync();
         }
 
         private static IReadOnlyList<NodeCatalogEntry> BuildNodeCatalog(Type baseType, string kind, string typeLabel)

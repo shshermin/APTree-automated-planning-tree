@@ -4,6 +4,14 @@ using BehaviorTreeMainProject.Log.Services;
 
 public abstract class BTNode : IBTNode
 {
+    // Static event fired on every tick so FrontendServer can broadcast to connected WebSocket clients.
+    // Arguments: (nodeName, status) where status is "Running", "Success", or "Failure".
+    public static event Action<string, string>? NodeTicked;
+
+    // Public helper so external code (e.g. Program.cs mock loop) can fire the event.
+    public static void FireNodeTicked(string nodeName, string status)
+        => NodeTicked?.Invoke(nodeName, status);
+
     //public  string DebugDisplayName { get; protected set; } = "Unnamed Node";
     //who is responsible for doing this action
 
@@ -246,7 +254,10 @@ public abstract class BTNode : IBTNode
         tickStartTime = DateTime.Now;
         HasCompletedFullTick = false;
         totalTickCount++;
-        
+
+        // Notify frontend that this node is now running
+        NodeTicked?.Invoke(DebugDisplayName, "Running");
+
         LogTickStart();
 
         // First time running, reset the node
@@ -485,6 +496,9 @@ public abstract class BTNode : IBTNode
         
         if (bCanSendExitNotification && HasFinished)
             OnExit();
+
+        // Notify frontend of final status for this tick
+        NodeTicked?.Invoke(DebugDisplayName, FinalResult.ToString());
 
         return FinalResult;
     }
