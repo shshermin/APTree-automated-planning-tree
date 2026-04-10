@@ -8,7 +8,7 @@ namespace AIPlanning
         public string ProblemFileContent { get; set; }  // Inline content so the VM doesn't need to read a local path
         public string DomainFileContent { get; set; }   // Inline domain file content — overrides the file on the VM
         public string PlannerPath { get; set; }
-        public string PlannerName { get; set; } = "ENHSP";  // New: planner selection
+        public string PlannerName { get; set; } = "Enhsp";  // New: planner selection
         public int TimeoutSeconds { get; set; } = 30;
         public int MaxPlanLength { get; set; } = 20;
 

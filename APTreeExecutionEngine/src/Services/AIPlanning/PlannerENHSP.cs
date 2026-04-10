@@ -9,12 +9,12 @@ using System.Linq;
 /// </summary>
 public class PlannerENHSP : Planner
 {
-    public override string[] PlannerNames => new[] { "ENHSP" };
+    public override string[] PlannerNames => new[] { "Enhsp" };
 
     public override string DefaultDomainFile => "Plannerinputs/static/DomainHL.pddl";
     public override string DefaultProblemFile => "Plannerinputs/static/problemC1.pddl";
         public override string DefaultPlannerPath => "/home/ubuntu/ENHSP-Public/enhsp.jar";
-    public override string DefaultPlannerName => "ENHSP";
+    public override string DefaultPlannerName => "Enhsp";
     public override int DefaultMaxPlanLength => 40;
 
     /// <summary>

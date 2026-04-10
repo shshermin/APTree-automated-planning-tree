@@ -158,7 +158,7 @@ namespace BehaviorTreeMainProject.Log.Services
 
             // Ensure we have rows for all three main planner types (FF, ENHSP, LAMA-FIRST)
             // even if they don't have any data
-            var requiredPlannerTypes = new[] { "FF", "ENHSP", "LAMA-FIRST" };
+            var requiredPlannerTypes = new[] { "FF", "Enhsp", "LAMA-FIRST" };
 
             foreach (var plannerType in requiredPlannerTypes)
             {

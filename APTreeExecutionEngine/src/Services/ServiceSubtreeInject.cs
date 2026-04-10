@@ -290,7 +290,7 @@ namespace BehaviorTreeMainProject
             // This is separate from ENHSP_Default (which uses DomainHL.pddl for HL cassette planning).
             if (subtreeConfigurations.TryGetValue("ENHSP_Default", out var enhspDefault))
             {
-                var mlConfig = new SubtreeConfiguration("ENHSP_ML_Default", "ENHSP", SuccessCriteria.ALL);
+                var mlConfig = new SubtreeConfiguration("ENHSP_ML_Default", "Enhsp", SuccessCriteria.ALL);
                 foreach (var kv in enhspDefault.PlannerParameters)
                     mlConfig.PlannerParameters[kv.Key] = kv.Value;
                 mlConfig.PlannerParameters["domainFile"] = "Plannerinputs/static/DomainML.pddl";

@@ -314,7 +314,7 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
                 else
                 {
                     // Step 1: Transform raw planner output to DSL NodeGraph format
-                    var plannerUsed = result.PlannerUsed ?? PlanningRequest.PlannerName ?? "ENHSP";
+                    var plannerUsed = result.PlannerUsed ?? PlanningRequest.PlannerName ?? "Enhsp";
                     LoggingService.LogInfo($"🔧 ServicePDDLPlanning: Transforming raw {plannerUsed} output to APTree DSL format...");
 
                     var planner = Planner.FromName(plannerUsed);

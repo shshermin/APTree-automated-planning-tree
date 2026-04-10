@@ -180,7 +180,7 @@ namespace BehaviorTreeMainProject
                     "./Plannerinputs/static/DomainHL.pddl",
                     problemFile,
                     "/home/ubuntu/ENHSP-Public/enhsp.jar",
-                    "ENHSP");
+                    "Enhsp");
                 pddlRequest.EnhspConfig = "sat-hmrph";
 
                 var pddlPlanner = new ServicePDDLPlanning(behaviorTree, pddlRequest);
