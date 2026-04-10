@@ -37,6 +37,9 @@ namespace BehaviorTreeMainProject
             LoggingService.Initialize("DemonstratorTreeTest", enableConsole: true, enableFile: true);
             ExecutionFlowLogger.Initialize("DemonstratorTreeTest", enableConsole: true, enableFile: true);
 
+            // Forward tick events to the FrontendServer so the editor shows live status
+            BTNode.EnableRemoteTickForwarding();
+
             testStartTime = DateTime.Now;
             LoggingService.LogSection("DEMONSTRATOR BEHAVIOR TREE TEST");
             LoggingService.LogSuccess($"Started at: {testStartTime:yyyy-MM-dd HH:mm:ss.fff}");

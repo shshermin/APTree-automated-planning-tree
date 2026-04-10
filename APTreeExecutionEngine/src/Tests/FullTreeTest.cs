@@ -28,6 +28,9 @@ namespace BehaviorTreeMainProject
             
             // Initialize execution flow logger
             ExecutionFlowLogger.Initialize("FullTreeTest", enableConsole: false, enableFile: true);
+
+            // Forward tick events to the FrontendServer so the editor shows live status
+            BTNode.EnableRemoteTickForwarding();
             
             // BlackboardTrackingLogger is automatically initialized when first accessed
             // No need to call Initialize() explicitly

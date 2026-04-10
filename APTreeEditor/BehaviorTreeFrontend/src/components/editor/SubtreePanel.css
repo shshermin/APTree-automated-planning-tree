@@ -1,0 +1,103 @@
+/* ── Subtree Panel: right-side execution viewer ─────────────────── */
+
+.subtree-panel {
+  width: 420px;
+  min-width: 320px;
+  max-width: 520px;
+  background: var(--surface-panel, #1a1a2e);
+  border-left: 1px solid var(--border-default, #333);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: width 0.2s ease;
+}
+
+.subtree-panel--collapsed {
+  width: 44px;
+  min-width: 44px;
+}
+
+/* ── Header ─────────────────────────────────────────────────────── */
+
+.subtree-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: var(--surface-hover, #1e1e36);
+  border-bottom: 1px solid var(--border-default, #333);
+  cursor: pointer;
+  user-select: none;
+  gap: 8px;
+  min-height: 44px;
+  flex-shrink: 0;
+}
+
+.subtree-panel--collapsed .subtree-panel__header {
+  flex-direction: column;
+  padding: 12px 8px;
+}
+
+.subtree-panel__title {
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--text-primary, #e0e0e0);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.subtree-panel--collapsed .subtree-panel__title {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  font-size: 0.75rem;
+}
+
+.subtree-panel__toggle {
+  background: none;
+  border: none;
+  color: var(--text-secondary, #999);
+  font-size: 0.8rem;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.subtree-panel__toggle:hover {
+  background: var(--surface-active, #2a2a4a);
+}
+
+/* ── Body ───────────────────────────────────────────────────────── */
+
+.subtree-panel__body {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.subtree-panel__placeholder {
+  color: var(--text-tertiary, #666);
+  font-size: 0.82rem;
+  text-align: center;
+  margin-top: 32px;
+  padding: 12px;
+}
+
+/* ── EditorCanvas inside the panel ──────────────────────────────── */
+
+.subtree-panel__canvas {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+}
+
+/* Override EditorCanvas styles when nested inside the panel */
+.subtree-panel__canvas .editor-canvas {
+  height: 100%;
+  border-radius: 0;
+  box-shadow: none;
+}

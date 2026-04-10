@@ -771,10 +771,13 @@ function EditorCanvasInner(props: EditorCanvasProps) {
     onShowActionParameterDetail,
     onOpenPredicateModal,
     tickStatus,
+    fitViewNodeIds,
+    readOnly,
   } = props;
 
   const wrapperRef = useRef<HTMLDivElement>(null);
-  const { project } = useReactFlow();
+  const reactFlowInstance = useReactFlow();
+  const { project } = reactFlowInstance;
   const viewportTransform = useStore((state) => state.transform);
   const viewportWidth = useStore((state) => state.width);
   const [isActive, setIsActive] = useState(false);
@@ -792,6 +795,22 @@ function EditorCanvasInner(props: EditorCanvasProps) {
     const entries = actionInstances ?? [];
     return new Map(entries.map((instance) => [instance.id, instance] as const));
   }, [actionInstances]);
+
+  // When fitViewNodeIds is provided, animate the viewport to fit those nodes.
+  const fitViewIdsKey = fitViewNodeIds?.join(",") ?? "";
+  useEffect(() => {
+    if (!fitViewNodeIds?.length) return;
+    // Small delay so ReactFlow has laid out the nodes first
+    const timer = setTimeout(() => {
+      reactFlowInstance.fitView({
+        nodes: fitViewNodeIds.map((id) => ({ id })),
+        padding: 0.25,
+        duration: 300,
+      });
+    }, 50);
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fitViewIdsKey, reactFlowInstance]);
 
   const separatorFlowNodes = useMemo<FlowNode<SeparatorNodeData>[]>(() => {
     if (!separators.length) {
@@ -1204,9 +1223,9 @@ function EditorCanvasInner(props: EditorCanvasProps) {
     <div
       ref={wrapperRef}
       className={`editor-canvas${isActive ? " is-active" : ""}`}
-      onDragOver={handleDragOver}
-      onDragLeave={handleDragLeave}
-      onDrop={handleDrop}
+      onDragOver={readOnly ? undefined : handleDragOver}
+      onDragLeave={readOnly ? undefined : handleDragLeave}
+      onDrop={readOnly ? undefined : handleDrop}
     >
       <ReactFlow
         nodes={flowNodes}
@@ -1215,24 +1234,24 @@ function EditorCanvasInner(props: EditorCanvasProps) {
         edgeTypes={edgeTypes}
         translateExtent={CANVAS_EXTENT}
         nodeExtent={CANVAS_EXTENT}
-        onConnect={handleConnect}
-        onEdgeMouseEnter={handleEdgeMouseEnter}
-        onEdgeMouseLeave={handleEdgeMouseLeave}
-        onNodeMouseEnter={handleNodeMouseEnter}
-        onNodeMouseLeave={handleNodeMouseLeave}
-        onNodeDragStart={handleNodeDragStart}
-        onNodeDrag={handleNodeDrag}
-        onNodeDragStop={handleNodeDragStop}
+        onConnect={readOnly ? undefined : handleConnect}
+        onEdgeMouseEnter={readOnly ? undefined : handleEdgeMouseEnter}
+        onEdgeMouseLeave={readOnly ? undefined : handleEdgeMouseLeave}
+        onNodeMouseEnter={readOnly ? undefined : handleNodeMouseEnter}
+        onNodeMouseLeave={readOnly ? undefined : handleNodeMouseLeave}
+        onNodeDragStart={readOnly ? undefined : handleNodeDragStart}
+        onNodeDrag={readOnly ? undefined : handleNodeDrag}
+        onNodeDragStop={readOnly ? undefined : handleNodeDragStop}
         connectionLineType={ConnectionLineType.SmoothStep}
         proOptions={{ hideAttribution: true }}
         minZoom={0.05}
         maxZoom={4}
         panOnDrag
         fitView
-        nodesDraggable
-        nodesConnectable
-        nodesFocusable
-        elementsSelectable
+        nodesDraggable={!readOnly}
+        nodesConnectable={!readOnly}
+        nodesFocusable={!readOnly}
+        elementsSelectable={!readOnly}
       >
         <Background
           variant={BackgroundVariant.Cross}

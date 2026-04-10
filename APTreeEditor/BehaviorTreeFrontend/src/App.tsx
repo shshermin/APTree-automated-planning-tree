@@ -42,19 +42,25 @@ function useTickStatus(
 
           setTickStatus((prev) => ({ ...prev, [nodeName]: status }));
 
+          // Clear any previous expiration timer
           const existing = timersRef.current.get(nodeName);
           if (existing) clearTimeout(existing);
 
-          const timer = setTimeout(() => {
-            setTickStatus((prev) => {
-              const next = { ...prev };
-              delete next[nodeName];
-              return next;
-            });
-            timersRef.current.delete(nodeName);
-          }, expireMs);
+          // Only "Running" expires — "Success" and "Failure" stay visible permanently
+          if (status === "Running") {
+            const timer = setTimeout(() => {
+              setTickStatus((prev) => {
+                const next = { ...prev };
+                delete next[nodeName];
+                return next;
+              });
+              timersRef.current.delete(nodeName);
+            }, expireMs);
 
-          timersRef.current.set(nodeName, timer);
+            timersRef.current.set(nodeName, timer);
+          } else {
+            timersRef.current.delete(nodeName);
+          }
         } catch {
           // ignore malformed messages
         }
@@ -113,6 +119,7 @@ import {
 import ActionParameterDetailsModal from "./components/editor/modals/ActionParameterDetailsModal.tsx";
 import ActionPredicateModal from "./components/editor/modals/ActionPredicateModal.tsx";
 import AptreeValidateModal from "./components/aptree/AptreeValidateModal";
+import SubtreePanel from "./components/editor/SubtreePanel";
 import { FLOW_SUCCESS_TYPES } from "./components/sidebar/utils/types";
 import type {
   ActionInstance,
@@ -1463,6 +1470,11 @@ function App() {
                 tickStatus={tickStatus}
               />
             </div>
+            <SubtreePanel
+              nodes={graph.nodes}
+              connections={graph.connections}
+              tickStatus={tickStatus}
+            />
           </div>
         </div>
       </div>

@@ -14,6 +14,16 @@ namespace BehaviorTreeMainProject
         private static readonly object _subscribersLock = new();
         private static readonly List<ChannelWriter<string>> _tickSubscribers = new();
 
+        private static void BroadcastModelUpdated()
+        {
+            var message = JsonSerializer.Serialize(new { type = "modelUpdated" });
+            lock (_subscribersLock)
+            {
+                foreach (var writer in _tickSubscribers)
+                    writer.TryWrite(message);
+            }
+        }
+
         public static async Task Run(string[] args)
         {
             // Subscribe to BTNode tick events and broadcast to all WebSocket clients
@@ -30,13 +40,36 @@ namespace BehaviorTreeMainProject
             // Subscribe to model file updates and notify all WebSocket clients
             BehaviorTreeMainProject.Services.AIPlanning.APTreeModelWriter.ModelUpdated += () =>
             {
-                var message = JsonSerializer.Serialize(new { type = "modelUpdated" });
-                lock (_subscribersLock)
-                {
-                    foreach (var writer in _tickSubscribers)
-                        writer.TryWrite(message);
-                }
+                BroadcastModelUpdated();
             };
+
+            // Watch the .bt file on disk so that changes from external processes
+            // (e.g. dotnet run --test) also trigger live frontend updates.
+            var btFilePath = BehaviorTreeMainProject.Services.AIPlanning.APTreeModelWriter.ActiveBtFilePath;
+            FileSystemWatcher? btFileWatcher = null;
+            if (File.Exists(btFilePath))
+            {
+                var dir = Path.GetDirectoryName(btFilePath)!;
+                var fileName = Path.GetFileName(btFilePath);
+                btFileWatcher = new FileSystemWatcher(dir, fileName)
+                {
+                    NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size,
+                    EnableRaisingEvents = true,
+                };
+
+                // Debounce: FileSystemWatcher often fires multiple events for a single write.
+                Timer? debounceTimer = null;
+                var debounceLock = new object();
+                btFileWatcher.Changed += (_, _) =>
+                {
+                    lock (debounceLock)
+                    {
+                        debounceTimer?.Dispose();
+                        debounceTimer = new Timer(_ => BroadcastModelUpdated(), null, 300, Timeout.Infinite);
+                    }
+                };
+            }
+
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddEndpointsApiExplorer();
@@ -66,6 +99,22 @@ namespace BehaviorTreeMainProject
             app.UseSwaggerUI();
 
             app.MapGet("/health", () => Results.Ok(new { ok = true }));
+
+            // Accepts tick events from external processes (e.g. dotnet run --test)
+            // and broadcasts them to all connected WebSocket clients.
+            app.MapPost("/api/tick", (TickMessage tick) =>
+            {
+                if (string.IsNullOrEmpty(tick.NodeName) || string.IsNullOrEmpty(tick.Status))
+                    return Results.BadRequest();
+
+                var message = JsonSerializer.Serialize(new { type = "tick", nodeName = tick.NodeName, status = tick.Status });
+                lock (_subscribersLock)
+                {
+                    foreach (var writer in _tickSubscribers)
+                        writer.TryWrite(message);
+                }
+                return Results.Ok();
+            }).WithName("PostTick");
 
             // Returns the current .bt model file text so the frontend can re-validate after live updates.
             app.MapGet("/api/tree/model", () =>
@@ -230,6 +279,7 @@ namespace BehaviorTreeMainProject
             .WithName("ValidateAptree");
 
             await app.RunAsync();
+            btFileWatcher?.Dispose();
         }
 
         private static IReadOnlyList<NodeCatalogEntry> BuildNodeCatalog(Type baseType, string kind, string typeLabel)
@@ -479,6 +529,11 @@ namespace BehaviorTreeMainProject
         );
 
         private record ProcessResult(int ExitCode, string StdOut, string StdErr);
+
+        private record TickMessage(
+            [property: System.Text.Json.Serialization.JsonPropertyName("nodeName")] string NodeName,
+            [property: System.Text.Json.Serialization.JsonPropertyName("status")] string Status
+        );
 
         private record NodeCatalogEntry(
             string Id,

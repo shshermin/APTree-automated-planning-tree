@@ -1,4 +1,7 @@
 using System.Reflection.PortableExecutable;
+using System.Net.Http;
+using System.Text;
+using System.Text.Json;
 using BehaviorTreeMainProject.Services;
 using BehaviorTreeMainProject.Log.Services;
 
@@ -7,6 +10,41 @@ public abstract class BTNode : IBTNode
     // Static event fired on every tick so FrontendServer can broadcast to connected WebSocket clients.
     // Arguments: (nodeName, status) where status is "Running", "Success", or "Failure".
     public static event Action<string, string>? NodeTicked;
+
+    // ── Remote tick forwarding ───────────────────────────────────────────
+    // When the tree runs in a separate process (e.g. dotnet run --test),
+    // in-process events don't reach the FrontendServer. This HttpClient
+    // forwards every tick to the running server via POST /api/tick.
+    private static readonly HttpClient _tickHttpClient = new() { Timeout = TimeSpan.FromSeconds(1) };
+    private static bool _remoteTickEnabled = false;
+    private static string _remoteTickUrl = "http://localhost:5254/api/tick";
+
+    /// <summary>
+    /// Call once at startup (before ticking) to enable forwarding tick events
+    /// to a running FrontendServer instance via HTTP.
+    /// </summary>
+    public static void EnableRemoteTickForwarding(string? serverUrl = null)
+    {
+        if (!string.IsNullOrWhiteSpace(serverUrl))
+            _remoteTickUrl = serverUrl.TrimEnd('/') + "/api/tick";
+        _remoteTickEnabled = true;
+    }
+
+    private static void ForwardTickRemotely(string nodeName, string status)
+    {
+        if (!_remoteTickEnabled) return;
+        // Fire-and-forget: don't block the tick loop
+        _ = Task.Run(async () =>
+        {
+            try
+            {
+                var json = JsonSerializer.Serialize(new { nodeName, status });
+                using var content = new StringContent(json, Encoding.UTF8, "application/json");
+                await _tickHttpClient.PostAsync(_remoteTickUrl, content);
+            }
+            catch { /* best-effort — server may not be running */ }
+        });
+    }
 
     // Public helper so external code (e.g. Program.cs mock loop) can fire the event.
     public static void FireNodeTicked(string nodeName, string status)
@@ -257,6 +295,7 @@ public abstract class BTNode : IBTNode
 
         // Notify frontend that this node is now running
         NodeTicked?.Invoke(DebugDisplayName, "Running");
+        ForwardTickRemotely(DebugDisplayName, "Running");
 
         LogTickStart();
 
@@ -499,6 +538,7 @@ public abstract class BTNode : IBTNode
 
         // Notify frontend of final status for this tick
         NodeTicked?.Invoke(DebugDisplayName, FinalResult.ToString());
+        ForwardTickRemotely(DebugDisplayName, FinalResult.ToString());
 
         return FinalResult;
     }

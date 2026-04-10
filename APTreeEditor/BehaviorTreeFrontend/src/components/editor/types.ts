@@ -124,4 +124,8 @@ export interface EditorCanvasProps {
   actionInstances?: ActionInstance[];
   /** Real-time tick status from the backend, keyed by node name. Values: "Running" | "Success" | "Failure" */
   tickStatus?: Record<string, string>;
+  /** When set, the canvas viewport will animate to fit these specific node ids. */
+  fitViewNodeIds?: string[];
+  /** When true, disables all editing interactions (drag, connect, select, drop). */
+  readOnly?: boolean;
 }

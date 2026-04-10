@@ -39,7 +39,7 @@ public class BTFlowNodeComposite : FlowNode
     {
         this.OwningTree = owningTree;
         this.TerminationPolicy = terminationPolicy;
-        DebugDisplayName = $"CompositeFlow({nodeName.ToString()})";
+        DebugDisplayName = nodeName.ToString();
         
         // Track flow node initialization
         BehaviorTreeComponentLogger.TrackFlowNodeInitialization(this.GetType().Name);

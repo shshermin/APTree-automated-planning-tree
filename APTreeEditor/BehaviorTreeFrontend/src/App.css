@@ -21,10 +21,12 @@
   background: var(--surface-panel-alt);
   overflow: auto;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  gap: 0;
 }
 
 .editor-canvas-wrap {
   flex: 1;
   min-height: 560px;
+  min-width: 0;
 }

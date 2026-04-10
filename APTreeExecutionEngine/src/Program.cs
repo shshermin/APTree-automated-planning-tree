@@ -11,7 +11,7 @@ var remainingArgs = args.Where(a => !a.StartsWith("--")).ToArray();
 switch (mode)
 {
     case "--test":
-        await FullTreeTest.RunTest();
+        await DemonstratorTreeTest.RunTest();
         break;
     case "--loadtest":
         await JsonBTLoadTest.RunTest();
