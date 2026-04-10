@@ -122,4 +122,6 @@ export interface EditorCanvasProps {
   onOpenPredicateModal?: (nodeId: string, group: PredicateGroup) => void;
   actionTypes?: ActionType[];
   actionInstances?: ActionInstance[];
+  /** Real-time tick status from the backend, keyed by node name. Values: "Running" | "Success" | "Failure" */
+  tickStatus?: Record<string, string>;
 }
