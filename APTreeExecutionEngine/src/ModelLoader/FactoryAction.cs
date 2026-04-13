@@ -21,7 +21,7 @@ public class FactoryAction : Singleton<FactoryAction>
         // Parse the action instance definition
         var (actionTypeName, instanceName, parameterValues) = ParseActionInstanceDefinition(actionInstanceDefinition, blackboard);
         
-        LoggingService.LogError($"🔧 Creating action instance: {actionTypeName} with name: {instanceName}");
+        LoggingService.LogDebug($"🔧 Creating action instance: {actionTypeName} with name: {instanceName}");
         
         // Dynamically find the action type
         Type actionType = FindActionType(actionTypeName);
@@ -31,7 +31,7 @@ public class FactoryAction : Singleton<FactoryAction>
             throw new ArgumentException($"Unknown action type: {actionTypeName}");
         }
         
-        LoggingService.LogError($"\u2705 Found action type: {actionType.Name}");
+        LoggingService.LogDebug($"\u2705 Found action type: {actionType.Name}");
 
         // Get the constructor that matches our expected signature
         var constructors = actionType.GetConstructors();
@@ -50,7 +50,7 @@ public class FactoryAction : Singleton<FactoryAction>
             throw new ArgumentException($"No suitable constructor found for action type {actionTypeName}");
         }
 
-        LoggingService.LogError($"✅ Found constructor with {targetConstructor.GetParameters().Length} parameters");
+        LoggingService.LogDebug($"✅ Found constructor with {targetConstructor.GetParameters().Length} parameters");
 
         // Build constructor arguments in the correct order
         var constructorArgs = new List<object> { actionTypeName, instanceName, blackboard };
@@ -61,12 +61,12 @@ public class FactoryAction : Singleton<FactoryAction>
         // Match parameters by name and add them in constructor order
         foreach (var param in constructorParams)
         {
-            LoggingService.LogError($"🔍 Looking for constructor parameter: {param.Name} of type {param.ParameterType.Name}");
+            LoggingService.LogDebug($"🔍 Looking for constructor parameter: {param.Name} of type {param.ParameterType.Name}");
             
             // Find the corresponding parameter value from the action definition
             if (parameterValues.TryGetValue(param.Name, out string paramValue))
             {
-                LoggingService.LogError($"  📋 Found parameter value: {param.Name} = {paramValue}");
+                LoggingService.LogDebug($"  📋 Found parameter value: {param.Name} = {paramValue}");
                 
                 // Get the parameter instance from blackboard
                 object parameterInstance = GetParameterInstanceFromBlackboard(blackboard, paramValue, actionType, param.Name);
@@ -76,7 +76,7 @@ public class FactoryAction : Singleton<FactoryAction>
                     throw new ArgumentException($"Parameter instance '{paramValue}' not found in blackboard");
                 }
                 
-                LoggingService.LogError($"  ✅ Retrieved from blackboard: {paramValue} -> {parameterInstance.GetType().Name}");
+                LoggingService.LogDebug($"  ✅ Retrieved from blackboard: {paramValue} -> {parameterInstance.GetType().Name}");
                 constructorArgs.Add(parameterInstance);
             }
             else
@@ -86,7 +86,7 @@ public class FactoryAction : Singleton<FactoryAction>
         }
 
         // Create the action instance
-        LoggingService.LogError($"🔍 Creating instance with constructor arguments...");
+        LoggingService.LogDebug($"🔍 Creating instance with constructor arguments...");
         PActionNode instance;
         try
         {
@@ -97,7 +97,7 @@ public class FactoryAction : Singleton<FactoryAction>
                 throw new InvalidOperationException($"Failed to create instance of type {actionTypeName}");
             }
             
-            LoggingService.LogError($"✅ Successfully created action instance: {instance.GetType().Name}");
+            LoggingService.LogInfo($"✅ Successfully created action instance: {instance.GetType().Name}");
             
             // Calculate and track timing
             var endTime = DateTime.Now;
@@ -106,7 +106,7 @@ public class FactoryAction : Singleton<FactoryAction>
             // Track creation timing for blackboard summary
             BlackboardSummaryLogger.TrackCreation("ActionInstances", actionTypeName, generationTime);
             
-            LoggingService.LogError($"⏱️ FACTORY: Action creation took {generationTime.TotalMilliseconds:F2}ms");
+            LoggingService.LogDebug($"⏱️ FACTORY: Action creation took {generationTime.TotalMilliseconds:F2}ms");
             
             return instance;
         }
@@ -174,7 +174,7 @@ public class FactoryAction : Singleton<FactoryAction>
     /// </summary>
     private Type FindActionType(string actionTypeName)
     {
-        LoggingService.LogError($"🔍 Finding action type: '{actionTypeName}'");
+        LoggingService.LogDebug($"🔍 Finding action type: '{actionTypeName}'");
         
         // Get the assembly containing GenericBTAction types
         var assembly = typeof(PActionNode).Assembly;
@@ -184,7 +184,7 @@ public class FactoryAction : Singleton<FactoryAction>
             .Where(t => t.IsSubclassOf(typeof(PActionNode)) && !t.IsAbstract)
             .ToList();
         
-        LoggingService.LogError($"📋 Found {actionTypes.Count} action types: {string.Join(", ", actionTypes.Select(t => t.Name))}");
+        LoggingService.LogDebug($"📋 Found {actionTypes.Count} action types: {string.Join(", ", actionTypes.Select(t => t.Name))}");
         
         // Try exact match first (case-insensitive)
         var exactMatch = actionTypes.FirstOrDefault(t => 
@@ -192,7 +192,7 @@ public class FactoryAction : Singleton<FactoryAction>
         
         if (exactMatch != null)
         {
-            LoggingService.LogError($"✅ Found exact match: {exactMatch.Name}");
+            LoggingService.LogDebug($"✅ Found exact match: {exactMatch.Name}");
             return exactMatch;
         }
         
@@ -202,7 +202,7 @@ public class FactoryAction : Singleton<FactoryAction>
         
         if (partialMatch != null)
         {
-            LoggingService.LogError($"✅ Found partial match: {partialMatch.Name}");
+            LoggingService.LogDebug($"✅ Found partial match: {partialMatch.Name}");
             return partialMatch;
         }
         
@@ -215,7 +215,7 @@ public class FactoryAction : Singleton<FactoryAction>
     /// </summary>
     private object GetParameterInstanceFromBlackboard(Blackboard<FastName> blackboard, string instanceName, Type actionType, string parameterName)
     {
-        LoggingService.LogError($"🔍 Getting parameter instance: '{instanceName}' (parameter '{parameterName}' in action '{actionType.Name}')");
+        LoggingService.LogDebug($"🔍 Getting parameter instance: '{instanceName}' (parameter '{parameterName}' in action '{actionType.Name}')");
         
         // Get the parameter type from the action class
         var parameterProperty = actionType.GetProperty(parameterName);
@@ -225,11 +225,11 @@ public class FactoryAction : Singleton<FactoryAction>
         }
         
         Type parameterType = parameterProperty.PropertyType;
-        LoggingService.LogError($"📋 Parameter type: {parameterType.Name}");
+        LoggingService.LogDebug($"📋 Parameter type: {parameterType.Name}");
         
         // Find the parent entity type
         Type parentType = GetParentEntityType(parameterType);
-        LoggingService.LogError($"📋 Parent entity type: {parentType?.Name ?? "null"}");
+        LoggingService.LogDebug($"📋 Parent entity type: {parentType?.Name ?? "null"}");
         
         if (parentType == null)
         {
@@ -251,7 +251,7 @@ public class FactoryAction : Singleton<FactoryAction>
         
         if (result != null)
         {
-            LoggingService.LogError($"✅ Found instance '{instanceName}' as {parentType.Name}: {result.GetType().Name}");
+            LoggingService.LogDebug($"✅ Found instance '{instanceName}' as {parentType.Name}: {result.GetType().Name}");
         }
         else
         {

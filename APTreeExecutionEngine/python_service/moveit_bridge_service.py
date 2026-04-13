@@ -27,7 +27,6 @@ import threading
 sys.path.insert(0, '/home/shermin/ws_moveit/src/hello_moveit/scripts')
 
 import rclpy
-from rclpy.executors import MultiThreadedExecutor
 from geometry_msgs.msg import Pose
 from moveit_msgs.msg import Constraints, OrientationConstraint
 from ur_msgs.srv import SetIO
@@ -38,16 +37,20 @@ from dynamic_scene_example import DynamicSceneManager
 app = Flask(__name__)
 
 # ── Global ROS state (initialised once in main) ──────────────────────────────
-executor = None          # MultiThreadedExecutor
 move_to_task = None      # MoveToTask node  (persistent)
 scene = None             # DynamicSceneManager node (persistent)
-spin_thread = None       # background thread running executor.spin()
+io_client = None         # SetIO service client (persistent)
 _init_lock = threading.Lock()
 
 
 def init_ros():
-    """Initialise rclpy, create nodes and start the executor spin thread."""
-    global executor, move_to_task, scene, spin_thread
+    """Initialise rclpy and create persistent nodes.
+
+    We do NOT spin in the background — the existing
+    rclpy.spin_until_future_complete() calls inside MoveToTask already
+    handle spinning when waiting for action/service results.
+    """
+    global move_to_task, scene, io_client
 
     with _init_lock:
         if move_to_task is not None:
@@ -57,15 +60,9 @@ def init_ros():
 
         scene = DynamicSceneManager()
         move_to_task = MoveToTask(end_effector_type='gripper')  # default; EE link updated per request
+        io_client = move_to_task.create_client(SetIO, '/io_and_status_controller/set_io')
 
-        executor = MultiThreadedExecutor()
-        executor.add_node(scene)
-        executor.add_node(move_to_task)
-
-        spin_thread = threading.Thread(target=executor.spin, daemon=True)
-        spin_thread.start()
-
-        print("ROS 2 nodes initialised and spinning.")
+        print("ROS 2 nodes initialised (persistent, no background spin).")
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
@@ -205,7 +202,6 @@ def plan_and_execute():
 
             # Open gripper after reaching target
             if end_effector_type == 'gripper':
-                io_client = move_to_task.create_client(SetIO, '/io_and_status_controller/set_io')
                 if io_client.wait_for_service(timeout_sec=5.0):
                     io_req = SetIO.Request()
                     io_req.fun = 1       # FUN_SET_DIGITAL_OUT
