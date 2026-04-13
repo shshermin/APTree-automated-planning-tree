@@ -10,6 +10,13 @@ public class DynamicFlowNode : FlowNode
     public override string TypeName => "DynamicFlowNode";
     private bool planningCompleted = false;
 
+    // Phase tracking for EndToEndSummaryLogger (top-level flow nodes only)
+    private int _endToEndPhaseId = -1;
+    private bool _isTopLevelPhase = false;
+
+    // HL trace ID set by ServicePlanning so we can close the trace when all ML children finish
+    internal int HLTraceId { get; set; } = -1;
+
     // Track if we've completed the first planning cycle
     private bool firstPlanningCycleCompleted = false;
 
@@ -72,6 +79,13 @@ public class DynamicFlowNode : FlowNode
         LoggingService.LogInfo($"🔍 FlowNode: Current LastStatus: {status}");
         LoggingService.LogInfo($"🔍 FlowNode: HasChildren: {HasChildren}");
 
+        // Phase tracking: start phase on first meaningful tick (top-level flow nodes only)
+        if (_endToEndPhaseId < 0 && ParentNode is BTFlowNodeComposite)
+        {
+            _isTopLevelPhase = true;
+            _endToEndPhaseId = EndToEndSummaryLogger.LogPhaseStart(DebugDisplayName);
+        }
+
         // Track child count for average branching factor calculation
         var childCount = actionGraph.GetAllActionNodes().Count;
 
@@ -84,6 +98,13 @@ public class DynamicFlowNode : FlowNode
             LoggingService.LogInfo($"   ✅ FlowNode: Success criteria met, setting status to Success");
             status = BTNodeResult.Success;
             LoggingService.TrackNodeCompletion(DebugDisplayName, System.DateTime.Now, true);
+            if (_isTopLevelPhase && _endToEndPhaseId > 0)
+                EndToEndSummaryLogger.LogPhaseEnd(_endToEndPhaseId, true);
+            if (HLTraceId > 0)
+            {
+                HierarchicalTraceLogger.LogHLCompleted(HLTraceId, true);
+                HLTraceId = -1;
+            }
             return true; // Return true so parent can detect completion
         }
         else
@@ -106,6 +127,13 @@ public class DynamicFlowNode : FlowNode
                 LoggingService.LogError($"   ❌ FlowNode: All children finished but success criteria not met, setting status to Failure");
                 status = BTNodeResult.Failure;
                 LoggingService.TrackNodeCompletion(DebugDisplayName, System.DateTime.Now, false);
+                if (_isTopLevelPhase && _endToEndPhaseId > 0)
+                    EndToEndSummaryLogger.LogPhaseEnd(_endToEndPhaseId, false);
+                if (HLTraceId > 0)
+                {
+                    HierarchicalTraceLogger.LogHLCompleted(HLTraceId, false);
+                    HLTraceId = -1;
+                }
                 return false; // Return false to stop execution
             }
         }

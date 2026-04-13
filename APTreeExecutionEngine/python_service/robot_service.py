@@ -366,6 +366,10 @@ def robot_move():
                     print(f"Robot safety issue after MoveIt execution: {safety_msg}")
                     return jsonify({'success': False, 'error': f"Robot safety issue after MoveIt execution: {safety_msg}"}), 500
                 result_msg = resp_data.get('message', 'MoveIt execution completed')
+                # Forward MoveIt timing breakdown
+                moveit_motion_time = resp_data.get('motionTimeSeconds', 0)
+                moveit_setup_time = resp_data.get('setupTimeSeconds', 0)
+                moveit_lift_time = resp_data.get('liftTimeSeconds', 0)
             else:
                 error_msg = resp_data.get('error', 'MoveIt execution failed')
                 print(f"MoveIt FAILED: {error_msg}")
@@ -374,11 +378,17 @@ def robot_move():
         elapsed = time.time() - start_time
 
         print(f"Move completed: {result_msg} ({elapsed:.2f}s)")
-        return jsonify({
+        response_data = {
             'success': True,
             'message': result_msg,
             'executionTimeSeconds': elapsed
-        })
+        }
+        # Include MoveIt timing breakdown for planned moves
+        if command_type == 'planned':
+            response_data['planningTimeSeconds'] = moveit_motion_time
+            response_data['setupTimeSeconds'] = moveit_setup_time
+            response_data['liftTimeSeconds'] = moveit_lift_time
+        return jsonify(response_data)
 
     except Exception as e:
         print(f"Move failed: {str(e)}")

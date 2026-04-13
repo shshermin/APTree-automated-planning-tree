@@ -463,6 +463,15 @@ function App() {
 
   const tickStatus = useTickStatus(handleModelUpdated);
 
+  // Auto-load the .bt model from the backend on first mount so the canvas is
+  // populated even before a "modelUpdated" WebSocket event arrives.
+  const autoLoaded = useRef(false);
+  useEffect(() => {
+    if (autoLoaded.current) return;
+    autoLoaded.current = true;
+    handleModelUpdated();
+  }, [handleModelUpdated]);
+
   const rawActionInstances = useMemo(
     () => getItemsForCategory(ACTION_INSTANCES_KEY) as ActionInstance[],
     [getItemsForCategory]

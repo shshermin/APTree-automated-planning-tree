@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace BehaviorTreeMainProject.Log.Services
 {
@@ -70,6 +71,15 @@ namespace BehaviorTreeMainProject.Log.Services
         public static void LogCallFailed(int callId, double plannerTimeSeconds, string error)
         {
             Instance.LogCallEndInternal(callId, false, plannerTimeSeconds, 0, 0, null, error);
+        }
+
+        /// <summary>
+        /// Attach PDDL problem complexity metrics to a planner call record.
+        /// Call immediately after LogCallStart, before the planner runs.
+        /// </summary>
+        public static void LogProblemComplexity(int callId, string problemContent, string domainContent)
+        {
+            Instance.LogProblemComplexityInternal(callId, problemContent, domainContent);
         }
 
         /// <summary>
@@ -149,6 +159,94 @@ namespace BehaviorTreeMainProject.Log.Services
             }
         }
 
+        private void LogProblemComplexityInternal(int callId, string problemContent, string domainContent)
+        {
+            lock (lockObject)
+            {
+                var record = callRecords.FirstOrDefault(r => r.CallNumber == callId);
+                if (record == null) return;
+
+                if (!string.IsNullOrEmpty(problemContent))
+                {
+                    record.ObjectCount = CountPDDLObjects(problemContent);
+                    record.InitPredicateCount = CountPDDLSectionPredicates(problemContent, ":init");
+                    record.GoalPredicateCount = CountPDDLSectionPredicates(problemContent, ":goal");
+                }
+
+                if (!string.IsNullOrEmpty(domainContent))
+                {
+                    record.DomainActionCount = CountPDDLDomainActions(domainContent);
+                }
+
+                WriteLog($"[CALL #{callId}] COMPLEXITY | Objects: {record.ObjectCount} | Init predicates: {record.InitPredicateCount} | Goal predicates: {record.GoalPredicateCount} | Domain actions: {record.DomainActionCount}");
+            }
+        }
+
+        // ── PDDL parsing helpers ─────────────────────────────────────────
+
+        /// <summary>Count typed objects in (:objects ...) block.</summary>
+        private static int CountPDDLObjects(string pddl)
+        {
+            var match = Regex.Match(pddl, @"\(:objects\s(.*?)\)", RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            if (!match.Success) return 0;
+            var lines = match.Groups[1].Value.Split('\n');
+            int count = 0;
+            foreach (var line in lines)
+            {
+                var trimmed = line.Trim();
+                if (string.IsNullOrEmpty(trimmed) || trimmed.StartsWith(";")) continue;
+                // Remove inline comments
+                var commentIdx = trimmed.IndexOf(';');
+                if (commentIdx >= 0) trimmed = trimmed.Substring(0, commentIdx).Trim();
+                if (string.IsNullOrEmpty(trimmed)) continue;
+                var tokens = trimmed.Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+                // Count tokens before "-" (those are object names)
+                for (int i = 0; i < tokens.Length; i++)
+                {
+                    if (tokens[i] == "-") break; // stop at type separator
+                    count++;
+                }
+            }
+            return count;
+        }
+
+        /// <summary>Count ground predicates in a section like :init or :goal.</summary>
+        private static int CountPDDLSectionPredicates(string pddl, string section)
+        {
+            int idx = pddl.IndexOf(section, StringComparison.OrdinalIgnoreCase);
+            if (idx < 0) return 0;
+            // Find the balanced parenthesized block
+            int depth = 0;
+            int start = -1;
+            for (int i = idx; i < pddl.Length; i++)
+            {
+                if (pddl[i] == '(') { if (start < 0) start = i; depth++; }
+                else if (pddl[i] == ')') { depth--; if (depth == 0) return CountPredicateInstances(pddl.Substring(start, i - start + 1)); }
+            }
+            return 0;
+        }
+
+        /// <summary>Count predicate instances inside a PDDL block (excludes keywords like and/not/forall).</summary>
+        private static int CountPredicateInstances(string block)
+        {
+            var matches = Regex.Matches(block, @"\(\s*([a-z]\w*)", RegexOptions.IgnoreCase);
+            var keywords = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+                { "and", "or", "not", "when", "forall", "exists", "imply", "define", "problem", "domain" };
+            int count = 0;
+            foreach (Match m in matches)
+            {
+                if (!keywords.Contains(m.Groups[1].Value))
+                    count++;
+            }
+            return count;
+        }
+
+        /// <summary>Count (:action ...) definitions in a domain file.</summary>
+        private static int CountPDDLDomainActions(string domain)
+        {
+            return Regex.Matches(domain, @"\(:action\s", RegexOptions.IgnoreCase).Count;
+        }
+
         private void GenerateCSVSummaryInternal()
         {
             lock (lockObject)
@@ -157,7 +255,7 @@ namespace BehaviorTreeMainProject.Log.Services
 
                 // ── Per-call CSV ─────────────────────────────────
                 var csvPerCall = new StringBuilder();
-                csvPerCall.AppendLine("CallNumber,Timestamp,PlannerName,HLActionInstance,ProblemFile,Success,PlannerTimeMs,TotalTimeMs,ActionsGenerated,PlanLength,Error");
+                csvPerCall.AppendLine("CallNumber,Timestamp,PlannerName,HLActionInstance,ProblemFile,Objects,InitPredicates,GoalPredicates,DomainActions,Success,PlannerTimeMs,TotalTimeMs,ActionsGenerated,PlanLength,Error");
 
                 foreach (var r in callRecords)
                 {
@@ -167,7 +265,7 @@ namespace BehaviorTreeMainProject.Log.Services
                     var plannerMs = r.PlannerTimeSeconds * 1000.0;
                     var errorEscaped = (r.Error ?? "").Replace(",", ";").Replace("\n", " ");
 
-                    csvPerCall.AppendLine($"{r.CallNumber},{r.StartTime:yyyy-MM-dd HH:mm:ss.fff},{r.PlannerName},{r.HLActionInstance},{r.ProblemFile},{r.Success},{plannerMs:F2},{totalMs:F2},{r.ActionsGenerated},{r.PlanLength},{errorEscaped}");
+                    csvPerCall.AppendLine($"{r.CallNumber},{r.StartTime:yyyy-MM-dd HH:mm:ss.fff},{r.PlannerName},{r.HLActionInstance},{r.ProblemFile},{r.ObjectCount},{r.InitPredicateCount},{r.GoalPredicateCount},{r.DomainActionCount},{r.Success},{plannerMs:F2},{totalMs:F2},{r.ActionsGenerated},{r.PlanLength},{errorEscaped}");
                 }
 
                 WriteLog("Per-Call CSV:");
@@ -279,6 +377,11 @@ namespace BehaviorTreeMainProject.Log.Services
             public string PlannerName { get; set; } = "";
             public string HLActionInstance { get; set; } = "";
             public string ProblemFile { get; set; } = "";
+            // PDDL problem complexity
+            public int ObjectCount { get; set; }
+            public int InitPredicateCount { get; set; }
+            public int GoalPredicateCount { get; set; }
+            public int DomainActionCount { get; set; }
             public bool Success { get; set; }
             public double PlannerTimeSeconds { get; set; }
             public int ActionsGenerated { get; set; }

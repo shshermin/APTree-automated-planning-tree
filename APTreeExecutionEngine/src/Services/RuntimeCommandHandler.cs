@@ -306,6 +306,7 @@ namespace BehaviorTreeMainProject.Services
             llFlowNode.ResetForRetry();
             mlAction.Reset();
 
+            EndToEndSummaryLogger.LogRecovery();
             LoggingService.LogSuccess($"✅ RETRY complete for '{actionName}'");
             LoggingService.LogSuccess("▶️ RESUMED — will retry on next tick");
             return true;
@@ -342,6 +343,7 @@ namespace BehaviorTreeMainProject.Services
 
             mlFlowNode.ResetForNextRound();
 
+            EndToEndSummaryLogger.LogReplan();
             LoggingService.LogSuccess($"✅ REPLAN complete for '{actionName}'");
             LoggingService.LogSuccess("▶️ RESUMED — will replan on next tick");
             return true;

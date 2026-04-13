@@ -127,6 +127,18 @@ public abstract class ExeAction : PActionNode
         var communicator = new RestRobotCommandCommunicator(FlaskBaseUrl);
         LoggingService.LogInfo($"🚀 ExeAction: Sending command for '{InstanceName}' — {CommandRequest.CommandType} → {CommandRequest.FinalPosition}");
 
+        // Log command start for paper metrics
+        var cmdId = RobotCommandLogger.LogCommandStart(
+            llActionType: GetType().Name,
+            instanceName: InstanceName.ToString(),
+            commandType: CommandRequest.CommandType ?? "",
+            targetPosition: CommandRequest.FinalPosition ?? "",
+            pose: CommandRequest.Pose,
+            joints: CommandRequest.Joints,
+            endEffectorType: CommandRequest.EndEffectorType,
+            velocity: CommandRequest.Velocity,
+            acceleration: CommandRequest.Acceleration);
+
         try
         {
             var commandResult = Task.Run(async () => await communicator.SendCommandAsync(CommandRequest)).Result;
@@ -134,6 +146,9 @@ public abstract class ExeAction : PActionNode
             if (commandResult.Success)
             {
                 LoggingService.LogSuccess($"✅ ExeAction: Command succeeded for '{InstanceName}'");
+                RobotCommandLogger.LogCommandEnd(cmdId, true, commandResult.ExecutionTimeSeconds, commandResult.PlanningTimeSeconds);
+                HierarchicalTraceLogger.LogLLStep(GetType().Name, InstanceName.ToString(), CommandRequest.CommandType, CommandRequest.FinalPosition, true, commandResult.ExecutionTimeSeconds * 1000.0);
+                NotifyParentMLStep(true);
                 _hasExecuted = true;
                 status = BTNodeResult.Success;
                 return true;
@@ -141,6 +156,9 @@ public abstract class ExeAction : PActionNode
             else
             {
                 LoggingService.LogError($"❌ ExeAction: Command failed for '{InstanceName}': {commandResult.Error}");
+                RobotCommandLogger.LogCommandFailed(cmdId, commandResult.ExecutionTimeSeconds, commandResult.Error ?? "Unknown");
+                HierarchicalTraceLogger.LogLLStep(GetType().Name, InstanceName.ToString(), CommandRequest.CommandType, CommandRequest.FinalPosition, false, commandResult.ExecutionTimeSeconds * 1000.0);
+                NotifyParentMLStep(false);
                 status = BTNodeResult.Failure;
                 return false;
             }
@@ -148,6 +166,9 @@ public abstract class ExeAction : PActionNode
         catch (Exception ex)
         {
             LoggingService.LogError($"❌ ExeAction: Exception sending command for '{InstanceName}': {ex.Message}");
+            RobotCommandLogger.LogCommandFailed(cmdId, 0, ex.Message);
+            HierarchicalTraceLogger.LogLLStep(GetType().Name, InstanceName.ToString(), CommandRequest.CommandType, CommandRequest.FinalPosition, false, 0);
+            NotifyParentMLStep(false);
             status = BTNodeResult.Failure;
             return false;
         }
@@ -295,5 +316,26 @@ public abstract class ExeAction : PActionNode
     {
         double theta = Math.Atan2(dy, dx) - Math.PI / 2.0;
         return theta * (180.0 / Math.PI);
+    }
+
+    /// <summary>
+    /// Notify the parent ML-level PActionNode that an LL step has completed,
+    /// so it can track the count for the hierarchical trace summary.
+    /// </summary>
+    private void NotifyParentMLStep(bool success)
+    {
+        // Walk up the tree to find the parent ML action (PActionNode that isn't ExeAction)
+        var node = this.ParentNode;
+        while (node != null)
+        {
+            if (node is PActionNode pAction && !(node is ExeAction))
+            {
+                pAction._mlLLStepCount++;
+                if (success)
+                    pAction._mlLLStepSucceeded++;
+                break;
+            }
+            node = node.ParentNode;
+        }
     }
 }

@@ -68,6 +68,9 @@ public abstract class ServicePlanning : Service
     private int communicationRetryCount = 0;
     private const int MAX_COMMUNICATION_RETRIES = 3;
 
+    // Hierarchical trace tracking
+    private int _hlTraceId = -1;
+
     /// <summary>
     /// Returns true if the error string indicates a transient communication failure
     /// (connection refused, timeout, tunnel down) rather than a planner-level rejection.
@@ -143,6 +146,17 @@ public abstract class ServicePlanning : Service
         var problemFile = (planningRequest as PDDLPlanningRequest)?.ProblemFile ?? "Unknown";
         var plannerCallId = PlannerCallLogger.LogCallStart(plannerType, hlActionName, problemFile);
 
+        // Log PDDL problem complexity metrics
+        var pddlRequest = planningRequest as PDDLPlanningRequest;
+        if (pddlRequest != null)
+        {
+            PlannerCallLogger.LogProblemComplexity(plannerCallId,
+                pddlRequest.ProblemFileContent, pddlRequest.DomainFileContent);
+        }
+
+        // Hierarchical trace: HL planning start
+        _hlTraceId = HierarchicalTraceLogger.LogHLStart(hlActionName, plannerType);
+
         try
         {
             // Step 2: Send to external planner via communicator
@@ -178,6 +192,8 @@ public abstract class ServicePlanning : Service
                 LoggingService.LogInfo($"📋 {GetType().Name}: Planning Status - Completed: {HasCompleted}, Successful: {WasSuccessful}, Plan Generated: {HasPlanGenerated}");
                 LoggingService.LogWarning($"🔄 {GetType().Name}: Planning failed permanently. No more retries.");
                 PlannerCallLogger.LogCallFailed(plannerCallId, result.PlanningTimeSeconds, result.Error);
+                if (_hlTraceId > 0)
+                    HierarchicalTraceLogger.LogHLCompleted(_hlTraceId, false);
                 return false;
             }
 
@@ -198,6 +214,8 @@ public abstract class ServicePlanning : Service
                 LoggingService.LogInfo($"📋 {GetType().Name}: Planning Status - Completed: {HasCompleted}, Successful: {WasSuccessful}, Plan Generated: {HasPlanGenerated}");
                 LoggingService.LogWarning($"🔄 {GetType().Name}: NodeGraph generation failed - this node will fail. No retries will be attempted.");
                 PlannerCallLogger.LogCallFailed(plannerCallId, result.PlanningTimeSeconds, "Failed to generate NodeGraph from planner result");
+                if (_hlTraceId > 0)
+                    HierarchicalTraceLogger.LogHLCompleted(_hlTraceId, false);
                 return false;
             }
 
@@ -262,6 +280,15 @@ public abstract class ServicePlanning : Service
 
             PlannerCallLogger.LogCallEnd(plannerCallId, true, result.PlanningTimeSeconds, generatedNodeGraph.GetAllActionNodes().Count, result.PlanLength, result.PlannerUsed);
 
+            // Hierarchical trace: HL planning completed
+            if (_hlTraceId > 0)
+            {
+                HierarchicalTraceLogger.LogHLPlanned(_hlTraceId, generatedNodeGraph.GetAllActionNodes().Count, result.PlanningTimeSeconds * 1000.0, result.PlannerUsed);
+                // Pass HL trace ID to the flow node so it can call LogHLCompleted when all ML children finish
+                if (OwningFlowNode is DynamicFlowNode dfn)
+                    dfn.HLTraceId = _hlTraceId;
+            }
+
             return true;
         }
         catch (Exception ex)
@@ -289,6 +316,8 @@ public abstract class ServicePlanning : Service
             LoggingService.LogInfo($"📋 {GetType().Name}: Planning Status - Completed: {HasCompleted}, Successful: {WasSuccessful}, Plan Generated: {HasPlanGenerated}");
             LoggingService.LogWarning($"🔄 {GetType().Name}: Planning exception occurred — no more retries.");
             PlannerCallLogger.LogCallFailed(plannerCallId, 0, errorMsg);
+            if (_hlTraceId > 0)
+                HierarchicalTraceLogger.LogHLCompleted(_hlTraceId, false);
             return false;
         }
     }

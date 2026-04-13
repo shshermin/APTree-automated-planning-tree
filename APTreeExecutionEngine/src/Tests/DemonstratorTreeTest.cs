@@ -44,6 +44,7 @@ namespace BehaviorTreeMainProject
             testStartTime = DateTime.Now;
             LoggingService.LogSection("DEMONSTRATOR BEHAVIOR TREE TEST");
             LoggingService.LogSuccess($"Started at: {testStartTime:yyyy-MM-dd HH:mm:ss.fff}");
+            EndToEndSummaryLogger.LogTaskStart("Demonstrator");
 
             try
             {
@@ -374,6 +375,7 @@ namespace BehaviorTreeMainProject
                 LoggingService.LogSection("DEMONSTRATOR TREE TEST COMPLETED");
                 LoggingService.LogSuccess($"Finished at: {testEndTime:yyyy-MM-dd HH:mm:ss.fff}");
                 LoggingService.LogSuccess($"Total duration: {testEndTime - testStartTime:hh\\:mm\\:ss\\.fff}");
+                EndToEndSummaryLogger.LogTaskEnd(true);
 
                 await DisplayExecutionSummary();
 
@@ -389,6 +391,12 @@ namespace BehaviorTreeMainProject
                 PlannerCallLogger.Close();
                 ActionExecutionLogger.GenerateCSVSummary();
                 ActionExecutionLogger.Instance.Close();
+                RobotCommandLogger.GenerateCSVSummary();
+                RobotCommandLogger.Close();
+                HierarchicalTraceLogger.GenerateCSVSummary();
+                HierarchicalTraceLogger.Close();
+                EndToEndSummaryLogger.GenerateFinalSummary();
+                EndToEndSummaryLogger.Close();
                 LoggingService.Close();
                 ExecutionFlowLogger.Close();
             }
@@ -428,9 +436,11 @@ namespace BehaviorTreeMainProject
                         isPaused = !isPaused;
                         if (isPaused)
                         {
+                            EndToEndSummaryLogger.LogPauseStart();
                             var cmdHandler = new RuntimeCommandHandler(behaviorTree);
                             var cmdResult = cmdHandler.EnterCommandLoop();
                             isPaused = false;
+                            EndToEndSummaryLogger.LogPauseEnd();
                             if (cmdResult == CommandResult.Quit)
                                 return;
                             continue;

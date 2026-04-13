@@ -186,7 +186,10 @@ def plan_and_execute():
         if end_effector_type == 'nailgun':
             path_constraints = _build_nailgun_path_constraints(target_pose)
 
-        # Execute motion
+        setup_elapsed = time.time() - start_time
+
+        # Execute motion (plan + execute inside MoveIt)
+        motion_start = time.time()
         success = move_to_task.move_to(
             target_pose,
             velocity_scaling=0.15,
@@ -194,6 +197,9 @@ def plan_and_execute():
             planning_time=10.0,
             path_constraints=path_constraints
         )
+        motion_elapsed = time.time() - motion_start
+
+        post_motion_start = time.time()
 
         if success:
             # Detach object if it was attached
@@ -216,6 +222,7 @@ def plan_and_execute():
                     time.sleep(0.5)
 
             # Lift 5 cm straight up
+            lift_start = time.time()
             lift_pose = _build_pose(x, y, z + 0.05, yaw)
             move_to_task.move_to(
                 lift_pose,
@@ -223,22 +230,31 @@ def plan_and_execute():
                 acceleration_scaling=0.15,
                 planning_time=5.0,
             )
+            lift_elapsed = time.time() - lift_start
+        else:
+            lift_elapsed = 0.0
 
-        elapsed = time.time() - start_time
+        total_elapsed = time.time() - start_time
+        post_motion_elapsed = time.time() - post_motion_start
 
         if success:
-            print(f"MoveIt execution completed successfully ({elapsed:.2f}s)")
+            print(f"MoveIt execution completed successfully (total={total_elapsed:.2f}s, setup={setup_elapsed:.2f}s, motion={motion_elapsed:.2f}s, post={post_motion_elapsed:.2f}s, lift={lift_elapsed:.2f}s)")
             return jsonify({
                 'success': True,
                 'message': f"MoveIt planned and executed to ({x}, {y}, {z}, yaw={yaw}°)",
-                'executionTimeSeconds': elapsed
+                'executionTimeSeconds': total_elapsed,
+                'motionTimeSeconds': motion_elapsed,
+                'setupTimeSeconds': setup_elapsed,
+                'liftTimeSeconds': lift_elapsed
             })
         else:
-            print(f"MoveIt motion planning/execution failed ({elapsed:.2f}s)")
+            print(f"MoveIt motion planning/execution failed (total={total_elapsed:.2f}s, setup={setup_elapsed:.2f}s, motion={motion_elapsed:.2f}s)")
             return jsonify({
                 'success': False,
                 'error': 'MoveIt motion planning or execution failed',
-                'executionTimeSeconds': elapsed
+                'executionTimeSeconds': total_elapsed,
+                'motionTimeSeconds': motion_elapsed,
+                'setupTimeSeconds': setup_elapsed
             }), 500
 
     except Exception as e:

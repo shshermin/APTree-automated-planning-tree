@@ -103,6 +103,18 @@ namespace BehaviorTreeMainProject
                 // Generate action execution CSV summary
                 ActionExecutionLogger.GenerateCSVSummary();
                 ActionExecutionLogger.Instance.Close();
+
+                // Generate robot command CSV summary
+                RobotCommandLogger.GenerateCSVSummary();
+                RobotCommandLogger.Close();
+
+                // Generate hierarchical trace CSV summary
+                HierarchicalTraceLogger.GenerateCSVSummary();
+                HierarchicalTraceLogger.Close();
+
+                // Generate end-to-end summary
+                EndToEndSummaryLogger.GenerateFinalSummary();
+                EndToEndSummaryLogger.Close();
                 
                 // Close logging service
                 LoggingService.Close();

@@ -23,6 +23,11 @@ public abstract class PActionNode : ActionNode
     // ServiceSubtreeInject access
     public ServiceSubtreeInject ServiceSubtreeInject => GetSubtreeInjectionService();
 
+    // Hierarchical trace tracking for ML-level actions
+    private int _mlTraceId = -1;
+    internal int _mlLLStepCount = 0;
+    internal int _mlLLStepSucceeded = 0;
+
     // Abstract properties for preconditions and effects
     protected abstract State Preconditions { get; }
     protected abstract State Effects { get; }
@@ -228,6 +233,16 @@ public abstract class PActionNode : ActionNode
         {
             LoggingService.LogInfo($"🔍 GenericBTAction: {InstanceName.ToString()} OnEnter - skipping precondition check (HL action, PDDL planner handles validity)");
         }
+
+        // Hierarchical trace: log ML action start (for ML-level actions, not HL or LL)
+        var actionTypeName = actionType.ToString();
+        if (actionTypeName.Contains("ML") && !(this is ExeAction))
+        {
+            var parentHL = (ParentNode as DynamicFlowNode)?.GetParentAction()?.InstanceName.ToString() ?? "";
+            _mlTraceId = HierarchicalTraceLogger.LogMLStart(actionTypeName, InstanceName.ToString(), parentHL);
+            _mlLLStepCount = 0;
+            _mlLLStepSucceeded = 0;
+        }
     }
 
     /// <summary>
@@ -408,6 +423,13 @@ public abstract class PActionNode : ActionNode
                 LoggingService.LogError($"❌ GenericBTAction: {InstanceName.ToString()} failed to apply effects on exit: {ex.Message}");
                 ActionExecutionLogger.Instance.LogActionFailed(this.GetType().Name, InstanceName.ToString(), $"Effect application failed on exit: {ex.Message}");
             }
+        }
+
+        // Hierarchical trace: log ML action completion
+        if (_mlTraceId > 0)
+        {
+            HierarchicalTraceLogger.LogMLCompleted(_mlTraceId, status == BTNodeResult.Success, _mlLLStepCount, _mlLLStepSucceeded);
+            _mlTraceId = -1;
         }
 
         base.OnExit();
