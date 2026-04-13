@@ -47,8 +47,8 @@ namespace BehaviorTreeMainProject.Log.Services
         {
             sessionStartTime = DateTime.Now;
             
-            // Initialize the base logger
-            base.Initialize("BlackboardTracking", true, true);
+            // Initialize the base logger (file only, no console spam)
+            base.Initialize("BlackboardTracking", false, true);
             
             // Write header to log file
             WriteToLog("=== BLACKBOARD TRACKING LOG ===");

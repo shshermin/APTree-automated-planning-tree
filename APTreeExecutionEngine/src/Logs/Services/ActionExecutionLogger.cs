@@ -57,7 +57,7 @@ namespace BehaviorTreeMainProject.Log.Services
             startTime = DateTime.Now;
             
             // Initialize the base logger
-            base.Initialize("ActionExecution", true, true);
+            base.Initialize("ActionExecution", false, true);
             
             // Write header to log file
             WriteToLog("=== ML Action Execution Order Log ===");
