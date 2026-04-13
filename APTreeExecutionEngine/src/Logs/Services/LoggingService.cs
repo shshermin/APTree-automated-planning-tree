@@ -49,27 +49,27 @@ namespace BehaviorTreeMainProject.Log.Services
 
         public static void LogDebug(string message)
         {
-            Instance.WriteLog("🔍 DEBUG", message, ConsoleColor.Gray);
+            Instance.WriteLog("🔍 DEBUG", message, ConsoleColor.Gray, LogLevel.Debug);
         }
 
         public static void LogInfo(string message)
         {
-            Instance.WriteLog("ℹ️ INFO", message, ConsoleColor.White);
+            Instance.WriteLog("ℹ️ INFO", message, ConsoleColor.White, LogLevel.Info);
         }
 
         public static void LogSuccess(string message)
         {
-            Instance.WriteLog("✅ SUCCESS", message, ConsoleColor.Green);
+            Instance.WriteLog("✅ SUCCESS", message, ConsoleColor.Green, LogLevel.Success);
         }
 
         public static void LogWarning(string message)
         {
-            Instance.WriteLog("⚠️ WARNING", message, ConsoleColor.Yellow);
+            Instance.WriteLog("⚠️ WARNING", message, ConsoleColor.Yellow, LogLevel.Warning);
         }
 
         public static void LogError(string message)
         {
-            Instance.WriteLog("❌ ERROR", message, ConsoleColor.Red);
+            Instance.WriteLog("❌ ERROR", message, ConsoleColor.Red, LogLevel.Error);
         }
 
         public static void LogSection(string message)

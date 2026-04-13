@@ -36,6 +36,33 @@ class RobotSafetyError(Exception):
     pass
 
 
+def check_safety_mode(robot_ip: str):
+    """Read the current safety mode from the robot's real-time interface.
+
+    Returns: (is_safe: bool, message: str)
+        is_safe is True when the robot is in NORMAL or REDUCED mode.
+    """
+    try:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.settimeout(5)
+        sock.connect((robot_ip, REALTIME_PORT))
+        data = b""
+        while len(data) < 1116:
+            chunk = sock.recv(4096)
+            if not chunk:
+                break
+            data += chunk
+        sock.close()
+        if len(data) >= 820:
+            safety_mode = int(round(struct.unpack("!d", data[812:820])[0]))
+            if safety_mode not in (SAFETY_MODE_NORMAL, SAFETY_MODE_REDUCED):
+                mode_name = SAFETY_MODE_NAMES.get(safety_mode, str(safety_mode))
+                return False, f"Robot in {mode_name}"
+        return True, "OK"
+    except Exception as e:
+        return False, f"Could not read safety mode: {e}"
+
+
 # TCP offsets (flange → tool tip) for each tool, in meters and radians.
 # Format: [x, y, z, rx, ry, rz]
 TCP_OFFSETS = {

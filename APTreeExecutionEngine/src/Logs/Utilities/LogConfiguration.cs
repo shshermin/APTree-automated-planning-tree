@@ -7,6 +7,19 @@ using System.Text.RegularExpressions;
 namespace BehaviorTreeMainProject.Log
 {
     /// <summary>
+    /// Log severity levels, ordered from most verbose to most critical.
+    /// </summary>
+    public enum LogLevel
+    {
+        Debug = 0,
+        Info = 1,
+        Success = 2,
+        Warning = 3,
+        Error = 4,
+        None = 5
+    }
+
+    /// <summary>
     /// Centralized configuration for all logging systems
     /// </summary>
     public static class LogConfiguration
@@ -14,6 +27,14 @@ namespace BehaviorTreeMainProject.Log
         public static string LogsDirectory { get; set; } = "WrittenLogs";
         public static bool EnableConsole { get; set; } = true;
         public static bool EnableFile { get; set; } = true;
+
+        /// <summary>
+        /// Messages below this level are suppressed on the console.
+        /// File logging is unaffected (always writes everything).
+        /// Default: Warning — only warnings, errors, and section headers appear in the terminal.
+        /// Set to LogLevel.Debug to restore the previous (verbose) behaviour.
+        /// </summary>
+        public static LogLevel MinimumConsoleLogLevel { get; set; } = LogLevel.Warning;
         public static string TimestampFormat { get; set; } = "HH:mm:ss.fff";
         public static string DateFormat { get; set; } = "yyyy-MM-dd_HH-mm-ss";
         public static string DateFormatCompact { get; set; } = "yyyyMMdd_HHmmss";

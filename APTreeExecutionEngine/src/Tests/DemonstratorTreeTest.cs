@@ -6,6 +6,7 @@ using System.IO;
 using BehaviorTreeMainProject.Services;
 using BehaviorTreeMainProject.Services.AIPlanning;
 using AIPlanning;
+using ModelLoader;
 using ModelLoader.ParameterTypes;
 using BehaviorTreeMainProject.Log.Services;
 
@@ -428,7 +429,9 @@ namespace BehaviorTreeMainProject
                         if (isPaused)
                         {
                             LoggingService.LogWarning("⏸️ PAUSED — entering command mode");
-                            LoggingService.LogInfo("Commands: list | list all | set <type> <p1> ... <true|false> | retry | replan | resume | quit");
+                            LoggingService.LogInfo("Commands: list | list all | set <type> <p1> ... <true|false>");
+                            LoggingService.LogInfo("         listloc [filter] | setpos <loc> <x> <y> <z> | setnail <obj1> <obj2> <x> <y> <z>");
+                            LoggingService.LogInfo("         retry | replan | resume | quit");
                             bool stayPaused = true;
                             while (stayPaused)
                             {
@@ -464,6 +467,18 @@ namespace BehaviorTreeMainProject
                                         LoggingService.LogInfo($"  {p.GetPredicateType()} {string.Join(" ", p.GetParameterValues())}{neg}");
                                     }
                                 }
+                                else if (input.StartsWith("setpos ", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    HandleSetPosCommand(input, behaviorTree.linkedBlackboard);
+                                }
+                                else if (input.StartsWith("setnail ", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    HandleSetNailCommand(input, behaviorTree);
+                                }
+                                else if (input.StartsWith("listloc", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    HandleListLocCommand(input, behaviorTree.linkedBlackboard);
+                                }
                                 else if (input.StartsWith("set ", StringComparison.OrdinalIgnoreCase))
                                 {
                                     HandleSetCommand(input, behaviorTree.linkedBlackboard);
@@ -489,7 +504,9 @@ namespace BehaviorTreeMainProject
                                 else
                                 {
                                     LoggingService.LogWarning($"Unknown command: {input}");
-                                    LoggingService.LogInfo("Commands: list | list all | set <type> <p1> ... <true|false> | retry | replan | resume | quit");
+                                    LoggingService.LogInfo("Commands: list | list all | set <type> <p1> ... <true|false>");
+                                    LoggingService.LogInfo("         listloc [filter] | setpos <loc> <x> <y> <z> | setnail <obj1> <obj2> <x> <y> <z>");
+                                    LoggingService.LogInfo("         retry | replan | resume | quit");
                                 }
                             }
                             continue;
@@ -544,6 +561,116 @@ namespace BehaviorTreeMainProject
             {
                 LoggingService.LogWarning($"Tree execution stopped after {maxTicks} ticks (max reached)");
             }
+        }
+
+        private void HandleListLocCommand(string input, Blackboard<FastName> blackboard)
+        {
+            var parts = input.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            string filter = parts.Length > 1 ? parts[1].ToLower() : null;
+
+            var locations = blackboard.GetAllLocations();
+            int shown = 0;
+            foreach (var loc in locations.OrderBy(l => l.NameKey?.ToString() ?? ""))
+            {
+                string name = loc.NameKey?.ToString() ?? "(unnamed)";
+                if (filter != null && !name.ToLower().Contains(filter))
+                    continue;
+
+                if (loc is FinalLocation fl)
+                {
+                    string pos = fl.Position != null ? $"({fl.Position.X}, {fl.Position.Y}, {fl.Position.Z})" : "(none)";
+                    string ori = fl.Orientation != null ? $"({fl.Orientation.X}, {fl.Orientation.Y}, {fl.Orientation.Z})" : "(none)";
+                    LoggingService.LogInfo($"  📍 {name}: pos={pos}  ori={ori}");
+                }
+                else
+                {
+                    LoggingService.LogInfo($"  📍 {name}: {loc.GetType().Name}");
+                }
+                shown++;
+            }
+            LoggingService.LogInfo($"--- {shown} location(s) shown ---");
+        }
+
+        private void HandleSetPosCommand(string input, Blackboard<FastName> blackboard)
+        {
+            // Format: setpos <locationName> <x> <y> <z>
+            var parts = input.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            if (parts.Length != 5)
+            {
+                LoggingService.LogWarning("Usage: setpos <locationName> <x> <y> <z>");
+                return;
+            }
+
+            string locName = parts[1].ToLower();
+            if (!double.TryParse(parts[2], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out double x) ||
+                !double.TryParse(parts[3], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out double y) ||
+                !double.TryParse(parts[4], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out double z))
+            {
+                LoggingService.LogWarning("Invalid coordinates. Use decimal numbers, e.g.: setpos finallocstick88 0.360 0.835 0.460");
+                return;
+            }
+
+            var fl = blackboard.GetFinalLocationByName(locName);
+            if (fl == null)
+            {
+                LoggingService.LogWarning($"FinalLocation '{locName}' not found on blackboard");
+                LoggingService.LogInfo("Tip: use 'listloc' to see available locations");
+                return;
+            }
+
+            var oldPos = fl.Position != null ? $"({fl.Position.X}, {fl.Position.Y}, {fl.Position.Z})" : "(none)";
+            fl.Position = new Coordinate(x, y, z);
+            LoggingService.LogSuccess($"✅ Updated {locName} position: {oldPos} → ({x}, {y}, {z})");
+        }
+
+        private void HandleSetNailCommand(string input, BehaviorTree behaviorTree)
+        {
+            // Format: setnail <obj1> <obj2> <x> <y> <z>
+            var parts = input.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            if (parts.Length != 6)
+            {
+                LoggingService.LogWarning("Usage: setnail <obj1> <obj2> <x> <y> <z>");
+                return;
+            }
+
+            string obj1 = parts[1].ToLower();
+            string obj2 = parts[2].ToLower();
+            if (!double.TryParse(parts[3], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out double x) ||
+                !double.TryParse(parts[4], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out double y) ||
+                !double.TryParse(parts[5], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out double z))
+            {
+                LoggingService.LogWarning("Invalid coordinates. Use decimal numbers, e.g.: setnail stick88 stick87 0.360 0.835 0.460");
+                return;
+            }
+
+            var newCoord = new Coordinate(x, y, z);
+
+            // Update the static lookup table (affects future action instances)
+            var oldCoord = NailCoordinates.Lookup(obj1, obj2);
+            NailCoordinates.Update(obj1, obj2, newCoord);
+            string oldStr = oldCoord != null ? $"({oldCoord.X}, {oldCoord.Y}, {oldCoord.Z})" : "(none)";
+            LoggingService.LogSuccess($"✅ Updated nail coordinate ({obj1}, {obj2}): {oldStr} → ({x}, {y}, {z})");
+
+            // Also update any live NailingML action instances that match
+            int liveUpdated = 0;
+            var allActions = behaviorTree.linkedBlackboard.GetAllActionInstances();
+            foreach (var action in allActions)
+            {
+                if (action is NailingML nailing)
+                {
+                    string a1 = nailing.obj1?.NameKey?.ToString()?.ToLower() ?? "";
+                    string a2 = nailing.obj2?.NameKey?.ToString()?.ToLower() ?? "";
+                    if ((a1 == obj1 && a2 == obj2) || (a1 == obj2 && a2 == obj1))
+                    {
+                        // Update the live action's cached coordinate via reflection (property has private setter)
+                        var prop = typeof(NailingML).GetProperty("nailCoordinate");
+                        prop?.SetValue(nailing, newCoord);
+                        liveUpdated++;
+                    }
+                }
+            }
+            if (liveUpdated > 0)
+                LoggingService.LogSuccess($"   Also updated {liveUpdated} live NailingML action instance(s)");
         }
 
         private void HandleSetCommand(string input, Blackboard<FastName> blackboard)

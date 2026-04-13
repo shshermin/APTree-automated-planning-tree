@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using BehaviorTreeMainProject.Services;
 using BehaviorTreeMainProject.Log.Services;
+using ModelLoader.ParameterTypes;
 
 
 //we need to fix the query so that the parent types are also added to the graph
@@ -228,7 +229,7 @@ public class Blackboard<T> : IDisposable where T : class
         ElementValues[key] = value;
         // Ensure the element's NameKey matches its instance ID
         value.NameKey = key;  // This ensures the element keeps its instance ID
-        LoggingService.LogError($"Successfully added {value.GetType().Name} to Blackboard with key: {key}");
+        LoggingService.LogInfo($"Successfully added {value.GetType().Name} to Blackboard with key: {key}");
         
         // Log new element instance created
         BlackboardTrackingLogger.LogNewInstance(key.ToString(), value.GetType().Name, "Blackboard", $"Element instance: {value.GetType().Name}");
@@ -538,9 +539,9 @@ public List<PActionNode> GetAllActionInstances()
             // First check if predicates have the same name
             if (existingPredicate.PredicateName == newPredicate.PredicateName)
             {
-                LoggingService.LogError($"\nComparing predicates:");
-                LoggingService.LogError($"New: {newPredicate.PredicateName}");
-                LoggingService.LogError($"Existing: {existingPredicate.PredicateName}");
+                LoggingService.LogDebug($"\nComparing predicates:");
+                LoggingService.LogDebug($"New: {newPredicate.PredicateName}");
+                LoggingService.LogDebug($"Existing: {existingPredicate.PredicateName}");
                 
                 // Get properties of both predicates
                 var existingParams = existingPredicate.GetAllProperties();
@@ -557,7 +558,7 @@ public List<PActionNode> GetAllActionInstances()
                     // If parameter doesn't exist in existing predicate
                     if (!existingParams.ContainsKey(param.Key))
                     {
-                        LoggingService.LogError($"Parameter {param.Key} not found in existing predicate");
+                        LoggingService.LogDebug($"Parameter {param.Key} not found in existing predicate");
                         allParamsMatch = false;
                         break;
                     }
@@ -566,9 +567,9 @@ public List<PActionNode> GetAllActionInstances()
                     var existingValue = existingParams[param.Key];
                     var newValue = param.Value;
 
-                    LoggingService.LogError($"\nComparing parameter {param.Key}:");
-                    LoggingService.LogError($"Existing value: {existingValue}");
-                    LoggingService.LogError($"New value: {newValue}");
+                    LoggingService.LogDebug($"\nComparing parameter {param.Key}:");
+                    LoggingService.LogDebug($"Existing value: {existingValue}");
+                    LoggingService.LogDebug($"New value: {newValue}");
 
                     // Get the instance identifiers for comparison
                     var existingId = existingValue?.GetType().GetProperty("InstanceId")?.GetValue(existingValue)?.ToString()
@@ -576,8 +577,8 @@ public List<PActionNode> GetAllActionInstances()
                     var newId = newValue?.GetType().GetProperty("InstanceId")?.GetValue(newValue)?.ToString()
                         ?? newValue?.ToString();
 
-                    LoggingService.LogError($"Existing ID: {existingId}");
-                    LoggingService.LogError($"New ID: {newId}");
+                    LoggingService.LogDebug($"Existing ID: {existingId}");
+                    LoggingService.LogDebug($"New ID: {newId}");
 
                     if (existingId != newId)
                     {
@@ -781,7 +782,7 @@ public List<PActionNode> GetAllActionInstances()
             BlackboardTrackingLogger.LogNewInstance(key.ToString(), value.GetType().Name, "Blackboard", $"State instance: {value.GetType().Name}");
         }
         StateValues[key] = value;
-        LoggingService.LogError($"Successfully added State to Blackboard with key: {key}");
+        LoggingService.LogInfo($"Successfully added State to Blackboard with key: {key}");
     }
 
     // Get and Set methods for NodeGraphs
@@ -797,7 +798,7 @@ public List<PActionNode> GetAllActionInstances()
     public void SetNodeGraph(FastName key, NodeGraph value)
     {
         NodeGraphValues[key] = value;
-        LoggingService.LogError($"Successfully added NodeGraph to Blackboard with key: {key}");
+        LoggingService.LogInfo($"Successfully added NodeGraph to Blackboard with key: {key}");
         
         // Log new node graph instance created
         BlackboardTrackingLogger.LogNewInstance(key.ToString(), value.GetType().Name, "Blackboard", $"NodeGraph instance: {value.GetType().Name}");
@@ -825,7 +826,7 @@ public List<PActionNode> GetAllActionInstances()
     public void SetInjectedSubtree(FastName key, DynamicFlowNode value)
     {
         InjectedSubtreesValues[key] = value;
-        LoggingService.LogError($"Successfully added injected subtree to Blackboard with key: {key}");
+        LoggingService.LogInfo($"Successfully added injected subtree to Blackboard with key: {key}");
         
         // Log new injected subtree instance created
         BlackboardTrackingLogger.LogNewInstance(key.ToString(), value.GetType().Name, "Blackboard", $"Injected subtree instance: {value.GetType().Name}");
@@ -871,6 +872,18 @@ public List<PActionNode> GetAllActionInstances()
 
         return truePredicates;
     }
+    /// <summary>
+    /// Convenience method to retrieve a FinalLocation by name.
+    /// Returns null if the key does not exist or is not a FinalLocation.
+    /// </summary>
+    public FinalLocation GetFinalLocationByName(string name)
+    {
+        var key = new FastName(name);
+        if (LocationValues.ContainsKey(key) && LocationValues[key] is FinalLocation fl)
+            return fl;
+        return null;
+    }
+
     private void CleanupConflictingAtAgentPredicates(Predicate newLocationPredicate)
 {
     try

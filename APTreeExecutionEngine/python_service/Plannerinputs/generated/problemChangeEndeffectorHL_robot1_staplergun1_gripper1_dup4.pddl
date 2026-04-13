@@ -1,22 +1,7 @@
 ﻿(define (problem changeendeffectorhl)
   (:domain trussml)
   (:objects 
-    ;; Base elements (layer 2, pre-placed)
-    stick6 - stick
-    stick7 - stick
-    stick8 - stick
-    stick9 - stick
-    cube1 - cube
-    cube2 - cube
-
-    ;; Active elements - layer 3
-    stick10 - stick
-    stick11 - stick
-    stick12 - stick
-    stick13 - stick
-    stick14 - stick
-
-    ;; Active elements - layer 4
+    ;; Base elements (layer 4, pre-placed)
     stick15 - stick
     stick16 - stick
     stick17 - stick
@@ -24,10 +9,25 @@
     cube3 - cube
     cube4 - cube
 
+    ;; Active elements - layer 5
+    stick19 - stick
+    stick20 - stick
+    stick21 - stick
+    stick22 - stick
+    stick23 - stick
+
+    ;; Active elements - layer 6
+    stick24 - stick
+    stick25 - stick
+    stick26 - stick
+    stick27 - stick
+    cube5 - cube
+    cube6 - cube
+
     ;; Layers
-    layer2 - stack
-    layer3 - stack
     layer4 - stack
+    layer5 - stack
+    layer6 - stack
 
     ;; Agent
     robot1 - robot
@@ -37,187 +37,183 @@
     staplergun1 - staplergun
 
     ;; Equip Positions
-    equiplocgripper - equipposition
-    equiplocstapler - equipposition
+   ; equiplocgripper - equipposition
+    ;equiplocstapler - equipposition
 
     ;; Robot Positions
-    rppickup - rppickup
-    rpmanipulate - rpmanipulate
-    rptoolchange - rptoolchange
+   ; rppickup - rppickup
+    ;rpmanipulate - rpmanipulate
+    ;rptoolchange - rptoolchange
+
+    ;; robotpositions
+    
 
     ;; Locations - Initial (active elements only)
-    initlocstick10 - firstposition
-    initlocstick11 - firstposition
-    initlocstick12 - firstposition
-    initlocstick13 - firstposition
-    initlocstick14 - firstposition
-    initlocstick15 - firstposition
-    initlocstick16 - firstposition
-    initlocstick17 - firstposition
-    initlocstick18 - firstposition
-    initloccube3 - firstposition
-    initloccube4 - firstposition
+    initlocstick19 - firstposition
+    initlocstick20 - firstposition
+    initlocstick21 - firstposition
+    initlocstick22 - firstposition
+    initlocstick23 - firstposition
+    initlocstick24 - firstposition
+    initlocstick25 - firstposition
+    initlocstick26 - firstposition
+    initlocstick27 - firstposition
+    initloccube5 - firstposition
+    initloccube6 - firstposition
 
     ;; Locations - Final (base + active)
-    finallocstick6 - finalposition
-    finallocstick7 - finalposition
-    finallocstick8 - finalposition
-    finallocstick9 - finalposition
-    finloccube1 - finalposition
-    finloccube2 - finalposition
-    finallocstick10 - finalposition
-    finallocstick11 - finalposition
-    finallocstick12 - finalposition
-    finallocstick13 - finalposition
-    finallocstick14 - finalposition
     finallocstick15 - finalposition
     finallocstick16 - finalposition
     finallocstick17 - finalposition
     finallocstick18 - finalposition
     finloccube3 - finalposition
     finloccube4 - finalposition
+    finallocstick19 - finalposition
+    finallocstick20 - finalposition
+    finallocstick21 - finalposition
+    finallocstick22 - finalposition
+    finallocstick23 - finalposition
+    finallocstick24 - finalposition
+    finallocstick25 - finalposition
+    finallocstick26 - finalposition
+    finallocstick27 - finalposition
+    finloccube5 - finalposition
+    finloccube6 - finalposition
+    ;; HARDCODED ML-only objects (not in HL problem files)
+    equiplocgripper - equipposition
+    equiplocstapler - equipposition
+    rppickup - rppickup
+    rpmanipulate - rpmanipulate
+    rptoolchange - rptoolchange
   )
   (:init  
     (robotequipped robot1)
-(objectfinalposition stick6 finallocstick6)
-(objectfinalposition stick7 finallocstick7)
-(objectfinalposition stick8 finallocstick8)
-(objectfinalposition stick9 finallocstick9)
-(objectfinalposition stick10 finallocstick10)
-(objectfinalposition stick11 finallocstick11)
-(objectfinalposition stick12 finallocstick12)
-(objectfinalposition stick13 finallocstick13)
-(objectfinalposition stick14 finallocstick14)
 (objectfinalposition stick15 finallocstick15)
 (objectfinalposition stick16 finallocstick16)
 (objectfinalposition stick17 finallocstick17)
 (objectfinalposition stick18 finallocstick18)
-(objectfinalposition cube1 finloccube1)
-(objectfinalposition cube2 finloccube2)
+(objectfinalposition stick19 finallocstick19)
+(objectfinalposition stick20 finallocstick20)
+(objectfinalposition stick21 finallocstick21)
+(objectfinalposition stick22 finallocstick22)
+(objectfinalposition stick23 finallocstick23)
+(objectfinalposition stick24 finallocstick24)
+(objectfinalposition stick25 finallocstick25)
+(objectfinalposition stick26 finallocstick26)
+(objectfinalposition stick27 finallocstick27)
 (objectfinalposition cube3 finloccube3)
 (objectfinalposition cube4 finloccube4)
+(objectfinalposition cube5 finloccube5)
+(objectfinalposition cube6 finloccube6)
 (gripperempty robot1)
-(belongstolayer stick6 layer2)
-(belongstolayer stick7 layer2)
-(belongstolayer stick8 layer2)
-(belongstolayer stick9 layer2)
-(belongstolayer cube1 layer2)
-(belongstolayer cube2 layer2)
-(belongstolayer stick10 layer3)
-(belongstolayer stick11 layer3)
-(belongstolayer stick12 layer3)
-(belongstolayer stick13 layer3)
-(belongstolayer stick14 layer3)
 (belongstolayer stick15 layer4)
 (belongstolayer stick16 layer4)
 (belongstolayer stick17 layer4)
 (belongstolayer stick18 layer4)
 (belongstolayer cube3 layer4)
 (belongstolayer cube4 layer4)
-(clear stick6)
-(clear stick7)
-(clear stick8)
-(clear stick9)
-(clear stick10)
-(clear stick11)
-(clear stick12)
-(clear stick13)
-(clear stick14)
+(belongstolayer stick19 layer5)
+(belongstolayer stick20 layer5)
+(belongstolayer stick21 layer5)
+(belongstolayer stick22 layer5)
+(belongstolayer stick23 layer5)
+(belongstolayer stick24 layer6)
+(belongstolayer stick25 layer6)
+(belongstolayer stick26 layer6)
+(belongstolayer stick27 layer6)
+(belongstolayer cube5 layer6)
+(belongstolayer cube6 layer6)
 (clear stick15)
 (clear stick16)
 (clear stick17)
 (clear stick18)
-(clear cube1)
-(clear cube2)
+(clear stick19)
+(clear stick20)
+(clear stick21)
+(clear stick22)
+(clear stick23)
+(clear stick24)
+(clear stick25)
+(clear stick26)
+(clear stick27)
 (clear cube3)
 (clear cube4)
-(atplace stick16 initlocstick16)
-(atplace stick17 initlocstick17)
-(atplace stick18 initlocstick18)
-(atplace cube4 initloccube4)
+(clear cube5)
+(clear cube6)
+(atplace stick24 initlocstick24)
+(atplace stick25 initlocstick25)
+(atplace stick26 initlocstick26)
+(atplace stick27 initlocstick27)
+(atplace cube5 initloccube5)
+(atplace cube6 initloccube6)
 (atagent robot1 rpmanipulate)
-(atplace stick8 finallocstick8)
-(atfinalposition stick8)
 (attool gripper1 equiplocgripper)
 (hastool robot1 staplergun1)
 (positionfree equiplocstapler)
 (activetool staplergun1)
-(fixed stick8)
-(atplace stick6 finallocstick6)
-(atfinalposition stick6)
-(atplace cube1 finloccube1)
-(atfinalposition cube1)
-(atplace stick7 finallocstick7)
-(atfinalposition stick7)
-(atplace cube2 finloccube2)
-(atfinalposition cube2)
-(atplace stick9 finallocstick9)
-(atfinalposition stick9)
-(fixed stick9)
-(fixed cube1)
-(fixed cube2)
-(fixed stick6)
-(fixed stick7)
-(positionfree initlocstick11)
-(atplace stick11 finallocstick11)
-(stacked stick11 stick6)
-(stacked stick11 stick7)
-(atfinalposition stick11)
-(positionfree initlocstick10)
-(atplace stick10 finallocstick10)
-(stacked stick10 stick6)
-(stacked stick10 cube1)
-(atfinalposition stick10)
-(nailed stick10 cube1)
-(fixed stick10)
-(nailed stick10 stick6)
-(nailed stick11 stick6)
-(fixed stick11)
-(nailed stick11 stick7)
-(positionfree initlocstick15)
 (atplace stick15 finallocstick15)
-(accessible stick15)
-(stacked stick15 stick11)
-(stacked stick15 stick10)
 (atfinalposition stick15)
-(positionfree initlocstick13)
-(atplace stick13 finallocstick13)
-(accessible stick13)
-(stacked stick13 stick9)
-(stacked stick13 stick8)
-(atfinalposition stick13)
-(positionfree initlocstick14)
-(atplace stick14 finallocstick14)
-(accessible stick14)
-(stacked stick14 cube2)
-(stacked stick14 stick9)
-(atfinalposition stick14)
-(positionfree initlocstick12)
-(atplace stick12 finallocstick12)
-(accessible stick12)
-(stacked stick12 stick8)
-(stacked stick12 stick7)
-(atfinalposition stick12)
-(positionfree initloccube3)
-(atplace cube3 finloccube3)
-(accessible cube3)
-(stacked cube3 stick10)
-(stacked cube3 stick11)
+(atfinalposition cube4)
+(atplace cube4 finloccube4)
+(atplace stick18 finallocstick18)
+(atfinalposition stick18)
 (atfinalposition cube3)
-(nailed cube3 stick10)
+(atplace cube3 finloccube3)
+(atplace stick17 finallocstick17)
+(atfinalposition stick17)
+(atplace stick16 finallocstick16)
+(atfinalposition stick16)
 (fixed cube3)
-(nailed stick15 stick10)
+(fixed cube4)
 (fixed stick15)
-(nailed stick15 stick11)
-(nailed stick12 stick7)
-(fixed stick12)
-(nailed stick12 stick8)
-(nailed stick13 stick8)
-(fixed stick13)
-(nailed stick13 stick9)
-(nailed stick14 cube2)
-(fixed stick14)
-(nailed stick14 stick9)
+(fixed stick16)
+(fixed stick17)
+(fixed stick18)
+(positionfree initlocstick20)
+(atplace stick20 finallocstick20)
+(accessible stick20)
+(stacked stick20 stick15)
+(stacked stick20 stick16)
+(atfinalposition stick20)
+(positionfree initlocstick19)
+(atplace stick19 finallocstick19)
+(accessible stick19)
+(stacked stick19 stick15)
+(stacked stick19 cube3)
+(atfinalposition stick19)
+(positionfree initlocstick23)
+(atplace stick23 finallocstick23)
+(accessible stick23)
+(stacked stick23 cube4)
+(stacked stick23 stick18)
+(atfinalposition stick23)
+(positionfree initlocstick21)
+(atplace stick21 finallocstick21)
+(accessible stick21)
+(stacked stick21 stick16)
+(stacked stick21 stick17)
+(atfinalposition stick21)
+(positionfree initlocstick22)
+(atplace stick22 finallocstick22)
+(accessible stick22)
+(stacked stick22 stick18)
+(stacked stick22 stick17)
+(atfinalposition stick22)
+(nailed stick19 stick15)
+(fixed stick19)
+(nailed stick23 stick18)
+(fixed stick23)
+(nailed stick19 cube3)
+(nailed stick20 stick15)
+(fixed stick20)
+(nailed stick22 stick18)
+(fixed stick22)
+(nailed stick23 cube4)
+(nailed stick20 stick16)
+(nailed stick21 stick16)
+(fixed stick21)
+(nailed stick21 stick17)
+(nailed stick22 stick17)
   )
   (:goal 
     (and

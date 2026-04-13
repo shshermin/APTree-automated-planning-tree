@@ -37,13 +37,13 @@
     staplergun1 - staplergun
 
     ;; Equip Positions
-    equiplocgripper - equipposition
-    equiplocstapler - equipposition
+    ;equiplocgripper - equipposition
+    ;equiplocstapler - equipposition
 
     ;; Robot Positions
-    rppickup - rppickup
-    rpmanipulate - rpmanipulate
-    rptoolchange - rptoolchange
+   ; rppickup - rppickup
+    ;rpmanipulate - rpmanipulate
+    ;rptoolchange - rptoolchange
 
     ;; Locations - Initial (active elements only)
     initlocstick28 - firstposition
@@ -76,6 +76,12 @@
     finallocstick36 - finalposition
     finloccube7 - finalposition
     finloccube8 - finalposition
+    ;; HARDCODED ML-only objects (not in HL problem files)
+    equiplocgripper - equipposition
+    equiplocstapler - equipposition
+    rppickup - rppickup
+    rpmanipulate - rpmanipulate
+    rptoolchange - rptoolchange
   )
   (:init  
     (robotequipped robot1)
@@ -134,9 +140,9 @@
 (clear cube7)
 (clear cube8)
 (attool staplergun1 equiplocstapler)
-(atplace stick30 initlocstick30)
 (atplace stick31 initlocstick31)
 (atplace stick32 initlocstick32)
+(atplace stick33 initlocstick33)
 (atplace stick34 initlocstick34)
 (atplace stick35 initlocstick35)
 (atplace stick36 initlocstick36)
@@ -145,47 +151,42 @@
 (atagent robot1 rpmanipulate)
 (atplace stick24 finallocstick24)
 (atfinalposition stick24)
-(atplace cube5 finloccube5)
-(atfinalposition cube5)
-(fixed cube5)
-(fixed stick24)
-(atplace stick25 finallocstick25)
-(atfinalposition stick25)
+(atfinalposition cube6)
 (atplace cube6 finloccube6)
 (accessible cube6)
-(atfinalposition cube6)
 (atplace stick26 finallocstick26)
-(accessible stick26)
 (atfinalposition stick26)
+(atplace stick25 finallocstick25)
+(atfinalposition stick25)
+(atfinalposition cube5)
+(atplace cube5 finloccube5)
 (atplace stick27 finallocstick27)
 (accessible stick27)
 (atfinalposition stick27)
+(fixed cube5)
 (fixed cube6)
+(fixed stick24)
 (fixed stick25)
 (fixed stick26)
 (fixed stick27)
 (positionfree initlocstick29)
 (atplace stick29 finallocstick29)
+(accessible stick29)
 (stacked stick29 stick24)
 (stacked stick29 stick25)
 (atfinalposition stick29)
 (positionfree initlocstick28)
 (atplace stick28 finallocstick28)
+(accessible stick28)
 (stacked stick28 stick24)
 (stacked stick28 cube5)
 (atfinalposition stick28)
-(nailed stick28 cube5)
-(fixed stick28)
-(nailed stick28 stick24)
-(nailed stick29 stick24)
-(fixed stick29)
-(nailed stick29 stick25)
-(positionfree initlocstick33)
-(atplace stick33 finallocstick33)
-(accessible stick33)
-(stacked stick33 stick29)
-(stacked stick33 stick28)
-(atfinalposition stick33)
+(positionfree initlocstick30)
+(atplace stick30 finallocstick30)
+(accessible stick30)
+(stacked stick30 stick25)
+(stacked stick30 stick26)
+(atfinalposition stick30)
   )
   (:goal 
     (and

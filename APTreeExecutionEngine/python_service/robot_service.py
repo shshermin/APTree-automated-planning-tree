@@ -359,6 +359,12 @@ def robot_move():
             # inside move_to_task.py via MoveIt, so no need to stop/reload.
 
             if resp_data.get('success'):
+                # Verify robot isn't in protective stop after MoveIt execution
+                from ur10_control.ur10_commands import check_safety_mode
+                is_safe, safety_msg = check_safety_mode(robot_ip)
+                if not is_safe:
+                    print(f"Robot safety issue after MoveIt execution: {safety_msg}")
+                    return jsonify({'success': False, 'error': f"Robot safety issue after MoveIt execution: {safety_msg}"}), 500
                 result_msg = resp_data.get('message', 'MoveIt execution completed')
             else:
                 error_msg = resp_data.get('error', 'MoveIt execution failed')

@@ -9,6 +9,7 @@ namespace BehaviorTreeMainProject.Log
     {
         void WriteLog(string message);
         void WriteLog(string prefix, string message, ConsoleColor color = ConsoleColor.White);
+        void WriteLog(string prefix, string message, ConsoleColor color, LogLevel level);
         void WriteLog(LogEntry entry);
         void Flush();
         void Close();
