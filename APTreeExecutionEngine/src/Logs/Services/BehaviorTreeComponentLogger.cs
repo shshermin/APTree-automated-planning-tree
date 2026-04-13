@@ -47,7 +47,7 @@ namespace BehaviorTreeMainProject.Log.Services
 
         private BehaviorTreeComponentLogger()
         {
-            base.Initialize("BehaviorTreeComponent", true, true);
+            base.Initialize("BehaviorTreeComponent", false, true);
             
             // Initialize component tracking
             InitializeComponentTracking();

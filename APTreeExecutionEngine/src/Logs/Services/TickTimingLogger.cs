@@ -37,7 +37,7 @@ namespace BehaviorTreeMainProject.Log.Services
 
         private TickTimingLogger()
         {
-            base.Initialize("TickTiming", true, true);
+            base.Initialize("TickTiming", false, true);
 
             WriteSectionHeader("⏱️ TICK TIMING LOGGER INITIALIZED");
             WriteLog("Ready to track tick timing statistics for behavior tree nodes");

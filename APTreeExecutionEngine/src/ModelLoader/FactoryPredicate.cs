@@ -53,34 +53,34 @@ public class FactoryPredicate
             throw new InvalidOperationException($"No constructors found for predicate type {predicateName}");
         }
         
-        LoggingService.LogError($"🔧 Found {constructors.Length} constructor(s)");
+        LoggingService.LogDebug($"🔧 Found {constructors.Length} constructor(s)");
         
         // Use the first constructor (assuming it's the one with parameters)
         var constructor = constructors[0];
         var constructorParams = constructor.GetParameters();
         
-        LoggingService.LogError($"🔧 Constructor parameters: {string.Join(", ", constructorParams.Select(p => $"{p.Name}:{p.ParameterType.Name}"))}");
+        LoggingService.LogDebug($"🔧 Constructor parameters: {string.Join(", ", constructorParams.Select(p => $"{p.Name}:{p.ParameterType.Name}"))}");
         
         // Map parameter mappings to constructor parameters
         foreach (var param in constructorParams)
         {
-            LoggingService.LogError($"\n🔍 Looking for constructor parameter: {param.Name} (type: {param.ParameterType.Name})");
+            LoggingService.LogDebug($"\n🔍 Looking for constructor parameter: {param.Name} (type: {param.ParameterType.Name})");
             
             var mapping = parameterMappings.FirstOrDefault(m => 
                 string.Equals(m.ParameterName, param.Name, StringComparison.OrdinalIgnoreCase));
             
             if (mapping != null)
             {
-                LoggingService.LogError($"✅ Found mapping: {mapping.ParameterName} = {mapping.ParameterValue}");
+                LoggingService.LogDebug($"✅ Found mapping: {mapping.ParameterName} = {mapping.ParameterValue}");
                 
                 // Get the actual entity from blackboard
                 var key = new FastName(mapping.ParameterValue);
-                LoggingService.LogError($"🔍 Looking up entity in blackboard with key: {key}");
+                LoggingService.LogDebug($"🔍 Looking up entity in blackboard with key: {key}");
                 
                 try
                 {
                     object value = GetEntityFromBlackboard(blackboard, key, param.ParameterType);
-                    LoggingService.LogError($"✅ Retrieved entity: {value} (type: {value?.GetType().Name})");
+                    LoggingService.LogDebug($"✅ Retrieved entity: {value} (type: {value?.GetType().Name})");
                     parameterValues.Add(value);
                     parameterTypes.Add(param.ParameterType);
                 }
@@ -98,7 +98,7 @@ public class FactoryPredicate
             }
         }
 
-        LoggingService.LogError($"\n🔧 Creating instance with parameters: {string.Join(", ", parameterValues.Select(v => $"{v}"))}");
+        LoggingService.LogDebug($"\n🔧 Creating instance with parameters: {string.Join(", ", parameterValues.Select(v => $"{v}"))}");
         
         // Create instance using constructor with parameters (no predicatename needed)
         var instance = Activator.CreateInstance(predicateType, parameterValues.ToArray()) as Predicate;
@@ -109,17 +109,17 @@ public class FactoryPredicate
             throw new InvalidOperationException($"Failed to create instance of predicate type {predicateName}");
         }
         
-        LoggingService.LogError($"✅ FACTORY: Successfully created predicate instance: {instance.GetType().Name}");
-        LoggingService.LogError($"🔑 FACTORY: Predicate unique key (PredicateName): {instance.PredicateName}");
+        LoggingService.LogDebug($"✅ FACTORY: Successfully created predicate instance: {instance.GetType().Name}");
+        LoggingService.LogDebug($"🔑 FACTORY: Predicate unique key (PredicateName): {instance.PredicateName}");
         
         // Log the GetParameterValues result to see what's being generated
         var paramValues = instance.GetParameterValues();
-        LoggingService.LogError($"📋 FACTORY: GetParameterValues result: {string.Join(", ", paramValues)}");
+        LoggingService.LogDebug($"📋 FACTORY: GetParameterValues result: {string.Join(", ", paramValues)}");
         
         // Log the unique key generation
         var uniqueKey = instance.PredicateName;
-        LoggingService.LogError($"🔑 FACTORY: GetUniqueKey result: {uniqueKey}");
-        LoggingService.LogError($"🔑 FACTORY: PredicateName vs GetUniqueKey match: {instance.PredicateName == uniqueKey}");
+        LoggingService.LogDebug($"🔑 FACTORY: GetUniqueKey result: {uniqueKey}");
+        LoggingService.LogDebug($"🔑 FACTORY: PredicateName vs GetUniqueKey match: {instance.PredicateName == uniqueKey}");
 
         // Set any additional properties that might not be in constructor
         foreach (var mapping in parameterMappings)
@@ -127,7 +127,7 @@ public class FactoryPredicate
             var property = predicateType.GetProperty(mapping.ParameterName);
             if (property != null && !parameterTypes.Contains(property.PropertyType))
             {
-                LoggingService.LogError($"🔧 FACTORY: Setting additional property: {mapping.ParameterName} = {mapping.ParameterValue}");
+                LoggingService.LogDebug($"🔧 FACTORY: Setting additional property: {mapping.ParameterName} = {mapping.ParameterValue}");
                 
                 // Get the actual entity from blackboard using the parameter name
                 var key = new FastName(mapping.ParameterValue);
@@ -135,31 +135,31 @@ public class FactoryPredicate
 
                 // Set the property value
                 property.SetValue(instance, value);
-                LoggingService.LogError($"✅ FACTORY: Set predicate property {mapping.ParameterName} = {mapping.ParameterValue} (actual: {value})");
+                LoggingService.LogDebug($"✅ FACTORY: Set predicate property {mapping.ParameterName} = {mapping.ParameterValue} (actual: {value})");
             }
         }
         
         // The predicate's PredicateName is already set to the unique key in the constructor
-        LoggingService.LogError($"🔧 FACTORY: Final PredicateName (unique key): {instance.PredicateName}");
+        LoggingService.LogDebug($"🔧 FACTORY: Final PredicateName (unique key): {instance.PredicateName}");
         
         // Register the predicate in the blackboard using the PredicateName (which is the unique key)
-        LoggingService.LogError($"🔧 FACTORY: Registering predicate with blackboard using key: {instance.PredicateName}");       
+        LoggingService.LogDebug($"🔧 FACTORY: Registering predicate with blackboard using key: {instance.PredicateName}");       
         
         blackboard.SetPredicateSync(instance.PredicateName, instance);
         
         // Check blackboard state after registration
         var predicatesAfter = blackboard.GetAllPredicates();
-        LoggingService.LogError($"🔧 FACTORY: Predicates in blackboard after registration: {predicatesAfter.Count}");
+        LoggingService.LogDebug($"🔧 FACTORY: Predicates in blackboard after registration: {predicatesAfter.Count}");
         
         var foundInBlackboard = predicatesAfter.Any(p => p.PredicateName == instance.PredicateName);
-        LoggingService.LogError($"🔧 FACTORY: Predicate found in blackboard after registration: {foundInBlackboard}");
+        LoggingService.LogDebug($"🔧 FACTORY: Predicate found in blackboard after registration: {foundInBlackboard}");
         
         if (!foundInBlackboard)
         {
-            LoggingService.LogError($"⚠️ FACTORY WARNING: Predicate {instance.PredicateName} was not found in blackboard after SetPredicateSync!");
+            LoggingService.LogWarning($"⚠️ FACTORY WARNING: Predicate {instance.PredicateName} was not found in blackboard after SetPredicateSync!");
         }
         
-        LoggingService.LogError($"✅ FACTORY: Successfully registered predicate with key: {instance.PredicateName}");
+        LoggingService.LogInfo($"✅ FACTORY: Successfully registered predicate with key: {instance.PredicateName}");
         
         // Calculate and track timing
         var endTime = DateTime.Now;
@@ -168,7 +168,7 @@ public class FactoryPredicate
         // Track creation timing for blackboard summary
         BlackboardSummaryLogger.TrackCreation("PredicateInstances", predicateName, generationTime);
         
-        LoggingService.LogError($"⏱️ FACTORY: Predicate creation took {generationTime.TotalMilliseconds:F2}ms");
+        LoggingService.LogDebug($"⏱️ FACTORY: Predicate creation took {generationTime.TotalMilliseconds:F2}ms");
         
         return instance;
     }
@@ -180,7 +180,7 @@ public class FactoryPredicate
     /// <returns></returns>
     private Type FindPredicateType(string predicateName)
     {
-        LoggingService.LogError($"🔍 FindPredicateType: searching for '{predicateName}'");
+        LoggingService.LogDebug($"🔍 FindPredicateType: searching for '{predicateName}'");
         
         // Get the assembly containing Predicate types
         var assembly = typeof(Predicate).Assembly;
@@ -190,7 +190,7 @@ public class FactoryPredicate
             .Where(t => t.IsSubclassOf(typeof(Predicate)) && !t.IsAbstract)
             .ToList();
         
-        LoggingService.LogError($"📋 Found {predicateTypes.Count} predicate types: {string.Join(", ", predicateTypes.Select(t => t.Name))}");
+        LoggingService.LogDebug($"📋 Found {predicateTypes.Count} predicate types: {string.Join(", ", predicateTypes.Select(t => t.Name))}");
         
         // Try exact match first (case-insensitive)
         var exactMatch = predicateTypes.FirstOrDefault(t => 
@@ -198,7 +198,7 @@ public class FactoryPredicate
         
         if (exactMatch != null)
         {
-            LoggingService.LogError($"✅ Found exact match: {exactMatch.Name}");
+            LoggingService.LogDebug($"✅ Found exact match: {exactMatch.Name}");
             return exactMatch;
         }
         
@@ -208,7 +208,7 @@ public class FactoryPredicate
         
         if (partialMatch != null)
         {
-            LoggingService.LogError($"✅ Found partial match: {partialMatch.Name}");
+            LoggingService.LogDebug($"✅ Found partial match: {partialMatch.Name}");
             return partialMatch;
         }
         
@@ -229,35 +229,35 @@ public class FactoryPredicate
     /// <exception cref="ArgumentException"></exception>
     private object GetEntityFromBlackboard(Blackboard<FastName> blackboard, FastName key, Type entityType)
     {
-        LoggingService.LogError($"🔍 GetEntityFromBlackboard: key={key}, expectedType={entityType.Name}");
+        LoggingService.LogDebug($"🔍 GetEntityFromBlackboard: key={key}, expectedType={entityType.Name}");
         
         // Handle primitive types first
         if (entityType == typeof(bool))
         {
             // For boolean values, parse the string value directly
             bool boolValue = bool.Parse(key.ToString());
-            LoggingService.LogError($"✅ GetEntityFromBlackboard result: {boolValue} (type: Boolean)");
+            LoggingService.LogDebug($"✅ GetEntityFromBlackboard result: {boolValue} (type: Boolean)");
             return boolValue;
         }
         else if (entityType == typeof(int))
         {
             // For integer values, parse the string value directly
             int intValue = int.Parse(key.ToString());
-            LoggingService.LogError($"✅ GetEntityFromBlackboard result: {intValue} (type: Int32)");
+            LoggingService.LogDebug($"✅ GetEntityFromBlackboard result: {intValue} (type: Int32)");
             return intValue;
         }
         else if (entityType == typeof(double))
         {
             // For double values, parse the string value directly
             double doubleValue = double.Parse(key.ToString());
-            LoggingService.LogError($"✅ GetEntityFromBlackboard result: {doubleValue} (type: Double)");
+            LoggingService.LogDebug($"✅ GetEntityFromBlackboard result: {doubleValue} (type: Double)");
             return doubleValue;
         }
         else if (entityType == typeof(string))
         {
             // For string values, return the key as string
             string stringValue = key.ToString();
-            LoggingService.LogError($"✅ GetEntityFromBlackboard result: {stringValue} (type: String)");
+            LoggingService.LogDebug($"✅ GetEntityFromBlackboard result: {stringValue} (type: String)");
             return stringValue;
         }
         
@@ -273,7 +273,7 @@ public class FactoryPredicate
             _ => throw new ArgumentException($"Unsupported entity type: {entityType.Name}")
         };
         
-        LoggingService.LogError($"✅ GetEntityFromBlackboard result: {result} (type: {result?.GetType().Name})");
+        LoggingService.LogDebug($"✅ GetEntityFromBlackboard result: {result} (type: {result?.GetType().Name})");
         return result;
     }
 

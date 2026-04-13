@@ -145,7 +145,7 @@ public abstract class FlowNode : BTNode, IEnumerable
     {
         var graph = new NodeGraph();
 
-        LoggingService.LogError($"🔧 CreateNodeGraphFromActions: Input actionNodes count: {actionNodes?.Count ?? 0}");
+        LoggingService.LogDebug($"🔧 CreateNodeGraphFromActions: Input actionNodes count: {actionNodes?.Count ?? 0}");
 
         if (actionNodes == null || actionNodes.Count == 0)
         {
@@ -156,11 +156,11 @@ public abstract class FlowNode : BTNode, IEnumerable
         // Add all action nodes to the graph
         foreach (var action in actionNodes)
         {
-            LoggingService.LogError($"🔧 CreateNodeGraphFromActions: Adding action {action.InstanceName.ToString()} to graph");
+            LoggingService.LogDebug($"🔧 CreateNodeGraphFromActions: Adding action {action.InstanceName.ToString()} to graph");
             graph.AddNode(action);
         }
 
-        LoggingService.LogError($"🔧 CreateNodeGraphFromActions: Added {actionNodes.Count} nodes to graph");
+        LoggingService.LogDebug($"🔧 CreateNodeGraphFromActions: Added {actionNodes.Count} nodes to graph");
 
         // Create default relations: sequential order with MEETS temporal constraint
         for (int i = 0; i < actionNodes.Count - 1; i++)
@@ -168,7 +168,7 @@ public abstract class FlowNode : BTNode, IEnumerable
             var currentAction = actionNodes[i];
             var nextAction = actionNodes[i + 1];
 
-            LoggingService.LogError($"🔧 CreateNodeGraphFromActions: Creating relation {currentAction.InstanceName.ToString()} → {nextAction.InstanceName.ToString()}");
+            LoggingService.LogDebug($"🔧 CreateNodeGraphFromActions: Creating relation {currentAction.InstanceName.ToString()} → {nextAction.InstanceName.ToString()}");
 
             // Add order relation (sequential execution)
             graph.AddOrderRelation(currentAction, nextAction);
@@ -177,8 +177,8 @@ public abstract class FlowNode : BTNode, IEnumerable
             graph.AddTemporalConstraint(currentAction, nextAction, TemporalType.MEETS);
         }
 
-        LoggingService.LogError($"🔧 CreateNodeGraphFromActions: Created {actionNodes.Count - 1} relations");
-        LoggingService.LogError($"🔧 CreateNodeGraphFromActions: Final graph has {graph.GetAllActionNodes().Count} nodes");
+        LoggingService.LogDebug($"🔧 CreateNodeGraphFromActions: Created {actionNodes.Count - 1} relations");
+        LoggingService.LogDebug($"🔧 CreateNodeGraphFromActions: Final graph has {graph.GetAllActionNodes().Count} nodes");
 
         // Debug: Show final graph structure
         LoggingService.LogInfo("\n🔍 DEBUG: Final Graph Structure:");
@@ -186,7 +186,7 @@ public abstract class FlowNode : BTNode, IEnumerable
         for (int i = 0; i < allNodes.Count; i++)
         {
             var node = allNodes[i];
-            LoggingService.LogError($"   Node {i}: {node.InstanceName.ToString()}");
+            LoggingService.LogDebug($"   Node {i}: {node.InstanceName.ToString()}");
         }
 
         return graph;

@@ -86,6 +86,42 @@ namespace BehaviorTreeMainProject.Log
             }
         }
 
+        /// <summary>
+        /// Level-aware WriteLog: writes to file unconditionally but only
+        /// writes to the console when <paramref name="level"/> is at or
+        /// above <see cref="LogConfiguration.MinimumConsoleLogLevel"/>.
+        /// </summary>
+        public virtual void WriteLog(string prefix, string message, ConsoleColor color, LogLevel level)
+        {
+            if (!isInitialized) return;
+
+            var formattedMessage = LogFormatter.FormatMessage(prefix, message);
+            bool showOnConsole = enableConsole && level >= LogConfiguration.MinimumConsoleLogLevel;
+
+            lock (logLock)
+            {
+                if (showOnConsole)
+                {
+                    if (LogConfiguration.EnableColors)
+                    {
+                        var originalColor = Console.ForegroundColor;
+                        Console.ForegroundColor = color;
+                        Console.WriteLine(formattedMessage);
+                        Console.ForegroundColor = originalColor;
+                    }
+                    else
+                    {
+                        Console.WriteLine(formattedMessage);
+                    }
+                }
+
+                if (enableFile && fileManager != null)
+                {
+                    fileManager.WriteLine(formattedMessage);
+                }
+            }
+        }
+
         public virtual void WriteLog(LogEntry entry)
         {
             if (!isInitialized) return;

@@ -6,6 +6,7 @@ using System.IO;
 using BehaviorTreeMainProject.Services;
 using BehaviorTreeMainProject.Services.AIPlanning;
 using AIPlanning;
+using ModelLoader;
 using ModelLoader.ParameterTypes;
 using BehaviorTreeMainProject.Log.Services;
 
@@ -427,71 +428,11 @@ namespace BehaviorTreeMainProject
                         isPaused = !isPaused;
                         if (isPaused)
                         {
-                            LoggingService.LogWarning("⏸️ PAUSED — entering command mode");
-                            LoggingService.LogInfo("Commands: list | list all | set <type> <p1> ... <true|false> | retry | replan | resume | quit");
-                            bool stayPaused = true;
-                            while (stayPaused)
-                            {
-                                Console.Write("bb> ");
-                                string input = Console.ReadLine()?.Trim();
-                                if (string.IsNullOrEmpty(input)) continue;
-
-                                if (input.Equals("resume", StringComparison.OrdinalIgnoreCase))
-                                {
-                                    isPaused = false;
-                                    stayPaused = false;
-                                    LoggingService.LogSuccess("▶️ RESUMED");
-                                }
-                                else if (input.Equals("quit", StringComparison.OrdinalIgnoreCase))
-                                {
-                                    LoggingService.LogWarning("Execution stopped by user (quit)");
-                                    return;
-                                }
-                                else if (input.Equals("list", StringComparison.OrdinalIgnoreCase))
-                                {
-                                    var predicates = behaviorTree.linkedBlackboard.GetTruePredicates();
-                                    LoggingService.LogInfo($"--- True predicates ({predicates.Count}) ---");
-                                    foreach (var p in predicates.OrderBy(p => p.GetPredicateType()))
-                                        LoggingService.LogInfo($"  {p.GetPredicateType()} {string.Join(" ", p.GetParameterValues())}");
-                                }
-                                else if (input.Equals("list all", StringComparison.OrdinalIgnoreCase))
-                                {
-                                    var predicates = behaviorTree.linkedBlackboard.GetAllPredicates();
-                                    LoggingService.LogInfo($"--- All predicates ({predicates.Count}) ---");
-                                    foreach (var p in predicates.OrderBy(p => p.GetPredicateType()))
-                                    {
-                                        string neg = p.not ? " [NEGATED]" : "";
-                                        LoggingService.LogInfo($"  {p.GetPredicateType()} {string.Join(" ", p.GetParameterValues())}{neg}");
-                                    }
-                                }
-                                else if (input.StartsWith("set ", StringComparison.OrdinalIgnoreCase))
-                                {
-                                    HandleSetCommand(input, behaviorTree.linkedBlackboard);
-                                }
-                                else if (input.Equals("retry", StringComparison.OrdinalIgnoreCase))
-                                {
-                                    if (HandleManualRetry(behaviorTree))
-                                    {
-                                        isPaused = false;
-                                        stayPaused = false;
-                                        LoggingService.LogSuccess("▶️ RESUMED — will retry on next tick");
-                                    }
-                                }
-                                else if (input.Equals("replan", StringComparison.OrdinalIgnoreCase))
-                                {
-                                    if (HandleManualReplan(behaviorTree))
-                                    {
-                                        isPaused = false;
-                                        stayPaused = false;
-                                        LoggingService.LogSuccess("▶️ RESUMED — will replan on next tick");
-                                    }
-                                }
-                                else
-                                {
-                                    LoggingService.LogWarning($"Unknown command: {input}");
-                                    LoggingService.LogInfo("Commands: list | list all | set <type> <p1> ... <true|false> | retry | replan | resume | quit");
-                                }
-                            }
+                            var cmdHandler = new RuntimeCommandHandler(behaviorTree);
+                            var cmdResult = cmdHandler.EnterCommandLoop();
+                            isPaused = false;
+                            if (cmdResult == CommandResult.Quit)
+                                return;
                             continue;
                         }
                         else
@@ -544,155 +485,6 @@ namespace BehaviorTreeMainProject
             {
                 LoggingService.LogWarning($"Tree execution stopped after {maxTicks} ticks (max reached)");
             }
-        }
-
-        private void HandleSetCommand(string input, Blackboard<FastName> blackboard)
-        {
-            // Format: set <type> <p1> <p2> ... <true|false>
-            var parts = input.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            if (parts.Length < 3)
-            {
-                LoggingService.LogWarning("Usage: set <predicateType> <param1> [param2] ... <true|false>");
-                return;
-            }
-
-            string boolStr = parts[^1];
-            if (!boolStr.Equals("true", StringComparison.OrdinalIgnoreCase) &&
-                !boolStr.Equals("false", StringComparison.OrdinalIgnoreCase))
-            {
-                LoggingService.LogWarning("Last argument must be 'true' or 'false'");
-                return;
-            }
-
-            bool setTrue = boolStr.Equals("true", StringComparison.OrdinalIgnoreCase);
-            string predType = parts[1].ToLower();
-            var paramValues = parts[2..^1]; // everything between type and true/false
-
-            // Build key matching GetUniqueKey() format: {type}_{p1}_{p2}_...
-            string keyStr = predType + "_" + string.Join("_", paramValues);
-            var key = new FastName(keyStr);
-
-            // Try to find the predicate
-            var allPredicates = blackboard.GetAllPredicates();
-            var match = allPredicates.FirstOrDefault(p =>
-                p.GetPredicateType().Equals(predType, StringComparison.OrdinalIgnoreCase) &&
-                p.GetParameterValues().Select(v => v.ToLower()).SequenceEqual(
-                    paramValues.Select(v => v.ToLower())));
-
-            if (match != null)
-            {
-                bool oldNot = match.not;
-                match.not = !setTrue; // true → not=false, false → not=true
-                LoggingService.LogSuccess($"✅ Updated: {predType} {string.Join(" ", paramValues)} — not: {oldNot} → {match.not}");
-            }
-            else
-            {
-                LoggingService.LogWarning($"Predicate not found: {keyStr}");
-                LoggingService.LogInfo("Tip: use 'list all' to see available predicates and their exact parameter names");
-            }
-        }
-
-        private PActionNode FindActiveMLAction(BehaviorTree behaviorTree)
-        {
-            var compositeRoot = behaviorTree.root as BTFlowNodeComposite;
-            if (compositeRoot == null) return null;
-
-            var children = compositeRoot.GetChildren();
-            foreach (var child in children)
-            {
-                if (child is DynamicFlowNode dfn)
-                {
-                    // Search HL actions in the top-level graph
-                    var graph = dfn.GetActionGraph();
-                    foreach (var action in graph.GetAllActionNodes())
-                    {
-                        if (action is PActionNode hlAction &&
-                            hlAction.IsHighLevelAction &&
-                            hlAction.HighLevelSubtree != null &&
-                            hlAction.status == BTNodeResult.InProgress)
-                        {
-                            // Look inside the HL action's ML subtree for active ML actions
-                            var mlGraph = hlAction.HighLevelSubtree.GetActionGraph();
-                            foreach (var mlNode in mlGraph.GetAllActionNodes())
-                            {
-                                if (mlNode is PActionNode mlAction &&
-                                    mlAction.actionType.ToString().EndsWith("ML") &&
-                                    mlAction.status == BTNodeResult.InProgress)
-                                {
-                                    return mlAction;
-                                }
-                            }
-
-                            // If no ML action is InProgress, return the HL action itself
-                            // (allows retry/replan at HL level)
-                            if (hlAction.actionType.ToString().EndsWith("HL"))
-                            {
-                                LoggingService.LogInfo($"No active ML action, but found active HL action: {hlAction.InstanceName}");
-                                return hlAction;
-                            }
-                        }
-                    }
-                }
-            }
-            return null;
-        }
-
-        private bool HandleManualRetry(BehaviorTree behaviorTree)
-        {
-            var mlAction = FindActiveMLAction(behaviorTree);
-            if (mlAction == null)
-            {
-                LoggingService.LogWarning("No active ML action found to retry");
-                return false;
-            }
-
-            var actionName = mlAction.InstanceName.ToString();
-            LoggingService.LogInfo($"🔄 RETRY: Resetting LL subtree for '{actionName}'");
-
-            var llFlowNode = mlAction.HighLevelSubtree as DynamicFlowNode;
-            var graph = llFlowNode.GetActionGraph();
-            graph.ResetAllNodeStatuses();
-            llFlowNode.ResetForRetry();
-            mlAction.Reset();
-
-            LoggingService.LogSuccess($"✅ RETRY complete for '{actionName}'");
-            return true;
-        }
-
-        private bool HandleManualReplan(BehaviorTree behaviorTree)
-        {
-            var mlAction = FindActiveMLAction(behaviorTree);
-            if (mlAction == null)
-            {
-                LoggingService.LogWarning("No active ML action found to replan");
-                return false;
-            }
-
-            var actionName = mlAction.InstanceName.ToString();
-            LoggingService.LogInfo($"🔄 REPLAN: Resetting ML-level planning for '{actionName}'");
-
-            // Walk up to find parent DynamicFlowNode
-            var current = mlAction.ParentNode;
-            DynamicFlowNode mlFlowNode = null;
-            while (current != null)
-            {
-                if (current is DynamicFlowNode dfn) { mlFlowNode = dfn; break; }
-                current = current.ParentNode;
-            }
-
-            if (mlFlowNode == null)
-            {
-                LoggingService.LogError($"Could not find parent ML FlowNode for '{actionName}'");
-                return false;
-            }
-
-            if (mlFlowNode.ServicePlanning is ServicePlanning plannerService)
-                plannerService.ResetPlanningService();
-
-            mlFlowNode.ResetForNextRound();
-
-            LoggingService.LogSuccess($"✅ REPLAN complete for '{actionName}'");
-            return true;
         }
 
         private async Task DisplayExecutionSummary()
