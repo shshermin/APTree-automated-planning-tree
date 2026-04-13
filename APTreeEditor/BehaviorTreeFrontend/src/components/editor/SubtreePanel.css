@@ -1,11 +1,10 @@
-/* ── Subtree Panel: right-side execution viewer ─────────────────── */
-
+/* ── Subtree Panel: right-side canvas viewport ── */
 .subtree-panel {
-  width: 420px;
-  min-width: 320px;
-  max-width: 520px;
+  width: 480px;
+  min-width: 360px;
+  max-width: 600px;
   background: var(--surface-panel, #1a1a2e);
-  border-left: 1px solid var(--border-default, #333);
+  border-left: 2px solid var(--border-default, #333);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -17,8 +16,7 @@
   min-width: 44px;
 }
 
-/* ── Header ─────────────────────────────────────────────────────── */
-
+/* ── Header ── */
 .subtree-panel__header {
   display: flex;
   align-items: center;
@@ -68,8 +66,7 @@
   background: var(--surface-active, #2a2a4a);
 }
 
-/* ── Body ───────────────────────────────────────────────────────── */
-
+/* ── Body ── */
 .subtree-panel__body {
   flex: 1;
   min-height: 0;
@@ -87,12 +84,17 @@
   padding: 12px;
 }
 
-/* ── EditorCanvas inside the panel ──────────────────────────────── */
-
+/* ── Canvas viewport inside the panel ── */
 .subtree-panel__canvas {
   flex: 1;
   min-height: 0;
   position: relative;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+/* Disable the background dot grid for a cleaner viewport look */
+.subtree-panel__canvas .react-flow__background {
+  opacity: 0.4;
 }
 
 /* Override EditorCanvas styles when nested inside the panel */
@@ -100,4 +102,14 @@
   height: 100%;
   border-radius: 0;
   box-shadow: none;
+}
+
+/* Hide controls (zoom buttons, etc.) inside the panel viewport */
+.subtree-panel__canvas .react-flow__controls {
+  display: none;
+}
+
+/* Hide the minimap if it ever appears inside the panel */
+.subtree-panel__canvas .react-flow__minimap {
+  display: none;
 }

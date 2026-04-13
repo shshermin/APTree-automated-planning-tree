@@ -126,6 +126,8 @@ export interface EditorCanvasProps {
   tickStatus?: Record<string, string>;
   /** When set, the canvas viewport will animate to fit these specific node ids. */
   fitViewNodeIds?: string[];
+  /** Maximum zoom level used when fitting the view to fitViewNodeIds (default: 1). */
+  fitViewMaxZoom?: number;
   /** When true, disables all editing interactions (drag, connect, select, drop). */
   readOnly?: boolean;
 }

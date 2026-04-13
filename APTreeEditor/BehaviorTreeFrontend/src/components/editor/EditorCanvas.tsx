@@ -772,6 +772,7 @@ function EditorCanvasInner(props: EditorCanvasProps) {
     onOpenPredicateModal,
     tickStatus,
     fitViewNodeIds,
+    fitViewMaxZoom,
     readOnly,
   } = props;
 
@@ -805,12 +806,13 @@ function EditorCanvasInner(props: EditorCanvasProps) {
       reactFlowInstance.fitView({
         nodes: fitViewNodeIds.map((id) => ({ id })),
         padding: 0.25,
+        maxZoom: fitViewMaxZoom ?? 1,
         duration: 300,
       });
     }, 50);
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fitViewIdsKey, reactFlowInstance]);
+  }, [fitViewIdsKey, fitViewMaxZoom, reactFlowInstance]);
 
   const separatorFlowNodes = useMemo<FlowNode<SeparatorNodeData>[]>(() => {
     if (!separators.length) {

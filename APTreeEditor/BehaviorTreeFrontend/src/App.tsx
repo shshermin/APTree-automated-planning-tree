@@ -1474,6 +1474,8 @@ function App() {
               nodes={graph.nodes}
               connections={graph.connections}
               tickStatus={tickStatus}
+              actionTypes={actionTypes}
+              actionInstances={actionInstances}
             />
           </div>
         </div>
