@@ -14,6 +14,29 @@ namespace BehaviorTreeMainProject
         private static readonly object _subscribersLock = new();
         private static readonly List<ChannelWriter<string>> _tickSubscribers = new();
 
+        // Circular buffer for tick diagnostics (last 2000 ticks)
+        private const int TickLogCapacity = 2000;
+        private static readonly object _tickLogLock = new();
+        private static readonly List<TickLogEntry> _tickLog = new(TickLogCapacity);
+        private static int _tickLogIndex = 0;
+
+        private record TickLogEntry(string Timestamp, string NodeName, string Status, string Source);
+
+        private static void LogTick(string nodeName, string status, string source)
+        {
+            var entry = new TickLogEntry(
+                DateTime.UtcNow.ToString("yyyy-MM-dd'T'HH:mm:ss.fffZ"),
+                nodeName, status, source);
+            lock (_tickLogLock)
+            {
+                if (_tickLog.Count < TickLogCapacity)
+                    _tickLog.Add(entry);
+                else
+                    _tickLog[_tickLogIndex % TickLogCapacity] = entry;
+                _tickLogIndex++;
+            }
+        }
+
         private static void BroadcastModelUpdated()
         {
             var message = JsonSerializer.Serialize(new { type = "modelUpdated" });
@@ -29,6 +52,7 @@ namespace BehaviorTreeMainProject
             // Subscribe to BTNode tick events and broadcast to all WebSocket clients
             BTNode.NodeTicked += (nodeName, status) =>
             {
+                LogTick(nodeName, status, "local");
                 var message = JsonSerializer.Serialize(new { type = "tick", nodeName, status });
                 lock (_subscribersLock)
                 {
@@ -107,6 +131,7 @@ namespace BehaviorTreeMainProject
                 if (string.IsNullOrEmpty(tick.NodeName) || string.IsNullOrEmpty(tick.Status))
                     return Results.BadRequest();
 
+                LogTick(tick.NodeName, tick.Status, "remote");
                 var message = JsonSerializer.Serialize(new { type = "tick", nodeName = tick.NodeName, status = tick.Status });
                 lock (_subscribersLock)
                 {
@@ -115,6 +140,17 @@ namespace BehaviorTreeMainProject
                 }
                 return Results.Ok();
             }).WithName("PostTick");
+
+            // Returns recent tick log entries for diagnostic purposes.
+            app.MapGet("/api/tick/log", () =>
+            {
+                List<TickLogEntry> snapshot;
+                lock (_tickLogLock)
+                {
+                    snapshot = new List<TickLogEntry>(_tickLog);
+                }
+                return Results.Ok(snapshot);
+            }).WithName("GetTickLog");
 
             // Returns the current .bt model file text so the frontend can re-validate after live updates.
             app.MapGet("/api/tree/model", () =>

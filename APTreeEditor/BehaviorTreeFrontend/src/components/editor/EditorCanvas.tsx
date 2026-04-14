@@ -271,7 +271,7 @@ function BehaviorTreeNode({ id, data, selected }: NodeProps<BehaviorNodeData>) {
     nodeClasses.push("canvas-node-rooted");
   }
 
-  if (data.tickStatus === "Running") {
+  if (data.tickStatus === "Running" || data.tickStatus === "InProgress") {
     nodeClasses.push("canvas-node-tick-running");
   } else if (data.tickStatus === "Success") {
     nodeClasses.push("canvas-node-tick-success");

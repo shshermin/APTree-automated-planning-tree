@@ -8,7 +8,7 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  transition: width 0.2s ease;
+  transition: width 0.25s ease;
 }
 
 .subtree-panel--collapsed {
@@ -70,10 +70,34 @@
 .subtree-panel__body {
   flex: 1;
   min-height: 0;
-  overflow: hidden;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   position: relative;
+}
+
+/* ── Individual subtree section ── */
+.subtree-panel__section {
+  flex: 1;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid var(--border-default, #333);
+  overflow: hidden;
+}
+
+.subtree-panel__section:last-child {
+  border-bottom: none;
+}
+
+.subtree-panel__section-label {
+  padding: 4px 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary, #999);
+  background: var(--surface-hover, #1e1e36);
+  border-bottom: 1px solid var(--border-default, #333);
+  flex-shrink: 0;
 }
 
 .subtree-panel__placeholder {

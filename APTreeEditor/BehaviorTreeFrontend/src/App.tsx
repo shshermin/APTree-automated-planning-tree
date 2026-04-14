@@ -7,10 +7,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
  */
 function useTickStatus(
   onModelUpdated: () => void,
-  expireMs = 2000,
 ): Record<string, string> {
   const [tickStatus, setTickStatus] = useState<Record<string, string>>({});
-  const timersRef = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
   const wsRef = useRef<WebSocket | null>(null);
   const onModelUpdatedRef = useRef(onModelUpdated);
   useEffect(() => {
@@ -41,26 +39,6 @@ function useTickStatus(
           if (!nodeName || !status) return;
 
           setTickStatus((prev) => ({ ...prev, [nodeName]: status }));
-
-          // Clear any previous expiration timer
-          const existing = timersRef.current.get(nodeName);
-          if (existing) clearTimeout(existing);
-
-          // Only "Running" expires — "Success" and "Failure" stay visible permanently
-          if (status === "Running") {
-            const timer = setTimeout(() => {
-              setTickStatus((prev) => {
-                const next = { ...prev };
-                delete next[nodeName];
-                return next;
-              });
-              timersRef.current.delete(nodeName);
-            }, expireMs);
-
-            timersRef.current.set(nodeName, timer);
-          } else {
-            timersRef.current.delete(nodeName);
-          }
         } catch {
           // ignore malformed messages
         }
@@ -78,10 +56,8 @@ function useTickStatus(
       active = false;
       wsRef.current?.close();
       wsRef.current = null;
-      timersRef.current.forEach(clearTimeout);
-      timersRef.current.clear();
     };
-  }, [expireMs]);
+  }, []);
 
   return tickStatus;
 }
@@ -462,15 +438,6 @@ function App() {
   }, [addActionTypes, addActionInstances]);
 
   const tickStatus = useTickStatus(handleModelUpdated);
-
-  // Auto-load the .bt model from the backend on first mount so the canvas is
-  // populated even before a "modelUpdated" WebSocket event arrives.
-  const autoLoaded = useRef(false);
-  useEffect(() => {
-    if (autoLoaded.current) return;
-    autoLoaded.current = true;
-    handleModelUpdated();
-  }, [handleModelUpdated]);
 
   const rawActionInstances = useMemo(
     () => getItemsForCategory(ACTION_INSTANCES_KEY) as ActionInstance[],

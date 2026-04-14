@@ -2,8 +2,18 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import EditorCanvas from "./EditorCanvas";
 import type { CanvasNode, NodeConnection } from "./types";
 import type { ActionInstance, ActionType } from "../sidebar/utils/types";
-import { ACTION_INSTANCES_KEY, FLOW_NODES_KEY } from "../sidebar/utils/constants";
+import { FLOW_NODES_KEY } from "../sidebar/utils/constants";
 import "./SubtreePanel.css";
+
+/* ── Diagnostic logging ── */
+const TICK_DIAG = new URLSearchParams(window.location.search).has("tickDiag");
+
+/** Statuses that indicate a node is currently active. */
+const ACTIVE_STATUSES = new Set(["Running", "InProgress"]);
+
+function diagLog(...args: unknown[]) {
+  if (TICK_DIAG) console.log("[TickDiag]", ...args);
+}
 
 /* ── Types ── */
 interface SubtreePanelProps {
@@ -14,169 +24,166 @@ interface SubtreePanelProps {
   actionInstances?: ActionInstance[];
 }
 
+interface SubtreeResult {
+  flowNode: CanvasNode;
+  subtreeNodes: CanvasNode[];
+  subtreeConnections: NodeConnection[];
+}
 
-function findActiveSubtree(
-  nodes: CanvasNode[],
+/** Extract the graph-origin prefix from a node ID, e.g. "bt-tree-5-" */
+function graphPrefix(id: string): string | null {
+  const m = id.match(/^(bt-tree-\d+-)/);
+  return m ? m[1] : null;
+}
+
+/**
+ * Collect the subtree for a FlowNode.
+ *
+ * For FlowNodes from the main tree (bt-tree-0-):
+ *   Follow "contains" edges to find wrapper nodes, then use geometric
+ *   containment to find action nodes inside the wrappers.
+ *
+ * For FlowNodes from subtree graphs (bt-tree-N-, N>0):
+ *   Simply collect ALL nodes sharing the same prefix — the entire subtree
+ *   graph belongs to this FlowNode.
+ */
+function collectSubtree(
+  flowNode: CanvasNode,
+  allNodes: CanvasNode[],
+  nodeById: Map<string, CanvasNode>,
   connections: NodeConnection[],
-  tickStatus: Record<string, string>,
-): { flowNode: CanvasNode | null; subtreeNodes: CanvasNode[]; subtreeConnections: NodeConnection[] } {
-  if (Object.keys(tickStatus).length === 0)
-    return { flowNode: null, subtreeNodes: [], subtreeConnections: [] };
-
-  // DEBUG: Log tick status and available node names for diagnosis
-  const tickNames = Object.keys(tickStatus);
-  if (tickNames.length > 0) {
-    const nodeNames = nodes.filter((n) => n.name).map((n) => `${n.name} [${n.category}]`);
-    console.log("[SubtreePanel] tickStatus keys:", tickNames);
-    console.log("[SubtreePanel] canvas node names:", nodeNames.slice(0, 20));
-    console.log("[SubtreePanel] total nodes:", nodes.length, "total connections:", connections.length);
-  }
-
-  const nodeByName = new Map(nodes.filter((n) => n.name).map((n) => [n.name, n]));
-  const nodeById   = new Map(nodes.map((n) => [n.id, n]));
-
-  // Pre-compute which FlowNode IDs are children of another FlowNode (have an
-  // incoming "contains" connection).  These are the layer-level FlowNodes such
-  // as Layers1_2, Layers3_4, etc.  Root FlowNodes (Main) and subtree-root
-  // FlowNodes (ENHSP_Demonstrator_DynamicFlow_…) are NOT children and should
-  // only be used as a fallback.
-  const childFlowNodeIds = new Set<string>();
-  for (const conn of connections) {
-    if (conn.kind === "contains") {
-      const target = nodeById.get(conn.targetNodeId);
-      if (target?.category === FLOW_NODES_KEY) {
-        childFlowNodeIds.add(target.id);
-      }
-    }
-  }
-
-  // 1. Try to find a running FlowNode directly in tickStatus – that gives us the
-  //    most stable anchor (doesn't change on every action tick within the same layer).
-  //    Prefer child FlowNodes (layer-level) over root / subtree-root FlowNodes.
-  let flowNode: CanvasNode | null = null;
-  let fallbackFlowNode: CanvasNode | null = null;
-  for (const [name, status] of Object.entries(tickStatus)) {
-    if (status !== "Running") continue;
-    const n = nodeByName.get(name);
-    if (n?.category === FLOW_NODES_KEY) {
-      if (childFlowNodeIds.has(n.id)) {
-        flowNode = n;
-        break;
-      }
-      if (!fallbackFlowNode) {
-        fallbackFlowNode = n;
-      }
-    }
-  }
-  if (!flowNode) flowNode = fallbackFlowNode;
-  console.log("[SubtreePanel] Step 1 result: flowNode =", flowNode?.name ?? "null", "| childFlowNodeIds:", [...childFlowNodeIds].length);
-
-  // 2. If no running FlowNode is in tickStatus, find the running action node and
-  //    walk up via "contains" connections to its parent FlowNode.
-  if (!flowNode) {
-    let actionNode: CanvasNode | undefined;
-    for (const [name, status] of Object.entries(tickStatus)) {
-      if (status !== "Running") continue;
-      const n = nodeByName.get(name);
-      console.log("[SubtreePanel] Step 2: checking tick name", name, "-> found?", !!n, n?.category);
-      if (n && (n.category === ACTION_INSTANCES_KEY || n.kind === "actionInstance")) {
-        actionNode = n; break;
-      }
-    }
-    // Fallback: any ticked node
-    if (!actionNode) {
-      for (const name of Object.keys(tickStatus)) {
-        const n = nodeByName.get(name);
-        if (n) { actionNode = n; break; }
-      }
-    }
-    if (!actionNode) return { flowNode: null, subtreeNodes: [], subtreeConnections: [] };
-
-    // Walk "contains" edges upward until we hit a FlowNode.
-    // Prefer child FlowNodes (layer-level) over subtree-root FlowNodes.
-    let walkFallback: CanvasNode | null = null;
-    const visited = new Set<string>();
-    const queue = [actionNode.id];
-    while (queue.length > 0 && !flowNode) {
-      const id = queue.shift()!;
-      if (visited.has(id)) continue;
-      visited.add(id);
-      for (const conn of connections) {
-        if (conn.targetNodeId !== id || conn.kind !== "contains") continue;
-        const parent = nodeById.get(conn.sourceNodeId);
-        if (!parent) continue;
-        if (parent.category === FLOW_NODES_KEY) {
-          if (childFlowNodeIds.has(parent.id)) {
-            flowNode = parent;
-            break;
-          }
-          if (!walkFallback) walkFallback = parent;
-        }
-        queue.push(parent.id);
-      }
-    }
-    if (!flowNode) flowNode = walkFallback;
-    console.log("[SubtreePanel] Step 2 result: flowNode =", flowNode?.name ?? "null");
-  }
-
-  if (!flowNode) {
-    console.log("[SubtreePanel] No flowNode found, returning empty");
-    return { flowNode: null, subtreeNodes: [], subtreeConnections: [] };
-  }
-
-  // 3. Collect ALL descendant nodes of the selected flowNode so the panel
-  //    always shows the complete subtree, not just the currently running slice.
-  const subtreeNodes: CanvasNode[] = [flowNode];
+): { subtreeNodes: CanvasNode[]; subtreeConnections: NodeConnection[] } {
   const subtreeNodeIds = new Set<string>([flowNode.id]);
+  const prefix = graphPrefix(flowNode.id);
 
-  // BFS down via "contains" edges to gather every descendant.
-  {
-    const descQueue = [flowNode.id];
-    while (descQueue.length > 0) {
-      const did = descQueue.shift()!;
-      for (const conn of connections) {
-        if (conn.sourceNodeId !== did || conn.kind !== "contains") continue;
-        if (subtreeNodeIds.has(conn.targetNodeId)) continue;
-        const child = nodeById.get(conn.targetNodeId);
-        if (!child || child.hidden) continue;
-        subtreeNodes.push(child);
-        subtreeNodeIds.add(child.id);
-        descQueue.push(child.id);
+  // For subtree graphs (index > 0): simply collect all nodes with the same prefix
+  if (prefix && !prefix.startsWith("bt-tree-0-")) {
+    for (const node of allNodes) {
+      if (!node.hidden && node.id.startsWith(prefix)) {
+        subtreeNodeIds.add(node.id);
+      }
+    }
+  } else {
+    // Main tree: use geometric containment via wrappers
+
+    // Step 1: BFS via "contains" edges to find wrapper nodes
+    const wrappers: CanvasNode[] = [];
+    {
+      const queue = [flowNode.id];
+      while (queue.length > 0) {
+        const did = queue.shift()!;
+        for (const conn of connections) {
+          if (conn.sourceNodeId !== did || conn.kind !== "contains") continue;
+          if (subtreeNodeIds.has(conn.targetNodeId)) continue;
+          const child = nodeById.get(conn.targetNodeId);
+          if (!child || child.hidden) continue;
+          subtreeNodeIds.add(child.id);
+          if (child.renderAsSubtree) wrappers.push(child);
+          queue.push(child.id);
+        }
+      }
+    }
+
+    // Step 2: Geometric containment — find nodes inside wrappers.
+    // Skip the "bt-outer-subtree" wrapper (it encompasses the entire tree).
+    for (const wrapper of wrappers) {
+      if (wrapper.id.includes("bt-outer-subtree")) continue;
+      const ow = wrapper.width ?? 0;
+      const oh = wrapper.height ?? 0;
+      const oLeft = wrapper.x - ow / 2;
+      const oRight = wrapper.x + ow / 2;
+      const oTop = wrapper.y - oh / 2;
+      const oBottom = wrapper.y + oh / 2;
+      for (const node of allNodes) {
+        if (subtreeNodeIds.has(node.id) || node.hidden) continue;
+        if (node.category === FLOW_NODES_KEY) continue; // don't pull in other FlowNodes
+        if (node.x >= oLeft && node.x <= oRight && node.y >= oTop && node.y <= oBottom) {
+          subtreeNodeIds.add(node.id);
+        }
+      }
+    }
+
+    // Step 3: Follow non-"contains" edges (Meets, etc.)
+    {
+      const queue = [...subtreeNodeIds];
+      for (const startId of queue) {
+        for (const conn of connections) {
+          if (conn.kind === "contains") continue;
+          const neighborId =
+            conn.sourceNodeId === startId ? conn.targetNodeId :
+            conn.targetNodeId === startId ? conn.sourceNodeId : null;
+          if (!neighborId || subtreeNodeIds.has(neighborId)) continue;
+          const neighbor = nodeById.get(neighborId);
+          if (!neighbor || neighbor.hidden || neighbor.category === FLOW_NODES_KEY) continue;
+          subtreeNodeIds.add(neighborId);
+          queue.push(neighborId);
+        }
       }
     }
   }
 
-  // Also include nodes reachable via non-"contains" edges (Meets, etc.)
-  // from the already-collected descendants.
-  {
-    const queue = [...subtreeNodeIds];
-    for (const startId of queue) {
-      for (const conn of connections) {
-        if (conn.kind === "contains") continue;
-        const neighborId =
-          conn.sourceNodeId === startId ? conn.targetNodeId :
-          conn.targetNodeId === startId ? conn.sourceNodeId : null;
-        if (!neighborId || subtreeNodeIds.has(neighborId)) continue;
-        const neighbor = nodeById.get(neighborId);
-        if (!neighbor || neighbor.hidden || neighbor.category === FLOW_NODES_KEY) continue;
-        subtreeNodes.push(neighbor);
-        subtreeNodeIds.add(neighborId);
-        queue.push(neighborId);
-      }
-    }
-  }
-
-  // Remove wrapper / renderAsSubtree nodes – keep them in the ID set so their
-  // connections are preserved, but don't render them as visible nodes.
-  const visibleSubtreeNodes = subtreeNodes.filter((n) => !n.renderAsSubtree);
-
-  // 4. Collect all connections between the collected nodes.
+  const subtreeNodes = allNodes.filter(
+    (n) => subtreeNodeIds.has(n.id) && !n.renderAsSubtree,
+  );
   const subtreeConnections = connections.filter(
     (c) => subtreeNodeIds.has(c.sourceNodeId) && subtreeNodeIds.has(c.targetNodeId),
   );
 
-  console.log("[SubtreePanel] Result: flowNode =", flowNode.name, "| visible nodes:", visibleSubtreeNodes.length, "| connections:", subtreeConnections.length);
-  return { flowNode, subtreeNodes: visibleSubtreeNodes, subtreeConnections };
+  return { subtreeNodes, subtreeConnections };
+}
+
+function findAllActiveSubtrees(
+  nodes: CanvasNode[],
+  connections: NodeConnection[],
+  tickStatus: Record<string, string>,
+): SubtreeResult[] {
+  if (Object.keys(tickStatus).length === 0) return [];
+
+  const nodeById = new Map(nodes.map((n) => [n.id, n]));
+
+  // Find ALL active canvas nodes
+  const activeNodeIds = new Set<string>();
+  for (const n of nodes) {
+    if (!n.name) continue;
+    const status = tickStatus[n.name];
+    if (status && ACTIVE_STATUSES.has(status)) {
+      activeNodeIds.add(n.id);
+    }
+  }
+
+  if (activeNodeIds.size === 0) return [];
+
+  // Get all FlowNodes
+  const allFlowNodes = nodes.filter((n) => n.category === FLOW_NODES_KEY);
+
+  // Build subtree for each FlowNode and check if it has active content
+  const candidates: SubtreeResult[] = [];
+  for (const fn of allFlowNodes) {
+    // Skip the FlowNode if it's not active itself (optimization)
+    if (!activeNodeIds.has(fn.id)) continue;
+
+    const sub = collectSubtree(fn, nodes, nodeById, connections);
+    candidates.push({ flowNode: fn, ...sub });
+  }
+
+  diagLog("Candidate subtrees:", candidates.map((c) =>
+    `${c.flowNode.name} (${c.subtreeNodes.length} nodes)`));
+
+  // Filter out "parent" subtrees that contain other candidate FlowNodes.
+  // e.g. "Main" contains Layers1_2, so Main should be excluded.
+  const candidateFlowNodeIds = new Set(candidates.map((c) => c.flowNode.id));
+  const results = candidates.filter((c) => {
+    const containsOtherFlowNode = c.subtreeNodes.some(
+      (n) => n.category === FLOW_NODES_KEY && n.id !== c.flowNode.id && candidateFlowNodeIds.has(n.id),
+    );
+    if (containsOtherFlowNode) {
+      diagLog(`Excluding ${c.flowNode.name}: contains other active FlowNodes`);
+    }
+    return !containsOtherFlowNode;
+  });
+
+  diagLog("Final subtrees:", results.map((r) => r.flowNode.name));
+  return results;
 }
 
 /* ── Panel component ── */
@@ -189,38 +196,24 @@ export default function SubtreePanel({
 }: SubtreePanelProps) {
   const [collapsed, setCollapsed] = useState(false);
 
-  const current = useMemo(
-    () => findActiveSubtree(nodes, connections, tickStatus),
+  const currentSubtrees = useMemo(
+    () => findAllActiveSubtrees(nodes, connections, tickStatus),
     [nodes, connections, tickStatus],
   );
 
   // Keep the last non-empty result so the panel stays visible during brief gaps
   // between ticks (e.g. the pause at the end of a loop cycle).
-  const lastValidRef = useRef(current);
+  const lastValidRef = useRef(currentSubtrees);
   useEffect(() => {
-    if (current.subtreeNodes.length > 0) lastValidRef.current = current;
-  }, [current]);
+    if (currentSubtrees.length > 0) lastValidRef.current = currentSubtrees;
+  }, [currentSubtrees]);
 
-  const { flowNode, subtreeNodes, subtreeConnections } =
-    current.subtreeNodes.length > 0 ? current : lastValidRef.current;
+  const subtrees = currentSubtrees.length > 0 ? currentSubtrees : lastValidRef.current;
+  const hasContent = subtrees.length > 0;
 
-  const hasContent = subtreeNodes.length > 0;
-
-  // Re-fit the viewport in exactly two cases:
-  //   1. The active FlowNode changes (new subtree layer).
-  //   2. Action nodes first appear in the current subtree (length goes from 1
-  //      to >1), so the view expands from "just the FlowNode" to the full layer.
-  // After both triggers fire, we stop re-fitting until the next layer, which
-  // avoids the hectic re-zoom on every individual action tick.
-  const fitViewIds = useMemo(
-    () => (flowNode ? subtreeNodes.map((n) => n.id) : undefined),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [`${flowNode?.id ?? ""}:${subtreeNodes.length > 1}`],
-  );
-
-  const title = flowNode
-    ? flowNode.name || flowNode.typeLabel
-    : "Active Subtree";
+  const title = hasContent
+    ? subtrees.map((s) => s.flowNode.name || s.flowNode.typeLabel).join(" + ")
+    : "Active Subtrees";
 
   return (
     <div className={`subtree-panel ${collapsed ? "subtree-panel--collapsed" : ""}`}>
@@ -233,23 +226,61 @@ export default function SubtreePanel({
       {!collapsed && (
         <div className="subtree-panel__body">
           {hasContent ? (
-            <div className="subtree-panel__canvas">
-              <EditorCanvas
-                nodes={subtreeNodes}
-                connections={subtreeConnections}
+            subtrees.map((sub) => (
+              <SubtreeSection
+                key={sub.flowNode.id}
+                subtree={sub}
                 tickStatus={tickStatus}
                 actionTypes={actionTypes}
                 actionInstances={actionInstances}
-                fitViewNodeIds={fitViewIds}
-                readOnly
-                onDropNode={() => {}}
               />
-            </div>
+            ))
           ) : (
             <p className="subtree-panel__placeholder">No active execution</p>
           )}
         </div>
       )}
+    </div>
+  );
+}
+
+/* ── Individual subtree section ── */
+function SubtreeSection({
+  subtree,
+  tickStatus,
+  actionTypes,
+  actionInstances,
+}: {
+  subtree: SubtreeResult;
+  tickStatus: Record<string, string>;
+  actionTypes?: ActionType[];
+  actionInstances?: ActionInstance[];
+}) {
+  const { flowNode, subtreeNodes, subtreeConnections } = subtree;
+
+  const fitViewIds = useMemo(
+    () => subtreeNodes.map((n) => n.id),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [`${flowNode.id}:${subtreeNodes.length > 1}`],
+  );
+
+  return (
+    <div className="subtree-panel__section">
+      <div className="subtree-panel__section-label">
+        {flowNode.name || flowNode.typeLabel}
+      </div>
+      <div className="subtree-panel__canvas">
+        <EditorCanvas
+          nodes={subtreeNodes}
+          connections={subtreeConnections}
+          tickStatus={tickStatus}
+          actionTypes={actionTypes}
+          actionInstances={actionInstances}
+          fitViewNodeIds={fitViewIds}
+          readOnly
+          onDropNode={() => {}}
+        />
+      </div>
     </div>
   );
 }

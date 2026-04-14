@@ -69,6 +69,7 @@ export default function Sidebar({ manager, onCreateBehaviorNode }: SidebarProps)
 
   const [isBtNodeWizardOpen, setBtNodeWizardOpen] = useState(false);
   const [wizardHighlightStage, setWizardHighlightStage] = useState<WizardStage | null>(null);
+  const [collapsed, setCollapsed] = useState(false);
   const flowOptions = flowNodeOptions;
   const decoratorOptions = decoratorNodeOptions;
   const serviceOptions = serviceNodeOptions;
@@ -152,11 +153,20 @@ export default function Sidebar({ manager, onCreateBehaviorNode }: SidebarProps)
   };
 
   return (
-    <div className="sidebar">
+    <div className={`sidebar ${collapsed ? "sidebar--collapsed" : ""}`}>
       <div className="sidebar-title">
-        <span className="sidebar-title-text">APTree</span>
+        <span className="sidebar-title-text">{collapsed ? "" : "APTree"}</span>
+        <button
+          className="sidebar-collapse-toggle"
+          onClick={() => setCollapsed((c) => !c)}
+          title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+        >
+          {collapsed ? "▶" : "◀"}
+        </button>
       </div>
 
+      {!collapsed && (
+        <>
       <SidebarSection title="Canvas Tools" iconLabel="T" isOpen={false}>
         <div className="canvas-tools">
           <div
@@ -415,6 +425,8 @@ export default function Sidebar({ manager, onCreateBehaviorNode }: SidebarProps)
           </SidebarSection>
         );
       })}
+        </>
+      )}
     </div>
   );
 }
