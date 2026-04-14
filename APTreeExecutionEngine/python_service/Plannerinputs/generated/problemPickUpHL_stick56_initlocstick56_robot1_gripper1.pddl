@@ -37,13 +37,13 @@
     staplergun1 - staplergun
 
     ;; Equip Positions
-    equiplocgripper - equipposition
-    equiplocstapler - equipposition
+    ;equiplocgripper - equipposition
+    ;equiplocstapler - equipposition
 
     ;; Robot Positions
-    rppickup - rppickup
-    rpmanipulate - rpmanipulate
-    rptoolchange - rptoolchange
+    ;rppickup - rppickup
+    ;rpmanipulate - rpmanipulate
+    ;rptoolchange - rptoolchange
 
     ;; Locations - Initial (active elements only)
     initlocstick55 - firstposition
@@ -76,6 +76,12 @@
     finallocstick63 - finalposition
     finloccube13 - finalposition
     finloccube14 - finalposition
+    ;; HARDCODED ML-only objects (not in HL problem files)
+    equiplocgripper - equipposition
+    equiplocstapler - equipposition
+    rppickup - rppickup
+    rpmanipulate - rpmanipulate
+    rptoolchange - rptoolchange
   )
   (:init  
     (robotequipped robot1)
@@ -146,29 +152,24 @@
 (atplace cube13 initloccube13)
 (atplace cube14 initloccube14)
 (atagent robot1 rptoolchange)
-(atplace stick51 finallocstick51)
-(accessible stick51)
-(atfinalposition stick51)
-(atplace cube11 finloccube11)
-(accessible cube11)
-(atfinalposition cube11)
-(fixed cube11)
-(fixed stick51)
-(atplace stick52 finallocstick52)
-(accessible stick52)
-(atfinalposition stick52)
+(atfinalposition cube12)
 (atplace cube12 finloccube12)
 (accessible cube12)
-(atfinalposition cube12)
-(atplace stick53 finallocstick53)
-(accessible stick53)
-(atfinalposition stick53)
 (atplace stick54 finallocstick54)
 (accessible stick54)
 (atfinalposition stick54)
-(fixed cube12)
-(fixed stick52)
-(fixed stick53)
+(atplace stick51 finallocstick51)
+(accessible stick51)
+(atfinalposition stick51)
+(atfinalposition cube11)
+(atplace cube11 finloccube11)
+(accessible cube11)
+(atplace stick52 finallocstick52)
+(accessible stick52)
+(atfinalposition stick52)
+(atplace stick53 finallocstick53)
+(accessible stick53)
+(atfinalposition stick53)
 (fixed stick54)
   )
   (:goal 

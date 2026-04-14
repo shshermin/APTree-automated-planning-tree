@@ -29,6 +29,7 @@ sys.path.insert(0, '/home/shermin/ws_moveit/src/hello_moveit/scripts')
 import rclpy
 from geometry_msgs.msg import Pose
 from moveit_msgs.msg import Constraints, OrientationConstraint
+from std_msgs.msg import String as StringMsg
 from ur_msgs.srv import SetIO
 
 from move_to_task import MoveToTask
@@ -40,6 +41,9 @@ app = Flask(__name__)
 move_to_task = None      # MoveToTask node  (persistent)
 scene = None             # DynamicSceneManager node (persistent)
 io_client = None         # SetIO service client (persistent)
+stop_pub = None          # Publisher to clear MoveGroup's trajectory execution state
+_last_disabled_ee = [None]  # tracks which EE was last disabled to avoid redundant ACM updates
+_last_payload_ee = [None]   # tracks which EE payload was last set to avoid redundant updates
 _init_lock = threading.Lock()
 
 
@@ -50,7 +54,7 @@ def init_ros():
     rclpy.spin_until_future_complete() calls inside MoveToTask already
     handle spinning when waiting for action/service results.
     """
-    global move_to_task, scene, io_client
+    global move_to_task, scene, io_client, stop_pub
 
     with _init_lock:
         if move_to_task is not None:
@@ -61,6 +65,7 @@ def init_ros():
         scene = DynamicSceneManager()
         move_to_task = MoveToTask(end_effector_type='gripper')  # default; EE link updated per request
         io_client = move_to_task.create_client(SetIO, '/io_and_status_controller/set_io')
+        stop_pub = move_to_task.create_publisher(StringMsg, '/trajectory_execution_event', 1)
 
         print("ROS 2 nodes initialised (persistent, no background spin).")
 
@@ -156,12 +161,18 @@ def plan_and_execute():
 
         start_time = time.time()
 
-        # Disable collisions for inactive EE when both are loaded
+        # Disable collisions for inactive EE when both are loaded (only once per EE type)
         if both_loaded and end_effector_type in ('gripper', 'nailgun'):
-            move_to_task.disable_inactive_ee(end_effector_type)
+            if _last_disabled_ee[0] != end_effector_type:
+                move_to_task.disable_inactive_ee(end_effector_type)
+                _last_disabled_ee[0] = end_effector_type
+                time.sleep(2.0)  # let MoveIt digest the ACM update
 
-        # Set correct payload on the real robot controller
-        move_to_task.set_robot_payload(end_effector_type)
+        # Set correct payload on the real robot controller (only once per EE type)
+        if _last_payload_ee[0] != end_effector_type:
+            move_to_task.set_robot_payload(end_effector_type)
+            _last_payload_ee[0] = end_effector_type
+            time.sleep(2.0)  # let move_group absorb the robot state change
 
         # Attach object if needed
         if not no_object:
@@ -186,20 +197,33 @@ def plan_and_execute():
         if end_effector_type == 'nailgun':
             path_constraints = _build_nailgun_path_constraints(target_pose)
 
-        setup_elapsed = time.time() - start_time
+        # Tell MoveGroup to stop any ongoing trajectory execution and clear its
+        # internal state. Without this, the trajectory_execution_manager may try
+        # to send a "continuation" of the previous (now stale) trajectory instead
+        # of a fresh one, causing the controller to reject the goal.
+        stop_msg = StringMsg()
+        stop_msg.data = 'stop'
+        stop_pub.publish(stop_msg)
+        time.sleep(0.5)  # let MoveGroup process the stop before we send a new goal
+        move_to_task.get_logger().info('Published stop to clear stale trajectory state')
 
-        # Execute motion (plan + execute inside MoveIt)
-        motion_start = time.time()
-        success = move_to_task.move_to(
-            target_pose,
-            velocity_scaling=0.15,
-            acceleration_scaling=0.15,
-            planning_time=10.0,
-            path_constraints=path_constraints
-        )
-        motion_elapsed = time.time() - motion_start
-
-        post_motion_start = time.time()
+        # Execute motion with retry as safety net.
+        MAX_RETRIES = 3
+        success = False
+        for attempt in range(1, MAX_RETRIES + 1):
+            success = move_to_task.move_to(
+                target_pose,
+                velocity_scaling=0.15,
+                acceleration_scaling=0.15,
+                planning_time=10.0,
+                path_constraints=path_constraints
+            )
+            if success:
+                break
+            move_to_task.get_logger().warn(
+                f'Motion attempt {attempt}/{MAX_RETRIES} failed, retrying...'
+            )
+            time.sleep(2.0)
 
         if success:
             # Detach object if it was attached
@@ -222,7 +246,6 @@ def plan_and_execute():
                     time.sleep(0.5)
 
             # Lift 5 cm straight up
-            lift_start = time.time()
             lift_pose = _build_pose(x, y, z + 0.05, yaw)
             move_to_task.move_to(
                 lift_pose,
@@ -230,31 +253,22 @@ def plan_and_execute():
                 acceleration_scaling=0.15,
                 planning_time=5.0,
             )
-            lift_elapsed = time.time() - lift_start
-        else:
-            lift_elapsed = 0.0
 
-        total_elapsed = time.time() - start_time
-        post_motion_elapsed = time.time() - post_motion_start
+        elapsed = time.time() - start_time
 
         if success:
-            print(f"MoveIt execution completed successfully (total={total_elapsed:.2f}s, setup={setup_elapsed:.2f}s, motion={motion_elapsed:.2f}s, post={post_motion_elapsed:.2f}s, lift={lift_elapsed:.2f}s)")
+            print(f"MoveIt execution completed successfully ({elapsed:.2f}s)")
             return jsonify({
                 'success': True,
                 'message': f"MoveIt planned and executed to ({x}, {y}, {z}, yaw={yaw}°)",
-                'executionTimeSeconds': total_elapsed,
-                'motionTimeSeconds': motion_elapsed,
-                'setupTimeSeconds': setup_elapsed,
-                'liftTimeSeconds': lift_elapsed
+                'executionTimeSeconds': elapsed
             })
         else:
-            print(f"MoveIt motion planning/execution failed (total={total_elapsed:.2f}s, setup={setup_elapsed:.2f}s, motion={motion_elapsed:.2f}s)")
+            print(f"MoveIt motion planning/execution failed ({elapsed:.2f}s)")
             return jsonify({
                 'success': False,
                 'error': 'MoveIt motion planning or execution failed',
-                'executionTimeSeconds': total_elapsed,
-                'motionTimeSeconds': motion_elapsed,
-                'setupTimeSeconds': setup_elapsed
+                'executionTimeSeconds': elapsed
             }), 500
 
     except Exception as e:

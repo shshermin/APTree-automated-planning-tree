@@ -413,7 +413,7 @@ namespace BehaviorTreeMainProject
 
         private async Task ExecuteTree(BehaviorTree behaviorTree)
         {
-            int maxTicks = 1300;
+            int maxTicks = 3500;
             int tickCount = 0;
             bool isPaused = false;
             var actionStatusHistory = new Dictionary<string, BTNodeResult>();
