@@ -20,6 +20,23 @@ namespace BehaviorTreeMainProject.Log.Services
         private readonly List<PlannerCallRecord> callRecords = new List<PlannerCallRecord>();
         private int callCounter = 0;
 
+        /// <summary>
+        /// Returns a list of (StartTime, EndTime, DurationMs) for all completed planner calls.
+        /// Used by RobotCommandLogger to separate planning time from pure BT overhead in inter-command gaps.
+        /// </summary>
+        public static List<(DateTime Start, DateTime End, double DurationMs)> GetCompletedCallIntervals()
+        {
+            lock (lockObject)
+            {
+                if (instance == null) return new List<(DateTime, DateTime, double)>();
+                return instance.callRecords
+                    .Where(r => r.Completed && r.EndTime.HasValue)
+                    .Select(r => (r.StartTime, r.EndTime!.Value, (r.EndTime.Value - r.StartTime).TotalMilliseconds))
+                    .OrderBy(t => t.StartTime)
+                    .ToList();
+            }
+        }
+
         public static PlannerCallLogger Instance
         {
             get

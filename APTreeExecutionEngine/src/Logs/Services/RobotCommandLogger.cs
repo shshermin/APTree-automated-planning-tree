@@ -185,11 +185,19 @@ namespace BehaviorTreeMainProject.Log.Services
                 WriteSectionHeader("ROBOT COMMAND SUMMARY");
 
                 // ── Per-command CSV ─────────────────────────────
-                var csvPerCmd = new StringBuilder();
-                csvPerCmd.AppendLine("CmdNumber,Timestamp,LLActionType,InstanceName,CommandType,TargetPosition,EndEffector,Velocity,Acceleration,Pose,Joints,Success,ExecTimeMs,PlanTimeMs,TotalTimeMs,ParentMLAction,Error");
+                // Fetch planner call intervals to separate planning time from BT overhead
+                var plannerIntervals = PlannerCallLogger.GetCompletedCallIntervals();
 
-                foreach (var r in commandRecords)
+                var csvPerCmd = new StringBuilder();
+                csvPerCmd.AppendLine("CmdNumber,Timestamp,LLActionType,InstanceName,CommandType,TargetPosition,EndEffector,Velocity,Acceleration,Pose,Joints,Success,ExecTimeMs,PlanTimeMs,TotalTimeMs,GapFromPrevMs,PlanningInGapMs,BTOverheadMs,ParentMLAction,Error");
+
+                var allGapMs = new List<double>();
+                var allPlanInGapMs = new List<double>();
+                var allBTOverheadMs = new List<double>();
+
+                for (int i = 0; i < commandRecords.Count; i++)
                 {
+                    var r = commandRecords[i];
                     var totalMs = r.Completed && r.EndTime.HasValue
                         ? (r.EndTime.Value - r.StartTime).TotalMilliseconds : 0;
                     var execMs = r.ExecutionTimeSeconds * 1000.0;
@@ -198,7 +206,36 @@ namespace BehaviorTreeMainProject.Log.Services
                     var jointsStr = r.Joints != null ? string.Join(";", r.Joints.Select(j => j.ToString("F6"))) : "";
                     var errorEscaped = (r.Error ?? "").Replace(",", ";").Replace("\n", " ");
 
-                    csvPerCmd.AppendLine($"{r.CommandNumber},{r.StartTime:yyyy-MM-dd HH:mm:ss.fff},{r.LLActionType},{r.InstanceName},{r.CommandType},{r.TargetPosition},{r.EndEffectorType},{r.Velocity:F2},{r.Acceleration:F2},\"{poseStr}\",\"{jointsStr}\",{r.Success},{execMs:F2},{planMs:F2},{totalMs:F2},{r.ParentMLAction},{errorEscaped}");
+                    // Gap = time between previous command's end and this command's start
+                    var gapMs = 0.0;
+                    var planningInGapMs = 0.0;
+                    var btOverheadMs = 0.0;
+                    if (i > 0)
+                    {
+                        var prev = commandRecords[i - 1];
+                        var prevEnd = prev.EndTime ?? prev.StartTime;
+                        gapMs = (r.StartTime - prevEnd).TotalMilliseconds;
+                        if (gapMs < 0) gapMs = 0;
+
+                        // Sum planner call durations that overlap with this gap window
+                        foreach (var pi in plannerIntervals)
+                        {
+                            // Clamp planner interval to the gap window [prevEnd, r.StartTime]
+                            var overlapStart = pi.Start < prevEnd ? prevEnd : pi.Start;
+                            var overlapEnd = pi.End > r.StartTime ? r.StartTime : pi.End;
+                            if (overlapEnd > overlapStart)
+                                planningInGapMs += (overlapEnd - overlapStart).TotalMilliseconds;
+                        }
+
+                        btOverheadMs = gapMs - planningInGapMs;
+                        if (btOverheadMs < 0) btOverheadMs = 0;
+
+                        allGapMs.Add(gapMs);
+                        allPlanInGapMs.Add(planningInGapMs);
+                        allBTOverheadMs.Add(btOverheadMs);
+                    }
+
+                    csvPerCmd.AppendLine($"{r.CommandNumber},{r.StartTime:yyyy-MM-dd HH:mm:ss.fff},{r.LLActionType},{r.InstanceName},{r.CommandType},{r.TargetPosition},{r.EndEffectorType},{r.Velocity:F2},{r.Acceleration:F2},\"{poseStr}\",\"{jointsStr}\",{r.Success},{execMs:F2},{planMs:F2},{totalMs:F2},{gapMs:F2},{planningInGapMs:F2},{btOverheadMs:F2},{r.ParentMLAction},{errorEscaped}");
                 }
 
                 WriteLog("Per-Command CSV:");
@@ -278,6 +315,21 @@ namespace BehaviorTreeMainProject.Log.Services
                 WriteLog($"Total execution time: {grandExec:F0}ms ({grandExec / 1000.0:F1}s)");
                 WriteLog($"Total planning time (MoveIt): {grandPlan:F0}ms ({grandPlan / 1000.0:F1}s)");
                 WriteLog($"Total motion time: {(grandExec + grandPlan):F0}ms ({(grandExec + grandPlan) / 1000.0:F1}s)");
+
+                // ── Inter-command gap analysis ───────────────────
+                if (allGapMs.Count > 0)
+                {
+                    WriteSeparator('-');
+                    WriteLog("INTER-COMMAND GAP ANALYSIS:");
+                    WriteLog($"  Total gaps measured: {allGapMs.Count}");
+                    WriteLog($"  Average gap:           {allGapMs.Average():F0}ms");
+                    WriteLog($"  Avg planning in gap:   {allPlanInGapMs.Average():F0}ms");
+                    WriteLog($"  Avg pure BT overhead:  {allBTOverheadMs.Average():F0}ms");
+                    WriteLog($"  Min BT overhead:       {allBTOverheadMs.Min():F0}ms");
+                    WriteLog($"  Max BT overhead:       {allBTOverheadMs.Max():F0}ms");
+                    WriteLog($"  Total BT overhead:     {allBTOverheadMs.Sum():F0}ms ({allBTOverheadMs.Sum() / 1000.0:F1}s)");
+                    WriteLog($"  Total planning in gaps: {allPlanInGapMs.Sum():F0}ms ({allPlanInGapMs.Sum() / 1000.0:F1}s)");
+                }
                 WriteSeparator('=');
             }
         }
