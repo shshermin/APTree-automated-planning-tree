@@ -1,0 +1,7 @@
+﻿CommandType,Count,Successful,Failed,SuccessRate,AvgExecTimeMs,AvgPlanTimeMs,TotalExecTimeMs,TotalPlanTimeMs
+movej,237,237,0,100.00%,10595.85,0.00,2511215.29,0.00
+planned,144,142,2,98.61%,14903.16,0.00,2146055.67,0.00
+movel,142,142,0,100.00%,5695.02,0.00,808692.70,0.00
+close_gripper,71,71,0,100.00%,9.94,0.00,705.95,0.00
+play_program,32,32,0,100.00%,14644.19,0.00,468614.13,0.00
+TOTAL,626,624,2,99.68%,9481.28,0.00,5935283.73,0.00

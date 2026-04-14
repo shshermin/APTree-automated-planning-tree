@@ -137,7 +137,8 @@ public abstract class ExeAction : PActionNode
             joints: CommandRequest.Joints,
             endEffectorType: CommandRequest.EndEffectorType,
             velocity: CommandRequest.Velocity,
-            acceleration: CommandRequest.Acceleration);
+            acceleration: CommandRequest.Acceleration,
+            parentMLAction: GetParentMLActionName());
 
         try
         {
@@ -337,5 +338,20 @@ public abstract class ExeAction : PActionNode
             }
             node = node.ParentNode;
         }
+    }
+
+    /// <summary>
+    /// Walk up the tree to find the nearest parent ML action name (PActionNode that isn't ExeAction).
+    /// </summary>
+    private string GetParentMLActionName()
+    {
+        var node = this.ParentNode;
+        while (node != null)
+        {
+            if (node is PActionNode pAction && !(node is ExeAction))
+                return pAction.InstanceName.ToString();
+            node = node.ParentNode;
+        }
+        return "";
     }
 }
