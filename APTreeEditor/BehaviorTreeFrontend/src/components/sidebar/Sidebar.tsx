@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import EditModal from "./modals/EditModal";
 import { ActionInstanceModal } from "./modals/InstanceModal";
 import TypeDefinitionModal from "./modals/TypeDefinitionModal";
@@ -20,16 +20,59 @@ import {
 } from "./utils/constants";
 import type { BehaviorNodeOption, SidebarManager, StructuredItem } from "./utils/types";
 
+const NODE_COLOR_OPTIONS: { key: string; label: string; defaultColor: string }[] = [
+  { key: "flow",      label: "Flow",      defaultColor: "#f472b6" },
+  { key: "action",    label: "Action",    defaultColor: "#00d4ff" },
+  { key: "decorator", label: "Decorator", defaultColor: "#facc15" },
+  { key: "service",   label: "Service",   defaultColor: "#a78bfa" },
+];
+
+function NodeColorSwatch({
+  colorKey,
+  label,
+  defaultColor,
+  value,
+  onChange,
+  onSave,
+}: {
+  colorKey: string;
+  label: string;
+  defaultColor: string;
+  value?: string;
+  onChange: (key: string, color: string) => void;
+  onSave: (key: string, color: string) => void;
+}) {
+  const [local, setLocal] = useState(value ?? defaultColor);
+  useEffect(() => { setLocal(value ?? defaultColor); }, [value, defaultColor]);
+
+  return (
+    <div className="node-color-row">
+      <span className="node-color-label">{label}</span>
+      <input
+        type="color"
+        className="type-color-swatch"
+        value={local}
+        onChange={(e) => { setLocal(e.target.value); onChange(colorKey, e.target.value); }}
+        onBlur={(e) => onSave(colorKey, e.target.value)}
+        title={`${label} node color`}
+      />
+    </div>
+  );
+}
+
 interface SidebarProps {
   manager: SidebarManager;
   onCreateBehaviorNode?: (option: BehaviorNodeOption) => void;
+  nodeColorOverrides?: Record<string, string>;
+  onChangeNodeColor?: (key: string, color: string) => void;
+  onSaveNodeColor?: (key: string, color: string) => void;
 }
 
 /**
  * assembles the full planner sidebar, wiring state-driven modals and section content together.
  * @returns sidebar layout containing sections, search inputs, and supporting modals
  */
-export default function Sidebar({ manager, onCreateBehaviorNode }: SidebarProps) {
+export default function Sidebar({ manager, onCreateBehaviorNode, nodeColorOverrides, onChangeNodeColor, onSaveNodeColor }: SidebarProps) {
   const {
     addLabelFor,
     categoryModal,
@@ -161,7 +204,7 @@ export default function Sidebar({ manager, onCreateBehaviorNode }: SidebarProps)
           onClick={() => setCollapsed((c) => !c)}
           title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
-          {collapsed ? "▶" : "◀"}
+          ☰
         </button>
       </div>
 
@@ -426,6 +469,22 @@ export default function Sidebar({ manager, onCreateBehaviorNode }: SidebarProps)
         );
       })}
         </>
+      )}
+      {onChangeNodeColor && (
+        <div className="node-colors-section">
+          <span className="node-colors-title">Node Colors</span>
+          {NODE_COLOR_OPTIONS.map((opt) => (
+            <NodeColorSwatch
+              key={opt.key}
+              colorKey={opt.key}
+              label={opt.label}
+              defaultColor={opt.defaultColor}
+              value={nodeColorOverrides?.[opt.key]}
+              onChange={onChangeNodeColor ?? (() => {})}
+              onSave={onSaveNodeColor ?? onChangeNodeColor ?? (() => {})}
+            />
+          ))}
+        </div>
       )}
     </div>
   );

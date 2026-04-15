@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { startTransition, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 /**
  * Connects to the backend WebSocket at /ws/tick.
@@ -91,11 +91,12 @@ import {
   aptreeGraphToCanvasGraph,
   aptreeGraphsToCanvasGraph,
   normalizeAptreeValidateResponse,
+  type RawSubtreeEntry,
 } from "./utils/aptreeImport";
+import RightPanel from "./components/editor/RightPanel";
 import ActionParameterDetailsModal from "./components/editor/modals/ActionParameterDetailsModal.tsx";
 import ActionPredicateModal from "./components/editor/modals/ActionPredicateModal.tsx";
 import AptreeValidateModal from "./components/aptree/AptreeValidateModal";
-import SubtreePanel from "./components/editor/SubtreePanel";
 import { FLOW_SUCCESS_TYPES } from "./components/sidebar/utils/types";
 import type {
   ActionInstance,
@@ -353,6 +354,28 @@ function App() {
     connections: [],
     rootNodeId: null,
   }));
+  const [rawSubtreeGraphs, setRawSubtreeGraphs] = useState<Map<string, RawSubtreeEntry>>(
+    () => new Map()
+  );
+  const [nodeColorOverrides, setNodeColorOverrides] = useState<Record<string, string>>(() => {
+    try {
+      const stored = localStorage.getItem("nodeColorOverrides");
+      return stored ? JSON.parse(stored) : {};
+    } catch {
+      return {};
+    }
+  });
+  const handleChangeNodeColor = useCallback((key: string, color: string) => {
+    setNodeColorOverrides((prev) => ({ ...prev, [key]: color }));
+  }, []);
+  const handleSaveNodeColor = useCallback((key: string, color: string) => {
+    setNodeColorOverrides((prev) => {
+      const next = { ...prev, [key]: color };
+      localStorage.setItem("nodeColorOverrides", JSON.stringify(next));
+      return next;
+    });
+  }, []);
+
   const [separators, setSeparators] = useState<CanvasSeparator[]>([]);
   const [undoStack, setUndoStack] = useState<CanvasSnapshot[]>([]);
   const [redoStack, setRedoStack] = useState<CanvasSnapshot[]>([]);
@@ -417,20 +440,25 @@ function App() {
       }
 
       // Merge: preserve positions of existing nodes, add newly planned nodes
-      setGraph((prev) => {
-        const existingById = new Map(prev.nodes.map((n) => [n.id, n]));
-        const mergedNodes = importResult.graph.nodes.map((newNode) => {
-          const existing = existingById.get(newNode.id);
-          if (existing) {
-            return { ...newNode, x: existing.x, y: existing.y, width: existing.width, height: existing.height };
-          }
-          return newNode;
+      startTransition(() => {
+        setGraph((prev) => {
+          const existingById = new Map(prev.nodes.map((n) => [n.id, n]));
+          const mergedNodes = importResult.graph.nodes.map((newNode) => {
+            const existing = existingById.get(newNode.id);
+            if (existing) {
+              return { ...newNode, x: existing.x, y: existing.y, width: existing.width, height: existing.height };
+            }
+            return newNode;
+          });
+          return {
+            nodes: mergedNodes,
+            connections: importResult.graph.connections,
+            rootNodeId: importResult.graph.rootNodeId ?? prev.rootNodeId,
+          };
         });
-        return {
-          nodes: mergedNodes,
-          connections: importResult.graph.connections,
-          rootNodeId: importResult.graph.rootNodeId ?? prev.rootNodeId,
-        };
+        if (importResult.rawSubtreeGraphs.size > 0) {
+          setRawSubtreeGraphs(importResult.rawSubtreeGraphs);
+        }
       });
     } catch {
       // silently ignore — live model updates are best-effort
@@ -1036,7 +1064,10 @@ function App() {
         }
 
         pushHistory("import-aptree");
-        setGraph(importResult.graph);
+        startTransition(() => {
+          setGraph(importResult.graph);
+          setRawSubtreeGraphs(importResult.rawSubtreeGraphs);
+        });
         setSeparators([]);
         setParameterDetail(null);
       } catch (error) {
@@ -1403,6 +1434,9 @@ function App() {
         <Sidebar
           manager={sidebarManager}
           onCreateBehaviorNode={handleCreateBehaviorNode}
+          nodeColorOverrides={nodeColorOverrides}
+          onChangeNodeColor={handleChangeNodeColor}
+          onSaveNodeColor={handleSaveNodeColor}
         />
         <div className="main-content">
           <Header
@@ -1444,9 +1478,11 @@ function App() {
                 actionTypes={actionTypes}
                 actionInstances={actionInstances}
                 tickStatus={tickStatus}
+                nodeColorOverrides={nodeColorOverrides}
               />
             </div>
-            <SubtreePanel
+            <RightPanel
+              rawSubtreeGraphs={rawSubtreeGraphs}
               nodes={graph.nodes}
               connections={graph.connections}
               tickStatus={tickStatus}

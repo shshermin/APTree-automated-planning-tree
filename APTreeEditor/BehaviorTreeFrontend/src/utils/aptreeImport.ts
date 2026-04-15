@@ -151,48 +151,33 @@ type CanvasGraph = {
 
 type PortName = "top" | "bottom" | "left" | "right";
 
+/** A layout-ready graph that can be rendered independently (e.g. in SubtreeViewer). */
+export type SubtreeLayout = {
+  nodes: CanvasNode[];
+  connections: NodeConnection[];
+  rootNodeId: string | null;
+};
+
+/** Raw subtree entry stored for lazy layout computation. */
+export type RawSubtreeEntry = { graph: AptreeGraph; index: number };
+
 export type AptreeImportResult = {
   graph: CanvasGraph;
+  /** Raw subtree graphs keyed by name — layouts are computed on demand via computeSubtreeLayout(). */
+  rawSubtreeGraphs: Map<string, RawSubtreeEntry>;
   discoveredActionTypes: ActionType[];
   discoveredActionInstances: ActionInstance[];
 };
 
-const TREE_SECTION_GAP_Y = 280;
 
-const canvasBounds = (nodes: CanvasNode[]) => {
-  if (!nodes.length) {
-    return { left: 0, top: 0, right: 0, bottom: 0, width: 0, height: 0 };
-  }
-
-  let left = Number.POSITIVE_INFINITY;
-  let top = Number.POSITIVE_INFINITY;
-  let right = Number.NEGATIVE_INFINITY;
-  let bottom = Number.NEGATIVE_INFINITY;
-
-  for (const node of nodes) {
-    const width = node.width ?? DEFAULT_CANVAS_NODE_WIDTH;
-    const height = node.height ?? DEFAULT_CANVAS_NODE_HEIGHT;
-    const nodeLeft = node.x - width / 2;
-    const nodeTop = node.y - height / 2;
-    const nodeRight = node.x + width / 2;
-    const nodeBottom = node.y + height / 2;
-
-    left = Math.min(left, nodeLeft);
-    top = Math.min(top, nodeTop);
-    right = Math.max(right, nodeRight);
-    bottom = Math.max(bottom, nodeBottom);
-  }
-
-  return {
-    left,
-    top,
-    right,
-    bottom,
-    width: right - left,
-    height: bottom - top,
-  };
-};
-
+/**
+ * Processes multiple BehaviorTree graphs from a single .bt file.
+ *
+ * Graph[0] is the main tree placed on the canvas.
+ * Graphs[1..N] are stored as separate SubtreeLayouts (not merged into the canvas)
+ * so the browser only renders the top-level tree, keeping performance acceptable
+ * for large files with many subtrees.
+ */
 export function aptreeGraphsToCanvasGraph(
   graphs: AptreeGraph[],
   actionTypes: ActionType[],
@@ -200,144 +185,78 @@ export function aptreeGraphsToCanvasGraph(
   if (!graphs.length) {
     return {
       graph: { nodes: [], connections: [], rootNodeId: null },
+      rawSubtreeGraphs: new Map(),
       discoveredActionTypes: [],
       discoveredActionInstances: [],
     };
   }
 
-  const mergedNodes: CanvasNode[] = [];
-  const mergedConnections: NodeConnection[] = [];
-  let mergedRootNodeId: string | null = null;
-  let nextTopY = 0;
-
-  const knownActionTypeIds = new Set(actionTypes.map((type) => type.id));
+  const knownActionTypeIds = new Set(actionTypes.map((t) => t.id));
   const discoveredActionTypeMap = new Map<string, ActionType>();
   const discoveredActionInstanceMap = new Map<string, ActionInstance>();
 
-  // Maps subtree name → X anchor of the action node that references it (filled from graph 0)
-  const subtreeRefToAnchorX = new Map<string, number>();
-  // Tracks already-placed subtrees for overlap avoidance
-  const placedSubtrees: Array<{ left: number; right: number; bottom: number }> = [];
-  // Y at which subtree columns begin (set after graph 0 is placed)
-  let subtreeBaseY = 0;
-  // Fallback Y for subtrees with no matching anchor
-  let fallbackNextY = 0;
+  // ── Main graph (index 0) ──────────────────────────────────────────────────
+  const mainResult = aptreeGraphToCanvasGraph(graphs[0]!, actionTypes);
 
-  for (let index = 0; index < graphs.length; index++) {
-    const graph = graphs[index];
-    const effectiveActionTypes = [
-      ...actionTypes,
-      ...Array.from(discoveredActionTypeMap.values()),
-    ];
-    const sectionResult = aptreeGraphToCanvasGraph(graph, effectiveActionTypes);
+  for (const t of mainResult.discoveredActionTypes) {
+    if (!knownActionTypeIds.has(t.id)) discoveredActionTypeMap.set(t.id, t);
+  }
+  for (const inst of mainResult.discoveredActionInstances) {
+    discoveredActionInstanceMap.set(inst.id, inst);
+  }
 
-    for (const type of sectionResult.discoveredActionTypes) {
-      if (!knownActionTypeIds.has(type.id) && !discoveredActionTypeMap.has(type.id)) {
-        discoveredActionTypeMap.set(type.id, type);
-      }
-    }
+  // Apply bt-tree-0- prefix so SubtreePanel can distinguish graph origin.
+  const prefix0 = "bt-tree-0-";
+  const mainIdMap = new Map(mainResult.graph.nodes.map((n) => [n.id, prefix0 + n.id]));
+  const mainNodes = mainResult.graph.nodes.map((n) => ({ ...n, id: prefix0 + n.id }));
+  const mainConnections = mainResult.graph.connections.map((c) => ({
+    ...c,
+    id: prefix0 + c.id,
+    sourceNodeId: mainIdMap.get(c.sourceNodeId) ?? prefix0 + c.sourceNodeId,
+    targetNodeId: mainIdMap.get(c.targetNodeId) ?? prefix0 + c.targetNodeId,
+  }));
+  const mainRootNodeId = mainResult.graph.rootNodeId
+    ? prefix0 + mainResult.graph.rootNodeId
+    : null;
 
-    for (const instance of sectionResult.discoveredActionInstances) {
-      if (!discoveredActionInstanceMap.has(instance.id)) {
-        discoveredActionInstanceMap.set(instance.id, instance);
-      }
-    }
+  // ── Subtree graphs (index 1..N) — stored raw, layouts computed on demand ──
+  const rawSubtreeGraphs = new Map<string, RawSubtreeEntry>();
 
-    const bounds = canvasBounds(sectionResult.graph.nodes);
-    const idPrefix = `bt-tree-${index}-`;
-    const idMap = new Map<string, string>();
-
-    let sectionOffsetX = 0;
-    let sectionOffsetY: number;
-
-    if (index === 0) {
-      // Main tree: position normally
-      sectionOffsetY = nextTopY - bounds.top;
-
-      // Collect subtree ref anchors from main tree action nodes
-      for (const node of sectionResult.graph.nodes) {
-        const originalNode = graph.nodes.find(
-          (n) => "bt-import-" + n.id === node.id,
-        );
-        if (originalNode?.subtreeRef) {
-          subtreeRefToAnchorX.set(originalNode.subtreeRef, node.x);
-        }
-      }
-
-      subtreeBaseY = nextTopY + bounds.height + TREE_SECTION_GAP_Y;
-      fallbackNextY = subtreeBaseY;
-      nextTopY += bounds.height + TREE_SECTION_GAP_Y;
-    } else {
-      // Subtree: place below its action node anchor, or fall back to stacking
-      const anchorX = graph.name ? subtreeRefToAnchorX.get(graph.name) : undefined;
-
-      if (anchorX !== undefined) {
-        const sectionCenterX = bounds.left + bounds.width / 2;
-        sectionOffsetX = anchorX - sectionCenterX;
-
-        const subtreeLeft = anchorX - bounds.width / 2;
-        const subtreeRight = anchorX + bounds.width / 2;
-
-        // Find lowest Y that doesn't overlap any already-placed subtree
-        let startY = subtreeBaseY;
-        for (const placed of placedSubtrees) {
-          const overlapsX = placed.right > subtreeLeft && placed.left < subtreeRight;
-          if (overlapsX) {
-            startY = Math.max(startY, placed.bottom + TREE_SECTION_GAP_Y);
-          }
-        }
-
-        sectionOffsetY = startY - bounds.top;
-
-        placedSubtrees.push({
-          left: subtreeLeft,
-          right: subtreeRight,
-          bottom: startY + bounds.height,
-        });
-      } else {
-        // Fallback: stack vertically
-        sectionOffsetX = 0;
-        sectionOffsetY = fallbackNextY - bounds.top;
-        fallbackNextY += bounds.height + TREE_SECTION_GAP_Y;
-      }
-    }
-
-    // Remap node/connection IDs and apply offsets
-    for (const node of sectionResult.graph.nodes) {
-      const newId = idPrefix + node.id;
-      idMap.set(node.id, newId);
-      mergedNodes.push({
-        ...node,
-        id: newId,
-        x: node.x + sectionOffsetX,
-        y: node.y + sectionOffsetY,
-      });
-    }
-
-    if (index === 0) {
-      mergedRootNodeId = sectionResult.graph.rootNodeId
-        ? idPrefix + sectionResult.graph.rootNodeId
-        : null;
-    }
-
-    for (const conn of sectionResult.graph.connections) {
-      mergedConnections.push({
-        ...conn,
-        id: idPrefix + conn.id,
-        sourceNodeId: idMap.get(conn.sourceNodeId) ?? idPrefix + conn.sourceNodeId,
-        targetNodeId: idMap.get(conn.targetNodeId) ?? idPrefix + conn.targetNodeId,
-      });
+  for (let i = 1; i < graphs.length; i++) {
+    const subtreeGraph = graphs[i]!;
+    if (subtreeGraph.name) {
+      rawSubtreeGraphs.set(subtreeGraph.name, { graph: subtreeGraph, index: i });
     }
   }
 
   return {
-    graph: {
-      nodes: mergedNodes,
-      connections: mergedConnections,
-      rootNodeId: mergedRootNodeId,
-    },
+    graph: { nodes: mainNodes, connections: mainConnections, rootNodeId: mainRootNodeId },
+    rawSubtreeGraphs,
     discoveredActionTypes: Array.from(discoveredActionTypeMap.values()),
     discoveredActionInstances: Array.from(discoveredActionInstanceMap.values()),
+  };
+}
+
+/**
+ * Computes the layout for a single raw subtree graph on demand.
+ * Call this lazily (e.g. when user selects a subtree or it starts ticking).
+ */
+export function computeSubtreeLayout(
+  entry: RawSubtreeEntry,
+  actionTypes: ActionType[],
+): SubtreeLayout {
+  const prefix = `bt-tree-${entry.index}-`;
+  const result = aptreeGraphToCanvasGraph(entry.graph, actionTypes);
+  const idMap = new Map(result.graph.nodes.map((n) => [n.id, prefix + n.id]));
+  return {
+    nodes: result.graph.nodes.map((n) => ({ ...n, id: prefix + n.id })),
+    connections: result.graph.connections.map((c) => ({
+      ...c,
+      id: prefix + c.id,
+      sourceNodeId: idMap.get(c.sourceNodeId) ?? prefix + c.sourceNodeId,
+      targetNodeId: idMap.get(c.targetNodeId) ?? prefix + c.targetNodeId,
+    })),
+    rootNodeId: result.graph.rootNodeId ? prefix + result.graph.rootNodeId : null,
   };
 }
 
@@ -590,8 +509,8 @@ export function aptreeGraphToCanvasGraph(
   const ROOT_X = 0;
   const ROOT_Y = -150; // Position root above the outer nodegraph
   const ROOT_TO_FLOW_GAP_Y = 220;
-  const FLOW_TO_SUBTREE_GAP_Y = 120;
-  const SERVICE_FLOW_EXTRA_GAP_Y = 24;
+  const FLOW_TO_SUBTREE_GAP_Y = 200;
+  const SERVICE_FLOW_EXTRA_GAP_Y = 60;
   const TREE_GAP_X = 320; // Horizontal gap for plain BT (child-edge) layout
   const TREE_GAP_Y = 120; // Vertical gap for plain BT (child-edge) layout
   const SERVICE_OFFSET_Y = 55; // Service box offset above flow node
@@ -708,6 +627,28 @@ export function aptreeGraphToCanvasGraph(
         d2: 0,
       }
     );
+  };
+
+  const chooseMeetsPorts = (
+    source: CanvasNode,
+    target: CanvasNode,
+  ): { sourcePort: PortName; targetPort: PortName } => {
+    const dx = target.x - source.x;
+    const dy = target.y - source.y;
+    const sameRowTolerance = 48;
+
+    // Same row: connect side-to-side.
+    if (Math.abs(dy) <= sameRowTolerance) {
+      return dx >= 0
+        ? { sourcePort: "right", targetPort: "left" }
+        : { sourcePort: "left", targetPort: "right" };
+    }
+
+    // Different rows: connect top/bottom to avoid "floating" center lines.
+    if (dy >= 0) {
+      return { sourcePort: "bottom", targetPort: "top" };
+    }
+    return { sourcePort: "top", targetPort: "bottom" };
   };
 
   // Track info for each flow
@@ -1059,12 +1000,16 @@ export function aptreeGraphToCanvasGraph(
         const sourceCanvasId = canvasNodeIdByGraphId.get(rel.sourceId);
         const targetCanvasId = canvasNodeIdByGraphId.get(rel.targetId);
         if (sourceCanvasId && targetCanvasId) {
+          const sourceNode = canvasNodeById.get(sourceCanvasId);
+          const targetNode = canvasNodeById.get(targetCanvasId);
+          if (!sourceNode || !targetNode) continue;
+          const ports = chooseMeetsPorts(sourceNode, targetNode);
           connections.push({
             id: "bt-import-action-meet-" + rel.id,
             sourceNodeId: sourceCanvasId,
             targetNodeId: targetCanvasId,
-            sourcePort: "right",
-            targetPort: "left",
+            sourcePort: ports.sourcePort,
+            targetPort: ports.targetPort,
             kind: "relation",
             label: rel.label,
           });
@@ -1342,8 +1287,8 @@ export function aptreeGraphToCanvasGraph(
           id: "bt-import-flow-meet-" + rel.id,
           sourceNodeId: sourceWrapperId,
           targetNodeId: targetWrapperId,
-          sourcePort: "right",
-          targetPort: "left",
+          sourcePort: sourceInfo.subtreeCenterX <= targetInfo.subtreeCenterX ? "right" : "left",
+          targetPort: sourceInfo.subtreeCenterX <= targetInfo.subtreeCenterX ? "left" : "right",
           kind: "relation",
           label: rel.label,
         });
@@ -1382,6 +1327,7 @@ export function aptreeGraphToCanvasGraph(
   // Run this at the very end so it also covers wrapper nodes (subtrees/services/outer) we added.
   const allNodesById = new Map(canvasNodes.map((n) => [n.id, n] as const));
   for (const c of connections) {
+    if (c.kind === "relation") continue;
     const s = allNodesById.get(c.sourceNodeId);
     const t = allNodesById.get(c.targetNodeId);
     if (!s || !t) continue;
@@ -1397,6 +1343,7 @@ export function aptreeGraphToCanvasGraph(
 
   return {
     graph: { nodes: canvasNodes, connections, rootNodeId },
+    rawSubtreeGraphs: new Map(),
     discoveredActionTypes: Array.from(discoveredActionTypes.values()),
     discoveredActionInstances: Array.from(discoveredActionInstances.values()),
   };

@@ -84,6 +84,7 @@ interface BehaviorNodeData {
   onOpenPredicateModal?: (nodeId: string, group: PredicateGroup) => void;
   /** Real-time tick status: "Running" | "Success" | "Failure" | undefined */
   tickStatus?: string;
+  nodeColorOverrides?: Record<string, string>;
 }
 
 interface BehaviorEdgeData {
@@ -340,8 +341,21 @@ function BehaviorTreeNode({ id, data, selected }: NodeProps<BehaviorNodeData>) {
     };
   }
 
+  const categoryKey =
+    node.category === FLOW_NODES_KEY ? "flow"
+    : isAction ? "action"
+    : node.category === DECORATOR_NODES_KEY ? "decorator"
+    : node.category === SERVICE_NODES_KEY ? "service"
+    : null;
+  const customColor = categoryKey ? data.nodeColorOverrides?.[categoryKey] : undefined;
+  const colorStyle: CSSProperties = customColor ? {
+    ["--node-bg" as string]: `linear-gradient(135deg, ${customColor}55, ${customColor}33)`,
+    ["--node-border" as string]: `1px solid ${customColor}cc`,
+    ["--node-shadow" as string]: `0 0 28px ${customColor}72, 0 0 8px ${customColor}40`,
+  } : {};
+
   return (
-    <div className={nodeClasses.join(" ")}>
+    <div className={nodeClasses.join(" ")} style={colorStyle}>
       <NodeResizer
         isVisible={selected}
         minWidth={180}
@@ -774,6 +788,7 @@ function EditorCanvasInner(props: EditorCanvasProps) {
     fitViewNodeIds,
     fitViewMaxZoom,
     readOnly,
+    nodeColorOverrides,
   } = props;
 
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -908,6 +923,7 @@ function EditorCanvasInner(props: EditorCanvasProps) {
             onMoveNode,
             onShowActionParameterDetail,
             onOpenPredicateModal,
+            nodeColorOverrides,
           },
           hidden: !!node.hidden,
           width,
@@ -936,6 +952,7 @@ function EditorCanvasInner(props: EditorCanvasProps) {
       onMoveNode,
       onShowActionParameterDetail,
       onOpenPredicateModal,
+      nodeColorOverrides,
     ]
   );
 
