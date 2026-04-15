@@ -2,7 +2,7 @@ grammar CRFTypesCon extends CRFTypesDef, de.monticore.MCBasics {
 
 ////////// ?????? I am not sure why do we get errors if we dont include this world thing!
 @Override
-World = ( PropertyTypeDefinition | Property | PredicateTypeDefinition | ActionTypeDefinition | Beam | Plate | FirstPos | Robot | VacGripper | Holding | AtPlace | AtTool | NailGripper | GlueGun | Stack | Cassette | PositionOnRail | EquipPosition | StackPosition | IsAt | AtAgent | HasTool | Clear | OnTop | AllSet | BelongsToLayer | BelongsToModule | PositionFree | Stacked | Glued | Nailed | VgEmpty | Stick | Cube | InitialLocation | FinalLocation | EquipLocation | RobotPosition | Demo | StaplerGun | RobotEquipped | ActiveTool | GripperEmpty | Fixed | AtFinalPosition | ObjectFinalPosition | Gripper | Table | Accessible)*;
+World = ( PropertyTypeDefinition | Property | PredicateTypeDefinition | ActionTypeDefinition | Beam | Plate | FirstPos | Robot | VacGripper | Holding | AtPlace | AtTool | NailGripper | GlueGun | Stack | Cassette | PositionOnRail | EquipPosition | StackPosition | IsAt | AtAgent | HasTool | Clear | OnTop | AllSet | BelongsToLayer | BelongsToModule | PositionFree | Stacked | Glued | Nailed | VgEmpty | Stick | Cube | InitialLocation | FinalLocation | EquipLocation | RobotPosition | Demo | StaplerGun | RobotEquipped | ActiveTool | GripperEmpty | Fixed | AtFinalPosition | ObjectFinalPosition | Gripper | Table | Accessible | NailLocation)*;
 
 // === GENERATED RULES (DO NOT EDIT BELOW) ===
 symbol Beam extends Element = "Beam" name:Name "(" loc:Name@Location ")";
@@ -27,6 +27,7 @@ symbol Demo extends Module = "Demo" name:Name "(" ")";
 symbol Gripper extends Tool = "Gripper" name:Name "(" isOpen:Boolean gripperEmpty:Boolean loc:Name@Location ")";
 symbol StaplerGun extends Tool = "StaplerGun" name:Name "(" readyToFire:Boolean loc:Name@Location ")";
 symbol Table extends Element = "Table" name:Name "(" ")";
+symbol NailLocation extends Location = "NailLocation" name:Name "(" position:Coordinate orientation:Coordinate ")";
 // === END GENERATED RULES ===
 
 
@@ -44,7 +45,7 @@ BelongsToModule extends Predicate = not:["!"]? "BelongsToModule" "(" obj:Name@El
 PositionFree extends Predicate = not:["!"]? "PositionFree" "(" loc:Name@Location ")";
 Stacked extends Predicate = not:["!"]? "Stacked" "(" obj1:Name@Element obj2:Name@Element ")";
 Glued extends Predicate = not:["!"]? "Glued" "(" obj:Name@Element ")";
-Nailed extends Predicate = not:["!"]? "Nailed" "(" obj1:Name@Element obj2:Name@Element ")";
+Nailed extends Predicate = not:["!"]? "Nailed" "(" obj1:Name@Element obj2:Name@Element nailloc:Name@Location ")";
 VgEmpty extends Predicate = not:["!"]? "VgEmpty" "(" client:Name@Agent ")";
 AtTool extends Predicate = not:["!"]? "AtTool" "(" tool:Name@Tool toolLoc:Name@Location ")";
 RobotEquipped extends Predicate = not:["!"]? "RobotEquipped" "(" client:Name@Agent ")";

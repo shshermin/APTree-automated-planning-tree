@@ -126,6 +126,7 @@ public class CRFPredicateTypeRuleGenerator {
                 String pName = prop.getName();
                 String pType = prop.getType().getName();
                 boolean isOptional = prop.isIsOptional();
+                boolean isGeom = prop.isIsGeom();
 
                 // Build the field fragment: pName:Name@pType
                 String field = pName + ":Name@" + pType;
@@ -138,6 +139,10 @@ public class CRFPredicateTypeRuleGenerator {
                     rule.append("(").append(field).append(")?");
                 } else {
                     rule.append(field);
+                }
+
+                if (isGeom) {
+                    System.out.println("  [geom] " + predName + "." + pName + " marked as geometric (excluded from task planning)");
                 }
             }
 

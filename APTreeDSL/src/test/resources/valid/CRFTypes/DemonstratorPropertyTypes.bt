@@ -26,6 +26,11 @@ Location FinalLocation{
     orientation: Coordinate  
 } 
 
+Location NailLocation{
+    position: Coordinate  
+    orientation: Coordinate  
+} 
+
 Location EquipLocation{
     position: Coordinate 
     orientation: Coordinate  

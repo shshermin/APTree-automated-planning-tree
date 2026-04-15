@@ -16,7 +16,7 @@ grammar CRFTypesDef extends BehaviorTree, de.monticore.types.MCBasicTypes {
     abstract symbol Agent    implements CustomProperty = name:Name;
 
 // definition of a property - accepts any Name as type 
-    Property = name:Name isOptional:["?"]? ":" type:BasicType isList:["+"]? ;
+    Property = name:Name isGeom:["(geom)"]? isOptional:["?"]? ":" type:BasicType isList:["+"]? ;
     PropertyTypeDefinition = superType:Name  name:Name  ("{" (Property)* "}")?;
 
 // predicate definition

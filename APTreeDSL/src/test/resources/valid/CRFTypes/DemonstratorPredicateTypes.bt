@@ -43,6 +43,7 @@ Predicate Glued {
 Predicate Nailed {
     obj1 : Element
     obj2 : Element
+    nailloc (geom) : Location
 }
 
 Predicate Fixed {

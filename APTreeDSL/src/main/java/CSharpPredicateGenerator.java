@@ -124,14 +124,22 @@ public class CSharpPredicateGenerator {
                 cs.append("            this.PredicateName = GetUniqueKey();\n");
                 cs.append("        }\n");
 
-                // Override GetParameterValues
+                // Override GetParameterValues (excludes (geom) properties — discrete/symbolic only)
                 cs.append("\n        public override List<string> GetParameterValues()\n");
                 cs.append("        {\n");
                 cs.append("            return new List<string>\n");
                 cs.append("            {\n");
                 
-                for (int i = 0; i < propertyList.size(); i++) {
-                    ASTProperty prop = propertyList.get(i);
+                // Filter out geom properties — they are not discrete planning parameters
+                java.util.List<ASTProperty> discreteProps = new java.util.ArrayList<>();
+                for (ASTProperty prop : propertyList) {
+                    if (!prop.isIsGeom()) {
+                        discreteProps.add(prop);
+                    }
+                }
+
+                for (int i = 0; i < discreteProps.size(); i++) {
+                    ASTProperty prop = discreteProps.get(i);
                     String propName = prop.getName();
                     String propType = mapTypeToCSharp(prop.getType().getName());
                     boolean isList = prop.isIsList();
@@ -146,7 +154,7 @@ public class CSharpPredicateGenerator {
                          cs.append(propName).append("?.NameKey?.ToString() ?? \"null\"");
                     }
                     
-                    if (i < propertyList.size() - 1) {
+                    if (i < discreteProps.size() - 1) {
                         cs.append(",\n");
                     } else {
                         cs.append("\n");
