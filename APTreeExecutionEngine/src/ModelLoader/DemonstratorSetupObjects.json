@@ -5,8 +5,1963 @@
       "name": "robot1",
       "type": "Robot",
       "properties": {
-        "loc": "homepos",
+        "loc": "rpmanipulate",
         "tool": "gripper1"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "table1",
+      "type": "Table"
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick1",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.913545454118252,-0.40673665099161677,0",
+        "position": "0.25700801750455543,0.9742154289512492,-0.009000000000000008"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick2",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.40673665099161305,-0.913545454118254,0",
+        "position": "0.32997558906988855,0.7643970944333673,-0.008000000000000005"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick3",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.9135454541182548,0.4067366509916111,0",
+        "position": "0.11608988804209004,0.6822940683268509,-0.010000000000000007"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick4",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.4067366509916242,0.9135454541182488,-0",
+        "position": "0.00197558906988866,0.8649439104777402,-0.010000000000000007"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick5",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.9135454541182487,-0.4067366509916242,0",
+        "position": "-0.1776521574284753,0.9622995609964419,-0.010000000000000005"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick6",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.3255681544571368,-0.9455185755993236,0",
+        "position": "0.3351552347498206,0.8830304729160674,0.008500000000000011"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick7",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.9455185755993182,-0.3255681544571526,0",
+        "position": "0.2347232665247905,0.6771144226469192,0.007500000000000008"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick8",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.23177381193904148,0.9727697055825938,-0",
+        "position": "0.017773403452554192,0.7463105320863445,0.007500000000000008"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick9",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.9455185755993166,0.3255681544571576,-0",
+        "position": "-0.09327673347520953,0.9522265822641881,0.007500000000000008"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick10",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.8829475887909842,-0.46947157043657817,0",
+        "position": "0.27017614925933214,0.966870707184645,0.02600000000000003"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick11",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.4694715704365737,-0.8829475887909867,0",
+        "position": "0.325018734886871,0.7542340374832832,0.02599999859808177"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick12",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.8829475887909854,0.46947157043657584,0",
+        "position": "0.10592683109200615,0.6872509225098681,0.02499999857841103"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick13",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.46947157043657595,0.8829475887909856,-0",
+        "position": "-0.002981265113128925,0.8751069674278241,0.02499999857841103"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick14",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.8829475887909903,-0.46947157043656684,0",
+        "position": "-0.18896263432833185,0.9596952662926106,0.025000000000000012"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick15",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.25881904510252,-0.9659258262890685,0",
+        "position": "0.3384612093615605,0.8722171172006169,0.04350000000000004"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick16",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.9659258262890699,-0.25881904510251486,0",
+        "position": "0.22390991080933972,0.6738084480351793,0.042500000000000045"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick17",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.25881904510252,0.9659258262890685,-0",
+        "position": "0.010461209361560312,0.7571238877104903,0.042500000000000045"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick18",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.9659258262890716,0.25881904510250825,-0",
+        "position": "-0.10409008919066014,0.955532556875928,0.042500000000000045"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick19",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.8480480915647135,-0.529919271581481,0",
+        "position": "0.2826689891013145,0.9583986354748156,0.06100000000000006"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick20",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.529919271581489,-0.8480480915647085,0",
+        "position": "0.319365016336214,0.7444415098978071,0.061000000000000054"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick21",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.8480480915647134,0.5299192715814812,0",
+        "position": "0.09613430350653018,0.6929046410605254,0.06000000000000006"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick22",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.5299192715815024,0.8480480915647001,-0",
+        "position": "-0.008634983663785888,0.8848994950133006,0.06000000000000006"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick23",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.8480480915647135,-0.529919271581481,0",
+        "position": "-0.20006389305979316,0.9563083365348873,0.06000000000000006"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick24",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.19080899537655688,-0.9816271834476616,0",
+        "position": "0.34100482922125275,0.8611994891450085,0.07849999999999997"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick25",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.9816271834476641,-0.19080899537654353,0",
+        "position": "0.21289228275373165,0.6712648281754865,0.07749999999999997"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick26",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.19080899537654564,0.9816271834476636,-0",
+        "position": "0.01300482922125272,0.7681415157660989,0.07749999999999997"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick27",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.9816271834476641,0.19080899537654353,-0",
+        "position": "-0.1151077172462682,0.9580761767356208,0.07749999999999996"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick28",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.8090169892818273,-0.5877852593025515,0",
+        "position": "0.2943940485319837,0.9488587473974849,0.09599999999999999"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick29",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.5877852593025568,-0.8090169892818234,0",
+        "position": "0.31304197776638704,0.7350672198869951,0.09599999999999999"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick30",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.809016989281826,0.5877852593025534,0",
+        "position": "0.0867600134957178,0.6992276796303519,0.09499999999999988"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick31",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.5877852593025538,0.8090169892818256,-0",
+        "position": "-0.014958022233612776,0.8942737850241126,0.09499999999999999"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick32",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.8090169892818183,-0.5877852593025641,0",
+        "position": "-0.21090184940621343,0.9521552725046014,0.09499999999999989"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick33",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.12186934340515718,-0.992546151641321,0",
+        "position": "0.3427737020686253,0.850031265525642,0.11349999967098202"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick34",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.9925461516413222,-0.12186934340514621,0",
+        "position": "0.20172405913436495,0.6694959553281141,0.11249999942779439"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick35",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.12186934340514623,0.9925461516413222,-0",
+        "position": "0.014773702068625334,0.7793097393854653,0.1124999994277944"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick36",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.9925461516413218,0.12186934340514893,-0",
+        "position": "-0.12627594086563507,0.9598450495829935,0.1124999994277944"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick37",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.7660444375492604,-0.64278761632427,0",
+        "position": "0.3052639302859935,0.9383179403688832,0.1310000000000002"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick38",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.6427876163242688,-0.7660444375492615,0",
+        "position": "0.30608042438571215,0.7261568380494776,0.13100000000000012"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick39",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.7660444375492591,0.642787616324272,0",
+        "position": "0.0778496316582,0.7061892330110279,0.12999999999999992"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick40",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.6427876163242624,0.7660444375492672,-0",
+        "position": "-0.021919575614287586,0.9031841668616295,0.13000000000000014"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick41",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.7660444375492608,-0.64278761632427,0",
+        "position": "-0.22142370193370264,0.9472563075122399,0.13000000000000003"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick42",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.05233595624293232,-0.9986295347545744,0",
+        "position": "0.34375921013297234,0.8387668568053647,0.14850000000000002"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick43",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.9986295347545742,-0.05233595624293844,0",
+        "position": "0.190459650414088,0.668510447263767,0.14750000000000013"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick44",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.052335956242921255,0.998629534754575,-0",
+        "position": "0.01575921013297232,0.7905741481057426,0.14750000000000002"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick45",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.9986295347545737,0.05233595624294455,-0",
+        "position": "-0.13754034958591188,0.9608305576473408,0.14750000000000013"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick46",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.7193397943194758,-0.6946583766920357,0",
+        "position": "0.3151969016135253,0.9268500502438681,0.16599999995708456"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick47",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.6946583766920306,-0.719339794319481,0",
+        "position": "0.2985142721824869,0.7177537748698997,0.16599999995708462"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick48",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.7193397943194854,0.694658376692026,0",
+        "position": "0.06944656847862252,0.7137553852142519,0.16499999971389745"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick49",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.6946583766920232,0.7193397943194879,-0",
+        "position": "-0.02948572781751287,0.911587230041208,0.16499999971389742"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick50",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.7193397943194797,-0.6946583766920316,0",
+        "position": "-0.23157818923439694,0.9416353088228062,0.16499999971389737"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick51",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.01745240643728495,-0.9998476951563912,0",
+        "position": "0.3439565521180666,0.8274611420511678,0.1834999976682316"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick52",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.9998476951563912,0.0174524064372906,0",
+        "position": "0.1791539356598915,0.6683131052786727,0.18249999742504106"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick53",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.0174524064372794,0.9998476951563914,-0",
+        "position": "0.015956552118066604,0.8018798628599393,0.18249999742504103"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick54",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.9998476951563914,-0.017452406437279695,0",
+        "position": "-0.14884606434010828,0.9610278996324348,0.18249999742504106"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick55",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.6691305999195544,-0.7431448312753696,0",
+        "position": "0.3241174326667264,0.9145353820645268,0.20100000000000012"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick56",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.7431448312753619,-0.6691305999195628,0",
+        "position": "0.2903803826896993,0.7098989692273988,0.20100000000000007"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick57",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.6691305999195528,0.7431448312753709,0",
+        "position": "0.06159176283612167,0.7218892747070401,0.2"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick58",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.743144831275359,0.669130599919566,-0",
+        "position": "-0.03761961731030056,0.9194420356837083,0.2000000000000001"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick59",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.6691305999195563,-0.7431448312753677,0",
+        "position": "-0.2413158396668948,0.9353196613768938,0.19999999999999987"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick60",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.08715574274765217,-0.996194698091746,0",
+        "position": "0.3433647665935942,0.8161692015688881,0.21849999845504028"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick61",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.9961946980917457,0.08715574274765768,0",
+        "position": "0.16786199517761044,0.6689048908031454,0.21749999999999997"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick62",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.08715574274764665,0.9961946980917465,-0",
+        "position": "0.015364766593594226,0.8131718033422195,0.2175"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick63",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.9961946980917455,-0.08715574274765865,0",
+        "position": "-0.16013800482238918,0.9604361141079621,0.2175"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick64",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.6156614684976014,-0.7880107589413846,0",
+        "position": "0.3319566966842736,0.9014601997789943,0.2359999999999999"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick65",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.7880107589413887,-0.6156614684975962,0",
+        "position": "0.2817183833993424,0.7026306889455041,0.23599999974250782"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick66",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.6156614684975973,0.788010758941388,0",
+        "position": "0.05432348255422663,0.730551273997397,0.23500000000000004"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick67",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.7880107589413858,0.6156614684976,-0",
+        "position": "-0.04628161660065744,0.9267103159656035,0.23500000000000013"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick68",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.6156614684976014,-0.7880107589413846,0",
+        "position": "-0.2505892123771134,0.9283401343740123,0.23500000000000007"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick69",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.15643446504022365,-0.9876883405951389,0",
+        "position": "0.3419867366791434,0.8049460485574903,0.25349999745366975"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick70",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.9876883405951374,0.15643446504023364,0",
+        "position": "0.1566388421662137,0.6702829207175957,0.25249999999999995"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick71",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.15643446504023448,0.9876883405951372,-0",
+        "position": "0.013986736679143436,0.8243949563536169,0.25249999899863884"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick72",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.9876883405951392,-0.15643446504022282,0",
+        "position": "-0.17136115783378622,0.9590580841935121,0.25249999899863884"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick73",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.5591928962871946,-0.8290375774004088,0",
+        "position": "0.338653028893086,0.8877161779965165,0.270999998741145"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick74",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.8290375774004135,-0.5591928962871876,0",
+        "position": "0.27257047470125556,0.6959843443551412,0.2709999987411449"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick75",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.5591928962871832,0.8290375774004166,0",
+        "position": "0.04767713796386439,0.7396991826954836,0.2699999999999998"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick76",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.8290375774004166,0.5591928962871832,-0",
+        "position": "-0.05542952529874421,0.9333566605559662,0.2699999999999998"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick77",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.22495105434386795,-0.9743700647852346,0",
+        "position": "0.3398291759979393,0.7938463610903017,0.28850000000000003"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick78",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.9743700647852348,0.22495105434386672,0",
+        "position": "0.14553915469902498,0.6724404813988003,0.28750000000000003"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick79",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.22495105434386786,0.9743700647852346,-0",
+        "position": "0.011829175997939418,0.8354946438208054,0.28750000000000003"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick80",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.499999992495944,-0.8660254081169073,0",
+        "position": "0.34415234128936795,0.8733998190732365,0.3059999977397763"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick81",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.8660254081169033,-0.4999999924959512,0",
+        "position": "0.2629812242870746,0.6899923157790694,0.30599999773977615"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick82",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.49999999249594523,0.8660254081169066,0",
+        "position": "0.0416851093877923,0.7492884331096651,0.30499999928474275"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick83",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.29237170472275026,-0.9563047559630312,0",
+        "position": "0.33690259596874317,0.7829242157289249,0.32349999902724935"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick84",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.9563047559630355,0.29237170472273644,0",
+        "position": "0.13461700933764814,0.6753670614279966,0.3225"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick85",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0.4383711390011017,-0.8987940500976166,0",
+        "position": "0.3484084907210984,0.8586118390325479,0.3409999967384014"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick86",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.898794050097627,-0.4383711390010805,0",
+        "position": "0.2529973500209071,0.684683795778193,0.3409999967384013"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finallocstick87",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.3583679495452929,-0.9335804264972047,0",
+        "position": "0.33322125459527785,0.7722328240676694,0.35849999802588234"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finalloccube1",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.9135454541182547,0.4067366509916109,0",
+        "position": "0.19726214480522125,1.0008160059261,0.008499999992847451"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finalloccube2",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.9135454541182548,-0.40673665099161094,0",
+        "position": "-0.22634783206559372,0.9406188492919593,0.007499999973177917"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finalloccube3",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.8829475887909898,0.46947157043656795,0",
+        "position": "0.2158260880544007,0.9959709666439324,0.043499999438523326"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finalloccube4",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.8829475887909776,-0.4694715704365903,0",
+        "position": "-0.23664180412304456,0.934343801489036,0.04250000000000005"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finalloccube5",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.848048091564696,0.5299192715815093,0",
+        "position": "0.23354867178299063,0.989096602623368,0.07849999999999997"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finalloccube6",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.8480480915647174,-0.5299192715814749,0",
+        "position": "-0.24585849000428722,0.9276926958694873,0.07749999999999999"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finalloccube7",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.8090169892818231,0.5877852593025572,0",
+        "position": "0.25058577856237224,0.9806873191887175,0.11349999967098194"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finalloccube8",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.8090169892818297,-0.5877852593025483,0",
+        "position": "-0.25458876682743264,0.920414868502263,0.1124999999999999"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finalloccube9",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.7660444375492705,0.6427876163242582,0",
+        "position": "0.2666552906335106,0.970714436231626,0.14850000000000016"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finalloccube10",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.7660444375492689,-0.6427876163242602,0",
+        "position": "-0.2627901015613627,0.9125457762307293,0.14749999999999994"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finalloccube11",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.719339794319464,0.6946583766920481,0",
+        "position": "0.28163970020852075,0.9592558635165507,0.1834999994564047"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finalloccube12",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.7193397943194825,-0.6946583766920289,0",
+        "position": "-0.2704225381276492,0.9041237564814368,0.18249999999999994"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finalloccube13",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.6691305999195628,0.7431448312753619,0",
+        "position": "0.29541172993017684,0.9464162953262397,0.2184999984550404"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finalloccube14",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.6691305999195684,-0.7431448312753569,0",
+        "position": "-0.2769343810966458,0.8957612628157324,0.2175"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finalloccube15",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.6156614684975502,0.7880107589414246,0",
+        "position": "0.3078535501925931,0.9323108209915489,0.25349999999999995"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finalloccube16",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.5591928962871736,0.829037577400423,0",
+        "position": "0.3188576003645191,0.9170641082364905,0.2885"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "finalloccube17",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "-0.49999999249595284,0.8660254081169023,0",
+        "position": "0.3283273415268716,0.9008095232401369,0.3234999990272493"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "mp5",
+      "type": "FinalLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "equiplocgripper",
+      "type": "EquipLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "equiplocstapler",
+      "type": "EquipLocation",
+      "properties": {
+        "orientation": "0,0,0",
+        "position": "0,0,0"
+      }
+    },
+    {
+      "extends": "Module",
+      "name": "module1",
+      "type": "Demo"
+    },
+    {
+      "extends": "Location",
+      "name": "rpmanipulate",
+      "type": "RobotPosition",
+      "properties": {
+        "tcpPose": "0.133776,0.348742,0.490041",
+        "joints": "1.656148,-0.959557,-2.051016,-1.70177,1.553554,1.650556",
+        "tcpOrinetation": "0.0,-3.14159,0.0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "rppickup",
+      "type": "RobotPosition",
+      "properties": {
+        "tcpPose": "0.60736,-0.274802,0.339901",
+        "joints": "-0.1289,-1.540886,-1.93273,-1.238644,1.554514,1.43369",
+        "tcpOrinetation": "0.0,-3.14159,0.0"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "rptoolchange",
+      "type": "RobotPosition",
+      "properties": {
+        "tcpPose": "-0.276143,0.385864,0.086921",
+        "joints": "2.086106,-1.186673,-2.39603,-1.12949,1.555172,0.503193",
+        "tcpOrinetation": "-3.141491,-0.002589,-0.000081"
+      }
+    },
+    {
+      "extends": "Layer",
+      "name": "layer0",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer1",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer2",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer3",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer4",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer5",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer6",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer7",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer8",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer9",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer10",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer11",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer12",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer13",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer14",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer15",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer16",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer17",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer18",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer19",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer20",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer21",
+      "type": "Stack"
+    },
+    {
+      "extends": "Layer",
+      "name": "layer22",
+      "type": "Stack"
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc1",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.31222232034487585,0.9496323949305968,0.028574999904115266"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc2",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.19726214480522133,1.0008160059261002,0.02854999999642372"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc3",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.3559308774776819,0.8226936253151063,0.029050000000000003"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc4",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.3013252204787191,0.7000473144923036,0.02855"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc5",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.17438642230577625,0.6563388573783828,0.02755000036069088"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc6",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.013412788789888015,0.728008896524922,0.027550000170013855"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc7",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.03067881973466909,0.8004754003781708,0.02755"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc8",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "-0.026674727892632685,0.929293746761587,0.027549999649591043"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc9",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "-0.1536135810761711,0.9730022249920494,0.02755"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc10",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "-0.22369669928234298,0.9417992096831499,0.027574999993294474"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc11",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.3202300736078165,0.9402565195220844,0.0635749999041153"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc12",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.21576334482137635,0.9958529637875276,0.06354999971926167"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc13",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.35497728095471437,0.810578020323072,0.06354998510397154"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc14",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.2919493434187278,0.6920395590563364,0.06304998474361075"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc15",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.1622708139315037,0.6572923764394701,0.06254998427455716"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc16",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.005998958197680494,0.7403520173738877,0.06254168918437919"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc17",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.026977357942436952,0.8187629933596784,0.06254998391421429"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc18",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "-0.03605060903926668,0.9373015056232635,0.06254998356414342"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc19",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "-0.16572919483984838,0.9720487054568048,0.06255000000000004"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc20",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "-0.23377222445947413,0.9358695840929546,0.06257500000000003"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc21",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.3275642923795145,0.9303448906446019,0.09857499990411528"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc22",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.23354726099928771,0.9890943448975413,0.09854999999999997"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc23",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.3531809424821089,0.7985584390893051,0.09854997494717824"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc24",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.28203771274220624,0.6847053382321066,0.09804997458703706"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc25",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.1502512326985325,0.6590887149173484,0.09754997583887794"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc26",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.008967697617469907,0.7473724141345423,0.09754997561219318"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc27",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.025181018639456116,0.8307825799367324,0.09754997547871747"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc28",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "-0.04596224401543639,0.9446357295970215,0.0975499751288238"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc29",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "-0.1777487814169015,0.970252366153824,0.09754999999999996"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc30",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "-0.24310233370670215,0.9294149335021269,0.09757499999999998"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc31",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.33418931093032295,0.9199458355444935,0.13357499982185977"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc32",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.25058577856237246,0.9806873191887178,0.1335499998354909"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc33",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.3505505360892559,0.7866934432144163,0.1335500001961854"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc34",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.2716386169174976,0.6780803836062367,0.13304999971389714"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc35",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.13838623682323323,0.6617191213078485,0.13255000007459425"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc36",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.011641987556010222,0.7538041476237308,0.13254999982122959"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc37",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.022550611153256184,0.8426475811095618,0.13254999971389714"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc38",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "-0.05636134429594357,0.9512606871513819,0.13254999936348216"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc39",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "-0.18961378258973166,0.9676219586676241,0.13254999971389717"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc40",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "-0.25195946161226657,0.9223251705949964,0.13257499999999992"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc41",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.34007272400763533,0.9091099353005304,0.16857499990411537"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc42",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.2666552906335108,0.970714436231626,0.16855000000000014"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc43",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.3470988770624286,0.7750408377195046,0.16854999212554275"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc44",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.2608027192941454,0.6721969712917248,0.1680499917650301"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc45",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.12673363133632992,0.6651707803585277,0.1675500003606908"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc46",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.014138472748618805,0.7596491949175608,0.1675749999062032"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc47",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.019098950564702507,0.85430019178512,0.16754999265671391"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc48",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "-0.06719724661740306,0.9571441019902395,0.16754999230645942"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc49",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "-0.20126639326528997,0.9641702980790704,0.16754999999999995"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc50",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "-0.26030045713932776,0.914634835983783,0.16757499999999986"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc51",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.345185860590531,0.8978899953691539,0.2035749990529466"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc52",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.28163970020852086,0.9592558635165506,0.20354999954938843"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc53",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.34284278138313234,0.7636573929674071,0.2035499990160141"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc54",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.24958281127615056,0.6670837646819695,0.20304999853370656"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc55",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.11535018657507191,0.6694268760110524,0.20254999788112055"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc56",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.016604016474696198,0.7647847917194948,0.2025749974715817"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc57",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.014842853017222522,0.8656836416155121,0.2025499975204276"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc58",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "-0.07841715947904468,0.9622573108323422,0.20254999717001662"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc59",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "-0.21264984309568183,0.9599142005315906,0.20254999752042763"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc60",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "-0.26808468379611083,0.9063813962056855,0.20257499821186065"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc61",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.349503948989998,0.8863407415159213,0.23857499951787087"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc62",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.2954117299301768,0.94641629532624,0.23854999922752018"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc63",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.33780298440104983,0.752598567929861,0.23854999958822767"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc64",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.23803355512755475,0.6627656748055956,0.23804999999999996"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc65",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.10429136153751459,0.674466672993546,0.23755000036069085"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc66",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.019235388373730358,0.7689308479528184,0.23757499990107778"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc67",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.009803053790246251,0.8767424715774242,0.23754999999999996"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc68",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "-0.08996642062400233,0.9665754025764686,0.23754999964959103"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc69",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "-0.22370867305759404,0.9548744013046138,0.23755"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc70",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "-0.27501696212986004,0.897890772353523,0.237575"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc71",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.3530058835189847,0.8745184064440258,0.2735749992675254"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc72",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.30785355019259325,0.9323108209915489,0.27354999999999996"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc73",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.33200403947367674,0.7419182400995439,0.27354999801464636"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc74",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.2262112176633877,0.6592637389624274,0.27304999892711634"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc75",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.0936110337079523,0.6802656179225272,0.2725500003606908"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc76",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.022373029022051197,0.7714459903710746,0.27254999949931946"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc77",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.004004106279008323,0.8874228041629113,0.27254999949931935"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc78",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "-0.10178876320217306,0.9700773399360689,0.2725499991488999"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc79",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "-0.23438900564307993,0.9490754537933765,0.2725499994993194"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc80",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.3556746782412802,0.8624806013101833,0.30857499203633243"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc81",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.31885760036451943,0.9170641082364909,0.3085499947547913"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc82",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.3254741984892072,0.7316684429519358,0.3085499951153687"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc83",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.21417339612339764,0.65659501823188,0.30804999475479133"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc84",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.08336123656987168,0.6867954589209376,0.30755000036069075"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc85",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.026799321736228027,0.770651818720891,0.3075499999999998"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc86",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "-0.002525737627123966,0.897672605865201,0.3075499999999999"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc87",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.3574971060322962,0.8502859313805196,0.34357498553467825"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc88",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.3283273415268714,0.9008095232401369,0.3435499900960908"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc89",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.3182452741586049,0.7218991124786628,0.3435499904565884"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc90",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.20197873756408924,0.6547725143530938,0.34304999058246616"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc91",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.07359190609887309,0.6940243832525764,0.3425499973803941"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc92",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.35846458953213123,0.8379938528982339,0.3785749790258698"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "nailoc93",
+      "type": "NailLocation",
+      "properties": {
+        "orientation": "0,0,1",
+        "position": "0.3103524850791393,0.7126578438731078,0.37854998578350035"
       }
     },
     {
@@ -794,996 +2749,11 @@
     },
     {
       "extends": "Element",
-      "name": "stick88",
-      "type": "Stick",
-      "properties": {
-        "initLoc": "initlocstick88",
-        "finalLoc": "finallocstick88"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick1",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "0.913545454118252,-0.40673665099161677,0",
-        "position": "0.25700801750455543,0.9742154289512492,-0.010000000000000009"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick2",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.40673665099161305,-0.913545454118254,0",
-        "position": "0.32997558906988855,0.7643970944333673,-0.010000000000000007"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick3",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.9135454541182548,0.4067366509916111,0",
-        "position": "0.11608988804209004,0.6822940683268509,-0.010000000000000007"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick4",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.4067366509916242,0.9135454541182488,-0",
-        "position": "0.00197558906988866,0.8649439104777402,-0.010000000000000007"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick5",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.9135454541182487,-0.4067366509916242,0",
-        "position": "-0.1776521574284753,0.9622995609964419,-0.010000000000000005"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick6",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "0.3255681544571368,-0.9455185755993236,0",
-        "position": "0.3351552347498206,0.8830304729160674,0.0075000000000000075"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick7",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.9455185755993182,-0.3255681544571526,0",
-        "position": "0.2347232665247905,0.6771144226469192,0.007500000000000008"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick8",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "0.23177381193904148,0.9727697055825938,-0",
-        "position": "0.017773403452554192,0.7463105320863445,0.007500000000000008"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick9",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.9455185755993166,0.3255681544571576,-0",
-        "position": "-0.09327673347520953,0.9522265822641881,0.007500000000000008"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick10",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "0.8829475887909842,-0.46947157043657817,0",
-        "position": "0.27017614925933214,0.966870707184645,0.025000000000000022"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick11",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.4694715704365737,-0.8829475887909867,0",
-        "position": "0.325018734886871,0.7542340374832832,0.024999998519179018"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick12",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.8829475887909854,0.46947157043657584,0",
-        "position": "0.10592683109200615,0.6872509225098681,0.024999998519179015"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick13",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.46947157043657595,0.8829475887909856,-0",
-        "position": "-0.002981265113128925,0.8751069674278241,0.024999998519179018"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick14",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.8829475887909903,-0.46947157043656684,0",
-        "position": "-0.18896263432833185,0.9596952662926106,0.025000000000000012"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick15",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "0.25881904510252,-0.9659258262890685,0",
-        "position": "0.3384612093615605,0.8722171172006169,0.042500000000000045"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick16",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.9659258262890699,-0.2588190451025148,0",
-        "position": "0.22390991080933972,0.6738084480351793,0.042500000000000045"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick17",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "0.25881904510252,0.9659258262890685,-0",
-        "position": "0.010461209361560312,0.7571238877104903,0.042500000000000045"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick18",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.9659258262890716,0.25881904510250825,-0",
-        "position": "-0.10409008919066014,0.955532556875928,0.042500000000000045"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick19",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "0.8480480915647135,-0.529919271581481,0",
-        "position": "0.2826689891013145,0.9583986354748156,0.06000000000000006"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick20",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.529919271581489,-0.8480480915647085,0",
-        "position": "0.319365016336214,0.7444415098978071,0.06000000000000006"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick21",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.8480480915647134,0.5299192715814812,0",
-        "position": "0.09613430350653018,0.6929046410605254,0.06000000000000006"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick22",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.5299192715815024,0.8480480915647001,-0",
-        "position": "-0.008634983663785888,0.8848994950133006,0.06000000000000006"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick23",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.8480480915647135,-0.529919271581481,0",
-        "position": "-0.20006389305979316,0.9563083365348873,0.06000000000000006"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick24",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "0.19080899537655688,-0.9816271834476616,0",
-        "position": "0.34100482922125275,0.8611994891450085,0.07749999999999999"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick25",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.9816271834476642,-0.19080899537654356,0",
-        "position": "0.21289228275373165,0.6712648281754865,0.07749999999999997"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick26",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "0.19080899537654566,0.9816271834476638,-0",
-        "position": "0.01300482922125272,0.7681415157660989,0.07749999999999997"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick27",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.9816271834476642,0.19080899537654356,-0",
-        "position": "-0.1151077172462682,0.9580761767356208,0.07749999999999996"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick28",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "0.8090169892818273,-0.5877852593025515,0",
-        "position": "0.2943940485319837,0.9488587473974849,0.09499999999999997"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick29",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.5877852593025568,-0.8090169892818234,0",
-        "position": "0.31304197776638704,0.7350672198869951,0.09499999999999999"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick30",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.809016989281826,0.5877852593025533,0",
-        "position": "0.0867600134957178,0.6992276796303519,0.09499999999999988"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick31",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.5877852593025538,0.8090169892818256,-0",
-        "position": "-0.014958022233612776,0.8942737850241126,0.09499999999999999"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick32",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.8090169892818182,-0.587785259302564,0",
-        "position": "-0.21090184940621343,0.9521552725046014,0.09499999999999989"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick33",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "0.12186934340515718,-0.992546151641321,0",
-        "position": "0.3427737020686253,0.850031265525642,0.11249999940395257"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick34",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.9925461516413222,-0.12186934340514621,0",
-        "position": "0.20172405913436495,0.6694959553281141,0.11249999940395257"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick35",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "0.12186934340514623,0.9925461516413222,-0",
-        "position": "0.014773702068625334,0.7793097393854653,0.11249999940395257"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick36",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.9925461516413218,0.12186934340514893,-0",
-        "position": "-0.12627594086563507,0.9598450495829935,0.11249999940395258"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick37",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "0.7660444375492607,-0.6427876163242701,0",
-        "position": "0.3052639302859935,0.9383179403688832,0.13000000000000023"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick38",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.6427876163242688,-0.7660444375492615,0",
-        "position": "0.30608042438571215,0.7261568380494776,0.13000000000000014"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick39",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.7660444375492591,0.642787616324272,0",
-        "position": "0.0778496316582,0.7061892330110279,0.1299999999999999"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick40",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.6427876163242624,0.7660444375492672,-0",
-        "position": "-0.021919575614287586,0.9031841668616295,0.13000000000000014"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick41",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.7660444375492608,-0.64278761632427,0",
-        "position": "-0.22142370193370264,0.9472563075122399,0.13"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick42",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "0.05233595624293232,-0.9986295347545744,0",
-        "position": "0.34375921013297234,0.8387668568053647,0.14750000000000008"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick43",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.9986295347545742,-0.05233595624293844,0",
-        "position": "0.190459650414088,0.668510447263767,0.14750000000000013"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick44",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "0.052335956242921255,0.998629534754575,-0",
-        "position": "0.01575921013297232,0.7905741481057426,0.14750000000000005"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick45",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.9986295347545736,0.05233595624294454,-0",
-        "position": "-0.13754034958591188,0.9608305576473408,0.14750000000000013"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick46",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "0.7193397943194758,-0.6946583766920357,0",
-        "position": "0.3151969016135253,0.9268500502438681,0.1649999997019765"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick47",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.6946583766920306,-0.719339794319481,0",
-        "position": "0.2985142721824869,0.7177537748698997,0.16499999970197649"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick48",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.7193397943194854,0.694658376692026,0",
-        "position": "0.06944656847862252,0.7137553852142519,0.16499999970197649"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick49",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.6946583766920231,0.7193397943194878,-0",
-        "position": "-0.02948572781751287,0.911587230041208,0.16499999970197649"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick50",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.7193397943194797,-0.6946583766920316,0",
-        "position": "-0.23157818923439694,0.9416353088228062,0.16499999970197637"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick51",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.01745240643728495,-0.9998476951563912,0",
-        "position": "0.3439565521180666,0.8274611420511678,0.1824999973177529"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick52",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.9998476951563912,0.0174524064372906,0",
-        "position": "0.1791539356598915,0.6683131052786727,0.1824999973177529"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick53",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.017452406437279404,0.9998476951563914,-0",
-        "position": "0.015956552118066604,0.8018798628599393,0.1824999973177529"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick54",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.9998476951563914,-0.017452406437279695,0",
-        "position": "-0.14884606434010828,0.9610278996324348,0.1824999973177529"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick55",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "0.6691305999195544,-0.7431448312753696,0",
-        "position": "0.3241174326667264,0.9145353820645268,0.2000000000000001"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick56",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.7431448312753619,-0.6691305999195628,0",
-        "position": "0.2903803826896993,0.7098989692273988,0.20000000000000007"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick57",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.6691305999195527,0.7431448312753708,0",
-        "position": "0.06159176283612167,0.7218892747070401,0.2"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick58",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.743144831275359,0.669130599919566,-0",
-        "position": "-0.03761961731030056,0.9194420356837083,0.20000000000000004"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick59",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.6691305999195563,-0.7431448312753677,0",
-        "position": "-0.2413158396668948,0.9353196613768938,0.19999999999999987"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick60",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.08715574274765216,-0.996194698091746,0",
-        "position": "0.3433647665935942,0.8161692015688881,0.21749999999999997"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick61",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.9961946980917455,0.08715574274765767,0",
-        "position": "0.16786199517761044,0.6689048908031454,0.21749999999999997"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick62",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.08715574274764663,0.9961946980917464,-0",
-        "position": "0.015364766593594226,0.8131718033422195,0.2175"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick63",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.9961946980917455,-0.08715574274765865,0",
-        "position": "-0.16013800482238918,0.9604361141079621,0.2175"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick64",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "0.6156614684976014,-0.7880107589413846,0",
-        "position": "0.3319566966842736,0.9014601997789943,0.23500000000000015"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick65",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.7880107589413887,-0.6156614684975962,0",
-        "position": "0.2817183833993424,0.7026306889455041,0.23500000000000015"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick66",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.6156614684975972,0.788010758941388,0",
-        "position": "0.05432348255422663,0.730551273997397,0.23500000000000004"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick67",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.7880107589413858,0.6156614684976,-0",
-        "position": "-0.04628161660065744,0.9267103159656035,0.23500000000000013"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick68",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.6156614684976014,-0.7880107589413846,0",
-        "position": "-0.2505892123771134,0.9283401343740123,0.23500000000000007"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick69",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.15643446504022365,-0.9876883405951389,0",
-        "position": "0.3419867366791434,0.8049460485574903,0.2524999989569156"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick70",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.9876883405951373,0.15643446504023362,0",
-        "position": "0.1566388421662137,0.6702829207175957,0.25249999999999995"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick71",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.15643446504023448,0.9876883405951372,-0",
-        "position": "0.013986736679143436,0.8243949563536169,0.2524999989569156"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick72",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.9876883405951392,-0.15643446504022282,0",
-        "position": "-0.17136115783378622,0.9590580841935121,0.2524999989569156"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick73",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "0.5591928962871946,-0.8290375774004088,0",
-        "position": "0.338653028893086,0.8877161779965165,0.27"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick74",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.8290375774004135,-0.5591928962871876,0",
-        "position": "0.27257047470125556,0.6959843443551412,0.2699999999999998"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick75",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.5591928962871832,0.8290375774004166,0",
-        "position": "0.04767713796386439,0.7396991826954836,0.2699999999999998"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick76",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.8290375774004166,0.5591928962871832,-0",
-        "position": "-0.05542952529874421,0.9333566605559662,0.2699999999999998"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick77",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.22495105434386795,-0.9743700647852346,0",
-        "position": "0.3398291759979393,0.7938463610903017,0.28750000000000003"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick78",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.9743700647852348,0.22495105434386672,0",
-        "position": "0.14553915469902498,0.6724404813988003,0.28750000000000003"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick79",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.22495105434386786,0.9743700647852346,-0",
-        "position": "0.011829175997939418,0.8354946438208054,0.28750000000000003"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick80",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "0.499999992495944,-0.8660254081169073,0",
-        "position": "0.34415234128936795,0.8733998190732365,0.3049999992549404"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick81",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.8660254081169033,-0.4999999924959512,0",
-        "position": "0.2629812242870746,0.6899923157790694,0.30499999925494026"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick82",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.49999999249594523,0.8660254081169066,0",
-        "position": "0.0416851093877923,0.7492884331096651,0.3049999992549404"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick83",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.29237170472275026,-0.9563047559630312,0",
-        "position": "0.33690259596874317,0.7829242157289249,0.3225"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick84",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.9563047559630355,0.29237170472273644,0",
-        "position": "0.13461700933764814,0.6753670614279966,0.3225"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick85",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "0.4383711390011017,-0.8987940500976166,0",
-        "position": "0.3484084907210984,0.8586118390325479,0.33999999821185173"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick86",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.898794050097627,-0.4383711390010805,0",
-        "position": "0.2529973500209071,0.684683795778193,0.33999999821185173"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick87",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.3583679495452929,-0.9335804264972047,0",
-        "position": "0.33322125459527785,0.7722328240676694,0.35749999955296463"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finallocstick88",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "0.3746065853819128,-0.9271838578127336,0",
-        "position": "0.3513835979692173,0.8434565260129774,0.4310000000000004"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finloccube1",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.9135454541182554,0.4067366509916099,0",
-        "position": "0.19394069182725054,1.002294812103281,0.007499999972060328"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finloccube2",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.9135454541182548,-0.40673665099161094,0",
-        "position": "-0.22634783206559372,0.9406188492919593,0.007499999972060328"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finloccube3",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.8829475887909906,0.46947157043656657,0",
-        "position": "0.2125745148131368,0.9974980401390253,0.04249999962747062"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finloccube4",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.8829475887909776,-0.4694715704365903,0",
-        "position": "-0.23664180412304456,0.934343801489036,0.04250000000000005"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finloccube5",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.8480480915646951,0.5299192715815103,0",
-        "position": "0.23049569865335767,0.9910043120010612,0.07749999999999997"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finloccube6",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.8480480915647174,-0.5299192715814749,0",
-        "position": "-0.24585849000428722,0.9276926958694873,0.07749999999999999"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finloccube7",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.8090169892818209,0.5877852593025605,0",
-        "position": "0.2553589787991353,0.9772193861588322,0.11249999940395244"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finloccube8",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.8090169892818297,-0.5877852593025483,0",
-        "position": "-0.25458876682743264,0.920414868502263,0.1124999999999999"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finloccube9",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.7660444375492705,0.6427876163242582,0",
-        "position": "0.2638975306583333,0.9730284716503934,0.14750000000000016"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finloccube10",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.7660444375492689,-0.6427876163242602,0",
-        "position": "-0.2627901015613627,0.9125457762307293,0.14749999999999994"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finloccube11",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.7193397943194648,0.6946583766920472,0",
-        "position": "0.2790500769489706,0.9617566336726421,0.1824999991804342"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finloccube12",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.7193397943194825,-0.6946583766920289,0",
-        "position": "-0.2704225381276492,0.9041237564814368,0.18249999999999994"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finloccube13",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.6691305999195619,0.7431448312753627,0",
-        "position": "0.2930028597704665,0.949091616718831,0.2175000000000001"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finloccube14",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.6691305999195684,-0.7431448312753569,0",
-        "position": "-0.2769343810966458,0.8957612628157324,0.2175"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finloccube15",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.615661468497545,0.7880107589414286,0",
-        "position": "0.3056371689060018,0.9351476597237378,0.25249999999999995"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finloccube16",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.5591928962871693,0.8290375774004259,0",
-        "position": "0.3168445059378852,0.9200486435151322,0.2875"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finloccube17",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "-0.4999999924959536,0.8660254081169018,0",
-        "position": "0.32652734155388624,0.9039272147093578,0.32249999999999995"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "finloccube18",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "0.43837113900107205,-0.8987940500976311,0",
-        "position": "0.3308736451610551,0.8945636010364528,0.41100000000000014"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "mp5",
-      "type": "FinalLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0.0,0.0,0.0"
-      }
-    },
-    {
-      "extends": "Tool",
-      "name": "gripper1",
-      "type": "Gripper",
-      "properties": {
-        "loc": "equiplocgripper"
-      }
-    },
-    {
-      "extends": "Element",
-      "name": "table1",
-      "type": "Table"
-    },
-    {
-      "extends": "Element",
       "name": "cube1",
       "type": "Cube",
       "properties": {
         "initLoc": "initloccube1",
-        "finalLoc": "finloccube1"
+        "finalLoc": "finalloccube1"
       }
     },
     {
@@ -1792,7 +2762,7 @@
       "type": "Cube",
       "properties": {
         "initLoc": "initloccube2",
-        "finalLoc": "finloccube2"
+        "finalLoc": "finalloccube2"
       }
     },
     {
@@ -1801,7 +2771,7 @@
       "type": "Cube",
       "properties": {
         "initLoc": "initloccube3",
-        "finalLoc": "finloccube3"
+        "finalLoc": "finalloccube3"
       }
     },
     {
@@ -1810,7 +2780,7 @@
       "type": "Cube",
       "properties": {
         "initLoc": "initloccube4",
-        "finalLoc": "finloccube4"
+        "finalLoc": "finalloccube4"
       }
     },
     {
@@ -1819,7 +2789,7 @@
       "type": "Cube",
       "properties": {
         "initLoc": "initloccube5",
-        "finalLoc": "finloccube5"
+        "finalLoc": "finalloccube5"
       }
     },
     {
@@ -1828,7 +2798,7 @@
       "type": "Cube",
       "properties": {
         "initLoc": "initloccube6",
-        "finalLoc": "finloccube6"
+        "finalLoc": "finalloccube6"
       }
     },
     {
@@ -1837,7 +2807,7 @@
       "type": "Cube",
       "properties": {
         "initLoc": "initloccube7",
-        "finalLoc": "finloccube7"
+        "finalLoc": "finalloccube7"
       }
     },
     {
@@ -1846,7 +2816,7 @@
       "type": "Cube",
       "properties": {
         "initLoc": "initloccube8",
-        "finalLoc": "finloccube8"
+        "finalLoc": "finalloccube8"
       }
     },
     {
@@ -1855,7 +2825,7 @@
       "type": "Cube",
       "properties": {
         "initLoc": "initloccube9",
-        "finalLoc": "finloccube9"
+        "finalLoc": "finalloccube9"
       }
     },
     {
@@ -1864,7 +2834,7 @@
       "type": "Cube",
       "properties": {
         "initLoc": "initloccube10",
-        "finalLoc": "finloccube10"
+        "finalLoc": "finalloccube10"
       }
     },
     {
@@ -1873,7 +2843,7 @@
       "type": "Cube",
       "properties": {
         "initLoc": "initloccube11",
-        "finalLoc": "finloccube11"
+        "finalLoc": "finalloccube11"
       }
     },
     {
@@ -1882,7 +2852,7 @@
       "type": "Cube",
       "properties": {
         "initLoc": "initloccube12",
-        "finalLoc": "finloccube12"
+        "finalLoc": "finalloccube12"
       }
     },
     {
@@ -1891,7 +2861,7 @@
       "type": "Cube",
       "properties": {
         "initLoc": "initloccube13",
-        "finalLoc": "finloccube13"
+        "finalLoc": "finalloccube13"
       }
     },
     {
@@ -1900,7 +2870,7 @@
       "type": "Cube",
       "properties": {
         "initLoc": "initloccube14",
-        "finalLoc": "finloccube14"
+        "finalLoc": "finalloccube14"
       }
     },
     {
@@ -1909,7 +2879,7 @@
       "type": "Cube",
       "properties": {
         "initLoc": "initloccube15",
-        "finalLoc": "finloccube15"
+        "finalLoc": "finalloccube15"
       }
     },
     {
@@ -1918,7 +2888,7 @@
       "type": "Cube",
       "properties": {
         "initLoc": "initloccube16",
-        "finalLoc": "finloccube16"
+        "finalLoc": "finalloccube16"
       }
     },
     {
@@ -1927,16 +2897,15 @@
       "type": "Cube",
       "properties": {
         "initLoc": "initloccube17",
-        "finalLoc": "finloccube17"
+        "finalLoc": "finalloccube17"
       }
     },
     {
-      "extends": "Element",
-      "name": "cube18",
-      "type": "Cube",
+      "extends": "Tool",
+      "name": "staplergun1",
+      "type": "StaplerGun",
       "properties": {
-        "initLoc": "initloccube18",
-        "finalLoc": "finloccube18"
+        "loc": "equiplocstapler"
       }
     },
     {
@@ -2008,7 +2977,7 @@
       "type": "InitialLocation",
       "properties": {
         "orientation": "-1.6653345369377427E-14,1,-0",
-        "position": "0.60737,-0.2748199999999999,-0.005999999999999998"
+        "position": "0.60737,-0.2748199999999999,-0.006"
       }
     },
     {
@@ -2044,7 +3013,7 @@
       "type": "InitialLocation",
       "properties": {
         "orientation": "0,-1,0",
-        "position": "0.60737,-0.2748200000000001,-0.006000000000000002"
+        "position": "0.60737,-0.2748200000000001,-0.005999999999999998"
       }
     },
     {
@@ -2053,7 +3022,7 @@
       "type": "InitialLocation",
       "properties": {
         "orientation": "-5.551115123125809E-15,1,-0",
-        "position": "0.60737,-0.2748200000000001,-0.006000000000000002"
+        "position": "0.60737,-0.2748200000000001,-0.005999999999999998"
       }
     },
     {
@@ -2116,7 +3085,7 @@
       "type": "InitialLocation",
       "properties": {
         "orientation": "5.551115123125778E-15,-1,0",
-        "position": "0.6073699999999999,-0.2748200000000002,-0.006000000000000012"
+        "position": "0.6073699999999999,-0.2748200000000002,-0.005999999999999998"
       }
     },
     {
@@ -2125,7 +3094,7 @@
       "type": "InitialLocation",
       "properties": {
         "orientation": "8.326672684688668E-15,-1,0",
-        "position": "0.6073699999999999,-0.2748200000000001,-0.006000000000000012"
+        "position": "0.6073699999999999,-0.2748200000000001,-0.005999999999999998"
       }
     },
     {
@@ -2134,7 +3103,7 @@
       "type": "InitialLocation",
       "properties": {
         "orientation": "-1.6653345369376963E-14,1,-0",
-        "position": "0.6073700000000001,-0.27482,-0.006000000000000012"
+        "position": "0.6073700000000001,-0.27482,-0.005999999999999998"
       }
     },
     {
@@ -2161,7 +3130,7 @@
       "type": "InitialLocation",
       "properties": {
         "orientation": "0,-1,0",
-        "position": "0.60737,-0.27482000000000006,-0.006000000000000005"
+        "position": "0.60737,-0.27482000000000006,-0.006000000000000019"
       }
     },
     {
@@ -2260,7 +3229,7 @@
       "type": "InitialLocation",
       "properties": {
         "orientation": "5.5511151231258395E-15,1,-0",
-        "position": "0.60737,-0.27481999999999995,-0.006000000000000019"
+        "position": "0.60737,-0.27481999999999995,-0.00600000000000002"
       }
     },
     {
@@ -2278,7 +3247,7 @@
       "type": "InitialLocation",
       "properties": {
         "orientation": "-5.551115123125747E-15,-1,0",
-        "position": "0.6073699999999999,-0.27482000000000006,-0.006000000000000005"
+        "position": "0.6073699999999999,-0.27482000000000006,-0.005999999999999978"
       }
     },
     {
@@ -2296,7 +3265,7 @@
       "type": "InitialLocation",
       "properties": {
         "orientation": "-0,1,-0",
-        "position": "0.6073699999999999,-0.27481999999999995,-0.006000000000000033"
+        "position": "0.6073699999999999,-0.27481999999999995,-0.006000000000000005"
       }
     },
     {
@@ -2304,8 +3273,8 @@
       "name": "initlocstick41",
       "type": "InitialLocation",
       "properties": {
-        "orientation": "-5.5511151231257164E-15,1,-0",
-        "position": "0.6073699999999999,-0.27482000000000006,-0.009"
+        "orientation": "-5.5511151231257164E-15,1,2.9569150158695705E-15",
+        "position": "0.6073699999999999,-0.2748200000000001,-0.009"
       }
     },
     {
@@ -2340,8 +3309,8 @@
       "name": "initlocstick45",
       "type": "InitialLocation",
       "properties": {
-        "orientation": "5.551115123125901E-15,1,2.8912057932947114E-15",
-        "position": "0.6073699999999997,-0.27482000000000006,-0.006000000000000005"
+        "orientation": "5.551115123125901E-15,1,-0",
+        "position": "0.6073699999999997,-0.27482,-0.006000000000000005"
       }
     },
     {
@@ -2359,7 +3328,7 @@
       "type": "InitialLocation",
       "properties": {
         "orientation": "0,-1,0",
-        "position": "0.6073700000000001,-0.2748200000000001,-0.005999999999999978"
+        "position": "0.6073700000000001,-0.2748200000000001,-0.006000000000000005"
       }
     },
     {
@@ -2368,7 +3337,7 @@
       "type": "InitialLocation",
       "properties": {
         "orientation": "1.1102230246251494E-14,-1,0",
-        "position": "0.6073699999999995,-0.27482000000000023,-0.006000000000000005"
+        "position": "0.6073699999999995,-0.27482000000000023,-0.006000000000000033"
       }
     },
     {
@@ -2413,7 +3382,7 @@
       "type": "InitialLocation",
       "properties": {
         "orientation": "5.551115123125778E-15,1,-0",
-        "position": "0.6073699999999999,-0.27481999999999995,-0.006000000000000005"
+        "position": "0.6073699999999999,-0.27481999999999995,-0.005999999999999978"
       }
     },
     {
@@ -2439,8 +3408,8 @@
       "name": "initlocstick56",
       "type": "InitialLocation",
       "properties": {
-        "orientation": "1.1102230246251679E-14,-1,0",
-        "position": "0.6073700000000001,-0.2748200000000001,-0.006000000000000005"
+        "orientation": "1.1102230246251679E-14,-1,-5.913830031739187E-15",
+        "position": "0.6073700000000001,-0.2748200000000001,-0.005999999999999978"
       }
     },
     {
@@ -2449,7 +3418,7 @@
       "type": "InitialLocation",
       "properties": {
         "orientation": "0,-1,0",
-        "position": "0.6073700000000001,-0.27482000000000006,-0.006000000000000005"
+        "position": "0.6073700000000001,-0.27482000000000006,-0.006000000000000033"
       }
     },
     {
@@ -2457,8 +3426,8 @@
       "name": "initlocstick58",
       "type": "InitialLocation",
       "properties": {
-        "orientation": "1.66533453693777E-14,1,-0",
-        "position": "0.6073700000000001,-0.2748199999999999,-0.006000000000000033"
+        "orientation": "1.66533453693777E-14,1,-5.913830031739187E-15",
+        "position": "0.6073700000000001,-0.2748199999999999,-0.006000000000000005"
       }
     },
     {
@@ -2476,7 +3445,7 @@
       "type": "InitialLocation",
       "properties": {
         "orientation": "5.551115123125778E-15,-1,0",
-        "position": "0.60737,-0.27481999999999995,-0.005999999999999978"
+        "position": "0.60737,-0.27481999999999995,-0.006000000000000005"
       }
     },
     {
@@ -2494,7 +3463,7 @@
       "type": "InitialLocation",
       "properties": {
         "orientation": "1.1102230246251556E-14,1,-0",
-        "position": "0.60737,-0.27482000000000023,-0.006000000000000033"
+        "position": "0.60737,-0.27482000000000023,-0.006000000000000005"
       }
     },
     {
@@ -2502,8 +3471,8 @@
       "name": "initlocstick63",
       "type": "InitialLocation",
       "properties": {
-        "orientation": "1.3877787807814599E-15,1,-0",
-        "position": "0.6073699999999999,-0.27482000000000006,-0.005999999999999978"
+        "orientation": "6.938893903907299E-16,1,-1.4784575079347876E-15",
+        "position": "0.6073699999999999,-0.27482000000000006,-0.006000000000000005"
       }
     },
     {
@@ -2520,7 +3489,7 @@
       "name": "initlocstick65",
       "type": "InitialLocation",
       "properties": {
-        "orientation": "0,-1,0",
+        "orientation": "0,-1,-7.885107554965773E-15",
         "position": "0.6073700000000001,-0.27482000000000006,-0.006000000000000005"
       }
     },
@@ -2529,8 +3498,8 @@
       "name": "initlocstick66",
       "type": "InitialLocation",
       "properties": {
-        "orientation": "-5.551115123125778E-15,-1,-5.7824115865893785E-15",
-        "position": "0.6073699999999999,-0.2748200000000001,-0.006000000000000005"
+        "orientation": "-5.551115123125778E-15,-1,0",
+        "position": "0.6073699999999999,-0.2748200000000001,-0.006000000000000033"
       }
     },
     {
@@ -2539,7 +3508,7 @@
       "type": "InitialLocation",
       "properties": {
         "orientation": "5.551115123125809E-15,1,-0",
-        "position": "0.60737,-0.27482000000000006,-0.006000000000000033"
+        "position": "0.60737,-0.27482000000000006,-0.006000000000000005"
       }
     },
     {
@@ -2548,7 +3517,7 @@
       "type": "InitialLocation",
       "properties": {
         "orientation": "-0,1,-0",
-        "position": "0.6073699999999994,-0.27482,-0.009"
+        "position": "0.6073699999999994,-0.2748199999999999,-0.009"
       }
     },
     {
@@ -2602,7 +3571,7 @@
       "type": "InitialLocation",
       "properties": {
         "orientation": "-5.551115123125778E-15,-1,0",
-        "position": "0.6073700000000001,-0.27482,-0.006000000000000061"
+        "position": "0.6073700000000001,-0.27482,-0.006000000000000005"
       }
     },
     {
@@ -2665,7 +3634,7 @@
       "type": "InitialLocation",
       "properties": {
         "orientation": "5.551115123125809E-15,-1,0",
-        "position": "0.6073700000000001,-0.27482000000000006,-0.006000000000000061"
+        "position": "0.6073700000000001,-0.27482000000000006,-0.006000000000000005"
       }
     },
     {
@@ -2692,7 +3661,7 @@
       "type": "InitialLocation",
       "properties": {
         "orientation": "0,-1,0",
-        "position": "0.6073700000000002,-0.27482,-0.00599999999999995"
+        "position": "0.6073700000000002,-0.27482000000000006,-0.006000000000000005"
       }
     },
     {
@@ -2710,7 +3679,7 @@
       "type": "InitialLocation",
       "properties": {
         "orientation": "-5.551115123125778E-15,-1,0",
-        "position": "0.6073699999999999,-0.27482,-0.006000000000000005"
+        "position": "0.6073699999999999,-0.27482,-0.00599999999999995"
       }
     },
     {
@@ -2718,17 +3687,8 @@
       "name": "initlocstick87",
       "type": "InitialLocation",
       "properties": {
-        "orientation": "1.1102230246251556E-14,-1,5.7824126205651505E-15",
+        "orientation": "1.1102230246251556E-14,-1,5.913834896125126E-15",
         "position": "0.6073699999999999,-0.27482,-0.006000000000000005"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "initlocstick88",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "-1.665334536937752E-14,-1,0",
-        "position": "0.6073699999999997,-0.2748200000000005,-0.006"
       }
     },
     {
@@ -2736,8 +3696,8 @@
       "name": "initloccube1",
       "type": "InitialLocation",
       "properties": {
-        "orientation": "0,-1,0",
-        "position": "0.6073699999999997,-0.2748200000000001,-0.009"
+        "orientation": "-1.0408340855860688E-14,-1,0",
+        "position": "0.6073699999999999,-0.2748200000000001,-0.009"
       }
     },
     {
@@ -2745,8 +3705,8 @@
       "name": "initloccube2",
       "type": "InitialLocation",
       "properties": {
-        "orientation": "1.7347234759768416E-15,-1,0",
-        "position": "0.60737,-0.2748200000000001,-0.009"
+        "orientation": "0,-1,0",
+        "position": "0.6073700000000001,-0.27482000000000006,-0.009"
       }
     },
     {
@@ -2754,8 +3714,8 @@
       "name": "initloccube3",
       "type": "InitialLocation",
       "properties": {
-        "orientation": "1.387778780781454E-14,-1,0",
-        "position": "0.60737,-0.2748200000000001,-0.009"
+        "orientation": "-3.4694469519536832E-15,-1,0",
+        "position": "0.6073700000000001,-0.2748200000000001,-0.009000000000000008"
       }
     },
     {
@@ -2763,8 +3723,8 @@
       "name": "initloccube4",
       "type": "InitialLocation",
       "properties": {
-        "orientation": "1.040834085586105E-14,-1,0",
-        "position": "0.6073700000000002,-0.27482,-0.009"
+        "orientation": "1.0408340855860906E-14,-1,0",
+        "position": "0.6073699999999999,-0.27482000000000006,-0.009000000000000001"
       }
     },
     {
@@ -2772,8 +3732,8 @@
       "name": "initloccube5",
       "type": "InitialLocation",
       "properties": {
-        "orientation": "5.204170427930363E-15,-1,0",
-        "position": "0.6073700000000002,-0.27481999999999995,-0.009"
+        "orientation": "6.9388939039071984E-15,-1,0",
+        "position": "0.60737,-0.27482000000000006,-0.008999999999999994"
       }
     },
     {
@@ -2781,8 +3741,8 @@
       "name": "initloccube6",
       "type": "InitialLocation",
       "properties": {
-        "orientation": "8.673617379884058E-15,-1,0",
-        "position": "0.6073700000000001,-0.2748200000000001,-0.009"
+        "orientation": "-1.040834085586076E-14,-1,0",
+        "position": "0.6073699999999999,-0.27482,-0.00899999999999998"
       }
     },
     {
@@ -2790,8 +3750,8 @@
       "name": "initloccube7",
       "type": "InitialLocation",
       "properties": {
-        "orientation": "-8.673617379884118E-15,-1,0",
-        "position": "0.60737,-0.27481999999999984,-0.009"
+        "orientation": "6.938893903907295E-15,-1,0",
+        "position": "0.60737,-0.27481999999999995,-0.009000000000000008"
       }
     },
     {
@@ -2799,8 +3759,8 @@
       "name": "initloccube8",
       "type": "InitialLocation",
       "properties": {
-        "orientation": "8.673617379884058E-15,-1,0",
-        "position": "0.6073699999999999,-0.2748199999999999,-0.009"
+        "orientation": "6.9388939039071984E-15,-1,0",
+        "position": "0.6073699999999999,-0.2748199999999999,-0.009000000000000008"
       }
     },
     {
@@ -2808,8 +3768,8 @@
       "name": "initloccube9",
       "type": "InitialLocation",
       "properties": {
-        "orientation": "1.0408340855860906E-14,-1,0",
-        "position": "0.6073699999999999,-0.27482,-0.009"
+        "orientation": "-3.469446951953611E-15,-1,0",
+        "position": "0.60737,-0.2748200000000003,-0.009000000000000036"
       }
     },
     {
@@ -2818,7 +3778,7 @@
       "type": "InitialLocation",
       "properties": {
         "orientation": "0,-1,0",
-        "position": "0.6073700000000003,-0.27482000000000006,-0.009"
+        "position": "0.60737,-0.27482000000000006,-0.00899999999999998"
       }
     },
     {
@@ -2826,8 +3786,8 @@
       "name": "initloccube11",
       "type": "InitialLocation",
       "properties": {
-        "orientation": "-5.204170427930435E-15,-1,0",
-        "position": "0.60737,-0.27482000000000006,-0.009"
+        "orientation": "-6.9388939039071984E-15,-1,0",
+        "position": "0.60737,-0.2748200000000003,-0.009000000000000008"
       }
     },
     {
@@ -2835,8 +3795,8 @@
       "name": "initloccube12",
       "type": "InitialLocation",
       "properties": {
-        "orientation": "-8.673617379883938E-15,-1,0",
-        "position": "0.6073699999999997,-0.2748199999999999,-0.009"
+        "orientation": "1.040834085586087E-14,-1,0",
+        "position": "0.60737,-0.27482,-0.009000000000000008"
       }
     },
     {
@@ -2844,8 +3804,8 @@
       "name": "initloccube13",
       "type": "InitialLocation",
       "properties": {
-        "orientation": "5.2041704279304166E-15,-1,0",
-        "position": "0.60737,-0.27482,-0.009"
+        "orientation": "6.93889390390715E-15,-1,0",
+        "position": "0.60737,-0.2748199999999999,-0.009000000000000008"
       }
     },
     {
@@ -2853,8 +3813,8 @@
       "name": "initloccube14",
       "type": "InitialLocation",
       "properties": {
-        "orientation": "-1.5612511283791412E-14,-1,0",
-        "position": "0.60737,-0.2748200000000003,-0.009"
+        "orientation": "0,-1,0",
+        "position": "0.60737,-0.27482,-0.009000000000000008"
       }
     },
     {
@@ -2862,8 +3822,8 @@
       "name": "initloccube15",
       "type": "InitialLocation",
       "properties": {
-        "orientation": "6.93889390390727E-15,-1,0",
-        "position": "0.60737,-0.2748200000000001,-0.009"
+        "orientation": "6.9388939039072465E-15,-1,0",
+        "position": "0.6073699999999999,-0.27481999999999984,-0.009000000000000008"
       }
     },
     {
@@ -2871,8 +3831,8 @@
       "name": "initloccube16",
       "type": "InitialLocation",
       "properties": {
-        "orientation": "6.938893903907318E-15,-1,0",
-        "position": "0.6073700000000001,-0.27481999999999995,-0.009"
+        "orientation": "6.9388939039071984E-15,-1,0",
+        "position": "0.60737,-0.27482,-0.009000000000000008"
       }
     },
     {
@@ -2880,200 +3840,18 @@
       "name": "initloccube17",
       "type": "InitialLocation",
       "properties": {
-        "orientation": "2.2551405187698473E-14,-1,0",
-        "position": "0.6073700000000001,-0.2748200000000001,-0.009"
+        "orientation": "-1.3877787807814444E-14,-1,0",
+        "position": "0.60737,-0.27481999999999995,-0.009000000000000008"
       }
-    },
-    {
-      "extends": "Location",
-      "name": "initloccube18",
-      "type": "InitialLocation",
-      "properties": {
-        "orientation": "-1.7347234759768175E-14,-1,0",
-        "position": "0.60737,-0.2748199999999999,-0.009"
-      }
-    },
-    {
-      "extends": "Module",
-      "name": "module1",
-      "type": "Demo"
     },
     {
       "extends": "Tool",
-      "name": "staplergun1",
-      "type": "StaplerGun",
+      "name": "gripper1",
+      "type": "Gripper",
       "properties": {
-        "loc": "equiplocstapler"
-      }
-    },
-    {
-      "extends": "Layer",
-      "name": "layer0",
-      "type": "Stack"
-    },
-    {
-      "extends": "Layer",
-      "name": "layer1",
-      "type": "Stack"
-    },
-    {
-      "extends": "Layer",
-      "name": "layer2",
-      "type": "Stack"
-    },
-    {
-      "extends": "Layer",
-      "name": "layer3",
-      "type": "Stack"
-    },
-    {
-      "extends": "Layer",
-      "name": "layer4",
-      "type": "Stack"
-    },
-    {
-      "extends": "Layer",
-      "name": "layer5",
-      "type": "Stack"
-    },
-    {
-      "extends": "Layer",
-      "name": "layer6",
-      "type": "Stack"
-    },
-    {
-      "extends": "Layer",
-      "name": "layer7",
-      "type": "Stack"
-    },
-    {
-      "extends": "Layer",
-      "name": "layer8",
-      "type": "Stack"
-    },
-    {
-      "extends": "Layer",
-      "name": "layer9",
-      "type": "Stack"
-    },
-    {
-      "extends": "Layer",
-      "name": "layer10",
-      "type": "Stack"
-    },
-    {
-      "extends": "Layer",
-      "name": "layer11",
-      "type": "Stack"
-    },
-    {
-      "extends": "Layer",
-      "name": "layer12",
-      "type": "Stack"
-    },
-    {
-      "extends": "Layer",
-      "name": "layer13",
-      "type": "Stack"
-    },
-    {
-      "extends": "Layer",
-      "name": "layer14",
-      "type": "Stack"
-    },
-    {
-      "extends": "Layer",
-      "name": "layer15",
-      "type": "Stack"
-    },
-    {
-      "extends": "Layer",
-      "name": "layer16",
-      "type": "Stack"
-    },
-    {
-      "extends": "Layer",
-      "name": "layer17",
-      "type": "Stack"
-    },
-    {
-      "extends": "Layer",
-      "name": "layer18",
-      "type": "Stack"
-    },
-    {
-      "extends": "Layer",
-      "name": "layer19",
-      "type": "Stack"
-    },
-    {
-      "extends": "Layer",
-      "name": "layer20",
-      "type": "Stack"
-    },
-    {
-      "extends": "Layer",
-      "name": "layer21",
-      "type": "Stack"
-    },
-    {
-      "extends": "Layer",
-      "name": "layer22",
-      "type": "Stack"
-    },
-    {
-      "extends": "Layer",
-      "name": "layer23",
-      "type": "Stack"
-    },
-    {
-      "extends": "Location",
-      "name": "equiplocgripper",
-      "type": "EquipLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0.0,0.0,0.0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "equiplocstapler",
-      "type": "EquipLocation",
-      "properties": {
-        "orientation": "0,0,0",
-        "position": "0.0,0.0,0.0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "rpmanipulate",
-      "type": "RobotPosition",
-      "properties": {
-        "tcpPose": "0.133776,0.348742,0.490041",
-        "joints": "1.656148,-0.959557,-2.051016,-1.70177,1.553554,1.650556",
-        "tcpOrinetation": "0.0, -3.14159, 0.0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "rppickup",
-      "type": "RobotPosition",
-      "properties": {
-        "tcpPose": "0.60736,-0.274802,0.339901",
-        "joints": "-0.1289,-1.540886,-1.93273,-1.238644,1.554514,1.43369",
-        "tcpOrinetation": "0.0, -3.14159, 0.0"
-      }
-    },
-    {
-      "extends": "Location",
-      "name": "rptoolchange",
-      "type": "RobotPosition",
-      "properties": {
-        "tcpPose": "-0.276143,0.385864,0.086921",
-        "joints": "2.086106,-1.186673,-2.39603,-1.12949,1.555172,0.503193",
-        "tcpOrinetation": "-3.141491,-0.002589,-8.1e-05"
+        "loc": "equiplocgripper"
       }
     }
   ],
-  "count": 353
+  "count": 439
 }

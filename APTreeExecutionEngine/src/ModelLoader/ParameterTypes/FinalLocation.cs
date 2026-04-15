@@ -42,8 +42,8 @@ namespace ModelLoader.ParameterTypes
             {
                 if (parameters["position"] is Coordinate positionValue)
                     Position = positionValue;
-                else if (parameters["position"] is string posStr)
-                    Position = Coordinate.Parse(posStr);
+                else if (parameters["position"] is string positionStr)
+                    Position = Coordinate.Parse(positionStr);
             }
 
             // Set Orientation property
@@ -51,8 +51,8 @@ namespace ModelLoader.ParameterTypes
             {
                 if (parameters["orientation"] is Coordinate orientationValue)
                     Orientation = orientationValue;
-                else if (parameters["orientation"] is string oriStr)
-                    Orientation = Coordinate.Parse(oriStr);
+                else if (parameters["orientation"] is string orientationStr)
+                    Orientation = Coordinate.Parse(orientationStr);
             }
 
         }

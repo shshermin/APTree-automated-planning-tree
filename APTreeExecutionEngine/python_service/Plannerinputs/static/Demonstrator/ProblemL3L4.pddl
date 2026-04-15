@@ -63,8 +63,8 @@
     finallocstick7 - finalposition
     finallocstick8 - finalposition
     finallocstick9 - finalposition
-    finloccube1 - finalposition
-    finloccube2 - finalposition
+    finalloccube1 - finalposition
+    finalloccube2 - finalposition
     finallocstick10 - finalposition
     finallocstick11 - finalposition
     finallocstick12 - finalposition
@@ -74,8 +74,8 @@
     finallocstick16 - finalposition
     finallocstick17 - finalposition
     finallocstick18 - finalposition
-    finloccube3 - finalposition
-    finloccube4 - finalposition
+    finalloccube3 - finalposition
+    finalloccube4 - finalposition
   )
 
   (:init
@@ -146,8 +146,8 @@
     (objectfinalposition stick16 finallocstick16)
     (objectfinalposition stick17 finallocstick17)
     (objectfinalposition stick18 finallocstick18)
-    (objectfinalposition cube3 finloccube3)
-    (objectfinalposition cube4 finloccube4)
+    (objectfinalposition cube3 finalloccube3)
+    (objectfinalposition cube4 finalloccube4)
 
     ;; Base elements (layer 2, pre-placed)
     (fixed stick6)
@@ -166,8 +166,8 @@
     (atplace stick7 finallocstick7)
     (atplace stick8 finallocstick8)
     (atplace stick9 finallocstick9)
-    (atplace cube1 finloccube1)
-    (atplace cube2 finloccube2)
+    (atplace cube1 finalloccube1)
+    (atplace cube2 finalloccube2)
     (accessible stick6)
     (accessible stick7)
     (accessible stick8)
@@ -190,16 +190,16 @@
     (stacked stick14 stick9)
 
     ;; Nailed - layer 3
-    (nailed stick10 cube1)
-    (nailed stick10 stick6)
-    (nailed stick11 stick6)
-    (nailed stick11 stick7)
-    (nailed stick12 stick7)
-    (nailed stick12 stick8)
-    (nailed stick13 stick8)
-    (nailed stick13 stick9)
-    (nailed stick14 cube2)
-    (nailed stick14 stick9)
+    ;(nailed stick10 cube1)
+    ;(nailed stick10 stick6)
+    ;(nailed stick11 stick6)
+    ;(nailed stick11 stick7)
+    ;(nailed stick12 stick7)
+    ;(nailed stick12 stick8)
+    ;(nailed stick13 stick8)
+    ;(nailed stick13 stick9)
+    ;(nailed stick14 cube2)
+    ;(nailed stick14 stick9)
 
     ;; Stacked - layer 4
     (stacked cube3 stick10)

@@ -34,38 +34,39 @@ namespace ModelLoader.ParameterTypes
             // TypeName is automatically set in base constructor
         }
 
-        // Override SetParameters to set RobotPosition-specific properties.
-        // Handles both pre-parsed objects and raw comma-separated strings from JSON.
+        // Override SetParameters to set RobotPosition-specific properties
         public override void SetParameters(Dictionary<string, object> parameters)
         {
+            // Call base implementation first
             base.SetParameters(parameters);
 
-            // ── Joints ──
-            if (parameters.TryGetValue("joints", out var jointsVal))
+            // Set Joints property
+            if (parameters.ContainsKey("joints"))
             {
-                if (jointsVal is RobotJoints rj)
-                    Joints = rj;
-                else if (jointsVal is string jointsStr && !string.IsNullOrWhiteSpace(jointsStr))
+                if (parameters["joints"] is RobotJoints jointsValue)
+                    Joints = jointsValue;
+                else if (parameters["joints"] is string jointsStr && !string.IsNullOrWhiteSpace(jointsStr))
                     Joints = RobotJoints.Parse(jointsStr);
             }
 
-            // ── TcpPose ──
-            if (parameters.TryGetValue("tcpPose", out var poseVal))
+            // Set TcpPose property
+            if (parameters.ContainsKey("tcpPose"))
             {
-                if (poseVal is Coordinate c)
-                    TcpPose = c;
-                else if (poseVal is string poseStr && !string.IsNullOrWhiteSpace(poseStr))
-                    TcpPose = Coordinate.Parse(poseStr);
+                if (parameters["tcpPose"] is Coordinate tcpPoseValue)
+                    TcpPose = tcpPoseValue;
+                else if (parameters["tcpPose"] is string tcpPoseStr)
+                    TcpPose = Coordinate.Parse(tcpPoseStr);
             }
 
-            // ── TcpOrinetation ──
-            if (parameters.TryGetValue("tcpOrinetation", out var orientVal))
+            // Set TcpOrinetation property
+            if (parameters.ContainsKey("tcpOrinetation"))
             {
-                if (orientVal is Coordinate oc)
-                    TcpOrinetation = oc;
-                else if (orientVal is string orientStr && !string.IsNullOrWhiteSpace(orientStr))
-                    TcpOrinetation = Coordinate.Parse(orientStr);
+                if (parameters["tcpOrinetation"] is Coordinate tcpOrinetationValue)
+                    TcpOrinetation = tcpOrinetationValue;
+                else if (parameters["tcpOrinetation"] is string tcpOrinetationStr)
+                    TcpOrinetation = Coordinate.Parse(tcpOrinetationStr);
             }
+
         }
     }
 }

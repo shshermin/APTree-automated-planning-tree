@@ -42,15 +42,15 @@ public class NailingLL : ExeAction
 
     private double[] ResolveNailPose()
     {
-        // First try: use the explicit nail coordinate from MLInputs (set by NailingML via NailCoordinates lookup)
-        if (MLInputs != null && MLInputs.TryGetValue("coordinate", out var coordObj) && coordObj is Coordinate coord)
+        // First try: use the NailLocation resolved by DecoratorParameterResolver from goal state
+        if (MLInputs != null && MLInputs.TryGetValue("nailloc", out var locObj) && locObj is NailLocation nailLoc && nailLoc.Position != null)
         {
-            LoggingService.LogInfo($"🔨 NailingLL: Using nail coordinate ({coord.X}, {coord.Y}, {coord.Z})");
+            LoggingService.LogInfo($"🔨 NailingLL: Using NailLocation '{nailLoc.ID}' at ({nailLoc.Position.X}, {nailLoc.Position.Y}, {nailLoc.Position.Z})");
             return new[]
             {
-                coord.X,
-                coord.Y,
-                coord.Z,
+                nailLoc.Position.X,
+                nailLoc.Position.Y,
+                nailLoc.Position.Z,
                 0.0, 0.0, 0.0  // nailgun doesn't use orientation/yaw
             };
         }

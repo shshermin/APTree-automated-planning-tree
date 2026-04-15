@@ -22,7 +22,7 @@ public class FactoryPredicate
    
 
     // Create a predicate instance by predicate name and parameter mappings
-    public Predicate CreatePredicateInstance(string predicateName, List<ParameterMapping> parameterMappings, Blackboard<FastName> blackboard)
+    public Predicate CreatePredicateInstance(string predicateName, List<ParameterMapping> parameterMappings, Blackboard<FastName> blackboard, bool registerInBlackboard = true)
     {
         // Start timing
         var startTime = DateTime.Now;
@@ -112,9 +112,9 @@ public class FactoryPredicate
         LoggingService.LogDebug($"✅ FACTORY: Successfully created predicate instance: {instance.GetType().Name}");
         LoggingService.LogDebug($"🔑 FACTORY: Predicate unique key (PredicateName): {instance.PredicateName}");
         
-        // Log the GetParameterValues result to see what's being generated
-        var paramValues = instance.GetParameterValues();
-        LoggingService.LogDebug($"📋 FACTORY: GetParameterValues result: {string.Join(", ", paramValues)}");
+        // Log the GetPDDLParameterValues result to see what's being generated
+        var paramValues = instance.GetPDDLParameterValues();
+        LoggingService.LogDebug($"📋 FACTORY: GetPDDLParameterValues result: {string.Join(", ", paramValues)}");
         
         // Log the unique key generation
         var uniqueKey = instance.PredicateName;
@@ -143,23 +143,30 @@ public class FactoryPredicate
         LoggingService.LogDebug($"🔧 FACTORY: Final PredicateName (unique key): {instance.PredicateName}");
         
         // Register the predicate in the blackboard using the PredicateName (which is the unique key)
-        LoggingService.LogDebug($"🔧 FACTORY: Registering predicate with blackboard using key: {instance.PredicateName}");       
-        
-        blackboard.SetPredicateSync(instance.PredicateName, instance);
-        
-        // Check blackboard state after registration
-        var predicatesAfter = blackboard.GetAllPredicates();
-        LoggingService.LogDebug($"🔧 FACTORY: Predicates in blackboard after registration: {predicatesAfter.Count}");
-        
-        var foundInBlackboard = predicatesAfter.Any(p => p.PredicateName == instance.PredicateName);
-        LoggingService.LogDebug($"🔧 FACTORY: Predicate found in blackboard after registration: {foundInBlackboard}");
-        
-        if (!foundInBlackboard)
+        if (registerInBlackboard)
         {
-            LoggingService.LogWarning($"⚠️ FACTORY WARNING: Predicate {instance.PredicateName} was not found in blackboard after SetPredicateSync!");
+            LoggingService.LogDebug($"🔧 FACTORY: Registering predicate with blackboard using key: {instance.PredicateName}");       
+            
+            blackboard.SetPredicateSync(instance.PredicateName, instance);
+            
+            // Check blackboard state after registration
+            var predicatesAfter = blackboard.GetAllPredicates();
+            LoggingService.LogDebug($"🔧 FACTORY: Predicates in blackboard after registration: {predicatesAfter.Count}");
+            
+            var foundInBlackboard = predicatesAfter.Any(p => p.PredicateName == instance.PredicateName);
+            LoggingService.LogDebug($"🔧 FACTORY: Predicate found in blackboard after registration: {foundInBlackboard}");
+            
+            if (!foundInBlackboard)
+            {
+                LoggingService.LogWarning($"⚠️ FACTORY WARNING: Predicate {instance.PredicateName} was not found in blackboard after SetPredicateSync!");
+            }
+            
+            LoggingService.LogInfo($"✅ FACTORY: Successfully registered predicate with key: {instance.PredicateName}");
         }
-        
-        LoggingService.LogInfo($"✅ FACTORY: Successfully registered predicate with key: {instance.PredicateName}");
+        else
+        {
+            LoggingService.LogDebug($"🔧 FACTORY: Skipping blackboard registration for goal-state predicate: {instance.PredicateName}");
+        }
         
         // Calculate and track timing
         var endTime = DateTime.Now;

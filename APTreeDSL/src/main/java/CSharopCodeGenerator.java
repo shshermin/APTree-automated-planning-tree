@@ -118,8 +118,12 @@ public class CSharopCodeGenerator {
                     cs.append("\n");
                     cs.append("        // Constructor with parameters\n");
                     cs.append("        public ").append(className).append("(");
+                    boolean first = true;
+                    // Required properties first
                     for (int i = 0; i < properties.size(); i++) {
-                        if (i > 0) cs.append(", ");
+                        if (properties.get(i).isIsOptional()) continue;
+                        if (!first) cs.append(", ");
+                        first = false;
                         String propType = mapTypeToCSharp(properties.get(i).getType().getName());
                         boolean isList = properties.get(i).isIsList();
                         String propName = toCamelCase(properties.get(i).getName());
@@ -129,6 +133,21 @@ public class CSharopCodeGenerator {
                             cs.append(propType).append(" ");
                         }
                         cs.append(propName);
+                    }
+                    // Optional properties with null defaults
+                    for (int i = 0; i < properties.size(); i++) {
+                        if (!properties.get(i).isIsOptional()) continue;
+                        if (!first) cs.append(", ");
+                        first = false;
+                        String propType = mapTypeToCSharp(properties.get(i).getType().getName());
+                        boolean isList = properties.get(i).isIsList();
+                        String propName = toCamelCase(properties.get(i).getName());
+                        if (isList) {
+                            cs.append("List<").append(propType).append("> ");
+                        } else {
+                            cs.append(propType).append(" ");
+                        }
+                        cs.append(propName).append(" = null");
                     }
                     cs.append(") : this()\n");
                     cs.append("        {\n");
@@ -142,9 +161,11 @@ public class CSharopCodeGenerator {
                     // Constructor with name and parameters
                     cs.append("\n");
                     cs.append("        // Constructor with name and parameters\n");
-                    cs.append("        public ").append(className).append("(string name, ");
+                    cs.append("        public ").append(className).append("(string name");
+                    // Required properties first
                     for (int i = 0; i < properties.size(); i++) {
-                        if (i > 0) cs.append(", ");
+                        if (properties.get(i).isIsOptional()) continue;
+                        cs.append(", ");
                         String propType = mapTypeToCSharp(properties.get(i).getType().getName());
                         boolean isList = properties.get(i).isIsList();
                         String propName = toCamelCase(properties.get(i).getName());
@@ -154,6 +175,20 @@ public class CSharopCodeGenerator {
                             cs.append(propType).append(" ");
                         }
                         cs.append(propName);
+                    }
+                    // Optional properties with null defaults
+                    for (int i = 0; i < properties.size(); i++) {
+                        if (!properties.get(i).isIsOptional()) continue;
+                        cs.append(", ");
+                        String propType = mapTypeToCSharp(properties.get(i).getType().getName());
+                        boolean isList = properties.get(i).isIsList();
+                        String propName = toCamelCase(properties.get(i).getName());
+                        if (isList) {
+                            cs.append("List<").append(propType).append("> ");
+                        } else {
+                            cs.append(propType).append(" ");
+                        }
+                        cs.append(propName).append(" = null");
                     }
                     cs.append(") : base(name)\n");
                     cs.append("        {\n");

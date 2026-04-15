@@ -64,8 +64,8 @@
     finallocstick7 - finalposition
     finallocstick8 - finalposition
     finallocstick9 - finalposition
-    finloccube1 - finalposition
-    finloccube2 - finalposition
+    finalloccube1 - finalposition
+    finalloccube2 - finalposition
   )
 
   (:init
@@ -124,8 +124,8 @@
     (objectfinalposition stick7 finallocstick7)
     (objectfinalposition stick8 finallocstick8)
     (objectfinalposition stick9 finallocstick9)
-    (objectfinalposition cube1 finloccube1)
-    (objectfinalposition cube2 finloccube2)
+    (objectfinalposition cube1 finalloccube1)
+    (objectfinalposition cube2 finalloccube2)
 
     ;; Table
     (fixed table1)

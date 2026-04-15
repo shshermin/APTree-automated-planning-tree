@@ -15,7 +15,7 @@ namespace BehaviorTree.Predicates {
             this.PredicateName = GetUniqueKey();
         }
 
-        public override List<string> GetParameterValues()
+        public override List<string> GetPDDLParameterValues()
         {
             return new List<string>
             {

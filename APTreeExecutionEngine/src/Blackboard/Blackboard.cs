@@ -30,7 +30,8 @@ public class Blackboard<T> : IDisposable where T : class
     Dictionary<FastName, Element>   ElementValues =    new ();
     Dictionary<FastName, Location>   LocationValues =    new ();
     Dictionary<FastName, Agent>   AgentValues =    new ();
-    private Dictionary<FastName, Predicate> PredicateValues = new();
+    private Dictionary<FastName, Predicate> InitialStatePredicates = new();
+    private Dictionary<FastName, Predicate> GoalStatePredicates = new();
     Dictionary<FastName, PActionNode> ActionValues = new();
     Dictionary<FastName, IBTNode> FlowNodeValues = new();
      Dictionary<FastName, State> StateValues = new();
@@ -185,11 +186,11 @@ public class Blackboard<T> : IDisposable where T : class
     // Get methods for predicates
     public Predicate GetPredicate(FastName key)
     {
-        if (!PredicateValues.ContainsKey(key))
+        if (!InitialStatePredicates.ContainsKey(key))
         {
             throw new ArgumentException($"Could not find predicate for {key}");
         }
-        return PredicateValues[key];
+        return InitialStatePredicates[key];
     }
 
      // Update corresponding Get methods
@@ -501,23 +502,23 @@ public List<PActionNode> GetAllActionInstances()
         string newPredicateStr = BlackboardExtensions.FormatPredicate(predicate);
         LoggingService.LogInfo($"🔧 BLACKBOARD_SECONDARY: Formatted predicate string: {newPredicateStr}");
         
-        LoggingService.LogInfo($"🔧 BLACKBOARD_SECONDARY: Current PredicateValues count: {PredicateValues.Count}");
+        LoggingService.LogInfo($"🔧 BLACKBOARD_SECONDARY: Current PredicateValues count: {InitialStatePredicates.Count}");
         
         // Check if identical predicate exists
-        if (!PredicateValues.ContainsKey(key))
+        if (!InitialStatePredicates.ContainsKey(key))
         {
             LoggingService.LogInfo($"🔧 BLACKBOARD_SECONDARY: Key {key} not found in PredicateValues, adding new predicate");
-            PredicateValues[key] = predicate;
-            LoggingService.LogInfo($"🔧 BLACKBOARD_SECONDARY: PredicateValues count after adding: {PredicateValues.Count}");
+            InitialStatePredicates[key] = predicate;
+            LoggingService.LogInfo($"🔧 BLACKBOARD_SECONDARY: PredicateValues count after adding: {InitialStatePredicates.Count}");
             LoggingService.LogSuccess($"🔧 BLACKBOARD_SECONDARY: Successfully added predicate with key: {key}");
         }
-        else if (BlackboardExtensions.FormatPredicate(PredicateValues[key]) != newPredicateStr)
+        else if (BlackboardExtensions.FormatPredicate(InitialStatePredicates[key]) != newPredicateStr)
         {
             LoggingService.LogInfo($"🔧 BLACKBOARD_SECONDARY: Key {key} exists but predicate content differs, updating predicate");
-            LoggingService.LogInfo($"🔧 BLACKBOARD_SECONDARY: Old predicate: {BlackboardExtensions.FormatPredicate(PredicateValues[key])}");
+            LoggingService.LogInfo($"🔧 BLACKBOARD_SECONDARY: Old predicate: {BlackboardExtensions.FormatPredicate(InitialStatePredicates[key])}");
             LoggingService.LogInfo($"🔧 BLACKBOARD_SECONDARY: New predicate: {newPredicateStr}");
-            PredicateValues[key] = predicate;
-            LoggingService.LogInfo($"🔧 BLACKBOARD_SECONDARY: PredicateValues count after updating: {PredicateValues.Count}");
+            InitialStatePredicates[key] = predicate;
+            LoggingService.LogInfo($"🔧 BLACKBOARD_SECONDARY: PredicateValues count after updating: {InitialStatePredicates.Count}");
             LoggingService.LogSuccess($"🔧 BLACKBOARD_SECONDARY: Successfully updated predicate with key: {key}");
         }
         else
@@ -526,15 +527,15 @@ public List<PActionNode> GetAllActionInstances()
         }
         
         // Final verification
-        var finalCount = PredicateValues.Count;
-        var keyExists = PredicateValues.ContainsKey(key);
+        var finalCount = InitialStatePredicates.Count;
+        var keyExists = InitialStatePredicates.ContainsKey(key);
         LoggingService.LogInfo($"🔧 BLACKBOARD_SECONDARY: Final verification - Count: {finalCount}, Key exists: {keyExists}");
     }
     
 
     public bool HasSimilarPredicate(Predicate newPredicate)
     {
-        foreach (var existingPredicate in PredicateValues.Values)
+        foreach (var existingPredicate in InitialStatePredicates.Values)
         {
             // First check if predicates have the same name
             if (existingPredicate.PredicateName == newPredicate.PredicateName)
@@ -630,7 +631,7 @@ public List<PActionNode> GetAllActionInstances()
         LoggingService.LogInfo($"   Type: {predicate.GetType().Name}");
         LoggingService.LogInfo($"   PredicateName: {predicate.PredicateName}");
         LoggingService.LogInfo($"   isNegated: {predicate.not}");
-        LoggingService.LogInfo($"   Current total predicates: {PredicateValues.Count}");
+        LoggingService.LogInfo($"   Current total predicates: {InitialStatePredicates.Count}");
         LoggingService.LogInfo("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
         
         // NEW: Clean up conflicting atAgent predicates when updating location
@@ -639,9 +640,9 @@ public List<PActionNode> GetAllActionInstances()
             CleanupConflictingAtAgentPredicates(predicate);
         }
         // Check if a predicate with the same key already exists
-        if (PredicateValues.ContainsKey(key))
+        if (InitialStatePredicates.ContainsKey(key))
         {
-            var existingPredicate = PredicateValues[key];
+            var existingPredicate = InitialStatePredicates[key];
             LoggingService.LogWarning($"⚠️ PREDICATE_UPDATE: Key '{key}' already exists - updating negation");
             LoggingService.LogInfo($"   Old isNegated: {existingPredicate.not} → New isNegated: {predicate.not}");
 
@@ -658,27 +659,27 @@ public List<PActionNode> GetAllActionInstances()
 
         // Check for identical predicate (different key but same content)
         string newPredicateStr = BlackboardExtensions.FormatPredicate(predicate);
-        if (PredicateValues.Values.Any(p => BlackboardExtensions.FormatPredicate(p) == newPredicateStr))
+        if (InitialStatePredicates.Values.Any(p => BlackboardExtensions.FormatPredicate(p) == newPredicateStr))
         {
             LoggingService.LogWarning($"⚠️ PREDICATE_DUPLICATE: Identical predicate content already exists: {newPredicateStr}");
             return;
         }
 
         // Store the predicate in the dictionary
-        PredicateValues[key] = predicate;
+        InitialStatePredicates[key] = predicate;
         
         // Log new predicate instance created
         BlackboardTrackingLogger.LogNewInstance(key.ToString(), predicate.GetType().Name, "Blackboard", $"Predicate instance: {predicate.PredicateName}");
         
         // Verify the predicate was actually added
-        var foundInDict = PredicateValues.ContainsKey(key);
+        var foundInDict = InitialStatePredicates.ContainsKey(key);
         if (!foundInDict)
         {
             LoggingService.LogError($"❌ PREDICATE_ERROR: Failed to add predicate with key {key}!");
         }
         else
         {
-            LoggingService.LogSuccess($"✅ PREDICATE_ADDED: Successfully stored predicate with key: {key} (Total: {PredicateValues.Count})");
+            LoggingService.LogSuccess($"✅ PREDICATE_ADDED: Successfully stored predicate with key: {key} (Total: {InitialStatePredicates.Count})");
         }
     }
 
@@ -851,7 +852,17 @@ public List<PActionNode> GetAllActionInstances()
     }
      public List<Predicate> GetAllPredicates()
     {
-        return PredicateValues.Values.ToList();
+        return InitialStatePredicates.Values.ToList();
+    }
+
+    public List<Predicate> GetGoalStatePredicates()
+    {
+        return GoalStatePredicates.Values.ToList();
+    }
+
+    public void SetGoalStatePredicate(FastName key, Predicate predicate)
+    {
+        GoalStatePredicates[key] = predicate;
     }
 
     /// <summary>
@@ -862,7 +873,7 @@ public List<PActionNode> GetAllActionInstances()
     {
         var truePredicates = new List<Predicate>();
 
-        foreach (var predicate in PredicateValues.Values)
+        foreach (var predicate in InitialStatePredicates.Values)
         {
             if (!predicate.not)
             {
@@ -889,7 +900,7 @@ public List<PActionNode> GetAllActionInstances()
     try
     {
         // Extract robot and location from the new predicate
-        var newLocationStr = newLocationPredicate.GetParameterValues();
+        var newLocationStr = newLocationPredicate.GetPDDLParameterValues();
         if (newLocationStr.Count < 2) return;
 
         string robotName = newLocationStr[0];
@@ -900,7 +911,7 @@ public List<PActionNode> GetAllActionInstances()
         // Find ALL blackboard keys that contain "atAgent" for this robot
         var keysToRemove = new List<FastName>();
         
-        foreach (var kvp in PredicateValues)
+        foreach (var kvp in InitialStatePredicates)
         {
             string keyName = kvp.Key.ToString();
             
@@ -915,7 +926,7 @@ public List<PActionNode> GetAllActionInstances()
         // Remove ALL conflicting atAgent predicates
         foreach (var key in keysToRemove)
         {
-            PredicateValues.Remove(key);
+            InitialStatePredicates.Remove(key);
             LoggingService.LogInfo($"   ✅ Removed: {key}");
         }
 

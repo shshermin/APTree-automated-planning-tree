@@ -1210,8 +1210,8 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
                 // Get the predicate type name (not the unique key)
                 string predicateName = predicate.PredicateTypeName;
                 
-                // Use the GetParameterValues method to get clean parameter values in correct order
-                var parameterValues = predicate.GetParameterValues();
+                // Use the GetPDDLParameterValues method to get clean parameter values in correct order
+                var parameterValues = predicate.GetPDDLParameterValues();
 
                 // Create PDDL format
                 string pddlFormat = $"({predicateName} {string.Join(" ", parameterValues)})";

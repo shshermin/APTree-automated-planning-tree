@@ -77,7 +77,7 @@ public abstract class Predicate
         LoggingService.LogInfo($"🔑 UNIQUE_KEY: Starting GetUniqueKey() for predicate type: {PredicateType}");
         
         // Get parameter values in the correct order
-        var parameterValues = GetParameterValues();
+        var parameterValues = GetPDDLParameterValues();
         LoggingService.LogInfo($"🔑 UNIQUE_KEY: Parameter values in order: {string.Join(", ", parameterValues)}");
         
         // Create unique key: {PredicateType}_{param1}_{param2}_{param3}...
@@ -94,7 +94,7 @@ public abstract class Predicate
     /// Override this method in derived classes to provide parameter values for key generation
     /// </summary>
     /// <returns>List of parameter values in the correct order</returns>
-    public virtual List<string> GetParameterValues()
+    public virtual List<string> GetPDDLParameterValues()
     {
         // Default implementation returns empty list
         // Derived classes should override this to provide their parameter values in correct order

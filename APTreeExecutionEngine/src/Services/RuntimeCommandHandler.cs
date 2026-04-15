@@ -134,7 +134,7 @@ namespace BehaviorTreeMainProject.Services
             foreach (var p in predicates.OrderBy(p => p.GetPredicateType()))
             {
                 string suffix = (!trueOnly && p.not) ? " [NEGATED]" : "";
-                LoggingService.LogInfo($"  {p.GetPredicateType()} {string.Join(" ", p.GetParameterValues())}{suffix}");
+                LoggingService.LogInfo($"  {p.GetPredicateType()} {string.Join(" ", p.GetPDDLParameterValues())}{suffix}");
             }
         }
 
@@ -164,7 +164,7 @@ namespace BehaviorTreeMainProject.Services
             var allPredicates = Blackboard.GetAllPredicates();
             var match = allPredicates.FirstOrDefault(p =>
                 p.GetPredicateType().Equals(predType, StringComparison.OrdinalIgnoreCase) &&
-                p.GetParameterValues().Select(v => v.ToLower()).SequenceEqual(
+                p.GetPDDLParameterValues().Select(v => v.ToLower()).SequenceEqual(
                     paramValues.Select(v => v.ToLower())));
 
             if (match != null)
@@ -260,9 +260,24 @@ namespace BehaviorTreeMainProject.Services
 
             var newCoord = new Coordinate(x, y, z);
 
-            var oldCoord = NailCoordinates.Lookup(obj1, obj2);
-            NailCoordinates.Update(obj1, obj2, newCoord);
-            string oldStr = oldCoord != null ? $"({oldCoord.X}, {oldCoord.Y}, {oldCoord.Z})" : "(none)";
+            // Find the matching NailLocation from goal state Nailed predicates and update its position
+            string oldStr = "(none)";
+            var goalPredicates = Blackboard.GetGoalStatePredicates();
+            var matchingNailed = goalPredicates
+                .OfType<ModelLoader.PredicateTypes.Nailed>()
+                .FirstOrDefault(p =>
+                {
+                    string p1 = p.obj1?.NameKey?.ToString()?.ToLower() ?? "";
+                    string p2 = p.obj2?.NameKey?.ToString()?.ToLower() ?? "";
+                    return (p1 == obj1 && p2 == obj2) || (p1 == obj2 && p2 == obj1);
+                });
+
+            if (matchingNailed?.nailloc is ModelLoader.ParameterTypes.NailLocation nailLoc)
+            {
+                if (nailLoc.Position != null)
+                    oldStr = $"({nailLoc.Position.X}, {nailLoc.Position.Y}, {nailLoc.Position.Z})";
+                nailLoc.Position = newCoord;
+            }
             LoggingService.LogSuccess($"✅ Updated nail coordinate ({obj1}, {obj2}): {oldStr} → ({x}, {y}, {z})");
 
             // Also update any live NailingML action instances that match
@@ -276,8 +291,8 @@ namespace BehaviorTreeMainProject.Services
                     string a2 = nailing.obj2?.NameKey?.ToString()?.ToLower() ?? "";
                     if ((a1 == obj1 && a2 == obj2) || (a1 == obj2 && a2 == obj1))
                     {
-                        var prop = typeof(NailingML).GetProperty("nailCoordinate");
-                        prop?.SetValue(nailing, newCoord);
+                        if (nailing.nailloc != null)
+                            nailing.nailloc.Position = newCoord;
                         liveUpdated++;
                     }
                 }

@@ -33,7 +33,7 @@
 
     ;; Locations - Final (base + active)
     finallocstick87 - finalposition
-    finloccube18 - finalposition
+    finalloccube18 - finalposition
     finallocstick88 - finalposition
   )
 
@@ -66,7 +66,7 @@
     (atfinalposition stick87)
     (atfinalposition cube18)
     (atplace stick87 finallocstick87)
-    (atplace cube18 finloccube18)
+    (atplace cube18 finalloccube18)
     (accessible stick87)
     (accessible cube18)
   )

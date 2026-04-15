@@ -714,15 +714,7 @@
       "type": "ObjectFinalPosition",
       "properties": {
         "not": false,
-        "pos": "finallocstick88",
-        "obj": "stick88"
-      }
-    },
-    {
-      "type": "ObjectFinalPosition",
-      "properties": {
-        "not": false,
-        "pos": "finloccube1",
+        "pos": "finalloccube1",
         "obj": "cube1"
       }
     },
@@ -730,7 +722,7 @@
       "type": "ObjectFinalPosition",
       "properties": {
         "not": false,
-        "pos": "finloccube2",
+        "pos": "finalloccube2",
         "obj": "cube2"
       }
     },
@@ -738,7 +730,7 @@
       "type": "ObjectFinalPosition",
       "properties": {
         "not": false,
-        "pos": "finloccube3",
+        "pos": "finalloccube3",
         "obj": "cube3"
       }
     },
@@ -746,7 +738,7 @@
       "type": "ObjectFinalPosition",
       "properties": {
         "not": false,
-        "pos": "finloccube4",
+        "pos": "finalloccube4",
         "obj": "cube4"
       }
     },
@@ -754,7 +746,7 @@
       "type": "ObjectFinalPosition",
       "properties": {
         "not": false,
-        "pos": "finloccube5",
+        "pos": "finalloccube5",
         "obj": "cube5"
       }
     },
@@ -762,7 +754,7 @@
       "type": "ObjectFinalPosition",
       "properties": {
         "not": false,
-        "pos": "finloccube6",
+        "pos": "finalloccube6",
         "obj": "cube6"
       }
     },
@@ -770,7 +762,7 @@
       "type": "ObjectFinalPosition",
       "properties": {
         "not": false,
-        "pos": "finloccube7",
+        "pos": "finalloccube7",
         "obj": "cube7"
       }
     },
@@ -778,7 +770,7 @@
       "type": "ObjectFinalPosition",
       "properties": {
         "not": false,
-        "pos": "finloccube8",
+        "pos": "finalloccube8",
         "obj": "cube8"
       }
     },
@@ -786,7 +778,7 @@
       "type": "ObjectFinalPosition",
       "properties": {
         "not": false,
-        "pos": "finloccube9",
+        "pos": "finalloccube9",
         "obj": "cube9"
       }
     },
@@ -794,7 +786,7 @@
       "type": "ObjectFinalPosition",
       "properties": {
         "not": false,
-        "pos": "finloccube10",
+        "pos": "finalloccube10",
         "obj": "cube10"
       }
     },
@@ -802,7 +794,7 @@
       "type": "ObjectFinalPosition",
       "properties": {
         "not": false,
-        "pos": "finloccube11",
+        "pos": "finalloccube11",
         "obj": "cube11"
       }
     },
@@ -810,7 +802,7 @@
       "type": "ObjectFinalPosition",
       "properties": {
         "not": false,
-        "pos": "finloccube12",
+        "pos": "finalloccube12",
         "obj": "cube12"
       }
     },
@@ -818,7 +810,7 @@
       "type": "ObjectFinalPosition",
       "properties": {
         "not": false,
-        "pos": "finloccube13",
+        "pos": "finalloccube13",
         "obj": "cube13"
       }
     },
@@ -826,7 +818,7 @@
       "type": "ObjectFinalPosition",
       "properties": {
         "not": false,
-        "pos": "finloccube14",
+        "pos": "finalloccube14",
         "obj": "cube14"
       }
     },
@@ -834,7 +826,7 @@
       "type": "ObjectFinalPosition",
       "properties": {
         "not": false,
-        "pos": "finloccube15",
+        "pos": "finalloccube15",
         "obj": "cube15"
       }
     },
@@ -842,7 +834,7 @@
       "type": "ObjectFinalPosition",
       "properties": {
         "not": false,
-        "pos": "finloccube16",
+        "pos": "finalloccube16",
         "obj": "cube16"
       }
     },
@@ -850,16 +842,8 @@
       "type": "ObjectFinalPosition",
       "properties": {
         "not": false,
-        "pos": "finloccube17",
+        "pos": "finalloccube17",
         "obj": "cube17"
-      }
-    },
-    {
-      "type": "ObjectFinalPosition",
-      "properties": {
-        "not": false,
-        "pos": "finloccube18",
-        "obj": "cube18"
       }
     },
     {
@@ -874,14 +858,6 @@
       "properties": {
         "not": false,
         "client": "robot1"
-      }
-    },
-    {
-      "type": "BelongsToLayer",
-      "properties": {
-        "not": false,
-        "lay": "layer0",
-        "obj": "table1"
       }
     },
     {
@@ -1714,22 +1690,6 @@
         "not": false,
         "lay": "layer22",
         "obj": "stick87"
-      }
-    },
-    {
-      "type": "BelongsToLayer",
-      "properties": {
-        "not": false,
-        "lay": "layer22",
-        "obj": "cube18"
-      }
-    },
-    {
-      "type": "BelongsToLayer",
-      "properties": {
-        "not": false,
-        "lay": "layer23",
-        "obj": "stick88"
       }
     },
     {
@@ -2353,13 +2313,6 @@
       "type": "Clear",
       "properties": {
         "not": false,
-        "obj": "stick88"
-      }
-    },
-    {
-      "type": "Clear",
-      "properties": {
-        "not": false,
         "obj": "cube1"
       }
     },
@@ -2473,13 +2426,6 @@
       "properties": {
         "not": false,
         "obj": "cube17"
-      }
-    },
-    {
-      "type": "Clear",
-      "properties": {
-        "not": false,
-        "obj": "cube18"
       }
     },
     {
@@ -3190,14 +3136,6 @@
       "type": "AtPlace",
       "properties": {
         "not": false,
-        "obj": "stick88",
-        "objLoc": "initlocstick88"
-      }
-    },
-    {
-      "type": "AtPlace",
-      "properties": {
-        "not": false,
         "obj": "cube1",
         "objLoc": "initloccube1"
       }
@@ -3328,14 +3266,6 @@
         "not": false,
         "obj": "cube17",
         "objLoc": "initloccube17"
-      }
-    },
-    {
-      "type": "AtPlace",
-      "properties": {
-        "not": false,
-        "obj": "cube18",
-        "objLoc": "initloccube18"
       }
     },
     {

@@ -74,6 +74,13 @@ namespace BehaviorTreeMainProject
             if (status == BTNodeResult.Failure)
                 return;
 
+            // Only show confirmation dialog when execution is active
+            bool executionActive = false;
+            try { executionActive = blackboard.GetBool(new FastName("ExecutionActive")); } catch { }
+
+            if (!executionActive)
+                return;
+
             var message = $"About to execute PickUpML:\n\n" +
                           $"  Instance: {InstanceName}\n" +
                           $"  Object:   {obj?.ID}\n" +

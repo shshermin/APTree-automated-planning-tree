@@ -56,7 +56,7 @@
     finallocstick70 - finalposition
     finallocstick71 - finalposition
     finallocstick72 - finalposition
-    finloccube15 - finalposition
+    finalloccube15 - finalposition
     finallocstick73 - finalposition
     finallocstick74 - finalposition
     finallocstick75 - finalposition
@@ -64,7 +64,7 @@
     finallocstick77 - finalposition
     finallocstick78 - finalposition
     finallocstick79 - finalposition
-    finloccube16 - finalposition
+    finalloccube16 - finalposition
   )
 
   (:init
@@ -122,7 +122,7 @@
     (objectfinalposition stick77 finallocstick77)
     (objectfinalposition stick78 finallocstick78)
     (objectfinalposition stick79 finallocstick79)
-    (objectfinalposition cube16 finloccube16)
+    (objectfinalposition cube16 finalloccube16)
 
     ;; Base elements (layer 16, pre-placed)
     (fixed stick69)
@@ -139,7 +139,7 @@
     (atplace stick70 finallocstick70)
     (atplace stick71 finallocstick71)
     (atplace stick72 finallocstick72)
-    (atplace cube15 finloccube15)
+    (atplace cube15 finalloccube15)
     (accessible stick69)
     (accessible stick70)
     (accessible stick71)
@@ -159,14 +159,14 @@
     (stacked stick76 stick72)
 
     ;; Nailed - layer 17
-    (nailed stick73 cube15)
-    (nailed stick73 stick69)
-    (nailed stick74 stick69)
-    (nailed stick74 stick70)
-    (nailed stick75 stick70)
-    (nailed stick75 stick71)
-    (nailed stick76 stick71)
-    (nailed stick76 stick72)
+    ;(nailed stick73 cube15)
+    ;(nailed stick73 stick69)
+    ;(nailed stick74 stick69)
+    ;(nailed stick74 stick70)
+    ;(nailed stick75 stick70)
+    ;(nailed stick75 stick71)
+    ;(nailed stick76 stick71)
+    ;(nailed stick76 stick72)
 
     ;; Stacked - layer 18
     (stacked cube16 stick73)

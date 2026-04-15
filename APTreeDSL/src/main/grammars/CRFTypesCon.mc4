@@ -45,7 +45,7 @@ BelongsToModule extends Predicate = not:["!"]? "BelongsToModule" "(" obj:Name@El
 PositionFree extends Predicate = not:["!"]? "PositionFree" "(" loc:Name@Location ")";
 Stacked extends Predicate = not:["!"]? "Stacked" "(" obj1:Name@Element obj2:Name@Element ")";
 Glued extends Predicate = not:["!"]? "Glued" "(" obj:Name@Element ")";
-Nailed extends Predicate = not:["!"]? "Nailed" "(" obj1:Name@Element obj2:Name@Element nailloc:Name@Location ")";
+Nailed extends Predicate = not:["!"]? "Nailed" "(" obj1:Name@Element obj2:Name@Element (nailloc:Name@Location)? ")";
 VgEmpty extends Predicate = not:["!"]? "VgEmpty" "(" client:Name@Agent ")";
 AtTool extends Predicate = not:["!"]? "AtTool" "(" tool:Name@Tool toolLoc:Name@Location ")";
 RobotEquipped extends Predicate = not:["!"]? "RobotEquipped" "(" client:Name@Agent ")";
@@ -122,6 +122,7 @@ astrule StackOnTwoHL = method public crftypesdef._ast.ASTActionLevel getActLevel
 ChangeEndeffectorHL extends PActionNode = "Action" "ChangeEndeffectorHL" name:Name "(" client:Name@Robot oldtool:Name@Tool newtool:Name@Tool ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
 astrule ChangeEndeffectorHL = method public crftypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=crftypesdef._ast.ASTActionLevel.HIGHLEVEL; } return actLevel; } ;
 // === END GENERATED ACTION RULES ===
+
 
 
 

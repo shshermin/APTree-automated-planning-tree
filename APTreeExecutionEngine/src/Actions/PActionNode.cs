@@ -143,7 +143,7 @@ public abstract class PActionNode : ActionNode
                 // Log predicate parameters if available
                 try
                 {
-                    var parameters = predicate.GetParameterValues();
+                    var parameters = predicate.GetPDDLParameterValues();
                     if (parameters != null && parameters.Count > 0)
                     {
                         LoggingService.LogInfo($"🔧 APPLY_EFFECTS: Predicate parameters: {string.Join(", ", parameters)}");

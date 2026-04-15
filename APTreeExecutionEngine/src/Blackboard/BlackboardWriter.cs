@@ -208,6 +208,37 @@ public class BlackboardWriter
     }
 
     /// <summary>
+    /// Registers goal state predicates from a JSON file into the blackboard's GoalStatePredicates dictionary.
+    /// Uses the same JSON format as initial state but stores predicates separately.
+    /// </summary>
+    /// <param name="goalStateFile">Path to the goal state predicates JSON file</param>
+    public void RegisterGoalStatePredicates(string goalStateFile)
+    {
+        LoggingService.LogInfo("\n=== REGISTERING GOAL STATE PREDICATES ===");
+        LoggingService.LogInfo($"\ud83d\udcc1 File: {goalStateFile}");
+
+        List<Predicate> goalPredicates = ParseMontiCorePredicateFile(goalStateFile, blackboard, registerInBlackboard: false);
+
+        foreach (var predicate in goalPredicates)
+        {
+            blackboard.SetGoalStatePredicate(predicate.PredicateName, predicate);
+        }
+
+        LoggingService.LogInfo($"\n=== GOAL STATE PREDICATES REGISTERED ===");
+        LoggingService.LogInfo($"  \u2705 Successfully registered: {goalPredicates.Count} goal state predicates");
+
+        var allGoal = blackboard.GetGoalStatePredicates();
+        if (allGoal.Count > 0)
+        {
+            LoggingService.LogInfo($"  \ud83d\udccb Goal state predicates in blackboard:");
+            foreach (var pred in allGoal)
+            {
+                LoggingService.LogInfo($"    - {pred.PredicateName} ({pred.GetType().Name}) - isNegated: {pred.not}");
+            }
+        }
+    }
+
+    /// <summary>
     /// Registers action instances from action definition strings
     /// </summary>
     /// <param name="actionDefinitionStrings">Array of action definition strings</param>
@@ -613,7 +644,7 @@ public class BlackboardWriter
     /// <param name="filePath">Path to the InitialStatePredicates.json file</param>
     /// <param name="blackboard">The blackboard to get entities from</param>
     /// <returns>List of created predicate instances</returns>
-    public  List<Predicate> ParseMontiCorePredicateFile(string filePath, Blackboard<FastName> blackboard)
+    public  List<Predicate> ParseMontiCorePredicateFile(string filePath, Blackboard<FastName> blackboard, bool registerInBlackboard = true)
     {
         List<Predicate> createdInstances = new List<Predicate>();
         
@@ -684,7 +715,7 @@ public class BlackboardWriter
                     LoggingService.LogInfo($"  📝 isNegated: {isNegated}");
                     
                     // Create the predicate instance using the factory
-                    Predicate instance = predicateFactory.CreatePredicateInstance(predicateName, parameterMappings, blackboard);
+                    Predicate instance = predicateFactory.CreatePredicateInstance(predicateName, parameterMappings, blackboard, registerInBlackboard);
                     
                     if (instance != null)
                     {

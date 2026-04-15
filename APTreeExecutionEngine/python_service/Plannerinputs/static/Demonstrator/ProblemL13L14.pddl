@@ -63,8 +63,8 @@
     finallocstick52 - finalposition
     finallocstick53 - finalposition
     finallocstick54 - finalposition
-    finloccube11 - finalposition
-    finloccube12 - finalposition
+    finalloccube11 - finalposition
+    finalloccube12 - finalposition
     finallocstick55 - finalposition
     finallocstick56 - finalposition
     finallocstick57 - finalposition
@@ -74,8 +74,8 @@
     finallocstick61 - finalposition
     finallocstick62 - finalposition
     finallocstick63 - finalposition
-    finloccube13 - finalposition
-    finloccube14 - finalposition
+    finalloccube13 - finalposition
+    finalloccube14 - finalposition
   )
 
   (:init
@@ -146,8 +146,8 @@
     (objectfinalposition stick61 finallocstick61)
     (objectfinalposition stick62 finallocstick62)
     (objectfinalposition stick63 finallocstick63)
-    (objectfinalposition cube13 finloccube13)
-    (objectfinalposition cube14 finloccube14)
+    (objectfinalposition cube13 finalloccube13)
+    (objectfinalposition cube14 finalloccube14)
 
     ;; Base elements (layer 12, pre-placed)
     (fixed stick51)
@@ -166,8 +166,8 @@
     (atplace stick52 finallocstick52)
     (atplace stick53 finallocstick53)
     (atplace stick54 finallocstick54)
-    (atplace cube11 finloccube11)
-    (atplace cube12 finloccube12)
+    (atplace cube11 finalloccube11)
+    (atplace cube12 finalloccube12)
     (accessible stick51)
     (accessible stick52)
     (accessible stick53)
@@ -190,16 +190,16 @@
     (stacked stick59 stick54)
 
     ;; Nailed - layer 13
-   ; (nailed stick55 cube11)
-    ;(nailed stick55 stick51)
-   ; (nailed stick56 stick51)
-   ; (nailed stick56 stick52)
-   ; (nailed stick57 stick52)
-   ; (nailed stick57 stick53)
-   ; (nailed stick58 stick53)
-    ;(nailed stick58 stick54)
-   ; (nailed stick59 cube12)
-   ; (nailed stick59 stick54)
+    (nailed stick55 cube11)
+    (nailed stick55 stick51)
+    (nailed stick56 stick51)
+    (nailed stick56 stick52)
+    (nailed stick57 stick52)
+    (nailed stick57 stick53)
+    (nailed stick58 stick53)
+    (nailed stick58 stick54)
+    (nailed stick59 cube12)
+    (nailed stick59 stick54)
 
     ;; Stacked - layer 14
     (stacked cube13 stick55)

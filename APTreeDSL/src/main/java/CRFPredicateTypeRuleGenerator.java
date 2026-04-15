@@ -126,7 +126,7 @@ public class CRFPredicateTypeRuleGenerator {
                 String pName = prop.getName();
                 String pType = prop.getType().getName();
                 boolean isOptional = prop.isIsOptional();
-                boolean isGeom = prop.isIsGeom();
+                boolean isCont = prop.isIsCont();
 
                 // Build the field fragment: pName:Name@pType
                 String field = pName + ":Name@" + pType;
@@ -141,8 +141,8 @@ public class CRFPredicateTypeRuleGenerator {
                     rule.append(field);
                 }
 
-                if (isGeom) {
-                    System.out.println("  [geom] " + predName + "." + pName + " marked as geometric (excluded from task planning)");
+                if (isCont) {
+                    System.out.println("  [Cont] " + predName + "." + pName + " marked as continuous (excluded from task planning)");
                 }
             }
 

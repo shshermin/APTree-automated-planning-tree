@@ -151,7 +151,7 @@ namespace BehaviorTreeMainProject
 
             // ── NailingML ──
             var nailing = new LLSubtreeTemplate("NailingML");
-            nailing.Steps.Add(new LLStep("NailingLL") { Parameters = { ["obj"] = "{obj1}", ["base"] = "{obj2}", ["robot"] = "{client}", ["tool"] = "{ng}", ["coordinate"] = "{nailCoordinate}" } });
+            nailing.Steps.Add(new LLStep("NailingLL") { Parameters = { ["obj"] = "{obj1}", ["base"] = "{obj2}", ["robot"] = "{client}", ["tool"] = "{ng}", ["nailloc"] = "{nailloc}" } });
             // nailing.Steps.Add(new LLStep("LiftLL") { Parameters = { ["robot"] = "{client}" } });
             _templates["NailingML"] = nailing;
 
@@ -254,6 +254,11 @@ namespace BehaviorTreeMainProject
         /// </summary>
         private void InjectLLSubtree(PActionNode mlAction, LLSubtreeTemplate template)
         {
+            // Resolve any null Location parameters from goal state before extracting parameters
+            var paramResolver = new DecoratorParameterResolver(mlAction);
+            paramResolver.SetOwiningTree(mlAction.OwningTree);
+            paramResolver.Tick(0f);
+
             // Collect parameter values from the ML action via reflection
             var mlParamStrings = ExtractMLActionParameters(mlAction);
             var mlParamObjects = ExtractMLActionParameterObjects(mlAction);
@@ -305,6 +310,8 @@ namespace BehaviorTreeMainProject
 
             // Attach recovery decorator so operator can retry/replan on LL failure
             mlAction.AddDecorator(new DecoratorRecovery(mlAction));
+            // Attach parameter resolver so Location params are re-resolved on re-tick
+            mlAction.AddDecorator(paramResolver);
 
             LogMessage($"✅ ServiceLLSubtreeInject: Attached LL subtree ({template.Steps.Count} steps) + recovery decorator to {mlAction.InstanceName}");
         }

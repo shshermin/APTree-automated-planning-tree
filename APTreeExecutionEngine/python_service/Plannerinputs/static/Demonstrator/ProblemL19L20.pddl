@@ -50,13 +50,13 @@
     finallocstick77 - finalposition
     finallocstick78 - finalposition
     finallocstick79 - finalposition
-    finloccube16 - finalposition
+    finalloccube16 - finalposition
     finallocstick80 - finalposition
     finallocstick81 - finalposition
     finallocstick82 - finalposition
     finallocstick83 - finalposition
     finallocstick84 - finalposition
-    finloccube17 - finalposition
+    finalloccube17 - finalposition
   )
 
   (:init
@@ -104,7 +104,7 @@
     (objectfinalposition stick82 finallocstick82)
     (objectfinalposition stick83 finallocstick83)
     (objectfinalposition stick84 finallocstick84)
-    (objectfinalposition cube17 finloccube17)
+    (objectfinalposition cube17 finalloccube17)
 
     ;; Base elements (layer 18, pre-placed)
     (fixed stick77)
@@ -118,7 +118,7 @@
     (atplace stick77 finallocstick77)
     (atplace stick78 finallocstick78)
     (atplace stick79 finallocstick79)
-    (atplace cube16 finloccube16)
+    (atplace cube16 finalloccube16)
     (accessible stick77)
     (accessible stick78)
     (accessible stick79)

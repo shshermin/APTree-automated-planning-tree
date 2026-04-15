@@ -86,7 +86,7 @@ public class DecoratorRecovery : Decorator
                 var predicates = blackboard.GetTruePredicates();
                 LoggingService.LogInfo($"--- True predicates ({predicates.Count}) ---");
                 foreach (var p in predicates.OrderBy(p => p.GetPredicateType()))
-                    LoggingService.LogInfo($"  {p.GetPredicateType()} {string.Join(" ", p.GetParameterValues())}");
+                    LoggingService.LogInfo($"  {p.GetPredicateType()} {string.Join(" ", p.GetPDDLParameterValues())}");
             }
             else if (input.Equals("list all", StringComparison.OrdinalIgnoreCase))
             {
@@ -95,7 +95,7 @@ public class DecoratorRecovery : Decorator
                 foreach (var p in predicates.OrderBy(p => p.GetPredicateType()))
                 {
                     string neg = p.not ? " [NEGATED]" : "";
-                    LoggingService.LogInfo($"  {p.GetPredicateType()} {string.Join(" ", p.GetParameterValues())}{neg}");
+                    LoggingService.LogInfo($"  {p.GetPredicateType()} {string.Join(" ", p.GetPDDLParameterValues())}{neg}");
                 }
             }
             else if (input.StartsWith("set ", StringComparison.OrdinalIgnoreCase))
@@ -134,7 +134,7 @@ public class DecoratorRecovery : Decorator
         var allPredicates = blackboard.GetAllPredicates();
         var match = allPredicates.FirstOrDefault(p =>
             p.GetPredicateType().Equals(predType, StringComparison.OrdinalIgnoreCase) &&
-            p.GetParameterValues().Select(v => v.ToLower()).SequenceEqual(
+            p.GetPDDLParameterValues().Select(v => v.ToLower()).SequenceEqual(
                 paramValues.Select(v => v.ToLower())));
 
         if (match != null)

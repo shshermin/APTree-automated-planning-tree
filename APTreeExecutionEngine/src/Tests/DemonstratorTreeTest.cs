@@ -67,6 +67,11 @@ namespace BehaviorTreeMainProject
                     "src", "ModelLoader", "DemonstratorInitialStatePredicates.json");
                 blackboardWriter.RegisterAllInstances(setupObjectsFile, initialStateFile, actionInstancesFile);
 
+                string goalStateFile = Path.Combine(
+                    AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..",
+                    "src", "ModelLoader", "DemonstratorGoalState.json");
+                blackboardWriter.RegisterGoalStatePredicates(goalStateFile);
+
                 BlackboardSummaryLogger.CaptureBlackboardState(blackboard);
 
                 // ── 2. Create behavior tree ──
@@ -92,7 +97,7 @@ namespace BehaviorTreeMainProject
                 for (int i = 0; i < 12; i++) blackboard.CassetteSubtreeCompleted[i] = false;
 
                 // Enable LL execution — ServiceLLSubtreeInject gates on this flag
-                blackboard.SetBool(new FastName("ExecutionActive"), true);
+                blackboard.SetBool(new FastName("ExecutionActive"), false);
 
                 // ── Register Demonstrator-specific ML subtree config ──
                 // When HL actions are decomposed, ServiceSubtreeInject should use

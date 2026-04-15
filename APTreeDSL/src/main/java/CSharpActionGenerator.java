@@ -81,21 +81,26 @@ public class CSharpActionGenerator {
                 cs.append("    public class ").append(className).append(" : ").append(superClass).append("\n");
                 cs.append("    {\n");
 
-                // Properties/Arguments of the action with private set
+                // Properties/Arguments of the action
+                // Cont properties get public set (resolved at runtime by decorators)
+                // Regular properties get private set
                 java.util.List<ASTProperty> propertyList = def.getPropertyList();
                 for (ASTProperty prop : propertyList) {
                     String propName = prop.getName();
                     String propType = mapTypeToCSharp(prop.getType().getName());
                     boolean isList = prop.isIsList();
+                    boolean isCont = prop.isIsCont();
 
-                    cs.append("        // Parameter: ").append(propName).append(" of type ").append(propType).append("\n");
+                    cs.append("        // Parameter: ").append(propName).append(" of type ").append(propType);
+                    if (isCont) cs.append(" [Cont]");
+                    cs.append("\n");
                     cs.append("        public ");
                     if (isList) {
                         cs.append("List<").append(propType).append("> ");
                     } else {
                         cs.append(propType).append(" ");
                     }
-                    cs.append(propName).append(" { get; private set; }\n\n");
+                    cs.append(propName).append(isCont ? " { get; set; }" : " { get; private set; }").append("\n\n");
                 }
 
                 // Add preconditions and effects state fields
@@ -103,9 +108,11 @@ public class CSharpActionGenerator {
                 cs.append("        private State preconditions;\n");
                 cs.append("        private State effects;\n\n");
 
-                // Constructor
+                // Constructor — required properties first, then optional with defaults
                 cs.append("        public ").append(className).append("(string actionType, string instanceName, Blackboard<FastName> blackboard");
+                // Required properties first
                 for (ASTProperty prop : propertyList) {
+                    if (prop.isIsOptional()) continue;
                     String propName = prop.getName();
                     String propType = mapTypeToCSharp(prop.getType().getName());
                     boolean isList = prop.isIsList();
@@ -116,6 +123,20 @@ public class CSharpActionGenerator {
                         cs.append(propType).append(" ");
                     }
                     cs.append(propName);
+                }
+                // Optional properties with null defaults
+                for (ASTProperty prop : propertyList) {
+                    if (!prop.isIsOptional()) continue;
+                    String propName = prop.getName();
+                    String propType = mapTypeToCSharp(prop.getType().getName());
+                    boolean isList = prop.isIsList();
+                    cs.append(", ");
+                    if (isList) {
+                        cs.append("List<").append(propType).append("> ");
+                    } else {
+                        cs.append(propType).append(" ");
+                    }
+                    cs.append(propName).append(" = null");
                 }
                 cs.append(")\n");
                 cs.append("            : base(actionType, instanceName, blackboard)\n");

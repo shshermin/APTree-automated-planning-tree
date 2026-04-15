@@ -352,6 +352,7 @@ Define Action NailingML {
         client: Robot
         ng: StaplerGun
         rp: RobotPosition
+        Cont nailloc : Location ?
     }
     Preconditions {
         AtAgent(client, rp)
