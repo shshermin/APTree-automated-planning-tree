@@ -403,6 +403,7 @@ function LiveLayoutSection({
           actionTypes={actionTypes}
           actionInstances={actionInstances}
           fitViewNodeIds={fitIds}
+          fitViewMaxZoom={0.6}
           readOnly
           onDropNode={() => {}}
         />
@@ -430,8 +431,13 @@ function LiveSection({
     [`${flowNode.id}:${subtreeNodes.length > 1}`],
   );
 
+  const compact = subtreeNodes.length <= 1;
+
   return (
-    <div className="right-panel__section">
+    <div
+      className="right-panel__section"
+      style={compact ? { flex: 0, maxHeight: 160 } : undefined}
+    >
       <div className="right-panel__section-label">
         {flowNode.name || flowNode.typeLabel}
       </div>

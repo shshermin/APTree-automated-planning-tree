@@ -816,16 +816,17 @@ function EditorCanvasInner(props: EditorCanvasProps) {
   const fitViewIdsKey = fitViewNodeIds?.join(",") ?? "";
   useEffect(() => {
     if (!fitViewNodeIds?.length) return;
+    const opts = {
+      nodes: fitViewNodeIds.map((id) => ({ id })),
+      padding: 0.25,
+      maxZoom: fitViewMaxZoom ?? 1,
+      duration: 300,
+    };
     // Small delay so ReactFlow has laid out the nodes first
-    const timer = setTimeout(() => {
-      reactFlowInstance.fitView({
-        nodes: fitViewNodeIds.map((id) => ({ id })),
-        padding: 0.25,
-        maxZoom: fitViewMaxZoom ?? 1,
-        duration: 300,
-      });
-    }, 50);
-    return () => clearTimeout(timer);
+    const t1 = setTimeout(() => { reactFlowInstance.fitView(opts); }, 50);
+    // Second call after layout has fully settled (fixes compact containers)
+    const t2 = setTimeout(() => { reactFlowInstance.fitView(opts); }, 350);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fitViewIdsKey, fitViewMaxZoom, reactFlowInstance]);
 
@@ -1266,7 +1267,7 @@ function EditorCanvasInner(props: EditorCanvasProps) {
         minZoom={0.05}
         maxZoom={4}
         panOnDrag
-        fitView
+        fitView={!fitViewNodeIds?.length}
         nodesDraggable={!readOnly}
         nodesConnectable={!readOnly}
         nodesFocusable={!readOnly}
