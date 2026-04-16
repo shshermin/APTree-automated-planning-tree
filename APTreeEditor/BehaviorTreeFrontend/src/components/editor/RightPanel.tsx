@@ -319,8 +319,8 @@ export default function RightPanel({
                   nodes={selectedLayout.nodes}
                   connections={selectedLayout.connections}
                   tickStatus={tickStatus}
-                  actionTypes={actionTypes}
-                  actionInstances={actionInstances}
+                  actionTypes={[...(actionTypes ?? []), ...selectedLayout.discoveredActionTypes]}
+                  actionInstances={[...(actionInstances ?? []), ...selectedLayout.discoveredActionInstances]}
                   fitViewNodeIds={selectedLayout.nodes.map((n) => n.id)}
                   readOnly
                   onDropNode={() => {}}
@@ -356,8 +356,8 @@ export default function RightPanel({
                       name={name}
                       layout={layout}
                       tickStatus={tickStatus}
-                      actionTypes={actionTypes}
-                      actionInstances={actionInstances}
+                      actionTypes={[...(actionTypes ?? []), ...layout.discoveredActionTypes]}
+                      actionInstances={[...(actionInstances ?? []), ...layout.discoveredActionInstances]}
                     />
                   );
                 })}

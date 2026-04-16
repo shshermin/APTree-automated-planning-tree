@@ -156,6 +156,10 @@ export type SubtreeLayout = {
   nodes: CanvasNode[];
   connections: NodeConnection[];
   rootNodeId: string | null;
+  /** Action types discovered while laying out this subtree (not in the main sidebar). */
+  discoveredActionTypes: ActionType[];
+  /** Action instances discovered while laying out this subtree. */
+  discoveredActionInstances: ActionInstance[];
 };
 
 /** Raw subtree entry stored for lazy layout computation. */
@@ -257,6 +261,8 @@ export function computeSubtreeLayout(
       targetNodeId: idMap.get(c.targetNodeId) ?? prefix + c.targetNodeId,
     })),
     rootNodeId: result.graph.rootNodeId ? prefix + result.graph.rootNodeId : null,
+    discoveredActionTypes: result.discoveredActionTypes,
+    discoveredActionInstances: result.discoveredActionInstances,
   };
 }
 

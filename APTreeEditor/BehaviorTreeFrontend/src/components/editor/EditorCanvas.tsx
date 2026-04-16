@@ -491,7 +491,7 @@ function BehaviorTreeNode({ id, data, selected }: NodeProps<BehaviorNodeData>) {
                 });
               }}
             >
-              {entry.name}
+              {entry.value ?? entry.name}
             </button>
           ))}
           {actionParameterSummaries.length > 2 ? (
@@ -829,6 +829,19 @@ function EditorCanvasInner(props: EditorCanvasProps) {
     return () => { clearTimeout(t1); clearTimeout(t2); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fitViewIdsKey, fitViewMaxZoom, reactFlowInstance]);
+
+  // Auto-fit when the first nodes arrive on an initially-empty canvas (real-time build).
+  // Only triggers once: when nodes transition from 0 → >0.
+  const prevNodeCountRef = useRef(nodes.length);
+  useEffect(() => {
+    const visibleCount = nodes.filter((n) => !n.hidden).length;
+    if (prevNodeCountRef.current === 0 && visibleCount > 0) {
+      const t1 = setTimeout(() => { reactFlowInstance.fitView({ padding: 0.25, maxZoom: 1, duration: 300 }); }, 50);
+      const t2 = setTimeout(() => { reactFlowInstance.fitView({ padding: 0.25, maxZoom: 1, duration: 300 }); }, 350);
+      return () => { clearTimeout(t1); clearTimeout(t2); };
+    }
+    prevNodeCountRef.current = visibleCount;
+  }, [nodes, reactFlowInstance]);
 
   const separatorFlowNodes = useMemo<FlowNode<SeparatorNodeData>[]>(() => {
     if (!separators.length) {

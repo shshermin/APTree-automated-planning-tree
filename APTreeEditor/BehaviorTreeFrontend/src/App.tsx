@@ -402,68 +402,90 @@ function App() {
     actionTypesRef.current = actionTypes;
   });
 
-  const handleModelUpdated = useCallback(async () => {
-    try {
-      const modelRes = await fetch("/api/tree/model");
-      if (!modelRes.ok) return;
-      const modelText = await modelRes.text();
+  // Refs used to debounce and abort in-flight model-update requests.
+  const modelUpdateAbortRef = useRef<AbortController | null>(null);
+  const modelUpdateTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const addActionTypesRef = useRef(addActionTypes);
+  const addActionInstancesRef = useRef(addActionInstances);
+  useEffect(() => { addActionTypesRef.current = addActionTypes; });
+  useEffect(() => { addActionInstancesRef.current = addActionInstances; });
 
-      const validateRes = await fetch("/api/aptree/validate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ modelText, instancesText: null, jarPath: null }),
-      });
-      if (!validateRes.ok) return;
-
-      const json: unknown = await validateRes.json().catch(() => null);
-      const parsed = normalizeAptreeValidateResponse(json);
-      if (!parsed.ok) return;
-
-      const candidateGraphs =
-        parsed.graphs && parsed.graphs.length > 0
-          ? parsed.graphs
-          : parsed.graph
-            ? [parsed.graph]
-            : [];
-      if (!candidateGraphs.length) return;
-
-      const importResult =
-        candidateGraphs.length > 1
-          ? aptreeGraphsToCanvasGraph(candidateGraphs, actionTypesRef.current ?? [])
-          : aptreeGraphToCanvasGraph(candidateGraphs[0]!, actionTypesRef.current ?? []);
-
-      if (importResult.discoveredActionTypes.length > 0) {
-        addActionTypes(importResult.discoveredActionTypes);
-      }
-      if (importResult.discoveredActionInstances.length > 0) {
-        addActionInstances(importResult.discoveredActionInstances);
-      }
-
-      // Merge: preserve positions of existing nodes, add newly planned nodes
-      startTransition(() => {
-        setGraph((prev) => {
-          const existingById = new Map(prev.nodes.map((n) => [n.id, n]));
-          const mergedNodes = importResult.graph.nodes.map((newNode) => {
-            const existing = existingById.get(newNode.id);
-            if (existing) {
-              return { ...newNode, x: existing.x, y: existing.y, width: existing.width, height: existing.height };
-            }
-            return newNode;
-          });
-          return {
-            nodes: mergedNodes,
-            connections: importResult.graph.connections,
-            rootNodeId: importResult.graph.rootNodeId ?? prev.rootNodeId,
-          };
-        });
-        if (importResult.rawSubtreeGraphs.size > 0) {
-          setRawSubtreeGraphs(importResult.rawSubtreeGraphs);
-        }
-      });
-    } catch {
-      // silently ignore — live model updates are best-effort
+  const handleModelUpdated = useCallback(() => {
+    // Cancel any pending debounce timer and abort the in-flight request.
+    if (modelUpdateTimerRef.current !== null) {
+      clearTimeout(modelUpdateTimerRef.current);
     }
-  }, [addActionTypes, addActionInstances]);
+    modelUpdateAbortRef.current?.abort();
+
+    modelUpdateTimerRef.current = setTimeout(async () => {
+      const controller = new AbortController();
+      modelUpdateAbortRef.current = controller;
+
+      try {
+        const modelRes = await fetch("/api/tree/model", { signal: controller.signal });
+        if (!modelRes.ok) return;
+        const modelText = await modelRes.text();
+
+        const validateRes = await fetch("/api/aptree/validate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ modelText, instancesText: null, jarPath: null }),
+          signal: controller.signal,
+        });
+        if (!validateRes.ok) return;
+
+        const json: unknown = await validateRes.json().catch(() => null);
+        const parsed = normalizeAptreeValidateResponse(json);
+        if (!parsed.ok) return;
+
+        const candidateGraphs =
+          parsed.graphs && parsed.graphs.length > 0
+            ? parsed.graphs
+            : parsed.graph
+              ? [parsed.graph]
+              : [];
+        if (!candidateGraphs.length) return;
+
+        const importResult =
+          candidateGraphs.length > 1
+            ? aptreeGraphsToCanvasGraph(candidateGraphs, actionTypesRef.current ?? [])
+            : aptreeGraphToCanvasGraph(candidateGraphs[0]!, actionTypesRef.current ?? []);
+
+        if (importResult.discoveredActionTypes.length > 0) {
+          addActionTypesRef.current(importResult.discoveredActionTypes);
+        }
+        if (importResult.discoveredActionInstances.length > 0) {
+          addActionInstancesRef.current(importResult.discoveredActionInstances);
+        }
+
+        // Merge: preserve positions of existing nodes, add newly planned nodes
+        startTransition(() => {
+          setGraph((prev) => {
+            const existingById = new Map(prev.nodes.map((n) => [n.id, n]));
+            const mergedNodes = importResult.graph.nodes.map((newNode) => {
+              const existing = existingById.get(newNode.id);
+              if (existing) {
+                return { ...newNode, x: existing.x, y: existing.y, width: existing.width, height: existing.height };
+              }
+              return newNode;
+            });
+            return {
+              nodes: mergedNodes,
+              connections: importResult.graph.connections,
+              rootNodeId: importResult.graph.rootNodeId ?? prev.rootNodeId,
+            };
+          });
+          if (importResult.rawSubtreeGraphs.size > 0) {
+            setRawSubtreeGraphs(importResult.rawSubtreeGraphs);
+          }
+        });
+      } catch (err) {
+        // AbortError is expected when a newer update supersedes this one.
+        if (err instanceof Error && err.name === "AbortError") return;
+        // silently ignore all other errors — live model updates are best-effort
+      }
+    }, 150);
+  }, []);
 
   const tickStatus = useTickStatus(handleModelUpdated);
 
@@ -569,6 +591,7 @@ function App() {
   const handleChangePredicateGroup = useCallback((group: PredicateGroup) => {
     setPredicateModalState((prev) => (prev ? { ...prev, group } : prev));
   }, []);
+
 
   const graphRef = useRef(graph);
   const separatorsRef = useRef(separators);
