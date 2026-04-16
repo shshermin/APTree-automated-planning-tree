@@ -3,10 +3,12 @@ import { startTransition, useCallback, useEffect, useMemo, useRef, useState } fr
 /**
  * Connects to the backend WebSocket at /ws/tick.
  * Returns a live map of nodeName → tick status ("Running" | "Success" | "Failure").
- * Calls onModelUpdated() whenever the backend broadcasts a modelUpdated message.
+ * Calls onModelUpdated(graphPayload?) whenever the backend broadcasts a modelUpdated message.
+ * When the backend has already parsed the .bt file it embeds the graph JSON as graphPayload,
+ * allowing the frontend to skip the HTTP validate round-trip entirely.
  */
 function useTickStatus(
-  onModelUpdated: () => void,
+  onModelUpdated: (graphPayload?: unknown) => void,
 ): Record<string, string> {
   const [tickStatus, setTickStatus] = useState<Record<string, string>>({});
   const wsRef = useRef<WebSocket | null>(null);
@@ -45,7 +47,9 @@ function useTickStatus(
           const msg = JSON.parse(event.data as string) as Record<string, unknown>;
 
           if (msg.type === "modelUpdated") {
-            onModelUpdatedRef.current();
+            // Pass along the embedded graph payload (present when the backend has already
+            // run the jar — undefined when falling back to the plain notification).
+            onModelUpdatedRef.current(msg.graphPayload);
             return;
           }
 
@@ -427,13 +431,68 @@ function App() {
   useEffect(() => { addActionTypesRef.current = addActionTypes; });
   useEffect(() => { addActionInstancesRef.current = addActionInstances; });
 
-  const handleModelUpdated = useCallback(() => {
+  const handleModelUpdated = useCallback((graphPayload?: unknown) => {
     // Cancel any pending debounce timer and abort the in-flight request.
     if (modelUpdateTimerRef.current !== null) {
       clearTimeout(modelUpdateTimerRef.current);
     }
     modelUpdateAbortRef.current?.abort();
 
+    // Helper: process a parsed graph result and update state.
+    function applyImportResult(importResult: ReturnType<typeof aptreeGraphToCanvasGraph>) {
+      if (importResult.discoveredActionTypes.length > 0) {
+        addActionTypesRef.current(importResult.discoveredActionTypes);
+      }
+      if (importResult.discoveredActionInstances.length > 0) {
+        addActionInstancesRef.current(importResult.discoveredActionInstances);
+      }
+      // Merge: preserve positions of existing nodes, add newly planned nodes
+      startTransition(() => {
+        setGraph((prev) => {
+          const existingById = new Map(prev.nodes.map((n) => [n.id, n]));
+          const mergedNodes = importResult.graph.nodes.map((newNode) => {
+            const existing = existingById.get(newNode.id);
+            if (existing) {
+              return { ...newNode, x: existing.x, y: existing.y, width: existing.width, height: existing.height };
+            }
+            return newNode;
+          });
+          return {
+            nodes: mergedNodes,
+            connections: importResult.graph.connections,
+            rootNodeId: importResult.graph.rootNodeId ?? prev.rootNodeId,
+          };
+        });
+        if (importResult.rawSubtreeGraphs.size > 0) {
+          setRawSubtreeGraphs(importResult.rawSubtreeGraphs);
+        }
+      });
+    }
+
+    if (graphPayload != null) {
+      // Graph already parsed by the backend — use directly, no HTTP needed.
+      try {
+        const parsed = normalizeAptreeValidateResponse(graphPayload);
+        if (!parsed.ok) return;
+        const candidateGraphs =
+          parsed.graphs && parsed.graphs.length > 0
+            ? parsed.graphs
+            : parsed.graph
+              ? [parsed.graph]
+              : [];
+        if (!candidateGraphs.length) return;
+        const importResult =
+          candidateGraphs.length > 1
+            ? aptreeGraphsToCanvasGraph(candidateGraphs, actionTypesRef.current ?? [])
+            : aptreeGraphToCanvasGraph(candidateGraphs[0]!, actionTypesRef.current ?? []);
+        applyImportResult(importResult);
+      } catch {
+        // ignore — live updates are best-effort
+      }
+      return;
+    }
+
+    // Fallback: backend didn't embed graph — fetch and validate via HTTP.
     modelUpdateTimerRef.current = setTimeout(async () => {
       const controller = new AbortController();
       modelUpdateAbortRef.current = controller;
@@ -467,35 +526,7 @@ function App() {
           candidateGraphs.length > 1
             ? aptreeGraphsToCanvasGraph(candidateGraphs, actionTypesRef.current ?? [])
             : aptreeGraphToCanvasGraph(candidateGraphs[0]!, actionTypesRef.current ?? []);
-
-        if (importResult.discoveredActionTypes.length > 0) {
-          addActionTypesRef.current(importResult.discoveredActionTypes);
-        }
-        if (importResult.discoveredActionInstances.length > 0) {
-          addActionInstancesRef.current(importResult.discoveredActionInstances);
-        }
-
-        // Merge: preserve positions of existing nodes, add newly planned nodes
-        startTransition(() => {
-          setGraph((prev) => {
-            const existingById = new Map(prev.nodes.map((n) => [n.id, n]));
-            const mergedNodes = importResult.graph.nodes.map((newNode) => {
-              const existing = existingById.get(newNode.id);
-              if (existing) {
-                return { ...newNode, x: existing.x, y: existing.y, width: existing.width, height: existing.height };
-              }
-              return newNode;
-            });
-            return {
-              nodes: mergedNodes,
-              connections: importResult.graph.connections,
-              rootNodeId: importResult.graph.rootNodeId ?? prev.rootNodeId,
-            };
-          });
-          if (importResult.rawSubtreeGraphs.size > 0) {
-            setRawSubtreeGraphs(importResult.rawSubtreeGraphs);
-          }
-        });
+        applyImportResult(importResult);
       } catch (err) {
         // AbortError is expected when a newer update supersedes this one.
         if (err instanceof Error && err.name === "AbortError") return;

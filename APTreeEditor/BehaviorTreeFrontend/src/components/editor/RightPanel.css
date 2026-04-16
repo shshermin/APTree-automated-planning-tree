@@ -5,6 +5,7 @@
   width: 480px;
   min-width: 360px;
   max-width: 600px;
+  min-height: 0;
   background: var(--surface-panel, #1a1a2e);
   border-left: 2px solid var(--border-default, #333);
   overflow: hidden;

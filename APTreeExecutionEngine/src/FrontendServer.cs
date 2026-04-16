@@ -14,6 +14,10 @@ namespace BehaviorTreeMainProject
         private static readonly object _subscribersLock = new();
         private static readonly List<ChannelWriter<string>> _tickSubscribers = new();
 
+        // Cached content-root path set during startup — used by BroadcastModelUpdatedAsync
+        // to locate the MontiCore jar without needing IWebHostEnvironment.
+        private static string? _contentRootPath;
+
         // Circular buffer for tick diagnostics (last 2000 ticks)
         private const int TickLogCapacity = 2000;
         private static readonly object _tickLogLock = new();
@@ -37,13 +41,88 @@ namespace BehaviorTreeMainProject
             }
         }
 
-        private static void BroadcastModelUpdated()
+        /// <summary>
+        /// Runs the MontiCore jar on the current .bt file, embeds the resulting graph JSON
+        /// directly in the WebSocket message, and broadcasts it to all connected clients.
+        /// Falls back to a plain { type: "modelUpdated" } message when the jar is unavailable
+        /// or fails so the frontend can still trigger its HTTP-based fallback path.
+        /// </summary>
+        private static async Task BroadcastModelUpdatedAsync()
         {
-            var message = JsonSerializer.Serialize(new { type = "modelUpdated" });
+            string message;
+            try
+            {
+                message = await BuildModelUpdatedMessageAsync();
+            }
+            catch
+            {
+                // Jar not found, parse error, etc. — fall back to plain notification so the
+                // frontend can still attempt the HTTP-based validate as a safety net.
+                message = JsonSerializer.Serialize(new { type = "modelUpdated" });
+            }
+
             lock (_subscribersLock)
             {
                 foreach (var writer in _tickSubscribers)
                     writer.TryWrite(message);
+            }
+        }
+
+        /// <summary>
+        /// Runs the jar on the active .bt file and returns a JSON string of the form
+        /// { "type": "modelUpdated", "graphPayload": { ...graph... } }.
+        /// Throws if the jar or .bt file cannot be found or the jar produces non-JSON output.
+        /// </summary>
+        private static async Task<string> BuildModelUpdatedMessageAsync()
+        {
+            if (_contentRootPath == null)
+                throw new InvalidOperationException("Content root path not initialised.");
+
+            var montiCoreDir = FindMontiCoreDir(_contentRootPath)
+                ?? throw new DirectoryNotFoundException("APTreeDSL directory not found.");
+
+            // Locate the tool jar (same logic as the /api/aptree/validate endpoint).
+            var libsDir = Path.Combine(montiCoreDir, "target", "libs");
+            var jarPath = Path.Combine(libsDir, "automaton-tool.jar");
+            if (!File.Exists(jarPath) && Directory.Exists(libsDir))
+            {
+                jarPath = Directory
+                    .GetFiles(libsDir, "*-tool.jar")
+                    .OrderByDescending(File.GetLastWriteTimeUtc)
+                    .FirstOrDefault() ?? jarPath;
+            }
+            if (!File.Exists(jarPath))
+                throw new FileNotFoundException("MontiCore tool jar not found.", jarPath);
+
+            var btPath = BehaviorTreeMainProject.Services.AIPlanning.APTreeModelWriter.ActiveBtFilePath;
+            if (!File.Exists(btPath))
+                throw new FileNotFoundException(".bt model file not found.", btPath);
+
+            var modelText = await File.ReadAllTextAsync(btPath);
+
+            var tmpDir = Path.Combine(montiCoreDir, "target", "tmp");
+            Directory.CreateDirectory(tmpDir);
+            var modelFile = Path.Combine(tmpDir, $"aptree_{Guid.NewGuid():N}.bt");
+            var utf8NoBom = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
+            await File.WriteAllTextAsync(modelFile, StripUtf8Bom(modelText), utf8NoBom);
+
+            try
+            {
+                var result = await RunProcessAsync(
+                    fileName: "java",
+                    arguments: BuildArguments(jarPath, modelFile, null),
+                    workingDirectory: montiCoreDir,
+                    ct: CancellationToken.None);
+
+                if (!TryNormalizeJson(result.StdOut, out var graphJson, out _))
+                    throw new InvalidDataException("MontiCore jar returned non-JSON output.");
+
+                // Inline the graph JSON so the frontend can use it without extra HTTP round-trips.
+                return $"{{\"type\":\"modelUpdated\",\"graphPayload\":{graphJson}}}";
+            }
+            finally
+            {
+                TryDelete(modelFile);
             }
         }
 
@@ -61,11 +140,9 @@ namespace BehaviorTreeMainProject
                 }
             };
 
-            // Subscribe to model file updates and notify all WebSocket clients
+            // Subscribe to model file updates: run the jar and push the graph to all WebSocket clients.
             BehaviorTreeMainProject.Services.AIPlanning.APTreeModelWriter.ModelUpdated += () =>
-            {
-                BroadcastModelUpdated();
-            };
+                _ = BroadcastModelUpdatedAsync();
 
             // Watch the .bt file on disk so that changes from external processes
             // (e.g. dotnet run --test) also trigger live frontend updates.
@@ -89,12 +166,16 @@ namespace BehaviorTreeMainProject
                     lock (debounceLock)
                     {
                         debounceTimer?.Dispose();
-                        debounceTimer = new Timer(_ => BroadcastModelUpdated(), null, 300, Timeout.Infinite);
+                        debounceTimer = new Timer(_ => _ = BroadcastModelUpdatedAsync(), null, 300, Timeout.Infinite);
                     }
                 };
             }
 
             var builder = WebApplication.CreateBuilder(args);
+
+            // Cache the content-root path so BroadcastModelUpdatedAsync can locate the jar
+            // without needing IWebHostEnvironment outside of a request context.
+            _contentRootPath = builder.Environment.ContentRootPath;
 
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
