@@ -15,6 +15,21 @@ function useTickStatus(
     onModelUpdatedRef.current = onModelUpdated;
   });
 
+  // Batch incoming tick updates and flush once per animation frame
+  const pendingRef = useRef<Record<string, string>>({});
+  const rafRef = useRef<number | null>(null);
+
+  const scheduleFlush = useCallback(() => {
+    if (rafRef.current !== null) return;
+    rafRef.current = requestAnimationFrame(() => {
+      rafRef.current = null;
+      const batch = pendingRef.current;
+      pendingRef.current = {};
+      if (Object.keys(batch).length === 0) return;
+      setTickStatus((prev) => ({ ...prev, ...batch }));
+    });
+  }, []);
+
   useEffect(() => {
     let active = true;
 
@@ -38,7 +53,8 @@ function useTickStatus(
           const status = msg.status as string | undefined;
           if (!nodeName || !status) return;
 
-          setTickStatus((prev) => ({ ...prev, [nodeName]: status }));
+          pendingRef.current[nodeName] = status;
+          scheduleFlush();
         } catch {
           // ignore malformed messages
         }
@@ -54,10 +70,11 @@ function useTickStatus(
 
     return () => {
       active = false;
+      if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
       wsRef.current?.close();
       wsRef.current = null;
     };
-  }, []);
+  }, [scheduleFlush]);
 
   return tickStatus;
 }

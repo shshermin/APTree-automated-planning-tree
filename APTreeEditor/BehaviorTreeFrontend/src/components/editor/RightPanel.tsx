@@ -436,7 +436,7 @@ function LiveSection({
   return (
     <div
       className="right-panel__section"
-      style={compact ? { flex: 0, maxHeight: 160 } : undefined}
+      style={compact ? { flex: 0, maxHeight: 200 } : undefined}
     >
       <div className="right-panel__section-label">
         {flowNode.name || flowNode.typeLabel}
