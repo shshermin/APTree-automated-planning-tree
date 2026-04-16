@@ -97,7 +97,7 @@ namespace BehaviorTreeMainProject
                 for (int i = 0; i < 12; i++) blackboard.CassetteSubtreeCompleted[i] = false;
 
                 // Enable LL execution — ServiceLLSubtreeInject gates on this flag
-                blackboard.SetBool(new FastName("ExecutionActive"), false);
+                blackboard.SetBool(new FastName("ExecutionActive"), true);
 
                 // ── Register Demonstrator-specific ML subtree config ──
                 // When HL actions are decomposed, ServiceSubtreeInject should use
