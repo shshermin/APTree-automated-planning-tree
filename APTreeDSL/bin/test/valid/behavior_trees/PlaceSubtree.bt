@@ -1,8 +1,0 @@
-// Empty behavior tree referenced by actions
-BehaviorTree PlaceSubtree {
-    Root FlowNode emptyNode {
-        All
-        AllFlow
-        NodeGraph {}
-    }
-}

@@ -130,4 +130,6 @@ export interface EditorCanvasProps {
   fitViewMaxZoom?: number;
   /** When true, disables all editing interactions (drag, connect, select, drop). */
   readOnly?: boolean;
+  /** Custom color overrides per node category. Keys: "flow" | "action" | "decorator" | "service" */
+  nodeColorOverrides?: Record<string, string>;
 }

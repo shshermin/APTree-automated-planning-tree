@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import EditorCanvas from "./EditorCanvas";
 import type { CanvasNode, NodeConnection } from "./types";
 import type { ActionInstance, ActionType } from "../sidebar/utils/types";
@@ -203,12 +203,12 @@ export default function SubtreePanel({
 
   // Keep the last non-empty result so the panel stays visible during brief gaps
   // between ticks (e.g. the pause at the end of a loop cycle).
-  const lastValidRef = useRef(currentSubtrees);
-  useEffect(() => {
-    if (currentSubtrees.length > 0) lastValidRef.current = currentSubtrees;
-  }, [currentSubtrees]);
+  const [lastValid, setLastValid] = useState(currentSubtrees);
+  if (currentSubtrees.length > 0 && currentSubtrees !== lastValid) {
+    setLastValid(currentSubtrees);
+  }
 
-  const subtrees = currentSubtrees.length > 0 ? currentSubtrees : lastValidRef.current;
+  const subtrees = currentSubtrees.length > 0 ? currentSubtrees : lastValid;
   const hasContent = subtrees.length > 0;
 
   const title = hasContent
