@@ -7,7 +7,7 @@ using BehaviorTreeMainProject.Log.Services;
 
 namespace RobotCommand
 {
-    public class RestRobotCommandCommunicator
+    public class RestRobotCommandCommunicator : IRobotCommandCommunicator
     {
         private readonly HttpClient _httpClient;
         private readonly string _baseUrl;

@@ -1,19 +1,13 @@
-Element Stick{
-    initLoc: Location
-    finalLoc: Location 
-    }
+Element Stick
 
-Element Cube{
-    initLoc: Location
-    finalLoc: Location   
-    }
-    Element Table  
+Element Cube
+
+Element Table  
     
 Agent Robot{
 tool: Tool
 robothasTool: Boolean
 loc: RobotPosition
-
 }
 
 Location InitialLocation{
@@ -36,17 +30,14 @@ Location EquipLocation{
     orientation: Coordinate  
 } 
 
-Location RobotPosition{
+Location RobotLocation{
     joints: RobotJoints
     tcpPose: Coordinate
     tcpOrinetation: Coordinate
 }
 
 Layer Stack
-
-
 Module Demo 
-
 
 Tool Gripper {
     isOpen: Boolean

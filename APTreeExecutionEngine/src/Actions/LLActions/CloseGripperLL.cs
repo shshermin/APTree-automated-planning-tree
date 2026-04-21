@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using BehaviorTreeMainProject.Log.Services;
 using RobotCommand;
 
@@ -6,17 +8,20 @@ using RobotCommand;
 /// Sends a digital-output sequence to the robot via REST API
 /// (set DO1=True, wait 2s, set DO0=True).
 /// </summary>
-public class CloseGripperLL : ExeAction
+public class CloseGripperLL : ExeAction, ILLInputBindable
 {
     public CloseGripperLL(
         string instanceName,
         Blackboard<FastName> blackboard,
         string flaskBaseUrl = null,
-        string robotIp = null
-    ) : base("CloseGripperLL", instanceName, blackboard, flaskBaseUrl, robotIp)
+        string robotIp = null,
+        IRobotCommandCommunicator communicator = null
+    ) : base("CloseGripperLL", instanceName, blackboard, flaskBaseUrl, robotIp, communicator)
     {
         LoggingService.LogInfo($"🤖 CloseGripperLL: Created '{instanceName}'");
     }
+
+    public void BindInput(object value) { }
 
     protected override RobotCommandRequest BuildCommandRequest()
     {

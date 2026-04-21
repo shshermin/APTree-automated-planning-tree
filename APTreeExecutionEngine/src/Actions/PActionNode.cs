@@ -63,11 +63,16 @@ public abstract class PActionNode : ActionNode
         
         LoggingService.LogInfo($"🔧 GenericBTAction: About to call InitializeSubtreeInjectionService for {instanceName}");
         
-        // Automatically add ServiceSubtreeInject to all actions
-        InitializeSubtreeInjectionService();
-        
-        // Automatically add ServiceLLSubtreeInject (only acts on ML actions)
-        InitializeLLSubtreeInjectionService();
+        // Attach only the relevant injection service based on action level (class name suffix)
+        if (actualClassName.EndsWith("HL"))
+        {
+            InitializeSubtreeInjectionService();
+        }
+        else if (actualClassName.EndsWith("ML"))
+        {
+            InitializeLLSubtreeInjectionService();
+        }
+        // LL actions (ExeAction subclasses) need neither injection service
         
         LoggingService.LogInfo($"🔧 GenericBTAction: Constructor completed for {instanceName}");
     }

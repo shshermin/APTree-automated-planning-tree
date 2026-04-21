@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using ModelLoader.ParameterTypes;
@@ -22,6 +21,13 @@ public abstract class ExeAction : PActionNode
     protected static readonly string DEFAULT_FLASK_URL = "http://localhost:5001";
     protected static readonly string DEFAULT_ROBOT_IP = "192.168.1.100";
 
+    /// <summary>Shared default communicator — avoids creating a new HttpClient per tick.</summary>
+    private static readonly IRobotCommandCommunicator _defaultCommunicator =
+        new RestRobotCommandCommunicator(DEFAULT_FLASK_URL);
+
+    /// <summary>The communicator used to send robot commands. Injected or shared default.</summary>
+    protected readonly IRobotCommandCommunicator _communicator;
+
     // Win32 MessageBox via P/Invoke
     [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     private static extern int MessageBoxW(IntPtr hWnd, string text, string caption, uint type);
@@ -39,13 +45,6 @@ public abstract class ExeAction : PActionNode
 
     /// <summary>Populated after resolving the position from ML inputs.</summary>
     public RobotPosition ResolvedPosition { get; set; }
-
-    /// <summary>
-    /// Actual objects from the parent ML action, keyed by template parameter name.
-    /// E.g. "target" → RobotPosition, "robot" → Robot.
-    /// Set by ServiceLLSubtreeInject after creating the LL node.
-    /// </summary>
-    public Dictionary<string, object> MLInputs { get; set; }
 
     private bool _hasExecuted = false;
 
@@ -67,11 +66,13 @@ public abstract class ExeAction : PActionNode
         string instanceName,
         Blackboard<FastName> blackboard,
         string flaskBaseUrl = null,
-        string robotIp = null
+        string robotIp = null,
+        IRobotCommandCommunicator communicator = null
     ) : base(actionType, instanceName, blackboard)
     {
         FlaskBaseUrl = flaskBaseUrl ?? DEFAULT_FLASK_URL;
         RobotIp = robotIp ?? DEFAULT_ROBOT_IP;
+        _communicator = communicator ?? _defaultCommunicator;
 
         _emptyPreconditions = new State(StateType.Precondition, new FastName($"{instanceName}_pre"));
         _emptyEffects = new State(StateType.Effect, new FastName($"{instanceName}_eff"));
@@ -111,20 +112,12 @@ public abstract class ExeAction : PActionNode
             return false;
         }
 
-        // Resolve inputs from ML action objects into the command request
-        ResolveInputs();
-
         // Debug: log what we're about to send
         LoggingService.LogInfo($"🔍 ExeAction: Pre-send state for '{InstanceName}': " +
             $"Pose={CommandRequest.Pose?.Length ?? 0} elements, " +
-            $"Joints={CommandRequest.Joints?.Length ?? 0} elements, " +
-            $"MLInputs count={MLInputs?.Count ?? 0}");
-        if (MLInputs != null)
-            foreach (var kv in MLInputs)
-                LoggingService.LogInfo($"   MLInput: '{kv.Key}' = {kv.Value?.GetType().Name ?? "null"} ({kv.Value})");
+            $"Joints={CommandRequest.Joints?.Length ?? 0} elements");
 
-        // Send the robot command
-        var communicator = new RestRobotCommandCommunicator(FlaskBaseUrl);
+        // Send the robot command via the injected communicator
         LoggingService.LogInfo($"🚀 ExeAction: Sending command for '{InstanceName}' — {CommandRequest.CommandType} → {CommandRequest.FinalPosition}");
 
         // Log command start for paper metrics
@@ -142,7 +135,7 @@ public abstract class ExeAction : PActionNode
 
         try
         {
-            var commandResult = Task.Run(async () => await communicator.SendCommandAsync(CommandRequest)).Result;
+            var commandResult = Task.Run(async () => await _communicator.SendCommandAsync(CommandRequest)).Result;
 
             if (commandResult.Success)
             {
@@ -175,107 +168,6 @@ public abstract class ExeAction : PActionNode
         }
     }
 
-    /// <summary>
-    /// Resolves data from the parent ML action's actual objects into the command request.
-    /// Looks through MLInputs for RobotPosition (joints/pose), Robot (IP), etc.
-    /// Falls back to blackboard lookup if MLInputs is not set.
-    /// </summary>
-    private void ResolveInputs()
-    {
-        if (MLInputs == null || MLInputs.Count == 0)
-        {
-            LoggingService.LogInfo($"ℹ️ ExeAction: No ML inputs for '{InstanceName}', skipping resolution");
-            return;
-        }
-
-        foreach (var kv in MLInputs)
-        {
-            switch (kv.Value)
-            {
-                case RobotPosition rp:
-                    if (kv.Key.Equals("target", StringComparison.OrdinalIgnoreCase))
-                    {
-                        if (rp.Joints != null)
-                            CommandRequest.Joints = rp.Joints.Values;
-
-                        if (rp.TcpPose != null && rp.TcpOrinetation != null)
-                            CommandRequest.Pose = new[]
-                            {
-                                rp.TcpPose.X, rp.TcpPose.Y, rp.TcpPose.Z,
-                                rp.TcpOrinetation.X, rp.TcpOrinetation.Y, rp.TcpOrinetation.Z
-                            };
-
-                        ResolvedPosition = rp;
-                        LoggingService.LogInfo($"✅ ExeAction: Resolved target '{rp.ID}' → Joints={rp.Joints}, TcpPose={rp.TcpPose}");
-                    }
-                    break;
-
-                case Location loc:
-                    if (kv.Key.Equals("target", StringComparison.OrdinalIgnoreCase) && loc is InitialLocation il && il.Position != null)
-                    {
-                        var ori = GetManipulateOrientation();
-                        CommandRequest.Pose = new[] { il.Position.X, il.Position.Y, il.Position.Z, ori[0], ori[1], ori[2] };
-                        LoggingService.LogInfo($"✅ ExeAction: Resolved InitialLocation target '{il.ID}' → Pose=[{il.Position.X}, {il.Position.Y}, {il.Position.Z}, {ori[0]}, {ori[1]}, {ori[2]}]");
-                    }
-                    else if (kv.Key.Equals("target", StringComparison.OrdinalIgnoreCase) && loc is FinalLocation fl && fl.Position != null)
-                    {
-                        // Convert piece direction vector (dx,dy,0) to UR TCP rotation vector.
-                        // Base orientation is Rot(X, π) (tool pointing down). To rotate by θ around Z,
-                        // the combined rotation vector is (π·cos(θ/2), π·sin(θ/2), 0)
-                        // where θ = atan2(dy, dx).
-                        double[] ori;
-                        if (fl.Orientation != null)
-                        {
-                            double theta = Math.Atan2(fl.Orientation.Y, fl.Orientation.X) - Math.PI / 2.0;
-                            double halfTheta = theta / 2.0;
-                            ori = new[] { Math.PI * Math.Cos(halfTheta), Math.PI * Math.Sin(halfTheta), 0.0 };
-                        }
-                        else
-                        {
-                            ori = GetManipulateOrientation();
-                        }
-                        CommandRequest.Pose = new[] { fl.Position.X, fl.Position.Y, fl.Position.Z, ori[0], ori[1], ori[2] };
-                        LoggingService.LogInfo($"✅ ExeAction: Resolved FinalLocation target '{fl.ID}' → Pose=[{fl.Position.X}, {fl.Position.Y}, {fl.Position.Z}, {ori[0]}, {ori[1]}, {ori[2]}] (orientation source: {(fl.Orientation != null ? "FinalLocation (piece dir → TCP)" : "rppickup")})");
-                    }
-                    else
-                    {
-                        LoggingService.LogInfo($"ℹ️ ExeAction: ML input '{kv.Key}' is Location '{loc.ID}'");
-                    }
-                    break;
-
-                default:
-                    if (kv.Value is NailGripper or StaplerGun)
-                    {
-                        CommandRequest.EndEffectorType = "nailgun";
-                        LoggingService.LogInfo($"✅ ExeAction: Detected end effector type 'nailgun' from {kv.Value.GetType().Name} param '{kv.Key}'");
-                    }
-                    else if (kv.Value is Gripper)
-                    {
-                        CommandRequest.EndEffectorType = "gripper";
-                        LoggingService.LogInfo($"✅ ExeAction: Detected end effector type 'gripper' from Gripper param '{kv.Key}'");
-                    }
-                    else if (kv.Value is Robot robot && robot.Tool != null)
-                    {
-                        if (robot.Tool is NailGripper or StaplerGun)
-                            CommandRequest.EndEffectorType = "nailgun";
-                        else if (robot.Tool is Gripper)
-                            CommandRequest.EndEffectorType = "gripper";
-                        LoggingService.LogInfo($"✅ ExeAction: Detected end effector type '{CommandRequest.EndEffectorType}' from Robot '{robot.ID}'");
-                    }
-                    else if (kv.Value is CustomProperty cp)
-                        LoggingService.LogInfo($"ℹ️ ExeAction: ML input '{kv.Key}' = {cp.GetType().Name} '{cp.ID}'");
-                    break;
-            }
-        }
-
-        // Default to gripper if no end effector type was detected (e.g. StackML only has Robot param without Tool set)
-        if (CommandRequest.EndEffectorType == null && CommandRequest.CommandType == "planned")
-        {
-            CommandRequest.EndEffectorType = "gripper";
-            LoggingService.LogInfo($"ℹ️ ExeAction: No end effector detected, defaulting to 'gripper' for planned move");
-        }
-    }
-
     protected override void OnExit()
     {
         var actionName = GetType().Name;
@@ -291,8 +183,9 @@ public abstract class ExeAction : PActionNode
     /// <summary>
     /// Gets the TCP orientation (rx, ry, rz) from rppickup.
     /// Used so that InitialLocation/FinalLocation moves keep the same end-effector orientation.
+    /// Available to subclasses for use in BuildCommandRequest().
     /// </summary>
-    private double[] GetManipulateOrientation()
+    protected double[] GetManipulateOrientationFromBlackboard()
     {
         try
         {

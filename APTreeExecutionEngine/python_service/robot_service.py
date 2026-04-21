@@ -15,6 +15,7 @@ import sys
 import json
 import time
 import math
+import threading
 import requests as http_requests
 
 app = Flask(__name__)
@@ -30,25 +31,50 @@ EXTERNAL_CONTROL_NAILGUN = "external_control_n.urp"
 EXTERNAL_CONTROL_GRIPPER = "external_control_g.urp"
 SUPPORTED_MOVE_TYPES = ['movej', 'movel', 'movep', 'movec', 'planned']
 
-# Active tool state — set by /play_program (equip/deequip), re-applied on every move
-_active_tcp = None          # list [x, y, z, rx, ry, rz] or None
-_active_payload = None      # float (kg) or None
-_active_payload_cog = None  # list [cx, cy, cz] or None
 
+class RobotState:
+    """Thread-safe container for active tool state.
 
-def _reapply_robot_settings(robot_ip: str):
-    """Re-send the stored payload and TCP to the robot.
-
-    Call this AFTER any .urp program starts (because loading a .urp resets
-    the controller to pendant/installation defaults), and BEFORE any raw
-    URScript command that moves the robot.
+    Set by /play_program (equip/deequip), re-read by /move before every command.
+    All access is serialised through an internal lock so concurrent Flask
+    requests (unlikely with a single BT executor, but possible) cannot race.
     """
-    if _active_payload is not None:
-        msg = set_payload(robot_ip, _active_payload, cog=_active_payload_cog)
-        print(f"Reapplied payload: {_active_payload} kg, COG: {_active_payload_cog} -> {msg}")
-    if _active_tcp is not None:
-        msg = set_tcp(robot_ip, _active_tcp)
-        print(f"Reapplied TCP: {_active_tcp} -> {msg}")
+
+    def __init__(self):
+        self._lock = threading.Lock()
+        self._tcp = None            # list [x, y, z, rx, ry, rz] or None
+        self._payload = None        # float (kg) or None
+        self._payload_cog = None    # list [cx, cy, cz] or None
+
+    def update(self, tcp=None, payload=None, payload_cog=None):
+        """Atomically update all tool settings at once."""
+        with self._lock:
+            self._tcp = tcp
+            self._payload = payload
+            self._payload_cog = payload_cog
+
+    def snapshot(self):
+        """Return a consistent (tcp, payload, payload_cog) tuple."""
+        with self._lock:
+            return self._tcp, self._payload, self._payload_cog
+
+    def reapply(self, robot_ip: str):
+        """Re-send the stored payload and TCP to the robot.
+
+        Call this AFTER any .urp program starts (because loading a .urp resets
+        the controller to pendant/installation defaults), and BEFORE any raw
+        URScript command that moves the robot.
+        """
+        tcp, payload, payload_cog = self.snapshot()
+        if payload is not None:
+            msg = set_payload(robot_ip, payload, cog=payload_cog)
+            print(f"Reapplied payload: {payload} kg, COG: {payload_cog} -> {msg}")
+        if tcp is not None:
+            msg = set_tcp(robot_ip, tcp)
+            print(f"Reapplied TCP: {tcp} -> {msg}")
+
+
+robot_state = RobotState()
 
 
 @app.route('/health', methods=['GET'])
@@ -160,27 +186,25 @@ def robot_play_program():
                 'executionTimeSeconds': elapsed
             }), 500
 
-        # Set TCP after program completes if specified, and remember it
-        global _active_tcp, _active_payload, _active_payload_cog
+        # Set TCP and payload after program completes, and remember them
         tcp_values = data.get('tcp')
         tcp_msg = None
         if tcp_values is not None:
-            _active_tcp = tcp_values
             tcp_msg = set_tcp(robot_ip, tcp_values)
             print(f"TCP set and stored: {tcp_msg}")
-        else:
-            _active_tcp = None
 
-        # Set payload after program completes if specified, and remember it
         payload_msg = None
-        if payload_mass is not None:
-            _active_payload = float(payload_mass)
-            _active_payload_cog = payload_cog
-            payload_msg = set_payload(robot_ip, float(payload_mass), cog=payload_cog)
+        payload_val = float(payload_mass) if payload_mass is not None else None
+        if payload_val is not None:
+            payload_msg = set_payload(robot_ip, payload_val, cog=payload_cog)
             print(f"Payload set and stored: {payload_msg}")
-        else:
-            _active_payload = None
-            _active_payload_cog = None
+
+        # Atomically update stored state for subsequent /move commands
+        robot_state.update(
+            tcp=tcp_values,
+            payload=payload_val,
+            payload_cog=payload_cog
+        )
 
         elapsed = time.time() - start_time
 
@@ -247,10 +271,8 @@ def robot_move():
 
         start_time = time.time()
 
-        # Re-apply stored TCP/payload with every move command
-        tcp_for_move = _active_tcp
-        payload_for_move = _active_payload
-        payload_cog_for_move = _active_payload_cog
+        # Re-apply stored TCP/payload with every move command (thread-safe snapshot)
+        tcp_for_move, payload_for_move, payload_cog_for_move = robot_state.snapshot()
         if tcp_for_move:
             print(f"Re-applying stored TCP: {tcp_for_move}")
         if payload_for_move:

@@ -17,18 +17,18 @@ import crftypesdef._ast.ASTPredicate;
 import de.se_rwth.commons.logging.Log;
 
 /**
- * InitialStateJsonGenerator - Parses predicate models and exports predicates to JSON.
+ * GoalStateJsonGenerator - Parses goal state predicate models and exports to JSON.
  *
  * Convention-based usage (preferred):
- *   java InitialStateJsonGenerator &lt;treeName&gt;
+ *   java GoalStateJsonGenerator &lt;treeName&gt;
  *   Resolves:
- *     Input:  src/test/resources/valid/CRFConcrete/{treeName}InitState.bt
- *     Output: ../APTreeExecutionEngine/src/ModelLoader/{treeName}InitState.json
+ *     Input:  src/test/resources/valid/CRFConcrete/{treeName}GoalState.bt
+ *     Output: ../APTreeExecutionEngine/src/ModelLoader/{treeName}GoalState.json
  *
  * Explicit paths (legacy):
- *   java InitialStateJsonGenerator &lt;inputPath&gt; &lt;outputPath&gt;
+ *   java GoalStateJsonGenerator &lt;inputPath&gt; &lt;outputPath&gt;
  */
-public class InitialStateJsonGenerator {
+public class GoalStateJsonGenerator {
   private static final String INSTANCES_DIR = "src/test/resources/valid/CRFConcrete/";
   private static final String OUTPUT_DIR = "../APTreeExecutionEngine/src/ModelLoader/";
 
@@ -50,24 +50,24 @@ public class InitialStateJsonGenerator {
     Log.init();
     Log.enableFailQuick(false);
 
-    InitialStateJsonGenerator generator = new InitialStateJsonGenerator();
+    GoalStateJsonGenerator generator = new GoalStateJsonGenerator();
     String filePath;
     String outputPath;
 
     if (args.length == 1 && !args[0].contains("/") && !args[0].contains("\\") && !args[0].endsWith(".bt")) {
       // Convention mode: single treeName argument
       String treeName = args[0];
-      filePath = INSTANCES_DIR + treeName + "InitState.bt";
-      outputPath = OUTPUT_DIR + treeName + "InitState.json";
+      filePath = INSTANCES_DIR + treeName + "GoalState.bt";
+      outputPath = OUTPUT_DIR + treeName + "GoalState.json";
       System.out.println("[Convention] Tree: " + treeName);
     } else {
       // Legacy mode: explicit paths
-      filePath = args.length > 0 ? args[0] : INSTANCES_DIR + "LiveMatInitialState.bt";
-      outputPath = args.length > 1 ? args[1] : OUTPUT_DIR + "InitState.json";
+      filePath = args.length > 0 ? args[0] : INSTANCES_DIR + "LiveMatGoalState.bt";
+      outputPath = args.length > 1 ? args[1] : OUTPUT_DIR + "GoalState.json";
       filePath = resolveInputPath(filePath);
     }
 
-    System.out.println("Processing predicate model: " + filePath);
+    System.out.println("Processing goal state model: " + filePath);
     System.out.println("Output: " + outputPath);
     generator.parseAndExport(filePath, outputPath);
   }
@@ -86,12 +86,6 @@ public class InitialStateJsonGenerator {
     return filePath;
   }
 
-  /**
-   * Parse predicate model and export to JSON.
-   * 
-   * @param inputPath Path to the predicate model file
-   * @param outputPath Path where JSON should be written
-   */
   public void parseAndExport(String inputPath, String outputPath) {
     try {
       File inputFile = new File(inputPath);
@@ -100,10 +94,8 @@ public class InitialStateJsonGenerator {
         return;
       }
 
-      // Initialize MontiCore Mill
       CRFTypesConMill.init();
 
-      // Parse the file using the CRFTypesCon parser
       System.out.println("[DEBUG] Parsing with CRFTypesConParser...");
       CRFTypesConParser conParser = CRFTypesConMill.parser();
       Optional<ASTWorld> parseResult = conParser.parse(inputPath);
@@ -117,18 +109,16 @@ public class InitialStateJsonGenerator {
       }
 
       ASTWorld world = parseResult.get();
-      System.out.println("[OK] Successfully parsed predicate model");
+      System.out.println("[OK] Successfully parsed goal state model");
 
-      // Extract predicate instances from the AST
       List<PredicateInstance> instances = extractPredicateInstances(world);
 
       if (instances.isEmpty()) {
         System.err.println("[!] No predicate instances found in file");
       } else {
-        System.out.println("[OK] Extracted " + instances.size() + " predicate instances");
+        System.out.println("[OK] Extracted " + instances.size() + " goal state predicates");
       }
 
-      // Export to JSON
       exportPredicatesToJSON(instances, outputPath);
 
     } catch (Exception e) {
@@ -137,12 +127,6 @@ public class InitialStateJsonGenerator {
     }
   }
 
-  /**
-   * Extract predicate instances from the parsed AST.
-   * 
-   * @param world The parsed CRFTypesCon AST
-   * @return List of PredicateInstance objects
-   */
   private List<PredicateInstance> extractPredicateInstances(ASTWorld world) {
     List<PredicateInstance> instances = new ArrayList<>();
 
@@ -179,18 +163,11 @@ public class InitialStateJsonGenerator {
     return instances;
   }
 
-  /**
-   * Extract properties from an object using reflection.
-   * Only extracts simple, semantic properties that are JSON-serializable.
-   * 
-   * @param obj The object to extract properties from
-   * @param instance The PredicateInstance to store the extracted properties
-   */
   private static void extractPropertiesFromObject(Object obj, PredicateInstance instance) {
     if (obj == null) return;
 
     try {
-      // Check for the 'not' keyword attribute (generated as isNot() by MontiCore for not:["!"]?)
+      // Check for the 'not' keyword attribute
       try {
         java.lang.reflect.Method isNotMethod = obj.getClass().getMethod("isNot");
         if (isNotMethod.getReturnType() == boolean.class || isNotMethod.getReturnType() == Boolean.class) {
@@ -198,7 +175,6 @@ public class InitialStateJsonGenerator {
           instance.addProperty("not", isNot);
         }
       } catch (NoSuchMethodException e) {
-        // No isNot() method — default to false
         instance.addProperty("not", false);
       }
 
@@ -207,12 +183,10 @@ public class InitialStateJsonGenerator {
       for (java.lang.reflect.Method method : methods) {
         String methodName = method.getName();
 
-        // Look for getter methods (getXxx)
         if (methodName.startsWith("get") &&
             methodName.length() > 3 &&
             method.getParameterCount() == 0) {
 
-          // Skip these methods
           if (methodName.equals("getClass") ||
               methodName.equals("getFullName") || methodName.equals("getPackageName") ||
               methodName.equals("getAstNode") || methodName.equals("getEnclosingScope") ||
@@ -226,7 +200,6 @@ public class InitialStateJsonGenerator {
             propName = propName.substring(0, 1).toLowerCase() + propName.substring(1);
 
             if (value != null) {
-              // Skip internal framework properties
               if (propName.startsWith("_") ||
                   propName.startsWith("Pre") ||
                   propName.startsWith("Post") ||
@@ -237,9 +210,7 @@ public class InitialStateJsonGenerator {
                 continue;
               }
 
-              // Only serialize simple, JSON-friendly types
               if (isJsonSerializable(value)) {
-                // Special handling for objects with 'name' - extract the name instead of toString()
                 if (hasNameMethod(value)) {
                   try {
                     Object nameValue = value.getClass().getMethod("getName").invoke(value);
@@ -247,7 +218,7 @@ public class InitialStateJsonGenerator {
                       instance.addProperty(propName, nameValue.toString());
                     }
                   } catch (Exception e) {
-                    // Skip if we can't extract the name
+                    // Skip
                   }
                 } else {
                   instance.addProperty(propName, value);
@@ -255,7 +226,7 @@ public class InitialStateJsonGenerator {
               }
             }
           } catch (Exception e) {
-            // Skip properties that can't be read
+            // Skip
           }
         }
       }
@@ -264,18 +235,11 @@ public class InitialStateJsonGenerator {
     }
   }
 
-  /**
-   * Check if an object is JSON-serializable (primitive wrapper, String, etc.)
-   * 
-   * @param value The value to check
-   * @return true if the value can be safely serialized to JSON
-   */
   private static boolean isJsonSerializable(Object value) {
     if (value == null) return false;
 
     Class<?> clazz = value.getClass();
 
-    // Primitive wrappers and String
     if (clazz == String.class ||
         clazz == Integer.class || clazz == Long.class ||
         clazz == Float.class || clazz == Double.class ||
@@ -283,7 +247,6 @@ public class InitialStateJsonGenerator {
       return true;
     }
 
-    // Collections (but they should be empty/simple)
     if (value instanceof java.util.Collection) {
       java.util.Collection<?> col = (java.util.Collection<?>) value;
       return col.isEmpty();
@@ -297,12 +260,6 @@ public class InitialStateJsonGenerator {
     return false;
   }
 
-  /**
-   * Check if an object has a getName() method.
-   * 
-   * @param value The object to check
-   * @return true if the object has a public getName() method
-   */
   private static boolean hasNameMethod(Object value) {
     try {
       value.getClass().getMethod("getName");
@@ -312,12 +269,6 @@ public class InitialStateJsonGenerator {
     }
   }
 
-  /**
-   * Export predicates to a JSON file.
-   * 
-   * @param instances List of PredicateInstance objects
-   * @param outputPath Path where JSON should be written
-   */
   private void exportPredicatesToJSON(List<PredicateInstance> instances, String outputPath) {
     try {
       JSONObject rootJson = new JSONObject();
@@ -348,12 +299,18 @@ public class InitialStateJsonGenerator {
       rootJson.put("predicates", predicatesArray);
       rootJson.put("count", predicatesArray.size());
 
+      File outputFile = new File(outputPath);
+      File parentDir = outputFile.getParentFile();
+      if (parentDir != null && !parentDir.exists()) {
+        parentDir.mkdirs();
+      }
+
       try (FileWriter file = new FileWriter(outputPath)) {
         String jsonString = rootJson.toJSONString();
         String prettyJson = prettyPrintJson(jsonString);
         file.write(prettyJson);
         file.flush();
-        System.out.println("[OK] Exported " + instances.size() + " predicates to: " + outputPath);
+        System.out.println("[OK] Exported " + instances.size() + " goal state predicates to: " + outputPath);
       }
 
     } catch (IOException e) {
@@ -362,12 +319,6 @@ public class InitialStateJsonGenerator {
     }
   }
 
-  /**
-   * Pretty-print JSON for readability.
-   * 
-   * @param jsonString The compact JSON string
-   * @return Pretty-printed JSON with indentation
-   */
   private String prettyPrintJson(String jsonString) {
     StringBuilder prettified = new StringBuilder();
     int indentLevel = 0;
@@ -423,12 +374,6 @@ public class InitialStateJsonGenerator {
     return prettified.toString();
   }
 
-  /**
-   * Append indentation spaces.
-   * 
-   * @param sb StringBuilder to append to
-   * @param level Indent level (2 spaces per level)
-   */
   private void appendIndent(StringBuilder sb, int level) {
     for (int i = 0; i < level * 2; i++) {
       sb.append(' ');

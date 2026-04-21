@@ -1,0 +1,295 @@
+@startuml APTree Action & Service Architecture
+
+skinparam linetype ortho
+skinparam classAttributeIconSize 0
+skinparam nodesep 60
+skinparam ranksep 50
+
+title APTree — HL / ML / LL Action & Service Class Diagram
+
+' ============================================================
+' Core BT Infrastructure
+' ============================================================
+
+package "BT Core" #DDDDDD {
+
+    interface IBehaviorTree {
+        +linkedBlackboard : Blackboard
+        +root : FlowNode
+        +Tick(dt) : BTNodeResult
+        +Reset()
+    }
+
+    abstract class BTNode {
+        #AlwaysOnServices : List<Service>
+        #GenrealServices : List<Service>
+        #Decorators : List<IBTDecorator>
+        +AddService(s : Service)
+        +AddDecorator(d : IBTDecorator)
+    }
+
+    abstract class ActionNode extends BTNode {
+        +InstanceName : FastName
+        +status : BTNodeResult
+    }
+
+    abstract class FlowNode extends BTNode {
+        +InstanceName : FastName
+        #actionGraph : NodeGraph
+        +successCriteria : SuccessCriteria
+    }
+
+    class DynamicFlowNode extends FlowNode {
+        +CreateNodeGraphFromActions(actions)
+        +ForceSetActionGraph(graph)
+    }
+
+    abstract class Service {
+        +OwningTree : IBehaviorTree
+        +{abstract} OnEvaluate(dt) : bool
+        +Tick(dt) : bool
+    }
+
+    abstract class Decorator {
+        +AttachedAction : PActionNode
+        +{abstract} PostProcessTickResult(r) : BTNodeResult
+    }
+}
+
+' ============================================================
+' Action Hierarchy
+' ============================================================
+
+package "Actions" #E8F5E9 {
+
+    abstract class PActionNode extends ActionNode {
+        +actionType : FastName
+        +IsHighLevelAction : bool
+        +HighLevelSubtree : DynamicFlowNode
+        #Preconditions : State
+        #Effects : State
+        --
+        <i>Conditionally attaches by suffix:</i>
+        <i>• "HL" → ServiceSubtreeInject</i>
+        <i>• "ML" → ServiceLLSubtreeInject</i>
+        <i>• "LL" → neither</i>
+    }
+
+    note right of PActionNode
+        Constructor checks class name suffix
+        and only attaches the relevant service.
+        HL → planning injection.
+        ML → LL template expansion.
+        LL → no injection needed.
+    end note
+
+    ' -- HL Actions (generated from DSL, same PActionNode class) --
+    package "HL Actions" #C8E6C9 {
+        class PickUpHL <<generated>> extends PActionNode {
+            +obj : Element
+            +p : Location
+            +client : Robot
+            +g : Gripper
+        }
+        class StackHL <<generated>> extends PActionNode
+        class StackOnTwoHL <<generated>> extends PActionNode
+        class NailingHL <<generated>> extends PActionNode
+        class ChangeEndeffectorHL <<generated>> extends PActionNode
+    }
+
+    ' -- ML Actions (generated from DSL, same PActionNode class) --
+    package "ML Actions" #A5D6A7 {
+        class PickUpML <<generated>> extends PActionNode {
+            +obj : Element
+            +p : Location
+            +client : Robot
+            +vg : Gripper
+            +rp : RobotPosition
+        }
+        class StackML <<generated>> extends PActionNode
+        class StackOnTwoML <<generated>> extends PActionNode
+        class TravelML <<generated>> extends PActionNode
+        class NailingML <<generated>> extends PActionNode
+        class EquipeML <<generated>> extends PActionNode
+        class DeequipML <<generated>> extends PActionNode
+        class InitializeML <<generated>> extends PActionNode
+        class CloseToolML <<generated>> extends PActionNode
+    }
+
+    ' -- LL Actions (hand-written BuildCommandRequest) --
+    package "LL Actions" #81C784 {
+        abstract class ExeAction extends PActionNode {
+            #_communicator : IRobotCommandCommunicator
+            +MLInputs : Dictionary<string, object>
+            +CommandRequest : RobotCommandRequest
+            --
+            +OnEnter(): BuildCommandRequest()
+            +OnTick_NodeLogic(): ResolveInputs() → _communicator.SendCommandAsync()
+            +{abstract} BuildCommandRequest() : RobotCommandRequest
+        }
+
+        class MoveToLL extends ExeAction {
+            +MoveType : MoveType
+            +Velocity, Acceleration : double
+            +BuildCommandRequest()
+        }
+        class CloseGripperLL extends ExeAction {
+            +BuildCommandRequest()
+        }
+        class OpenGripperLL extends ExeAction {
+            +BuildCommandRequest()
+        }
+        class LiftLL extends ExeAction {
+            +BuildCommandRequest()
+        }
+        class EquipToolLL extends ExeAction {
+            +BuildCommandRequest()
+        }
+        class DeequipToolLL extends ExeAction {
+            +BuildCommandRequest()
+        }
+        class NailingLL extends ExeAction {
+            +BuildCommandRequest()
+        }
+    }
+}
+
+' ============================================================
+' Services
+' ============================================================
+
+package "Services" #E3F2FD {
+
+    ' -- HL-level: PDDL Planning --
+    package "HL Subtree Injection" #BBDEFB {
+        class ServiceSubtreeInject extends Service {
+            -pendingAction : PActionNode
+            +OnEvaluate(): detects "HL" suffix
+            -- injects →
+            DynamicFlowNode + ServicePDDLPlanning
+        }
+    }
+
+    ' -- ML-level: LL Template Expansion --
+    package "ML→LL Subtree Injection" #90CAF9 {
+        class ServiceLLSubtreeInject extends Service {
+            -_mlAction : PActionNode
+            -_communicator : IRobotCommandCommunicator
+            +OnEvaluate(): detects "ML" suffix
+            -- injects →
+            DynamicFlowNode with ExeAction sequence
+            +CreateLLNode(step) : PActionNode
+        }
+    }
+
+    ' -- AI Planning --
+    package "AI Planning" #64B5F6 {
+        abstract class ServicePlanning extends Service {
+            +{abstract} OnEvaluate(dt) : bool
+        }
+        class ServicePDDLPlanning extends ServicePlanning {
+            -_communicator : IPlannerCommunicator
+            +OnEvaluate(): sends PDDL → receives plan
+        }
+    }
+
+    ' -- Decorators --
+    package "Decorators" #42A5F5 {
+        class DecoratorResetOnSubtreeSuccess extends Decorator {
+            +PostProcessTickResult(): resets HL subtree
+        }
+        class DecoratorRecovery extends Decorator {
+            +PostProcessTickResult(): operator retry/replan on ML failure
+        }
+        class DecoratorParameterResolver extends Decorator {
+            +PostProcessTickResult(): resolves null Locations from goal state
+        }
+    }
+}
+
+' ============================================================
+' Communication Layer
+' ============================================================
+
+package "Communication" #FFF3E0 {
+
+    ' -- Planner Communication (existing pattern) --
+    package "Planner" #FFE0B2 {
+        interface IPlannerCommunicator {
+            +SendPlanningRequestAsync(r) : PlanningResult
+            +IsAvailable() : bool
+        }
+        class RestPlannerCommunicator implements IPlannerCommunicator {
+            -_httpClient : HttpClient
+            -_baseUrl : string
+        }
+    }
+
+    ' -- Robot Command Communication (refactored to match) --
+    package "Robot Command" #FFCC80 {
+        interface IRobotCommandCommunicator {
+            +SendCommandAsync(r) : RobotCommandResult
+        }
+        class RestRobotCommandCommunicator implements IRobotCommandCommunicator {
+            -_httpClient : HttpClient
+            -_baseUrl : string
+        }
+        class RobotCommandRequest {
+            +Endpoint, CommandType : string
+            +Pose : double[]
+            +Joints : double[]
+            +Velocity, Acceleration : double
+            +EndEffectorType : string
+        }
+        class RobotCommandResult {
+            +Success : bool
+            +Error, Message : string
+            +ExecutionTimeSeconds : double
+        }
+    }
+}
+
+' ============================================================
+' Relationships
+' ============================================================
+
+' Service attachments (conditional by suffix)
+PickUpHL ..> ServiceSubtreeInject : "HL → attaches"
+PickUpML ..> ServiceLLSubtreeInject : "ML → attaches"
+
+' HL injection flow
+ServiceSubtreeInject --> DynamicFlowNode : "creates subtree"
+ServiceSubtreeInject --> ServicePDDLPlanning : "attaches planner"
+ServicePDDLPlanning --> IPlannerCommunicator : "uses"
+
+' ML injection flow
+ServiceLLSubtreeInject --> DynamicFlowNode : "creates subtree"
+ServiceLLSubtreeInject --> ExeAction : "creates LL nodes"
+ServiceLLSubtreeInject --> IRobotCommandCommunicator : "passes to LL nodes"
+
+' LL execution
+ExeAction --> IRobotCommandCommunicator : "sends commands via"
+ExeAction --> RobotCommandRequest : "builds"
+IRobotCommandCommunicator --> RobotCommandResult : "returns"
+
+' Decorator attachments
+ServiceSubtreeInject ..> DecoratorResetOnSubtreeSuccess : "attaches to HL"
+ServiceLLSubtreeInject ..> DecoratorRecovery : "attaches to ML"
+ServiceLLSubtreeInject ..> DecoratorParameterResolver : "attaches to ML"
+
+' Tree structure
+PActionNode --> DynamicFlowNode : "HighLevelSubtree"
+
+' ============================================================
+' Design Issues Legend
+' ============================================================
+
+legend bottom left
+  |= Symbol |= Meaning |
+  | <<generated>> | Fully generatable from DSL |
+  | <color:green>Green</color> | Actions (HL → ML → LL) |
+  | <color:blue>Blue</color> | Services & Decorators |
+  | <color:orange>Orange</color> | Communication layer |
+endlegend
+
+@enduml

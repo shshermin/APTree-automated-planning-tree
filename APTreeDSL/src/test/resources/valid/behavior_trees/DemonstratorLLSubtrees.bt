@@ -1,0 +1,110 @@
+// ═══════════════════════════════════════════════════════════════════════════
+// Low-Level (LL) Subtree Models
+//
+// Each BehaviorTree below corresponds to one ML action's LL expansion.
+//
+// Parameters listed in (...) are ML property names — the resolver looks them
+// up by name on the parent ML action via reflection, then the LL action
+// binds by type.
+//
+// Cont properties (MoveType, DigitalOutput) are step-level configuration
+// values, not forwarded from the ML parent.
+// ═══════════════════════════════════════════════════════════════════════════
+
+
+// ── PickUpML ──
+// ML signature: PickUpML (obj:Element, p:Location, client:Robot, vg:Gripper, rp:RobotPosition)
+// Steps: MoveL to pick position → close gripper → MoveL to retract position
+BehaviorTree PickUpLLSubtree {
+    Root Sequence PickUpSequence {
+        Action MoveToLL moveToPickPosition (p client "movel")
+        Action CloseGripperLL closeGripper (client 0)
+        Action MoveToLL moveToRetract (rp client "movel")
+    }
+}
+
+// ── StackML ──
+// ML signature: StackML (stackingobject:Element, existingobject:Element, client:Robot, gripper:Gripper, objposition:Location, robotposition:RobotPosition)
+// Steps: Planned move to object position → MoveJ to robot rest position
+BehaviorTree StackLLSubtree {
+    Root Sequence StackSequence {
+        Action MoveToLL moveToObjPosition (objposition client "planned")
+        Action MoveToLL moveToRobotPosition (robotposition client "movej")
+    }
+}
+
+// ── StackOnTwoML ──
+// ML signature: StackOnTwoML (stackingobj:Element, client:Robot, objposition:Location, robotpos:RobotPosition, existingobj1:Element, existingobj2:Element, vg:Gripper, layer1:Stack, layer2:Stack)
+// Steps: Planned move to object position → MoveJ to robot position
+BehaviorTree StackOnTwoLLSubtree {
+    Root Sequence StackOnTwoSequence {
+        Action MoveToLL moveToObjPosition (objposition client "planned")
+        Action MoveToLL moveToRobotPos (robotpos client "movej")
+    }
+}
+
+// ── TravelML ──
+// ML signature: TravelML (client:Robot, from:RobotPosition, to:RobotPosition)
+// Steps: MoveJ to target position
+BehaviorTree TravelLLSubtree {
+    Root Sequence TravelSequence {
+        Action MoveToLL moveToTarget (to client "movej")
+    }
+}
+
+// ── NailingML ──
+// ML signature: NailingML (obj1:Element, obj2:Element, client:Robot, ng:StaplerGun, rp:RobotPosition)
+// Steps: Execute nailing operation
+BehaviorTree NailingLLSubtree {
+    Root Sequence NailingSequence {
+        Action NailingLL nailStep (client ng nailloc "planned")
+    }
+}
+
+// ── EquipeML ──
+// ML signature: EquipeML (client:Robot, too:Tool, rp:RobotPosition, ep:EquipLocation)
+// Steps: Equip tool
+BehaviorTree EquipeLLSubtree {
+    Root Sequence EquipeSequence {
+        Action EquipToolLL equipTool (client too)
+    }
+}
+
+// ── DeequipML ──
+// ML signature: DeequipML (client:Robot, too:Tool, ep:EquipLocation, rp:RobotPosition)
+// Steps: De-equip tool
+BehaviorTree DeequipLLSubtree {
+    Root Sequence DeequipSequence {
+        Action DeequipToolLL deequipTool (client too)
+    }
+}
+
+// ── PlaceML ──
+// ML signature: PlaceML (obj:Element, placepos:Location, client:Robot, vg:VacGripper)
+// Steps: Move to place position → lower object → open gripper → retract
+BehaviorTree PlaceLLSubtree {
+    Root Sequence PlaceSequence {
+        Action MoveToLL moveToPlacePos (placepos client "movel")
+        Action LowerLL lowerObject (client obj "movel")
+        Action OpenGripperLL openGripper (client 0)
+        Action RetractLL retractRobot (client "movel")
+    }
+}
+
+// ── CloseToolML ──
+// ML signature: CloseToolML (client:Robot, too:Tool)
+// Steps: Deactivate tool
+BehaviorTree CloseToolLLSubtree {
+    Root Sequence CloseToolSequence {
+        Action DeactivateToolLL deactivateTool (client too)
+    }
+}
+
+// ── InitializeML ──
+// ML signature: InitializeML (client:Robot, too:Tool)
+// Steps: Initialize robot
+BehaviorTree InitializeLLSubtree {
+    Root Sequence InitializeSequence {
+        Action InitializeLL initRobot (client)
+    }
+}

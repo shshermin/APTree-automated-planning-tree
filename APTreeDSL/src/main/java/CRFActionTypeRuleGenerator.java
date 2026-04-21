@@ -61,7 +61,13 @@ public class CRFActionTypeRuleGenerator {
                 // Add parameters
                 List<String> params = new ArrayList<>();
                 for (PropertyDef prop : action.properties) {
-                    params.add(prop.name + ":Name@" + prop.type);
+                    if (isPrimitiveType(prop.type)) {
+                        // String → Name in MontiCore grammar; other primitives keep their type
+                        String grammarType = prop.type.equals("String") ? "Name" : prop.type;
+                        params.add(prop.name + ":" + grammarType);
+                    } else {
+                        params.add(prop.name + ":Name@" + prop.type);
+                    }
                 }
                 rule.append(String.join(" ", params));
                 rule.append(" \")\" (\"{\" (Decorator | Service)* \"}\")?");
@@ -289,6 +295,14 @@ public class CRFActionTypeRuleGenerator {
         }
 
         return actions;
+    }
+
+    private static final java.util.Set<String> PRIMITIVE_TYPES = java.util.Set.of(
+        "String", "Boolean", "Integer", "Double", "Float", "Long", "int", "boolean", "double", "float"
+    );
+
+    private static boolean isPrimitiveType(String type) {
+        return PRIMITIVE_TYPES.contains(type);
     }
 
     private static class ActionDef {

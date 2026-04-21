@@ -4,11 +4,13 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.Json;
 
 using AIPlanning;
 using BehaviorTreeMainProject.Services.AIPlanning;
 using ModelLoader.ParameterTypes;
 using BehaviorTreeMainProject.Log.Services;
+using RobotCommand;
 
 namespace BehaviorTreeMainProject
 {
@@ -29,6 +31,9 @@ namespace BehaviorTreeMainProject
 
         // The ML-level action this service is attached to
         private PActionNode _mlAction;
+
+        // Shared robot communicator — one instance for all LL nodes in this subtree
+        private readonly IRobotCommandCommunicator _communicator;
 
         // Guard: only inject once per action
         private bool _hasInjected = false;
@@ -76,15 +81,17 @@ namespace BehaviorTreeMainProject
 
         // ──────────────────── Construction ────────────────────
 
-        public ServiceLLSubtreeInject(IBehaviorTree owningTree, PActionNode mlAction) : base(owningTree)
+        public ServiceLLSubtreeInject(IBehaviorTree owningTree, PActionNode mlAction, IRobotCommandCommunicator communicator = null) : base(owningTree)
         {
             _mlAction = mlAction;
+            _communicator = communicator;
             InitializeDefaultTemplates();
         }
 
-        public ServiceLLSubtreeInject(PActionNode mlAction) : base(null)
+        public ServiceLLSubtreeInject(PActionNode mlAction, IRobotCommandCommunicator communicator = null) : base(null)
         {
             _mlAction = mlAction;
+            _communicator = communicator;
             InitializeDefaultTemplates();
         }
 
@@ -109,80 +116,126 @@ namespace BehaviorTreeMainProject
         }
 
         /// <summary>
-        /// Initialises sensible default templates for every known ML action type.
-        /// These are intentionally minimal stubs — extend or replace them as you
-        /// implement the actual robot primitives.
+        /// Loads LL subtree templates from the generated JSON file.
+        /// Falls back to a warning if the file is not found.
         /// </summary>
         private static void InitializeDefaultTemplates()
         {
             if (_templatesInitialized) return;
             _templatesInitialized = true;
 
-            // ── PickUpML ──
-            // Target is {p} = the stick's InitialLocation (position where the stick sits)
-            var pickUp = new LLSubtreeTemplate("PickUpML");
-            pickUp.Steps.Add(new LLStep("MoveToLL", MoveType.MoveL) { Parameters = { ["target"] = "{p}", ["robot"] = "{client}" } });
-            pickUp.Steps.Add(new LLStep("CloseGripperLL") { Parameters = { ["robot"] = "{client}" } });
-            // pickUp.Steps.Add(new LLStep("LiftLL") { Parameters = { ["robot"] = "{client}" } });
-            pickUp.Steps.Add(new LLStep("MoveToLL", MoveType.MoveL) { Parameters = { ["target"] = "{rp}", ["robot"] = "{client}", ["velocity"] = "1.0", ["acceleration"] = "0.3" } });
-            _templates["PickUpML"] = pickUp;
+            // Convention: look for DemonstratorLLSubtrees.json next to the executable,
+            // then fall back to the ModelLoader source path (dev mode).
+            string jsonPath = FindLLSubtreeJson();
+            if (jsonPath == null)
+            {
+                LogMessageStatic("⚠️ ServiceLLSubtreeInject: No LLSubtrees.json found — no LL templates loaded");
+                return;
+            }
 
-            // ── StackML ──
-            var stack = new LLSubtreeTemplate("StackML");
-            stack.Steps.Add(new LLStep("MoveToLL", MoveType.Planned) { Parameters = { ["target"] = "{objposition}", ["robot"] = "{client}" } });
-            //stack.Steps.Add(new LLStep("OpenGripperLL") { Parameters = { ["robot"] = "{client}" } });
-            //stack.Steps.Add(new LLStep("LiftLL") { Parameters = { ["robot"] = "{client}" } });
-            stack.Steps.Add(new LLStep("MoveToLL", MoveType.MoveJ) { Parameters = { ["target"] = "{robotposition}", ["robot"] = "{client}", ["velocity"] = "1.0", ["acceleration"] = "0.3" } });
-            _templates["StackML"] = stack;
+            try
+            {
+                string json = File.ReadAllText(jsonPath);
+                var doc = JsonDocument.Parse(json);
+                var root = doc.RootElement;
 
-            // ── StackOnTwoML ──
-            var stackTwo = new LLSubtreeTemplate("StackOnTwoML");
-            stackTwo.Steps.Add(new LLStep("MoveToLL", MoveType.Planned) { Parameters = { ["target"] = "{objposition}", ["robot"] = "{client}" } });
-            //stackTwo.Steps.Add(new LLStep("OpenGripperLL") { Parameters = { ["robot"] = "{client}" } });
-            //stackTwo.Steps.Add(new LLStep("LiftLL") { Parameters = { ["robot"] = "{client}" } });
-            stackTwo.Steps.Add(new LLStep("MoveToLL", MoveType.MoveJ) { Parameters = { ["target"] = "{robotpos}", ["robot"] = "{client}", ["velocity"] = "1.0", ["acceleration"] = "0.3" } });
-            _templates["StackOnTwoML"] = stackTwo;
+                if (!root.TryGetProperty("llSubtrees", out var subtreesArr))
+                {
+                    LogMessageStatic("⚠️ ServiceLLSubtreeInject: JSON missing 'llSubtrees' array");
+                    return;
+                }
 
+                int count = 0;
+                foreach (var subtreeEl in subtreesArr.EnumerateArray())
+                {
+                    string mlAction = subtreeEl.GetProperty("mlAction").GetString();
+                    var template = new LLSubtreeTemplate(mlAction);
 
-            // ── TravelML ──
-            var travel = new LLSubtreeTemplate("TravelML");
-            travel.Steps.Add(new LLStep("MoveToLL", MoveType.MoveJ) { Parameters = { ["target"] = "{to}", ["robot"] = "{client}", ["velocity"] = "1.0", ["acceleration"] = "0.3" } });
-            _templates["TravelML"] = travel;
+                    foreach (var stepEl in subtreeEl.GetProperty("steps").EnumerateArray())
+                    {
+                        string actionType = stepEl.GetProperty("actionType").GetString();
 
-            // ── NailingML ──
-            var nailing = new LLSubtreeTemplate("NailingML");
-            nailing.Steps.Add(new LLStep("NailingLL") { Parameters = { ["obj"] = "{obj1}", ["base"] = "{obj2}", ["robot"] = "{client}", ["tool"] = "{ng}", ["nailloc"] = "{nailloc}" } });
-            // nailing.Steps.Add(new LLStep("LiftLL") { Parameters = { ["robot"] = "{client}" } });
-            _templates["NailingML"] = nailing;
+                        // Parse MoveType from contParams if present
+                        MoveType? moveType = null;
+                        if (stepEl.TryGetProperty("contParams", out var contParams) &&
+                            contParams.TryGetProperty("moveType", out var moveTypeEl))
+                        {
+                            moveType = ParseMoveType(moveTypeEl.GetString());
+                        }
 
+                        var step = new LLStep(actionType, moveType);
 
-            // ── EquipeML (tool change — equip) ──
-            var equip = new LLSubtreeTemplate("EquipeML");
-            equip.Steps.Add(new LLStep("EquipToolLL") { Parameters = { ["robot"] = "{client}", ["tool"] = "{too}" } });
-            _templates["EquipeML"] = equip;
+                        // Load paramBindings → Parameters dict (already in {placeholder} format)
+                        if (stepEl.TryGetProperty("paramBindings", out var bindings))
+                        {
+                            foreach (var binding in bindings.EnumerateObject())
+                            {
+                                step.Parameters[binding.Name] = binding.Value.GetString();
+                            }
+                        }
 
-            // ── DeequipML (tool change — de-equip) ──
-            var deequip = new LLSubtreeTemplate("DeequipML");
-            deequip.Steps.Add(new LLStep("DeequipToolLL") { Parameters = { ["robot"] = "{client}", ["tool"] = "{too}" } });
-            _templates["DeequipML"] = deequip;
+                        template.Steps.Add(step);
+                    }
 
-            // ── PlaceML ──
-            var place = new LLSubtreeTemplate("PlaceML");
-            place.Steps.Add(new LLStep("MoveTo") { Parameters = { ["target"] = "{pos}", ["robot"] = "{client}" } });
-            place.Steps.Add(new LLStep("Lower") { Parameters = { ["robot"] = "{client}", ["obj"] = "{obj}" } });
-            place.Steps.Add(new LLStep("OpenGripperLL") { Parameters = { ["robot"] = "{client}" } });
-            place.Steps.Add(new LLStep("Retract") { Parameters = { ["robot"] = "{client}" } });
-            _templates["PlaceML"] = place;
+                    _templates[mlAction] = template;
+                    count++;
+                }
 
-            // ── CloseToolML ──
-            var closeTool = new LLSubtreeTemplate("CloseToolML");
-            closeTool.Steps.Add(new LLStep("DeactivateTool") { Parameters = { ["robot"] = "{client}", ["tool"] = "{tool}" } });
-            _templates["CloseToolML"] = closeTool;
+                LogMessageStatic($"✅ ServiceLLSubtreeInject: Loaded {count} LL subtree templates from {jsonPath}");
+            }
+            catch (Exception ex)
+            {
+                LogMessageStatic($"❌ ServiceLLSubtreeInject: Failed to load LLSubtrees.json: {ex.Message}");
+            }
+        }
 
-            // ── InitializeML ──
-            var init = new LLSubtreeTemplate("InitializeML");
-            init.Steps.Add(new LLStep("Initialize") { Parameters = { ["robot"] = "{client}" } });
-            _templates["InitializeML"] = init;
+        /// <summary>
+        /// Searches known locations for the LL subtree JSON file.
+        /// </summary>
+        private static string FindLLSubtreeJson()
+        {
+            var candidates = new[]
+            {
+                Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "DemonstratorLLSubtrees.json"),
+                Path.Combine("src", "ModelLoader", "DemonstratorLLSubtrees.json"),
+                "DemonstratorLLSubtrees.json"
+            };
+
+            foreach (var path in candidates)
+            {
+                if (File.Exists(path))
+                    return Path.GetFullPath(path);
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Parses a moveType string from the .bt model to the MoveType enum.
+        /// </summary>
+        private static MoveType? ParseMoveType(string value)
+        {
+            if (string.IsNullOrEmpty(value)) return null;
+            return value.ToLowerInvariant() switch
+            {
+                "movej" => global::MoveType.MoveJ,
+                "movel" => global::MoveType.MoveL,
+                "movep" => global::MoveType.MoveP,
+                "movec" => global::MoveType.MoveC,
+                "planned" => global::MoveType.Planned,
+                _ => null
+            };
+        }
+
+        private static void LogMessageStatic(string message)
+        {
+            var timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
+            var logMessage = $"[{timestamp}] {message}";
+            LoggingService.LogInfo(logMessage);
+            lock (LogLock)
+            {
+                try { File.AppendAllText(LogFilePath, logMessage + Environment.NewLine); }
+                catch { /* swallow file write errors */ }
+            }
         }
 
         // ──────────────────── Service tick ────────────────────
@@ -285,7 +338,7 @@ namespace BehaviorTreeMainProject
                 var resolvedObjects = ResolveParameterObjects(step.Parameters, mlParamObjects);
                 var stepName = $"{step.ActionName}_{mlAction.InstanceName}";
 
-                PActionNode llNode = CreateLLNode(step, stepName, resolvedParams, resolvedObjects, linkedBlackboard);
+                PActionNode llNode = CreateLLNode(step, stepName, resolvedParams, resolvedObjects, linkedBlackboard, _communicator);
 
                 // Set the owning tree so services can access the blackboard
                 llNode.SetOwiningTree(subtreeTree);
@@ -320,9 +373,12 @@ namespace BehaviorTreeMainProject
 
         /// <summary>
         /// Creates the correct ExeAction (or falls back to LLActionNode) for a template step.
+        /// Attaches a DecoratorLLInputResolver to resolve ML inputs into the action's typed properties.
         /// </summary>
-        private PActionNode CreateLLNode(LLStep step, string stepName, Dictionary<string, string> resolvedParams, Dictionary<string, object> resolvedObjects, Blackboard<FastName> blackboard)
+        private PActionNode CreateLLNode(LLStep step, string stepName, Dictionary<string, string> resolvedParams, Dictionary<string, object> resolvedObjects, Blackboard<FastName> blackboard, IRobotCommandCommunicator communicator)
         {
+            ExeAction exeNode = null;
+
             switch (step.ActionName)
             {
                 case "MoveToLL":
@@ -330,39 +386,32 @@ namespace BehaviorTreeMainProject
                     var moveType = step.MoveType ?? MoveType.MoveJ;
                     double vel = step.Parameters.TryGetValue("velocity", out var vStr) && double.TryParse(vStr, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var vParsed) ? vParsed : 0.3;
                     double acc = step.Parameters.TryGetValue("acceleration", out var aStr) && double.TryParse(aStr, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var aParsed) ? aParsed : 0.3;
-                    var moveNode = new MoveToLL(stepName, "", target, blackboard, moveType, velocity: vel, acceleration: acc);
-                    moveNode.MLInputs = resolvedObjects;
-                    return moveNode;
+                    exeNode = new MoveToLL(stepName, "", target, blackboard, moveType, velocity: vel, acceleration: acc, communicator: communicator);
+                    break;
 
                 case "CloseGripperLL":
-                    var gripNode = new CloseGripperLL(stepName, blackboard);
-                    gripNode.MLInputs = resolvedObjects;
-                    return gripNode;
+                    exeNode = new CloseGripperLL(stepName, blackboard, communicator: communicator);
+                    break;
 
                 case "OpenGripperLL":
-                    var openGripNode = new OpenGripperLL(stepName, blackboard);
-                    openGripNode.MLInputs = resolvedObjects;
-                    return openGripNode;
+                    exeNode = new OpenGripperLL(stepName, blackboard, communicator: communicator);
+                    break;
 
                 case "LiftLL":
-                    var liftNode = new LiftLL(stepName, blackboard);
-                    liftNode.MLInputs = resolvedObjects;
-                    return liftNode;
+                    exeNode = new LiftLL(stepName, blackboard, communicator: communicator);
+                    break;
 
                 case "EquipToolLL":
-                    var equipNode = new EquipToolLL(stepName, blackboard);
-                    equipNode.MLInputs = resolvedObjects;
-                    return equipNode;
+                    exeNode = new EquipToolLL(stepName, blackboard, communicator: communicator);
+                    break;
 
                 case "DeequipToolLL":
-                    var deequipNode = new DeequipToolLL(stepName, blackboard);
-                    deequipNode.MLInputs = resolvedObjects;
-                    return deequipNode;
+                    exeNode = new DeequipToolLL(stepName, blackboard, communicator: communicator);
+                    break;
 
                 case "NailingLL":
-                    var nailingNode = new NailingLL(stepName, blackboard);
-                    nailingNode.MLInputs = resolvedObjects;
-                    return nailingNode;
+                    exeNode = new NailingLL(stepName, blackboard, communicator: communicator);
+                    break;
 
                 default:
                     // Fallback: generic LLActionNode for steps not yet mapped to ExeAction
@@ -374,6 +423,10 @@ namespace BehaviorTreeMainProject
                         blackboard
                     );
             }
+
+            // Attach the decorator that resolves ML inputs → typed properties before first tick
+            exeNode.AddDecorator(new DecoratorLLInputResolver(exeNode, resolvedObjects));
+            return exeNode;
         }
 
         /// <summary>

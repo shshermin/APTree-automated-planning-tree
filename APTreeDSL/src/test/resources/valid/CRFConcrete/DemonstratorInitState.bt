@@ -1,4 +1,4 @@
-// layer assignment 
+﻿// layer assignment 
 
 BelongsToLayer(table1 layer0)
 BelongsToLayer(stick1 layer1)
@@ -329,8 +329,7 @@ AtPlace(cube17 initloccube17)
 AtPlace(cube18 initloccube18)
 AtPlace(table1 mp5)
 
-// GripperEmpty predicates
-GripperEmpty(robot1)
+
 
 // ObjectFinalPosition predicates
 ObjectFinalPosition(stick1 finallocstick1)
@@ -459,5 +458,8 @@ RobotEquipped(robot1)
 
 // ActiveTool predicates
 ActiveTool(gripper1)
+
+// GripperEmpty predicates
+GripperEmpty(robot1)
 
 // === END GENERATED PREDICATES ===

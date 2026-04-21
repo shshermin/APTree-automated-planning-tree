@@ -10,10 +10,10 @@ namespace RobotCommand
         public double Velocity { get; set; } = 0.5;
         public double Acceleration { get; set; } = 1.0;
 
-        /// <summary>Joint angles array — populated by ServiceInputProvider from the blackboard.</summary>
+        /// <summary>Joint angles array — populated by ExeAction.ResolveInputs() from the blackboard.</summary>
         public double[] Joints { get; set; }
 
-        /// <summary>TCP pose [x, y, z, rx, ry, rz] — populated by ServiceInputProvider from the blackboard.</summary>
+        /// <summary>TCP pose [x, y, z, rx, ry, rz] — populated by ExeAction.ResolveInputs() from the blackboard.</summary>
         public double[] Pose { get; set; }
 
         /// <summary>Program name for /play_program endpoint (e.g. "equipdemo.urp").</summary>

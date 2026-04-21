@@ -904,7 +904,7 @@ export function aptreeGraphToCanvasGraph(
         width: actionWrapperWidth,
         height: actionWrapperHeight,
         renderAsSubtree: true,
-        subtreeTitle: "SubTreeInject",
+        subtreeTitle: "",
         hasOutgoing: true,
       };
       wrapperNodes.push(actionWrapper);

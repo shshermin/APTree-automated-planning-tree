@@ -237,6 +237,10 @@ task runCRFActionTypeParser(type: JavaExec) {
     workingDir = projectDir
 }
 
+///// generating grammar rules for new types
+// These tasks read the type definitions from the .bt files and generate corresponding grammar rules for the CRFTypesCon.mc4 grammar, which is used to parse concrete instances of these types in the .bt models. This way, when new types are added to the .bt files, we can easily update the grammar rules by running these tasks.
+// example command: gradle generateCRFPropertyTypeRules -PinputModel="src/test/resources/valid/CRFTypes/DemonstratorPropertyTypes.bt" 
+
 task generateCRFPropertyTypeRules(type: JavaExec) {
     description = 'Generates grammar rules for CRFTypesCon.mc4 from CRFPropertyTypes.bt'
     dependsOn 'compileJava'
@@ -246,6 +250,7 @@ task generateCRFPropertyTypeRules(type: JavaExec) {
     args = [project.properties.get('inputModel', 'src/test/resources/valid/CRFTypes/LiveMatPropertyTypes.bt')]
 }
 
+// 
 task generateCRFActionTypeRules(type: JavaExec) {
    description = 'Generates action type grammar rules for CRFTypesCon.mc4 from CRFActionTypes.bt'
    dependsOn 'compileJava'
@@ -275,6 +280,7 @@ task runCRFConPropertyParser(type: JavaExec) {
     args = [project.properties.get('modelName', 'LiveMatSetupObjects.bt')]
 }
 
+// Separate parser for predicate instances, as they have a different structure and are used to generate the initial state JSON
 task runCRFConPredicateParser(type: JavaExec) {
     description = 'Parses predicate models (CRFTypesCon grammar)'
     dependsOn 'compileJava'
@@ -284,15 +290,6 @@ task runCRFConPredicateParser(type: JavaExec) {
     args = [project.properties.get('modelName', 'LiveMatInitialState.bt')]
 }
 
-task runInitialStateJsonGenerator(type: JavaExec) {
-  description = 'Parses predicate model and exports JSON'
-  dependsOn 'compileJava'
-  classpath = sourceSets.main.runtimeClasspath
-  mainClass = 'InitialStateJsonGenerator'
-  workingDir = projectDir
-  args = [project.properties.get('modelName', 'LiveMatInitialState.bt'),
-      project.properties.get('outputName', '../APTreeExecutionEngine/src/ModelLoader/InitialStatePredicates.json')]
-}
 
 task runAPTreeTool(type: JavaExec) {
     description = 'Parses and analyzes the APTree behavior tree model'
@@ -336,16 +333,78 @@ task generateInstanceSymbols(type: JavaExec) {
   workingDir = projectDir
 }
 
+
+
+
+
+// Task to generate Class Diagram from grammar (shows AST structure)
+task generateASTClassDiagram(type: JavaExec) {
+    dependsOn 'compileJava'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'ASTClassDiagramGenerator'
+    workingDir = projectDir
+}
+
+/// Generating Json Files
+
+// Task to generate JSON file with parameter instances for the execution engine
+// Convention mode: gradle runObjectsJsonGenerator -PtreeName=Demonstrator
+// Legacy mode:     gradle runObjectsJsonGenerator -PmodelName=... -PoutputName=...
 task runObjectsJsonGenerator(type: JavaExec) {
-    description = 'Parses LiveMatSetupObjects.bt and generates JSON file with parameter instances'
+    description = 'Parses {treeName}SceneObjects.bt and generates {treeName}SetupObjects.json'
     dependsOn 'compileJava'
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'GeneratorJsonSetupObjects'
     workingDir = projectDir
-    args = [project.properties.get('modelName', 'src/test/resources/valid/CRFConcrete/LiveMatSetupObjects.bt'),
-        project.properties.get('outputName', '../APTreeExecutionEngine/src/ModelLoader/LiveMatSetupObjects.json')]
+    doFirst {
+        if (project.hasProperty('treeName')) {
+            args = [project.property('treeName')]
+        } else {
+            args = [project.properties.get('modelName', 'src/test/resources/valid/CRFConcrete/LiveMatSceneObjects.bt'),
+                project.properties.get('outputName', '../APTreeExecutionEngine/src/ModelLoader/LiveMatSetupObjects.json')]
+        }
+    }
 }
 
+// Task to generate the initial state JSON file for the execution engine, based on the predicate model
+// Convention mode: gradle runInitialStateJsonGenerator -PtreeName=Demonstrator
+// Legacy mode:     gradle runInitialStateJsonGenerator -PmodelName=... -PoutputName=...
+task runInitialStateJsonGenerator(type: JavaExec) {
+  description = 'Parses {treeName}InitState.bt and exports {treeName}InitState.json'
+  dependsOn 'compileJava'
+  classpath = sourceSets.main.runtimeClasspath
+  mainClass = 'InitialStateJsonGenerator'
+  workingDir = projectDir
+  doFirst {
+      if (project.hasProperty('treeName')) {
+          args = [project.property('treeName')]
+      } else {
+          args = [project.properties.get('modelName', 'LiveMatInitialState.bt'),
+              project.properties.get('outputName', '../APTreeExecutionEngine/src/ModelLoader/InitialStatePredicates.json')]
+      }
+  }
+}
+
+// Task to generate the goal state JSON file for the execution engine
+// Convention mode: gradle runGoalStateJsonGenerator -PtreeName=Demonstrator
+// Legacy mode:     gradle runGoalStateJsonGenerator -PmodelName=... -PoutputName=...
+task runGoalStateJsonGenerator(type: JavaExec) {
+  description = 'Parses {treeName}GoalState.bt and exports {treeName}GoalState.json'
+  dependsOn 'compileJava'
+  classpath = sourceSets.main.runtimeClasspath
+  mainClass = 'GoalStateJsonGenerator'
+  workingDir = projectDir
+  doFirst {
+      if (project.hasProperty('treeName')) {
+          args = [project.property('treeName')]
+      } else {
+          args = [project.properties.get('modelName', 'LiveMatGoalState.bt'),
+              project.properties.get('outputName', '../APTreeExecutionEngine/src/ModelLoader/GoalState.json')]
+      }
+  }
+}
+
+// Task to generate the behavior tree model JSON file for the execution engine, based on the APTree .bt model
 task generateBTModelJson(type: JavaExec) {
     description = 'Parses APTree BT model and exports full tree structure as JSON for the C# execution engine'
     dependsOn 'compileJava'
@@ -354,17 +413,148 @@ task generateBTModelJson(type: JavaExec) {
     workingDir = projectDir
     args = [
         project.properties.get('btModel', 'src/test/resources/valid/behavior_trees/APTreeLiveMat.bt'),
-        project.properties.get('instances', 'src/test/resources/valid/CRFConcrete/LiveMatSetupObjects.bt'),
+        project.properties.get('instances', 'src/test/resources/valid/CRFConcrete/LiveMatSceneObjects.bt'),
         project.properties.get('outputName', '../APTreeExecutionEngine/src/ModelLoader/BehaviorTreeModel.json')
     ]
 }
 
-// Task to generate Class Diagram from grammar (shows AST structure)
-task generateASTClassDiagram(type: JavaExec) {
+// Task to generate LL subtree JSON from LL subtree .bt models
+// Convention mode: gradle runLLSubtreeJsonGenerator -PtreeName=Demonstrator
+// Legacy mode:     gradle runLLSubtreeJsonGenerator -PinputModel=... -PoutputName=...
+task runLLSubtreeJsonGenerator(type: JavaExec) {
+    description = 'Parses {treeName}LLSubtrees.bt and generates LLSubtrees.json'
     dependsOn 'compileJava'
     classpath = sourceSets.main.runtimeClasspath
-    mainClass = 'ASTClassDiagramGenerator'
+    mainClass = 'LLSubtreeJsonGenerator'
     workingDir = projectDir
+    doFirst {
+        if (project.hasProperty('treeName')) {
+            String tn = project.property('treeName')
+            args = ["src/test/resources/valid/behavior_trees/${tn}LLSubtrees.bt",
+                    "../APTreeExecutionEngine/src/ModelLoader/${tn}LLSubtrees.json"]
+        } else {
+            args = [project.properties.get('inputModel', 'src/test/resources/valid/behavior_trees/DemonstratorLLSubtrees.bt'),
+                    project.properties.get('outputName', '../APTreeExecutionEngine/src/ModelLoader/LLSubtrees.json')]
+        }
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// UNIFIED TASK: Generate ALL JSON files for a behavior tree by convention
+//
+// Usage:  gradle generateAll "-PtreeName=Demonstrator"
+//
+// Convention (all in src/test/resources/valid/):
+//   behavior_trees/{treeName}.bt             → BT model
+//   CRFConcrete/{treeName}SceneObjects.bt    → setup objects / scene instances
+//   CRFConcrete/{treeName}InitState.bt       → initial state predicates
+//   CRFConcrete/{treeName}GoalState.bt       → goal state predicates
+//
+// Outputs (in ../APTreeExecutionEngine/src/ModelLoader/):
+//   BehaviorTreeModel.json
+//   {treeName}SetupObjects.json
+//   {treeName}InitState.json
+//   {treeName}GoalState.json
+//   {treeName}LLSubtrees.json   (if {treeName}LLSubtrees.bt exists)
+// ═══════════════════════════════════════════════════════════════════════════
+task generateAll {
+    description = 'Generates all JSON files for a tree: BT model + SceneObjects + InitState + GoalState'
+    dependsOn 'compileJava'
+
+    doLast {
+        if (!project.hasProperty('treeName')) {
+            throw new GradleException(
+                "Usage: gradle generateAll -PtreeName=<TreeName>\n" +
+                "Example: gradle generateAll -PtreeName=Demonstrator")
+        }
+
+        String tn = project.property('treeName')
+        String btModel      = "src/test/resources/valid/behavior_trees/${tn}.bt"
+        String sceneObjects  = "src/test/resources/valid/CRFConcrete/${tn}SceneObjects.bt"
+        String initState     = "src/test/resources/valid/CRFConcrete/${tn}InitState.bt"
+        String goalState     = "src/test/resources/valid/CRFConcrete/${tn}GoalState.bt"
+
+        // ── Pre-flight: check all DSL model files exist ──
+        def requiredFiles = [
+            'BT model'      : btModel,
+            'SceneObjects'   : sceneObjects,
+            'InitState'      : initState,
+            'GoalState'      : goalState
+        ]
+        def missing = []
+        requiredFiles.each { label, path ->
+            if (!file(path).exists()) {
+                missing << "  [MISSING] ${label}: ${path}"
+            } else {
+                println "[OK] Found ${label}: ${path}"
+            }
+        }
+        if (!missing.isEmpty()) {
+            throw new GradleException(
+                "Cannot generate for tree '${tn}'. Missing DSL files:\n" +
+                missing.join('\n') + "\n\n" +
+                "Expected naming convention:\n" +
+                "  behavior_trees/${tn}.bt\n" +
+                "  CRFConcrete/${tn}SceneObjects.bt\n" +
+                "  CRFConcrete/${tn}InitState.bt\n" +
+                "  CRFConcrete/${tn}GoalState.bt")
+        }
+
+        println "\n════════════════════════════════════════════"
+        println " Generating all JSON for: ${tn}"
+        println "════════════════════════════════════════════\n"
+
+        // ── 1. SceneObjects → {treeName}SetupObjects.json ──
+        println "── [1/5] SceneObjects ──"
+        javaexec {
+            classpath = sourceSets.main.runtimeClasspath
+            mainClass = 'GeneratorJsonSetupObjects'
+            args = [tn]
+        }
+
+        // ── 2. InitialState → {treeName}InitState.json ──
+        println "\n── [2/5] InitialState ──"
+        javaexec {
+            classpath = sourceSets.main.runtimeClasspath
+            mainClass = 'InitialStateJsonGenerator'
+            args = [tn]
+        }
+
+        // ── 3. GoalState → {treeName}GoalState.json ──
+        println "\n── [3/5] GoalState ──"
+        javaexec {
+            classpath = sourceSets.main.runtimeClasspath
+            mainClass = 'GoalStateJsonGenerator'
+            args = [tn]
+        }
+
+        // ── 4. BT Model → BehaviorTreeModel.json ──
+        println "\n── [4/5] BT Model ──"
+        javaexec {
+            classpath = sourceSets.main.runtimeClasspath
+            mainClass = 'BTInstanceJsonGenerator'
+            args = [btModel, sceneObjects,
+                    "../APTreeExecutionEngine/src/ModelLoader/BehaviorTreeModel.json"]
+        }
+
+        // ── 5. LL Subtrees → {treeName}LLSubtrees.json ──
+        String llSubtrees = "src/test/resources/valid/behavior_trees/${tn}LLSubtrees.bt"
+        if (file(llSubtrees).exists()) {
+            println "\n── [5/5] LL Subtrees ──"
+            javaexec {
+                classpath = sourceSets.main.runtimeClasspath
+                mainClass = 'LLSubtreeJsonGenerator'
+                args = [llSubtrees,
+                        "../APTreeExecutionEngine/src/ModelLoader/${tn}LLSubtrees.json"]
+            }
+        } else {
+            println "\n── [5/5] LL Subtrees ── (skipped: ${llSubtrees} not found)"
+        }
+
+        println "\n════════════════════════════════════════════"
+        println " Done! All JSON files generated for: ${tn}"
+        println "════════════════════════════════════════════"
+    }
 }
 
 defaultTasks 'build'

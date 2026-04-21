@@ -1,0 +1,15 @@
+{
+  "timeoutSeconds": 30,
+  "executionMode": "Sequential",
+
+  "subtreeConfigName": "ENHSP_Demonstrator",
+  "subtreePlannerName": "Enhsp",
+  "subtreeDomainFile": "./Plannerinputs/static/Demonstrator/DomainMLTruss.pddl",
+  "subtreeProblemFile": "./Plannerinputs/static/Demonstrator/ProblemL1L2.pddl",
+  "subtreeEnhspConfig": "opt-hmax",
+  "subtreeTimeoutSeconds": 30,
+  "subtreeExecutionMode": "Sequential",
+
+  "maxTicks": 3500,
+  "tickDelayMs": 100
+}

@@ -1,4 +1,14 @@
 {
     "java.configuration.updateBuildConfiguration": "interactive",
-    "java.compile.nullAnalysis.mode": "automatic"
+    "java.compile.nullAnalysis.mode": "automatic",
+    "auto-scroll.enabled": false,
+    "editor.smoothScrolling": true,
+    "editor.minimap.enabled": false,
+    "editor.lineNumbers": "off",
+    "editor.fontFamily": "'JetBrains Mono', 'Fira Code', 'Cascadia Code', Consolas",
+    "editor.fontLigatures": true,
+    "editor.fontSize": 18,
+    "editor.fontWeight": "bold",
+    "editor.padding.top": 20,
+    "cmake.sourceDirectory": "C:/Users/sherk/Documents/BehaviorTreeMainProject/vcpkg/ports/asio"
 }

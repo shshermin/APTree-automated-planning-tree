@@ -1,0 +1,239 @@
+{
+  "generatedAt": "2026-04-20T17:29:03.321920300",
+  "subtreeCount": 10,
+  "llSubtrees": [
+    {
+      "mlAction": "PickUpML",
+      "name": "PickUpLLSubtree",
+      "steps": [
+        {
+          "actionType": "MoveToLL",
+          "instanceName": "moveToPickPosition",
+          "contParams": {
+            "moveType": "movel"
+          },
+          "paramBindings": {
+            "client": "{client}",
+            "target": "{p}"
+          }
+        },
+        {
+          "actionType": "CloseGripperLL",
+          "instanceName": "closeGripper",
+          "contParams": {
+            "DigitalOutput": "0"
+          },
+          "paramBindings": {
+            "client": "{client}"
+          }
+        },
+        {
+          "actionType": "MoveToLL",
+          "instanceName": "moveToRetract",
+          "contParams": {
+            "moveType": "movel"
+          },
+          "paramBindings": {
+            "client": "{client}",
+            "target": "{rp}"
+          }
+        }
+      ]
+    },
+    {
+      "mlAction": "StackML",
+      "name": "StackLLSubtree",
+      "steps": [
+        {
+          "actionType": "MoveToLL",
+          "instanceName": "moveToObjPosition",
+          "contParams": {
+            "moveType": "planned"
+          },
+          "paramBindings": {
+            "client": "{client}",
+            "target": "{objposition}"
+          }
+        },
+        {
+          "actionType": "MoveToLL",
+          "instanceName": "moveToRobotPosition",
+          "contParams": {
+            "moveType": "movej"
+          },
+          "paramBindings": {
+            "client": "{client}",
+            "target": "{robotposition}"
+          }
+        }
+      ]
+    },
+    {
+      "mlAction": "StackOnTwoML",
+      "name": "StackOnTwoLLSubtree",
+      "steps": [
+        {
+          "actionType": "MoveToLL",
+          "instanceName": "moveToObjPosition",
+          "contParams": {
+            "moveType": "planned"
+          },
+          "paramBindings": {
+            "client": "{client}",
+            "target": "{objposition}"
+          }
+        },
+        {
+          "actionType": "MoveToLL",
+          "instanceName": "moveToRobotPos",
+          "contParams": {
+            "moveType": "movej"
+          },
+          "paramBindings": {
+            "client": "{client}",
+            "target": "{robotpos}"
+          }
+        }
+      ]
+    },
+    {
+      "mlAction": "TravelML",
+      "name": "TravelLLSubtree",
+      "steps": [
+        {
+          "actionType": "MoveToLL",
+          "instanceName": "moveToTarget",
+          "contParams": {
+            "moveType": "movej"
+          },
+          "paramBindings": {
+            "client": "{client}",
+            "target": "{to}"
+          }
+        }
+      ]
+    },
+    {
+      "mlAction": "NailingML",
+      "name": "NailingLLSubtree",
+      "steps": [
+        {
+          "actionType": "NailingLL",
+          "instanceName": "nailStep",
+          "contParams": {
+            "moveType": "planned"
+          },
+          "paramBindings": {
+            "nailloc": "{nailloc}",
+            "client": "{client}",
+            "tool": "{ng}"
+          }
+        }
+      ]
+    },
+    {
+      "mlAction": "EquipeML",
+      "name": "EquipeLLSubtree",
+      "steps": [
+        {
+          "actionType": "EquipToolLL",
+          "instanceName": "equipTool",
+          "paramBindings": {
+            "client": "{client}",
+            "tool": "{too}"
+          }
+        }
+      ]
+    },
+    {
+      "mlAction": "DeequipML",
+      "name": "DeequipLLSubtree",
+      "steps": [
+        {
+          "actionType": "DeequipToolLL",
+          "instanceName": "deequipTool",
+          "paramBindings": {
+            "client": "{client}",
+            "tool": "{too}"
+          }
+        }
+      ]
+    },
+    {
+      "mlAction": "PlaceML",
+      "name": "PlaceLLSubtree",
+      "steps": [
+        {
+          "actionType": "MoveToLL",
+          "instanceName": "moveToPlacePos",
+          "contParams": {
+            "moveType": "movel"
+          },
+          "paramBindings": {
+            "client": "{client}",
+            "target": "{placepos}"
+          }
+        },
+        {
+          "actionType": "LowerLL",
+          "instanceName": "lowerObject",
+          "contParams": {
+            "moveType": "movel"
+          },
+          "paramBindings": {
+            "obj": "{obj}",
+            "client": "{client}"
+          }
+        },
+        {
+          "actionType": "OpenGripperLL",
+          "instanceName": "openGripper",
+          "contParams": {
+            "DigitalOutput": "0"
+          },
+          "paramBindings": {
+            "client": "{client}"
+          }
+        },
+        {
+          "actionType": "RetractLL",
+          "instanceName": "retractRobot",
+          "contParams": {
+            "moveType": "movel"
+          },
+          "paramBindings": {
+            "client": "{client}"
+          }
+        }
+      ]
+    },
+    {
+      "mlAction": "CloseToolML",
+      "name": "CloseToolLLSubtree",
+      "steps": [
+        {
+          "actionType": "DeactivateToolLL",
+          "instanceName": "deactivateTool",
+          "paramBindings": {
+            "client": "{client}",
+            "tool": "{too}"
+          }
+        }
+      ]
+    },
+    {
+      "mlAction": "InitializeML",
+      "name": "InitializeLLSubtree",
+      "steps": [
+        {
+          "actionType": "InitializeLL",
+          "instanceName": "initRobot",
+          "paramBindings": {
+            "client": "{client}"
+          }
+        }
+      ]
+    }
+  ],
+  "sourceFile": "src/test/resources/valid/behavior_trees/DemonstratorLLSubtrees.bt"
+}

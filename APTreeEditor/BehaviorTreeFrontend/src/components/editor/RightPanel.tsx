@@ -386,6 +386,7 @@ function LiveLayoutSection({
   actionTypes?: ActionType[];
   actionInstances?: ActionInstance[];
 }) {
+  const [collapsed, setCollapsed] = useState(false);
   const fitIds = useMemo(
     () => layout.nodes.map((n) => n.id),
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -393,21 +394,30 @@ function LiveLayoutSection({
   );
 
   return (
-    <div className="right-panel__section">
-      <div className="right-panel__section-label" title={name}>{name}</div>
-      <div className="right-panel__canvas">
-        <EditorCanvas
-          nodes={layout.nodes}
-          connections={layout.connections}
-          tickStatus={tickStatus}
-          actionTypes={actionTypes}
-          actionInstances={actionInstances}
-          fitViewNodeIds={fitIds}
-          fitViewMaxZoom={0.6}
-          readOnly
-          onDropNode={() => {}}
-        />
-      </div>
+    <div className={`right-panel__section${collapsed ? " right-panel__section--collapsed" : ""}`}>
+      <button
+        className="right-panel__section-toggle"
+        onClick={() => setCollapsed((p) => !p)}
+        title={collapsed ? "Expand" : "Collapse"}
+      >
+        <span className={`right-panel__chevron${collapsed ? "" : " right-panel__chevron--open"}`}>&#9654;</span>
+        <span className="right-panel__section-label" title={name}>{name}</span>
+      </button>
+      {!collapsed && (
+        <div className="right-panel__canvas">
+          <EditorCanvas
+            nodes={layout.nodes}
+            connections={layout.connections}
+            tickStatus={tickStatus}
+            actionTypes={actionTypes}
+            actionInstances={actionInstances}
+            fitViewNodeIds={fitIds}
+            fitViewMaxZoom={0.6}
+            readOnly
+            onDropNode={() => {}}
+          />
+        </div>
+      )}
     </div>
   );
 }
@@ -424,6 +434,7 @@ function LiveSection({
   actionTypes?: ActionType[];
   actionInstances?: ActionInstance[];
 }) {
+  const [collapsed, setCollapsed] = useState(true);
   const { flowNode, subtreeNodes, subtreeConnections } = subtree;
   const fitIds = useMemo(
     () => subtreeNodes.map((n) => n.id),
@@ -435,24 +446,33 @@ function LiveSection({
 
   return (
     <div
-      className="right-panel__section"
-      style={compact ? { flex: 0, maxHeight: 200 } : undefined}
+      className={`right-panel__section${collapsed ? " right-panel__section--collapsed" : ""}`}
+      style={!collapsed && compact ? { flex: 0, maxHeight: 200 } : undefined}
     >
-      <div className="right-panel__section-label">
-        {flowNode.name || flowNode.typeLabel}
-      </div>
-      <div className="right-panel__canvas">
-        <EditorCanvas
-          nodes={subtreeNodes}
-          connections={subtreeConnections}
-          tickStatus={tickStatus}
-          actionTypes={actionTypes}
-          actionInstances={actionInstances}
-          fitViewNodeIds={fitIds}
-          readOnly
-          onDropNode={() => {}}
-        />
-      </div>
+      <button
+        className="right-panel__section-toggle"
+        onClick={() => setCollapsed((p) => !p)}
+        title={collapsed ? "Expand" : "Collapse"}
+      >
+        <span className={`right-panel__chevron${collapsed ? "" : " right-panel__chevron--open"}`}>&#9654;</span>
+        <span className="right-panel__section-label">
+          {flowNode.name || flowNode.typeLabel}
+        </span>
+      </button>
+      {!collapsed && (
+        <div className="right-panel__canvas">
+          <EditorCanvas
+            nodes={subtreeNodes}
+            connections={subtreeConnections}
+            tickStatus={tickStatus}
+            actionTypes={actionTypes}
+            actionInstances={actionInstances}
+            fitViewNodeIds={fitIds}
+            readOnly
+            onDropNode={() => {}}
+          />
+        </div>
+      )}
     </div>
   );
 }

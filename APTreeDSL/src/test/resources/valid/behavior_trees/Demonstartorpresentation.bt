@@ -1,0 +1,26 @@
+BehaviorTree Demonstrator {
+    Root FlowNode Main {
+        All
+        AllFlow
+        NodeGraph {
+            FlowNode Layers1_2 {
+                ServicePlanning planner1 Enhsp Domain:DomainTrussHL Problem:ProblemL1L2 Config:sat-hmrph
+                All
+                AllAction
+                NodeGraph {
+                    Action PickUpHL myPickup (stick4 initlocstick4 robot1 gripper1) {
+                        --[Meets]--> myStack;
+                    }
+                    Action StackHL myStack (stick4 table1 robot1 finallocstick4 gripper1)
+                }
+            } {
+                --[Meets]--> Layers3_4;
+            }
+        }
+    }
+}
+
+
+
+
+

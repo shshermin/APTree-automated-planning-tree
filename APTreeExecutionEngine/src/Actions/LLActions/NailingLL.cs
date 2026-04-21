@@ -1,37 +1,50 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using ModelLoader;
 using ModelLoader.ParameterTypes;
+using ModelLoader.PredicateTypes;
 using BehaviorTreeMainProject.Log.Services;
 using RobotCommand;
 
 /// <summary>
 /// Low-level nailing action. Sends a planned move (MoveIt) to the nail position
 /// with end_effector_type = "nailgun". The nail position is derived from the
-/// FinalLocation of the Element (obj1) being nailed.
+/// NailLocation resolved via the Nailed predicate in the goal state.
 /// </summary>
-public class NailingLL : ExeAction
+public class NailingLL : ExeAction, ILLInputBindable
 {
+    // Typed properties resolved by DecoratorLLInputResolver
+    public NailLocation NailLoc { get; set; }
+    public Element Obj { get; set; }
+    public Element Base { get; set; }
+
     public NailingLL(
         string instanceName,
         Blackboard<FastName> blackboard,
         string flaskBaseUrl = null,
-        string robotIp = null
-    ) : base("NailingLL", instanceName, blackboard, flaskBaseUrl, robotIp)
+        string robotIp = null,
+        IRobotCommandCommunicator communicator = null
+    ) : base("NailingLL", instanceName, blackboard, flaskBaseUrl, robotIp, communicator)
     {
         LoggingService.LogInfo($"🔨 NailingLL: Created '{instanceName}'");
     }
 
+    public void BindInput(object value)
+    {
+        if (value is NailLocation nl) NailLoc = nl;
+    }
+
     protected override RobotCommandRequest BuildCommandRequest()
     {
-        // Find the nail position from an Element's FinalLoc
         double[] pose = ResolveNailPose();
-
         LoggingService.LogInfo($"🔨 NailingLL: Nail pose=[{string.Join(", ", pose)}] for '{InstanceName}'");
 
         return new RobotCommandRequest
         {
             Endpoint = "/move",
             CommandType = "planned",
-            FinalPosition = ResolveFinalPositionName(),
+            FinalPosition = NailLoc?.ID ?? ResolveNailLocationFromGoalState()?.ID ?? "unknown",
             RobotIp = RobotIp,
             Velocity = 0.3,
             Acceleration = 0.3,
@@ -42,73 +55,46 @@ public class NailingLL : ExeAction
 
     private double[] ResolveNailPose()
     {
-        // First try: use the NailLocation resolved by DecoratorParameterResolver from goal state
-        if (MLInputs != null && MLInputs.TryGetValue("nailloc", out var locObj) && locObj is NailLocation nailLoc && nailLoc.Position != null)
+        // First try: use the NailLocation resolved by the decorator
+        if (NailLoc?.Position != null)
         {
-            LoggingService.LogInfo($"🔨 NailingLL: Using NailLocation '{nailLoc.ID}' at ({nailLoc.Position.X}, {nailLoc.Position.Y}, {nailLoc.Position.Z})");
+            LoggingService.LogInfo($"🔨 NailingLL: Using NailLocation '{NailLoc.ID}' at ({NailLoc.Position.X}, {NailLoc.Position.Y}, {NailLoc.Position.Z})");
             return new[]
             {
-                nailLoc.Position.X,
-                nailLoc.Position.Y,
-                nailLoc.Position.Z,
-                0.0, 0.0, 0.0  // nailgun doesn't use orientation/yaw
+                NailLoc.Position.X, NailLoc.Position.Y, NailLoc.Position.Z,
+                0.0, 0.0, 0.0
             };
         }
 
-        // Fallback: use Element's FinalLoc
-        if (MLInputs != null)
+        // Fallback: look up the NailLocation from the Nailed predicate in the goal state
+        var nailLocFromGoal = ResolveNailLocationFromGoalState();
+        if (nailLocFromGoal?.Position != null)
         {
-            foreach (var kv in MLInputs)
+            LoggingService.LogWarning($"⚠️ NailingLL: NailLoc not set by decorator, resolved from goal state: '{nailLocFromGoal.ID}'");
+            return new[]
             {
-                if (kv.Value is Element elem)
-                {
-                    var finalLoc = GetFinalLocation(elem);
-                    if (finalLoc?.Position != null)
-                    {
-                        LoggingService.LogWarning($"⚠️ NailingLL: No nail coordinate found, falling back to FinalLoc of '{kv.Key}'");
-                        return new[]
-                        {
-                            finalLoc.Position.X,
-                            finalLoc.Position.Y,
-                            finalLoc.Position.Z,
-                            0.0, 0.0, 0.0
-                        };
-                    }
-                }
-            }
+                nailLocFromGoal.Position.X, nailLocFromGoal.Position.Y, nailLocFromGoal.Position.Z,
+                0.0, 0.0, 0.0
+            };
         }
 
         LoggingService.LogWarning($"⚠️ NailingLL: Could not resolve nail position for '{InstanceName}', using zero pose");
         return new[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
     }
 
-    private FinalLocation GetFinalLocation(Element elem)
+    private NailLocation ResolveNailLocationFromGoalState()
     {
-        // Stick and Cube both have a FinalLoc property
-        var prop = elem.GetType().GetProperty("FinalLoc");
-        if (prop != null)
-        {
-            var loc = prop.GetValue(elem);
-            if (loc is FinalLocation fl)
-                return fl;
-        }
-        return null;
-    }
+        if (Obj == null || Base == null) return null;
 
-    private string ResolveFinalPositionName()
-    {
-        if (MLInputs != null)
-        {
-            foreach (var kv in MLInputs)
-            {
-                if (kv.Value is Element elem)
-                {
-                    var finalLoc = GetFinalLocation(elem);
-                    if (finalLoc != null)
-                        return finalLoc.ID ?? "unknown";
-                }
-            }
-        }
-        return "unknown";
+        var goalPredicates = Blackboard?.GetGoalStatePredicates();
+        if (goalPredicates == null) return null;
+
+        var matchingNailed = goalPredicates
+            .OfType<Nailed>()
+            .FirstOrDefault(n =>
+                n.obj1?.NameKey?.ToString()?.Equals(Obj.NameKey?.ToString(), StringComparison.OrdinalIgnoreCase) == true &&
+                n.obj2?.NameKey?.ToString()?.Equals(Base.NameKey?.ToString(), StringComparison.OrdinalIgnoreCase) == true);
+
+        return matchingNailed?.nailloc as NailLocation;
     }
 }

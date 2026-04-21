@@ -264,7 +264,7 @@ namespace BehaviorTreeMainProject.Services
             string oldStr = "(none)";
             var goalPredicates = Blackboard.GetGoalStatePredicates();
             var matchingNailed = goalPredicates
-                .OfType<ModelLoader.PredicateTypes.Nailed>()
+                .OfType<global::ModelLoader.PredicateTypes.Nailed>()
                 .FirstOrDefault(p =>
                 {
                     string p1 = p.obj1?.NameKey?.ToString()?.ToLower() ?? "";
@@ -272,7 +272,7 @@ namespace BehaviorTreeMainProject.Services
                     return (p1 == obj1 && p2 == obj2) || (p1 == obj2 && p2 == obj1);
                 });
 
-            if (matchingNailed?.nailloc is ModelLoader.ParameterTypes.NailLocation nailLoc)
+            if (matchingNailed?.nailloc is global::ModelLoader.ParameterTypes.NailLocation nailLoc)
             {
                 if (nailLoc.Position != null)
                     oldStr = $"({nailLoc.Position.X}, {nailLoc.Position.Y}, {nailLoc.Position.Z})";

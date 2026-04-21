@@ -368,3 +368,129 @@ Define Action NailingML {
         Fixed(obj1)
     }
 }
+
+// ==================== LL (LowLevel) Actions ====================
+
+// Robot moves to a target position
+Define Action MoveToLL {
+    ActLevel: LowLevel
+    Properties {
+        target: Location
+        client: Robot
+        cont moveType: String
+    }
+    Preconditions { }
+    Effects { }
+}
+
+// Robot closes gripper
+Define Action CloseGripperLL {
+    ActLevel: LowLevel
+    Properties {
+        client: Robot
+        cont DigitalOutput: Integer
+    }
+    Preconditions { }
+    Effects { }
+}
+
+// Robot opens gripper
+Define Action OpenGripperLL {
+    ActLevel: LowLevel
+    Properties {
+        client: Robot
+        cont    DigitalOutput: Integer
+    }
+    Preconditions { }
+    Effects { }
+}
+
+// Robot lifts after gripping
+Define Action LiftLL {
+    ActLevel: LowLevel
+    Properties {
+        client: Robot
+        cont moveType: String
+    }
+    Preconditions { }
+    Effects { }
+}
+
+// Robot equips a tool
+Define Action EquipToolLL {
+    ActLevel: LowLevel
+    Properties {
+        client: Robot
+        tool: Tool
+    }
+    Preconditions { }
+    Effects { }
+}
+
+// Robot de-equips a tool
+Define Action DeequipToolLL {
+    ActLevel: LowLevel
+    Properties {
+        client: Robot
+        tool: Tool
+    }
+    Preconditions { }
+    Effects { }
+}
+
+// Robot fires stapler / nails two elements
+Define Action NailingLL {
+    ActLevel: LowLevel
+    Properties {
+        client: Robot
+        tool: StaplerGun
+        nailloc: Location
+        cont moveType: String
+    }
+    Preconditions { }
+    Effects { }
+}
+
+// Robot lowers an object into place
+Define Action LowerLL {
+    ActLevel: LowLevel
+    Properties {
+        client: Robot
+        obj: Element
+        cont moveType: String
+    }
+    Preconditions { }
+    Effects { }
+}
+
+// Robot retracts after placing
+Define Action RetractLL {
+    ActLevel: LowLevel
+    Properties {
+        client: Robot
+        cont moveType: String
+    }
+    Preconditions { }
+    Effects { }
+}
+
+// Robot deactivates its current tool
+Define Action DeactivateToolLL {
+    ActLevel: LowLevel
+    Properties {
+        client: Robot
+        tool: Tool
+    }
+    Preconditions { }
+    Effects { }
+}
+
+// Robot initializes / homes
+Define Action InitializeLL {
+    ActLevel: LowLevel
+    Properties {
+        client: Robot
+    }
+    Preconditions { }
+    Effects { }
+}

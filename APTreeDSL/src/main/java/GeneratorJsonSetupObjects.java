@@ -14,11 +14,18 @@ import crftypescon._parser.CRFTypesConParser;
 import de.se_rwth.commons.logging.Log;
 
 /**
- * GeneratorJsonSetupObjects - Parses LiveMatSetupObjects.bt using MontiCore grammar
- * 
- * Reads a LiveMatSetupObjects file in APTreeDSL CRFTypesCon grammar format and exports 
- * all parameter instances to JSON format.
- * 
+ * GeneratorJsonSetupObjects - Parses a concrete instances .bt file using MontiCore grammar
+ * and exports all parameter instances to JSON format.
+ *
+ * Convention-based usage (preferred):
+ *   java GeneratorJsonSetupObjects &lt;treeName&gt;
+ *   Resolves:
+ *     Input:  src/test/resources/valid/CRFConcrete/{treeName}SceneObjects.bt
+ *     Output: ../APTreeExecutionEngine/src/ModelLoader/{treeName}SetupObjects.json
+ *
+ * Explicit paths (legacy):
+ *   java GeneratorJsonSetupObjects &lt;inputPath&gt; &lt;outputPath&gt;
+ *
  * Expected grammar format:
  *   Typename instancename (properties)
  *   Example: FirstPos fp1 ()
@@ -26,6 +33,9 @@ import de.se_rwth.commons.logging.Log;
  *            Beam b1 (fp1)
  */
 public class GeneratorJsonSetupObjects {
+
+  private static final String INSTANCES_DIR = "src/test/resources/valid/CRFConcrete/";
+  private static final String OUTPUT_DIR = "../APTreeExecutionEngine/src/ModelLoader/";
 
   private static class ParameterInstance {
     String name;
@@ -50,10 +60,23 @@ public class GeneratorJsonSetupObjects {
     Log.enableFailQuick(false);
     
     GeneratorJsonSetupObjects generator = new GeneratorJsonSetupObjects();
-    String filePath = args.length > 0 ? args[0] : "src/test/resources/valid/CRFConcrete/LiveMatSetupObjects.bt";
-    String outputPath = args.length > 1 ? args[1] : "../APTreeExecutionEngine/src/ModelLoader/LiveMatSetupObjects.json";
+    String filePath;
+    String outputPath;
+
+    if (args.length == 1) {
+      // Convention mode: single treeName argument
+      String treeName = args[0];
+      filePath = INSTANCES_DIR + treeName + "SceneObjects.bt";
+      outputPath = OUTPUT_DIR + treeName + "SetupObjects.json";
+      System.out.println("[Convention] Tree: " + treeName);
+    } else {
+      // Legacy mode: explicit paths
+      filePath = args.length > 0 ? args[0] : INSTANCES_DIR + "LiveMatSetupObjects.bt";
+      outputPath = args.length > 1 ? args[1] : OUTPUT_DIR + "LiveMatSetupObjects.json";
+    }
     
-    System.out.println("Processing LiveMatSetupObjects file: " + filePath);
+    System.out.println("Processing setup objects file: " + filePath);
+    System.out.println("Output: " + outputPath);
     generator.parseAndExport(filePath, outputPath);
   }
 

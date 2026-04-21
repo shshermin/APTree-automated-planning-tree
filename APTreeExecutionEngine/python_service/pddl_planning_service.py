@@ -58,7 +58,7 @@ def create_plan():
         # Extract PDDL-specific properties (new format)
         domain_file_path = data.get('domainFile', DEFAULT_DOMAIN_FILE_PATH)
         problem_file_path = data.get('problemFile', DEFAULT_PROBLEM_FILE_PATH)
-        planner_path = data.get('plannerPath', DEFAULT_ENHSP_PATH)
+        planner_path = data.get('plannerPath') or DEFAULT_ENHSP_PATH  # empty/null → server default
         timeout_seconds = data.get('timeoutSeconds', DEFAULT_TIMEOUT_SECONDS)
         max_plan_length = data.get('maxPlanLength', 20)
         planner_name = data.get('plannerName', DEFAULT_PLANNER).upper()  # New: planner selection

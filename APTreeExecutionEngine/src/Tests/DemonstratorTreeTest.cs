@@ -64,7 +64,7 @@ namespace BehaviorTreeMainProject
                     "src", "ModelLoader", "DemonstratorSetupObjects.json");
                 string initialStateFile = Path.Combine(
                     AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..",
-                    "src", "ModelLoader", "DemonstratorInitialStatePredicates.json");
+                    "src", "ModelLoader", "DemonstratorInitState.json");
                 blackboardWriter.RegisterAllInstances(setupObjectsFile, initialStateFile, actionInstancesFile);
 
                 string goalStateFile = Path.Combine(

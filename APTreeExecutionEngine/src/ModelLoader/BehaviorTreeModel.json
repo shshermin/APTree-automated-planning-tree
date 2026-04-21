@@ -1,6 +1,7 @@
 {
   "behaviorTrees": [
     {
+      "basePath": ".\/Plannerinputs\/static\/Demonstrator",
       "root": {
         "childType": "ALLFLOW",
         "successCriteria": "ALL",
@@ -14,9 +15,14 @@
               "name": "Layers1_2",
               "services": [
                 {
+                  "domainPath": ".\/Plannerinputs\/static\/Demonstrator\/DomainHLTruss.pddl",
+                  "plannerType": "Enhsp",
+                  "problem": "ProblemL1L2",
+                  "problemPath": ".\/Plannerinputs\/static\/Demonstrator\/ProblemL1L2.pddl",
+                  "domain": "DomainHLTruss",
                   "name": "planner1",
-                  "plannerRef": planningservice._ast.ASTPlannerENHSP@6b9651f3,
-                  "type": "ServicePDDLPlanning"
+                  "type": "ServicePDDLPlanning",
+                  "config": "sat-hmrph"
                 }
               ],
               "type": "DynamicFlowNode",
@@ -34,9 +40,14 @@
               "name": "Layers3_4",
               "services": [
                 {
+                  "domainPath": ".\/Plannerinputs\/static\/Demonstrator\/DomainHLTruss.pddl",
+                  "plannerType": "Enhsp",
+                  "problem": "ProblemL3L4",
+                  "problemPath": ".\/Plannerinputs\/static\/Demonstrator\/ProblemL3L4.pddl",
+                  "domain": "DomainHLTruss",
                   "name": "planner2",
-                  "plannerRef": planningservice._ast.ASTPlannerENHSP@38bc8ab5,
-                  "type": "ServicePDDLPlanning"
+                  "type": "ServicePDDLPlanning",
+                  "config": "sat-hmrph"
                 }
               ],
               "type": "DynamicFlowNode",
@@ -54,9 +65,14 @@
               "name": "Layers5_6",
               "services": [
                 {
+                  "domainPath": ".\/Plannerinputs\/static\/Demonstrator\/DomainHLTruss.pddl",
+                  "plannerType": "Enhsp",
+                  "problem": "ProblemL5L6",
+                  "problemPath": ".\/Plannerinputs\/static\/Demonstrator\/ProblemL5L6.pddl",
+                  "domain": "DomainHLTruss",
                   "name": "planner3",
-                  "plannerRef": planningservice._ast.ASTPlannerENHSP@687080dc,
-                  "type": "ServicePDDLPlanning"
+                  "type": "ServicePDDLPlanning",
+                  "config": "sat-hmrph"
                 }
               ],
               "type": "DynamicFlowNode",
@@ -74,9 +90,14 @@
               "name": "Layers7_8",
               "services": [
                 {
+                  "domainPath": ".\/Plannerinputs\/static\/Demonstrator\/DomainHLTruss.pddl",
+                  "plannerType": "Enhsp",
+                  "problem": "ProblemL7L8",
+                  "problemPath": ".\/Plannerinputs\/static\/Demonstrator\/ProblemL7L8.pddl",
+                  "domain": "DomainHLTruss",
                   "name": "planner4",
-                  "plannerRef": planningservice._ast.ASTPlannerENHSP@23d2a7e8,
-                  "type": "ServicePDDLPlanning"
+                  "type": "ServicePDDLPlanning",
+                  "config": "sat-hmrph"
                 }
               ],
               "type": "DynamicFlowNode",
@@ -94,9 +115,14 @@
               "name": "Layers9_10",
               "services": [
                 {
+                  "domainPath": ".\/Plannerinputs\/static\/Demonstrator\/DomainHLTruss.pddl",
+                  "plannerType": "Enhsp",
+                  "problem": "ProblemL9L10",
+                  "problemPath": ".\/Plannerinputs\/static\/Demonstrator\/ProblemL9L10.pddl",
+                  "domain": "DomainHLTruss",
                   "name": "planner5",
-                  "plannerRef": planningservice._ast.ASTPlannerENHSP@7a9273a8,
-                  "type": "ServicePDDLPlanning"
+                  "type": "ServicePDDLPlanning",
+                  "config": "sat-hmrph"
                 }
               ],
               "type": "DynamicFlowNode",
@@ -114,9 +140,14 @@
               "name": "Layers11_12",
               "services": [
                 {
+                  "domainPath": ".\/Plannerinputs\/static\/Demonstrator\/DomainHLTruss.pddl",
+                  "plannerType": "Enhsp",
+                  "problem": "ProblemL11L12",
+                  "problemPath": ".\/Plannerinputs\/static\/Demonstrator\/ProblemL11L12.pddl",
+                  "domain": "DomainHLTruss",
                   "name": "planner6",
-                  "plannerRef": planningservice._ast.ASTPlannerENHSP@26a7b76d,
-                  "type": "ServicePDDLPlanning"
+                  "type": "ServicePDDLPlanning",
+                  "config": "sat-hmrph"
                 }
               ],
               "type": "DynamicFlowNode",
@@ -134,9 +165,14 @@
               "name": "Layers13_14",
               "services": [
                 {
+                  "domainPath": ".\/Plannerinputs\/static\/Demonstrator\/DomainHLTruss.pddl",
+                  "plannerType": "Enhsp",
+                  "problem": "ProblemL13L14",
+                  "problemPath": ".\/Plannerinputs\/static\/Demonstrator\/ProblemL13L14.pddl",
+                  "domain": "DomainHLTruss",
                   "name": "planner7",
-                  "plannerRef": planningservice._ast.ASTPlannerENHSP@4abdb505,
-                  "type": "ServicePDDLPlanning"
+                  "type": "ServicePDDLPlanning",
+                  "config": "sat-hmrph"
                 }
               ],
               "type": "DynamicFlowNode",
@@ -154,9 +190,14 @@
               "name": "Layers15_16",
               "services": [
                 {
+                  "domainPath": ".\/Plannerinputs\/static\/Demonstrator\/DomainHLTruss.pddl",
+                  "plannerType": "Enhsp",
+                  "problem": "ProblemL15L16",
+                  "problemPath": ".\/Plannerinputs\/static\/Demonstrator\/ProblemL15L16.pddl",
+                  "domain": "DomainHLTruss",
                   "name": "planner8",
-                  "plannerRef": planningservice._ast.ASTPlannerENHSP@7ce6a65d,
-                  "type": "ServicePDDLPlanning"
+                  "type": "ServicePDDLPlanning",
+                  "config": "sat-hmrph"
                 }
               ],
               "type": "DynamicFlowNode",
@@ -174,9 +215,14 @@
               "name": "Layers17_18",
               "services": [
                 {
+                  "domainPath": ".\/Plannerinputs\/static\/Demonstrator\/DomainHLTruss.pddl",
+                  "plannerType": "Enhsp",
+                  "problem": "ProblemL17L18",
+                  "problemPath": ".\/Plannerinputs\/static\/Demonstrator\/ProblemL17L18.pddl",
+                  "domain": "DomainHLTruss",
                   "name": "planner9",
-                  "plannerRef": planningservice._ast.ASTPlannerENHSP@1500955a,
-                  "type": "ServicePDDLPlanning"
+                  "type": "ServicePDDLPlanning",
+                  "config": "sat-hmrph"
                 }
               ],
               "type": "DynamicFlowNode",
@@ -194,9 +240,14 @@
               "name": "Layers19_20",
               "services": [
                 {
+                  "domainPath": ".\/Plannerinputs\/static\/Demonstrator\/DomainHLTruss.pddl",
+                  "plannerType": "Enhsp",
+                  "problem": "ProblemL19L20",
+                  "problemPath": ".\/Plannerinputs\/static\/Demonstrator\/ProblemL19L20.pddl",
+                  "domain": "DomainHLTruss",
                   "name": "planner10",
-                  "plannerRef": planningservice._ast.ASTPlannerENHSP@e874448,
-                  "type": "ServicePDDLPlanning"
+                  "type": "ServicePDDLPlanning",
+                  "config": "sat-hmrph"
                 }
               ],
               "type": "DynamicFlowNode",
@@ -214,29 +265,14 @@
               "name": "Layers21_22",
               "services": [
                 {
+                  "domainPath": ".\/Plannerinputs\/static\/Demonstrator\/DomainHLTruss.pddl",
+                  "plannerType": "Enhsp",
+                  "problem": "ProblemL21L22",
+                  "problemPath": ".\/Plannerinputs\/static\/Demonstrator\/ProblemL21L22.pddl",
+                  "domain": "DomainHLTruss",
                   "name": "planner11",
-                  "plannerRef": planningservice._ast.ASTPlannerENHSP@29b5cd00,
-                  "type": "ServicePDDLPlanning"
-                }
-              ],
-              "type": "DynamicFlowNode",
-              "nodeGraph": {
-                "nodes": [
-                  
-                ],
-                "nodeCount": 0,
-                "relationCount": 0
-              }
-            },
-            {
-              "childType": "ALLACTION",
-              "successCriteria": "ALL",
-              "name": "Layer23",
-              "services": [
-                {
-                  "name": "planner12",
-                  "plannerRef": planningservice._ast.ASTPlannerENHSP@60285225,
-                  "type": "ServicePDDLPlanning"
+                  "type": "ServicePDDLPlanning",
+                  "config": "sat-hmrph"
                 }
               ],
               "type": "DynamicFlowNode",
@@ -249,8 +285,8 @@
               }
             }
           ],
-          "nodeCount": 12,
-          "relationCount": 11,
+          "nodeCount": 11,
+          "relationCount": 10,
           "relations": [
             {
               "temporalType": "MEETS",
@@ -301,11 +337,6 @@
               "temporalType": "MEETS",
               "from": "Layers19_20",
               "to": "Layers21_22"
-            },
-            {
-              "temporalType": "MEETS",
-              "from": "Layers21_22",
-              "to": "Layer23"
             }
           ]
         }
@@ -313,7 +344,7 @@
       "name": "Demonstrator"
     }
   ],
-  "generatedAt": "2026-03-11T11:32:10.065058100",
+  "generatedAt": "2026-04-20T13:39:26.735653200",
   "treeCount": 1,
   "sourceFile": "src\/test\/resources\/valid\/behavior_trees\/Demonstrator.bt"
 }

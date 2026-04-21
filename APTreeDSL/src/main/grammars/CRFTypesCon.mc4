@@ -2,7 +2,7 @@ grammar CRFTypesCon extends CRFTypesDef, de.monticore.MCBasics {
 
 ////////// ?????? I am not sure why do we get errors if we dont include this world thing!
 @Override
-World = ( PropertyTypeDefinition | Property | PredicateTypeDefinition | ActionTypeDefinition | Beam | Plate | FirstPos | Robot | VacGripper | Holding | AtPlace | AtTool | NailGripper | GlueGun | Stack | Cassette | PositionOnRail | EquipPosition | StackPosition | IsAt | AtAgent | HasTool | Clear | OnTop | AllSet | BelongsToLayer | BelongsToModule | PositionFree | Stacked | Glued | Nailed | VgEmpty | Stick | Cube | InitialLocation | FinalLocation | EquipLocation | RobotPosition | Demo | StaplerGun | RobotEquipped | ActiveTool | GripperEmpty | Fixed | AtFinalPosition | ObjectFinalPosition | Gripper | Table | Accessible | NailLocation)*;
+World = ( PropertyTypeDefinition | Property | PredicateTypeDefinition | ActionTypeDefinition | Beam | Plate | FirstPos | Robot | VacGripper | Holding | AtPlace | AtTool | NailGripper | GlueGun | Stack | Cassette | PositionOnRail | EquipPosition | StackPosition | IsAt | AtAgent | HasTool | Clear | OnTop | AllSet | BelongsToLayer | BelongsToModule | PositionFree | Stacked | Glued | Nailed | VgEmpty | Stick | Cube | InitialLocation | FinalLocation | EquipLocation | RobotPosition | Demo | StaplerGun | RobotEquipped | ActiveTool | GripperEmpty | Fixed | AtFinalPosition | ObjectFinalPosition | Gripper | Table | Accessible | NailLocation | RobotLocation)*;
 
 // === GENERATED RULES (DO NOT EDIT BELOW) ===
 symbol Beam extends Element = "Beam" name:Name "(" loc:Name@Location ")";
@@ -17,8 +17,8 @@ symbol Cassette extends Module = "Cassette" name:Name "(" layers:Name@Layer+ ")"
 symbol PositionOnRail extends Location = "PositionOnRail" name:Name "(" ")";
 symbol EquipPosition extends Location = "EquipPosition" name:Name "(" ")";
 symbol StackPosition extends Location = "StackPosition" name:Name "(" ")";
-symbol Stick extends Element = "Stick" name:Name "(" initLoc:Name@Location finalLoc:Name@Location ")";
-symbol Cube extends Element = "Cube" name:Name "(" initLoc:Name@Location finalLoc:Name@Location ")";
+symbol Stick extends Element = "Stick" name:Name "(" ")";
+symbol Cube extends Element = "Cube" name:Name "(" ")";
 symbol InitialLocation extends Location = "InitialLocation" name:Name "(" position:Coordinate orientation:Coordinate ")";
 symbol FinalLocation extends Location = "FinalLocation" name:Name "(" position:Coordinate orientation:Coordinate ")";
 symbol EquipLocation extends Location = "EquipLocation" name:Name "(" position:Coordinate orientation:Coordinate ")";
@@ -28,6 +28,7 @@ symbol Gripper extends Tool = "Gripper" name:Name "(" isOpen:Boolean gripperEmpt
 symbol StaplerGun extends Tool = "StaplerGun" name:Name "(" readyToFire:Boolean loc:Name@Location ")";
 symbol Table extends Element = "Table" name:Name "(" ")";
 symbol NailLocation extends Location = "NailLocation" name:Name "(" position:Coordinate orientation:Coordinate ")";
+symbol RobotLocation extends Location = "RobotLocation" name:Name "(" joints:RobotJoints tcpPose:Coordinate tcpOrinetation:Coordinate ")";
 // === END GENERATED RULES ===
 
 
@@ -121,7 +122,41 @@ astrule StackOnTwoHL = method public crftypesdef._ast.ASTActionLevel getActLevel
 
 ChangeEndeffectorHL extends PActionNode = "Action" "ChangeEndeffectorHL" name:Name "(" client:Name@Robot oldtool:Name@Tool newtool:Name@Tool ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
 astrule ChangeEndeffectorHL = method public crftypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=crftypesdef._ast.ASTActionLevel.HIGHLEVEL; } return actLevel; } ;
+
+MoveToLL extends PActionNode = "Action" "MoveToLL" name:Name "(" target:Name@Location client:Name@Robot moveType:Name ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
+astrule MoveToLL = method public crftypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=crftypesdef._ast.ASTActionLevel.LOWLEVEL; } return actLevel; } ;
+
+CloseGripperLL extends PActionNode = "Action" "CloseGripperLL" name:Name "(" client:Name@Robot DigitalOutput:Integer ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
+astrule CloseGripperLL = method public crftypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=crftypesdef._ast.ASTActionLevel.LOWLEVEL; } return actLevel; } ;
+
+OpenGripperLL extends PActionNode = "Action" "OpenGripperLL" name:Name "(" client:Name@Robot DigitalOutput:Integer ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
+astrule OpenGripperLL = method public crftypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=crftypesdef._ast.ASTActionLevel.LOWLEVEL; } return actLevel; } ;
+
+LiftLL extends PActionNode = "Action" "LiftLL" name:Name "(" client:Name@Robot moveType:Name ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
+astrule LiftLL = method public crftypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=crftypesdef._ast.ASTActionLevel.LOWLEVEL; } return actLevel; } ;
+
+EquipToolLL extends PActionNode = "Action" "EquipToolLL" name:Name "(" client:Name@Robot tool:Name@Tool ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
+astrule EquipToolLL = method public crftypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=crftypesdef._ast.ASTActionLevel.LOWLEVEL; } return actLevel; } ;
+
+DeequipToolLL extends PActionNode = "Action" "DeequipToolLL" name:Name "(" client:Name@Robot tool:Name@Tool ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
+astrule DeequipToolLL = method public crftypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=crftypesdef._ast.ASTActionLevel.LOWLEVEL; } return actLevel; } ;
+
+NailingLL extends PActionNode = "Action" "NailingLL" name:Name "(" client:Name@Robot tool:Name@StaplerGun nailloc:Name@Location moveType:Name ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
+astrule NailingLL = method public crftypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=crftypesdef._ast.ASTActionLevel.LOWLEVEL; } return actLevel; } ;
+
+LowerLL extends PActionNode = "Action" "LowerLL" name:Name "(" client:Name@Robot obj:Name@Element moveType:Name ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
+astrule LowerLL = method public crftypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=crftypesdef._ast.ASTActionLevel.LOWLEVEL; } return actLevel; } ;
+
+RetractLL extends PActionNode = "Action" "RetractLL" name:Name "(" client:Name@Robot moveType:Name ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
+astrule RetractLL = method public crftypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=crftypesdef._ast.ASTActionLevel.LOWLEVEL; } return actLevel; } ;
+
+DeactivateToolLL extends PActionNode = "Action" "DeactivateToolLL" name:Name "(" client:Name@Robot tool:Name@Tool ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
+astrule DeactivateToolLL = method public crftypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=crftypesdef._ast.ASTActionLevel.LOWLEVEL; } return actLevel; } ;
+
+InitializeLL extends PActionNode = "Action" "InitializeLL" name:Name "(" client:Name@Robot ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
+astrule InitializeLL = method public crftypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=crftypesdef._ast.ASTActionLevel.LOWLEVEL; } return actLevel; } ;
 // === END GENERATED ACTION RULES ===
+
 
 
 
