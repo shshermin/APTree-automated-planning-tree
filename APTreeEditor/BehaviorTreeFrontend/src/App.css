@@ -1,8 +1,7 @@
 .app-container {
   display: flex;
-  height: 100vh;
+  min-height: 100vh;
   width: 100%;
-  overflow: hidden;
   background: var(--surface-page);
   color: var(--text-primary);
   transition: background var(--transition-medium), color var(--transition-medium);
@@ -10,21 +9,17 @@
 
 .main-content {
   flex: 1;
-  min-width: 0;
-  min-height: 0;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
   background: var(--surface-panel);
   transition: background var(--transition-medium);
 }
 
 .editor {
   flex: 1;
-  min-height: 0;
   padding: 24px 28px;
   background: var(--surface-panel-alt);
-  overflow: hidden;
+  overflow: auto;
   display: flex;
   flex-direction: row;
   gap: 0;
@@ -32,6 +27,6 @@
 
 .editor-canvas-wrap {
   flex: 1;
-  min-height: 0;
+  min-height: 560px;
   min-width: 0;
 }
