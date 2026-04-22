@@ -36,9 +36,6 @@ Location RobotLocation{
     tcpOrinetation: Coordinate
 }
 
-Layer Stack
-Module Demo 
-
 Tool Gripper {
     isOpen: Boolean
     gripperEmpty: Boolean
@@ -49,6 +46,9 @@ Tool StaplerGun {
  readyToFire: Boolean
  loc: Location
 }
+
+Layer Stack
+Module Demo 
 
 
 

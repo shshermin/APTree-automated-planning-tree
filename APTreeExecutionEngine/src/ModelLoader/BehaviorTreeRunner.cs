@@ -6,6 +6,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using BehaviorTreeMainProject.Services;
 using BehaviorTreeMainProject.Services.AIPlanning;
+using BehaviorTreeMainProject.Services.FaultInjection;
 using BehaviorTreeMainProject.ModelLoader;
 using AIPlanning;
 using BehaviorTreeMainProject.Log.Services;
@@ -24,6 +25,7 @@ namespace BehaviorTreeMainProject
     {
         private readonly BehaviorTreeConfiguration config;
         private readonly string jsonModelPath;
+        private string faultConfigPath;
         private List<ServicePlanning> allPlanners = new();
         private DateTime testStartTime;
         private DateTime testEndTime;
@@ -32,6 +34,13 @@ namespace BehaviorTreeMainProject
         {
             this.jsonModelPath = jsonModelPath ?? throw new ArgumentNullException(nameof(jsonModelPath));
             this.config = config ?? throw new ArgumentNullException(nameof(config));
+        }
+
+        /// <summary>Optional path to a fault-injection JSON config.</summary>
+        public string FaultConfigPath
+        {
+            get => faultConfigPath;
+            set => faultConfigPath = value;
         }
 
         /// <summary>
@@ -69,6 +78,9 @@ namespace BehaviorTreeMainProject
 
                 var rootJson = treeJson.GetProperty("root");
                 BuildTreeFromJson(behaviorTree, rootJson, blackboard);
+
+                // 3a. Attach fault injection service (if a fault config is available)
+                AttachFaultInjectionService(behaviorTree, treeName);
 
                 BlackboardSummaryLogger.CaptureBlackboardState(blackboard);
 
@@ -279,6 +291,49 @@ namespace BehaviorTreeMainProject
             ServiceSubtreeInject.DefaultSubtreeConfigName = config.SubtreeConfigName;
 
             LoggingService.LogSuccess($"Registered subtree config: {config.SubtreeConfigName}");
+        }
+
+        // ── Fault injection ──
+
+        private void AttachFaultInjectionService(BehaviorTree behaviorTree, string treeName)
+        {
+            string path = faultConfigPath;
+            if (string.IsNullOrEmpty(path))
+            {
+                // Convention: {TreeName}Faults.json next to the model JSON, then in workspace root
+                string modelDir = Path.GetDirectoryName(Path.GetFullPath(jsonModelPath));
+                string[] candidates =
+                {
+                    modelDir != null ? Path.Combine(modelDir, $"{treeName}Faults.json") : null,
+                    Path.Combine(Directory.GetCurrentDirectory(), $"{treeName}Faults.json"),
+                    Path.Combine(AppContext.BaseDirectory, $"{treeName}Faults.json"),
+                };
+                foreach (var c in candidates)
+                {
+                    if (!string.IsNullOrEmpty(c) && File.Exists(c))
+                    {
+                        path = c;
+                        break;
+                    }
+                }
+            }
+
+            if (string.IsNullOrEmpty(path) || !File.Exists(path))
+            {
+                LoggingService.LogInfo("🧪 FaultInjection: No fault config discovered — skipping service attach");
+                return;
+            }
+
+            var faultCfg = FaultInjectionConfig.LoadFromFile(path);
+            if (faultCfg.Faults.Count == 0)
+            {
+                LoggingService.LogInfo("🧪 FaultInjection: Fault config is empty — skipping service attach");
+                return;
+            }
+
+            var service = new FaultInjectionService(behaviorTree, faultCfg);
+            behaviorTree.root.AddService(service, InIsAlwaysOn: true);
+            LoggingService.LogSuccess($"🧪 FaultInjection: Attached service with {faultCfg.Faults.Count} fault(s) from {path}");
         }
 
         // ── Tree execution ──
@@ -593,7 +648,7 @@ namespace BehaviorTreeMainProject
         ///   2. Convention: {TreeName}Config.json next to the model JSON
         ///   3. Fallback: built-in defaults
         /// </summary>
-        public static async Task RunFromFiles(string jsonModelPath, string configPath = null)
+        public static async Task RunFromFiles(string jsonModelPath, string configPath = null, string faultConfigPath = null)
         {
             BehaviorTreeConfiguration config;
             if (configPath != null && File.Exists(configPath))
@@ -618,6 +673,7 @@ namespace BehaviorTreeMainProject
             }
 
             var runner = new BehaviorTreeRunner(jsonModelPath, config);
+            runner.FaultConfigPath = faultConfigPath;
 
             // Convention-resolve any missing blackboard file paths from the tree name
             ResolveConventionBlackboardPaths(runner.config, jsonModelPath);
