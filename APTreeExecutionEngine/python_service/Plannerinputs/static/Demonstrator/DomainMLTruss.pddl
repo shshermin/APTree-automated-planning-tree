@@ -151,9 +151,38 @@
               (not(gripperempty ?client))
               (not(clear ?obj))
               (positionfree ?p)
+              ;; If ?obj was stacked on anything, clear that relationship
+              ;; and reveal the object underneath. Requires :adl.
+              (forall (?x - element)
+                (when (stacked ?obj ?x)
+                  (and (not (stacked ?obj ?x))
+                       (clear ?x)
+                       (accessible ?x))))
             )
     )
-      
+
+    ;robot puts a held object down at a free final-position (staging location)
+    ;symmetric to pickUpML — enables rearrangement (e.g. set a blocking object
+    ;aside to access another one underneath)
+    (:action putDownML
+    :parameters (?obj - element ?p - finalposition ?client - robot ?vg - gripper ?rp - rppickup)
+
+    :precondition (and
+      (hastool ?client ?vg)
+      (holding ?client ?obj)
+      (atagent ?client ?rp)
+      (positionfree ?p)
+    )
+
+    :effect   (and
+              (not (holding ?client ?obj))
+              (atplace ?obj ?p)
+              (not (positionfree ?p))
+              (gripperempty ?client)
+              (clear ?obj)
+            )
+    )
+
 
       (:action stackML ; for stacking one object on another object 
     :parameters (?stackingobject - element ?existingobject - element ?client - robot ?gripper - gripper ?objposition - finalposition ?robotposition - rpmanipulate)

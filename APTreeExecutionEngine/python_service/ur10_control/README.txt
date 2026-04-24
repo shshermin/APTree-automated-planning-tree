@@ -59,3 +59,9 @@ cd ..
 Invoke-RestMethod -Method Post -Uri "http://localhost:5001/move" -ContentType "application/json" -Body '{"commandType": "movel", "finalPosition": "rpmanipulate", "robotIp": "192.168.1.100", "pose": [0.133772, 0.34874, 0.490062, 3.137544, -0.07093, 0.006593], "velocity": 0.1, "acceleration": 0.1}'
 
 
+
+
+Run:
+dotnet run --project BehaviorTreeMainProject.csproj -- --run src/ModelLoader/BehaviorTreeModel.json --faults ../DemonstratorFaults.json
+
+

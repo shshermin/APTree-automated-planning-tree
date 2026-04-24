@@ -1,21 +1,43 @@
 {
-  "_comment": "Fault injection config for the Demonstrator tree. When PickUpML is active inside a PickUpHL whose InstanceName contains 'stick4', simulate a dropped stick: robot loses grasp, gripper becomes empty, stick becomes free at a new temploc1, and the ML flow node replans with the updated blackboard + PDDL :objects.",
+  "_comment": "Fault injection config for the Demonstrator tree. When PickUpML is active inside a PickUpHL whose InstanceName contains 'stick6', simulate a dropped stick: robot loses grasp, gripper becomes empty, stick becomes free at a new temploc1, and the ML flow node replans with the updated blackboard + PDDL :objects.",
   "Faults": [
     {
-      "Id": "drop_stick4_on_pickup",
+      "Id": "drop_stick6_on_pickup",
       "Type": "DropAfterClose",
       "Trigger": {
         "MlActionType": "PickUpML",
-        "ParentInstanceContains": "stick4",
+        "ParentInstanceContains": "stick6",
         "OnActivationCount": 1
       },
       "Effects": {
-        "DroppedObject": "stick4",
+        "DroppedObject": "stick6",
         "Robot": "robot1",
         "Gripper": "gripper1",
         "TempLocationName": "temploc1",
         "TempLocationPddlType": "firstposition",
-        "TempLocationPosition": [0.6073699999999999, -0.009, -0.0095]
+        "TempLocationPosition": [0.6073699999999999, 0.012, -0.009],
+        "RobotFromLocation": "rppickup",
+        "RobotToLocation": "rpmanipulate"
+      }
+    },
+    {
+      "Id": "blocker_on_stick3",
+      "Type": "BlockerOnTop",
+      "Trigger": {
+        "MlActionType": "TravelML",
+        "ParentInstanceContains": "stick3",
+        "OnActivationCount": 1
+      },
+      "Effects": {
+        "TargetObject": "stick3",
+        "BlockerObject": "stickdummy",
+        "BlockerPddlType": "stick",
+        "BlockerAtLocation": "temploc2",
+        "TempLocationName": "temploc3",
+        "TempLocationPddlType": "finalposition",
+        "TempLocationPosition": [0.6073699999999999, 0.012, -0.009],
+        "RobotFromLocation": "rpmanipulate",
+        "RobotToLocation": "rppickup"
       }
     }
   ]

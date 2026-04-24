@@ -52,6 +52,11 @@ public class DynamicFlowNode : FlowNode
         AddDecorator(new DecoratorPlanningComplete());
         LoggingService.LogInfo($"🔧 DynamicFlowNode: Added PlanningComplete decorator to {nodeName.ToString()}");
 
+        // FaultAbort must run before RetryOnFailure so fault-detected failures return
+        // InProgress directly, preventing DecoratorRetryOnFailure from starting a retry loop.
+        AddDecorator(new DecoratorFaultAbort(this));
+        LoggingService.LogInfo($"🔧 DynamicFlowNode: Added FaultAbort decorator to {nodeName.ToString()}");
+
         // Add RetryOnFailure decorator (skipped for LL FlowNodes so failures propagate to ML level)
         if (addRetryDecorator)
         {

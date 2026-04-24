@@ -1,6 +1,6 @@
 {
   "generatedAt": "2026-04-20T17:29:03.321920300",
-  "subtreeCount": 10,
+  "subtreeCount": 11,
   "llSubtrees": [
     {
       "mlAction": "PickUpML",
@@ -36,6 +36,82 @@
           "paramBindings": {
             "client": "{client}",
             "target": "{rp}"
+          }
+        }
+      ]
+    },
+    {
+      "mlAction": "PutDownML",
+      "name": "PutDownLLSubtree",
+      "steps": [
+        {
+          "actionType": "MoveToLL",
+          "instanceName": "moveToPutDownPosition",
+          "contParams": {
+            "moveType": "movel"
+          },
+          "paramBindings": {
+            "client": "{client}",
+            "target": "{p}"
+          }
+        },
+        {
+          "actionType": "OpenGripperLL",
+          "instanceName": "openGripper",
+          "contParams": {
+            "DigitalOutput": "0"
+          },
+          "paramBindings": {
+            "client": "{client}"
+          }
+        },
+        {
+          "actionType": "MoveToLL",
+          "instanceName": "moveToRetract",
+          "contParams": {
+            "moveType": "movel"
+          },
+          "paramBindings": {
+            "client": "{client}",
+            "target": "{rp}"
+          }
+        }
+      ]
+    },
+    {
+      "mlAction": "UnstackML",
+      "name": "UnstackLLSubtree",
+      "steps": [
+        {
+          "actionType": "MoveToLL",
+          "instanceName": "moveToPickPosition",
+          "contParams": {
+            "moveType": "movel"
+          },
+          "paramBindings": {
+            "client": "{client}",
+            "target": "{objposition}"
+          }
+        },
+        {
+          "actionType": "CloseGripperLL",
+          "instanceName": "closeGripper",
+          "contParams": {
+            "DigitalOutput": "0"
+          },
+          "paramBindings": {
+            "client": "{client}"
+          }
+        },
+        {
+          "actionType": "MoveToLL",
+          "instanceName": "moveToRetract",
+          "contParams": {
+            "moveType": "movel"
+          },
+          "paramBindings": {
+            "client": "{client}",
+            "target": "{robotposition}"
           }
         }
       ]

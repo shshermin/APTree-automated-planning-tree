@@ -66,6 +66,10 @@
     finallocstick9 - finalposition
     finalloccube1 - finalposition
     finalloccube2 - finalposition
+
+    temploc2 - firstposition
+    temploc3 - finalposition
+    stickdummy - stick
     ;; HARDCODED ML-only objects (not in HL problem files)
     equiplocgripper - equipposition
     equiplocstapler - equipposition
@@ -130,10 +134,14 @@
 (atplace stick4 finallocstick4)
 (accessible stick4)
 (stacked stick4 table1)
+(accessible stick5)
+(clear stickdummy)
+(accessible stickdummy)
+(positionfree temploc2)
+(atplace stickdummy temploc3)
 (positionfree initlocstick5)
 (atfinalposition stick5)
 (atplace stick5 finallocstick5)
-(accessible stick5)
 (stacked stick5 table1)
 (positionfree initlocstick2)
 (atfinalposition stick2)

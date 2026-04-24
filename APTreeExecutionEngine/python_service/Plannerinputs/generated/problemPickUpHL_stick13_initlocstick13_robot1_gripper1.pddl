@@ -63,8 +63,8 @@
     finallocstick7 - finalposition
     finallocstick8 - finalposition
     finallocstick9 - finalposition
-    finloccube1 - finalposition
-    finloccube2 - finalposition
+    finalloccube1 - finalposition
+    finalloccube2 - finalposition
     finallocstick10 - finalposition
     finallocstick11 - finalposition
     finallocstick12 - finalposition
@@ -74,8 +74,8 @@
     finallocstick16 - finalposition
     finallocstick17 - finalposition
     finallocstick18 - finalposition
-    finloccube3 - finalposition
-    finloccube4 - finalposition
+    finalloccube3 - finalposition
+    finalloccube4 - finalposition
     ;; HARDCODED ML-only objects (not in HL problem files)
     equiplocgripper - equipposition
     equiplocstapler - equipposition
@@ -98,10 +98,10 @@
 (objectfinalposition stick16 finallocstick16)
 (objectfinalposition stick17 finallocstick17)
 (objectfinalposition stick18 finallocstick18)
-(objectfinalposition cube1 finloccube1)
-(objectfinalposition cube2 finloccube2)
-(objectfinalposition cube3 finloccube3)
-(objectfinalposition cube4 finloccube4)
+(objectfinalposition cube1 finalloccube1)
+(objectfinalposition cube2 finalloccube2)
+(objectfinalposition cube3 finalloccube3)
+(objectfinalposition cube4 finalloccube4)
 (positionfree equiplocgripper)
 (gripperempty robot1)
 (belongstolayer stick6 layer2)
@@ -140,31 +140,23 @@
 (clear cube3)
 (clear cube4)
 (attool staplergun1 equiplocstapler)
-(atplace stick12 initlocstick12)
 (atplace stick13 initlocstick13)
-(atplace stick14 initlocstick14)
-(atplace stick15 initlocstick15)
-(atplace stick16 initlocstick16)
 (atplace stick17 initlocstick17)
 (atplace stick18 initlocstick18)
-(atplace cube3 initloccube3)
 (atplace cube4 initloccube4)
 (atagent robot1 rpmanipulate)
 (atplace stick9 finallocstick9)
-(accessible stick9)
 (atfinalposition stick9)
 (atfinalposition cube2)
-(atplace cube2 finloccube2)
-(accessible cube2)
+(atplace cube2 finalloccube2)
 (atfinalposition cube1)
-(atplace cube1 finloccube1)
+(atplace cube1 finalloccube1)
+(atplace stick6 finallocstick6)
+(atfinalposition stick6)
 (atplace stick7 finallocstick7)
 (atfinalposition stick7)
 (atplace stick8 finallocstick8)
-(accessible stick8)
 (atfinalposition stick8)
-(atplace stick6 finallocstick6)
-(atfinalposition stick6)
 (fixed stick6)
 (fixed stick7)
 (fixed stick8)
@@ -173,16 +165,42 @@
 (fixed cube2)
 (positionfree initlocstick11)
 (atplace stick11 finallocstick11)
-(accessible stick11)
 (stacked stick11 stick6)
 (stacked stick11 stick7)
 (atfinalposition stick11)
 (positionfree initlocstick10)
 (atplace stick10 finallocstick10)
-(accessible stick10)
-(stacked stick10 stick6)
 (stacked stick10 cube1)
+(stacked stick10 stick6)
 (atfinalposition stick10)
+(positionfree initlocstick12)
+(atplace stick12 finallocstick12)
+(stacked stick12 stick7)
+(stacked stick12 stick8)
+(atfinalposition stick12)
+(positionfree initlocstick15)
+(atplace stick15 finallocstick15)
+(accessible stick15)
+(stacked stick15 stick11)
+(stacked stick15 stick10)
+(atfinalposition stick15)
+(positionfree initloccube3)
+(atfinalposition cube3)
+(atplace cube3 finalloccube3)
+(accessible cube3)
+(stacked cube3 stick10)
+(positionfree initlocstick16)
+(atplace stick16 finallocstick16)
+(accessible stick16)
+(stacked stick16 stick11)
+(stacked stick16 stick12)
+(atfinalposition stick16)
+(positionfree initlocstick14)
+(atplace stick14 finallocstick14)
+(accessible stick14)
+(stacked stick14 cube2)
+(stacked stick14 stick9)
+(atfinalposition stick14)
   )
   (:goal 
     (and

@@ -9,7 +9,7 @@ namespace BehaviorTreeMainProject.ModelLoader
 {
     /// <summary>
     /// Top-level fault injection config loaded from JSON.
-    /// Lists all faults that the <see cref="Services.FaultInjection.FaultInjectionService"/>
+    /// Lists all faults that the <see cref="Services.FaultInjection.DummyCameraService"/>
     /// should watch for during execution.
     /// </summary>
     public class FaultInjectionConfig
@@ -85,6 +85,13 @@ namespace BehaviorTreeMainProject.ModelLoader
         /// <summary>How many times the matching ML action must have become active
         /// before firing. Default 1 (fire on first activation).</summary>
         public int OnActivationCount { get; set; } = 1;
+
+        /// <summary>Optional: require a specific LL step (by InstanceName substring,
+        /// case-insensitive) inside the ML action's LL subtree to have started or
+        /// completed before the fault fires. Lets faults target points like
+        /// "after gripper close, during retract" (e.g. "moveToRetract").
+        /// When null/empty, the fault fires as soon as the ML action is InProgress.</summary>
+        public string AfterLLStep { get; set; }
     }
 
     public class FaultEffects
@@ -107,5 +114,39 @@ namespace BehaviorTreeMainProject.ModelLoader
 
         /// <summary>Position [x,y,z] of the temp location. Defaults to (0,0,0).</summary>
         public double[] TempLocationPosition { get; set; } = new double[] { 0.0, 0.0, 0.0 };
+
+        /// <summary>Optional: location where the robot currently is (atagent <robot> <from>=true).
+        /// If set, the fault flips that predicate to false.</summary>
+        public string RobotFromLocation { get; set; }
+
+        /// <summary>Optional: location where the robot should appear after the fault
+        /// (atagent <robot> <to>=true). If the predicate does not exist on the blackboard,
+        /// a new one is created.</summary>
+        public string RobotToLocation { get; set; }
+
+        // ── BlockerOnTop fault fields ────────────────────────────────────
+
+        /// <summary>Target element that becomes blocked (e.g. "stick9"). The
+        /// planner must first move the blocker off this object before picking it up.</summary>
+        public string TargetObject { get; set; }
+
+        /// <summary>Element that sits on top of the target, blocking access.
+        /// If the element does not exist on the blackboard it is created
+        /// dynamically as a Stick at fault-fire time.</summary>
+        public string BlockerObject { get; set; }
+
+        /// <summary>PDDL type for the blocker element in the problem file
+        /// (e.g. "stick"). Defaults to "stick".</summary>
+        public string BlockerPddlType { get; set; } = "stick";
+
+        /// <summary>Location at which the blocker is placed (typically the
+        /// target's own initial location, e.g. "initlocstick9").</summary>
+        public string BlockerAtLocation { get; set; }
+
+        /// <summary>Optional: additional location names that should be marked
+        /// positionfree=false at fault time. Use this to remove competing
+        /// staging candidates so the planner must use the injected temp
+        /// location as the putDown target.</summary>
+        public List<string> BlockPositionfreeLocations { get; set; }
     }
 }

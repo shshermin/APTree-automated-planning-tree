@@ -64,8 +64,12 @@
     finallocstick7 - finalposition
     finallocstick8 - finalposition
     finallocstick9 - finalposition
-    finloccube1 - finalposition
-    finloccube2 - finalposition
+    finalloccube1 - finalposition
+    finalloccube2 - finalposition
+
+    temploc2 - firstposition
+    temploc3 - finalposition
+    stickdummy - stick
     ;; HARDCODED ML-only objects (not in HL problem files)
     equiplocgripper - equipposition
     equiplocstapler - equipposition
@@ -85,10 +89,9 @@
 (objectfinalposition stick7 finallocstick7)
 (objectfinalposition stick8 finallocstick8)
 (objectfinalposition stick9 finallocstick9)
-(objectfinalposition cube1 finloccube1)
-(objectfinalposition cube2 finloccube2)
+(objectfinalposition cube1 finalloccube1)
+(objectfinalposition cube2 finalloccube2)
 (gripperempty robot1)
-(belongstolayer table1 layer0)
 (belongstolayer stick1 layer1)
 (belongstolayer stick2 layer1)
 (belongstolayer stick3 layer1)
@@ -118,6 +121,10 @@
 (atfinalposition stick4)
 (atplace stick4 finallocstick4)
 (stacked stick4 table1)
+(clear stickdummy)
+(accessible stickdummy)
+(positionfree temploc2)
+(atplace stickdummy temploc3)
 (positionfree initlocstick5)
 (atfinalposition stick5)
 (atplace stick5 finallocstick5)
@@ -134,22 +141,28 @@
 (atfinalposition stick9)
 (positionfree initloccube2)
 (atfinalposition cube2)
-(atplace cube2 finloccube2)
+(atplace cube2 finalloccube2)
 (accessible cube2)
 (stacked cube2 stick5)
 (positionfree initlocstick1)
 (atfinalposition stick1)
 (atplace stick1 finallocstick1)
 (stacked stick1 table1)
+(positionfree initloccube1)
+(atfinalposition cube1)
+(atplace cube1 finalloccube1)
+(accessible cube1)
+(stacked cube1 stick1)
 (positionfree initlocstick3)
 (atfinalposition stick3)
 (atplace stick3 finallocstick3)
 (stacked stick3 table1)
-(positionfree initloccube1)
-(atfinalposition cube1)
-(atplace cube1 finloccube1)
-(accessible cube1)
-(stacked cube1 stick1)
+(positionfree initlocstick6)
+(atplace stick6 finallocstick6)
+(accessible stick6)
+(stacked stick6 stick1)
+(stacked stick6 stick2)
+(atfinalposition stick6)
 (positionfree initlocstick7)
 (atplace stick7 finallocstick7)
 (accessible stick7)
@@ -159,15 +172,9 @@
 (positionfree initlocstick8)
 (atplace stick8 finallocstick8)
 (accessible stick8)
-(stacked stick8 stick4)
 (stacked stick8 stick3)
+(stacked stick8 stick4)
 (atfinalposition stick8)
-(positionfree initlocstick6)
-(atplace stick6 finallocstick6)
-(accessible stick6)
-(stacked stick6 stick2)
-(stacked stick6 stick1)
-(atfinalposition stick6)
 (attool gripper1 equiplocgripper)
 (hastool robot1 staplergun1)
 (positionfree equiplocstapler)

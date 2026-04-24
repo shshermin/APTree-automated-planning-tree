@@ -127,6 +127,7 @@ public abstract class FlowNode : BTNode, IEnumerable
             SuccessCriteria.ANY => successCount > 0, // At least one must succeed
             SuccessCriteria.COUNT => successCount >= (int)successThreshold, // Must have at least threshold number of successes
             SuccessCriteria.PERCENTAGE => successCount >= (totalCount * successThreshold), // Must have at least threshold percentage of successes
+            SuccessCriteria.ALL_FINISHED => (successCount + failedCount) == totalCount, // Every child terminated (Success OR Failure)
             _ => false
         };
         

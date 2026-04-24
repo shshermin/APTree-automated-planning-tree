@@ -165,7 +165,18 @@ public class BTFlowNodeComposite : FlowNode
             else if (child.status == BTNodeResult.Failure)
             {
                 LoggingService.LogError($"❌ CompositeFlow: Child {child.DebugDisplayName} failed");
-                
+
+                // Under ALL_FINISHED the subtree tolerates failed children — treat a
+                // failed child as "finished" and advance to the next one instead of
+                // retrying / bailing.
+                if (successCriteria == SuccessCriteria.ALL_FINISHED)
+                {
+                    LoggingService.LogInfo(
+                        $"➡️ CompositeFlow: ALL_FINISHED — skipping past failed child {child.DebugDisplayName}");
+                    currentChildIndex++;
+                    continue;
+                }
+
                 // Check termination policy
                 currentAttempt++;
                 bool shouldTerminate = ShouldTerminate(allChildren);
@@ -207,23 +218,35 @@ public class BTFlowNodeComposite : FlowNode
     }
     
     /// <summary>
+    /// Public helper: is the configured success criterion reached given the
+    /// current child statuses? Used by OnTick and can be called by services
+    /// (e.g. fault-injection, replan decorators) to query subtree satisfaction.
+    /// </summary>
+    public bool IsSuccessReached() => EvaluateSuccessCriteria(GetChildren());
+
+    /// <summary>
     /// Evaluate success criteria based on child node results
     /// </summary>
     private bool EvaluateSuccessCriteria(List<IBTNode> children)
     {
         if (children.Count == 0) return false;
-        
+
         int successCount = children.Count(node => node.status == BTNodeResult.Success);
+        int finishedCount = children.Count(node =>
+            node.status == BTNodeResult.Success || node.status == BTNodeResult.Failure);
         int totalCount = children.Count;
-        
-        LoggingService.LogInfo($"📊 CompositeFlow: Success evaluation - {successCount}/{totalCount} children succeeded");
-        
+
+        LoggingService.LogInfo(
+            $"📊 CompositeFlow: Success evaluation - {successCount}/{totalCount} succeeded, " +
+            $"{finishedCount}/{totalCount} finished (criterion={successCriteria})");
+
         return successCriteria switch
         {
             SuccessCriteria.ALL => successCount == totalCount,
             SuccessCriteria.ANY => successCount > 0,
             SuccessCriteria.COUNT => successCount >= (int)successThreshold,
             SuccessCriteria.PERCENTAGE => successCount >= (totalCount * successThreshold),
+            SuccessCriteria.ALL_FINISHED => finishedCount == totalCount,
             _ => false
         };
     }
@@ -267,6 +290,7 @@ public class BTFlowNodeComposite : FlowNode
             SuccessCriteria.ANY => maxPossibleSuccess == 0, // No children can succeed
             SuccessCriteria.COUNT => maxPossibleSuccess < (int)successThreshold,
             SuccessCriteria.PERCENTAGE => maxPossibleSuccess < (children.Count * successThreshold),
+            SuccessCriteria.ALL_FINISHED => false, // Any terminal status counts — never impossible
             _ => false
         };
     }

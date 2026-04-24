@@ -26,6 +26,11 @@ namespace BehaviorTreeMainProject.ModelLoader
         /// <summary>Default execution mode: Sequential, Parallel, or Hybrid.</summary>
         public string ExecutionMode { get; set; } = "Sequential";
 
+        /// <summary>Explicit planner path sent to the Flask service.
+        /// Leave empty/null to let Flask fall back to its own DEFAULT_ENHSP_PATH.
+        /// Example on the Ubuntu VM: "/home/ubuntu/ENHSP-Public/enhsp.jar".</summary>
+        public string PlannerPath { get; set; } = "";
+
         // ── ML subtree (HL→ML decomposition) configuration ──
 
         /// <summary>Name for the subtree config registered with ServiceSubtreeInject.</summary>
@@ -42,6 +47,11 @@ namespace BehaviorTreeMainProject.ModelLoader
 
         /// <summary>ENHSP config for ML-level planner (e.g. "opt-hmax").</summary>
         public string SubtreeEnhspConfig { get; set; } = "opt-hmax";
+
+        /// <summary>Explicit planner path sent to Flask for ML subtree planners.
+        /// Leave empty/null to fall back to the top-level PlannerPath, which in turn
+        /// falls back to Flask's own default.</summary>
+        public string SubtreePlannerPath { get; set; } = "";
 
         /// <summary>Timeout for ML subtree planners.</summary>
         public int SubtreeTimeoutSeconds { get; set; } = 30;
@@ -69,7 +79,7 @@ namespace BehaviorTreeMainProject.ModelLoader
         // ── Tick loop settings ──
 
         /// <summary>Maximum number of ticks before stopping execution.</summary>
-        public int MaxTicks { get; set; } = 3500;
+        public int MaxTicks { get; set; } = 0;
 
         /// <summary>Delay in milliseconds between ticks.</summary>
         public int TickDelayMs { get; set; } = 100;
@@ -145,7 +155,7 @@ namespace BehaviorTreeMainProject.ModelLoader
                 SubtreeTimeoutSeconds = 30,
                 SubtreeExecutionMode = "Sequential",
 
-                MaxTicks = 3500,
+                MaxTicks = 0,
                 TickDelayMs = 100
             };
         }

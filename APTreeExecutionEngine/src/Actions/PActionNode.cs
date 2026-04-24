@@ -120,7 +120,7 @@ public abstract class PActionNode : ActionNode
         return Effects;
     }
 
-    public void applyEffects()
+    public virtual void applyEffects()
     {
         LoggingService.LogInfo($"🔧 APPLY_EFFECTS: Starting applyEffects() for action: {InstanceName.ToString()}");
         LoggingService.LogInfo($"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");

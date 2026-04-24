@@ -8,6 +8,8 @@ using System.Text.RegularExpressions;
 using AIPlanning;
 using BehaviorTreeMainProject.Services;
 using BehaviorTreeMainProject.Log.Services;
+using BehaviorTreeMainProject.Services.AIPlanning.Replan;
+using BehaviorTreeMainProject.Decorators.Replan;
 
 namespace BehaviorTreeMainProject.Services.AIPlanning
 {
@@ -15,7 +17,6 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
     {
         private DateTime planningStartTime;
         private bool planningStarted = false;
-        private bool hlProblemPatched = false;
 
         private readonly Blackboard<FastName> blackboard;
         private readonly FactoryAction actionFactory;
@@ -52,14 +53,159 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
         // Track generated problem files for debugging (static since generation happens before instance creation)
         private static readonly List<string> s_generatedProblemFiles = new List<string>();
 
+        /// <summary>
+        /// The original (static) problem file path captured at construction time.
+        /// Used on replans so we don't feed the already-generated (and hardcoded-ML-augmented)
+        /// file back into GetRelevantObjects, which would duplicate object declarations
+        /// and crash ENHSP with a parse error (exit code 255).
+        /// </summary>
+        private readonly string _originalProblemFile;
+
+        /// <summary>
+        /// When true (default), the service automatically attaches the standard
+        /// set of replan decorators to its owning flow node when the flow node
+        /// is first bound. Set to false to fully customise the pipeline from
+        /// the outside.
+        /// </summary>
+        public bool AutoAttachDefaultReplanDecorators { get; set; } = true;
+
+        private bool _defaultsAttached = false;
+
         public ServicePDDLPlanning(BehaviorTree InOwningTree, PDDLPlanningRequest InPlanningRequest)
             : base(InOwningTree, new RestPlannerCommunicator("http://localhost:5000"), InPlanningRequest)
         {
             this.blackboard = InOwningTree.linkedBlackboard;
             this.actionFactory = FactoryAction.Instance;
             this.PlanningRequest = InPlanningRequest;
+            this._originalProblemFile = InPlanningRequest?.ProblemFile;
         }
-      
+
+        /// <summary>
+        /// When the owning flow node becomes known, auto-attach the default
+        /// replan-decorator pipeline (unless one of those types is already
+        /// present or <see cref="AutoAttachDefaultReplanDecorators"/> was
+        /// turned off by the caller). Attach order matches pipeline order:
+        /// GoalSatisfiedSkip → ExtraPDDLObjects → RegenerateFromBlackboard → HLStatePatch.
+        /// </summary>
+        public override void SetOwningFlowNode(FlowNode flowNode)
+        {
+            base.SetOwningFlowNode(flowNode);
+            if (AutoAttachDefaultReplanDecorators && !_defaultsAttached && flowNode != null)
+            {
+                EnsureDefaultReplanDecorators(flowNode);
+                _defaultsAttached = true;
+            }
+        }
+
+        /// <summary>
+        /// Attach the standard replan decorators to <paramref name="flowNode"/>,
+        /// skipping any type that is already present. Public so external code
+        /// can call it explicitly (e.g. on a late-bound flow node).
+        /// </summary>
+        public static void EnsureDefaultReplanDecorators(FlowNode flowNode)
+        {
+            if (flowNode == null) return;
+            var existing = flowNode.GetDecorators();
+
+            if (!existing.Any(d => d is DecoratorResetFailedPlan))
+                flowNode.AddDecorator(new DecoratorResetFailedPlan());
+
+            if (!existing.Any(d => d is DecoratorGoalSatisfiedSkip))
+                flowNode.AddDecorator(new DecoratorGoalSatisfiedSkip());
+
+            // Create (or find) the ExtraPDDLObjects decorator and drain any
+            // pending registrations that fault injection stored before this
+            // FlowNode existed.
+            var extraDec = existing.OfType<DecoratorExtraPDDLObjects>().FirstOrDefault();
+            if (extraDec == null)
+            {
+                extraDec = new DecoratorExtraPDDLObjects();
+                flowNode.AddDecorator(extraDec);
+            }
+            DrainPendingExtrasInto(flowNode.DebugDisplayName, extraDec);
+
+            if (!existing.Any(d => d is DecoratorRegenerateFromBlackboard))
+                flowNode.AddDecorator(new DecoratorRegenerateFromBlackboard());
+
+            if (!existing.Any(d => d is DecoratorHLStatePatch))
+                flowNode.AddDecorator(new DecoratorHLStatePatch());
+
+            LoggingService.LogInfo(
+                $"🔧 ServicePDDLPlanning: Default replan decorators ensured on flow node '{flowNode.DebugDisplayName}'");
+        }
+
+        // ── Pending extra-objects registry ────────────────────────────────────
+        // Fault injection may fire before the target HL FlowNode exists.  We
+        // store (nameSubstring → list of (object, type)) here and drain them
+        // into the real decorator once the FlowNode is created.
+        private static readonly Dictionary<string, List<(string obj, string type)>> _pendingExtras
+            = new Dictionary<string, List<(string, string)>>(StringComparer.OrdinalIgnoreCase);
+
+        /// <summary>
+        /// Register an extra PDDL object for a FlowNode that may not exist yet.
+        /// <paramref name="flowNodeNameSubstring"/> is matched case-insensitively
+        /// against <c>FlowNode.DebugDisplayName</c> when the node is created.
+        /// If the FlowNode already exists, pass it via <paramref name="flowNode"/>
+        /// instead and register directly.
+        /// </summary>
+        public static void RegisterPendingExtraObject(
+            string flowNodeNameSubstring, string objectName, string pddlType)
+        {
+            if (string.IsNullOrWhiteSpace(flowNodeNameSubstring) ||
+                string.IsNullOrWhiteSpace(objectName)) return;
+            if (!_pendingExtras.TryGetValue(flowNodeNameSubstring, out var list))
+                _pendingExtras[flowNodeNameSubstring] = list = new List<(string, string)>();
+            list.Add((objectName.Trim(), pddlType?.Trim() ?? ""));
+            LoggingService.LogInfo(
+                $"🕑 ServicePDDLPlanning: Pending extra PDDL object '{objectName} - {pddlType}' "
+                + $"queued for FlowNode matching '{flowNodeNameSubstring}'");
+        }
+
+        private static void DrainPendingExtrasInto(
+            string flowNodeName, DecoratorExtraPDDLObjects decorator)
+        {
+            if (string.IsNullOrEmpty(flowNodeName) || decorator == null) return;
+            var keys = new List<string>(_pendingExtras.Keys);
+            foreach (var key in keys)
+            {
+                if (flowNodeName.IndexOf(key, StringComparison.OrdinalIgnoreCase) < 0) continue;
+                foreach (var (obj, type) in _pendingExtras[key])
+                {
+                    decorator.AddObject(obj, type);
+                    LoggingService.LogSuccess(
+                        $"🕑 ServicePDDLPlanning: Drained pending extra '{obj} - {type}' "
+                        + $"into '{flowNodeName}'");
+                }
+                _pendingExtras.Remove(key);
+            }
+        }
+        // ─────────────────────────────────────────────────────────────────────
+
+        /// <summary>
+        /// Find the first <see cref="DecoratorExtraPDDLObjects"/> attached to
+        /// <paramref name="flowNode"/>, attaching one if none exists. Used by
+        /// e.g. fault injection to declaratively register temp PDDL objects.
+        /// </summary>
+        public static DecoratorExtraPDDLObjects GetOrCreateExtraObjectsDecorator(FlowNode flowNode)
+        {
+            if (flowNode == null) return null;
+            var existing = flowNode.GetDecorators().OfType<DecoratorExtraPDDLObjects>().FirstOrDefault();
+            if (existing != null) return existing;
+            var created = new DecoratorExtraPDDLObjects();
+            flowNode.AddDecorator(created);
+            return created;
+        }
+
+        /// <summary>
+        /// Enumerate all <see cref="IReplanModifier"/> decorators attached to
+        /// the owning flow node, in attach order.
+        /// </summary>
+        private IEnumerable<IReplanModifier> GetReplanModifiers()
+        {
+            if (OwningFlowNode == null) yield break;
+            foreach (var dec in OwningFlowNode.GetDecorators())
+                if (dec is IReplanModifier mod) yield return mod;
+        }
 
         public override bool OnEvaluate(float InDeltaTime)
         {
@@ -69,67 +215,68 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
                 planningStarted = true;
             }
 
-            // Before each planning attempt, regenerate the PDDL problem file
-            // from the current blackboard state so re-plans use fresh data.
-            // Only regenerate if planning hasn't completed yet (the base guard
-            // in ServicePlanning.OnEvaluate will skip if HasCompleted is true).
-            if (!HasCompleted && !IsExecuting)
+            // Build the context shared by the replan pipeline.
+            // We build it once and run Phase 1 (PrePlan) UNCONDITIONALLY so that
+            // modifiers such as DecoratorResetFailedPlan can clear a latched
+            // failure before the HasCompleted guard below short-circuits us.
+            var ctx = new PDDLPlanningContext
             {
-                var parentAction = (OwningFlowNode as DynamicFlowNode)?.GetParentAction();
-                if (parentAction != null && blackboard != null)
+                Service = this,
+                FlowNode = OwningFlowNode as DynamicFlowNode,
+                ParentAction = (OwningFlowNode as DynamicFlowNode)?.GetParentAction(),
+                Blackboard = blackboard,
+                PlanningRequest = PlanningRequest,
+                OriginalProblemFile = _originalProblemFile,
+            };
+
+            // Phase 1: PrePlan — any modifier may short-circuit.
+            foreach (var mod in GetReplanModifiers())
+            {
+                var result = mod.PrePlan(ctx);
+                if (result == PrePlanResult.SkipAsSuccess)
                 {
-                    // Goal-satisfaction check: skip planning if all goals are already met
-                    var goalPredicates = parentAction.GetActionEffects();
-                    var currentState = blackboard.GetTruePredicates();
-
-                    bool allGoalsMet = goalPredicates.Count > 0 && goalPredicates.All(goal =>
-                        currentState.Any(init => init.PredicateName == goal.PredicateName
-                                              && init.not == goal.not));
-
-                    if (allGoalsMet)
-                    {
-                        LoggingService.LogInfo($"⏭️ ServicePDDLPlanning: All {goalPredicates.Count} goal predicates already satisfied in blackboard — skipping planning for {parentAction.InstanceName}");
-                        // Mark as completed successfully without calling the planner
-                        HasCompleted = true;
-                        WasSuccessful = true;
-                        HasPlanGenerated = false; // No plan needed
-                        return true;
-                    }
-
-                    // Regenerate the problem file with the current blackboard state
-                    string originalProblemFile = PlanningRequest.ProblemFile;
-                    string newProblemFile = GenerateDynamicPDDLProblem(parentAction, blackboard, originalProblemFile);
-                    PlanningRequest.ProblemFile = newProblemFile;
-
-                    // Send file content inline so the remote VM service doesn't need
-                    // to read a path that only exists on this (Windows) machine.
-                    string localPath = $"python_service/Plannerinputs/generated/{Path.GetFileName(newProblemFile)}";
-                    if (File.Exists(localPath))
-                        PlanningRequest.ProblemFileContent = File.ReadAllText(localPath, Encoding.UTF8);
-
-                    LoggingService.LogInfo($"🔄 ServicePDDLPlanning: Regenerated problem file for re-plan: {newProblemFile}");
+                    HasCompleted = true;
+                    WasSuccessful = true;
+                    HasPlanGenerated = false;
+                    return true;
+                }
+                if (result == PrePlanResult.SkipAsFailure)
+                {
+                    HasCompleted = true;
+                    WasSuccessful = false;
+                    HasPlanGenerated = false;
+                    return false;
                 }
             }
 
-            // Always send domain and problem file contents inline so the VM
-            // gets the latest versions from this machine, overriding whatever
-            // is already on disk there.
-            PopulateInlineFileContents();
-
-            // For HL-level planning (no parentAction), patch the static problem
-            // file with live robot-state predicates from the blackboard so that
-            // cross-cassette transitions start from the actual robot state.
             if (!HasCompleted && !IsExecuting)
             {
-                var parentAction2 = (OwningFlowNode as DynamicFlowNode)?.GetParentAction();
-                if (parentAction2 == null && blackboard != null
-                    && !string.IsNullOrEmpty(PlanningRequest.ProblemFileContent)
-                    && !hlProblemPatched)
+                // Phase 2a: ML-level problem-file regeneration & extras contribution.
+                //           (Decorators that care only run when ParentAction != null.)
+                foreach (var mod in GetReplanModifiers())
+                    mod.ApplyModifications(ctx);
+
+                // Always send domain and problem file contents inline so the VM
+                // gets the latest versions from this machine, overriding whatever
+                // is already on disk there.
+                PopulateInlineFileContents();
+
+                // Phase 2b: HL robot-state patching runs AFTER PopulateInlineFileContents
+                //           because the HL patch mutates ProblemFileContent which the
+                //           population step has just filled from disk. We re-enter
+                //           the same decorator pipeline but only DecoratorHLStatePatch
+                //           will actually do work (its guards bail for ML nodes).
+                foreach (var mod in GetReplanModifiers())
                 {
-                    PlanningRequest.ProblemFileContent = PatchRobotStatePredicates(
-                        PlanningRequest.ProblemFileContent, blackboard);
-                    hlProblemPatched = true;
+                    if (mod is DecoratorHLStatePatch)
+                        mod.ApplyModifications(ctx);
                 }
+            }
+            else
+            {
+                // Even when the pipeline is skipped, still populate inline file
+                // contents so the base implementation sees a valid request.
+                PopulateInlineFileContents();
             }
 
             return base.OnEvaluate(InDeltaTime);
@@ -283,13 +430,25 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
         }
 
         /// <summary>
+        /// Public wrapper around <see cref="PatchRobotStatePredicates"/> so that
+        /// <see cref="Replan.IReplanModifier"/> decorators can invoke it.
+        /// </summary>
+        public string PatchRobotStatePredicatesPublic(string problemContent, Blackboard<FastName> bb)
+            => PatchRobotStatePredicates(problemContent, bb);
+
+        /// <summary>
         /// Reset the planning service state, including PDDL-specific tracking.
         /// Called during cross-cassette reset to allow re-planning.
         /// </summary>
         public new void ResetPlanningService()
         {
             planningStarted = false;
-            hlProblemPatched = false;
+            // Reset HL state-patch decorators so they re-patch on the next activation.
+            if (OwningFlowNode != null)
+            {
+                foreach (var dec in OwningFlowNode.GetDecorators().OfType<DecoratorHLStatePatch>())
+                    dec.Reset();
+            }
             base.ResetPlanningService();
         }
 
@@ -328,8 +487,36 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
                     if (nodeGraph != null)
                     {
                         actionsGenerated = nodeGraph.GetAllActionNodes().Count;
+                        var planDuration = endTime - planningStartTime;
+                        var tResumePlanning = endTime;
                         LoggingService.LogSuccess($"✅ ServicePDDLPlanning: Generated NodeGraph with {actionsGenerated} actions");
                         LoggingService.LogSuccess($"✅ ServicePDDLPlanning: Execution Mode applied: {ExecutionMode}");
+                        LoggingService.LogSuccess($"⏱️ ServicePDDLPlanning: Planning completed in {planDuration.TotalMilliseconds:F0}ms ({planDuration.TotalSeconds:F1}s)");
+
+                        // If a Safety (BlockerOnTop) fault timestamp was recorded for this flow node,
+                        // emit a FAULT_METRIC resume line with Recovery Time = plan_complete - t_fault.
+                        // (Execution faults use DecoratorFaultAbort for this; Safety faults have no abort path.)
+                        var ownerName = OwningFlowNode?.DebugDisplayName ?? "";
+                        if (!string.IsNullOrEmpty(ownerName))
+                        {
+                            try
+                            {
+                                string raw = blackboard?.GetString(
+                                    BehaviorTreeMainProject.Services.FaultInjection.BlackboardKeys.FaultTimestampKey(ownerName));
+                                if (!string.IsNullOrEmpty(raw) && long.TryParse(raw, out long ticks))
+                                {
+                                    var tFault = new DateTime(ticks);
+                                    var recoveryMs = (tResumePlanning - tFault).TotalMilliseconds;
+                                    LoggingService.LogSuccess(
+                                        $"📋 FAULT_METRIC | t_resume={tResumePlanning:HH:mm:ss.fff} | node={ownerName} | type=Safety" +
+                                        $" | recovery_ms={recoveryMs:F0} | replan_latency_ms={planDuration.TotalMilliseconds:F0}");
+                                    // Clear so subsequent planning cycles don't double-log
+                                    blackboard.SetString(
+                                        BehaviorTreeMainProject.Services.FaultInjection.BlackboardKeys.FaultTimestampKey(ownerName), "");
+                                }
+                            }
+                            catch { }
+                        }
 
                         // Write the generated DSL plan back into APTreeLivematFinal.bt
                         var flowNodeName = OwningFlowNode?.GetNodeName();
@@ -519,6 +706,18 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
         /// <param name="blackboard">The blackboard whose true predicates become the PDDL init</param>
         /// <returns>Relative path to the generated problem file (e.g. "Plannerinputs/generated/problemX.pddl")</returns>
         public static string GenerateDynamicPDDLProblem(PActionNode action, Blackboard<FastName> blackboard, string originalProblemFile)
+            => GenerateDynamicPDDLProblem(action, blackboard, originalProblemFile, null);
+
+        /// <summary>
+        /// Overload that accepts an explicit set of extra PDDL object declarations
+        /// to append to the (:objects) block (e.g. contributed by
+        /// <see cref="DecoratorExtraPDDLObjects"/>). Pass <c>null</c> for no extras.
+        /// </summary>
+        public static string GenerateDynamicPDDLProblem(
+            PActionNode action,
+            Blackboard<FastName> blackboard,
+            string originalProblemFile,
+            IReadOnlyDictionary<string, string> extraObjects)
         {
             try
             {
@@ -570,7 +769,7 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
                 LoggingService.LogInfo($"🎯 ServicePDDLPlanning: Goal state PDDL: {goalstatepredicatesPDDL}");
 
                 // 3. Generate PDDL problem content
-                string pddlContent = GeneratePDDLProblemContent(actionFullName, initialstatepredicatesPDDL, goalstatepredicatesPDDL, originalProblemFile);
+                string pddlContent = GeneratePDDLProblemContent(actionFullName, initialstatepredicatesPDDL, goalstatepredicatesPDDL, originalProblemFile, extraObjects);
                 LoggingService.LogInfo($"🔧 ServicePDDLPlanning: Generated PDDL content length: {pddlContent?.Length ?? 0}");
 
                 // 4. Write to file
@@ -614,7 +813,12 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
         /// <summary>
         /// Generate PDDL problem content string from action type, initial predicates, and goal predicates.
         /// </summary>
-        private static string GeneratePDDLProblemContent(string actionType, string initialPredicates, string goalPredicates, string parentProblemFile)
+        private static string GeneratePDDLProblemContent(
+            string actionType,
+            string initialPredicates,
+            string goalPredicates,
+            string parentProblemFile,
+            IReadOnlyDictionary<string, string> extraObjects)
         {
             actionType = actionType.ToLower();
             goalPredicates = goalPredicates.ToLower();
@@ -631,6 +835,17 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
                 "\n    rpmanipulate - rpmanipulate" +
                 "\n    rptoolchange - rptoolchange";
             objects = objects.TrimEnd() + hardcodedMLObjects;
+
+            // Append caller-supplied extra objects (e.g. contributed by the
+            // DecoratorExtraPDDLObjects decorator on the owning flow node).
+            if (extraObjects != null && extraObjects.Count > 0)
+            {
+                var sb = new StringBuilder();
+                sb.Append("\n    ;; Runtime-injected extra objects");
+                foreach (var kv in extraObjects)
+                    sb.Append($"\n    {kv.Key} - {kv.Value}");
+                objects += sb.ToString();
+            }
 
             // Parse declared object names from the objects block
             var declaredObjects = ParseDeclaredObjectNames(objects);

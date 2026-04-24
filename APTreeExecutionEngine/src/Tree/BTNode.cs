@@ -127,7 +127,11 @@ public abstract class BTNode : IBTNode
     {
         if (Decorators == null)
             Decorators = new();
-        InDecorator.SetOwiningTree(OwningTree);
+        // Only propagate the tree if it's already available. If the node's tree
+        // isn't set yet, SetOwiningTree will retroactively propagate to every
+        // attached decorator.
+        if (OwningTree != null)
+            InDecorator.SetOwiningTree(OwningTree);
         Decorators.Add(InDecorator);
         
         // Track decorator addition
@@ -135,6 +139,14 @@ public abstract class BTNode : IBTNode
         
         return this;
     }
+
+    /// <summary>
+    /// Read-only view of decorators attached to this node. Returns an empty
+    /// list if no decorators have been attached. Used by services (e.g.
+    /// ServicePDDLPlanning) that need to delegate policy to decorators.
+    /// </summary>
+    public IReadOnlyList<IBTDecorator> GetDecorators()
+        => (IReadOnlyList<IBTDecorator>?)Decorators ?? System.Array.Empty<IBTDecorator>();
     /// <summary>
     /// Adds services to each node
     /// </summary>
@@ -231,9 +243,17 @@ public abstract class BTNode : IBTNode
     public void SetOwiningTree(IBehaviorTree InOwningtree)
     {
         this.OwningTree = InOwningtree;
-        
-      
-        
+
+        // Retroactively propagate to any decorators that were attached
+        // before the tree was set on this node. Services have their own
+        // propagation path via SetTreeForAllServices.
+        if (InOwningtree != null && Decorators != null)
+        {
+            foreach (var dec in Decorators)
+            {
+                dec.SetOwiningTree(InOwningtree);
+            }
+        }
     }
     
     

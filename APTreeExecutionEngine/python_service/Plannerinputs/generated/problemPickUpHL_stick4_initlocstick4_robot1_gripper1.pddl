@@ -66,12 +66,18 @@
     finallocstick9 - finalposition
     finalloccube1 - finalposition
     finalloccube2 - finalposition
+
+    temploc2 - firstposition
+    temploc3 - finalposition
+    stickdummy - stick
     ;; HARDCODED ML-only objects (not in HL problem files)
     equiplocgripper - equipposition
     equiplocstapler - equipposition
     rppickup - rppickup
     rpmanipulate - rpmanipulate
     rptoolchange - rptoolchange
+    ;; Runtime-injected extra objects
+    temploc1 - firstposition
   )
   (:init  
     (atfinalposition table1)
@@ -116,7 +122,6 @@
 (atplace stick1 initlocstick1)
 (atplace stick2 initlocstick2)
 (atplace stick3 initlocstick3)
-(atplace stick4 initlocstick4)
 (atplace stick5 initlocstick5)
 (atplace stick6 initlocstick6)
 (atplace stick7 initlocstick7)
@@ -129,6 +134,8 @@
 (accessible table1)
 (fixed table1)
 (activetool gripper1)
+(positionfree initlocstick4)
+(atplace stick4 temploc1)
   )
   (:goal 
     (and

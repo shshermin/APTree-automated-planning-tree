@@ -66,8 +66,8 @@
     finallocstick16 - finalposition
     finallocstick17 - finalposition
     finallocstick18 - finalposition
-    finloccube3 - finalposition
-    finloccube4 - finalposition
+    finalloccube3 - finalposition
+    finalloccube4 - finalposition
     finallocstick19 - finalposition
     finallocstick20 - finalposition
     finallocstick21 - finalposition
@@ -77,8 +77,8 @@
     finallocstick25 - finalposition
     finallocstick26 - finalposition
     finallocstick27 - finalposition
-    finloccube5 - finalposition
-    finloccube6 - finalposition
+    finalloccube5 - finalposition
+    finalloccube6 - finalposition
     ;; HARDCODED ML-only objects (not in HL problem files)
     equiplocgripper - equipposition
     equiplocstapler - equipposition
@@ -101,10 +101,10 @@
 (objectfinalposition stick25 finallocstick25)
 (objectfinalposition stick26 finallocstick26)
 (objectfinalposition stick27 finallocstick27)
-(objectfinalposition cube3 finloccube3)
-(objectfinalposition cube4 finloccube4)
-(objectfinalposition cube5 finloccube5)
-(objectfinalposition cube6 finloccube6)
+(objectfinalposition cube3 finalloccube3)
+(objectfinalposition cube4 finalloccube4)
+(objectfinalposition cube5 finalloccube5)
+(objectfinalposition cube6 finalloccube6)
 (positionfree equiplocgripper)
 (gripperempty robot1)
 (belongstolayer stick15 layer4)
@@ -158,26 +158,26 @@
 (atplace stick15 finallocstick15)
 (accessible stick15)
 (atfinalposition stick15)
-(atfinalposition cube4)
-(atplace cube4 finloccube4)
-(accessible cube4)
-(atplace stick18 finallocstick18)
-(accessible stick18)
-(atfinalposition stick18)
 (atfinalposition cube3)
-(atplace cube3 finloccube3)
+(atplace cube3 finalloccube3)
 (accessible cube3)
-(atplace stick17 finallocstick17)
-(accessible stick17)
-(atfinalposition stick17)
 (atplace stick16 finallocstick16)
 (accessible stick16)
 (atfinalposition stick16)
+(atfinalposition cube4)
+(atplace cube4 finalloccube4)
+(accessible cube4)
+(atplace stick17 finallocstick17)
+(accessible stick17)
+(atfinalposition stick17)
+(fixed stick17)
 (fixed cube3)
 (fixed cube4)
 (fixed stick15)
 (fixed stick16)
-(fixed stick17)
+(atplace stick18 finallocstick18)
+(accessible stick18)
+(atfinalposition stick18)
 (fixed stick18)
   )
   (:goal 

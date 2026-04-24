@@ -23,6 +23,17 @@ BehaviorTree PickUpLLSubtree {
     }
 }
 
+// ── UnstackML ──
+// ML signature: UnstackML (stackingobject:Element, existingobject:Element, client:Robot, gripper:Gripper, objposition:Location, robotposition:RobotPosition)
+// Steps: MoveL to pick position (objposition) → close gripper → MoveL to retract position (robotposition)
+BehaviorTree UnstackLLSubtree {
+    Root Sequence UnstackSequence {
+        Action MoveToLL moveToPickPosition (objposition client "movel")
+        Action CloseGripperLL closeGripper (client 0)
+        Action MoveToLL moveToRetract (robotposition client "movel")
+    }
+}
+
 // ── StackML ──
 // ML signature: StackML (stackingobject:Element, existingobject:Element, client:Robot, gripper:Gripper, objposition:Location, robotposition:RobotPosition)
 // Steps: Planned move to object position → MoveJ to robot rest position

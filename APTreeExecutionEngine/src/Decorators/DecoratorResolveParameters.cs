@@ -33,7 +33,12 @@ public abstract class DecoratorResolveParameters : Decorator
         }
         catch (Exception ex)
         {
-            LoggingService.LogWarning($"⚠️ {GetType().Name}: Error resolving parameters for {AttachedAction.InstanceName}: {ex.Message}");
+            // Include full exception details (type, stack trace, inner exceptions) so
+            // the root cause is visible. ex.ToString() gives us file:line from the PDB.
+            LoggingService.LogWarning(
+                $"⚠️ {GetType().Name}: Error resolving parameters for {AttachedAction.InstanceName}: " +
+                $"{ex.GetType().Name}: {ex.Message}\n{ex.StackTrace}" +
+                (ex.InnerException != null ? $"\n  ↳ Inner: {ex.InnerException}" : ""));
         }
 
         return true; // Never block execution

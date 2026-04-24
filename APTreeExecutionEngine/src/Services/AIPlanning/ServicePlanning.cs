@@ -100,7 +100,7 @@ public abstract class ServicePlanning : Service
     /// Set the owning flow node for this planning service
     /// </summary>
     /// <param name="flowNode">The flow node that owns this planning service</param>
-    public void SetOwningFlowNode(FlowNode flowNode)
+    public virtual void SetOwningFlowNode(FlowNode flowNode)
     {
         LoggingService.LogInfo($"🔧 ServicePlanning: SetOwningFlowNode called - {GetType().Name} ↔ {flowNode.DebugDisplayName}");
         OwningFlowNode = flowNode;
@@ -468,6 +468,24 @@ public abstract class ServicePlanning : Service
         return HasCompleted && WasSuccessful && HasPlanGenerated && generatedNodeGraph != null;
     }
     
+    /// <summary>
+    /// Clear only the latched "completed + failed" flags so the service will
+    /// re-enter planning on the next tick, preserving any other state.
+    /// Used by <see cref="BehaviorTreeMainProject.Decorators.Replan.DecoratorResetFailedPlan"/>
+    /// to prevent a single planner failure from poisoning the flow node forever.
+    /// No-op if the service is not in a failed-completed state.
+    /// </summary>
+    public void ClearFailedCompletion()
+    {
+        if (HasCompleted && !WasSuccessful)
+        {
+            HasCompleted = false;
+            IsExecuting = false;
+            HasPlanGenerated = false;
+            LastError = null;
+        }
+    }
+
     /// <summary>
     /// Reset the planning service state (useful when tree is reset)
     /// </summary>

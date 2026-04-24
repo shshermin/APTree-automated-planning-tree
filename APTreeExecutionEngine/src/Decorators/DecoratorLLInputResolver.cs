@@ -48,7 +48,11 @@ public class DecoratorLLInputResolver : DecoratorResolveParameters
             }
             catch (Exception ex)
             {
-                LoggingService.LogWarning($"⚠️ DecoratorLLInputResolver: Error binding ML param '{kv.Key}' ({kv.Value.GetType().Name}) on '{action.InstanceName}': {ex.Message}");
+                LoggingService.LogWarning(
+                    $"⚠️ DecoratorLLInputResolver: Error binding ML param '{kv.Key}' " +
+                    $"({kv.Value?.GetType().Name ?? "null"}) on '{action.InstanceName}': " +
+                    $"{ex.GetType().Name}: {ex.Message}\n{ex.StackTrace}" +
+                    (ex.InnerException != null ? $"\n  ↳ Inner: {ex.InnerException}" : ""));
             }
         }
 

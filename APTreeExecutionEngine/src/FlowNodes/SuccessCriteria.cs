@@ -4,5 +4,6 @@ public enum SuccessCriteria
     ANY,            // At least one child must succeed
     COUNT,          // X number of children must succeed
     PERCENTAGE,     // X% of children must succeed
-    SIGNAL
+    SIGNAL,
+    ALL_FINISHED    // Every child has finished (Success OR Failure) — failures tolerated
 }

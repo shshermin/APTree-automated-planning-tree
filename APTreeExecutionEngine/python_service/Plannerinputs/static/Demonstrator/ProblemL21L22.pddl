@@ -111,10 +111,10 @@
     (stacked stick86 stick84)
 
     ;; Nailed - layer 21
-    (nailed stick85 cube17)
-    (nailed stick85 stick83)
-    (nailed stick86 stick83)
-    (nailed stick86 stick84)
+    ;(nailed stick85 cube17)
+    ;(nailed stick85 stick83)
+    ;(nailed stick86 stick83)
+    ;(nailed stick86 stick84)
 
     ;; Stacked - layer 22
     (stacked cube18 stick85)

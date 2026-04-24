@@ -246,7 +246,7 @@ namespace BehaviorTreeMainProject
             public Dictionary<string, object> PlannerParameters { get; set; }
             public bool UseCaching { get; set; } = true;
 
-            public SubtreeConfiguration(string name, string plannerName, SuccessCriteria successCriteria = SuccessCriteria.ALL)
+            public SubtreeConfiguration(string name, string plannerName, SuccessCriteria successCriteria = SuccessCriteria.ALL_FINISHED)
             {
                 Name = name;
                 PlannerName = plannerName;
@@ -272,7 +272,7 @@ namespace BehaviorTreeMainProject
                 var planner = (Planner)Activator.CreateInstance(type);
                 var configName = $"{planner.DefaultPlannerName}_Default";
 
-                var config = new SubtreeConfiguration(configName, planner.DefaultPlannerName, SuccessCriteria.ALL);
+                var config = new SubtreeConfiguration(configName, planner.DefaultPlannerName, SuccessCriteria.ALL_FINISHED);
                 config.PlannerParameters["domainFile"] = planner.DefaultDomainFile;
                 config.PlannerParameters["problemFile"] = planner.DefaultProblemFile;
                 config.PlannerParameters["plannerPath"] = planner.DefaultPlannerPath;
@@ -290,7 +290,7 @@ namespace BehaviorTreeMainProject
             // This is separate from ENHSP_Default (which uses DomainHL.pddl for HL cassette planning).
             if (subtreeConfigurations.TryGetValue("ENHSP_Default", out var enhspDefault))
             {
-                var mlConfig = new SubtreeConfiguration("ENHSP_ML_Default", "Enhsp", SuccessCriteria.ALL);
+                var mlConfig = new SubtreeConfiguration("ENHSP_ML_Default", "Enhsp", SuccessCriteria.ALL_FINISHED);
                 foreach (var kv in enhspDefault.PlannerParameters)
                     mlConfig.PlannerParameters[kv.Key] = kv.Value;
                 mlConfig.PlannerParameters["domainFile"] = "Plannerinputs/static/DomainML.pddl";

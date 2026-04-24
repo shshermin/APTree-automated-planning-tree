@@ -63,8 +63,8 @@
     finallocstick7 - finalposition
     finallocstick8 - finalposition
     finallocstick9 - finalposition
-    finloccube1 - finalposition
-    finloccube2 - finalposition
+    finalloccube1 - finalposition
+    finalloccube2 - finalposition
     finallocstick10 - finalposition
     finallocstick11 - finalposition
     finallocstick12 - finalposition
@@ -74,8 +74,8 @@
     finallocstick16 - finalposition
     finallocstick17 - finalposition
     finallocstick18 - finalposition
-    finloccube3 - finalposition
-    finloccube4 - finalposition
+    finalloccube3 - finalposition
+    finalloccube4 - finalposition
     ;; HARDCODED ML-only objects (not in HL problem files)
     equiplocgripper - equipposition
     equiplocstapler - equipposition
@@ -98,10 +98,10 @@
 (objectfinalposition stick16 finallocstick16)
 (objectfinalposition stick17 finallocstick17)
 (objectfinalposition stick18 finallocstick18)
-(objectfinalposition cube1 finloccube1)
-(objectfinalposition cube2 finloccube2)
-(objectfinalposition cube3 finloccube3)
-(objectfinalposition cube4 finloccube4)
+(objectfinalposition cube1 finalloccube1)
+(objectfinalposition cube2 finalloccube2)
+(objectfinalposition cube3 finalloccube3)
+(objectfinalposition cube4 finalloccube4)
 (positionfree equiplocgripper)
 (gripperempty robot1)
 (belongstolayer stick6 layer2)
@@ -155,18 +155,18 @@
 (accessible stick9)
 (atfinalposition stick9)
 (atfinalposition cube2)
-(atplace cube2 finloccube2)
+(atplace cube2 finalloccube2)
 (accessible cube2)
 (atfinalposition cube1)
-(atplace cube1 finloccube1)
+(atplace cube1 finalloccube1)
 (accessible cube1)
+(atplace stick6 finallocstick6)
+(atfinalposition stick6)
 (atplace stick7 finallocstick7)
 (atfinalposition stick7)
 (atplace stick8 finallocstick8)
 (accessible stick8)
 (atfinalposition stick8)
-(atplace stick6 finallocstick6)
-(atfinalposition stick6)
 (fixed stick6)
 (fixed stick7)
 (fixed stick8)

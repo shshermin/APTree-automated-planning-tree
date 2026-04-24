@@ -63,8 +63,8 @@
     finallocstick25 - finalposition
     finallocstick26 - finalposition
     finallocstick27 - finalposition
-    finloccube5 - finalposition
-    finloccube6 - finalposition
+    finalloccube5 - finalposition
+    finalloccube6 - finalposition
     finallocstick28 - finalposition
     finallocstick29 - finalposition
     finallocstick30 - finalposition
@@ -74,8 +74,8 @@
     finallocstick34 - finalposition
     finallocstick35 - finalposition
     finallocstick36 - finalposition
-    finloccube7 - finalposition
-    finloccube8 - finalposition
+    finalloccube7 - finalposition
+    finalloccube8 - finalposition
     ;; HARDCODED ML-only objects (not in HL problem files)
     equiplocgripper - equipposition
     equiplocstapler - equipposition
@@ -98,10 +98,10 @@
 (objectfinalposition stick34 finallocstick34)
 (objectfinalposition stick35 finallocstick35)
 (objectfinalposition stick36 finallocstick36)
-(objectfinalposition cube5 finloccube5)
-(objectfinalposition cube6 finloccube6)
-(objectfinalposition cube7 finloccube7)
-(objectfinalposition cube8 finloccube8)
+(objectfinalposition cube5 finalloccube5)
+(objectfinalposition cube6 finalloccube6)
+(objectfinalposition cube7 finalloccube7)
+(objectfinalposition cube8 finalloccube8)
 (positionfree equiplocgripper)
 (belongstolayer stick24 layer6)
 (belongstolayer stick25 layer6)
@@ -139,8 +139,6 @@
 (clear cube8)
 (attool staplergun1 equiplocstapler)
 (atplace stick31 initlocstick31)
-(atplace stick32 initlocstick32)
-(atplace stick33 initlocstick33)
 (atplace stick34 initlocstick34)
 (atplace stick35 initlocstick35)
 (atplace stick36 initlocstick36)
@@ -149,18 +147,16 @@
 (atagent robot1 rppickup)
 (atplace stick24 finallocstick24)
 (atfinalposition stick24)
+(atfinalposition cube5)
+(atplace cube5 finalloccube5)
+(atplace stick25 finallocstick25)
+(atfinalposition stick25)
 (atfinalposition cube6)
-(atplace cube6 finloccube6)
-(accessible cube6)
+(atplace cube6 finalloccube6)
 (atplace stick26 finallocstick26)
 (accessible stick26)
 (atfinalposition stick26)
-(atplace stick25 finallocstick25)
-(atfinalposition stick25)
-(atfinalposition cube5)
-(atplace cube5 finloccube5)
 (atplace stick27 finallocstick27)
-(accessible stick27)
 (atfinalposition stick27)
 (fixed cube5)
 (fixed cube6)
@@ -170,16 +166,26 @@
 (fixed stick27)
 (positionfree initlocstick29)
 (atplace stick29 finallocstick29)
-(accessible stick29)
 (stacked stick29 stick24)
 (stacked stick29 stick25)
 (atfinalposition stick29)
 (positionfree initlocstick28)
 (atplace stick28 finallocstick28)
-(accessible stick28)
-(stacked stick28 stick24)
 (stacked stick28 cube5)
+(stacked stick28 stick24)
 (atfinalposition stick28)
+(positionfree initlocstick32)
+(atplace stick32 finallocstick32)
+(accessible stick32)
+(stacked stick32 cube6)
+(stacked stick32 stick27)
+(atfinalposition stick32)
+(positionfree initlocstick33)
+(atplace stick33 finallocstick33)
+(accessible stick33)
+(stacked stick33 stick29)
+(stacked stick33 stick28)
+(atfinalposition stick33)
 (holding robot1 stick30)
 (positionfree initlocstick30)
   )

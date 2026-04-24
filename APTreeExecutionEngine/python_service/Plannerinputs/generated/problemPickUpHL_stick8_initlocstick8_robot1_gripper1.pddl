@@ -66,6 +66,10 @@
     finallocstick9 - finalposition
     finalloccube1 - finalposition
     finalloccube2 - finalposition
+
+    temploc2 - firstposition
+    temploc3 - finalposition
+    stickdummy - stick
     ;; HARDCODED ML-only objects (not in HL problem files)
     equiplocgripper - equipposition
     equiplocstapler - equipposition
@@ -113,7 +117,6 @@
 (clear cube1)
 (clear cube2)
 (attool staplergun1 equiplocstapler)
-(atplace stick6 initlocstick6)
 (atplace stick8 initlocstick8)
 (atplace table1 mp5)
 (atagent robot1 rpmanipulate)
@@ -123,6 +126,10 @@
 (atfinalposition stick4)
 (atplace stick4 finallocstick4)
 (stacked stick4 table1)
+(clear stickdummy)
+(accessible stickdummy)
+(positionfree temploc2)
+(atplace stickdummy temploc3)
 (positionfree initlocstick5)
 (atfinalposition stick5)
 (atplace stick5 finallocstick5)
@@ -146,15 +153,21 @@
 (atfinalposition stick1)
 (atplace stick1 finallocstick1)
 (stacked stick1 table1)
-(positionfree initlocstick3)
-(atfinalposition stick3)
-(atplace stick3 finallocstick3)
-(stacked stick3 table1)
 (positionfree initloccube1)
 (atfinalposition cube1)
 (atplace cube1 finalloccube1)
 (accessible cube1)
 (stacked cube1 stick1)
+(positionfree initlocstick3)
+(atfinalposition stick3)
+(atplace stick3 finallocstick3)
+(stacked stick3 table1)
+(positionfree initlocstick6)
+(atplace stick6 finallocstick6)
+(accessible stick6)
+(stacked stick6 stick1)
+(stacked stick6 stick2)
+(atfinalposition stick6)
 (positionfree initlocstick7)
 (atplace stick7 finallocstick7)
 (accessible stick7)

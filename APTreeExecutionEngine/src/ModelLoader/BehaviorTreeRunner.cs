@@ -245,7 +245,7 @@ namespace BehaviorTreeMainProject
             }
 
             // Let the Flask service resolve its own planner path when empty
-            string plannerPath = "";
+            string plannerPath = config.PlannerPath ?? "";
 
             var request = new PDDLPlanningRequest(
                 domainPath,
@@ -272,11 +272,14 @@ namespace BehaviorTreeMainProject
                 return;
 
             var subtreeConfig = new ServiceSubtreeInject.SubtreeConfiguration(
-                config.SubtreeConfigName, config.SubtreePlannerName, SuccessCriteria.ALL);
+                config.SubtreeConfigName, config.SubtreePlannerName, SuccessCriteria.ALL_FINISHED);
 
             subtreeConfig.PlannerParameters["domainFile"] = config.SubtreeDomainFile;
             subtreeConfig.PlannerParameters["problemFile"] = config.SubtreeProblemFile;
-            subtreeConfig.PlannerParameters["plannerPath"] = "";  // Flask uses its own default
+            // Prefer SubtreePlannerPath, fall back to top-level PlannerPath, then Flask default
+            subtreeConfig.PlannerParameters["plannerPath"] =
+                !string.IsNullOrEmpty(config.SubtreePlannerPath) ? config.SubtreePlannerPath
+                : (config.PlannerPath ?? "");
             subtreeConfig.PlannerParameters["timeoutSeconds"] = config.SubtreeTimeoutSeconds;
             subtreeConfig.PlannerParameters["maxPlanLength"] = config.SubtreeMaxPlanLength;
             subtreeConfig.PlannerParameters["executionMode"] = config.SubtreeExecutionMode switch
@@ -331,9 +334,9 @@ namespace BehaviorTreeMainProject
                 return;
             }
 
-            var service = new FaultInjectionService(behaviorTree, faultCfg);
+            var service = new DummyCameraService(behaviorTree, faultCfg, new WorldStateManager(behaviorTree.linkedBlackboard));
             behaviorTree.root.AddService(service, InIsAlwaysOn: true);
-            LoggingService.LogSuccess($"🧪 FaultInjection: Attached service with {faultCfg.Faults.Count} fault(s) from {path}");
+            LoggingService.LogSuccess($"🧪 FaultInjection: Attached DummyCameraService with {faultCfg.Faults.Count} fault(s) from {path}");
         }
 
         // ── Tree execution ──
@@ -343,11 +346,28 @@ namespace BehaviorTreeMainProject
             int maxTicks = config.MaxTicks;
             int tickCount = 0;
             bool isPaused = false;
+            bool stopRequested = false;
 
-            LoggingService.LogInfo($"Starting tree execution (max {maxTicks} ticks)...");
-            LoggingService.LogInfo("Controls: P = pause/resume, Q = quit");
+            // Treat <=0 as "unlimited" so the tree ticks until the user stops it
+            // (Q / Ctrl+C) or the tree reports HasFinished.
+            bool unlimited = maxTicks <= 0;
 
-            while (tickCount < maxTicks)
+            // Ctrl+C handler — request a graceful stop without killing the process
+            ConsoleCancelEventHandler cancelHandler = (sender, eArgs) =>
+            {
+                eArgs.Cancel = true; // don't terminate the process
+                stopRequested = true;
+                LoggingService.LogWarning("Execution stop requested by user (Ctrl+C)");
+            };
+            Console.CancelKeyPress += cancelHandler;
+
+            if (unlimited)
+                LoggingService.LogInfo("Starting tree execution (unlimited ticks — runs until tree finishes or user stops)...");
+            else
+                LoggingService.LogInfo($"Starting tree execution (max {maxTicks} ticks)...");
+            LoggingService.LogInfo("Controls: P = pause/resume, Q or Ctrl+C = quit");
+
+            while (!stopRequested && (unlimited || tickCount < maxTicks))
             {
                 if (Console.KeyAvailable)
                 {
@@ -417,9 +437,15 @@ namespace BehaviorTreeMainProject
                 await Task.Delay(config.TickDelayMs);
             }
 
-            if (tickCount >= maxTicks)
+            Console.CancelKeyPress -= cancelHandler;
+
+            if (!unlimited && tickCount >= maxTicks)
             {
                 LoggingService.LogWarning($"Tree execution stopped after {maxTicks} ticks (max reached)");
+            }
+            else if (stopRequested)
+            {
+                LoggingService.LogWarning($"Tree execution stopped by user after {tickCount} ticks");
             }
         }
 

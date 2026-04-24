@@ -104,5 +104,62 @@ namespace BehaviorTreeMainProject
 
         protected override State Preconditions => preconditions;
         protected override State Effects => effects;
+
+        /// <summary>
+        /// Extends the base effect application with a runtime conditional effect
+        /// that mirrors the PDDL domain's forall/when clause:
+        /// if the picked-up object was stacked on any other element, clear that
+        /// stacked relationship and mark the element underneath as clear +
+        /// accessible. This lets rearrangement plans (e.g. pick blocker → put
+        /// down → pick target) work at runtime, not just in the planner.
+        /// </summary>
+        public override void applyEffects()
+        {
+            base.applyEffects();
+
+            if (obj == null || blackboard == null) return;
+            string pickedName = obj.NameKey?.ToString();
+            if (string.IsNullOrEmpty(pickedName)) return;
+
+            // Find stacked(pickedName, ?x) predicates that are currently true
+            var stackedToClear = new List<Stacked>();
+            foreach (var p in blackboard.GetAllPredicates())
+            {
+                if (p is Stacked s
+                    && !s.not
+                    && s.obj1?.NameKey?.ToString()?.Equals(pickedName, StringComparison.OrdinalIgnoreCase) == true)
+                {
+                    stackedToClear.Add(s);
+                }
+            }
+
+            foreach (var s in stackedToClear)
+            {
+                string belowName = s.obj2?.NameKey?.ToString() ?? "";
+                // Flip stacked(picked, below) → false
+                s.not = true;
+                LoggingService.LogSuccess(
+                    $"🔧 PickUpML: Cleared stacked({pickedName}, {belowName}) — picked object revealed what was underneath");
+
+                // Set clear(below) = true and accessible(below) = true
+                foreach (var p in blackboard.GetAllPredicates())
+                {
+                    if (p is Clear c
+                        && c.obj?.NameKey?.ToString()?.Equals(belowName, StringComparison.OrdinalIgnoreCase) == true)
+                    {
+                        c.not = false;
+                    }
+                    else if (p is Accessible a
+                        && a.obj?.NameKey?.ToString()?.Equals(belowName, StringComparison.OrdinalIgnoreCase) == true)
+                    {
+                        a.not = false;
+                    }
+                }
+                LoggingService.LogSuccess(
+                    $"🔧 PickUpML: Set clear({belowName}) = true and accessible({belowName}) = true");
+            }
+
+
+        }
     }
 }

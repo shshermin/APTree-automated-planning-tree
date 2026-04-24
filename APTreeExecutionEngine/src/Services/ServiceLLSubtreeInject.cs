@@ -69,6 +69,13 @@ namespace BehaviorTreeMainProject
         public class LLStep
         {
             public string ActionName { get; set; }
+            /// <summary>
+            /// Per-step instance name from the JSON template (e.g. "moveToRobotPosition").
+            /// Included in the runtime LL node's InstanceName so fault triggers and
+            /// logs can distinguish otherwise identical steps (e.g. two MoveToLLs in
+            /// the same ML subtree).
+            /// </summary>
+            public string InstanceName { get; set; }
             public Dictionary<string, string> Parameters { get; set; } = new Dictionary<string, string>();
             public MoveType? MoveType { get; set; }
 
@@ -164,6 +171,13 @@ namespace BehaviorTreeMainProject
                         }
 
                         var step = new LLStep(actionType, moveType);
+
+                        // Optional per-step instanceName (used to disambiguate runtime
+                        // LL node names and to let fault triggers target specific steps).
+                        if (stepEl.TryGetProperty("instanceName", out var instNameEl))
+                        {
+                            step.InstanceName = instNameEl.GetString();
+                        }
 
                         // Load paramBindings → Parameters dict (already in {placeholder} format)
                         if (stepEl.TryGetProperty("paramBindings", out var bindings))
@@ -336,7 +350,12 @@ namespace BehaviorTreeMainProject
             {
                 var resolvedParams = ResolveParameters(step.Parameters, mlParamStrings);
                 var resolvedObjects = ResolveParameterObjects(step.Parameters, mlParamObjects);
-                var stepName = $"{step.ActionName}_{mlAction.InstanceName}";
+                // Include the per-step instanceName so multiple steps of the same ActionName
+                // (e.g. two MoveToLLs in StackML) get distinct runtime names and fault
+                // triggers like AfterLLStep="moveToRobotPosition" can match.
+                var stepName = string.IsNullOrWhiteSpace(step.InstanceName)
+                    ? $"{step.ActionName}_{mlAction.InstanceName}"
+                    : $"{step.ActionName}_{step.InstanceName}_{mlAction.InstanceName}";
 
                 PActionNode llNode = CreateLLNode(step, stepName, resolvedParams, resolvedObjects, linkedBlackboard, _communicator);
 

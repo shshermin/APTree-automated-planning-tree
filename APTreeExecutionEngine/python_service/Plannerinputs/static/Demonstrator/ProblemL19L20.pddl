@@ -135,12 +135,12 @@
     (stacked stick82 stick79)
 
     ;; Nailed - layer 19
-    (nailed stick80 cube16)
-    (nailed stick80 stick77)
-    (nailed stick81 stick77)
-    (nailed stick81 stick78)
-    (nailed stick82 stick78)
-    (nailed stick82 stick79)
+    ;(nailed stick80 cube16)
+    ;(nailed stick80 stick77)
+    ;(nailed stick81 stick77)
+    ;(nailed stick81 stick78)
+    ;(nailed stick82 stick78)
+    ;(nailed stick82 stick79)
 
     ;; Stacked - layer 20
     (stacked cube17 stick80)
