@@ -63,18 +63,7 @@ namespace BehaviorTreeMainProject
             // Write to console
             LoggingService.LogInfo(logMessage);
             
-            // Write to file
-            lock (LogLock)
-            {
-                try
-                {
-                    File.AppendAllText(LogFilePath, logMessage + Environment.NewLine);
-                }
-                catch (Exception ex)
-                {
-                    LoggingService.LogError($"[{timestamp}] ❌ Failed to write to log file: {ex.Message}");
-                }
-            }
+            // File write handled by LoggingService's buffered LogFileManager
         }
 
         public void resetAfterSuccessFullExecution()

@@ -245,11 +245,7 @@ namespace BehaviorTreeMainProject
             var timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
             var logMessage = $"[{timestamp}] {message}";
             LoggingService.LogInfo(logMessage);
-            lock (LogLock)
-            {
-                try { File.AppendAllText(LogFilePath, logMessage + Environment.NewLine); }
-                catch { /* swallow file write errors */ }
-            }
+            // File write handled by LoggingService's buffered LogFileManager
         }
 
         // ──────────────────── Service tick ────────────────────
@@ -564,11 +560,7 @@ namespace BehaviorTreeMainProject
             var timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
             var logMessage = $"[{timestamp}] {message}";
             LoggingService.LogInfo(logMessage);
-            lock (LogLock)
-            {
-                try { File.AppendAllText(LogFilePath, logMessage + Environment.NewLine); }
-                catch { /* swallow file write errors */ }
-            }
+            // File write handled by LoggingService's buffered LogFileManager
         }
     }
 }

@@ -1,15 +1,18 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
 namespace BehaviorTreeMainProject.Log
 {
     /// <summary>
-    /// Centralized file management for all logging systems
+    /// Centralized file management for all logging systems.
+    /// All writes are buffered in memory and flushed to disk only when
+    /// Flush() or Dispose() is called — eliminating per-message I/O overhead.
     /// </summary>
     public class LogFileManager : IDisposable
     {
-        private StreamWriter? fileWriter;
+        private readonly List<string> _buffer = new List<string>();
         private string logFilePath;
         private readonly object fileLock = new object();
         private bool isDisposed = false;
@@ -17,160 +20,53 @@ namespace BehaviorTreeMainProject.Log
         public LogFileManager(string logFilePath)
         {
             this.logFilePath = logFilePath;
-            InitializeFile();
+            EnsureDirectory();
         }
 
-        private void InitializeFile()
+        private void EnsureDirectory()
         {
             try
             {
-                // Ensure directory exists
                 var directory = Path.GetDirectoryName(logFilePath);
                 if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
-                {
                     Directory.CreateDirectory(directory);
-                }
-
-                // Check if file is locked by another process
-                if (File.Exists(logFilePath))
-                {
-                    try
-                    {
-                        // Try to open the file for writing to check if it's locked
-                        using (var testStream = File.Open(logFilePath, FileMode.Append, FileAccess.Write, FileShare.Read))
-                        {
-                            // If we can open it, it's not locked
-                        }
-                    }
-                    catch (IOException)
-                    {
-                        // File is locked, create a new filename with timestamp
-                        var fileName = Path.GetFileNameWithoutExtension(logFilePath);
-                        var extension = Path.GetExtension(logFilePath);
-                        var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss_fff");
-                        var newLogFilePath = Path.Combine(directory ?? ".", $"{fileName}_{timestamp}{extension}");
-                        
-                        Console.WriteLine($"⚠️ Log file {logFilePath} is locked, creating new file: {newLogFilePath}");
-                        logFilePath = newLogFilePath;
-                    }
-                }
-
-                // Create or append to file
-                fileWriter = new StreamWriter(logFilePath, true, Encoding.UTF8);
-                fileWriter.AutoFlush = LogConfiguration.AutoFlush;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"❌ Failed to create log file {logFilePath}: {ex.Message}");
-                
-                // Try to create a fallback log file in the same directory
-                try
-                {
-                    var directory = Path.GetDirectoryName(logFilePath);
-                    var fallbackPath = Path.Combine(directory ?? ".", $"fallback_{DateTime.Now:yyyyMMdd_HHmmss_fff}.log");
-                    Console.WriteLine($"🔄 Attempting to create fallback log file: {fallbackPath}");
-                    
-                    logFilePath = fallbackPath;
-                    fileWriter = new StreamWriter(logFilePath, true, Encoding.UTF8);
-                    fileWriter.AutoFlush = LogConfiguration.AutoFlush;
-                    Console.WriteLine($"✅ Successfully created fallback log file: {fallbackPath}");
-                }
-                catch (Exception fallbackEx)
-                {
-                    Console.WriteLine($"❌ Failed to create fallback log file: {fallbackEx.Message}");
-                    throw;
-                }
+                Console.WriteLine($"❌ Failed to create log directory: {ex.Message}");
             }
         }
 
         public void WriteLine(string message)
         {
-            if (isDisposed || fileWriter == null) return;
-
+            if (isDisposed) return;
             lock (fileLock)
-            {
-                try
-                {
-                    fileWriter.WriteLine(message);
-                    
-                    // Check file size and rotate if needed
-                    CheckFileSize();
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"❌ Failed to write to log file: {ex.Message}");
-                }
-            }
+                _buffer.Add(message);
         }
 
-        public void WriteHeader(string header)
-        {
-            WriteLine($"\n{header}");
-        }
+        public void WriteHeader(string header) => WriteLine($"\n{header}");
 
-        public void WriteSeparator(char separator = '-', int length = 80)
-        {
-            WriteLine(new string(separator, length));
-        }
+        public void WriteSeparator(char separator = '-', int length = 80) => WriteLine(new string(separator, length));
 
-        private void CheckFileSize()
-        {
-            try
-            {
-                if (fileWriter?.BaseStream != null)
-                {
-                    var fileSizeMB = fileWriter.BaseStream.Length / (1024 * 1024);
-                    if (fileSizeMB > LogConfiguration.MaxLogFileSizeMB)
-                    {
-                        RotateLogFile();
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Warning: Could not check log file size: {ex.Message}");
-            }
-        }
-
-        private void RotateLogFile()
-        {
-            try
-            {
-                if (fileWriter != null)
-                {
-                    fileWriter.Close();
-                    fileWriter.Dispose();
-                }
-
-                var ext = Path.GetExtension(logFilePath);
-                var nameWithoutExt = logFilePath.Substring(0, logFilePath.Length - ext.Length);
-                var backupPath = $"{nameWithoutExt}_backup_{DateTime.Now:yyyyMMdd_HHmmss}{ext}";
-                File.Move(logFilePath, backupPath);
-                
-                // Recreate file
-                InitializeFile();
-                WriteLine($"Log file rotated at {DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Warning: Could not rotate log file: {ex.Message}");
-            }
-        }
-
-        public string GetLogFilePath()
-        {
-            return logFilePath;
-        }
+        public string GetLogFilePath() => logFilePath;
 
         public string CurrentLogFilePath => logFilePath;
 
         public void Flush()
         {
-            if (fileWriter != null && !isDisposed)
+            if (isDisposed) return;
+            lock (fileLock)
             {
-                lock (fileLock)
+                if (_buffer.Count == 0) return;
+                try
                 {
-                    fileWriter.Flush();
+                    EnsureDirectory();
+                    File.AppendAllLines(logFilePath, _buffer, Encoding.UTF8);
+                    _buffer.Clear();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"❌ Failed to flush log file {logFilePath}: {ex.Message}");
                 }
             }
         }
@@ -178,28 +74,11 @@ namespace BehaviorTreeMainProject.Log
         public void Clear()
         {
             if (isDisposed) return;
-
             lock (fileLock)
             {
-                try
-                {
-                    if (fileWriter != null)
-                    {
-                        fileWriter.Close();
-                        fileWriter.Dispose();
-                    }
-
-                    if (File.Exists(logFilePath))
-                    {
-                        File.Delete(logFilePath);
-                    }
-
-                    InitializeFile();
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Warning: Could not clear log file: {ex.Message}");
-                }
+                _buffer.Clear();
+                try { if (File.Exists(logFilePath)) File.Delete(logFilePath); }
+                catch (Exception ex) { Console.WriteLine($"Warning: Could not clear log file: {ex.Message}"); }
             }
         }
 
@@ -207,27 +86,8 @@ namespace BehaviorTreeMainProject.Log
         {
             if (!isDisposed)
             {
-                lock (fileLock)
-                {
-                    try
-                    {
-                        if (fileWriter != null)
-                        {
-                            fileWriter.Flush();
-                            fileWriter.Close();
-                            fileWriter.Dispose();
-                            fileWriter = null;
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"⚠️ Warning: Error during file disposal: {ex.Message}");
-                    }
-                    finally
-                    {
-                        isDisposed = true;
-                    }
-                }
+                Flush();
+                isDisposed = true;
             }
         }
     }
