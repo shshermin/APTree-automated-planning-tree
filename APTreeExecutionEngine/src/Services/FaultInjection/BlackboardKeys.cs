@@ -29,5 +29,15 @@ namespace BehaviorTreeMainProject.Services.FaultInjection
         /// </summary>
         public static FastName FaultTimestampKey(string flowNodeName)
             => new FastName($"fault_time_{flowNodeName}");
+
+        /// <summary>
+        /// Key written (true) by fault injection when a previously completed HL action's
+        /// effects have been invalidated (e.g. a stacked element was dislodged).
+        /// Read and cleared by <see cref="BehaviorTreeMainProject.Decorators.Replan.DecoratorHLFaultReplan"/>
+        /// at the start of the next planning cycle to force a full HL replan from
+        /// the current blackboard state while preserving :objects and :goal.
+        /// </summary>
+        public static FastName HLReplanKey(string flowNodeName)
+            => new FastName($"hl_replan_{flowNodeName}");
     }
 }

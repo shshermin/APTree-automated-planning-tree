@@ -11,6 +11,7 @@
     stick7 - stick
     stick8 - stick
     stick9 - stick
+     stickdummy - stick
 
     ;; Elements - Cubes
     cube1 - cube
@@ -52,6 +53,7 @@
     initlocstick9 - firstposition
     initloccube1 - firstposition
     initloccube2 - firstposition
+    temploc2 - firstposition
 
     ;; Locations - Final positions
     mp5 - finalposition
@@ -67,9 +69,9 @@
     finalloccube1 - finalposition
     finalloccube2 - finalposition
 
-    temploc2 - firstposition
+    
     temploc3 - finalposition
-    stickdummy - stick
+   
   )
 
   (:init

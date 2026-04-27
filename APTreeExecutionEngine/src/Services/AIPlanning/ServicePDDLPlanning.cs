@@ -10,6 +10,7 @@ using BehaviorTreeMainProject.Services;
 using BehaviorTreeMainProject.Log.Services;
 using BehaviorTreeMainProject.Services.AIPlanning.Replan;
 using BehaviorTreeMainProject.Decorators.Replan;
+using BehaviorTreeMainProject.Services.FaultInjection;
 
 namespace BehaviorTreeMainProject.Services.AIPlanning
 {
@@ -127,6 +128,9 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
             if (!existing.Any(d => d is DecoratorRegenerateFromBlackboard))
                 flowNode.AddDecorator(new DecoratorRegenerateFromBlackboard());
 
+            if (!existing.Any(d => d is DecoratorHLFaultReplan))
+                flowNode.AddDecorator(new DecoratorHLFaultReplan());
+
             if (!existing.Any(d => d is DecoratorHLStatePatch))
                 flowNode.AddDecorator(new DecoratorHLStatePatch());
 
@@ -214,6 +218,15 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
                 planningStartTime = DateTime.Now;
                 planningStarted = true;
             }
+
+            // Trace HL replan state for diagnostics (only when an HL flag may be set)
+            string _dfnName = (OwningFlowNode as DynamicFlowNode)?.DebugDisplayName ?? "";
+            bool _hlFlagSet = false;
+            if (blackboard != null)
+                try { _hlFlagSet = blackboard.GetBool(BlackboardKeys.HLReplanKey(_dfnName)); } catch { }
+            if (_hlFlagSet || HasCompleted)
+                LoggingService.LogInfo(
+                    $"🔎 ServicePDDLPlanning.OnEvaluate [{_dfnName}]: HasCompleted={HasCompleted}, IsExecuting={IsExecuting}, HLReplanFlag={_hlFlagSet}");
 
             // Build the context shared by the replan pipeline.
             // We build it once and run Phase 1 (PrePlan) UNCONDITIONALLY so that
@@ -435,6 +448,20 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
         /// </summary>
         public string PatchRobotStatePredicatesPublic(string problemContent, Blackboard<FastName> bb)
             => PatchRobotStatePredicates(problemContent, bb);
+
+        /// <summary>
+        /// Reads the original (static) problem file from local disk and returns its
+        /// full text content. Returns null if the file cannot be resolved.
+        /// Used by <see cref="BehaviorTreeMainProject.Decorators.Replan.DecoratorHLFaultReplan"/>
+        /// to reconstruct the unmodified problem template after a fault.
+        /// </summary>
+        public string LoadOriginalProblemContent()
+        {
+            if (string.IsNullOrEmpty(_originalProblemFile)) return null;
+            var resolved = ResolveLocalFilePath(_originalProblemFile);
+            if (resolved == null) return null;
+            return File.ReadAllText(resolved, Encoding.UTF8);
+        }
 
         /// <summary>
         /// Reset the planning service state, including PDDL-specific tracking.
@@ -1034,6 +1061,103 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
         /// Get the list of generated problem file paths (for debugging/diagnostics).
         /// </summary>
         public static IReadOnlyList<string> GeneratedProblemFiles => s_generatedProblemFiles;
+
+        /// <summary>
+        /// Rebuilds the <c>(:init …)</c> block of a PDDL problem file from the
+        /// current blackboard state, using the static file's <c>(:objects)</c>
+        /// section to filter predicates to only those whose parameters are
+        /// declared objects. All other sections (:domain, :objects, :goal) are
+        /// preserved verbatim from <paramref name="staticFileContent"/>.
+        ///
+        /// This is the HL-level counterpart of <see cref="GenerateDynamicPDDLProblem"/>
+        /// for ML-level replanning. Called by
+        /// <see cref="BehaviorTreeMainProject.Decorators.Replan.DecoratorHLFaultReplan"/>.
+        /// </summary>
+        /// <param name="staticFileContent">Full text of the original static problem file.</param>
+        /// <param name="blackboard">Current blackboard whose true predicates form the new :init.</param>
+        /// <returns>Problem file text with a fully rebuilt <c>(:init)</c> block, or
+        /// <paramref name="staticFileContent"/> unchanged if parsing fails.</returns>
+        public static string RebuildHLInitFromBlackboard(string staticFileContent, Blackboard<FastName> blackboard)
+        {
+            if (string.IsNullOrEmpty(staticFileContent) || blackboard == null)
+                return staticFileContent;
+
+            try
+            {
+                // 1. Extract (:objects) text from the static file content directly
+                string objectsBlock = ExtractObjectsBlockFromContent(staticFileContent);
+                if (string.IsNullOrEmpty(objectsBlock))
+                {
+                    LoggingService.LogError("❌ RebuildHLInitFromBlackboard: No (:objects) block found — (:init) NOT rebuilt");
+                    return staticFileContent;
+                }
+
+                // 2. Collect all true blackboard predicates and convert to PDDL
+                var allPredicates = blackboard.GetTruePredicates();
+                string allPddl = ConvertMultiplePredicatesToPDDL(allPredicates);
+
+                // 3. Filter to predicates whose parameters are all declared objects
+                var declaredObjects = ParseDeclaredObjectNames(objectsBlock);
+                string filteredPddl = FilterPredicatesByDeclaredObjects(allPddl, declaredObjects);
+
+                // 4. Strip the existing (:init …) block and replace it
+                string rebuilt = ReplaceInitBlock(staticFileContent, filteredPddl);
+                LoggingService.LogWarning(
+                    $"🔄 RebuildHLInitFromBlackboard: Rebuilt (:init) with {allPredicates.Count} blackboard predicates " +
+                    $"({declaredObjects.Count} declared objects, filtered to HL-relevant predicates)");
+                return rebuilt;
+            }
+            catch (Exception ex)
+            {
+                LoggingService.LogError($"❌ RebuildHLInitFromBlackboard: {ex.Message}");
+                return staticFileContent;
+            }
+        }
+
+        /// <summary>Extracts the text content inside the (:objects …) block from a PDDL file string.</summary>
+        private static string ExtractObjectsBlockFromContent(string content)
+        {
+            int start = content.IndexOf("(:objects", StringComparison.OrdinalIgnoreCase);
+            if (start < 0) return string.Empty;
+
+            int depth = 0, bodyStart = -1;
+            for (int i = start; i < content.Length; i++)
+            {
+                if (content[i] == '(')
+                {
+                    depth++;
+                    if (depth == 1) bodyStart = i + "(:objects".Length;
+                }
+                else if (content[i] == ')')
+                {
+                    depth--;
+                    if (depth == 0 && bodyStart >= 0)
+                        return content.Substring(bodyStart, i - bodyStart).Trim();
+                }
+            }
+            return string.Empty;
+        }
+
+        /// <summary>
+        /// Replaces the entire <c>(:init …)</c> block in <paramref name="content"/>
+        /// with a new block containing <paramref name="newInitPredicates"/>.
+        /// </summary>
+        private static string ReplaceInitBlock(string content, string newInitPredicates)
+        {
+            int start = content.IndexOf("(:init", StringComparison.OrdinalIgnoreCase);
+            if (start < 0) return content;
+
+            int depth = 0, end = -1;
+            for (int i = start; i < content.Length; i++)
+            {
+                if (content[i] == '(') depth++;
+                else if (content[i] == ')') { depth--; if (depth == 0) { end = i; break; } }
+            }
+            if (end < 0) return content;
+
+            string newBlock = $"(:init\n    {newInitPredicates.Trim()}\n  )";
+            return content.Substring(0, start) + newBlock + content.Substring(end + 1);
+        }
 
         #region Parsing (migrated from Parser)
 

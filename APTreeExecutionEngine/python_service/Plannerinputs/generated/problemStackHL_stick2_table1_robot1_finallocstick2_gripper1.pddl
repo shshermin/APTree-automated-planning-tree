@@ -11,6 +11,7 @@
     stick7 - stick
     stick8 - stick
     stick9 - stick
+     stickdummy - stick
 
     ;; Elements - Cubes
     cube1 - cube
@@ -52,6 +53,7 @@
     initlocstick9 - firstposition
     initloccube1 - firstposition
     initloccube2 - firstposition
+    temploc2 - firstposition
 
     ;; Locations - Final positions
     mp5 - finalposition
@@ -67,9 +69,8 @@
     finalloccube1 - finalposition
     finalloccube2 - finalposition
 
-    temploc2 - firstposition
+    
     temploc3 - finalposition
-    stickdummy - stick
     ;; HARDCODED ML-only objects (not in HL problem files)
     equiplocgripper - equipposition
     equiplocstapler - equipposition
@@ -132,14 +133,10 @@
 (atplace stick4 finallocstick4)
 (accessible stick4)
 (stacked stick4 table1)
-(accessible stick5)
-(clear stickdummy)
-(accessible stickdummy)
-(positionfree temploc2)
-(atplace stickdummy temploc3)
 (positionfree initlocstick5)
 (atfinalposition stick5)
 (atplace stick5 finallocstick5)
+(accessible stick5)
 (stacked stick5 table1)
 (holding robot1 stick2)
 (positionfree initlocstick2)

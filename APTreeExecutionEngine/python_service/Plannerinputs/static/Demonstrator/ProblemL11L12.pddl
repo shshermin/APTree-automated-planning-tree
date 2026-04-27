@@ -213,7 +213,7 @@
     (stacked stick54 stick49)
     (stacked stick54 stick50)
 
-     Nailed - layer 12
+    ;; Nailed - layer 12
     (nailed cube11 stick46)
     (nailed cube12 stick50)
     (nailed stick51 stick46)

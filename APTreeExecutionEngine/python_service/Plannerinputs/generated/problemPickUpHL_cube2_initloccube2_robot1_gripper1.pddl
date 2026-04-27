@@ -11,6 +11,7 @@
     stick7 - stick
     stick8 - stick
     stick9 - stick
+     stickdummy - stick
 
     ;; Elements - Cubes
     cube1 - cube
@@ -52,6 +53,7 @@
     initlocstick9 - firstposition
     initloccube1 - firstposition
     initloccube2 - firstposition
+    temploc2 - firstposition
 
     ;; Locations - Final positions
     mp5 - finalposition
@@ -67,9 +69,8 @@
     finalloccube1 - finalposition
     finalloccube2 - finalposition
 
-    temploc2 - firstposition
+    
     temploc3 - finalposition
-    stickdummy - stick
     ;; HARDCODED ML-only objects (not in HL problem files)
     equiplocgripper - equipposition
     equiplocstapler - equipposition
@@ -122,6 +123,7 @@
 (atplace stick6 initlocstick6)
 (atplace stick7 initlocstick7)
 (atplace stick8 initlocstick8)
+(atplace stick9 initlocstick9)
 (atplace cube1 initloccube1)
 (atplace cube2 initloccube2)
 (atplace table1 mp5)
@@ -131,26 +133,18 @@
 (positionfree initlocstick4)
 (atfinalposition stick4)
 (atplace stick4 finallocstick4)
+(accessible stick4)
 (stacked stick4 table1)
-(clear stickdummy)
-(accessible stickdummy)
-(positionfree temploc2)
-(atplace stickdummy temploc3)
 (positionfree initlocstick5)
 (atfinalposition stick5)
 (atplace stick5 finallocstick5)
+(accessible stick5)
 (stacked stick5 table1)
 (positionfree initlocstick2)
 (atfinalposition stick2)
 (atplace stick2 finallocstick2)
 (accessible stick2)
 (stacked stick2 table1)
-(positionfree initlocstick9)
-(atplace stick9 finallocstick9)
-(accessible stick9)
-(stacked stick9 stick5)
-(stacked stick9 stick4)
-(atfinalposition stick9)
   )
   (:goal 
     (and

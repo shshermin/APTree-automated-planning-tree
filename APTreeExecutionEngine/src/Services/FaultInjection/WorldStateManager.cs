@@ -409,6 +409,118 @@ namespace BehaviorTreeMainProject.Services.FaultInjection
             }
         }
 
+        /// <summary>
+        /// Applies "stacked element dislodged" world-state changes: undoes the effects
+        /// of a previously completed <c>stackHL</c> or <c>stackOnTwoHL</c> on the blackboard,
+        /// then writes the HL-replan flag and an abort flag on <paramref name="activeDfn"/>
+        /// so <see cref="DecoratorFaultAbort"/> + <see cref="BehaviorTreeMainProject.Decorators.Replan.DecoratorHLFaultReplan"/>
+        /// trigger a full HL replan on the next planning tick.
+        ///
+        /// :objects and :goal in the static problem file are preserved.
+        /// Only (:init …) is rebuilt from the updated blackboard.
+        /// </summary>
+        public void ApplyDislodge(FaultEffects effects, DynamicFlowNode activeDfn)
+        {
+            string dislodged    = effects?.DislodgedObject    ?? "";
+            string returnLoc    = effects?.ReturnToLocation   ?? "";
+            string baseObj      = effects?.BaseObject         ?? "";
+
+            if (string.IsNullOrEmpty(dislodged) || string.IsNullOrEmpty(returnLoc))
+            {
+                LoggingService.LogError("🌍 WorldStateManager: DislodgedAfterStack requires DislodgedObject and ReturnToLocation");
+                return;
+            }
+
+            var bb = _bb;
+
+            // 1) Resolve the dislodged element
+            Element dislodgedEl = null;
+            try { dislodgedEl = bb.GetElement(new FastName(dislodged)); } catch { }
+
+            // 2) Resolve the return location (must already be in the static problem)
+            Location returnLocObj = null;
+            try { returnLocObj = bb.GetLocation(new FastName(returnLoc)); } catch { }
+
+            if (dislodgedEl == null)
+            {
+                LoggingService.LogError($"🌍 WorldStateManager: Cannot resolve element '{dislodged}' for dislodge fault");
+                return;
+            }
+            if (returnLocObj == null)
+            {
+                LoggingService.LogError($"🌍 WorldStateManager: Cannot resolve location '{returnLoc}' for dislodge fault");
+                return;
+            }
+
+            // 3) Undo atfinalposition(dislodged)
+            FlipPredicate(bb, "atfinalposition", new[] { dislodged }, newNot: true);
+
+            // 4) Undo atplace(dislodged, finalpos) — negate all, then assert atplace(dislodged, returnLoc)
+            //    Also free the final position.
+            var finalPositions = new List<Location>();
+            foreach (var p in bb.GetAllPredicates())
+            {
+                if (p is AtPlace ap
+                    && !ap.not
+                    && ap.obj?.NameKey?.ToString()?.Equals(dislodged, StringComparison.OrdinalIgnoreCase) == true
+                    && ap.objLoc != null)
+                {
+                    finalPositions.Add(ap.objLoc);
+                }
+            }
+            NegateAllPredicatesOfType(bb, "atplace", requiredParam0: dislodged);
+
+            foreach (var fp in finalPositions)
+            {
+                string fpName = fp.NameKey?.ToString() ?? "";
+                if (!string.IsNullOrEmpty(fpName))
+                    FlipPredicate(bb, "positionfree", new[] { fpName }, newNot: false);
+            }
+
+            // 5) Assert atplace(dislodged, returnLoc) = true
+            var atPlaceReturn = new AtPlace(dislodgedEl, returnLocObj, isNegated: false);
+            bb.SetPredicateSync(atPlaceReturn.GetUniqueKey(), atPlaceReturn);
+            // The return location is now occupied → positionfree = false
+            FlipPredicate(bb, "positionfree", new[] { returnLoc }, newNot: true);
+            LoggingService.LogSuccess($"🌍 WorldStateManager: Set atplace({dislodged}, {returnLoc}) = true, positionfree({returnLoc}) = false");
+
+            // 6) Undo stacked(dislodged, *) and restore accessibility of base(s)
+            NegateAllPredicatesOfType(bb, "stacked", requiredParam0: dislodged);
+            if (!string.IsNullOrEmpty(baseObj))
+            {
+                FlipPredicate(bb, "accessible", new[] { baseObj }, newNot: false);
+                FlipPredicate(bb, "clear",       new[] { baseObj }, newNot: false);
+            }
+
+            // 7) Dislodged element is no longer accessible at final position
+            FlipPredicate(bb, "accessible", new[] { dislodged }, newNot: true);
+            FlipPredicate(bb, "clear",       new[] { dislodged }, newNot: false); // clear on table = true
+
+            // 8) Write HL-replan flag + fault timestamp on the active DFN.
+            //    DecoratorHLFaultAbort reads hl_replan_<dfn> to intercept the next tick
+            //    result and call ResetForNextRound, which puts the DFN back into planning.
+            //    DecoratorHLFaultReplan then reads the same flag in the planning pipeline
+            //    to fully rebuild (:init) from the blackboard.
+            //    NOTE: abort_<dfn> is intentionally NOT written here — DecoratorFaultAbort
+            //    (which handles ML-level faults) must not be triggered for HL faults.
+            if (activeDfn != null)
+            {
+                var tFault = DateTime.Now;
+                var hlKey  = BlackboardKeys.HLReplanKey(activeDfn.DebugDisplayName);
+                var tsKey  = BlackboardKeys.FaultTimestampKey(activeDfn.DebugDisplayName);
+                _bb.SetBool(hlKey, true);
+                _bb.SetString(tsKey, tFault.Ticks.ToString());
+                LoggingService.LogWarning(
+                    $"🌍 WorldStateManager: Wrote HL-replan flag '{hlKey}' for '{activeDfn.DebugDisplayName}'");
+                LoggingService.LogWarning(
+                    $"📋 FAULT_METRIC | t_fault={tFault:HH:mm:ss.fff} | node={activeDfn.DebugDisplayName} | type=DislodgedAfterStack");
+            }
+            else
+            {
+                LoggingService.LogWarning("🌍 WorldStateManager: No active DFN — HL-replan flag NOT written");
+            }
+        }
+
         // ─── Blackboard helpers ───────────────────────────────────────────
 
         private static bool FlipPredicate(Blackboard<FastName> bb, string predType,

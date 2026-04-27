@@ -419,6 +419,7 @@ namespace BehaviorTreeMainProject
                         if (children[i] is DynamicFlowNode dfn)
                         {
                             var graph = dfn.GetActionGraph();
+                            if (graph == null) continue;
                             var actionNodes = graph.GetAllActionNodes();
                             if (actionNodes.Count > 0)
                             {

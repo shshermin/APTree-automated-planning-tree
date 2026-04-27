@@ -148,5 +148,24 @@ namespace BehaviorTreeMainProject.ModelLoader
         /// staging candidates so the planner must use the injected temp
         /// location as the putDown target.</summary>
         public List<string> BlockPositionfreeLocations { get; set; }
+
+        // ── DislodgedAfterStack fault fields ─────────────────────────────
+
+        /// <summary>Element that was stacked and is now dislodged back to its
+        /// initial location (e.g. "stick5").</summary>
+        public string DislodgedObject { get; set; }
+
+        /// <summary>Location the dislodged object returns to (must already
+        /// exist in the static PDDL :objects, e.g. "initlocstick5").</summary>
+        public string ReturnToLocation { get; set; }
+
+        /// <summary>PDDL type of the return location (e.g. "firstposition").
+        /// Only used if new objects must be registered.</summary>
+        public string ReturnToLocationPddlType { get; set; } = "firstposition";
+
+        /// <summary>The element the dislodged object was resting on (e.g.
+        /// "cube2"). Its accessible and clear predicates are restored to
+        /// true after dislodgement.</summary>
+        public string BaseObject { get; set; }
     }
 }

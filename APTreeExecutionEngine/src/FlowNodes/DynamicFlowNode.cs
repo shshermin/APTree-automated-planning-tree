@@ -57,6 +57,11 @@ public class DynamicFlowNode : FlowNode
         AddDecorator(new DecoratorFaultAbort(this));
         LoggingService.LogInfo($"🔧 DynamicFlowNode: Added FaultAbort decorator to {nodeName.ToString()}");
 
+        // HLFaultAbort handles HL-level fault replanning (hl_replan_<dfn> flag).
+        // Must run after FaultAbort (different flag) but before RetryOnFailure.
+        AddDecorator(new DecoratorHLFaultAbort(this));
+        LoggingService.LogInfo($"🔧 DynamicFlowNode: Added HLFaultAbort decorator to {nodeName.ToString()}");
+
         // Add RetryOnFailure decorator (skipped for LL FlowNodes so failures propagate to ML level)
         if (addRetryDecorator)
         {
@@ -83,6 +88,15 @@ public class DynamicFlowNode : FlowNode
         LoggingService.LogInfo($"🚨 DEBUG: DynamicFlowNode.OnTick_NodeLogic called for {DebugDisplayName}");
         LoggingService.LogInfo($"🔍 FlowNode: Current LastStatus: {status}");
         LoggingService.LogInfo($"🔍 FlowNode: HasChildren: {HasChildren}");
+
+        // Guard: actionGraph is null while waiting for a new plan after ResetForNextRound.
+        // (DecoratorHLFaultAbort clears the graph so SetActionGraph can install the new one.)
+        if (actionGraph == null)
+        {
+            LoggingService.LogInfo($"🔄 DynamicFlowNode [{DebugDisplayName}]: OnTick_NodeLogic — actionGraph is null, waiting for new plan");
+            status = BTNodeResult.InProgress;
+            return true;
+        }
 
         // Phase tracking: start phase on first meaningful tick (top-level flow nodes only)
         if (_endToEndPhaseId < 0 && ParentNode is BTFlowNodeComposite)
@@ -282,6 +296,14 @@ public class DynamicFlowNode : FlowNode
         LoggingService.LogInfo($"🔍 FlowNode: Planning completed: {planningCompleted}");
         LoggingService.LogInfo($"🔍 FlowNode: ActionGraph exists: {actionGraph != null}");
         LoggingService.LogInfo($"🔍 FlowNode: Tick progress: {tickCount}/{MAX_TICKS_BEFORE_FAILURE} ({(MAX_TICKS_BEFORE_FAILURE - tickCount)} attempts remaining)");
+
+        // Guard: HasChildren is hardcoded true on FlowNode, so OnTick_Children always runs
+        // even when OnTick_NodeLogic already returned early. Guard here too.
+        if (actionGraph == null)
+        {
+            LoggingService.LogInfo($"🔄 DynamicFlowNode [{DebugDisplayName}]: OnTick_Children — actionGraph is null, waiting for new plan");
+            return true;
+        }
 
         // Get current executable nodes from NodeGraph based on order relations and temporal constraints
         var executableNodes = actionGraph.GetExecutableNodes(inDeltaTime);

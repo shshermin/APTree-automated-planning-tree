@@ -39,6 +39,21 @@
         "RobotFromLocation": "rpmanipulate",
         "RobotToLocation": "rppickup"
       }
+    },
+    {
+      "Id": "dislodge_stick5_after_stack",
+      "Type": "DislodgedAfterStack",
+      "Trigger": {
+        "MlActionType": "TravelML",
+        "ParentInstanceContains": "stick2",
+        "OnActivationCount": 1
+      },
+      "Effects": {
+        "DislodgedObject": "stick5",
+        "ReturnToLocation": "initlocstick5",
+        "ReturnToLocationPddlType": "firstposition",
+        "BaseObject": "table1"
+      }
     }
   ]
 }

@@ -187,6 +187,14 @@ namespace BehaviorTreeMainProject.Services.FaultInjection
                 var targetHlFlow = FindHLSubtreeForPickUpOfTarget(fault.Effects?.TargetObject ?? "");
                 _wsm.ApplyBlocker(fault.Effects, targetHlFlow);
             }
+            else if (faultType.Equals("DislodgedAfterStack", StringComparison.OrdinalIgnoreCase))
+            {
+                var activeDfn = FindActiveDFN();
+                if (activeDfn == null)
+                    LoggingService.LogWarning($"🧪 DummyCameraService[{fault.Id}]: No active DFN found — DislodgedAfterStack skipped");
+                else
+                    _wsm.ApplyDislodge(fault.Effects, activeDfn);
+            }
             else
             {
                 LoggingService.LogWarning($"🧪 DummyCameraService[{fault.Id}]: Unknown fault type '{faultType}' — skipping");
@@ -225,6 +233,25 @@ namespace BehaviorTreeMainProject.Services.FaultInjection
                     yield return hlAction.HighLevelSubtree;
                 }
             }
+        }
+
+        /// <summary>
+        /// Returns the <see cref="DynamicFlowNode"/> at the top level of the composite
+        /// whose execution status is currently <see cref="BTNodeResult.InProgress"/>.
+        /// Used by DislodgedAfterStack faults to target the DFN that is actively
+        /// planning/executing so its abort + HL-replan flags can be set.
+        /// </summary>
+        private DynamicFlowNode FindActiveDFN()
+        {
+            var compositeRoot = OwningTree?.root as BTFlowNodeComposite;
+            if (compositeRoot == null) return null;
+
+            foreach (var child in compositeRoot.GetChildren())
+            {
+                if (child is DynamicFlowNode dfn && dfn.status == BTNodeResult.InProgress)
+                    return dfn;
+            }
+            return null;
         }
 
         /// <summary>
