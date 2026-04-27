@@ -284,7 +284,7 @@ def robot_move():
             if "PLAYING" in state.upper():
                 print("Stopping external_control before URScript move")
                 dashboard_command(robot_ip, "stop")
-                time.sleep(0.1)
+                time.sleep(0.5)
 
         if command_type == 'movej':
             result_msg = move_to_pose(

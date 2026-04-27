@@ -285,7 +285,7 @@ def _send_urscript(robot_ip: str, cmd: str):
     sock.close()
 
 
-def _wait_for_motion_complete(robot_ip: str, timeout: float = 60.0, settle_time: float = 0.1, velocity_threshold: float = 0.001):
+def _wait_for_motion_complete(robot_ip: str, timeout: float = 60.0, settle_time: float = 0.3, velocity_threshold: float = 0.001):
     """Block until the robot has finished moving by polling joint velocities.
 
     Also monitors safety mode from the real-time data packet (offset 812).
@@ -298,7 +298,7 @@ def _wait_for_motion_complete(robot_ip: str, timeout: float = 60.0, settle_time:
     """
     import time
 
-    time.sleep(0.1)  # give the motion time to start
+    time.sleep(0.5)  # give the motion time to start
 
     start = time.time()
     settled_since = None
