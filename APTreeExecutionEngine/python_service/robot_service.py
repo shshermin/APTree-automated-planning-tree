@@ -15,6 +15,7 @@ import sys
 import json
 import time
 import math
+import socket
 import threading
 import requests as http_requests
 
@@ -26,6 +27,7 @@ from ur10_commands import move_to_pose, move_to_pose_l, move_to_pose_p, move_to_
 from ur10_commands import play_program, dashboard_command, set_payload, set_tcp
 
 DEFAULT_ROBOT_IP = "192.168.1.100"
+DEFAULT_GRIPPER_PORT = os.environ.get("ROBOTIQ_PORT", "COM3")
 MOVEIT_BRIDGE_URL = "http://127.0.0.1:5002"
 EXTERNAL_CONTROL_NAILGUN = "external_control_n.urp"
 EXTERNAL_CONTROL_GRIPPER = "external_control_g.urp"
@@ -77,9 +79,134 @@ class RobotState:
 robot_state = RobotState()
 
 
-@app.route('/health', methods=['GET'])
+# ---------------------------------------------------------------------------
+# Robotiq MODBUS RTU gripper — persistent instance manager
+# ---------------------------------------------------------------------------
+
+from ur10_control.robotiq_gripper import RobotiqModbusRTUGripper
+
+
+class ModbusGripperManager:
+    """Thread-safe holder for the Robotiq serial gripper instance."""
+
+    def __init__(self):
+        self._lock = threading.Lock()
+        self._gripper: RobotiqModbusRTUGripper | None = None
+
+    def ensure_connected(self, port: str) -> RobotiqModbusRTUGripper:
+        """Return the gripper, connecting if not already connected."""
+        with self._lock:
+            if self._gripper is None or self._gripper.port != port:
+                if self._gripper is not None:
+                    try:
+                        self._gripper.disconnect()
+                    except Exception:
+                        pass
+                self._gripper = RobotiqModbusRTUGripper(port)
+            if not (self._gripper.ser and self._gripper.ser.is_open):
+                self._gripper.connect()
+            return self._gripper
+
+    def disconnect(self):
+        with self._lock:
+            if self._gripper is not None:
+                self._gripper.disconnect()
+                self._gripper = None
+
+
+modbus_gripper = ModbusGripperManager()
+
+
+# ---------------------------------------------------------------------------
+# URCaps Modbus TCP gripper — robot_ip:63352
+# ---------------------------------------------------------------------------
+
+from ur10_control.robotiq_gripper import RobotiqModbusTCPGripper
+
+
+class URCapsTCPGripperManager:
+    """Thread-safe holder for the Robotiq Modbus TCP gripper (URCaps)."""
+
+    def __init__(self):
+        self._lock = threading.Lock()
+        self._gripper: RobotiqModbusTCPGripper | None = None
+
+    def ensure_connected(self, robot_ip: str) -> RobotiqModbusTCPGripper:
+        with self._lock:
+            if self._gripper is None or self._gripper.robot_ip != robot_ip:
+                if self._gripper is not None:
+                    try:
+                        self._gripper.disconnect()
+                    except Exception:
+                        pass
+                self._gripper = RobotiqModbusTCPGripper(robot_ip)
+            if not self._gripper._connected:
+                self._gripper.connect()
+            return self._gripper
+
+    def disconnect(self):
+        with self._lock:
+            if self._gripper is not None:
+                self._gripper.disconnect()
+                self._gripper = None
+
+
+urcaps_gripper = URCapsTCPGripperManager()
+
+
 def health():
     return jsonify({'status': 'ok', 'service': 'robot_execution', 'robotIp': DEFAULT_ROBOT_IP})
+
+
+@app.route('/urcap_gripper', methods=['POST'])
+def urcap_gripper_command():
+    """Control the Robotiq gripper via URCaps Modbus TCP (robot_ip:63352).
+
+    Expected JSON body:
+        commandType  (str) — "connect", "activate", "open", "close", "status", "disconnect"
+        robotIp      (str) — robot IP (optional, defaults to DEFAULT_ROBOT_IP)
+    """
+    try:
+        data = request.json or {}
+        command_type = data.get('commandType', '').lower()
+        robot_ip = data.get('robotIp', DEFAULT_ROBOT_IP)
+
+        print(f"[URCAPS_GRIPPER] commandType={command_type} robotIp={robot_ip}")
+        start_time = time.time()
+
+        if command_type == 'disconnect':
+            urcaps_gripper.disconnect()
+            msg = f"URCaps gripper on {robot_ip} disconnected"
+        elif command_type in ('connect', 'activate', 'open', 'close', 'status'):
+            g = urcaps_gripper.ensure_connected(robot_ip)
+            if command_type == 'connect':
+                msg = f"Connected to URCaps gripper on {robot_ip}:63352"
+            elif command_type == 'activate':
+                g.activate()
+                msg = "URCaps gripper activated"
+            elif command_type == 'open':
+                g.open()
+                msg = "URCaps gripper opened"
+            elif command_type == 'close':
+                g.close()
+                msg = "URCaps gripper closed"
+            elif command_type == 'status':
+                raw = g.read_status()
+                msg = f"Status bytes: {raw.hex() if raw else 'no response'}"
+        else:
+            return jsonify({
+                'success': False,
+                'error': f"Unsupported commandType '{command_type}'. "
+                         "Supported: connect, activate, open, close, status, disconnect"
+            }), 400
+
+        elapsed = time.time() - start_time
+        print(f"[URCAPS_GRIPPER] {command_type} done: {msg} ({elapsed:.2f}s)")
+        return jsonify({'success': True, 'message': msg, 'executionTimeSeconds': elapsed})
+
+    except Exception as e:
+        print(f"[URCAPS_GRIPPER] command failed: {str(e)}")
+        return jsonify({'success': False, 'error': str(e), 'executionTimeSeconds': 0}), 500
 
 
 @app.route('/gripper', methods=['POST'])
@@ -99,6 +226,12 @@ def robot_gripper():
         elif command_type == 'open_gripper':
             from ur10_control.ur10_commands import set_tool_digital_out_open
             result_msg = set_tool_digital_out_open(robot_ip)
+        elif command_type == 'rq_open':
+            from ur10_control.ur10_commands import rq_open_urcap
+            result_msg = rq_open_urcap(robot_ip)
+        elif command_type == 'rq_close':
+            from ur10_control.ur10_commands import rq_close_urcap
+            result_msg = rq_close_urcap(robot_ip)
         else:
             return jsonify({'success': False, 'error': f"Unsupported gripper commandType '{command_type}'"}), 400
 
@@ -117,6 +250,57 @@ def robot_gripper():
             'error': str(e),
             'executionTimeSeconds': 0
         }), 500
+
+
+@app.route('/modbus_gripper', methods=['POST'])
+def modbus_gripper_command():
+    """Control the Robotiq 2F/Hand-E gripper via MODBUS RTU (serial COM port).
+
+    Expected JSON body:
+        commandType  (str) — "connect", "activate", "open", "close", "status", "disconnect"
+        port         (str) — serial COM port (optional, defaults to ROBOTIQ_PORT env var or COM4)
+    """
+    try:
+        data = request.json or {}
+        command_type = data.get('commandType', '').lower()
+        port = data.get('port', DEFAULT_GRIPPER_PORT)
+
+        print(f"[MODBUS_GRIPPER] commandType={command_type} port={port}")
+        start_time = time.time()
+
+        if command_type == 'disconnect':
+            modbus_gripper.disconnect()
+            msg = f"Gripper on {port} disconnected"
+        elif command_type in ('connect', 'activate', 'open', 'close', 'status'):
+            g = modbus_gripper.ensure_connected(port)
+            if command_type == 'connect':
+                msg = f"Connected to gripper on {port}"
+            elif command_type == 'activate':
+                g.activate()
+                msg = "Gripper activated"
+            elif command_type == 'open':
+                g.open()
+                msg = "Gripper opened"
+            elif command_type == 'close':
+                g.close()
+                msg = "Gripper closed"
+            elif command_type == 'status':
+                raw = g.read_status()
+                msg = f"Status bytes: {raw.hex() if raw else 'no response'}"
+        else:
+            return jsonify({
+                'success': False,
+                'error': f"Unsupported commandType '{command_type}'. "
+                         "Supported: connect, activate, open, close, status, disconnect"
+            }), 400
+
+        elapsed = time.time() - start_time
+        print(f"[MODBUS_GRIPPER] {command_type} done: {msg} ({elapsed:.2f}s)")
+        return jsonify({'success': True, 'message': msg, 'executionTimeSeconds': elapsed})
+
+    except Exception as e:
+        print(f"[MODBUS_GRIPPER] command failed: {str(e)}")
+        return jsonify({'success': False, 'error': str(e), 'executionTimeSeconds': 0}), 500
 
 
 @app.route('/lift', methods=['POST'])

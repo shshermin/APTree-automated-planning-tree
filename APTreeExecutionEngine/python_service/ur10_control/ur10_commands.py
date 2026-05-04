@@ -497,6 +497,44 @@ def set_tool_digital_out_open(robot_ip: str) -> str:
     return "Tool digital out: TDO0=True (open), wait 0.5s"
 
 
+def rq_open_urcap(robot_ip: str) -> str:
+    """Open the Robotiq gripper via URCaps URScript (rq_open_and_wait).
+
+    Activates the gripper first if needed, then opens it.
+    Requires the Robotiq URCaps driver to be installed and active on the robot.
+
+    Input:  robot_ip (str) — IP address of the UR10.
+    Output: str — Confirmation message.
+    """
+    cmd = (
+        "def rq_open_cmd():\n"
+        "  rq_activate_and_wait()\n"
+        "  rq_open_and_wait()\n"
+        "end\n"
+    )
+    _send_urscript(robot_ip, cmd)
+    return "URCaps: rq_activate_and_wait + rq_open_and_wait sent"
+
+
+def rq_close_urcap(robot_ip: str) -> str:
+    """Close the Robotiq gripper via URCaps URScript (rq_close_and_wait).
+
+    Activates the gripper first if needed, then closes it.
+    Requires the Robotiq URCaps driver to be installed and active on the robot.
+
+    Input:  robot_ip (str) — IP address of the UR10.
+    Output: str — Confirmation message.
+    """
+    cmd = (
+        "def rq_close_cmd():\n"
+        "  rq_activate_and_wait()\n"
+        "  rq_close_and_wait()\n"
+        "end\n"
+    )
+    _send_urscript(robot_ip, cmd)
+    return "URCaps: rq_activate_and_wait + rq_close_and_wait sent"
+
+
 if __name__ == "__main__":
     import sys
     if len(sys.argv) != 3:
