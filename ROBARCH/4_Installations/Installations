@@ -1,0 +1,7 @@
+To control the sensors-guided pick and place (and seperately test its' hardware), install the following:
+1. INTEL RealSense SDK: 
+https://eci.intel.com/embodied-sdk-docs/content/installation_setup/installation/realsense.html
+https://github.com/realsenseai/librealsense
+
+2. Robotiq FT-Sensor
+3. Robotiq RUI
