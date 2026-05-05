@@ -433,6 +433,79 @@ namespace BehaviorTreeMainProject.Services.FaultInjection
 
             var bb = _bb;
 
+            // 0) If the fault fires mid-StackML, apply StackML completion effects for the
+            //    object being stacked so the HL replan sees it as already placed and does
+            //    not re-issue a stackHL for it.
+            string stackingObj   = effects?.StackingObject   ?? "";
+            string stackingOnObj = effects?.StackingOnObject ?? "";
+            string stackingPos   = effects?.StackingPosition ?? "";
+            string robot         = effects?.Robot            ?? "";
+
+            if (!string.IsNullOrEmpty(stackingObj) && !string.IsNullOrEmpty(stackingOnObj)
+                && !string.IsNullOrEmpty(stackingPos) && !string.IsNullOrEmpty(robot))
+            {
+                LoggingService.LogSuccess(
+                    $"🌍 WorldStateManager: Applying StackML completion for '{stackingObj}' onto '{stackingOnObj}' at '{stackingPos}'");
+
+                Element  stackingEl    = null;
+                Element  stackingOnEl  = null;
+                Location stackingLocObj = null;
+                Agent    robotAgent    = null;
+
+                try { stackingEl    = bb.GetElement(new FastName(stackingObj));    } catch { }
+                try { stackingOnEl  = bb.GetElement(new FastName(stackingOnObj));  } catch { }
+                try { stackingLocObj = bb.GetLocation(new FastName(stackingPos)); } catch { }
+                try { robotAgent    = bb.GetAgent(new FastName(robot));            } catch { }
+
+                // not(holding robot stackingObj)
+                FlipPredicate(bb, "holding", new[] { robot, stackingObj }, newNot: true);
+
+                // gripperempty(robot) = true
+                if (robotAgent != null)
+                {
+                    var ge = new GripperEmpty(robotAgent, isNegated: false);
+                    bb.SetPredicateSync(ge.GetUniqueKey(), ge);
+                    LoggingService.LogSuccess($"🌍 WorldStateManager: Set gripperempty({robot}) = true");
+                }
+                else
+                    FlipPredicate(bb, "gripperempty", new[] { robot }, newNot: false);
+
+                if (stackingEl != null)
+                {
+                    // atfinalposition(stackingObj) = true
+                    var afp = new AtFinalPosition(stackingEl, isNegated: false);
+                    bb.SetPredicateSync(afp.GetUniqueKey(), afp);
+                    LoggingService.LogSuccess($"🌍 WorldStateManager: Set atfinalposition({stackingObj}) = true");
+
+                    // atplace(stackingObj, stackingPos) = true, positionfree(stackingPos) = false
+                    if (stackingLocObj != null)
+                    {
+                        NegateAllPredicatesOfType(bb, "atplace", requiredParam0: stackingObj);
+                        var apStack = new AtPlace(stackingEl, stackingLocObj, isNegated: false);
+                        bb.SetPredicateSync(apStack.GetUniqueKey(), apStack);
+                        FlipPredicate(bb, "positionfree", new[] { stackingPos }, newNot: true);
+                        LoggingService.LogSuccess(
+                            $"🌍 WorldStateManager: Set atplace({stackingObj}, {stackingPos}) = true, positionfree({stackingPos}) = false");
+                    }
+
+                    // clear(stackingObj) = true
+                    FlipPredicate(bb, "clear", new[] { stackingObj }, newNot: false);
+
+                    // accessible(stackingObj) = true
+                    var accStack = new Accessible(stackingEl, isNegated: false);
+                    bb.SetPredicateSync(accStack.GetUniqueKey(), accStack);
+                    LoggingService.LogSuccess($"🌍 WorldStateManager: Set accessible({stackingObj}) = true");
+
+                    // stacked(stackingObj, stackingOnObj) = true
+                    if (stackingOnEl != null)
+                    {
+                        var st = new Stacked(stackingEl, stackingOnEl, isNegated: false);
+                        bb.SetPredicateSync(st.GetUniqueKey(), st);
+                        LoggingService.LogSuccess($"🌍 WorldStateManager: Set stacked({stackingObj}, {stackingOnObj}) = true");
+                    }
+                }
+            }
+
             // 1) Resolve the dislodged element
             Element dislodgedEl = null;
             try { dislodgedEl = bb.GetElement(new FastName(dislodged)); } catch { }

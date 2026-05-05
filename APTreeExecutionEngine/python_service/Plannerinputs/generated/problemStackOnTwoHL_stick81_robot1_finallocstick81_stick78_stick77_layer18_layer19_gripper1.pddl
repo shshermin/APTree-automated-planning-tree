@@ -30,13 +30,13 @@
     staplergun1 - staplergun
 
     ;; Equip Positions
-    equiplocgripper - equipposition
-    equiplocstapler - equipposition
+   ; equiplocgripper - equipposition
+    ;equiplocstapler - equipposition
 
     ;; Robot Positions
-    rppickup - rppickup
-    rpmanipulate - rpmanipulate
-    rptoolchange - rptoolchange
+    ;rppickup - rppickup
+    ;rpmanipulate - rpmanipulate
+    ;rptoolchange - rptoolchange
 
     ;; Locations - Initial (active elements only)
     initlocstick80 - firstposition
@@ -50,13 +50,19 @@
     finallocstick77 - finalposition
     finallocstick78 - finalposition
     finallocstick79 - finalposition
-    finloccube16 - finalposition
+    finalloccube16 - finalposition
     finallocstick80 - finalposition
     finallocstick81 - finalposition
     finallocstick82 - finalposition
     finallocstick83 - finalposition
     finallocstick84 - finalposition
-    finloccube17 - finalposition
+    finalloccube17 - finalposition
+    ;; HARDCODED ML-only objects (not in HL problem files)
+    equiplocgripper - equipposition
+    equiplocstapler - equipposition
+    rppickup - rppickup
+    rpmanipulate - rpmanipulate
+    rptoolchange - rptoolchange
   )
   (:init  
     (robotequipped robot1)
@@ -68,8 +74,8 @@
 (objectfinalposition stick82 finallocstick82)
 (objectfinalposition stick83 finallocstick83)
 (objectfinalposition stick84 finallocstick84)
-(objectfinalposition cube16 finloccube16)
-(objectfinalposition cube17 finloccube17)
+(objectfinalposition cube16 finalloccube16)
+(objectfinalposition cube17 finalloccube17)
 (positionfree equiplocgripper)
 (belongstolayer stick77 layer18)
 (belongstolayer stick78 layer18)
@@ -92,31 +98,28 @@
 (clear cube16)
 (clear cube17)
 (attool staplergun1 equiplocstapler)
+(atplace stick80 initlocstick80)
 (atplace stick82 initlocstick82)
 (atplace stick83 initlocstick83)
 (atplace stick84 initlocstick84)
 (atplace cube17 initloccube17)
 (atagent robot1 rppickup)
-(atplace stick79 finallocstick79)
-(accessible stick79)
-(atfinalposition stick79)
-(atplace stick77 finallocstick77)
-(atfinalposition stick77)
-(atplace cube16 finloccube16)
 (atfinalposition cube16)
+(atplace cube16 finalloccube16)
+(accessible cube16)
+(atplace stick77 finallocstick77)
+(accessible stick77)
+(atfinalposition stick77)
 (atplace stick78 finallocstick78)
 (accessible stick78)
 (atfinalposition stick78)
-(fixed stick79)
+(atplace stick79 finallocstick79)
+(accessible stick79)
+(atfinalposition stick79)
 (fixed cube16)
 (fixed stick77)
 (fixed stick78)
-(positionfree initlocstick80)
-(atplace stick80 finallocstick80)
-(accessible stick80)
-(stacked stick80 stick77)
-(stacked stick80 cube16)
-(atfinalposition stick80)
+(fixed stick79)
 (holding robot1 stick81)
 (positionfree initlocstick81)
   )

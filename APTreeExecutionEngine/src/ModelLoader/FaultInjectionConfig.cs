@@ -167,5 +167,19 @@ namespace BehaviorTreeMainProject.ModelLoader
         /// "cube2"). Its accessible and clear predicates are restored to
         /// true after dislodgement.</summary>
         public string BaseObject { get; set; }
+
+        // ── DislodgedAfterStack — stacking completion fields ─────────────
+
+        /// <summary>Optional: the element actively being stacked when the fault fires
+        /// (e.g. "stick2"). When set, ApplyDislodge first applies StackML completion
+        /// effects for this object so the HL replan sees it as already placed.</summary>
+        public string StackingObject { get; set; }
+
+        /// <summary>Optional: the element it was being stacked onto (e.g. "table1").</summary>
+        public string StackingOnObject { get; set; }
+
+        /// <summary>Optional: the final position the stacking object lands at
+        /// (e.g. "finallocstick2").</summary>
+        public string StackingPosition { get; set; }
     }
 }

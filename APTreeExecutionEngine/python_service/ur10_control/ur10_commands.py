@@ -8,6 +8,7 @@ import json
 import os
 import socket
 import struct
+import time
 
 DASHBOARD_PORT = 29999
 REALTIME_PORT = 30003
@@ -100,23 +101,42 @@ def load_program(robot_ip: str, program_name: str) -> str:
     return dashboard_command(robot_ip, f"load {program_name}")
 
 
-def play_program(robot_ip: str, program_name: str, speed: int = 30) -> str:
+def play_program(robot_ip: str, program_name: str, speed: int = 30, max_retries: int = 5, retry_delay: float = 3.0) -> str:
     """Load a program, set the speed slider, and start execution.
 
-    Input:  robot_ip     (str) — IP address of the UR10.
-            program_name (str) — Filename of the program (e.g. "myprogram.urp").
-            speed        (int) — Speed slider value 1-100% (default: 30).
+    Input:  robot_ip     (str)   — IP address of the UR10.
+            program_name (str)   — Filename of the program (e.g. "myprogram.urp").
+            speed        (int)   — Speed slider value 1-100% (default: 30).
+            max_retries  (int)   — Max attempts if play is rejected (default: 5).
+            retry_delay  (float) — Seconds to wait between retries (default: 3.0).
     Output: str — Dashboard response to the play command, or error if file not found.
+
+    Retries automatically if the play command is rejected by the controller (e.g. it
+    is still settling after a previous stop). Only polls for completion and sends stop
+    after a successful play — not after a rejection.
     """
     load_response = load_program(robot_ip, program_name)
     if "File not found" in load_response:
         return load_response
-    dashboard_command(robot_ip, f"setUserRole locked")
-    dashboard_command(robot_ip, f"setSpeedSlider {speed}")
-    play_response = dashboard_command(robot_ip, "play")
 
-    # Wait for the program to finish, then stop
-    import time
+    play_response = None
+    for attempt in range(1, max_retries + 1):
+        dashboard_command(robot_ip, f"setUserRole locked")
+        dashboard_command(robot_ip, f"setSpeedSlider {speed}")
+        play_response = dashboard_command(robot_ip, "play")
+
+        if "Failed" not in play_response:
+            break  # play accepted — proceed to wait for completion
+
+        print(f"play_program: attempt {attempt}/{max_retries} — play rejected: {play_response!r}. "
+              f"Waiting {retry_delay}s before retry.")
+        if attempt < max_retries:
+            time.sleep(retry_delay)
+    else:
+        # All retries exhausted — return the last failure response without polling
+        return play_response
+
+    # Wait for the program to finish running, then stop
     time.sleep(1)  # give the program a moment to start
     while True:
         state = dashboard_command(robot_ip, "running")

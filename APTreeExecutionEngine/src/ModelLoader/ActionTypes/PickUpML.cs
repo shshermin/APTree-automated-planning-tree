@@ -75,6 +75,8 @@ namespace BehaviorTreeMainProject
                 return;
 
             // Only show confirmation dialog when execution is active
+            // TEMPORARILY DISABLED — uncomment to re-enable operator confirmation popup
+            /*
             bool executionActive = false;
             try { executionActive = blackboard.GetBool(new FastName("ExecutionActive")); } catch { }
 
@@ -100,6 +102,7 @@ namespace BehaviorTreeMainProject
             }
 
             LoggingService.LogSuccess($"▶️ PickUpML: Operator confirmed '{InstanceName}' — proceeding");
+            */
         }
 
         protected override State Preconditions => preconditions;

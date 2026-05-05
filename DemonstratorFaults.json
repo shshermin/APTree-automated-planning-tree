@@ -44,7 +44,7 @@
       "Id": "dislodge_stick5_after_stack",
       "Type": "DislodgedAfterStack",
       "Trigger": {
-        "MlActionType": "TravelML",
+        "MlActionType": "StackML",
         "ParentInstanceContains": "stick2",
         "OnActivationCount": 1
       },
@@ -52,7 +52,11 @@
         "DislodgedObject": "stick5",
         "ReturnToLocation": "initlocstick5",
         "ReturnToLocationPddlType": "firstposition",
-        "BaseObject": "table1"
+        "BaseObject": "table1",
+        "StackingObject": "stick2",
+        "StackingOnObject": "table1",
+        "StackingPosition": "finallocstick2",
+        "Robot": "robot1"
       }
     }
   ]

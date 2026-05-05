@@ -63,8 +63,8 @@
     finallocstick43 - finalposition
     finallocstick44 - finalposition
     finallocstick45 - finalposition
-    finloccube9 - finalposition
-    finloccube10 - finalposition
+    finalloccube9 - finalposition
+    finalloccube10 - finalposition
     finallocstick46 - finalposition
     finallocstick47 - finalposition
     finallocstick48 - finalposition
@@ -74,8 +74,8 @@
     finallocstick52 - finalposition
     finallocstick53 - finalposition
     finallocstick54 - finalposition
-    finloccube11 - finalposition
-    finloccube12 - finalposition
+    finalloccube11 - finalposition
+    finalloccube12 - finalposition
     ;; HARDCODED ML-only objects (not in HL problem files)
     equiplocgripper - equipposition
     equiplocstapler - equipposition
@@ -98,10 +98,10 @@
 (objectfinalposition stick52 finallocstick52)
 (objectfinalposition stick53 finallocstick53)
 (objectfinalposition stick54 finallocstick54)
-(objectfinalposition cube9 finloccube9)
-(objectfinalposition cube10 finloccube10)
-(objectfinalposition cube11 finloccube11)
-(objectfinalposition cube12 finloccube12)
+(objectfinalposition cube9 finalloccube9)
+(objectfinalposition cube10 finalloccube10)
+(objectfinalposition cube11 finalloccube11)
+(objectfinalposition cube12 finalloccube12)
 (positionfree equiplocgripper)
 (gripperempty robot1)
 (belongstolayer stick42 layer10)
@@ -151,25 +151,31 @@
 (atplace stick54 initlocstick54)
 (atplace cube11 initloccube11)
 (atplace cube12 initloccube12)
-(atagent robot1 rpmanipulate)
+(atagent robot1 rptoolchange)
 (atplace stick42 finallocstick42)
 (accessible stick42)
 (atfinalposition stick42)
-(atplace stick44 finallocstick44)
-(accessible stick44)
-(atfinalposition stick44)
+(atfinalposition cube9)
+(atplace cube9 finalloccube9)
+(accessible cube9)
 (atplace stick43 finallocstick43)
 (accessible stick43)
 (atfinalposition stick43)
 (atfinalposition cube10)
-(atplace cube10 finloccube10)
+(atplace cube10 finalloccube10)
 (accessible cube10)
-(atfinalposition cube9)
-(atplace cube9 finloccube9)
-(accessible cube9)
+(atplace stick44 finallocstick44)
+(accessible stick44)
+(atfinalposition stick44)
+(fixed stick43)
+(fixed stick44)
+(fixed cube9)
+(fixed cube10)
+(fixed stick42)
 (atplace stick45 finallocstick45)
 (accessible stick45)
 (atfinalposition stick45)
+(fixed stick45)
   )
   (:goal 
     (and

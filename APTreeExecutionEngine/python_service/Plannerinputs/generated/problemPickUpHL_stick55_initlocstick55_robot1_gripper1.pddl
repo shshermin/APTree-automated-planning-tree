@@ -63,8 +63,8 @@
     finallocstick52 - finalposition
     finallocstick53 - finalposition
     finallocstick54 - finalposition
-    finloccube11 - finalposition
-    finloccube12 - finalposition
+    finalloccube11 - finalposition
+    finalloccube12 - finalposition
     finallocstick55 - finalposition
     finallocstick56 - finalposition
     finallocstick57 - finalposition
@@ -74,8 +74,8 @@
     finallocstick61 - finalposition
     finallocstick62 - finalposition
     finallocstick63 - finalposition
-    finloccube13 - finalposition
-    finloccube14 - finalposition
+    finalloccube13 - finalposition
+    finalloccube14 - finalposition
     ;; HARDCODED ML-only objects (not in HL problem files)
     equiplocgripper - equipposition
     equiplocstapler - equipposition
@@ -98,10 +98,10 @@
 (objectfinalposition stick61 finallocstick61)
 (objectfinalposition stick62 finallocstick62)
 (objectfinalposition stick63 finallocstick63)
-(objectfinalposition cube11 finloccube11)
-(objectfinalposition cube12 finloccube12)
-(objectfinalposition cube13 finloccube13)
-(objectfinalposition cube14 finloccube14)
+(objectfinalposition cube11 finalloccube11)
+(objectfinalposition cube12 finalloccube12)
+(objectfinalposition cube13 finalloccube13)
+(objectfinalposition cube14 finalloccube14)
 (positionfree equiplocgripper)
 (gripperempty robot1)
 (belongstolayer stick51 layer12)
@@ -151,22 +151,27 @@
 (atplace cube13 initloccube13)
 (atplace cube14 initloccube14)
 (atagent robot1 rpmanipulate)
-(atfinalposition cube12)
-(atplace cube12 finloccube12)
-(accessible cube12)
-(atplace stick54 finallocstick54)
-(accessible stick54)
-(atfinalposition stick54)
 (atplace stick51 finallocstick51)
 (atfinalposition stick51)
 (atfinalposition cube11)
-(atplace cube11 finloccube11)
+(atplace cube11 finalloccube11)
 (accessible cube11)
 (atplace stick52 finallocstick52)
 (atfinalposition stick52)
+(atfinalposition cube12)
+(atplace cube12 finalloccube12)
+(accessible cube12)
 (atplace stick53 finallocstick53)
 (accessible stick53)
 (atfinalposition stick53)
+(atplace stick54 finallocstick54)
+(accessible stick54)
+(atfinalposition stick54)
+(fixed cube11)
+(fixed cube12)
+(fixed stick51)
+(fixed stick52)
+(fixed stick53)
 (fixed stick54)
 (positionfree initlocstick56)
 (atplace stick56 finallocstick56)

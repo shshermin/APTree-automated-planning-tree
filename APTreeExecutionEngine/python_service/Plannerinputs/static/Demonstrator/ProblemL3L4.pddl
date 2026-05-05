@@ -133,7 +133,7 @@
     ;; GripperEmpty
     (gripperempty robot1)
     ;(atagent robot1 rpmanipulate)
-    (hastool robot1 staplergun1)
+    (hastool robot1 gripper1)
     ;(attool gripper1 equiplocgripper)
 
     ;; ObjectFinalPosition (active elements)

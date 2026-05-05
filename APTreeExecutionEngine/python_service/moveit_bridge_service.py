@@ -27,6 +27,8 @@ import threading
 sys.path.insert(0, '/home/shermin/ws_moveit/src/hello_moveit/scripts')
 
 import rclpy
+import rclpy.time
+import tf2_ros
 from geometry_msgs.msg import Pose
 from moveit_msgs.msg import Constraints, OrientationConstraint
 from std_msgs.msg import String as StringMsg
@@ -42,6 +44,7 @@ move_to_task = None      # MoveToTask node  (persistent)
 scene = None             # DynamicSceneManager node (persistent)
 io_client = None         # SetIO service client (persistent)
 stop_pub = None          # Publisher to clear MoveGroup's trajectory execution state
+tf_buffer = None         # TF2 buffer for reading actual TCP pose
 _last_disabled_ee = [None]  # tracks which EE was last disabled to avoid redundant ACM updates
 _last_payload_ee = [None]   # tracks which EE payload was last set to avoid redundant updates
 _init_lock = threading.Lock()
@@ -54,7 +57,7 @@ def init_ros():
     rclpy.spin_until_future_complete() calls inside MoveToTask already
     handle spinning when waiting for action/service results.
     """
-    global move_to_task, scene, io_client, stop_pub
+    global move_to_task, scene, io_client, stop_pub, tf_buffer
 
     with _init_lock:
         if move_to_task is not None:
@@ -66,6 +69,8 @@ def init_ros():
         move_to_task = MoveToTask(end_effector_type='gripper')  # default; EE link updated per request
         io_client = move_to_task.create_client(SetIO, '/io_and_status_controller/set_io')
         stop_pub = move_to_task.create_publisher(StringMsg, '/trajectory_execution_event', 1)
+        tf_buffer = tf2_ros.Buffer()
+        tf2_ros.TransformListener(tf_buffer, move_to_task)
 
         print("ROS 2 nodes initialised (persistent, no background spin).")
 
@@ -245,13 +250,50 @@ def plan_and_execute():
                         move_to_task.get_logger().error('Failed to open gripper')
                     time.sleep(0.5)
 
-            # Lift 5 cm straight up
+            # Press 2mm down (Pilz LIN) for nailgun — use actual TCP pose from TF
+            # so Pilz LIN start state exactly matches the robot's current state.
+            if end_effector_type == 'nailgun':
+                time.sleep(0.3)  # let joint state settle after approach
+                try:
+                    rclpy.spin_once(move_to_task, timeout_sec=0.5)  # flush TF callbacks
+                    t = tf_buffer.lookup_transform('base_link', 'nailgun_tip', rclpy.time.Time())
+                    tr = t.transform.translation
+                    rot = t.transform.rotation
+                    press_pose = Pose()
+                    press_pose.position.x = tr.x
+                    press_pose.position.y = tr.y
+                    press_pose.position.z = tr.z - 0.002
+                    press_pose.orientation.x = rot.x
+                    press_pose.orientation.y = rot.y
+                    press_pose.orientation.z = rot.z
+                    press_pose.orientation.w = rot.w
+                    move_to_task.get_logger().info(
+                        f'Nailgun: pressing 2mm down from actual pose '
+                        f'({tr.x:.4f}, {tr.y:.4f}, {tr.z:.4f})')
+                    press_success = move_to_task.move_to(
+                        press_pose,
+                        velocity_scaling=0.15,
+                        acceleration_scaling=0.15,
+                        planning_time=5.0,
+                        pipeline_id='pilz_industrial_motion_planner',
+                        planner_id='LIN',
+                    )
+                    if not press_success:
+                        move_to_task.get_logger().error('Nailgun: 2mm press failed')
+                except Exception as tf_ex:
+                    move_to_task.get_logger().error(f'Nailgun: TF lookup failed: {tf_ex}')
+
+            time.sleep(0.5)  # settle after press before lift
+
+            # Lift 5 cm straight up (Pilz LIN to stay on same IK branch)
             lift_pose = _build_pose(x, y, z + 0.05, yaw)
             move_to_task.move_to(
                 lift_pose,
                 velocity_scaling=0.15,
                 acceleration_scaling=0.15,
                 planning_time=5.0,
+                pipeline_id='pilz_industrial_motion_planner',
+                planner_id='LIN',
             )
 
         elapsed = time.time() - start_time

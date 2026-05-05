@@ -33,13 +33,13 @@
     staplergun1 - staplergun
 
     ;; Equip Positions
-    equiplocgripper - equipposition
-    equiplocstapler - equipposition
+   ; equiplocgripper - equipposition
+   ; equiplocstapler - equipposition
 
     ;; Robot Positions
-    rppickup - rppickup
-    rpmanipulate - rpmanipulate
-    rptoolchange - rptoolchange
+   ; rppickup - rppickup
+   ; rpmanipulate - rpmanipulate
+   ; rptoolchange - rptoolchange
 
     ;; Locations - Initial (active elements only)
     initlocstick73 - firstposition
@@ -56,7 +56,7 @@
     finallocstick70 - finalposition
     finallocstick71 - finalposition
     finallocstick72 - finalposition
-    finloccube15 - finalposition
+    finalloccube15 - finalposition
     finallocstick73 - finalposition
     finallocstick74 - finalposition
     finallocstick75 - finalposition
@@ -64,7 +64,13 @@
     finallocstick77 - finalposition
     finallocstick78 - finalposition
     finallocstick79 - finalposition
-    finloccube16 - finalposition
+    finalloccube16 - finalposition
+    ;; HARDCODED ML-only objects (not in HL problem files)
+    equiplocgripper - equipposition
+    equiplocstapler - equipposition
+    rppickup - rppickup
+    rpmanipulate - rpmanipulate
+    rptoolchange - rptoolchange
   )
   (:init  
     (robotequipped robot1)
@@ -79,8 +85,8 @@
 (objectfinalposition stick77 finallocstick77)
 (objectfinalposition stick78 finallocstick78)
 (objectfinalposition stick79 finallocstick79)
-(objectfinalposition cube15 finloccube15)
-(objectfinalposition cube16 finloccube16)
+(objectfinalposition cube15 finalloccube15)
+(objectfinalposition cube16 finalloccube16)
 (positionfree equiplocgripper)
 (gripperempty robot1)
 (belongstolayer stick69 layer16)
@@ -120,21 +126,21 @@
 (atplace stick79 initlocstick79)
 (atplace cube16 initloccube16)
 (atagent robot1 rptoolchange)
-(atplace stick71 finallocstick71)
-(accessible stick71)
-(atfinalposition stick71)
-(atplace stick72 finallocstick72)
-(accessible stick72)
-(atfinalposition stick72)
-(atplace stick70 finallocstick70)
-(accessible stick70)
-(atfinalposition stick70)
-(atplace cube15 finloccube15)
-(accessible cube15)
-(atfinalposition cube15)
 (atplace stick69 finallocstick69)
 (accessible stick69)
 (atfinalposition stick69)
+(atfinalposition cube15)
+(atplace cube15 finalloccube15)
+(accessible cube15)
+(atplace stick71 finallocstick71)
+(accessible stick71)
+(atfinalposition stick71)
+(atplace stick70 finallocstick70)
+(accessible stick70)
+(atfinalposition stick70)
+(atplace stick72 finallocstick72)
+(accessible stick72)
+(atfinalposition stick72)
 (fixed cube15)
 (fixed stick69)
 (fixed stick70)

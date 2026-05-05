@@ -123,7 +123,7 @@
 
     ;; Nailed - layer 22
     (nailed cube18 stick85)
-    (nailed stick87 stick85)
-    (nailed stick87 stick86)
+    ;(nailed stick87 stick85)
+    ;(nailed stick87 stick86)
   ))
 )

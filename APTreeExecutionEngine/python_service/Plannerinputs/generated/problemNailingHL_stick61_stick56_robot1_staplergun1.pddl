@@ -37,13 +37,13 @@
     staplergun1 - staplergun
 
     ;; Equip Positions
-    equiplocgripper - equipposition
-    equiplocstapler - equipposition
+    ;equiplocgripper - equipposition
+    ;equiplocstapler - equipposition
 
     ;; Robot Positions
-    rppickup - rppickup
-    rpmanipulate - rpmanipulate
-    rptoolchange - rptoolchange
+    ;rppickup - rppickup
+    ;rpmanipulate - rpmanipulate
+    ;rptoolchange - rptoolchange
 
     ;; Locations - Initial (active elements only)
     initlocstick55 - firstposition
@@ -63,8 +63,8 @@
     finallocstick52 - finalposition
     finallocstick53 - finalposition
     finallocstick54 - finalposition
-    finloccube11 - finalposition
-    finloccube12 - finalposition
+    finalloccube11 - finalposition
+    finalloccube12 - finalposition
     finallocstick55 - finalposition
     finallocstick56 - finalposition
     finallocstick57 - finalposition
@@ -74,8 +74,14 @@
     finallocstick61 - finalposition
     finallocstick62 - finalposition
     finallocstick63 - finalposition
-    finloccube13 - finalposition
-    finloccube14 - finalposition
+    finalloccube13 - finalposition
+    finalloccube14 - finalposition
+    ;; HARDCODED ML-only objects (not in HL problem files)
+    equiplocgripper - equipposition
+    equiplocstapler - equipposition
+    rppickup - rppickup
+    rpmanipulate - rpmanipulate
+    rptoolchange - rptoolchange
   )
   (:init  
     (robotequipped robot1)
@@ -92,10 +98,10 @@
 (objectfinalposition stick61 finallocstick61)
 (objectfinalposition stick62 finallocstick62)
 (objectfinalposition stick63 finallocstick63)
-(objectfinalposition cube11 finloccube11)
-(objectfinalposition cube12 finloccube12)
-(objectfinalposition cube13 finloccube13)
-(objectfinalposition cube14 finloccube14)
+(objectfinalposition cube11 finalloccube11)
+(objectfinalposition cube12 finalloccube12)
+(objectfinalposition cube13 finalloccube13)
+(objectfinalposition cube14 finalloccube14)
 (gripperempty robot1)
 (belongstolayer stick51 layer12)
 (belongstolayer stick52 layer12)
@@ -138,19 +144,19 @@
 (activetool staplergun1)
 (atplace stick51 finallocstick51)
 (atfinalposition stick51)
-(atplace cube11 finloccube11)
 (atfinalposition cube11)
-(fixed cube11)
-(fixed stick51)
+(atplace cube11 finalloccube11)
 (atplace stick52 finallocstick52)
 (atfinalposition stick52)
-(atplace cube12 finloccube12)
 (atfinalposition cube12)
+(atplace cube12 finalloccube12)
 (atplace stick53 finallocstick53)
 (atfinalposition stick53)
 (atplace stick54 finallocstick54)
 (atfinalposition stick54)
+(fixed cube11)
 (fixed cube12)
+(fixed stick51)
 (fixed stick52)
 (fixed stick53)
 (fixed stick54)
@@ -161,82 +167,65 @@
 (atfinalposition stick56)
 (positionfree initlocstick55)
 (atplace stick55 finallocstick55)
-(stacked stick55 stick51)
 (stacked stick55 cube11)
+(stacked stick55 stick51)
 (atfinalposition stick55)
-(nailed stick55 cube11)
-(fixed stick55)
-(nailed stick55 stick51)
-(nailed stick56 stick51)
-(fixed stick56)
-(nailed stick56 stick52)
+(positionfree initlocstick59)
+(atplace stick59 finallocstick59)
+(stacked stick59 cube12)
+(stacked stick59 stick54)
+(atfinalposition stick59)
 (positionfree initlocstick60)
 (atplace stick60 finallocstick60)
 (accessible stick60)
 (stacked stick60 stick56)
 (stacked stick60 stick55)
 (atfinalposition stick60)
-(positionfree initlocstick58)
-(atplace stick58 finallocstick58)
-(stacked stick58 stick54)
-(stacked stick58 stick53)
-(atfinalposition stick58)
 (positionfree initlocstick57)
 (atplace stick57 finallocstick57)
-(stacked stick57 stick53)
 (stacked stick57 stick52)
+(stacked stick57 stick53)
 (atfinalposition stick57)
-(positionfree initlocstick59)
-(atplace stick59 finallocstick59)
-(stacked stick59 cube12)
-(stacked stick59 stick54)
-(atfinalposition stick59)
-(positionfree initloccube13)
-(atplace cube13 finloccube13)
-(accessible cube13)
-(stacked cube13 stick55)
-(stacked cube13 stick56)
-(atfinalposition cube13)
-(nailed stick57 stick52)
-(fixed stick57)
-(nailed stick57 stick53)
-(nailed stick58 stick53)
-(fixed stick58)
-(nailed stick58 stick54)
-(nailed stick59 cube12)
-(fixed stick59)
-(nailed stick59 stick54)
-(nailed cube13 stick55)
-(fixed cube13)
-(nailed stick60 stick55)
-(fixed stick60)
-(nailed stick60 stick56)
+(positionfree initlocstick58)
+(atplace stick58 finallocstick58)
+(stacked stick58 stick53)
+(stacked stick58 stick54)
+(atfinalposition stick58)
 (positionfree initlocstick62)
 (atplace stick62 finallocstick62)
 (accessible stick62)
 (stacked stick62 stick58)
 (stacked stick62 stick57)
 (atfinalposition stick62)
-(positionfree initloccube14)
-(atplace cube14 finloccube14)
-(accessible cube14)
-(stacked cube14 stick59)
-(stacked cube14 stick57)
-(atfinalposition cube14)
 (positionfree initlocstick61)
 (atplace stick61 finallocstick61)
 (accessible stick61)
-(stacked stick61 stick57)
 (stacked stick61 stick56)
+(stacked stick61 stick57)
 (atfinalposition stick61)
+(positionfree initloccube14)
+(atfinalposition cube14)
+(atplace cube14 finalloccube14)
+(accessible cube14)
+(stacked cube14 stick59)
+(positionfree initloccube13)
+(atfinalposition cube13)
+(atplace cube13 finalloccube13)
+(accessible cube13)
+(stacked cube13 stick55)
 (positionfree initlocstick63)
 (atplace stick63 finallocstick63)
 (accessible stick63)
-(stacked stick63 stick58)
 (stacked stick63 stick59)
+(stacked stick63 stick58)
 (atfinalposition stick63)
+(nailed cube13 stick55)
+(fixed cube13)
 (nailed cube14 stick59)
 (fixed cube14)
+(nailed stick60 stick55)
+(fixed stick60)
+(nailed stick60 stick56)
   )
   (:goal 
     (and

@@ -11,6 +11,7 @@
     stick7 - stick
     stick8 - stick
     stick9 - stick
+     stickdummy - stick
 
     ;; Elements - Cubes
     cube1 - cube
@@ -32,13 +33,13 @@
     staplergun1 - staplergun
 
     ;; Equip Positions
-    equiplocgripper - equipposition
-    equiplocstapler - equipposition
+    ;equiplocgripper - equipposition
+    ;equiplocstapler - equipposition
 
-    ;; Robot Positions
-    rppickup - rppickup
-    rpmanipulate - rpmanipulate
-    rptoolchange - rptoolchange
+  ;; Robot Positions
+   ; rppickup - rppickup
+   ; rpmanipulate - rpmanipulate
+   ; rptoolchange - rptoolchange
 
     ;; Locations - Initial (first positions)
     initlocstick1 - firstposition
@@ -52,6 +53,7 @@
     initlocstick9 - firstposition
     initloccube1 - firstposition
     initloccube2 - firstposition
+    temploc2 - firstposition
 
     ;; Locations - Final positions
     mp5 - finalposition
@@ -64,8 +66,17 @@
     finallocstick7 - finalposition
     finallocstick8 - finalposition
     finallocstick9 - finalposition
-    finloccube1 - finalposition
-    finloccube2 - finalposition
+    finalloccube1 - finalposition
+    finalloccube2 - finalposition
+
+    
+    temploc3 - finalposition
+    ;; HARDCODED ML-only objects (not in HL problem files)
+    equiplocgripper - equipposition
+    equiplocstapler - equipposition
+    rppickup - rppickup
+    rpmanipulate - rpmanipulate
+    rptoolchange - rptoolchange
   )
   (:init  
     (atfinalposition table1)
@@ -79,10 +90,9 @@
 (objectfinalposition stick7 finallocstick7)
 (objectfinalposition stick8 finallocstick8)
 (objectfinalposition stick9 finallocstick9)
-(objectfinalposition cube1 finloccube1)
-(objectfinalposition cube2 finloccube2)
+(objectfinalposition cube1 finalloccube1)
+(objectfinalposition cube2 finalloccube2)
 (positionfree equiplocgripper)
-(belongstolayer table1 layer0)
 (belongstolayer stick1 layer1)
 (belongstolayer stick2 layer1)
 (belongstolayer stick3 layer1)
@@ -106,60 +116,42 @@
 (clear cube1)
 (clear cube2)
 (attool staplergun1 equiplocstapler)
+(atplace stick5 initlocstick5)
+(atplace stick7 initlocstick7)
+(atplace stick8 initlocstick8)
+(atplace stick9 initlocstick9)
+(atplace cube1 initloccube1)
+(atplace cube2 initloccube2)
 (atplace table1 mp5)
 (fixed table1)
 (activetool gripper1)
 (atagent robot1 rppickup)
-(positionfree initlocstick2)
-(atfinalposition stick2)
-(atplace stick2 finallocstick2)
-(stacked stick2 table1)
 (positionfree initlocstick4)
 (atfinalposition stick4)
 (atplace stick4 finallocstick4)
+(accessible stick4)
 (stacked stick4 table1)
-(positionfree initlocstick1)
-(atfinalposition stick1)
-(atplace stick1 finallocstick1)
-(stacked stick1 table1)
-(positionfree initloccube1)
-(atfinalposition cube1)
-(atplace cube1 finloccube1)
-(accessible cube1)
-(stacked cube1 stick1)
+(positionfree initlocstick2)
+(atfinalposition stick2)
+(atplace stick2 finallocstick2)
+(accessible stick2)
+(stacked stick2 table1)
+(accessible stick3)
+(clear stickdummy)
+(accessible stickdummy)
+(positionfree temploc2)
+(atplace stickdummy temploc3)
 (positionfree initlocstick3)
 (atfinalposition stick3)
 (atplace stick3 finallocstick3)
 (stacked stick3 table1)
-(positionfree initlocstick7)
-(atplace stick7 finallocstick7)
-(accessible stick7)
-(stacked stick7 stick2)
-(stacked stick7 stick3)
-(atfinalposition stick7)
-(positionfree initlocstick8)
-(atplace stick8 finallocstick8)
-(accessible stick8)
-(stacked stick8 stick3)
-(stacked stick8 stick4)
-(atfinalposition stick8)
-(positionfree initlocstick5)
-(atfinalposition stick5)
-(atplace stick5 finallocstick5)
-(stacked stick5 table1)
-(positionfree initloccube2)
-(atfinalposition cube2)
-(atplace cube2 finloccube2)
-(accessible cube2)
-(stacked cube2 stick5)
-(positionfree initlocstick9)
-(atplace stick9 finallocstick9)
-(accessible stick9)
-(stacked stick9 stick5)
-(stacked stick9 stick4)
-(atfinalposition stick9)
-(holding robot1 stick6)
+(positionfree initlocstick1)
+(atfinalposition stick1)
+(atplace stick1 finallocstick1)
+(accessible stick1)
+(stacked stick1 table1)
 (positionfree initlocstick6)
+(holding robot1 stick6)
   )
   (:goal 
     (and

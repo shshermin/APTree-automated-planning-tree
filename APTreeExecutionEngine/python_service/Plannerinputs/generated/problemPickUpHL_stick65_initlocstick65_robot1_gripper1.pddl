@@ -36,13 +36,13 @@
     staplergun1 - staplergun
 
     ;; Equip Positions
-    equiplocgripper - equipposition
-    equiplocstapler - equipposition
+   ; equiplocgripper - equipposition
+    ;equiplocstapler - equipposition
 
     ;; Robot Positions
-    rppickup - rppickup
-    rpmanipulate - rpmanipulate
-    rptoolchange - rptoolchange
+   ; rppickup - rppickup
+    ;rpmanipulate - rpmanipulate
+    ;rptoolchange - rptoolchange
 
     ;; Locations - Initial (active elements only)
     initlocstick64 - firstposition
@@ -61,8 +61,8 @@
     finallocstick61 - finalposition
     finallocstick62 - finalposition
     finallocstick63 - finalposition
-    finloccube13 - finalposition
-    finloccube14 - finalposition
+    finalloccube13 - finalposition
+    finalloccube14 - finalposition
     finallocstick64 - finalposition
     finallocstick65 - finalposition
     finallocstick66 - finalposition
@@ -72,7 +72,13 @@
     finallocstick70 - finalposition
     finallocstick71 - finalposition
     finallocstick72 - finalposition
-    finloccube15 - finalposition
+    finalloccube15 - finalposition
+    ;; HARDCODED ML-only objects (not in HL problem files)
+    equiplocgripper - equipposition
+    equiplocstapler - equipposition
+    rppickup - rppickup
+    rpmanipulate - rpmanipulate
+    rptoolchange - rptoolchange
   )
   (:init  
     (robotequipped robot1)
@@ -89,9 +95,9 @@
 (objectfinalposition stick70 finallocstick70)
 (objectfinalposition stick71 finallocstick71)
 (objectfinalposition stick72 finallocstick72)
-(objectfinalposition cube13 finloccube13)
-(objectfinalposition cube14 finloccube14)
-(objectfinalposition cube15 finloccube15)
+(objectfinalposition cube13 finalloccube13)
+(objectfinalposition cube14 finalloccube14)
+(objectfinalposition cube15 finalloccube15)
 (positionfree equiplocgripper)
 (gripperempty robot1)
 (belongstolayer stick60 layer14)
@@ -142,24 +148,24 @@
 (atplace stick60 finallocstick60)
 (accessible stick60)
 (atfinalposition stick60)
-(atplace cube13 finloccube13)
-(accessible cube13)
-(atfinalposition cube13)
-(fixed cube13)
-(fixed stick60)
 (atplace stick62 finallocstick62)
 (accessible stick62)
 (atfinalposition stick62)
-(atplace cube14 finloccube14)
-(accessible cube14)
-(atfinalposition cube14)
 (atplace stick61 finallocstick61)
 (accessible stick61)
 (atfinalposition stick61)
+(atfinalposition cube14)
+(atplace cube14 finalloccube14)
+(accessible cube14)
+(atfinalposition cube13)
+(atplace cube13 finalloccube13)
+(accessible cube13)
 (atplace stick63 finallocstick63)
 (accessible stick63)
 (atfinalposition stick63)
+(fixed cube13)
 (fixed cube14)
+(fixed stick60)
 (fixed stick61)
 (fixed stick62)
 (fixed stick63)
