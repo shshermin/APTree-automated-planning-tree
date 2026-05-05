@@ -502,7 +502,12 @@ function App() {
 
             const mergedNodes = importResult.graph.nodes.map((newNode) => {
               const existing = existingById.get(newNode.id);
-              if (existing) {
+              // Preserve user-placed position for regular (non-wrapper) nodes.
+              // Wrapper nodes (renderAsSubtree: true) have their bounds auto-computed
+              // from contained actions; keeping stale sizes breaks geometric containment
+              // in collectSubtree after a replan, so they always get a fresh position
+              // derived from the new layout plus the FlowNode's displacement offset.
+              if (existing && !newNode.renderAsSubtree) {
                 return { ...newNode, x: existing.x, y: existing.y, width: existing.width, height: existing.height };
               }
               // FlowNodes: no offset needed (they're new or keep layout pos directly)
