@@ -173,7 +173,13 @@ def robot_play_program():
         payload_cog = data.get('payloadCog')
 
         start_time = time.time()
-        result_msg = play_program(robot_ip, program_name, speed=speed)
+        # Equip/deequip programs may be rejected while the robot is still settling —
+        # retry up to 5 times.  External Control and other persistent programs must
+        # NOT be retried: the retry loop re-sends setUserRole/setSpeedSlider and
+        # the wait-for-completion poll would hang because EC never stops itself.
+        is_equip_program = 'equip' in program_name.lower()
+        result_msg = play_program(robot_ip, program_name, speed=speed,
+                                  max_retries=5 if is_equip_program else 1)
 
         # Check if the program actually failed to play
         if result_msg and ("File not found" in result_msg or "Failed" in result_msg):

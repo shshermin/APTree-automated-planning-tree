@@ -101,7 +101,7 @@ def load_program(robot_ip: str, program_name: str) -> str:
     return dashboard_command(robot_ip, f"load {program_name}")
 
 
-def play_program(robot_ip: str, program_name: str, speed: int = 30, max_retries: int = 5, retry_delay: float = 3.0) -> str:
+def play_program(robot_ip: str, program_name: str, speed: int = 30, max_retries: int = 1, retry_delay: float = 3.0) -> str:
     """Load a program, set the speed slider, and start execution.
 
     Input:  robot_ip     (str)   — IP address of the UR10.

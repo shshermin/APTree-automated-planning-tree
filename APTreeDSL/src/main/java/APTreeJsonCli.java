@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import CoCos.CRFTypesCon.ElementExistsCoCo;
 import crftypescon.CRFTypesConMill;
 import crftypescon._ast.ASTPickUpHL;
 import crftypescon._ast.ASTPlaceHL;
@@ -15,9 +14,7 @@ import crftypesdef._symboltable.ElementSymbol;
 import de.se_rwth.commons.logging.Log;
 import dynamicbtflownode.DynamicBTFlowNodeMill;
 import dynamicbtflownode._ast.ASTAPTree;
-import dynamicbtflownode._ast.ASTDynamicBTFlowNodeNode;
 import dynamicbtflownode._ast.ASTFinalWorld;
-import dynamicbtflownode._cocos.DynamicBTFlowNodeCoCoChecker;
 import dynamicbtflownode._symboltable.IDynamicBTFlowNodeArtifactScope;
 import dynamicbtflownode._symboltable.IDynamicBTFlowNodeGlobalScope;
 
@@ -408,6 +405,8 @@ public class APTreeJsonCli {
       final List<Node> nodes = new ArrayList<>();
       final List<Edge> edges = new ArrayList<>();
       final java.util.IdentityHashMap<Object, String> ids = new java.util.IdentityHashMap<>();
+      // Tracks name-based IDs already assigned, to detect duplicate names and fall back to sequential.
+      final java.util.HashMap<String, Integer> nameIdCount = new java.util.HashMap<>();
       int nextNodeId = 1;
       int nextEdgeId = 1;
 
@@ -420,12 +419,23 @@ public class APTreeJsonCli {
           return existing;
         }
 
-        String id = "n" + (nextNodeId++);
-        ids.put(astNode, id);
-
         String astType = astNode.getClass().getSimpleName();
         String kind = classifyKind(astNode);
         String name = tryGetName(astNode);
+
+        // Use a stable name-derived ID so that re-parses after model updates produce the
+        // same IDs for the same nodes, allowing the frontend position-merge to work correctly.
+        // Fall back to sequential IDs only for anonymous nodes (no name) or duplicate names.
+        String id;
+        if (name != null && !name.isEmpty()) {
+          String nameKey = "name-" + name.replaceAll("[^A-Za-z0-9_\\-]", "_");
+          int count = nameIdCount.getOrDefault(nameKey, 0);
+          nameIdCount.put(nameKey, count + 1);
+          id = count == 0 ? nameKey : nameKey + "_" + count;
+        } else {
+          id = "n" + (nextNodeId++);
+        }
+        ids.put(astNode, id);
         String label = buildLabel(astNode, name);
         Integer line = tryGetLine(astNode);
         String successType = tryGetSuccessType(astNode);

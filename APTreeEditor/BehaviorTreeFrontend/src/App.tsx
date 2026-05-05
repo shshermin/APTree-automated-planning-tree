@@ -462,13 +462,71 @@ function App() {
         startTransition(() => {
           setGraph((prev) => {
             const existingById = new Map(prev.nodes.map((n) => [n.id, n]));
+            const layoutNodeById = new Map(importResult.graph.nodes.map((n) => [n.id, n]));
+
+            // ── Per-FlowNode displacement (existing canvas pos − layout pos) ──
+            // When a FlowNode keeps its old canvas position but its children are
+            // rebuilt (e.g. after an HL replan), new child nodes must be offset by
+            // the same delta so they land at the right place relative to their parent.
+            const flowOffsets = new Map<string, { dx: number; dy: number }>();
+            for (const node of importResult.graph.nodes) {
+              if (node.category !== FLOW_NODES_KEY) continue;
+              const existing = existingById.get(node.id);
+              flowOffsets.set(
+                node.id,
+                existing
+                  ? { dx: existing.x - node.x, dy: existing.y - node.y }
+                  : { dx: 0, dy: 0 },
+              );
+            }
+
+            // FlowNode → outer nodegraph-wrapper (reachable via a single "contains" edge)
+            const wrapperFlowId = new Map<string, string>();
+            for (const conn of importResult.graph.connections) {
+              if (conn.kind !== "contains" || !flowOffsets.has(conn.sourceNodeId)) continue;
+              wrapperFlowId.set(conn.targetNodeId, conn.sourceNodeId);
+            }
+
+            // Outer wrapper layout node per FlowNode (used for spatial fall-through)
+            const flowOuterWrapper = new Map<string, CanvasNode>();
+            for (const [wrapperId, flowId] of wrapperFlowId) {
+              const w = layoutNodeById.get(wrapperId);
+              if (w) flowOuterWrapper.set(flowId, w);
+            }
+
+            const applyFlowOffset = (node: CanvasNode, flowId: string): CanvasNode => {
+              const off = flowOffsets.get(flowId);
+              if (!off || (off.dx === 0 && off.dy === 0)) return node;
+              return { ...node, x: node.x + off.dx, y: node.y + off.dy };
+            };
+
             const mergedNodes = importResult.graph.nodes.map((newNode) => {
               const existing = existingById.get(newNode.id);
               if (existing) {
                 return { ...newNode, x: existing.x, y: existing.y, width: existing.width, height: existing.height };
               }
+              // FlowNodes: no offset needed (they're new or keep layout pos directly)
+              if (newNode.category === FLOW_NODES_KEY) return newNode;
+
+              // Outer nodegraph wrapper: connected directly to its FlowNode
+              const wFlowId = wrapperFlowId.get(newNode.id);
+              if (wFlowId !== undefined) return applyFlowOffset(newNode, wFlowId);
+
+              // Per-action wrapper / action node: spatially inside the outer wrapper
+              for (const [flowId, outerW] of flowOuterWrapper) {
+                const hw = (outerW.width ?? DEFAULT_CANVAS_NODE_WIDTH) / 2;
+                const hh = (outerW.height ?? DEFAULT_CANVAS_NODE_HEIGHT) / 2;
+                if (
+                  newNode.x >= outerW.x - hw && newNode.x <= outerW.x + hw &&
+                  newNode.y >= outerW.y - hh && newNode.y <= outerW.y + hh
+                ) {
+                  return applyFlowOffset(newNode, flowId);
+                }
+              }
+
               return newNode;
             });
+
             return {
               nodes: mergedNodes,
               connections: importResult.graph.connections,

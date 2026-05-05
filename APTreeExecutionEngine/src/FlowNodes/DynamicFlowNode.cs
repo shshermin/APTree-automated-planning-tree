@@ -265,6 +265,29 @@ public class DynamicFlowNode : FlowNode
         if (actionGraph != null)
         {
             LoggingService.LogInfo($"🔄 FlowNode: Clearing action graph for next round");
+            // Broadcast "Idle" for any actions still marked as active so the frontend
+            // stops showing the old subtree as running after the HL replan.
+            foreach (var node in actionGraph.GetAllActionNodes())
+            {
+                if (node.status == BTNodeResult.InProgress || node.status == BTNodeResult.ReadyToTick)
+                    BTNode.FireNodeTicked(node.DebugDisplayName, "Idle");
+
+                // Also fire "Idle" for any ML-level nodes inside each HL action's subtree
+                // (e.g. StackML_stick2 / TravelML inside StackHL_stick2's DFN), so the
+                // live panel stops showing stick2 after the fault triggers the replan.
+                if (node.IsHighLevelAction && node.HighLevelSubtree != null)
+                {
+                    var mlGraph = node.HighLevelSubtree.GetActionGraph();
+                    if (mlGraph != null)
+                    {
+                        foreach (var mlNode in mlGraph.GetAllActionNodes())
+                        {
+                            if (mlNode.status == BTNodeResult.InProgress || mlNode.status == BTNodeResult.ReadyToTick)
+                                BTNode.FireNodeTicked(mlNode.DebugDisplayName, "Idle");
+                        }
+                    }
+                }
+            }
             ClearActionGraph();
         }
         else

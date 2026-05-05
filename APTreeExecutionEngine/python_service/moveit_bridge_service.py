@@ -296,6 +296,15 @@ def plan_and_execute():
                 planner_id='LIN',
             )
 
+            # Immediately retire the Pilz LIN execution handle so MoveGroup's
+            # trajectory_execution_manager is clean before the next request arrives.
+            # Without this, MoveGroup still considers the handle "active" and sends
+            # a "continuation" on the next goal — which the controller rejects
+            # (CONTROL_FAILED).  spin_once flushes any pending result/feedback
+            # callbacks that move_to()'s spin_until_future_complete may have missed.
+            stop_pub.publish(stop_msg)
+            rclpy.spin_once(move_to_task, timeout_sec=1.0)
+
         elapsed = time.time() - start_time
 
         if success:
@@ -327,4 +336,8 @@ if __name__ == '__main__':
     print("Starting MoveIt Bridge Service...")
     init_ros()
     print("Listening on http://127.0.0.1:5002")
-    app.run(host='127.0.0.1', port=5002, debug=False)
+    # threaded=False is required: rclpy only allows one executor to spin at a time.
+    # Concurrent Flask threads (the default) would race on spin_once / spin_until_future_complete
+    # and raise "Executor is already spinning". The BT engine is sequential anyway, so
+    # serialising requests here has no practical cost.
+    app.run(host='127.0.0.1', port=5002, debug=False, threaded=False)

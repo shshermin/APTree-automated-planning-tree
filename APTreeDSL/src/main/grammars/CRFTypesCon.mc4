@@ -99,6 +99,9 @@ astrule CloseToolML = method public crftypesdef._ast.ASTActionLevel getActLevel(
 PickUpML extends PActionNode = "Action" "PickUpML" name:Name "(" obj:Name@Element p:Name@Location client:Name@Robot vg:Name@Gripper rp:Name@RobotPosition ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
 astrule PickUpML = method public crftypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=crftypesdef._ast.ASTActionLevel.MIDLEVEL; } return actLevel; } ;
 
+PutDownML extends PActionNode = "Action" "PutDownML" name:Name "(" obj:Name@Element p:Name@Location client:Name@Robot vg:Name@Gripper rp:Name@RobotPosition ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
+astrule PutDownML = method public crftypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=crftypesdef._ast.ASTActionLevel.MIDLEVEL; } return actLevel; } ;
+
 PlaceML extends PActionNode = "Action" "PlaceML" name:Name "(" obj:Name@Element placepos:Name@Location client:Name@Robot vg:Name@VacGripper ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
 astrule PlaceML = method public crftypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=crftypesdef._ast.ASTActionLevel.MIDLEVEL; } return actLevel; } ;
 
