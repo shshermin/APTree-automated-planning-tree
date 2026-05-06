@@ -744,7 +744,7 @@ namespace BehaviorTreeMainProject
                     break;
                 }
                 
-                await Task.Delay(100); // Small delay to prevent high CPU usage
+                await Task.Delay(10); // Small delay to prevent high CPU usage
             }
             
             LoggingService.LogInfo($"ÃƒÂ¢Ã‚ÂÃ‚Â±ÃƒÂ¯Ã‚Â¸Ã‚Â Monitoring duration: {DateTime.Now - monitoringStartTime:hh\\:mm\\:ss\\.fff}");
@@ -1033,7 +1033,7 @@ namespace BehaviorTreeMainProject
                     }
                     
                     // Small delay between ticks
-                    await Task.Delay(100);
+                    await Task.Delay(10);
                 }
                 
                 if (tickCount >= maxTicks)

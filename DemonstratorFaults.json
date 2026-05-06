@@ -15,7 +15,7 @@
         "Gripper": "gripper1",
         "TempLocationName": "temploc1",
         "TempLocationPddlType": "firstposition",
-        "TempLocationPosition": [0.6073699999999999, 0.012, -0.009],
+        "TempLocationPosition": [0.5993800000000005, -0.0027, -0.009],
         "RobotFromLocation": "rppickup",
         "RobotToLocation": "rpmanipulate"
       }

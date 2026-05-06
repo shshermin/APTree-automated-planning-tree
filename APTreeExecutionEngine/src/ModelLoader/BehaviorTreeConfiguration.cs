@@ -82,7 +82,7 @@ namespace BehaviorTreeMainProject.ModelLoader
         public int MaxTicks { get; set; } = 0;
 
         /// <summary>Delay in milliseconds between ticks.</summary>
-        public int TickDelayMs { get; set; } = 100;
+        public int TickDelayMs { get; set; } = 10;
 
         // ── Execution mode parsing ──
 
@@ -156,7 +156,7 @@ namespace BehaviorTreeMainProject.ModelLoader
                 SubtreeExecutionMode = "Sequential",
 
                 MaxTicks = 0,
-                TickDelayMs = 100
+                TickDelayMs = 10
             };
         }
     }

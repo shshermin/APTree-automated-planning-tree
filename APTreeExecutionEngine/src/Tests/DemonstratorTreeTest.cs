@@ -493,7 +493,7 @@ namespace BehaviorTreeMainProject
                     break;
                 }
 
-                await Task.Delay(100);
+                await Task.Delay(10);
             }
 
             if (tickCount >= maxTicks)

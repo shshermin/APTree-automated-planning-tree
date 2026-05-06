@@ -46,7 +46,8 @@ public class DeequipToolLL : ExeAction, ILLInputBindable
             ProgramName = programName,
             Speed = 10,
             RobotIp = RobotIp,
-            Payload = 0.5  // Reset to default after removing tool
+            Payload = 0.5,  // Reset to default after removing tool
+            EndEffectorType = isNailTool ? "nailgun" : "gripper"
         };
     }
 }

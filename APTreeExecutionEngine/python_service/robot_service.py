@@ -45,6 +45,7 @@ class RobotState:
         self._tcp = None            # list [x, y, z, rx, ry, rz] or None
         self._payload = None        # float (kg) or None
         self._payload_cog = None    # list [cx, cy, cz] or None
+        self._end_effector = 'gripper'  # currently equipped tool
 
     def update(self, tcp=None, payload=None, payload_cog=None):
         """Atomically update all tool settings at once."""
@@ -52,6 +53,16 @@ class RobotState:
             self._tcp = tcp
             self._payload = payload
             self._payload_cog = payload_cog
+
+    def set_end_effector(self, ee: str):
+        """Store the currently equipped end effector."""
+        with self._lock:
+            self._end_effector = ee
+
+    def get_end_effector(self) -> str:
+        """Return the currently equipped end effector."""
+        with self._lock:
+            return self._end_effector
 
     def snapshot(self):
         """Return a consistent (tcp, payload, payload_cog) tuple."""
@@ -84,39 +95,25 @@ def health():
 
 @app.route('/gripper', methods=['POST'])
 def robot_gripper():
-    """Send a gripper command to the UR10 robot."""
+    """Forward gripper command to the MoveIt bridge (ROS IO service).
+
+    URScript via port 30002 is ignored while External Control holds the
+    fieldbus lock, so commands must go through the ROS driver instead.
+    """
     try:
         data = request.json
         print(f"Received gripper request: {json.dumps(data, indent=2)}")
-
-        robot_ip = data.get('robotIp', DEFAULT_ROBOT_IP)
-        command_type = data.get('commandType', 'close_gripper')
-
         start_time = time.time()
-
-        if command_type == 'close_gripper':
-            result_msg = set_digital_out_sequence(robot_ip)
-        elif command_type == 'open_gripper':
-            from ur10_control.ur10_commands import set_tool_digital_out_open
-            result_msg = set_tool_digital_out_open(robot_ip)
-        else:
-            return jsonify({'success': False, 'error': f"Unsupported gripper commandType '{command_type}'"}), 400
-
+        resp = http_requests.post(f"{MOVEIT_BRIDGE_URL}/gripper", json=data, timeout=15)
+        resp_data = resp.json()
         elapsed = time.time() - start_time
-        print(f"Gripper command completed: {result_msg} ({elapsed:.2f}s)")
-        return jsonify({
-            'success': True,
-            'message': result_msg,
-            'executionTimeSeconds': elapsed
-        })
-
+        print(f"Gripper command completed: {resp_data.get('message', '')} ({elapsed:.2f}s)")
+        if resp_data.get('success'):
+            return jsonify({'success': True, 'message': resp_data.get('message', ''), 'executionTimeSeconds': elapsed})
+        return jsonify({'success': False, 'error': resp_data.get('error', 'Gripper command failed'), 'executionTimeSeconds': elapsed}), 500
     except Exception as e:
         print(f"Gripper command failed: {str(e)}")
-        return jsonify({
-            'success': False,
-            'error': str(e),
-            'executionTimeSeconds': 0
-        }), 500
+        return jsonify({'success': False, 'error': str(e), 'executionTimeSeconds': 0}), 500
 
 
 @app.route('/lift', methods=['POST'])
@@ -177,9 +174,20 @@ def robot_play_program():
         # retry up to 5 times.  External Control and other persistent programs must
         # NOT be retried: the retry loop re-sends setUserRole/setSpeedSlider and
         # the wait-for-completion poll would hang because EC never stops itself.
-        is_equip_program = 'equip' in program_name.lower()
+        is_deequip_program = 'deequip' in program_name.lower()
+        is_equip_program = 'equip' in program_name.lower() and not is_deequip_program
+
+        # Equip/deequip programs cannot run while EC holds the fieldbus lock —
+        # stop EC first so the dashboard can load and play the new program.
+        if is_equip_program or is_deequip_program:
+            state = dashboard_command(robot_ip, "programState")
+            if "PLAYING" in state.upper():
+                print(f"Stopping EC before running '{program_name}'")
+                dashboard_command(robot_ip, "stop")
+                time.sleep(1.0)  # let the controller release the fieldbus
+
         result_msg = play_program(robot_ip, program_name, speed=speed,
-                                  max_retries=5 if is_equip_program else 1)
+                                  max_retries=5 if (is_equip_program or is_deequip_program) else 1)
 
         # Check if the program actually failed to play
         if result_msg and ("File not found" in result_msg or "Failed" in result_msg):
@@ -212,6 +220,24 @@ def robot_play_program():
             payload_cog=payload_cog
         )
 
+        # Auto-start the correct EC program after equip/deequip so the 4s settle
+        # is paid here rather than on the first move, and so that EC loading does
+        # not clobber the payload we just set above.
+        end_effector_type = data.get('endEffectorType')
+        if is_equip_program and end_effector_type:
+            # Track the newly equipped tool so /move commands pick up the right EC
+            robot_state.set_end_effector(end_effector_type)
+            # Give the controller time to fully settle after the equip program stops,
+            # then start EC matching the newly equipped tool.
+            print(f"Auto-starting EC '{end_effector_type}' after equip program '{program_name}'")
+            time.sleep(0.5)
+            _ensure_ec_running(robot_ip, end_effector_type)
+        elif is_deequip_program:
+            # Track that the tool has been removed (back to gripper)
+            robot_state.set_end_effector('gripper')
+            # Do NOT start EC here — the equip that follows will start the right one.
+            print(f"Deequip complete: end effector reset to 'gripper', EC will start on next equip/move")
+
         elapsed = time.time() - start_time
 
         print(f"Program '{program_name}' completed: {result_msg} ({elapsed:.2f}s)")
@@ -233,6 +259,52 @@ def robot_play_program():
             'error': str(e),
             'executionTimeSeconds': 0
         }), 500
+
+
+def _ensure_ec_running(robot_ip, end_effector='gripper'):
+    """Ensure the correct External Control URCap program is running.
+
+    Reuses it if already PLAYING with the correct program (no restart overhead).
+    Stops and reloads if the wrong EC program is running (tool switch scenario).
+    Loads and plays fresh if nothing is running.
+    The 4s settle is only paid once per tool session, not per request.
+    """
+    ext_program = EXTERNAL_CONTROL_NAILGUN if end_effector == 'nailgun' else EXTERNAL_CONTROL_GRIPPER
+
+    state = dashboard_command(robot_ip, "programState")
+    if "PLAYING" in state.upper():
+        # Check which program is actually loaded — guard against wrong EC being active
+        loaded = dashboard_command(robot_ip, "get loaded program")
+        # Response is e.g. "Loaded program: /programs/external_control_g.urp"
+        if ext_program.lower() in loaded.lower():
+            print(f"External Control '{ext_program}' already running — skipping load/play")
+            return
+        # Wrong EC program is playing (tool was switched) — stop and reload
+        print(f"Wrong EC program running (expected '{ext_program}', got '{loaded}') — reloading")
+        dashboard_command(robot_ip, "stop")
+        time.sleep(0.5)
+
+    print(f"Loading External Control program: {ext_program}")
+    load_resp = dashboard_command(robot_ip, f"load {ext_program}")
+    if "File not found" in load_resp:
+        raise RuntimeError(f"External Control program not found: {ext_program}")
+    for attempt in range(1, 4):
+        play_resp = dashboard_command(robot_ip, "play")
+        if "Failed" not in play_resp and "Rejected" not in play_resp:
+            break
+        print(f"EC play attempt {attempt} rejected ({play_resp!r}), retrying in 3s")
+        time.sleep(3.0)
+    waited = 0.0
+    while waited < 15.0:
+        time.sleep(0.5)
+        waited += 0.5
+        state = dashboard_command(robot_ip, "programState")
+        if "PLAYING" in state.upper():
+            print(f"External Control program running after {waited:.1f}s")
+            break
+    time.sleep(1.5)  # settle: URCap <-> ROS2 driver handshake (paid once per tool session)
+    # NOTE: do NOT call robot_state.reapply() here. set_payload/set_tcp use URScript
+    # (port 30002) which preempts and kills the EC program on e-Series robots.
 
 
 @app.route('/move', methods=['POST'])
@@ -284,28 +356,52 @@ def robot_move():
         if payload_for_move:
             print(f"Re-applying stored payload: {payload_for_move} kg, COG: {payload_cog_for_move}")
 
-        # Stop external_control.urp before URScript moves to avoid fieldbus disconnect
-        if command_type in ('movej', 'movel', 'movep', 'movec'):
-            state = dashboard_command(robot_ip, "programState")
-            if "PLAYING" in state.upper():
-                print("Stopping external_control before URScript move")
-                dashboard_command(robot_ip, "stop")
-                time.sleep(0.5)
-
         if command_type == 'movej':
-            result_msg = move_to_pose(
-                robot_ip=robot_ip, name=final_position, position=position_data,
-                velocity=velocity if velocity is not None else 0.5,
-                acceleration=acceleration if acceleration is not None else 1.0,
-                tcp=tcp_for_move, payload=payload_for_move, payload_cog=payload_cog_for_move,
-            )
+            # Joint-space move via MoveIt RRTConnect — EC must be running
+            joints = inline_joints
+            if not joints or len(joints) < 6:
+                return jsonify({'success': False, 'error': 'joints [j1..j6] required for movej'}), 400
+            end_effector = data.get('endEffectorType') or robot_state.get_end_effector()
+            _ensure_ec_running(robot_ip, end_effector)
+            vel_val = velocity if velocity is not None else 0.3
+            acc_val = acceleration if acceleration is not None else 0.3
+            moveit_payload = {
+                'joints': joints,
+                'end_effector_type': end_effector,
+                'velocity': vel_val,
+                'acceleration': acc_val,
+            }
+            print(f"Forwarding movej to /move_joints: {moveit_payload}")
+            resp = http_requests.post(f"{MOVEIT_BRIDGE_URL}/move_joints", json=moveit_payload, timeout=60)
+            resp_data = resp.json()
+            if resp_data.get('success'):
+                result_msg = f"Joint-space move succeeded ({resp_data.get('executionTimeSeconds', 0):.2f}s)"
+            else:
+                return jsonify({'success': False, 'error': resp_data.get('error', 'movej failed')}), 500
+
         elif command_type == 'movel':
-            result_msg = move_to_pose_l(
-                robot_ip=robot_ip, name=final_position, position=position_data,
-                velocity=velocity if velocity is not None else 0.25,
-                acceleration=acceleration if acceleration is not None else 1.2,
-                tcp=tcp_for_move, payload=payload_for_move, payload_cog=payload_cog_for_move,
-            )
+            # Cartesian linear move via Pilz LIN — EC must be running
+            pose = inline_pose
+            if not pose or len(pose) < 6:
+                return jsonify({'success': False, 'error': 'pose [x,y,z,rx,ry,rz] required for movel'}), 400
+            end_effector = data.get('endEffectorType') or robot_state.get_end_effector()
+            _ensure_ec_running(robot_ip, end_effector)
+            vel_val = velocity if velocity is not None else 0.15
+            acc_val = acceleration if acceleration is not None else 0.15
+            moveit_payload = {
+                'pose': pose,
+                'end_effector_type': end_effector,
+                'velocity': vel_val,
+                'acceleration': acc_val,
+            }
+            print(f"Forwarding movel to /move_lin: {moveit_payload}")
+            resp = http_requests.post(f"{MOVEIT_BRIDGE_URL}/move_lin", json=moveit_payload, timeout=60)
+            resp_data = resp.json()
+            if resp_data.get('success'):
+                result_msg = f"Pilz LIN move succeeded ({resp_data.get('executionTimeSeconds', 0):.2f}s)"
+            else:
+                return jsonify({'success': False, 'error': resp_data.get('error', 'movel failed')}), 500
+
         elif command_type == 'movep':
             result_msg = move_to_pose_p(
                 robot_ip=robot_ip, name=final_position, position=position_data,
@@ -330,37 +426,10 @@ def robot_move():
                 return jsonify({'success': False, 'error': 'pose [x,y,z,rx,ry,rz] is required for planned moves'}), 400
 
             # Determine which external_control program to use based on end effector
-            end_effector = data.get('endEffectorType') or 'gripper'
-            ext_program = EXTERNAL_CONTROL_NAILGUN if end_effector == 'nailgun' else EXTERNAL_CONTROL_GRIPPER
+            end_effector = data.get('endEffectorType') or robot_state.get_end_effector()
 
-            # Step 1: Reuse external_control if already running, otherwise load+play
-            state = dashboard_command(robot_ip, "programState")
-            if "PLAYING" in state.upper():
-                print(f"External Control already running — skipping load/play")
-            else:
-                print(f"Loading External Control program: {ext_program}")
-                load_resp = dashboard_command(robot_ip, f"load {ext_program}")
-                print(f"Load response: {load_resp}")
-                if "File not found" in load_resp:
-                    return jsonify({'success': False, 'error': f"External Control program not found: {ext_program}"}), 500
-                dashboard_command(robot_ip, "play")
-
-                # Wait for External Control program to reach PLAYING state,
-                # then allow extra time for the URCap ↔ ROS2 driver handshake.
-                waited = 0.0
-                playing = False
-                while waited < 15.0:
-                    time.sleep(0.5)
-                    waited += 0.5
-                    state = dashboard_command(robot_ip, "programState")
-                    if "PLAYING" in state.upper():
-                        playing = True
-                        print(f"External Control program running after {waited:.1f}s")
-                        break
-                if not playing:
-                    print(f"WARNING: program did not reach PLAYING after {waited:.1f}s, proceeding anyway")
-                # Extra settle time for the driver connection to fully establish
-                time.sleep(2)
+            # Ensure external_control is running (reuse if already PLAYING)
+            _ensure_ec_running(robot_ip, end_effector)
 
             # Step 2: Convert rotation vector (rx, ry) to yaw in degrees
             rx, ry = pose[3], pose[4]
@@ -368,8 +437,8 @@ def robot_move():
             yaw_deg = 2.0 * half_theta * (180.0 / math.pi)
 
             moveit_payload = {
-                'x': -pose[0],
-                'y': -pose[1],
+                'x': pose[0],
+                'y': pose[1],
                 'z': pose[2],
                 'end_effector_type': end_effector,
                 'no_object': True,
@@ -431,4 +500,4 @@ if __name__ == '__main__':
     print("Starting Robot Execution Service...")
     print(f"Robot IP: {DEFAULT_ROBOT_IP}")
     print(f"Supported move types: {', '.join(SUPPORTED_MOVE_TYPES)}")
-    app.run(host='127.0.0.1', port=5001, debug=True)
+    app.run(host='127.0.0.1', port=5001, debug=True, use_reloader=False)

@@ -194,28 +194,37 @@ def plan_and_execute():
             )
             time.sleep(5.0)
 
-        # Build target pose
-        target_pose = _build_pose(x, y, z, yaw)
+        # Build target pose — negate x and y to convert from robot frame to ROS frame
+        target_pose = _build_pose(-x, -y, z, yaw)
 
         # Path constraints for nailgun
         path_constraints = None
         if end_effector_type == 'nailgun':
             path_constraints = _build_nailgun_path_constraints(target_pose)
 
-        # Tell MoveGroup to stop any ongoing trajectory execution and clear its
-        # internal state. Without this, the trajectory_execution_manager may try
-        # to send a "continuation" of the previous (now stale) trajectory instead
-        # of a fresh one, causing the controller to reject the goal.
         stop_msg = StringMsg()
         stop_msg.data = 'stop'
-        stop_pub.publish(stop_msg)
-        time.sleep(0.5)  # let MoveGroup process the stop before we send a new goal
-        move_to_task.get_logger().info('Published stop to clear stale trajectory state')
 
         # Execute motion with retry as safety net.
         MAX_RETRIES = 3
         success = False
         for attempt in range(1, MAX_RETRIES + 1):
+            if attempt > 1:
+                # Only publish stop before retries — NOT before attempt 1.
+                # MoveGroup processes topic callbacks on its own thread only when
+                # idle. If we publish stop then immediately send a goal, MoveGroup
+                # queues the stop while busy planning/dispatching, then fires it
+                # AFTER the controller starts executing → robot moves briefly then
+                # gets cut off (CONTROL_FAILED).
+                # Before attempt 1 the state is clean: either the end-of-previous-
+                # request stop+spin cleared the Pilz handle, or this is the first
+                # call and there is nothing to stop.
+                stop_pub.publish(stop_msg)
+                rclpy.spin_once(move_to_task, timeout_sec=0.1)  # flush pending callbacks
+                time.sleep(1.5)  # give MoveGroup time to process stop before new goal
+            move_to_task.get_logger().info(
+                f'Starting attempt {attempt}/{MAX_RETRIES}'
+            )
             success = move_to_task.move_to(
                 target_pose,
                 velocity_scaling=0.15,
@@ -286,7 +295,7 @@ def plan_and_execute():
             time.sleep(0.5)  # settle after press before lift
 
             # Lift 5 cm straight up (Pilz LIN to stay on same IK branch)
-            lift_pose = _build_pose(x, y, z + 0.05, yaw)
+            lift_pose = _build_pose(-x, -y, z + 0.05, yaw)
             move_to_task.move_to(
                 lift_pose,
                 velocity_scaling=0.15,
@@ -330,6 +339,192 @@ def plan_and_execute():
             'error': str(e),
             'executionTimeSeconds': 0
         }), 500
+
+
+@app.route('/gripper', methods=['POST'])
+def gripper():
+    """Control the gripper via the ROS IO service (works while EC is running).
+
+    URScript sent via port 30002 is ignored when External Control holds the
+    fieldbus lock — so gripper commands must go through the ROS driver instead.
+
+    Expected JSON body:
+        commandType  (str) — "close_gripper" or "open_gripper"
+    """
+    try:
+        data = request.json
+        command_type = data.get('commandType', 'close_gripper')
+
+        if not io_client.wait_for_service(timeout_sec=5.0):
+            return jsonify({'success': False, 'error': 'IO service not available'}), 500
+
+        def _set_io(pin, state):
+            req = SetIO.Request()
+            req.fun = 1        # FUN_SET_DIGITAL_OUT
+            req.pin = pin
+            req.state = float(state)
+            fut = io_client.call_async(req)
+            rclpy.spin_until_future_complete(move_to_task, fut, timeout_sec=5.0)
+            return fut.result() is not None and fut.result().success
+
+        if command_type == 'close_gripper':
+            # TDO1=True (close), wait, TDO0=False — mirrors URScript sequence
+            ok1 = _set_io(17, 1.0)
+            time.sleep(0.5)
+            ok2 = _set_io(16, 0.0)
+            if ok1 and ok2:
+                return jsonify({'success': True, 'message': 'Gripper closed'})
+            return jsonify({'success': False, 'error': 'IO set_io call failed'}), 500
+
+        elif command_type == 'open_gripper':
+            # TDO0=True (open)
+            ok = _set_io(16, 1.0)
+            time.sleep(0.5)
+            if ok:
+                return jsonify({'success': True, 'message': 'Gripper opened'})
+            return jsonify({'success': False, 'error': 'IO set_io call failed'}), 500
+
+        else:
+            return jsonify({'success': False, 'error': f'Unknown commandType: {command_type}'}), 400
+
+    except Exception as e:
+        import traceback; traceback.print_exc()
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@app.route('/move_lin', methods=['POST'])
+def move_lin():
+    """Execute a Cartesian linear move using Pilz LIN planner.
+
+    Used for movel moves: straight-line TCP path to a Cartesian pose.
+
+    Expected JSON body:
+        pose            (list[6]) — [x, y, z, rx, ry, rz] target pose
+        end_effector_type (str)   — "gripper" or "nailgun" (default: "gripper")
+        velocity        (float)   — velocity scaling 0-1 (default: 0.15)
+        acceleration    (float)   — acceleration scaling 0-1 (default: 0.15)
+    """
+    try:
+        data = request.json
+        print(f"Received /move_lin request: {data}")
+
+        pose = data.get('pose')
+        if not pose or len(pose) < 6:
+            return jsonify({'success': False, 'error': 'pose [x,y,z,rx,ry,rz] required'}), 400
+
+        end_effector_type = data.get('end_effector_type', 'gripper')
+        vel = float(data.get('velocity', 0.15))
+        acc = float(data.get('acceleration', 0.15))
+
+        # Clear any stale Pilz LIN handle from a previous move BEFORE sending a new goal.
+        # Publishing stop AFTER a completed move (at a low/contact position) can cause
+        # the controller to drop its hold, leading to a fieldbus disconnect protective stop.
+        _clear_stop = StringMsg()
+        _clear_stop.data = 'stop'
+        stop_pub.publish(_clear_stop)
+        rclpy.spin_once(move_to_task, timeout_sec=0.1)
+        time.sleep(0.3)
+
+        move_to_task.end_effector_link = EE_LINK_MAP.get(end_effector_type, 'tool0')
+
+        # Disable collisions for the inactive EE (only once per EE type)
+        if end_effector_type in ('gripper', 'nailgun'):
+            if _last_disabled_ee[0] != end_effector_type:
+                move_to_task.disable_inactive_ee(end_effector_type)
+                _last_disabled_ee[0] = end_effector_type
+                time.sleep(2.0)
+
+        # Set payload once per EE type
+        if _last_payload_ee[0] != end_effector_type:
+            move_to_task.set_robot_payload(end_effector_type)
+            _last_payload_ee[0] = end_effector_type
+            time.sleep(2.0)
+
+        # Convert rotation vector (rx, ry) to yaw for _build_pose
+        rx, ry = pose[3], pose[4]
+        half_theta = math.atan2(ry, rx)
+        yaw_deg = 2.0 * half_theta * (180.0 / math.pi)
+
+        target_pose = _build_pose(-pose[0], -pose[1], pose[2], yaw_deg)
+
+        start = time.time()
+        success = move_to_task.move_to(
+            target_pose,
+            velocity_scaling=vel,
+            acceleration_scaling=acc,
+            planning_time=10.0,
+            pipeline_id='pilz_industrial_motion_planner',
+            planner_id='LIN',
+        )
+        elapsed = time.time() - start
+
+        if success:
+            return jsonify({'success': True, 'executionTimeSeconds': elapsed})
+        else:
+            return jsonify({'success': False, 'error': 'Pilz LIN move failed',
+                            'executionTimeSeconds': elapsed}), 500
+    except Exception as e:
+        import traceback; traceback.print_exc()
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@app.route('/move_joints', methods=['POST'])
+def move_joints():
+    """Execute a joint-space move using OMPL RRTConnect.
+
+    Used for movej moves: joint-interpolated motion to a joint configuration
+    or a Cartesian pose (resolved via IK inside MoveIt).
+
+    Expected JSON body:
+        joints          (list[6]) — joint angles [j1..j6] in radians
+        end_effector_type (str)   — "gripper" or "nailgun" (default: "gripper")
+        velocity        (float)   — velocity scaling 0-1 (default: 0.3)
+        acceleration    (float)   — acceleration scaling 0-1 (default: 0.3)
+    """
+    try:
+        data = request.json
+        print(f"Received /move_joints request: {data}")
+
+        joints = data.get('joints')
+        if not joints or len(joints) < 6:
+            return jsonify({'success': False, 'error': 'joints [j1..j6] required'}), 400
+
+        end_effector_type = data.get('end_effector_type', 'gripper')
+        vel = float(data.get('velocity', 0.3))
+        acc = float(data.get('acceleration', 0.3))
+
+        move_to_task.end_effector_link = EE_LINK_MAP.get(end_effector_type, 'tool0')
+
+        # Disable collisions for the inactive EE (only once per EE type)
+        if end_effector_type in ('gripper', 'nailgun'):
+            if _last_disabled_ee[0] != end_effector_type:
+                move_to_task.disable_inactive_ee(end_effector_type)
+                _last_disabled_ee[0] = end_effector_type
+                time.sleep(2.0)
+
+        # Set payload once per EE type
+        if _last_payload_ee[0] != end_effector_type:
+            move_to_task.set_robot_payload(end_effector_type)
+            _last_payload_ee[0] = end_effector_type
+            time.sleep(2.0)
+
+        start = time.time()
+        success = move_to_task.move_to_joints(
+            joint_values=joints,
+            velocity_scaling=vel,
+            acceleration_scaling=acc,
+            planning_time=10.0,
+        )
+        elapsed = time.time() - start
+
+        if success:
+            return jsonify({'success': True, 'executionTimeSeconds': elapsed})
+        else:
+            return jsonify({'success': False, 'error': 'Joint-space move failed',
+                            'executionTimeSeconds': elapsed}), 500
+    except Exception as e:
+        import traceback; traceback.print_exc()
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 
 if __name__ == '__main__':

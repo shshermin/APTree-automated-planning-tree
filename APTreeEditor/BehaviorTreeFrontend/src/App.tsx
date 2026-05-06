@@ -462,7 +462,7 @@ function App() {
         startTransition(() => {
           setGraph((prev) => {
             const existingById = new Map(prev.nodes.map((n) => [n.id, n]));
-            const layoutNodeById = new Map(importResult.graph.nodes.map((n) => [n.id, n]));
+            const layoutNodeById = new Map(importResult.graph.nodes.map((n) => [n.id, n])); // used for flowOuterWrapper lookup
 
             // ── Per-FlowNode displacement (existing canvas pos − layout pos) ──
             // When a FlowNode keeps its old canvas position but its children are
@@ -501,17 +501,19 @@ function App() {
             };
 
             const mergedNodes = importResult.graph.nodes.map((newNode) => {
-              const existing = existingById.get(newNode.id);
-              // Preserve user-placed position for regular (non-wrapper) nodes.
-              // Wrapper nodes (renderAsSubtree: true) have their bounds auto-computed
-              // from contained actions; keeping stale sizes breaks geometric containment
-              // in collectSubtree after a replan, so they always get a fresh position
-              // derived from the new layout plus the FlowNode's displacement offset.
-              if (existing && !newNode.renderAsSubtree) {
-                return { ...newNode, x: existing.x, y: existing.y, width: existing.width, height: existing.height };
+              // FlowNodes: preserve user-placed positions (the draggable layer boxes).
+              if (newNode.category === FLOW_NODES_KEY) {
+                const existing = existingById.get(newNode.id);
+                if (existing) {
+                  return { ...newNode, x: existing.x, y: existing.y, width: existing.width, height: existing.height };
+                }
+                return newNode;
               }
-              // FlowNodes: no offset needed (they're new or keep layout pos directly)
-              if (newNode.category === FLOW_NODES_KEY) return newNode;
+
+              // All other nodes (actions, wrappers, services, decorators):
+              // Always use the fresh layout position + FlowNode displacement offset.
+              // Preserving stale positions here causes wrong visual order after a
+              // replan — a node that moved rows keeps its old position on screen.
 
               // Outer nodegraph wrapper: connected directly to its FlowNode
               const wFlowId = wrapperFlowId.get(newNode.id);

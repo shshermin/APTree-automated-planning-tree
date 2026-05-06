@@ -52,7 +52,8 @@ public class EquipToolLL : ExeAction, ILLInputBindable
                 : new[] { -0.001, 0.015, 0.028 },
             Tcp = isNailTool
                 ? new[] { -0.09515, -0.00026, 0.3165, 0.0, 0.0, 0.0 }
-                : new[] { 0.00723, 0.00095, 0.148, 0.0, 0.0, 0.0 }
+                : new[] { 0.00723, 0.00095, 0.148, 0.0, 0.0, 0.0 },
+            EndEffectorType = isNailTool ? "nailgun" : "gripper"
         };
     }
 }

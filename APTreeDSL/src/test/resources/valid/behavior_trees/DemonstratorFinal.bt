@@ -104,7 +104,114 @@ BehaviorTree Demonstrator {
                 ServicePlanning planner2 Enhsp Domain:DomainHLTruss Problem:ProblemL3L4 Config:sat-hmrph
                 All
                 AllAction
-                NodeGraph { }
+                NodeGraph {
+                    Action ChangeEndeffectorHL ChangeEndeffectorHL_robot1_staplergun1_gripper1 (robot1 staplergun1 gripper1) @ChangeEndeffectorHL_robot1_staplergun1_gripper1Subtree {
+                        --[Meets]--> PickUpHL_stick11_initlocstick11_robot1_gripper1;
+                    }
+                    Action PickUpHL PickUpHL_stick11_initlocstick11_robot1_gripper1 (stick11 initlocstick11 robot1 gripper1) @PickUpHL_stick11_initlocstick11_robot1_gripper1Subtree {
+                        --[Meets]--> StackOnTwoHL_stick11_robot1_finallocstick11_stick6_stick7_layer2_layer3_gripper1;
+                    }
+                    Action StackOnTwoHL StackOnTwoHL_stick11_robot1_finallocstick11_stick6_stick7_layer2_layer3_gripper1 (stick11 robot1 finallocstick11 stick6 stick7 layer2 layer3 gripper1) @StackOnTwoHL_stick11_robot1_finallocstick11_stick6_stick7_layer2_layer3_gripper1Subtree {
+                        --[Meets]--> PickUpHL_stick10_initlocstick10_robot1_gripper1;
+                    }
+                    Action PickUpHL PickUpHL_stick10_initlocstick10_robot1_gripper1 (stick10 initlocstick10 robot1 gripper1) {
+                        --[Meets]--> StackOnTwoHL_stick10_robot1_finallocstick10_stick6_cube1_layer2_layer3_gripper1;
+                    }
+                    Action StackOnTwoHL StackOnTwoHL_stick10_robot1_finallocstick10_stick6_cube1_layer2_layer3_gripper1 (stick10 robot1 finallocstick10 stick6 cube1 layer2 layer3 gripper1) {
+                        --[Meets]--> PickUpHL_stick12_initlocstick12_robot1_gripper1;
+                    }
+                    Action PickUpHL PickUpHL_stick12_initlocstick12_robot1_gripper1 (stick12 initlocstick12 robot1 gripper1) {
+                        --[Meets]--> StackOnTwoHL_stick12_robot1_finallocstick12_stick8_stick7_layer2_layer3_gripper1;
+                    }
+                    Action StackOnTwoHL StackOnTwoHL_stick12_robot1_finallocstick12_stick8_stick7_layer2_layer3_gripper1 (stick12 robot1 finallocstick12 stick8 stick7 layer2 layer3 gripper1) {
+                        --[Meets]--> PickUpHL_stick15_initlocstick15_robot1_gripper1;
+                    }
+                    Action PickUpHL PickUpHL_stick15_initlocstick15_robot1_gripper1 (stick15 initlocstick15 robot1 gripper1) {
+                        --[Meets]--> StackOnTwoHL_stick15_robot1_finallocstick15_stick11_stick10_layer3_layer4_gripper1;
+                    }
+                    Action StackOnTwoHL StackOnTwoHL_stick15_robot1_finallocstick15_stick11_stick10_layer3_layer4_gripper1 (stick15 robot1 finallocstick15 stick11 stick10 layer3 layer4 gripper1) {
+                        --[Meets]--> PickUpHL_cube3_initloccube3_robot1_gripper1;
+                    }
+                    Action PickUpHL PickUpHL_cube3_initloccube3_robot1_gripper1 (cube3 initloccube3 robot1 gripper1) {
+                        --[Meets]--> StackHL_cube3_stick10_robot1_finalloccube3_gripper1;
+                    }
+                    Action StackHL StackHL_cube3_stick10_robot1_finalloccube3_gripper1 (cube3 stick10 robot1 finalloccube3 gripper1) {
+                        --[Meets]--> PickUpHL_stick16_initlocstick16_robot1_gripper1;
+                    }
+                    Action PickUpHL PickUpHL_stick16_initlocstick16_robot1_gripper1 (stick16 initlocstick16 robot1 gripper1) {
+                        --[Meets]--> StackOnTwoHL_stick16_robot1_finallocstick16_stick12_stick11_layer3_layer4_gripper1;
+                    }
+                    Action StackOnTwoHL StackOnTwoHL_stick16_robot1_finallocstick16_stick12_stick11_layer3_layer4_gripper1 (stick16 robot1 finallocstick16 stick12 stick11 layer3 layer4 gripper1) {
+                        --[Meets]--> PickUpHL_stick14_initlocstick14_robot1_gripper1;
+                    }
+                    Action PickUpHL PickUpHL_stick14_initlocstick14_robot1_gripper1 (stick14 initlocstick14 robot1 gripper1) {
+                        --[Meets]--> StackOnTwoHL_stick14_robot1_finallocstick14_cube2_stick9_layer2_layer3_gripper1;
+                    }
+                    Action StackOnTwoHL StackOnTwoHL_stick14_robot1_finallocstick14_cube2_stick9_layer2_layer3_gripper1 (stick14 robot1 finallocstick14 cube2 stick9 layer2 layer3 gripper1) {
+                        --[Meets]--> PickUpHL_stick13_initlocstick13_robot1_gripper1;
+                    }
+                    Action PickUpHL PickUpHL_stick13_initlocstick13_robot1_gripper1 (stick13 initlocstick13 robot1 gripper1) {
+                        --[Meets]--> StackOnTwoHL_stick13_robot1_finallocstick13_stick8_stick9_layer2_layer3_gripper1;
+                    }
+                    Action StackOnTwoHL StackOnTwoHL_stick13_robot1_finallocstick13_stick8_stick9_layer2_layer3_gripper1 (stick13 robot1 finallocstick13 stick8 stick9 layer2 layer3 gripper1) {
+                        --[Meets]--> PickUpHL_cube4_initloccube4_robot1_gripper1;
+                    }
+                    Action PickUpHL PickUpHL_cube4_initloccube4_robot1_gripper1 (cube4 initloccube4 robot1 gripper1) {
+                        --[Meets]--> StackHL_cube4_stick14_robot1_finalloccube4_gripper1;
+                    }
+                    Action StackHL StackHL_cube4_stick14_robot1_finalloccube4_gripper1 (cube4 stick14 robot1 finalloccube4 gripper1) {
+                        --[Meets]--> PickUpHL_stick17_initlocstick17_robot1_gripper1;
+                    }
+                    Action PickUpHL PickUpHL_stick17_initlocstick17_robot1_gripper1 (stick17 initlocstick17 robot1 gripper1) {
+                        --[Meets]--> StackOnTwoHL_stick17_robot1_finallocstick17_stick13_stick12_layer3_layer4_gripper1;
+                    }
+                    Action StackOnTwoHL StackOnTwoHL_stick17_robot1_finallocstick17_stick13_stick12_layer3_layer4_gripper1 (stick17 robot1 finallocstick17 stick13 stick12 layer3 layer4 gripper1) {
+                        --[Meets]--> ChangeEndeffectorHL_robot1_gripper1_staplergun1;
+                    }
+                    Action ChangeEndeffectorHL ChangeEndeffectorHL_robot1_gripper1_staplergun1 (robot1 gripper1 staplergun1) {
+                        --[Meets]--> NailingHL_stick17_stick12_robot1_staplergun1;
+                    }
+                    Action NailingHL NailingHL_stick17_stick12_robot1_staplergun1 (stick17 stick12 robot1 staplergun1) {
+                        --[Meets]--> NailingHL_stick17_stick13_robot1_staplergun1;
+                    }
+                    Action NailingHL NailingHL_stick17_stick13_robot1_staplergun1 (stick17 stick13 robot1 staplergun1) {
+                        --[Meets]--> NailingHL_cube3_stick10_robot1_staplergun1;
+                    }
+                    Action NailingHL NailingHL_cube3_stick10_robot1_staplergun1 (cube3 stick10 robot1 staplergun1) {
+                        --[Meets]--> NailingHL_cube4_stick14_robot1_staplergun1;
+                    }
+                    Action NailingHL NailingHL_cube4_stick14_robot1_staplergun1 (cube4 stick14 robot1 staplergun1) {
+                        --[Meets]--> NailingHL_stick15_stick10_robot1_staplergun1;
+                    }
+                    Action NailingHL NailingHL_stick15_stick10_robot1_staplergun1 (stick15 stick10 robot1 staplergun1) {
+                        --[Meets]--> NailingHL_stick15_stick11_robot1_staplergun1;
+                    }
+                    Action NailingHL NailingHL_stick15_stick11_robot1_staplergun1 (stick15 stick11 robot1 staplergun1) {
+                        --[Meets]--> NailingHL_stick16_stick11_robot1_staplergun1;
+                    }
+                    Action NailingHL NailingHL_stick16_stick11_robot1_staplergun1 (stick16 stick11 robot1 staplergun1) {
+                        --[Meets]--> NailingHL_stick16_stick12_robot1_staplergun1;
+                    }
+                    Action NailingHL NailingHL_stick16_stick12_robot1_staplergun1 (stick16 stick12 robot1 staplergun1) {
+                        --[Meets]--> ChangeEndeffectorHL_robot1_staplergun1_gripper1_dup2;
+                    }
+                    Action ChangeEndeffectorHL ChangeEndeffectorHL_robot1_staplergun1_gripper1_dup2 (robot1 staplergun1 gripper1) {
+                        --[Meets]--> PickUpHL_stick18_initlocstick18_robot1_gripper1;
+                    }
+                    Action PickUpHL PickUpHL_stick18_initlocstick18_robot1_gripper1 (stick18 initlocstick18 robot1 gripper1) {
+                        --[Meets]--> StackOnTwoHL_stick18_robot1_finallocstick18_stick13_stick14_layer3_layer4_gripper1;
+                    }
+                    Action StackOnTwoHL StackOnTwoHL_stick18_robot1_finallocstick18_stick13_stick14_layer3_layer4_gripper1 (stick18 robot1 finallocstick18 stick13 stick14 layer3 layer4 gripper1) {
+                        --[Meets]--> ChangeEndeffectorHL_robot1_gripper1_staplergun1_dup2;
+                    }
+                    Action ChangeEndeffectorHL ChangeEndeffectorHL_robot1_gripper1_staplergun1_dup2 (robot1 gripper1 staplergun1) {
+                        --[Meets]--> NailingHL_stick18_stick13_robot1_staplergun1;
+                    }
+                    Action NailingHL NailingHL_stick18_stick13_robot1_staplergun1 (stick18 stick13 robot1 staplergun1) {
+                        --[Meets]--> NailingHL_stick18_stick14_robot1_staplergun1;
+                    }
+                    Action NailingHL NailingHL_stick18_stick14_robot1_staplergun1 (stick18 stick14 robot1 staplergun1)
+                }
             } {
                 --[Meets]--> Layers5_6;
             }
@@ -178,6 +285,645 @@ BehaviorTree Demonstrator {
                 AllAction
                 NodeGraph { }
             } 
+        }
+    }
+}BehaviorTree PickUpHL_stick10_initlocstick10_robot1_gripper1Subtree {
+    Root FlowNode ENHSP_Demonstrator_DynamicFlow_PickUpHL_stick10_initlocstick10_robot1_gripper1 {
+        ServicePlanning subtreeSrv_PickUpHL_stick10_initlocstick10_robot1_gripper1 Enhsp Domain:DomainMLTruss Problem:problemPickUpHL_stick10_initlocstick10_robot1_gripper1
+        All
+        AllAction
+        NodeGraph {
+            Action TravelML TravelML_robot1_rpmanipulate_rppickup (robot1 rpmanipulate rppickup) {
+                --[Meets]--> PickUpML_stick10_initlocstick10_robot1_gripper1_rppickup;
+            }
+            Action PickUpML PickUpML_stick10_initlocstick10_robot1_gripper1_rppickup (stick10 initlocstick10 robot1 gripper1 rppickup)
+        }
+    }
+}
+
+BehaviorTree StackOnTwoHL_stick10_robot1_finallocstick10_stick6_cube1_layer2_layer3_gripper1Subtree {
+    Root FlowNode ENHSP_Demonstrator_DynamicFlow_StackOnTwoHL_stick10_robot1_finallocstick10_stick6_cube1_layer2_layer3_gripper1 {
+        ServicePlanning subtreeSrv_StackOnTwoHL_stick10_robot1_finallocstick10_stick6_cube1_layer2_layer3_gripper1 Enhsp Domain:DomainMLTruss Problem:problemStackOnTwoHL_stick10_robot1_finallocstick10_stick6_cube1_layer2_layer3_gripper1
+        All
+        AllAction
+        NodeGraph {
+            Action TravelML TravelML_robot1_rppickup_rpmanipulate (robot1 rppickup rpmanipulate) {
+                --[Meets]--> StackOnTwoML_stick10_robot1_finallocstick10_rpmanipulate_cube1_stick6_gripper1_layer2_layer3;
+            }
+            Action StackOnTwoML StackOnTwoML_stick10_robot1_finallocstick10_rpmanipulate_cube1_stick6_gripper1_layer2_layer3 (stick10 robot1 finallocstick10 rpmanipulate cube1 stick6 gripper1 layer2 layer3)
+        }
+    }
+}
+
+BehaviorTree PickUpHL_stick12_initlocstick12_robot1_gripper1Subtree {
+    Root FlowNode ENHSP_Demonstrator_DynamicFlow_PickUpHL_stick12_initlocstick12_robot1_gripper1 {
+        ServicePlanning subtreeSrv_PickUpHL_stick12_initlocstick12_robot1_gripper1 Enhsp Domain:DomainMLTruss Problem:problemPickUpHL_stick12_initlocstick12_robot1_gripper1
+        All
+        AllAction
+        NodeGraph {
+            Action TravelML TravelML_robot1_rpmanipulate_rppickup (robot1 rpmanipulate rppickup) {
+                --[Meets]--> PickUpML_stick12_initlocstick12_robot1_gripper1_rppickup;
+            }
+            Action PickUpML PickUpML_stick12_initlocstick12_robot1_gripper1_rppickup (stick12 initlocstick12 robot1 gripper1 rppickup)
+        }
+    }
+}
+
+BehaviorTree StackOnTwoHL_stick12_robot1_finallocstick12_stick8_stick7_layer2_layer3_gripper1Subtree {
+    Root FlowNode ENHSP_Demonstrator_DynamicFlow_StackOnTwoHL_stick12_robot1_finallocstick12_stick8_stick7_layer2_layer3_gripper1 {
+        ServicePlanning subtreeSrv_StackOnTwoHL_stick12_robot1_finallocstick12_stick8_stick7_layer2_layer3_gripper1 Enhsp Domain:DomainMLTruss Problem:problemStackOnTwoHL_stick12_robot1_finallocstick12_stick8_stick7_layer2_layer3_gripper1
+        All
+        AllAction
+        NodeGraph {
+            Action TravelML TravelML_robot1_rppickup_rpmanipulate (robot1 rppickup rpmanipulate) {
+                --[Meets]--> StackOnTwoML_stick12_robot1_finallocstick12_rpmanipulate_stick7_stick8_gripper1_layer2_layer3;
+            }
+            Action StackOnTwoML StackOnTwoML_stick12_robot1_finallocstick12_rpmanipulate_stick7_stick8_gripper1_layer2_layer3 (stick12 robot1 finallocstick12 rpmanipulate stick7 stick8 gripper1 layer2 layer3)
+        }
+    }
+}
+
+BehaviorTree PickUpHL_stick15_initlocstick15_robot1_gripper1Subtree {
+    Root FlowNode ENHSP_Demonstrator_DynamicFlow_PickUpHL_stick15_initlocstick15_robot1_gripper1 {
+        ServicePlanning subtreeSrv_PickUpHL_stick15_initlocstick15_robot1_gripper1 Enhsp Domain:DomainMLTruss Problem:problemPickUpHL_stick15_initlocstick15_robot1_gripper1
+        All
+        AllAction
+        NodeGraph {
+            Action TravelML TravelML_robot1_rpmanipulate_rppickup (robot1 rpmanipulate rppickup) {
+                --[Meets]--> PickUpML_stick15_initlocstick15_robot1_gripper1_rppickup;
+            }
+            Action PickUpML PickUpML_stick15_initlocstick15_robot1_gripper1_rppickup (stick15 initlocstick15 robot1 gripper1 rppickup)
+        }
+    }
+}
+
+BehaviorTree StackOnTwoHL_stick15_robot1_finallocstick15_stick11_stick10_layer3_layer4_gripper1Subtree {
+    Root FlowNode ENHSP_Demonstrator_DynamicFlow_StackOnTwoHL_stick15_robot1_finallocstick15_stick11_stick10_layer3_layer4_gripper1 {
+        ServicePlanning subtreeSrv_StackOnTwoHL_stick15_robot1_finallocstick15_stick11_stick10_layer3_layer4_gripper1 Enhsp Domain:DomainMLTruss Problem:problemStackOnTwoHL_stick15_robot1_finallocstick15_stick11_stick10_layer3_layer4_gripper1
+        All
+        AllAction
+        NodeGraph {
+            Action TravelML TravelML_robot1_rppickup_rpmanipulate (robot1 rppickup rpmanipulate) {
+                --[Meets]--> StackOnTwoML_stick15_robot1_finallocstick15_rpmanipulate_stick11_stick10_gripper1_layer3_layer4;
+            }
+            Action StackOnTwoML StackOnTwoML_stick15_robot1_finallocstick15_rpmanipulate_stick11_stick10_gripper1_layer3_layer4 (stick15 robot1 finallocstick15 rpmanipulate stick11 stick10 gripper1 layer3 layer4)
+        }
+    }
+}
+
+BehaviorTree PickUpHL_cube3_initloccube3_robot1_gripper1Subtree {
+    Root FlowNode ENHSP_Demonstrator_DynamicFlow_PickUpHL_cube3_initloccube3_robot1_gripper1 {
+        ServicePlanning subtreeSrv_PickUpHL_cube3_initloccube3_robot1_gripper1 Enhsp Domain:DomainMLTruss Problem:problemPickUpHL_cube3_initloccube3_robot1_gripper1
+        All
+        AllAction
+        NodeGraph {
+            Action TravelML TravelML_robot1_rpmanipulate_rppickup (robot1 rpmanipulate rppickup) {
+                --[Meets]--> PickUpML_cube3_initloccube3_robot1_gripper1_rppickup;
+            }
+            Action PickUpML PickUpML_cube3_initloccube3_robot1_gripper1_rppickup (cube3 initloccube3 robot1 gripper1 rppickup)
+        }
+    }
+}
+
+BehaviorTree StackHL_cube3_stick10_robot1_finalloccube3_gripper1Subtree {
+    Root FlowNode ENHSP_Demonstrator_DynamicFlow_StackHL_cube3_stick10_robot1_finalloccube3_gripper1 {
+        ServicePlanning subtreeSrv_StackHL_cube3_stick10_robot1_finalloccube3_gripper1 Enhsp Domain:DomainMLTruss Problem:problemStackHL_cube3_stick10_robot1_finalloccube3_gripper1
+        All
+        AllAction
+        NodeGraph {
+            Action TravelML TravelML_robot1_rppickup_rpmanipulate (robot1 rppickup rpmanipulate) {
+                --[Meets]--> StackML_cube3_stick10_robot1_gripper1_finalloccube3_rpmanipulate;
+            }
+            Action StackML StackML_cube3_stick10_robot1_gripper1_finalloccube3_rpmanipulate (cube3 stick10 robot1 gripper1 finalloccube3 rpmanipulate)
+        }
+    }
+}
+
+BehaviorTree PickUpHL_stick16_initlocstick16_robot1_gripper1Subtree {
+    Root FlowNode ENHSP_Demonstrator_DynamicFlow_PickUpHL_stick16_initlocstick16_robot1_gripper1 {
+        ServicePlanning subtreeSrv_PickUpHL_stick16_initlocstick16_robot1_gripper1 Enhsp Domain:DomainMLTruss Problem:problemPickUpHL_stick16_initlocstick16_robot1_gripper1
+        All
+        AllAction
+        NodeGraph {
+            Action TravelML TravelML_robot1_rpmanipulate_rppickup (robot1 rpmanipulate rppickup) {
+                --[Meets]--> PickUpML_stick16_initlocstick16_robot1_gripper1_rppickup;
+            }
+            Action PickUpML PickUpML_stick16_initlocstick16_robot1_gripper1_rppickup (stick16 initlocstick16 robot1 gripper1 rppickup)
+        }
+    }
+}
+
+BehaviorTree StackOnTwoHL_stick16_robot1_finallocstick16_stick12_stick11_layer3_layer4_gripper1Subtree {
+    Root FlowNode ENHSP_Demonstrator_DynamicFlow_StackOnTwoHL_stick16_robot1_finallocstick16_stick12_stick11_layer3_layer4_gripper1 {
+        ServicePlanning subtreeSrv_StackOnTwoHL_stick16_robot1_finallocstick16_stick12_stick11_layer3_layer4_gripper1 Enhsp Domain:DomainMLTruss Problem:problemStackOnTwoHL_stick16_robot1_finallocstick16_stick12_stick11_layer3_layer4_gripper1
+        All
+        AllAction
+        NodeGraph {
+            Action TravelML TravelML_robot1_rppickup_rpmanipulate (robot1 rppickup rpmanipulate) {
+                --[Meets]--> StackOnTwoML_stick16_robot1_finallocstick16_rpmanipulate_stick11_stick12_gripper1_layer3_layer4;
+            }
+            Action StackOnTwoML StackOnTwoML_stick16_robot1_finallocstick16_rpmanipulate_stick11_stick12_gripper1_layer3_layer4 (stick16 robot1 finallocstick16 rpmanipulate stick11 stick12 gripper1 layer3 layer4)
+        }
+    }
+}
+
+BehaviorTree PickUpHL_stick14_initlocstick14_robot1_gripper1Subtree {
+    Root FlowNode ENHSP_Demonstrator_DynamicFlow_PickUpHL_stick14_initlocstick14_robot1_gripper1 {
+        ServicePlanning subtreeSrv_PickUpHL_stick14_initlocstick14_robot1_gripper1 Enhsp Domain:DomainMLTruss Problem:problemPickUpHL_stick14_initlocstick14_robot1_gripper1
+        All
+        AllAction
+        NodeGraph {
+            Action TravelML TravelML_robot1_rpmanipulate_rppickup (robot1 rpmanipulate rppickup) {
+                --[Meets]--> PickUpML_stick14_initlocstick14_robot1_gripper1_rppickup;
+            }
+            Action PickUpML PickUpML_stick14_initlocstick14_robot1_gripper1_rppickup (stick14 initlocstick14 robot1 gripper1 rppickup)
+        }
+    }
+}
+
+BehaviorTree StackOnTwoHL_stick14_robot1_finallocstick14_cube2_stick9_layer2_layer3_gripper1Subtree {
+    Root FlowNode ENHSP_Demonstrator_DynamicFlow_StackOnTwoHL_stick14_robot1_finallocstick14_cube2_stick9_layer2_layer3_gripper1 {
+        ServicePlanning subtreeSrv_StackOnTwoHL_stick14_robot1_finallocstick14_cube2_stick9_layer2_layer3_gripper1 Enhsp Domain:DomainMLTruss Problem:problemStackOnTwoHL_stick14_robot1_finallocstick14_cube2_stick9_layer2_layer3_gripper1
+        All
+        AllAction
+        NodeGraph {
+            Action TravelML TravelML_robot1_rppickup_rpmanipulate (robot1 rppickup rpmanipulate) {
+                --[Meets]--> StackOnTwoML_stick14_robot1_finallocstick14_rpmanipulate_cube2_stick9_gripper1_layer2_layer3;
+            }
+            Action StackOnTwoML StackOnTwoML_stick14_robot1_finallocstick14_rpmanipulate_cube2_stick9_gripper1_layer2_layer3 (stick14 robot1 finallocstick14 rpmanipulate cube2 stick9 gripper1 layer2 layer3)
+        }
+    }
+}
+
+BehaviorTree PickUpHL_stick13_initlocstick13_robot1_gripper1Subtree {
+    Root FlowNode ENHSP_Demonstrator_DynamicFlow_PickUpHL_stick13_initlocstick13_robot1_gripper1 {
+        ServicePlanning subtreeSrv_PickUpHL_stick13_initlocstick13_robot1_gripper1 Enhsp Domain:DomainMLTruss Problem:problemPickUpHL_stick13_initlocstick13_robot1_gripper1
+        All
+        AllAction
+        NodeGraph {
+            Action TravelML TravelML_robot1_rpmanipulate_rppickup (robot1 rpmanipulate rppickup) {
+                --[Meets]--> PickUpML_stick13_initlocstick13_robot1_gripper1_rppickup;
+            }
+            Action PickUpML PickUpML_stick13_initlocstick13_robot1_gripper1_rppickup (stick13 initlocstick13 robot1 gripper1 rppickup)
+        }
+    }
+}
+
+BehaviorTree StackOnTwoHL_stick13_robot1_finallocstick13_stick8_stick9_layer2_layer3_gripper1Subtree {
+    Root FlowNode ENHSP_Demonstrator_DynamicFlow_StackOnTwoHL_stick13_robot1_finallocstick13_stick8_stick9_layer2_layer3_gripper1 {
+        ServicePlanning subtreeSrv_StackOnTwoHL_stick13_robot1_finallocstick13_stick8_stick9_layer2_layer3_gripper1 Enhsp Domain:DomainMLTruss Problem:problemStackOnTwoHL_stick13_robot1_finallocstick13_stick8_stick9_layer2_layer3_gripper1
+        All
+        AllAction
+        NodeGraph {
+            Action TravelML TravelML_robot1_rppickup_rpmanipulate (robot1 rppickup rpmanipulate) {
+                --[Meets]--> StackOnTwoML_stick13_robot1_finallocstick13_rpmanipulate_stick8_stick9_gripper1_layer2_layer3;
+            }
+            Action StackOnTwoML StackOnTwoML_stick13_robot1_finallocstick13_rpmanipulate_stick8_stick9_gripper1_layer2_layer3 (stick13 robot1 finallocstick13 rpmanipulate stick8 stick9 gripper1 layer2 layer3)
+        }
+    }
+}
+
+BehaviorTree PickUpHL_cube4_initloccube4_robot1_gripper1Subtree {
+    Root FlowNode ENHSP_Demonstrator_DynamicFlow_PickUpHL_cube4_initloccube4_robot1_gripper1 {
+        ServicePlanning subtreeSrv_PickUpHL_cube4_initloccube4_robot1_gripper1 Enhsp Domain:DomainMLTruss Problem:problemPickUpHL_cube4_initloccube4_robot1_gripper1
+        All
+        AllAction
+        NodeGraph {
+            Action TravelML TravelML_robot1_rpmanipulate_rppickup (robot1 rpmanipulate rppickup) {
+                --[Meets]--> PickUpML_cube4_initloccube4_robot1_gripper1_rppickup;
+            }
+            Action PickUpML PickUpML_cube4_initloccube4_robot1_gripper1_rppickup (cube4 initloccube4 robot1 gripper1 rppickup)
+        }
+    }
+}BehaviorTree PickUpHL_stick1_initlocstick1_robot1_gripper1Subtree {
+    Root FlowNode ENHSP_Demonstrator_DynamicFlow_PickUpHL_stick1_initlocstick1_robot1_gripper1 {
+        ServicePlanning subtreeSrv_PickUpHL_stick1_initlocstick1_robot1_gripper1 Enhsp Domain:DomainMLTruss Problem:problemPickUpHL_stick1_initlocstick1_robot1_gripper1
+        All
+        AllAction
+        NodeGraph {
+            Action TravelML TravelML_robot1_rpmanipulate_rppickup (robot1 rpmanipulate rppickup) {
+                --[Meets]--> PickUpML_stick1_initlocstick1_robot1_gripper1_rppickup;
+            }
+            Action PickUpML PickUpML_stick1_initlocstick1_robot1_gripper1_rppickup (stick1 initlocstick1 robot1 gripper1 rppickup)
+        }
+    }
+}
+
+BehaviorTree StackHL_stick1_table1_robot1_finallocstick1_gripper1Subtree {
+    Root FlowNode ENHSP_Demonstrator_DynamicFlow_StackHL_stick1_table1_robot1_finallocstick1_gripper1 {
+        ServicePlanning subtreeSrv_StackHL_stick1_table1_robot1_finallocstick1_gripper1 Enhsp Domain:DomainMLTruss Problem:problemStackHL_stick1_table1_robot1_finallocstick1_gripper1
+        All
+        AllAction
+        NodeGraph {
+            Action TravelML TravelML_robot1_rppickup_rpmanipulate (robot1 rppickup rpmanipulate) {
+                --[Meets]--> StackML_stick1_table1_robot1_gripper1_finallocstick1_rpmanipulate;
+            }
+            Action StackML StackML_stick1_table1_robot1_gripper1_finallocstick1_rpmanipulate (stick1 table1 robot1 gripper1 finallocstick1 rpmanipulate)
+        }
+    }
+}BehaviorTree PickUpHL_stick3_initlocstick3_robot1_gripper1Subtree {
+    Root FlowNode ENHSP_Demonstrator_DynamicFlow_PickUpHL_stick3_initlocstick3_robot1_gripper1 {
+        ServicePlanning subtreeSrv_PickUpHL_stick3_initlocstick3_robot1_gripper1 Enhsp Domain:DomainMLTruss Problem:problemPickUpHL_stick3_initlocstick3_robot1_gripper1
+        All
+        AllAction
+        NodeGraph {
+            Action PickUpML PickUpML_stickdummy_temploc2_robot1_gripper1_rppickup (stickdummy temploc2 robot1 gripper1 rppickup) {
+                --[Meets]--> PutDownML_stickdummy_temploc3_robot1_gripper1_rppickup;
+            }
+            Action PutDownML PutDownML_stickdummy_temploc3_robot1_gripper1_rppickup (stickdummy temploc3 robot1 gripper1 rppickup) {
+                --[Meets]--> PickUpML_stick3_initlocstick3_robot1_gripper1_rppickup;
+            }
+            Action PickUpML PickUpML_stick3_initlocstick3_robot1_gripper1_rppickup (stick3 initlocstick3 robot1 gripper1 rppickup)
+        }
+    }
+}
+
+BehaviorTree StackHL_stick3_table1_robot1_finallocstick3_gripper1Subtree {
+    Root FlowNode ENHSP_Demonstrator_DynamicFlow_StackHL_stick3_table1_robot1_finallocstick3_gripper1 {
+        ServicePlanning subtreeSrv_StackHL_stick3_table1_robot1_finallocstick3_gripper1 Enhsp Domain:DomainMLTruss Problem:problemStackHL_stick3_table1_robot1_finallocstick3_gripper1
+        All
+        AllAction
+        NodeGraph {
+            Action TravelML TravelML_robot1_rppickup_rpmanipulate (robot1 rppickup rpmanipulate) {
+                --[Meets]--> StackML_stick3_table1_robot1_gripper1_finallocstick3_rpmanipulate;
+            }
+            Action StackML StackML_stick3_table1_robot1_gripper1_finallocstick3_rpmanipulate (stick3 table1 robot1 gripper1 finallocstick3 rpmanipulate)
+        }
+    }
+}BehaviorTree StackOnTwoHL_stick6_robot1_finallocstick6_stick2_stick1_layer1_layer2_gripper1_dup2Subtree {
+    Root FlowNode ENHSP_Demonstrator_DynamicFlow_StackOnTwoHL_stick6_robot1_finallocstick6_stick2_stick1_layer1_layer2_gripper1_dup2 {
+        ServicePlanning subtreeSrv_StackOnTwoHL_stick6_robot1_finallocstick6_stick2_stick1_layer1_layer2_gripper1_dup2 Enhsp Domain:DomainMLTruss Problem:problemStackOnTwoHL_stick6_robot1_finallocstick6_stick2_stick1_layer1_layer2_gripper1_dup2
+        All
+        AllAction
+        NodeGraph {
+            Action TravelML TravelML_robot1_rppickup_rpmanipulate (robot1 rppickup rpmanipulate) {
+                --[Meets]--> StackOnTwoML_stick6_robot1_finallocstick6_rpmanipulate_stick2_stick1_gripper1_layer1_layer2;
+            }
+            Action StackOnTwoML StackOnTwoML_stick6_robot1_finallocstick6_rpmanipulate_stick2_stick1_gripper1_layer1_layer2 (stick6 robot1 finallocstick6 rpmanipulate stick2 stick1 gripper1 layer1 layer2)
+        }
+    }
+}
+
+BehaviorTree PickUpHL_stick4_initlocstick4_robot1_gripper1_dup2Subtree {
+    Root FlowNode ENHSP_Demonstrator_DynamicFlow_PickUpHL_stick4_initlocstick4_robot1_gripper1_dup2 {
+        ServicePlanning subtreeSrv_PickUpHL_stick4_initlocstick4_robot1_gripper1_dup2 Enhsp Domain:DomainMLTruss Problem:problemPickUpHL_stick4_initlocstick4_robot1_gripper1_dup2
+        All
+        AllAction
+        NodeGraph {
+            Action TravelML TravelML_robot1_rpmanipulate_rppickup (robot1 rpmanipulate rppickup) {
+                --[Meets]--> PickUpML_stick4_initlocstick4_robot1_gripper1_rppickup;
+            }
+            Action PickUpML PickUpML_stick4_initlocstick4_robot1_gripper1_rppickup (stick4 initlocstick4 robot1 gripper1 rppickup)
+        }
+    }
+}
+
+BehaviorTree StackHL_stick4_table1_robot1_finallocstick4_gripper1_dup2Subtree {
+    Root FlowNode ENHSP_Demonstrator_DynamicFlow_StackHL_stick4_table1_robot1_finallocstick4_gripper1_dup2 {
+        ServicePlanning subtreeSrv_StackHL_stick4_table1_robot1_finallocstick4_gripper1_dup2 Enhsp Domain:DomainMLTruss Problem:problemStackHL_stick4_table1_robot1_finallocstick4_gripper1_dup2
+        All
+        AllAction
+        NodeGraph {
+            Action TravelML TravelML_robot1_rppickup_rpmanipulate (robot1 rppickup rpmanipulate) {
+                --[Meets]--> StackML_stick4_table1_robot1_gripper1_finallocstick4_rpmanipulate;
+            }
+            Action StackML StackML_stick4_table1_robot1_gripper1_finallocstick4_rpmanipulate (stick4 table1 robot1 gripper1 finallocstick4 rpmanipulate)
+        }
+    }
+}BehaviorTree StackOnTwoHL_stick7_robot1_finallocstick7_stick3_stick2_layer1_layer2_gripper1_dup2Subtree {
+    Root FlowNode ENHSP_Demonstrator_DynamicFlow_StackOnTwoHL_stick7_robot1_finallocstick7_stick3_stick2_layer1_layer2_gripper1_dup2 {
+        ServicePlanning subtreeSrv_StackOnTwoHL_stick7_robot1_finallocstick7_stick3_stick2_layer1_layer2_gripper1_dup2 Enhsp Domain:DomainMLTruss Problem:problemStackOnTwoHL_stick7_robot1_finallocstick7_stick3_stick2_layer1_layer2_gripper1_dup2
+        All
+        AllAction
+        NodeGraph {
+            Action TravelML TravelML_robot1_rppickup_rpmanipulate (robot1 rppickup rpmanipulate) {
+                --[Meets]--> StackOnTwoML_stick7_robot1_finallocstick7_rpmanipulate_stick2_stick3_gripper1_layer1_layer2;
+            }
+            Action StackOnTwoML StackOnTwoML_stick7_robot1_finallocstick7_rpmanipulate_stick2_stick3_gripper1_layer1_layer2 (stick7 robot1 finallocstick7 rpmanipulate stick2 stick3 gripper1 layer1 layer2)
+        }
+    }
+}
+
+BehaviorTree PickUpHL_cube1_initloccube1_robot1_gripper1_dup2Subtree {
+    Root FlowNode ENHSP_Demonstrator_DynamicFlow_PickUpHL_cube1_initloccube1_robot1_gripper1_dup2 {
+        ServicePlanning subtreeSrv_PickUpHL_cube1_initloccube1_robot1_gripper1_dup2 Enhsp Domain:DomainMLTruss Problem:problemPickUpHL_cube1_initloccube1_robot1_gripper1_dup2
+        All
+        AllAction
+        NodeGraph {
+            Action TravelML TravelML_robot1_rpmanipulate_rppickup (robot1 rpmanipulate rppickup) {
+                --[Meets]--> PickUpML_cube1_initloccube1_robot1_gripper1_rppickup;
+            }
+            Action PickUpML PickUpML_cube1_initloccube1_robot1_gripper1_rppickup (cube1 initloccube1 robot1 gripper1 rppickup)
+        }
+    }
+}
+
+BehaviorTree StackHL_cube1_stick1_robot1_finalloccube1_gripper1_dup2Subtree {
+    Root FlowNode ENHSP_Demonstrator_DynamicFlow_StackHL_cube1_stick1_robot1_finalloccube1_gripper1_dup2 {
+        ServicePlanning subtreeSrv_StackHL_cube1_stick1_robot1_finalloccube1_gripper1_dup2 Enhsp Domain:DomainMLTruss Problem:problemStackHL_cube1_stick1_robot1_finalloccube1_gripper1_dup2
+        All
+        AllAction
+        NodeGraph {
+            Action TravelML TravelML_robot1_rppickup_rpmanipulate (robot1 rppickup rpmanipulate) {
+                --[Meets]--> StackML_cube1_stick1_robot1_gripper1_finalloccube1_rpmanipulate;
+            }
+            Action StackML StackML_cube1_stick1_robot1_gripper1_finalloccube1_rpmanipulate (cube1 stick1 robot1 gripper1 finalloccube1 rpmanipulate)
+        }
+    }
+}
+
+BehaviorTree PickUpHL_stick8_initlocstick8_robot1_gripper1_dup2Subtree {
+    Root FlowNode ENHSP_Demonstrator_DynamicFlow_PickUpHL_stick8_initlocstick8_robot1_gripper1_dup2 {
+        ServicePlanning subtreeSrv_PickUpHL_stick8_initlocstick8_robot1_gripper1_dup2 Enhsp Domain:DomainMLTruss Problem:problemPickUpHL_stick8_initlocstick8_robot1_gripper1_dup2
+        All
+        AllAction
+        NodeGraph {
+            Action TravelML TravelML_robot1_rpmanipulate_rppickup (robot1 rpmanipulate rppickup) {
+                --[Meets]--> PickUpML_stick8_initlocstick8_robot1_gripper1_rppickup;
+            }
+            Action PickUpML PickUpML_stick8_initlocstick8_robot1_gripper1_rppickup (stick8 initlocstick8 robot1 gripper1 rppickup)
+        }
+    }
+}
+
+BehaviorTree StackOnTwoHL_stick8_robot1_finallocstick8_stick3_stick4_layer1_layer2_gripper1_dup2Subtree {
+    Root FlowNode ENHSP_Demonstrator_DynamicFlow_StackOnTwoHL_stick8_robot1_finallocstick8_stick3_stick4_layer1_layer2_gripper1_dup2 {
+        ServicePlanning subtreeSrv_StackOnTwoHL_stick8_robot1_finallocstick8_stick3_stick4_layer1_layer2_gripper1_dup2 Enhsp Domain:DomainMLTruss Problem:problemStackOnTwoHL_stick8_robot1_finallocstick8_stick3_stick4_layer1_layer2_gripper1_dup2
+        All
+        AllAction
+        NodeGraph {
+            Action TravelML TravelML_robot1_rppickup_rpmanipulate (robot1 rppickup rpmanipulate) {
+                --[Meets]--> StackOnTwoML_stick8_robot1_finallocstick8_rpmanipulate_stick3_stick4_gripper1_layer1_layer2;
+            }
+            Action StackOnTwoML StackOnTwoML_stick8_robot1_finallocstick8_rpmanipulate_stick3_stick4_gripper1_layer1_layer2 (stick8 robot1 finallocstick8 rpmanipulate stick3 stick4 gripper1 layer1 layer2)
+        }
+    }
+}
+
+BehaviorTree PickUpHL_stick5_initlocstick5_robot1_gripper1_dup2Subtree {
+    Root FlowNode ENHSP_Demonstrator_DynamicFlow_PickUpHL_stick5_initlocstick5_robot1_gripper1_dup2 {
+        ServicePlanning subtreeSrv_PickUpHL_stick5_initlocstick5_robot1_gripper1_dup2 Enhsp Domain:DomainMLTruss Problem:problemPickUpHL_stick5_initlocstick5_robot1_gripper1_dup2
+        All
+        AllAction
+        NodeGraph {
+            Action TravelML TravelML_robot1_rpmanipulate_rppickup (robot1 rpmanipulate rppickup) {
+                --[Meets]--> PickUpML_stick5_initlocstick5_robot1_gripper1_rppickup;
+            }
+            Action PickUpML PickUpML_stick5_initlocstick5_robot1_gripper1_rppickup (stick5 initlocstick5 robot1 gripper1 rppickup)
+        }
+    }
+}
+
+BehaviorTree StackHL_stick5_table1_robot1_finallocstick5_gripper1_dup2Subtree {
+    Root FlowNode ENHSP_Demonstrator_DynamicFlow_StackHL_stick5_table1_robot1_finallocstick5_gripper1_dup2 {
+        ServicePlanning subtreeSrv_StackHL_stick5_table1_robot1_finallocstick5_gripper1_dup2 Enhsp Domain:DomainMLTruss Problem:problemStackHL_stick5_table1_robot1_finallocstick5_gripper1_dup2
+        All
+        AllAction
+        NodeGraph {
+            Action TravelML TravelML_robot1_rppickup_rpmanipulate (robot1 rppickup rpmanipulate) {
+                --[Meets]--> StackML_stick5_table1_robot1_gripper1_finallocstick5_rpmanipulate;
+            }
+            Action StackML StackML_stick5_table1_robot1_gripper1_finallocstick5_rpmanipulate (stick5 table1 robot1 gripper1 finallocstick5 rpmanipulate)
+        }
+    }
+}
+
+BehaviorTree PickUpHL_cube2_initloccube2_robot1_gripper1_dup2Subtree {
+    Root FlowNode ENHSP_Demonstrator_DynamicFlow_PickUpHL_cube2_initloccube2_robot1_gripper1_dup2 {
+        ServicePlanning subtreeSrv_PickUpHL_cube2_initloccube2_robot1_gripper1_dup2 Enhsp Domain:DomainMLTruss Problem:problemPickUpHL_cube2_initloccube2_robot1_gripper1_dup2
+        All
+        AllAction
+        NodeGraph {
+            Action TravelML TravelML_robot1_rpmanipulate_rppickup (robot1 rpmanipulate rppickup) {
+                --[Meets]--> PickUpML_cube2_initloccube2_robot1_gripper1_rppickup;
+            }
+            Action PickUpML PickUpML_cube2_initloccube2_robot1_gripper1_rppickup (cube2 initloccube2 robot1 gripper1 rppickup)
+        }
+    }
+}
+
+BehaviorTree StackHL_cube2_stick5_robot1_finalloccube2_gripper1_dup2Subtree {
+    Root FlowNode ENHSP_Demonstrator_DynamicFlow_StackHL_cube2_stick5_robot1_finalloccube2_gripper1_dup2 {
+        ServicePlanning subtreeSrv_StackHL_cube2_stick5_robot1_finalloccube2_gripper1_dup2 Enhsp Domain:DomainMLTruss Problem:problemStackHL_cube2_stick5_robot1_finalloccube2_gripper1_dup2
+        All
+        AllAction
+        NodeGraph {
+            Action TravelML TravelML_robot1_rppickup_rpmanipulate (robot1 rppickup rpmanipulate) {
+                --[Meets]--> StackML_cube2_stick5_robot1_gripper1_finalloccube2_rpmanipulate;
+            }
+            Action StackML StackML_cube2_stick5_robot1_gripper1_finalloccube2_rpmanipulate (cube2 stick5 robot1 gripper1 finalloccube2 rpmanipulate)
+        }
+    }
+}
+
+BehaviorTree PickUpHL_stick9_initlocstick9_robot1_gripper1_dup2Subtree {
+    Root FlowNode ENHSP_Demonstrator_DynamicFlow_PickUpHL_stick9_initlocstick9_robot1_gripper1_dup2 {
+        ServicePlanning subtreeSrv_PickUpHL_stick9_initlocstick9_robot1_gripper1_dup2 Enhsp Domain:DomainMLTruss Problem:problemPickUpHL_stick9_initlocstick9_robot1_gripper1_dup2
+        All
+        AllAction
+        NodeGraph {
+            Action TravelML TravelML_robot1_rpmanipulate_rppickup (robot1 rpmanipulate rppickup) {
+                --[Meets]--> PickUpML_stick9_initlocstick9_robot1_gripper1_rppickup;
+            }
+            Action PickUpML PickUpML_stick9_initlocstick9_robot1_gripper1_rppickup (stick9 initlocstick9 robot1 gripper1 rppickup)
+        }
+    }
+}
+
+BehaviorTree StackOnTwoHL_stick9_robot1_finallocstick9_stick4_stick5_layer1_layer2_gripper1Subtree {
+    Root FlowNode ENHSP_Demonstrator_DynamicFlow_StackOnTwoHL_stick9_robot1_finallocstick9_stick4_stick5_layer1_layer2_gripper1 {
+        ServicePlanning subtreeSrv_StackOnTwoHL_stick9_robot1_finallocstick9_stick4_stick5_layer1_layer2_gripper1 Enhsp Domain:DomainMLTruss Problem:problemStackOnTwoHL_stick9_robot1_finallocstick9_stick4_stick5_layer1_layer2_gripper1
+        All
+        AllAction
+        NodeGraph {
+            Action TravelML TravelML_robot1_rppickup_rpmanipulate (robot1 rppickup rpmanipulate) {
+                --[Meets]--> StackOnTwoML_stick9_robot1_finallocstick9_rpmanipulate_stick5_stick4_gripper1_layer1_layer2;
+            }
+            Action StackOnTwoML StackOnTwoML_stick9_robot1_finallocstick9_rpmanipulate_stick5_stick4_gripper1_layer1_layer2 (stick9 robot1 finallocstick9 rpmanipulate stick5 stick4 gripper1 layer1 layer2)
+        }
+    }
+}
+
+BehaviorTree ChangeEndeffectorHL_robot1_gripper1_staplergun1_dup2Subtree {
+    Root FlowNode ENHSP_Demonstrator_DynamicFlow_ChangeEndeffectorHL_robot1_gripper1_staplergun1_dup2 {
+        ServicePlanning subtreeSrv_ChangeEndeffectorHL_robot1_gripper1_staplergun1_dup2 Enhsp Domain:DomainMLTruss Problem:problemChangeEndeffectorHL_robot1_gripper1_staplergun1_dup2
+        All
+        AllAction
+        NodeGraph {
+            Action TravelML TravelML_robot1_rpmanipulate_rptoolchange (robot1 rpmanipulate rptoolchange) {
+                --[Meets]--> CloseToolML_robot1_gripper1;
+            }
+            Action CloseToolML CloseToolML_robot1_gripper1 (robot1 gripper1) {
+                --[Meets]--> DeequipML_robot1_gripper1_equiplocgripper_rptoolchange;
+            }
+            Action DeequipML DeequipML_robot1_gripper1_equiplocgripper_rptoolchange (robot1 gripper1 equiplocgripper rptoolchange) {
+                --[Meets]--> EquipeML_robot1_staplergun1_rptoolchange_equiplocstapler;
+            }
+            Action EquipeML EquipeML_robot1_staplergun1_rptoolchange_equiplocstapler (robot1 staplergun1 rptoolchange equiplocstapler)
+        }
+    }
+}
+
+BehaviorTree NailingHL_stick8_stick4_robot1_staplergun1_dup2Subtree {
+    Root FlowNode ENHSP_Demonstrator_DynamicFlow_NailingHL_stick8_stick4_robot1_staplergun1_dup2 {
+        ServicePlanning subtreeSrv_NailingHL_stick8_stick4_robot1_staplergun1_dup2 Enhsp Domain:DomainMLTruss Problem:problemNailingHL_stick8_stick4_robot1_staplergun1_dup2
+        All
+        AllAction
+        NodeGraph {
+            Action TravelML TravelML_robot1_rptoolchange_rpmanipulate (robot1 rptoolchange rpmanipulate) {
+                --[Meets]--> InitializeML_robot1_staplergun1;
+            }
+            Action InitializeML InitializeML_robot1_staplergun1 (robot1 staplergun1) {
+                --[Meets]--> NailingML_stick8_stick4_robot1_staplergun1_rpmanipulate;
+            }
+            Action NailingML NailingML_stick8_stick4_robot1_staplergun1_rpmanipulate (stick8 stick4 robot1 staplergun1 rpmanipulate)
+        }
+    }
+}
+
+BehaviorTree NailingHL_stick9_stick4_robot1_staplergun1_dup2Subtree {
+    Root FlowNode ENHSP_Demonstrator_DynamicFlow_NailingHL_stick9_stick4_robot1_staplergun1_dup2 {
+        ServicePlanning subtreeSrv_NailingHL_stick9_stick4_robot1_staplergun1_dup2 Enhsp Domain:DomainMLTruss Problem:problemNailingHL_stick9_stick4_robot1_staplergun1_dup2
+        All
+        AllAction
+        NodeGraph {
+            Action NailingML NailingML_stick9_stick4_robot1_staplergun1_rpmanipulate (stick9 stick4 robot1 staplergun1 rpmanipulate)
+        }
+    }
+}
+
+BehaviorTree NailingHL_stick9_stick5_robot1_staplergun1_dup2Subtree {
+    Root FlowNode ENHSP_Demonstrator_DynamicFlow_NailingHL_stick9_stick5_robot1_staplergun1_dup2 {
+        ServicePlanning subtreeSrv_NailingHL_stick9_stick5_robot1_staplergun1_dup2 Enhsp Domain:DomainMLTruss Problem:problemNailingHL_stick9_stick5_robot1_staplergun1_dup2
+        All
+        AllAction
+        NodeGraph {
+            Action NailingML NailingML_stick9_stick5_robot1_staplergun1_rpmanipulate (stick9 stick5 robot1 staplergun1 rpmanipulate)
+        }
+    }
+}
+
+BehaviorTree NailingHL_cube1_stick1_robot1_staplergun1_dup2Subtree {
+    Root FlowNode ENHSP_Demonstrator_DynamicFlow_NailingHL_cube1_stick1_robot1_staplergun1_dup2 {
+        ServicePlanning subtreeSrv_NailingHL_cube1_stick1_robot1_staplergun1_dup2 Enhsp Domain:DomainMLTruss Problem:problemNailingHL_cube1_stick1_robot1_staplergun1_dup2
+        All
+        AllAction
+        NodeGraph {
+            Action NailingML NailingML_cube1_stick1_robot1_staplergun1_rpmanipulate (cube1 stick1 robot1 staplergun1 rpmanipulate)
+        }
+    }
+}
+
+BehaviorTree NailingHL_cube2_stick5_robot1_staplergun1_dup2Subtree {
+    Root FlowNode ENHSP_Demonstrator_DynamicFlow_NailingHL_cube2_stick5_robot1_staplergun1_dup2 {
+        ServicePlanning subtreeSrv_NailingHL_cube2_stick5_robot1_staplergun1_dup2 Enhsp Domain:DomainMLTruss Problem:problemNailingHL_cube2_stick5_robot1_staplergun1_dup2
+        All
+        AllAction
+        NodeGraph {
+            Action NailingML NailingML_cube2_stick5_robot1_staplergun1_rpmanipulate (cube2 stick5 robot1 staplergun1 rpmanipulate)
+        }
+    }
+}
+
+BehaviorTree NailingHL_stick6_stick1_robot1_staplergun1_dup2Subtree {
+    Root FlowNode ENHSP_Demonstrator_DynamicFlow_NailingHL_stick6_stick1_robot1_staplergun1_dup2 {
+        ServicePlanning subtreeSrv_NailingHL_stick6_stick1_robot1_staplergun1_dup2 Enhsp Domain:DomainMLTruss Problem:problemNailingHL_stick6_stick1_robot1_staplergun1_dup2
+        All
+        AllAction
+        NodeGraph {
+            Action NailingML NailingML_stick6_stick1_robot1_staplergun1_rpmanipulate (stick6 stick1 robot1 staplergun1 rpmanipulate)
+        }
+    }
+}
+
+BehaviorTree NailingHL_stick6_stick2_robot1_staplergun1_dup2Subtree {
+    Root FlowNode ENHSP_Demonstrator_DynamicFlow_NailingHL_stick6_stick2_robot1_staplergun1_dup2 {
+        ServicePlanning subtreeSrv_NailingHL_stick6_stick2_robot1_staplergun1_dup2 Enhsp Domain:DomainMLTruss Problem:problemNailingHL_stick6_stick2_robot1_staplergun1_dup2
+        All
+        AllAction
+        NodeGraph {
+            Action NailingML NailingML_stick6_stick2_robot1_staplergun1_rpmanipulate (stick6 stick2 robot1 staplergun1 rpmanipulate)
+        }
+    }
+}
+
+BehaviorTree NailingHL_stick7_stick2_robot1_staplergun1_dup2Subtree {
+    Root FlowNode ENHSP_Demonstrator_DynamicFlow_NailingHL_stick7_stick2_robot1_staplergun1_dup2 {
+        ServicePlanning subtreeSrv_NailingHL_stick7_stick2_robot1_staplergun1_dup2 Enhsp Domain:DomainMLTruss Problem:problemNailingHL_stick7_stick2_robot1_staplergun1_dup2
+        All
+        AllAction
+        NodeGraph {
+            Action NailingML NailingML_stick7_stick2_robot1_staplergun1_rpmanipulate (stick7 stick2 robot1 staplergun1 rpmanipulate)
+        }
+    }
+}
+
+BehaviorTree NailingHL_stick7_stick3_robot1_staplergun1_dup2Subtree {
+    Root FlowNode ENHSP_Demonstrator_DynamicFlow_NailingHL_stick7_stick3_robot1_staplergun1_dup2 {
+        ServicePlanning subtreeSrv_NailingHL_stick7_stick3_robot1_staplergun1_dup2 Enhsp Domain:DomainMLTruss Problem:problemNailingHL_stick7_stick3_robot1_staplergun1_dup2
+        All
+        AllAction
+        NodeGraph {
+            Action NailingML NailingML_stick7_stick3_robot1_staplergun1_rpmanipulate (stick7 stick3 robot1 staplergun1 rpmanipulate)
+        }
+    }
+}
+
+BehaviorTree NailingHL_stick8_stick3_robot1_staplergun1_dup2Subtree {
+    Root FlowNode ENHSP_Demonstrator_DynamicFlow_NailingHL_stick8_stick3_robot1_staplergun1_dup2 {
+        ServicePlanning subtreeSrv_NailingHL_stick8_stick3_robot1_staplergun1_dup2 Enhsp Domain:DomainMLTruss Problem:problemNailingHL_stick8_stick3_robot1_staplergun1_dup2
+        All
+        AllAction
+        NodeGraph {
+            Action NailingML NailingML_stick8_stick3_robot1_staplergun1_rpmanipulate (stick8 stick3 robot1 staplergun1 rpmanipulate)
+        }
+    }
+}
+
+BehaviorTree ChangeEndeffectorHL_robot1_staplergun1_gripper1Subtree {
+    Root FlowNode ENHSP_Demonstrator_DynamicFlow_ChangeEndeffectorHL_robot1_staplergun1_gripper1 {
+        ServicePlanning subtreeSrv_ChangeEndeffectorHL_robot1_staplergun1_gripper1 Enhsp Domain:DomainMLTruss Problem:problemChangeEndeffectorHL_robot1_staplergun1_gripper1
+        All
+        AllAction
+        NodeGraph {
+            Action TravelML TravelML_robot1_rpmanipulate_rptoolchange (robot1 rpmanipulate rptoolchange) {
+                --[Meets]--> CloseToolML_robot1_staplergun1;
+            }
+            Action CloseToolML CloseToolML_robot1_staplergun1 (robot1 staplergun1) {
+                --[Meets]--> DeequipML_robot1_staplergun1_equiplocstapler_rptoolchange;
+            }
+            Action DeequipML DeequipML_robot1_staplergun1_equiplocstapler_rptoolchange (robot1 staplergun1 equiplocstapler rptoolchange) {
+                --[Meets]--> EquipeML_robot1_gripper1_rptoolchange_equiplocgripper;
+            }
+            Action EquipeML EquipeML_robot1_gripper1_rptoolchange_equiplocgripper (robot1 gripper1 rptoolchange equiplocgripper)
+        }
+    }
+}
+
+BehaviorTree PickUpHL_stick11_initlocstick11_robot1_gripper1Subtree {
+    Root FlowNode ENHSP_Demonstrator_DynamicFlow_PickUpHL_stick11_initlocstick11_robot1_gripper1 {
+        ServicePlanning subtreeSrv_PickUpHL_stick11_initlocstick11_robot1_gripper1 Enhsp Domain:DomainMLTruss Problem:problemPickUpHL_stick11_initlocstick11_robot1_gripper1
+        All
+        AllAction
+        NodeGraph {
+            Action TravelML TravelML_robot1_rptoolchange_rppickup (robot1 rptoolchange rppickup) {
+                --[Meets]--> PickUpML_stick11_initlocstick11_robot1_gripper1_rppickup;
+            }
+            Action PickUpML PickUpML_stick11_initlocstick11_robot1_gripper1_rppickup (stick11 initlocstick11 robot1 gripper1 rppickup)
+        }
+    }
+}
+
+BehaviorTree StackOnTwoHL_stick11_robot1_finallocstick11_stick6_stick7_layer2_layer3_gripper1Subtree {
+    Root FlowNode ENHSP_Demonstrator_DynamicFlow_StackOnTwoHL_stick11_robot1_finallocstick11_stick6_stick7_layer2_layer3_gripper1 {
+        ServicePlanning subtreeSrv_StackOnTwoHL_stick11_robot1_finallocstick11_stick6_stick7_layer2_layer3_gripper1 Enhsp Domain:DomainMLTruss Problem:problemStackOnTwoHL_stick11_robot1_finallocstick11_stick6_stick7_layer2_layer3_gripper1
+        All
+        AllAction
+        NodeGraph {
+            Action TravelML TravelML_robot1_rppickup_rpmanipulate (robot1 rppickup rpmanipulate) {
+                --[Meets]--> StackOnTwoML_stick11_robot1_finallocstick11_rpmanipulate_stick6_stick7_gripper1_layer2_layer3;
+            }
+            Action StackOnTwoML StackOnTwoML_stick11_robot1_finallocstick11_rpmanipulate_stick6_stick7_gripper1_layer2_layer3 (stick11 robot1 finallocstick11 rpmanipulate stick6 stick7 gripper1 layer2 layer3)
         }
     }
 }BehaviorTree PickUpHL_stick4_initlocstick4_robot1_gripper1Subtree {
@@ -347,6 +1093,20 @@ BehaviorTree StackOnTwoHL_stick6_robot1_finallocstick6_stick1_stick2_layer1_laye
                 --[Meets]--> StackOnTwoML_stick6_robot1_finallocstick6_rpmanipulate_stick2_stick1_gripper1_layer1_layer2;
             }
             Action StackOnTwoML StackOnTwoML_stick6_robot1_finallocstick6_rpmanipulate_stick2_stick1_gripper1_layer1_layer2 (stick6 robot1 finallocstick6 rpmanipulate stick2 stick1 gripper1 layer1 layer2)
+        }
+    }
+}
+
+BehaviorTree PickUpHL_stick7_initlocstick7_robot1_gripper1_dup2Subtree {
+    Root FlowNode ENHSP_Demonstrator_DynamicFlow_PickUpHL_stick7_initlocstick7_robot1_gripper1_dup2 {
+        ServicePlanning subtreeSrv_PickUpHL_stick7_initlocstick7_robot1_gripper1_dup2 Enhsp Domain:DomainMLTruss Problem:problemPickUpHL_stick7_initlocstick7_robot1_gripper1_dup2
+        All
+        AllAction
+        NodeGraph {
+            Action TravelML TravelML_robot1_rpmanipulate_rppickup (robot1 rpmanipulate rppickup) {
+                --[Meets]--> PickUpML_stick7_initlocstick7_robot1_gripper1_rppickup;
+            }
+            Action PickUpML PickUpML_stick7_initlocstick7_robot1_gripper1_rppickup (stick7 initlocstick7 robot1 gripper1 rppickup)
         }
     }
 }
