@@ -261,6 +261,31 @@ def robot_play_program():
         }), 500
 
 
+def _poll_bridge_controller_active(timeout_sec=30.0):
+    """Poll the bridge's /controller_active endpoint until the joint trajectory
+    controller is active or timeout_sec elapses.
+
+    robot_service.py runs on Windows and cannot call ROS2 services directly,
+    so it delegates the check to the bridge running in WSL.
+    Returns True when active, False on timeout.
+    """
+    deadline = time.time() + timeout_sec
+    print(f"Waiting for joint controller to become active (timeout={timeout_sec:.0f}s)...")
+    while time.time() < deadline:
+        try:
+            resp = http_requests.get(f"{MOVEIT_BRIDGE_URL}/controller_active", timeout=5)
+            resp_json = resp.json()
+            print(f"[poll] controller_active: {resp_json}")
+            if resp_json.get('active'):
+                print("Joint controller is active — proceeding")
+                return True
+        except Exception as e:
+            print(f"_poll_bridge_controller_active: bridge unreachable ({e}), retrying...")
+        time.sleep(1.0)
+    print(f"Joint controller did not become active within {timeout_sec:.0f}s")
+    return False
+
+
 def _ensure_ec_running(robot_ip, end_effector='gripper'):
     """Ensure the correct External Control URCap program is running.
 
@@ -272,17 +297,31 @@ def _ensure_ec_running(robot_ip, end_effector='gripper'):
     ext_program = EXTERNAL_CONTROL_NAILGUN if end_effector == 'nailgun' else EXTERNAL_CONTROL_GRIPPER
 
     state = dashboard_command(robot_ip, "programState")
+    print(f"[EC check] programState: {state!r}")
     if "PLAYING" in state.upper():
         # Check which program is actually loaded — guard against wrong EC being active
         loaded = dashboard_command(robot_ip, "get loaded program")
+        print(f"[EC check] loadedProgram: {loaded!r}")
         # Response is e.g. "Loaded program: /programs/external_control_g.urp"
         if ext_program.lower() in loaded.lower():
             print(f"External Control '{ext_program}' already running — skipping load/play")
-            return
-        # Wrong EC program is playing (tool was switched) — stop and reload
-        print(f"Wrong EC program running (expected '{ext_program}', got '{loaded}') — reloading")
-        dashboard_command(robot_ip, "stop")
-        time.sleep(0.5)
+            # Dashboard says PLAYING but the RT reverse interface may still be
+            # reconnecting after an EC drop (UR watchdog reset).  Poll the bridge
+            # until the joint controller is actually active before returning.
+            if _poll_bridge_controller_active(timeout_sec=30.0):
+                return
+            # Dashboard says PLAYING but the RT interface is dead — force EC restart.
+            # This happens when the UR watchdog terminates the URScript connection
+            # while the URCap process itself is still listed as PLAYING.
+            print(f"[WARN] Controller not active after 30s despite EC PLAYING — forcing EC restart")
+            dashboard_command(robot_ip, "stop")
+            time.sleep(1.0)
+            # fall through to load+play below
+        else:
+            # Wrong EC program is playing (tool was switched) — stop and reload
+            print(f"Wrong EC program running (expected '{ext_program}', got '{loaded}') — reloading")
+            dashboard_command(robot_ip, "stop")
+            time.sleep(0.5)
 
     print(f"Loading External Control program: {ext_program}")
     load_resp = dashboard_command(robot_ip, f"load {ext_program}")
@@ -302,7 +341,11 @@ def _ensure_ec_running(robot_ip, end_effector='gripper'):
         if "PLAYING" in state.upper():
             print(f"External Control program running after {waited:.1f}s")
             break
-    time.sleep(1.5)  # settle: URCap <-> ROS2 driver handshake (paid once per tool session)
+    # Poll the bridge until scaled_joint_trajectory_controller is active.
+    # Dashboard PLAYING only means the URCap started; the RT reverse interface
+    # (and therefore the controller) takes 5-15 s more to connect.  A fixed
+    # 1.5 s sleep is far too short and causes CONTROL_FAILED on the first move.
+    _poll_bridge_controller_active(timeout_sec=30.0)
     # NOTE: do NOT call robot_state.reapply() here. set_payload/set_tcp use URScript
     # (port 30002) which preempts and kills the EC program on e-Series robots.
 
@@ -372,7 +415,11 @@ def robot_move():
                 'acceleration': acc_val,
             }
             print(f"Forwarding movej to /move_joints: {moveit_payload}")
-            resp = http_requests.post(f"{MOVEIT_BRIDGE_URL}/move_joints", json=moveit_payload, timeout=60)
+            resp = http_requests.post(f"{MOVEIT_BRIDGE_URL}/move_joints", json=moveit_payload, timeout=150)
+            if resp.status_code == 503:
+                print("[WARN] Bridge: controller inactive (503) — restarting EC and retrying movej")
+                _ensure_ec_running(robot_ip, end_effector)
+                resp = http_requests.post(f"{MOVEIT_BRIDGE_URL}/move_joints", json=moveit_payload, timeout=150)
             resp_data = resp.json()
             if resp_data.get('success'):
                 result_msg = f"Joint-space move succeeded ({resp_data.get('executionTimeSeconds', 0):.2f}s)"
@@ -395,7 +442,11 @@ def robot_move():
                 'acceleration': acc_val,
             }
             print(f"Forwarding movel to /move_lin: {moveit_payload}")
-            resp = http_requests.post(f"{MOVEIT_BRIDGE_URL}/move_lin", json=moveit_payload, timeout=60)
+            resp = http_requests.post(f"{MOVEIT_BRIDGE_URL}/move_lin", json=moveit_payload, timeout=150)
+            if resp.status_code == 503:
+                print("[WARN] Bridge: controller inactive (503) — restarting EC and retrying movel")
+                _ensure_ec_running(robot_ip, end_effector)
+                resp = http_requests.post(f"{MOVEIT_BRIDGE_URL}/move_lin", json=moveit_payload, timeout=150)
             resp_data = resp.json()
             if resp_data.get('success'):
                 result_msg = f"Pilz LIN move succeeded ({resp_data.get('executionTimeSeconds', 0):.2f}s)"
@@ -449,6 +500,10 @@ def robot_move():
                 moveit_payload['yaw'] = round(yaw_deg, 2)
             print(f"Forwarding to MoveIt bridge: {json.dumps(moveit_payload, indent=2)}")
             resp = http_requests.post(f"{MOVEIT_BRIDGE_URL}/plan_and_execute", json=moveit_payload, timeout=130)
+            if resp.status_code == 503:
+                print("[WARN] Bridge: controller inactive (503) — restarting EC and retrying planned move")
+                _ensure_ec_running(robot_ip, end_effector)
+                resp = http_requests.post(f"{MOVEIT_BRIDGE_URL}/plan_and_execute", json=moveit_payload, timeout=130)
             resp_data = resp.json()
             print(f"MoveIt response: {json.dumps(resp_data, indent=2)}")
 

@@ -33,6 +33,7 @@ from geometry_msgs.msg import Pose
 from moveit_msgs.msg import Constraints, OrientationConstraint
 from std_msgs.msg import String as StringMsg
 from ur_msgs.srv import SetIO
+from controller_manager_msgs.srv import ListControllers
 
 from move_to_task import MoveToTask
 from dynamic_scene_example import DynamicSceneManager
@@ -43,11 +44,14 @@ app = Flask(__name__)
 move_to_task = None      # MoveToTask node  (persistent)
 scene = None             # DynamicSceneManager node (persistent)
 io_client = None         # SetIO service client (persistent)
+ctrl_list_client = None  # ListControllers service client (persistent)
 stop_pub = None          # Publisher to clear MoveGroup's trajectory execution state
 tf_buffer = None         # TF2 buffer for reading actual TCP pose
 _last_disabled_ee = [None]  # tracks which EE was last disabled to avoid redundant ACM updates
 _last_payload_ee = [None]   # tracks which EE payload was last set to avoid redundant updates
 _init_lock = threading.Lock()
+
+_JOINT_CTRL = 'scaled_joint_trajectory_controller'  # controller whose active state we check
 
 
 def init_ros():
@@ -57,7 +61,7 @@ def init_ros():
     rclpy.spin_until_future_complete() calls inside MoveToTask already
     handle spinning when waiting for action/service results.
     """
-    global move_to_task, scene, io_client, stop_pub, tf_buffer
+    global move_to_task, scene, io_client, ctrl_list_client, stop_pub, tf_buffer
 
     with _init_lock:
         if move_to_task is not None:
@@ -68,6 +72,9 @@ def init_ros():
         scene = DynamicSceneManager()
         move_to_task = MoveToTask(end_effector_type='gripper')  # default; EE link updated per request
         io_client = move_to_task.create_client(SetIO, '/io_and_status_controller/set_io')
+        ctrl_list_client = move_to_task.create_client(
+            ListControllers, '/controller_manager/list_controllers'
+        )
         stop_pub = move_to_task.create_publisher(StringMsg, '/trajectory_execution_event', 1)
         tf_buffer = tf2_ros.Buffer()
         tf2_ros.TransformListener(tf_buffer, move_to_task)
@@ -76,6 +83,36 @@ def init_ros():
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
+
+def _wait_for_controller_active(timeout_sec=30.0):
+    """Spin-poll /controller_manager/list_controllers until scaled_joint_trajectory_controller
+    reports state == 'active'.  Returns True when active, False on timeout.
+
+    Called between retry attempts so that CONTROL_FAILED retries only fire
+    after the RT reverse interface has reconnected and the controller is ready,
+    rather than after a fixed sleep that may be too short.
+    """
+    deadline = time.time() + timeout_sec
+    move_to_task.get_logger().info(
+        f'Waiting for {_JOINT_CTRL} to become active (timeout={timeout_sec:.0f}s)...'
+    )
+    while time.time() < deadline:
+        if not ctrl_list_client.wait_for_service(timeout_sec=0.5):
+            rclpy.spin_once(move_to_task, timeout_sec=0.1)
+            continue
+        fut = ctrl_list_client.call_async(ListControllers.Request())
+        rclpy.spin_until_future_complete(move_to_task, fut, timeout_sec=2.0)
+        if fut.result() is not None:
+            for ctrl in fut.result().controller:
+                if ctrl.name == _JOINT_CTRL and ctrl.state == 'active':
+                    move_to_task.get_logger().info(f'{_JOINT_CTRL} is active — proceeding')
+                    return True
+        rclpy.spin_once(move_to_task, timeout_sec=0.5)
+    move_to_task.get_logger().warn(
+        f'{_JOINT_CTRL} did not become active within {timeout_sec:.0f}s'
+    )
+    return False
+
 
 EE_LINK_MAP = {
     'none': 'tool0',
@@ -122,6 +159,30 @@ def _build_nailgun_path_constraints(target_pose):
 @app.route('/health', methods=['GET'])
 def health():
     return jsonify({'status': 'ok', 'service': 'moveit_bridge'})
+
+
+@app.route('/controller_active', methods=['GET'])
+def controller_active():
+    """Return whether scaled_joint_trajectory_controller is currently active.
+
+    Used by robot_service.py (_ensure_ec_running) to wait for the RT reverse
+    interface to reconnect after an EC restart, instead of a fixed sleep.
+    Returns immediately — does NOT block for recovery.
+    """
+    try:
+        if not ctrl_list_client.wait_for_service(timeout_sec=1.0):
+            return jsonify({'active': False, 'error': 'controller_manager service unavailable'})
+        fut = ctrl_list_client.call_async(ListControllers.Request())
+        rclpy.spin_until_future_complete(move_to_task, fut, timeout_sec=2.0)
+        if fut.result() is None:
+            return jsonify({'active': False, 'error': 'ListControllers timed out'})
+        for ctrl in fut.result().controller:
+            if ctrl.name == _JOINT_CTRL and ctrl.state == 'active':
+                return jsonify({'active': True})
+        return jsonify({'active': False})
+    except Exception as e:
+        import traceback; traceback.print_exc()
+        return jsonify({'active': False, 'error': str(e)})
 
 
 @app.route('/plan_and_execute', methods=['POST'])
@@ -173,12 +234,6 @@ def plan_and_execute():
                 _last_disabled_ee[0] = end_effector_type
                 time.sleep(2.0)  # let MoveIt digest the ACM update
 
-        # Set correct payload on the real robot controller (only once per EE type)
-        if _last_payload_ee[0] != end_effector_type:
-            move_to_task.set_robot_payload(end_effector_type)
-            _last_payload_ee[0] = end_effector_type
-            time.sleep(2.0)  # let move_group absorb the robot state change
-
         # Attach object if needed
         if not no_object:
             touch_links = ['gripper_base', 'gripper_left_finger', 'gripper_right_finger', 'tool0']
@@ -197,13 +252,18 @@ def plan_and_execute():
         # Build target pose — negate x and y to convert from robot frame to ROS frame
         target_pose = _build_pose(-x, -y, z, yaw)
 
-        # Path constraints for nailgun
+        # Nailgun uses Pilz PTP (no path constraints needed — Pilz ignores/rejects them)
         path_constraints = None
-        if end_effector_type == 'nailgun':
-            path_constraints = _build_nailgun_path_constraints(target_pose)
 
         stop_msg = StringMsg()
         stop_msg.data = 'stop'
+
+        # Confirm the controller is active right now — setup (ACM + payload sleeps)
+        # above can take 4 s, during which the controller may have dropped.
+        # 10s is sufficient: robot_service already confirmed active before sending
+        # this request, so this only catches drops during the setup phase.
+        if not _wait_for_controller_active(timeout_sec=10.0):
+            return jsonify({'success': False, 'error': 'scaled_joint_trajectory_controller not active — EC disconnected'}), 503
 
         # Execute motion with retry as safety net.
         MAX_RETRIES = 3
@@ -225,21 +285,45 @@ def plan_and_execute():
             move_to_task.get_logger().info(
                 f'Starting attempt {attempt}/{MAX_RETRIES}'
             )
-            success = move_to_task.move_to(
-                target_pose,
-                velocity_scaling=0.15,
-                acceleration_scaling=0.15,
-                planning_time=10.0,
-                path_constraints=path_constraints
-            )
+            if end_effector_type == 'nailgun':
+                success = move_to_task.move_to(
+                    target_pose,
+                    velocity_scaling=0.15,
+                    acceleration_scaling=0.15,
+                    planning_time=10.0,
+                    pipeline_id='pilz_industrial_motion_planner',
+                    planner_id='PTP',
+                )
+            else:
+                success = move_to_task.move_to(
+                    target_pose,
+                    velocity_scaling=0.15,
+                    acceleration_scaling=0.15,
+                    planning_time=10.0,
+                    pipeline_id='pilz_industrial_motion_planner',
+                    planner_id='PTP',
+                )
             if success:
                 break
             move_to_task.get_logger().warn(
                 f'Motion attempt {attempt}/{MAX_RETRIES} failed, retrying...'
             )
-            time.sleep(2.0)
+            # If the controller is already inactive (EC dropped mid-move), return
+            # 503 immediately so robot_service restarts EC and retries the whole
+            # request, rather than burning 30 s waiting for a recovery that only
+            # robot_service can trigger.
+            if not _wait_for_controller_active(timeout_sec=2.0):
+                return jsonify({'success': False, 'error': 'scaled_joint_trajectory_controller inactive after move failure — EC dropped'}), 503
 
         if success:
+            # Drain TEM deferred deactivate callback from the approach move.
+            # ALL planners (OMPL, Pilz PTP, Pilz LIN) queue a TEM stop ~700ms
+            # after trajectory completion. Without draining here, it fires during
+            # the lift move_to() mid-execution → CONTROL_FAILED.
+            _drain_end = time.time() + 1.5
+            while time.time() < _drain_end:
+                rclpy.spin_once(move_to_task, timeout_sec=0.1)
+
             # Detach object if it was attached
             if not no_object:
                 scene.detach_object('target_object', link_name='gripper_base')
@@ -289,6 +373,12 @@ def plan_and_execute():
                     )
                     if not press_success:
                         move_to_task.get_logger().error('Nailgun: 2mm press failed')
+                    # Drain deferred deactivate callback from press LIN before lift LIN.
+                    # Loop for the full 1.5s window so the TEM callback (~700ms) is
+                    # guaranteed to be processed even if TF/clock callbacks compete first.
+                    _drain_end = time.time() + 1.5
+                    while time.time() < _drain_end:
+                        rclpy.spin_once(move_to_task, timeout_sec=0.1)
                 except Exception as tf_ex:
                     move_to_task.get_logger().error(f'Nailgun: TF lookup failed: {tf_ex}')
 
@@ -296,7 +386,7 @@ def plan_and_execute():
 
             # Lift 5 cm straight up (Pilz LIN to stay on same IK branch)
             lift_pose = _build_pose(-x, -y, z + 0.05, yaw)
-            move_to_task.move_to(
+            lift_success = move_to_task.move_to(
                 lift_pose,
                 velocity_scaling=0.15,
                 acceleration_scaling=0.15,
@@ -304,15 +394,21 @@ def plan_and_execute():
                 pipeline_id='pilz_industrial_motion_planner',
                 planner_id='LIN',
             )
+            # Drain the deferred controller deactivate callback before returning.
+            # Without this, the callback fires ~700ms later during the next
+            # move_to() spin — mid-execution — causing CONTROL_FAILED, or
+            # the RT watchdog drops EC while the callback is unprocessed.
+            # Loop for the full 1.5s window so the TEM callback (~700ms) is
+            # guaranteed to be processed even if TF/clock callbacks compete first.
+            _drain_end = time.time() + 1.5
+            while time.time() < _drain_end:
+                rclpy.spin_once(move_to_task, timeout_sec=0.1)
 
-            # Immediately retire the Pilz LIN execution handle so MoveGroup's
-            # trajectory_execution_manager is clean before the next request arrives.
-            # Without this, MoveGroup still considers the handle "active" and sends
-            # a "continuation" on the next goal — which the controller rejects
-            # (CONTROL_FAILED).  spin_once flushes any pending result/feedback
-            # callbacks that move_to()'s spin_until_future_complete may have missed.
-            stop_pub.publish(stop_msg)
-            rclpy.spin_once(move_to_task, timeout_sec=1.0)
+            if not lift_success:
+                move_to_task.get_logger().error('Lift move failed')
+                if not _wait_for_controller_active(timeout_sec=2.0):
+                    return jsonify({'success': False, 'error': 'Lift failed — EC dropped during lift'}), 503
+                return jsonify({'success': False, 'error': 'Lift move failed'}), 500
 
         elapsed = time.time() - start_time
 
@@ -416,15 +512,6 @@ def move_lin():
         vel = float(data.get('velocity', 0.15))
         acc = float(data.get('acceleration', 0.15))
 
-        # Clear any stale Pilz LIN handle from a previous move BEFORE sending a new goal.
-        # Publishing stop AFTER a completed move (at a low/contact position) can cause
-        # the controller to drop its hold, leading to a fieldbus disconnect protective stop.
-        _clear_stop = StringMsg()
-        _clear_stop.data = 'stop'
-        stop_pub.publish(_clear_stop)
-        rclpy.spin_once(move_to_task, timeout_sec=0.1)
-        time.sleep(0.3)
-
         move_to_task.end_effector_link = EE_LINK_MAP.get(end_effector_type, 'tool0')
 
         # Disable collisions for the inactive EE (only once per EE type)
@@ -434,12 +521,6 @@ def move_lin():
                 _last_disabled_ee[0] = end_effector_type
                 time.sleep(2.0)
 
-        # Set payload once per EE type
-        if _last_payload_ee[0] != end_effector_type:
-            move_to_task.set_robot_payload(end_effector_type)
-            _last_payload_ee[0] = end_effector_type
-            time.sleep(2.0)
-
         # Convert rotation vector (rx, ry) to yaw for _build_pose
         rx, ry = pose[3], pose[4]
         half_theta = math.atan2(ry, rx)
@@ -447,18 +528,58 @@ def move_lin():
 
         target_pose = _build_pose(-pose[0], -pose[1], pose[2], yaw_deg)
 
+        stop_msg = StringMsg()
+        stop_msg.data = 'stop'
+
+        # Confirm the controller is active right now — setup sleeps above can
+        # take up to 4 s, during which the controller may have dropped.
+        # 10s is sufficient: robot_service already confirmed active before sending
+        # this request, so this only catches drops during the setup phase.
+        if not _wait_for_controller_active(timeout_sec=2.0):
+            return jsonify({'success': False, 'error': 'scaled_joint_trajectory_controller not active — EC disconnected'}), 503
+
         start = time.time()
-        success = move_to_task.move_to(
-            target_pose,
-            velocity_scaling=vel,
-            acceleration_scaling=acc,
-            planning_time=10.0,
-            pipeline_id='pilz_industrial_motion_planner',
-            planner_id='LIN',
-        )
+        MAX_RETRIES = 3
+        success = False
+        for attempt in range(1, MAX_RETRIES + 1):
+            if attempt > 1:
+                # Publish stop only before retries (same reasoning as plan_and_execute:
+                # publishing stop then immediately sending a goal races with MoveGroup).
+                stop_pub.publish(stop_msg)
+                rclpy.spin_once(move_to_task, timeout_sec=0.1)
+                if not _wait_for_controller_active(timeout_sec=2.0):
+                    return jsonify({'success': False, 'error': 'scaled_joint_trajectory_controller inactive before retry — EC dropped'}), 503
+            move_to_task.get_logger().info(f'move_lin attempt {attempt}/{MAX_RETRIES}')
+            success = move_to_task.move_to(
+                target_pose,
+                velocity_scaling=vel,
+                acceleration_scaling=acc,
+                planning_time=10.0,
+                pipeline_id='pilz_industrial_motion_planner',
+                planner_id='LIN',
+            )
+            if success:
+                break
+            move_to_task.get_logger().warn(
+                f'move_lin attempt {attempt}/{MAX_RETRIES} failed, retrying...'
+            )
+            if not _wait_for_controller_active(timeout_sec=2.0):
+                return jsonify({'success': False, 'error': 'scaled_joint_trajectory_controller inactive after move failure — EC dropped'}), 503
         elapsed = time.time() - start
 
         if success:
+            # Drain MoveGroup's deferred handle-retirement callback before returning.
+            # The TrajectoryExecutionManager queues an internal stop ~700ms after a
+            # completed Pilz LIN.  If we return immediately that callback fires later
+            # during spin_until_future_complete inside the *next* move_to() call —
+            # while the controller is mid-execution — causing CONTROL_FAILED.
+            # Spinning here lets the deactivate/reactivate cycle complete while the
+            # robot is idle, so the controller is clean for the next request.
+            # Loop for the full 1.5s window so the TEM callback (~700ms) is
+            # guaranteed to be processed even if TF/clock callbacks compete first.
+            _drain_end = time.time() + 1.5
+            while time.time() < _drain_end:
+                rclpy.spin_once(move_to_task, timeout_sec=0.1)
             return jsonify({'success': True, 'executionTimeSeconds': elapsed})
         else:
             return jsonify({'success': False, 'error': 'Pilz LIN move failed',
@@ -470,7 +591,7 @@ def move_lin():
 
 @app.route('/move_joints', methods=['POST'])
 def move_joints():
-    """Execute a joint-space move using OMPL RRTConnect.
+    """Execute a joint-space move using Pilz PTP.
 
     Used for movej moves: joint-interpolated motion to a joint configuration
     or a Cartesian pose (resolved via IK inside MoveIt).
@@ -502,22 +623,48 @@ def move_joints():
                 _last_disabled_ee[0] = end_effector_type
                 time.sleep(2.0)
 
-        # Set payload once per EE type
-        if _last_payload_ee[0] != end_effector_type:
-            move_to_task.set_robot_payload(end_effector_type)
-            _last_payload_ee[0] = end_effector_type
-            time.sleep(2.0)
+        stop_msg = StringMsg()
+        stop_msg.data = 'stop'
+
+        # Confirm the controller is active right now — setup sleeps above can
+        # take up to 4 s, during which the controller may have dropped.
+        # 10s is sufficient: robot_service already confirmed active before sending
+        # this request, so this only catches drops during the setup phase.
+        if not _wait_for_controller_active(timeout_sec=10.0):
+            return jsonify({'success': False, 'error': 'scaled_joint_trajectory_controller not active — EC disconnected'}), 503
 
         start = time.time()
-        success = move_to_task.move_to_joints(
-            joint_values=joints,
-            velocity_scaling=vel,
-            acceleration_scaling=acc,
-            planning_time=10.0,
-        )
+        MAX_RETRIES = 3
+        success = False
+        for attempt in range(1, MAX_RETRIES + 1):
+            if attempt > 1:
+                stop_pub.publish(stop_msg)
+                rclpy.spin_once(move_to_task, timeout_sec=0.1)
+                if not _wait_for_controller_active(timeout_sec=2.0):
+                    return jsonify({'success': False, 'error': 'scaled_joint_trajectory_controller inactive before retry — EC dropped'}), 503
+            move_to_task.get_logger().info(f'move_joints attempt {attempt}/{MAX_RETRIES}')
+            success = move_to_task.move_to_joints(
+                joint_values=joints,
+                velocity_scaling=vel,
+                acceleration_scaling=acc,
+                planning_time=10.0,
+                use_pilz_ptp=True,
+            )
+            if success:
+                break
+            move_to_task.get_logger().warn(
+                f'move_joints attempt {attempt}/{MAX_RETRIES} failed, retrying...'
+            )
+            if not _wait_for_controller_active(timeout_sec=2.0):
+                return jsonify({'success': False, 'error': 'scaled_joint_trajectory_controller inactive after move failure — EC dropped'}), 503
         elapsed = time.time() - start
 
         if success:
+            # Drain MoveGroup's deferred TEM callback (~700ms after trajectory end)
+            # before returning, so it doesn't fire mid-execution of the next move.
+            _drain_end = time.time() + 1.5
+            while time.time() < _drain_end:
+                rclpy.spin_once(move_to_task, timeout_sec=0.1)
             return jsonify({'success': True, 'executionTimeSeconds': elapsed})
         else:
             return jsonify({'success': False, 'error': 'Joint-space move failed',

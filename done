@@ -1,0 +1,566 @@
+[1mdiff --git a/APTreeExecutionEngine/python_service/moveit_bridge_service.py b/APTreeExecutionEngine/python_service/moveit_bridge_service.py[m
+[1mindex 02ecef7..57f8e21 100644[m
+[1m--- a/APTreeExecutionEngine/python_service/moveit_bridge_service.py[m
+[1m+++ b/APTreeExecutionEngine/python_service/moveit_bridge_service.py[m
+[36m@@ -194,28 +194,37 @@[m [mdef plan_and_execute():[m
+             )[m
+             time.sleep(5.0)[m
+ [m
+[31m-        # Build target pose[m
+[31m-        target_pose = _build_pose(x, y, z, yaw)[m
+[32m+[m[32m        # Build target pose — negate x and y to convert from robot frame to ROS frame[m
+[32m+[m[32m        target_pose = _build_pose(-x, -y, z, yaw)[m
+ [m
+         # Path constraints for nailgun[m
+         path_constraints = None[m
+         if end_effector_type == 'nailgun':[m
+             path_constraints = _build_nailgun_path_constraints(target_pose)[m
+ [m
+[31m-        # Tell MoveGroup to stop any ongoing trajectory execution and clear its[m
+[31m-        # internal state. Without this, the trajectory_execution_manager may try[m
+[31m-        # to send a "continuation" of the previous (now stale) trajectory instead[m
+[31m-        # of a fresh one, causing the controller to reject the goal.[m
+         stop_msg = StringMsg()[m
+         stop_msg.data = 'stop'[m
+[31m-        stop_pub.publish(stop_msg)[m
+[31m-        time.sleep(0.5)  # let MoveGroup process the stop before we send a new goal[m
+[31m-        move_to_task.get_logger().info('Published stop to clear stale trajectory state')[m
+ [m
+         # Execute motion with retry as safety net.[m
+         MAX_RETRIES = 3[m
+         success = False[m
+         for attempt in range(1, MAX_RETRIES + 1):[m
+[32m+[m[32m            if attempt > 1:[m
+[32m+[m[32m                # Only publish stop before retries — NOT before attempt 1.[m
+[32m+[m[32m                # MoveGroup processes topic callbacks on its own thread only when[m
+[32m+[m[32m                # idle. If we publish stop then immediately send a goal, MoveGroup[m
+[32m+[m[32m                # queues the stop while busy planning/dispatching, then fires it[m
+[32m+[m[32m                # AFTER the controller starts executing → robot moves briefly then[m
+[32m+[m[32m                # gets cut off (CONTROL_FAILED).[m
+[32m+[m[32m                # Before attempt 1 the state is clean: either the end-of-previous-[m
+[32m+[m[32m                # request stop+spin cleared the Pilz handle, or this is the first[m
+[32m+[m[32m                # call and there is nothing to stop.[m
+[32m+[m[32m                stop_pub.publish(stop_msg)[m
+[32m+[m[32m                rclpy.spin_once(move_to_task, timeout_sec=0.1)  # flush pending callbacks[m
+[32m+[m[32m                time.sleep(1.5)  # give MoveGroup time to process stop before new goal[m
+[32m+[m[32m            move_to_task.get_logger().info([m
+[32m+[m[32m                f'Starting attempt {attempt}/{MAX_RETRIES}'[m
+[32m+[m[32m            )[m
+             success = move_to_task.move_to([m
+                 target_pose,[m
+                 velocity_scaling=0.15,[m
+[36m@@ -286,7 +295,7 @@[m [mdef plan_and_execute():[m
+             time.sleep(0.5)  # settle after press before lift[m
+ [m
+             # Lift 5 cm straight up (Pilz LIN to stay on same IK branch)[m
+[31m-            lift_pose = _build_pose(x, y, z + 0.05, yaw)[m
+[32m+[m[32m            lift_pose = _build_pose(-x, -y, z + 0.05, yaw)[m
+             move_to_task.move_to([m
+                 lift_pose,[m
+                 velocity_scaling=0.15,[m
+[36m@@ -332,6 +341,192 @@[m [mdef plan_and_execute():[m
+         }), 500[m
+ [m
+ [m
+[32m+[m[32m@app.route('/gripper', methods=['POST'])[m
+[32m+[m[32mdef gripper():[m
+[32m+[m[32m    """Control the gripper via the ROS IO service (works while EC is running).[m
+[32m+[m
+[32m+[m[32m    URScript sent via port 30002 is ignored when External Control holds the[m
+[32m+[m[32m    fieldbus lock — so gripper commands must go through the ROS driver instead.[m
+[32m+[m
+[32m+[m[32m    Expected JSON body:[m
+[32m+[m[32m        commandType  (str) — "close_gripper" or "open_gripper"[m
+[32m+[m[32m    """[m
+[32m+[m[32m    try:[m
+[32m+[m[32m        data = request.json[m
+[32m+[m[32m        command_type = data.get('commandType', 'close_gripper')[m
+[32m+[m
+[32m+[m[32m        if not io_client.wait_for_service(timeout_sec=5.0):[m
+[32m+[m[32m            return jsonify({'success': False, 'error': 'IO service not available'}), 500[m
+[32m+[m
+[32m+[m[32m        def _set_io(pin, state):[m
+[32m+[m[32m            req = SetIO.Request()[m
+[32m+[m[32m            req.fun = 1        # FUN_SET_DIGITAL_OUT[m
+[32m+[m[32m            req.pin = pin[m
+[32m+[m[32m            req.state = float(state)[m
+[32m+[m[32m            fut = io_client.call_async(req)[m
+[32m+[m[32m            rclpy.spin_until_future_complete(move_to_task, fut, timeout_sec=5.0)[m
+[32m+[m[32m            return fut.result() is not None and fut.result().success[m
+[32m+[m
+[32m+[m[32m        if command_type == 'close_gripper':[m
+[32m+[m[32m            # TDO1=True (close), wait, TDO0=False — mirrors URScript sequence[m
+[32m+[m[32m            ok1 = _set_io(17, 1.0)[m
+[32m+[m[32m            time.sleep(0.5)[m
+[32m+[m[32m            ok2 = _set_io(16, 0.0)[m
+[32m+[m[32m            if ok1 and ok2:[m
+[32m+[m[32m                return jsonify({'success': True, 'message': 'Gripper closed'})[m
+[32m+[m[32m            return jsonify({'success': False, 'error': 'IO set_io call failed'}), 500[m
+[32m+[m
+[32m+[m[32m        elif command_type == 'open_gripper':[m
+[32m+[m[32m            # TDO0=True (open)[m
+[32m+[m[32m            ok = _set_io(16, 1.0)[m
+[32m+[m[32m            time.sleep(0.5)[m
+[32m+[m[32m            if ok:[m
+[32m+[m[32m                return jsonify({'success': True, 'message': 'Gripper opened'})[m
+[32m+[m[32m            return jsonify({'success': False, 'error': 'IO set_io call failed'}), 500[m
+[32m+[m
+[32m+[m[32m        else:[m
+[32m+[m[32m            return jsonify({'success': False, 'error': f'Unknown commandType: {command_type}'}), 400[m
+[32m+[m
+[32m+[m[32m    except Exception as e:[m
+[32m+[m[32m        import traceback; traceback.print_exc()[m
+[32m+[m[32m        return jsonify({'success': False, 'error': str(e)}), 500[m
+[32m+[m
+[32m+[m
+[32m+[m[32m@app.route('/move_lin', methods=['POST'])[m
+[32m+[m[32mdef move_lin():[m
+[32m+[m[32m    """Execute a Cartesian linear move using Pilz LIN planner.[m
+[32m+[m
+[32m+[m[32m    Used for movel moves: straight-line TCP path to a Cartesian pose.[m
+[32m+[m
+[32m+[m[32m    Expected JSON body:[m
+[32m+[m[32m        pose            (list[6]) — [x, y, z, rx, ry, rz] target pose[m
+[32m+[m[32m        end_effector_type (str)   — "gripper" or "nailgun" (default: "gripper")[m
+[32m+[m[32m        velocity        (float)   — velocity scaling 0-1 (default: 0.15)[m
+[32m+[m[32m        acceleration    (float)   — acceleration scaling 0-1 (default: 0.15)[m
+[32m+[m[32m    """[m
+[32m+[m[32m    try:[m
+[32m+[m[32m        data = request.json[m
+[32m+[m[32m        print(f"Received /move_lin request: {data}")[m
+[32m+[m
+[32m+[m[32m        pose = data.get('pose')[m
+[32m+[m[32m        if not pose or len(pose) < 6:[m
+[32m+[m[32m            return jsonify({'success': False, 'error': 'pose [x,y,z,rx,ry,rz] required'}), 400[m
+[32m+[m
+[32m+[m[32m        end_effector_type = data.get('end_effector_type', 'gripper')[m
+[32m+[m[32m        vel = float(data.get('velocity', 0.15))[m
+[32m+[m[32m        acc = float(data.get('acceleration', 0.15))[m
+[32m+[m
+[32m+[m[32m        # Clear any stale Pilz LIN handle from a previous move BEFORE sending a new goal.[m
+[32m+[m[32m        # Publishing stop AFTER a completed move (at a low/contact position) can cause[m
+[32m+[m[32m        # the controller to drop its hold, leading to a fieldbus disconnect protective stop.[m
+[32m+[m[32m        _clear_stop = StringMsg()[m
+[32m+[m[32m        _clear_stop.data = 'stop'[m
+[32m+[m[32m        stop_pub.publish(_clear_stop)[m
+[32m+[m[32m        rclpy.spin_once(move_to_task, timeout_sec=0.1)[m
+[32m+[m[32m        time.sleep(0.3)[m
+[32m+[m
+[32m+[m[32m        move_to_task.end_effector_link = EE_LINK_MAP.get(end_effector_type, 'tool0')[m
+[32m+[m
+[32m+[m[32m        # Disable collisions for the inactive EE (only once per EE type)[m
+[32m+[m[32m        if end_effector_type in ('gripper', 'nailgun'):[m
+[32m+[m[32m            if _last_disabled_ee[0] != end_effector_type:[m
+[32m+[m[32m                move_to_task.disable_inactive_ee(end_effector_type)[m
+[32m+[m[32m                _last_disabled_ee[0] = end_effector_type[m
+[32m+[m[32m                time.sleep(2.0)[m
+[32m+[m
+[32m+[m[32m        # Set payload once per EE type[m
+[32m+[m[32m        if _last_payload_ee[0] != end_effector_type:[m
+[32m+[m[32m            move_to_task.set_robot_payload(end_effector_type)[m
+[32m+[m[32m            _last_payload_ee[0] = end_effector_type[m
+[32m+[m[32m            time.sleep(2.0)[m
+[32m+[m
+[32m+[m[32m        # Convert rotation vector (rx, ry) to yaw for _build_pose[m
+[32m+[m[32m        rx, ry = pose[3], pose[4][m
+[32m+[m[32m        half_theta = math.atan2(ry, rx)[m
+[32m+[m[32m        yaw_deg = 2.0 * half_theta * (180.0 / math.pi)[m
+[32m+[m
+[32m+[m[32m        target_pose = _build_pose(-pose[0], -pose[1], pose[2], yaw_deg)[m
+[32m+[m
+[32m+[m[32m        start = time.time()[m
+[32m+[m[32m        success = move_to_task.move_to([m
+[32m+[m[32m            target_pose,[m
+[32m+[m[32m            velocity_scaling=vel,[m
+[32m+[m[32m            acceleration_scaling=acc,[m
+[32m+[m[32m            planning_time=10.0,[m
+[32m+[m[32m            pipeline_id='pilz_industrial_motion_planner',[m
+[32m+[m[32m            planner_id='LIN',[m
+[32m+[m[32m        )[m
+[32m+[m[32m        elapsed = time.time() - start[m
+[32m+[m
+[32m+[m[32m        if success:[m
+[32m+[m[32m            return jsonify({'success': True, 'executionTimeSeconds': elapsed})[m
+[32m+[m[32m        else:[m
+[32m+[m[32m            return jsonify({'success': False, 'error': 'Pilz LIN move failed',[m
+[32m+[m[32m                            'executionTimeSeconds': elapsed}), 500[m
+[32m+[m[32m    except Exception as e:[m
+[32m+[m[32m        import traceback; traceback.print_exc()[m
+[32m+[m[32m        return jsonify({'success': False, 'error': str(e)}), 500[m
+[32m+[m
+[32m+[m
+[32m+[m[32m@app.route('/move_joints', methods=['POST'])[m
+[32m+[m[32mdef move_joints():[m
+[32m+[m[32m    """Execute a joint-space move using OMPL RRTConnect.[m
+[32m+[m
+[32m+[m[32m    Used for movej moves: joint-interpolated motion to a joint configuration[m
+[32m+[m[32m    or a Cartesian pose (resolved via IK inside MoveIt).[m
+[32m+[m
+[32m+[m[32m    Expected JSON body:[m
+[32m+[m[32m        joints          (list[6]) — joint angles [j1..j6] in radians[m
+[32m+[m[32m        end_effector_type (str)   — "gripper" or "nailgun" (default: "gripper")[m
+[32m+[m[32m        velocity        (float)   — velocity scaling 0-1 (default: 0.3)[m
+[32m+[m[32m        acceleration    (float)   — acceleration scaling 0-1 (default: 0.3)[m
+[32m+[m[32m    """[m
+[32m+[m[32m    try:[m
+[32m+[m[32m        data = request.json[m
+[32m+[m[32m        print(f"Received /move_joints request: {data}")[m
+[32m+[m
+[32m+[m[32m        joints = data.get('joints')[m
+[32m+[m[32m        if not joints or len(joints) < 6:[m
+[32m+[m[32m            return jsonify({'success': False, 'error': 'joints [j1..j6] required'}), 400[m
+[32m+[m
+[32m+[m[32m        end_effector_type = data.get('end_effector_type', 'gripper')[m
+[32m+[m[32m        vel = float(data.get('velocity', 0.3))[m
+[32m+[m[32m        acc = float(data.get('acceleration', 0.3))[m
+[32m+[m
+[32m+[m[32m        move_to_task.end_effector_link = EE_LINK_MAP.get(end_effector_type, 'tool0')[m
+[32m+[m
+[32m+[m[32m        # Disable collisions for the inactive EE (only once per EE type)[m
+[32m+[m[32m        if end_effector_type in ('gripper', 'nailgun'):[m
+[32m+[m[32m            if _last_disabled_ee[0] != end_effector_type:[m
+[32m+[m[32m                move_to_task.disable_inactive_ee(end_effector_type)[m
+[32m+[m[32m                _last_disabled_ee[0] = end_effector_type[m
+[32m+[m[32m                time.sleep(2.0)[m
+[32m+[m
+[32m+[m[32m        # Set payload once per EE type[m
+[32m+[m[32m        if _last_payload_ee[0] != end_effector_type:[m
+[32m+[m[32m            move_to_task.set_robot_payload(end_effector_type)[m
+[32m+[m[32m            _last_payload_ee[0] = end_effector_type[m
+[32m+[m[32m            time.sleep(2.0)[m
+[32m+[m
+[32m+[m[32m        start = time.time()[m
+[32m+[m[32m        success = move_to_task.move_to_joints([m
+[32m+[m[32m            joint_values=joints,[m
+[32m+[m[32m            velocity_scaling=vel,[m
+[32m+[m[32m            acceleration_scaling=acc,[m
+[32m+[m[32m            planning_time=10.0,[m
+[32m+[m[32m        )[m
+[32m+[m[32m        elapsed = time.time() - start[m
+[32m+[m
+[32m+[m[32m        if success:[m
+[32m+[m[32m            return jsonify({'success': True, 'executionTimeSeconds': elapsed})[m
+[32m+[m[32m        else:[m
+[32m+[m[32m            return jsonify({'success': False, 'error': 'Joint-space move failed',[m
+[32m+[m[32m                            'executionTimeSeconds': elapsed}), 500[m
+[32m+[m[32m    except Exception as e:[m
+[32m+[m[32m        import traceback; traceback.print_exc()[m
+[32m+[m[32m        return jsonify({'success': False, 'error': str(e)}), 500[m
+[32m+[m
+[32m+[m
+ if __name__ == '__main__':[m
+     print("Starting MoveIt Bridge Service...")[m
+     init_ros()[m
+[1mdiff --git a/APTreeExecutionEngine/python_service/robot_service.py b/APTreeExecutionEngine/python_service/robot_service.py[m
+[1mindex 9a0ff7e..97482e3 100644[m
+[1m--- a/APTreeExecutionEngine/python_service/robot_service.py[m
+[1m+++ b/APTreeExecutionEngine/python_service/robot_service.py[m
+[36m@@ -45,6 +45,7 @@[m [mclass RobotState:[m
+         self._tcp = None            # list [x, y, z, rx, ry, rz] or None[m
+         self._payload = None        # float (kg) or None[m
+         self._payload_cog = None    # list [cx, cy, cz] or None[m
+[32m+[m[32m        self._end_effector = 'gripper'  # currently equipped tool[m
+ [m
+     def update(self, tcp=None, payload=None, payload_cog=None):[m
+         """Atomically update all tool settings at once."""[m
+[36m@@ -53,6 +54,16 @@[m [mclass RobotState:[m
+             self._payload = payload[m
+             self._payload_cog = payload_cog[m
+ [m
+[32m+[m[32m    def set_end_effector(self, ee: str):[m
+[32m+[m[32m        """Store the currently equipped end effector."""[m
+[32m+[m[32m        with self._lock:[m
+[32m+[m[32m            self._end_effector = ee[m
+[32m+[m
+[32m+[m[32m    def get_end_effector(self) -> str:[m
+[32m+[m[32m        """Return the currently equipped end effector."""[m
+[32m+[m[32m        with self._lock:[m
+[32m+[m[32m            return self._end_effector[m
+[32m+[m
+     def snapshot(self):[m
+         """Return a consistent (tcp, payload, payload_cog) tuple."""[m
+         with self._lock:[m
+[36m@@ -84,39 +95,25 @@[m [mdef health():[m
+ [m
+ @app.route('/gripper', methods=['POST'])[m
+ def robot_gripper():[m
+[31m-    """Send a gripper command to the UR10 robot."""[m
+[32m+[m[32m    """Forward gripper command to the MoveIt bridge (ROS IO service).[m
+[32m+[m
+[32m+[m[32m    URScript via port 30002 is ignored while External Control holds the[m
+[32m+[m[32m    fieldbus lock, so commands must go through the ROS driver instead.[m
+[32m+[m[32m    """[m
+     try:[m
+         data = request.json[m
+         print(f"Received gripper request: {json.dumps(data, indent=2)}")[m
+[31m-[m
+[31m-        robot_ip = data.get('robotIp', DEFAULT_ROBOT_IP)[m
+[31m-        command_type = data.get('commandType', 'close_gripper')[m
+[31m-[m
+         start_time = time.time()[m
+[31m-[m
+[31m-        if command_type == 'close_gripper':[m
+[31m-            result_msg = set_digital_out_sequence(robot_ip)[m
+[31m-        elif command_type == 'open_gripper':[m
+[31m-            from ur10_control.ur10_commands import set_tool_digital_out_open[m
+[31m-            result_msg = set_tool_digital_out_open(robot_ip)[m
+[31m-        else:[m
+[31m-            return jsonify({'success': False, 'error': f"Unsupported gripper commandType '{command_type}'"}), 400[m
+[31m-[m
+[32m+[m[32m        resp = http_requests.post(f"{MOVEIT_BRIDGE_URL}/gripper", json=data, timeout=15)[m
+[32m+[m[32m        resp_data = resp.json()[m
+         elapsed = time.time() - start_time[m
+[31m-        print(f"Gripper command completed: {result_msg} ({elapsed:.2f}s)")[m
+[31m-        return jsonify({[m
+[31m-            'success': True,[m
+[31m-            'message': result_msg,[m
+[31m-            'executionTimeSeconds': elapsed[m
+[31m-        })[m
+[31m-[m
+[32m+[m[32m        print(f"Gripper command completed: {resp_data.get('message', '')} ({elapsed:.2f}s)")[m
+[32m+[m[32m        if resp_data.get('success'):[m
+[32m+[m[32m            return jsonify({'success': True, 'message': resp_data.get('message', ''), 'executionTimeSeconds': elapsed})[m
+[32m+[m[32m        return jsonify({'success': False, 'error': resp_data.get('error', 'Gripper command failed'), 'executionTimeSeconds': elapsed}), 500[m
+     except Exception as e:[m
+         print(f"Gripper command failed: {str(e)}")[m
+[31m-        return jsonify({[m
+[31m-            'success': False,[m
+[31m-            'error': str(e),[m
+[31m-            'executionTimeSeconds': 0[m
+[31m-        }), 500[m
+[32m+[m[32m        return jsonify({'success': False, 'error': str(e), 'executionTimeSeconds': 0}), 500[m
+ [m
+ [m
+ @app.route('/lift', methods=['POST'])[m
+[36m@@ -177,9 +174,20 @@[m [mdef robot_play_program():[m
+         # retry up to 5 times.  External Control and other persistent programs must[m
+         # NOT be retried: the retry loop re-sends setUserRole/setSpeedSlider and[m
+         # the wait-for-completion poll would hang because EC never stops itself.[m
+[31m-        is_equip_program = 'equip' in program_name.lower()[m
+[32m+[m[32m        is_deequip_program = 'deequip' in program_name.lower()[m
+[32m+[m[32m        is_equip_program = 'equip' in program_name.lower() and not is_deequip_program[m
+[32m+[m
+[32m+[m[32m        # Equip/deequip programs cannot run while EC holds the fieldbus lock —[m
+[32m+[m[32m        # stop EC first so the dashboard can load and play the new program.[m
+[32m+[m[32m        if is_equip_program or is_deequip_program:[m
+[32m+[m[32m            state = dashboard_command(robot_ip, "programState")[m
+[32m+[m[32m            if "PLAYING" in state.upper():[m
+[32m+[m[32m                print(f"Stopping EC before running '{program_name}'")[m
+[32m+[m[32m                dashboard_command(robot_ip, "stop")[m
+[32m+[m[32m                time.sleep(1.0)  # let the controller release the fieldbus[m
+[32m+[m
+         result_msg = play_program(robot_ip, program_name, speed=speed,[m
+[31m-                                  max_retries=5 if is_equip_program else 1)[m
+[32m+[m[32m                                  max_retries=5 if (is_equip_program or is_deequip_program) else 1)[m
+ [m
+         # Check if the program actually failed to play[m
+         if result_msg and ("File not found" in result_msg or "Failed" in result_msg):[m
+[36m@@ -212,6 +220,24 @@[m [mdef robot_play_program():[m
+             payload_cog=payload_cog[m
+         )[m
+ [m
+[32m+[m[32m        # Auto-start the correct EC program after equip/deequip so the 4s settle[m
+[32m+[m[32m        # is paid here rather than on the first move, and so that EC loading does[m
+[32m+[m[32m        # not clobber the payload we just set above.[m
+[32m+[m[32m        end_effector_type = data.get('endEffectorType')[m
+[32m+[m[32m        if is_equip_program and end_effector_type:[m
+[32m+[m[32m            # Track the newly equipped tool so /move commands pick up the right EC[m
+[32m+[m[32m            robot_state.set_end_effector(end_effector_type)[m
+[32m+[m[32m            # Give the controller time to fully settle after the equip program stops,[m
+[32m+[m[32m            # then start EC matching the newly equipped tool.[m
+[32m+[m[32m            print(f"Auto-starting EC '{end_effector_type}' after equip program '{program_name}'")[m
+[32m+[m[32m            time.sleep(0.5)[m
+[32m+[m[32m            _ensure_ec_running(robot_ip, end_effector_type)[m
+[32m+[m[32m        elif is_deequip_program:[m
+[32m+[m[32m            # Track that the tool has been removed (back to gripper)[m
+[32m+[m[32m            robot_state.set_end_effector('gripper')[m
+[32m+[m[32m            # Do NOT start EC here — the equip that follows will start the right one.[m
+[32m+[m[32m            print(f"Deequip complete: end effector reset to 'gripper', EC will start on next equip/move")[m
+[32m+[m
+         elapsed = time.time() - start_time[m
+ [m
+         print(f"Program '{program_name}' completed: {result_msg} ({elapsed:.2f}s)")[m
+[36m@@ -235,6 +261,52 @@[m [mdef robot_play_program():[m
+         }), 500[m
+ [m
+ [m
+[32m+[m[32mdef _ensure_ec_running(robot_ip, end_effector='gripper'):[m
+[32m+[m[32m    """Ensure the correct External Control URCap program is running.[m
+[32m+[m
+[32m+[m[32m    Reuses it if already PLAYING with the correct program (no restart overhead).[m
+[32m+[m[32m    Stops and reloads if the wrong EC program is running (tool switch scenario).[m
+[32m+[m[32m    Loads and plays fresh if nothing is running.[m
+[32m+[m[32m    The 4s settle is only paid once per tool session, not per request.[m
+[32m+[m[32m    """[m
+[32m+[m[32m    ext_program = EXTERNAL_CONTROL_NAILGUN if end_effector == 'nailgun' else EXTERNAL_CONTROL_GRIPPER[m
+[32m+[m
+[32m+[m[32m    state = dashboard_command(robot_ip, "programState")[m
+[32m+[m[32m    if "PLAYING" in state.upper():[m
+[32m+[m[32m        # Check which program is actually loaded — guard against wrong EC being active[m
+[32m+[m[32m        loaded = dashboard_command(robot_ip, "get loaded program")[m
+[32m+[m[32m        # Response is e.g. "Loaded program: /programs/external_control_g.urp"[m
+[32m+[m[32m        if ext_program.lower() in loaded.lower():[m
+[32m+[m[32m            print(f"External Control '{ext_program}' already running — skipping load/play")[m
+[32m+[m[32m            return[m
+[32m+[m[32m        # Wrong EC program is playing (tool was switched) — stop and reload[m
+[32m+[m[32m        print(f"Wrong EC program running (expected '{ext_program}', got '{loaded}') — reloading")[m
+[32m+[m[32m        dashboard_command(robot_ip, "stop")[m
+[32m+[m[32m        time.sleep(0.5)[m
+[32m+[m
+[32m+[m[32m    print(f"Loading External Control program: {ext_program}")[m
+[32m+[m[32m    load_resp = dashboard_command(robot_ip, f"load {ext_program}")[m
+[32m+[m[32m    if "File not found" in load_resp:[m
+[32m+[m[32m        raise RuntimeError(f"External Control program not found: {ext_program}")[m
+[32m+[m[32m    for attempt in range(1, 4):[m
+[32m+[m[32m        play_resp = dashboard_command(robot_ip, "play")[m
+[32m+[m[32m        if "Failed" not in play_resp and "Rejected" not in play_resp:[m
+[32m+[m[32m            break[m
+[32m+[m[32m        print(f"EC play attempt {attempt} rejected ({play_resp!r}), retrying in 3s")[m
+[32m+[m[32m        time.sleep(3.0)[m
+[32m+[m[32m    waited = 0.0[m
+[32m+[m[32m    while waited < 15.0:[m
+[32m+[m[32m        time.sleep(0.5)[m
+[32m+[m[32m        waited += 0.5[m
+[32m+[m[32m        state = dashboard_command(robot_ip, "programState")[m
+[32m+[m[32m        if "PLAYING" in state.upper():[m
+[32m+[m[32m            print(f"External Control program running after {waited:.1f}s")[m
+[32m+[m[32m            break[m
+[32m+[m[32m    time.sleep(1.5)  # settle: URCap <-> ROS2 driver handshake (paid once per tool session)[m
+[32m+[m[32m    # NOTE: do NOT call robot_state.reapply() here. set_payload/set_tcp use URScript[m
+[32m+[m[32m    # (port 30002) which preempts and kills the EC program on e-Series robots.[m
+[32m+[m
+[32m+[m
+ @app.route('/move', methods=['POST'])[m
+ def robot_move():[m
+     """Send a move command to the UR10 robot.[m
+[36m@@ -284,28 +356,52 @@[m [mdef robot_move():[m
+         if payload_for_move:[m
+             print(f"Re-applying stored payload: {payload_for_move} kg, COG: {payload_cog_for_move}")[m
+ [m
+[31m-        # Stop external_control.urp before URScript moves to avoid fieldbus disconnect[m
+[31m-        if command_type in ('movej', 'movel', 'movep', 'movec'):[m
+[31m-            state = dashboard_command(robot_ip, "programState")[m
+[31m-            if "PLAYING" in state.upper():[m
+[31m-                print("Stopping external_control before URScript move")[m
+[31m-                dashboard_command(robot_ip, "stop")[m
+[31m-                time.sleep(0.5)[m
+[31m-[m
+         if command_type == 'movej':[m
+[31m-            result_msg = move_to_pose([m
+[31m-                robot_ip=robot_ip, name=final_position, position=position_data,[m
+[31m-                velocity=velocity if velocity is not None else 0.5,[m
+[31m-                acceleration=acceleration if acceleration is not None else 1.0,[m
+[31m-                tcp=tcp_for_move, payload=payload_for_move, payload_cog=payload_cog_for_move,[m
+[31m-            )[m
+[32m+[m[32m            # Joint-space move via MoveIt RRTConnect — EC must be running[m
+[32m+[m[32m            joints = inline_joints[m
+[32m+[m[32m            if not joints or len(joints) < 6:[m
+[32m+[m[32m                return jsonify({'success': False, 'error': 'joints [j1..j6] required for movej'}), 400[m
+[32m+[m[32m            end_effector = data.get('endEffectorType') or robot_state.get_end_effector()[m
+[32m+[m[32m            _ensure_ec_running(robot_ip, end_effector)[m
+[32m+[m[32m            vel_val = velocity if velocity is not None else 0.3[m
+[32m+[m[32m            acc_val = acceleration if acceleration is not None else 0.3[m
+[32m+[m[32m            moveit_payload = {[m
+[32m+[m[32m                'joints': joints,[m
+[32m+[m[32m                'end_effector_type': end_effector,[m
+[32m+[m[32m                'velocity': vel_val,[m
+[32m+[m[32m                'acceleration': acc_val,[m
+[32m+[m[32m            }[m
+[32m+[m[32m            print(f"Forwarding movej to /move_joints: {moveit_payload}")[m
+[32m+[m[32m            resp = http_requests.post(f"{MOVEIT_BRIDGE_URL}/move_joints", json=moveit_payload, timeout=60)[m
+[32m+[m[32m            resp_data = resp.json()[m
+[32m+[m[32m            if resp_data.get('success'):[m
+[32m+[m[32m                result_msg = f"Joint-space move succeeded ({resp_data.get('executionTimeSeconds', 0):.2f}s)"[m
+[32m+[m[32m            else:[m
+[32m+[m[32m                return jsonify({'success': False, 'error': resp_data.get('error', 'movej failed')}), 500[m
+[32m+[m
+         elif command_type == 'movel':[m
+[31m-            result_msg = move_to_pose_l([m
+[31m-                robot_ip=robot_ip, name=final_position, position=position_data,[m
+[31m-                velocity=velocity if velocity is not None else 0.25,[m
+[31m-                acceleration=acceleration if acceleration is not None else 1.2,[m
+[31m-                tcp=tcp_for_move, payload=payload_for_move, payload_cog=payload_cog_for_move,[m
+[31m-            )[m
+[32m+[m[32m            # Cartesian linear move via Pilz LIN — EC must be running[m
+[32m+[m[32m            pose = inline_pose[m
+[32m+[m[32m            if not pose or len(pose) < 6:[m
+[32m+[m[32m                return jsonify({'success': False, 'error': 'pose [x,y,z,rx,ry,rz] required for movel'}), 400[m
+[32m+[m[32m            end_effector = data.get('endEffectorType') or robot_state.get_end_effector()[m
+[32m+[m[32m            _ensure_ec_running(robot_ip, end_effector)[m
+[32m+[m[32m            vel_val = velocity if velocity is not None else 0.15[m
+[32m+[m[32m            acc_val = acceleration if acceleration is not None else 0.15[m
+[32m+[m[32m            moveit_payload = {[m
+[32m+[m[32m                'pose': pose,[m
+[32m+[m[32m                'end_effector_type': end_effector,[m
+[32m+[m[32m                'velocity': vel_val,[m
+[32m+[m[32m                'acceleration': acc_val,[m
+[32m+[m[32m            }[m
+[32m+[m[32m            print(f"Forwarding movel to /move_lin: {moveit_payload}")[m
+[32m+[m[32m            resp = http_requests.post(f"{MOVEIT_BRIDGE_URL}/move_lin", json=moveit_payload, timeout=60)[m
+[32m+[m[32m            resp_data = resp.json()[m
+[32m+[m[32m            if resp_data.get('success'):[m
+[32m+[m[32m                result_msg = f"Pilz LIN move succeeded ({resp_data.get('executionTimeSeconds', 0):.2f}s)"[m
+[32m+[m[32m            else:[m
+[32m+[m[32m                return jsonify({'success': False, 'error': resp_data.get('error', 'movel failed')}), 500[m
+[32m+[m
+         elif command_type == 'movep':[m
+             result_msg = move_to_pose_p([m
+                 robot_ip=robot_ip, name=final_position, position=position_data,[m
+[36m@@ -330,37 +426,10 @@[m [mdef robot_move():[m
+                 return jsonify({'success': False, 'error': 'pose [x,y,z,rx,ry,rz] is required for planned moves'}), 400[m
+ [m
+             # Determine which external_control program to use based on end effector[m
+[31m-            end_effector = data.get('endEffectorType') or 'gripper'[m
+[31m-            ext_program = EXTERNAL_CONTROL_NAILGUN if end_effector == 'nailgun' else EXTERNAL_CONTROL_GRIPPER[m
+[32m+[m[32m            end_effector = data.get('endEffectorType') or robot_state.get_end_effector()[m
+ [m
+[31m-            # Step 1: Reuse external_control if already running, otherwise load+play[m
+[31m-            state = dashboard_command(robot_ip, "programState")[m
+[31m-            if "PLAYING" in state.upper():[m
+[31m-                print(f"External Control already running — skipping load/play")[m
+[31m-            else:[m
+[31m-                print(f"Loading External Control program: {ext_program}")[m
+[31m-                load_resp = dashboard_command(robot_ip, f"load {ext_program}")[m
+[31m-                print(f"Load response: {load_resp}")[m
+[31m-                if "File not found" in load_resp:[m
+[31m-                    return jsonify({'success': False, 'error': f"External Control program not found: {ext_program}"}), 500[m
+[31m-                dashboard_command(robot_ip, "play")[m
+[31m-[m
+[31m-                # Wait for External Control program to reach PLAYING state,[m
+[31m-                # then allow extra time for the URCap ↔ ROS2 driver handshake.[m
+[31m-                waited = 0.0[m
+[31m-                playing = False[m
+[31m-                while waited < 15.0:[m
+[31m-                    time.sleep(0.5)[m
+[31m-                    waited += 0.5[m
+[31m-                    state = dashboard_command(robot_ip, "programState")[m
+[31m-                    if "PLAYING" in state.upper():[m
+[31m-                        playing = True[m
+[31m-                        print(f"External Control program running after {waited:.1f}s")[m
+[31m-                        break[m
+[31m-                if not playing:[m
+[31m-                    print(f"WARNING: program did not reach PLAYING after {waited:.1f}s, proceeding anyway")[m
+[31m-                # Extra settle time for the driver connection to fully establish[m
+[31m-                time.sleep(2)[m
+[32m+[m[32m            # Ensure external_control is running (reuse if already PLAYING)[m
+[32m+[m[32m            _ensure_ec_running(robot_ip, end_effector)[m
+ [m
+             # Step 2: Convert rotation vector (rx, ry) to yaw in degrees[m
+             rx, ry = pose[3], pose[4][m
+[36m@@ -368,8 +437,8 @@[m [mdef robot_move():[m
+             yaw_deg = 2.0 * half_theta * (180.0 / math.pi)[m
+ [m
+             moveit_payload = {[m
+[31m-                'x': -pose[0],[m
+[31m-                'y': -pose[1],[m
+[32m+[m[32m                'x': pose[0],[m
+[32m+[m[32m                'y': pose[1],[m
+                 'z': pose[2],[m
+                 'end_effector_type': end_effector,[m
+                 'no_object': True,[m
+[36m@@ -431,4 +500,4 @@[m [mif __name__ == '__main__':[m
+     print("Starting Robot Execution Service...")[m
+     print(f"Robot IP: {DEFAULT_ROBOT_IP}")[m
+     print(f"Supported move types: {', '.join(SUPPORTED_MOVE_TYPES)}")[m
+[31m-    app.run(host='127.0.0.1', port=5001, debug=True)[m
+[32m+[m[32m    app.run(host='127.0.0.1', port=5001, debug=True, use_reloader=False)[m
