@@ -33,5 +33,8 @@ namespace RobotCommand
 
         /// <summary>End effector type for planned moves ("gripper" or "nailgun").</summary>
         public string EndEffectorType { get; set; }
+
+        /// <summary>Height in meters for /lift endpoint. Positive = up, negative = down (press). Null uses robot_service default (0.1 m).</summary>
+        public double? Height { get; set; }
     }
 }

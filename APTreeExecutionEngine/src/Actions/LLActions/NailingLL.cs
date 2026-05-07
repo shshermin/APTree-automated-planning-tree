@@ -43,7 +43,7 @@ public class NailingLL : ExeAction, ILLInputBindable
         return new RobotCommandRequest
         {
             Endpoint = "/move",
-            CommandType = "planned",
+            CommandType = "movej",
             FinalPosition = NailLoc?.ID ?? ResolveNailLocationFromGoalState()?.ID ?? "unknown",
             RobotIp = RobotIp,
             Velocity = 0.3,
@@ -62,7 +62,7 @@ public class NailingLL : ExeAction, ILLInputBindable
             return new[]
             {
                 NailLoc.Position.X, NailLoc.Position.Y, NailLoc.Position.Z,
-                0.0, 0.0, 0.0
+                Math.PI / Math.Sqrt(2), -Math.PI / Math.Sqrt(2), 0.0
             };
         }
 
@@ -74,7 +74,7 @@ public class NailingLL : ExeAction, ILLInputBindable
             return new[]
             {
                 nailLocFromGoal.Position.X, nailLocFromGoal.Position.Y, nailLocFromGoal.Position.Z,
-                0.0, 0.0, 0.0
+                Math.PI / Math.Sqrt(2), -Math.PI / Math.Sqrt(2), 0.0
             };
         }
 

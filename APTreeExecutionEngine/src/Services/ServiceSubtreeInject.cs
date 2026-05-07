@@ -138,8 +138,6 @@ namespace BehaviorTreeMainProject
                 if (hasInjectedSubtree)
                 {
                     LogMessage($"⏭️ ServiceSubtreeInject: Subtree already injected for {actionType}, skipping (re-planning handled by ServicePDDLPlanning)");
-                    // Re-set the cassette completion flag (it may have been cleared by resetAfterSuccessFullExecution)
-                    DecoratorDynamicPlanningComplete.SetCassetteSubtreeCompletedFlag(OwningTree.root, pendingAction, linkedBlackboard);
                     return true;
                 }
 
@@ -394,9 +392,6 @@ namespace BehaviorTreeMainProject
             BehaviorTreeComponentLogger.TrackSubtreeInjection($"{configName}_{instanceName}");
             
             // NOTE: Subtrees are now added to blackboard after successful planning, not during injection
-            
-            // Set the corresponding cassette subtree completion flag
-            DecoratorDynamicPlanningComplete.SetCassetteSubtreeCompletedFlag(OwningTree.root, action, linkedBlackboard);
         }
 
         /// <summary>

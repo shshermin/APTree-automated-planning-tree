@@ -305,7 +305,7 @@ def _send_urscript(robot_ip: str, cmd: str):
     sock.close()
 
 
-def _wait_for_motion_complete(robot_ip: str, timeout: float = 60.0, settle_time: float = 0.3, velocity_threshold: float = 0.001):
+def _wait_for_motion_complete(robot_ip: str, timeout: float = 60.0, settle_time: float = 0.3, velocity_threshold: float = 0.01):
     """Block until the robot has finished moving by polling joint velocities.
 
     Also monitors safety mode from the real-time data packet (offset 812).
@@ -318,7 +318,7 @@ def _wait_for_motion_complete(robot_ip: str, timeout: float = 60.0, settle_time:
     """
     import time
 
-    time.sleep(0.5)  # give the motion time to start
+    time.sleep(0.15)  # give the motion time to start
 
     start = time.time()
     settled_since = None
@@ -489,11 +489,18 @@ def lift_z(robot_ip: str, height: float = 0.1, velocity: float = 0.1, accelerati
             acceleration (float) — TCP acceleration in m/s² (default: 0.3).
     Output: str — Confirmation message.
     """
+    height = float(height) if height is not None else 0.1
     cmd = (
         "def lift_up():\n"
         "  local curr = get_actual_tcp_pose()\n"
-        f"  local target = p[curr[0], curr[1], curr[2]+{height}, curr[3], curr[4], curr[5]]\n"
-        f"  movel(target, a={acceleration}, v={velocity})\n"
+        f"  local target_z = curr[2] + {height}\n"
+        "  local cx = curr[0]\n"
+        "  local cy = curr[1]\n"
+        "  local crx = curr[3]\n"
+        "  local cry = curr[4]\n"
+        "  local crz = curr[5]\n"
+        "  movel(p[cx, cy, target_z, crx, cry, crz], "
+        f"a={acceleration}, v={velocity})\n"
         "end\n"
     )
     _send_urscript(robot_ip, cmd)

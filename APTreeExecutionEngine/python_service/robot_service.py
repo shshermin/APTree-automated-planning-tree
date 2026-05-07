@@ -23,13 +23,14 @@ app = Flask(__name__)
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(SCRIPT_DIR, "ur10_control"))
 from ur10_commands import move_to_pose, move_to_pose_l, move_to_pose_p, move_to_pose_c, set_digital_out_sequence
-from ur10_commands import play_program, dashboard_command, set_payload, set_tcp
+from ur10_commands import play_program, dashboard_command, set_payload, set_tcp, set_tool_digital_out_open
+from ur10_commands import _send_urscript
 
 DEFAULT_ROBOT_IP = "192.168.1.100"
 MOVEIT_BRIDGE_URL = "http://127.0.0.1:5002"
 EXTERNAL_CONTROL_NAILGUN = "external_control_n.urp"
 EXTERNAL_CONTROL_GRIPPER = "external_control_g.urp"
-SUPPORTED_MOVE_TYPES = ['movej', 'movel', 'movep', 'movec', 'planned']
+SUPPORTED_MOVE_TYPES = ['movej', 'movel', 'movep', 'movec']
 
 
 class RobotState:
@@ -95,22 +96,43 @@ def health():
 
 @app.route('/gripper', methods=['POST'])
 def robot_gripper():
-    """Forward gripper command to the MoveIt bridge (ROS IO service).
-
-    URScript via port 30002 is ignored while External Control holds the
-    fieldbus lock, so commands must go through the ROS driver instead.
-    """
+    """Send gripper open/close via direct URScript (tool digital outputs)."""
     try:
         data = request.json
         print(f"Received gripper request: {json.dumps(data, indent=2)}")
         start_time = time.time()
-        resp = http_requests.post(f"{MOVEIT_BRIDGE_URL}/gripper", json=data, timeout=15)
-        resp_data = resp.json()
+        robot_ip = data.get('robotIp') or DEFAULT_ROBOT_IP
+        command_type = data.get('commandType', '').lower()
+
+        if command_type == 'open_gripper':
+            # TDO0 = True → open
+            cmd = (
+                "def gripper_open():\n"
+                "  set_tool_digital_out(0, True)\n"
+                "  sleep(0.8)\n"
+                "end\n"
+            )
+            _send_urscript(robot_ip, cmd)
+            time.sleep(0.8)  # wait for gripper to finish before returning to C#
+            msg = "Gripper opened (TDO0=True)"
+        elif command_type == 'close_gripper':
+            # TDO0 = False, TDO1 = True → close
+            cmd = (
+                "def gripper_close():\n"
+                "  set_tool_digital_out(0, False)\n"
+                "  set_tool_digital_out(1, True)\n"
+                "  sleep(0.8)\n"
+                "end\n"
+            )
+            _send_urscript(robot_ip, cmd)
+            time.sleep(0.8)  # wait for gripper to finish before returning to C#
+            msg = "Gripper closed (TDO0=False, TDO1=True)"
+        else:
+            return jsonify({'success': False, 'error': f"Unknown gripper command: {command_type}", 'executionTimeSeconds': 0}), 400
+
         elapsed = time.time() - start_time
-        print(f"Gripper command completed: {resp_data.get('message', '')} ({elapsed:.2f}s)")
-        if resp_data.get('success'):
-            return jsonify({'success': True, 'message': resp_data.get('message', ''), 'executionTimeSeconds': elapsed})
-        return jsonify({'success': False, 'error': resp_data.get('error', 'Gripper command failed'), 'executionTimeSeconds': elapsed}), 500
+        print(f"Gripper command completed: {msg} ({elapsed:.2f}s)")
+        return jsonify({'success': True, 'message': msg, 'executionTimeSeconds': elapsed})
     except Exception as e:
         print(f"Gripper command failed: {str(e)}")
         return jsonify({'success': False, 'error': str(e), 'executionTimeSeconds': 0}), 500
@@ -123,8 +145,8 @@ def robot_lift():
         data = request.json
         print(f"Received lift request: {json.dumps(data, indent=2)}")
 
-        robot_ip = data.get('robotIp', DEFAULT_ROBOT_IP)
-        height = data.get('height', 0.1)
+        robot_ip = data.get('robotIp') or DEFAULT_ROBOT_IP
+        height = data.get('height') or 0.1
 
         from ur10_control.ur10_commands import lift_z
         start_time = time.time()
@@ -225,13 +247,8 @@ def robot_play_program():
         # not clobber the payload we just set above.
         end_effector_type = data.get('endEffectorType')
         if is_equip_program and end_effector_type:
-            # Track the newly equipped tool so /move commands pick up the right EC
+            # Track the newly equipped tool so /move commands pick up the right TCP/payload
             robot_state.set_end_effector(end_effector_type)
-            # Give the controller time to fully settle after the equip program stops,
-            # then start EC matching the newly equipped tool.
-            print(f"Auto-starting EC '{end_effector_type}' after equip program '{program_name}'")
-            time.sleep(0.5)
-            _ensure_ec_running(robot_ip, end_effector_type)
         elif is_deequip_program:
             # Track that the tool has been removed (back to gripper)
             robot_state.set_end_effector('gripper')
@@ -400,58 +417,38 @@ def robot_move():
             print(f"Re-applying stored payload: {payload_for_move} kg, COG: {payload_cog_for_move}")
 
         if command_type == 'movej':
-            # Joint-space move via MoveIt RRTConnect — EC must be running
+            # Joint-space move via URScript movej — no EC required
+            # Accepts joints OR pose (movej supports Cartesian targets via IK in URScript)
             joints = inline_joints
-            if not joints or len(joints) < 6:
-                return jsonify({'success': False, 'error': 'joints [j1..j6] required for movej'}), 400
-            end_effector = data.get('endEffectorType') or robot_state.get_end_effector()
-            _ensure_ec_running(robot_ip, end_effector)
+            pose = inline_pose
+            if (not joints or len(joints) < 6) and (not pose or len(pose) < 6):
+                return jsonify({'success': False, 'error': 'joints [j1..j6] or pose [x,y,z,rx,ry,rz] required for movej'}), 400
             vel_val = velocity if velocity is not None else 0.3
             acc_val = acceleration if acceleration is not None else 0.3
-            moveit_payload = {
-                'joints': joints,
-                'end_effector_type': end_effector,
-                'velocity': vel_val,
-                'acceleration': acc_val,
-            }
-            print(f"Forwarding movej to /move_joints: {moveit_payload}")
-            resp = http_requests.post(f"{MOVEIT_BRIDGE_URL}/move_joints", json=moveit_payload, timeout=150)
-            if resp.status_code == 503:
-                print("[WARN] Bridge: controller inactive (503) — restarting EC and retrying movej")
-                _ensure_ec_running(robot_ip, end_effector)
-                resp = http_requests.post(f"{MOVEIT_BRIDGE_URL}/move_joints", json=moveit_payload, timeout=150)
-            resp_data = resp.json()
-            if resp_data.get('success'):
-                result_msg = f"Joint-space move succeeded ({resp_data.get('executionTimeSeconds', 0):.2f}s)"
+            if joints and len(joints) >= 6:
+                position_arg = {'joints': joints}
             else:
-                return jsonify({'success': False, 'error': resp_data.get('error', 'movej failed')}), 500
+                position_arg = {'pose': pose}
+            result_msg = move_to_pose(
+                robot_ip=robot_ip, name=final_position,
+                position=position_arg,
+                velocity=vel_val, acceleration=acc_val,
+                tcp=tcp_for_move, payload=payload_for_move, payload_cog=payload_cog_for_move,
+            )
 
         elif command_type == 'movel':
-            # Cartesian linear move via Pilz LIN — EC must be running
+            # Cartesian linear move via URScript movel — no EC required
             pose = inline_pose
             if not pose or len(pose) < 6:
                 return jsonify({'success': False, 'error': 'pose [x,y,z,rx,ry,rz] required for movel'}), 400
-            end_effector = data.get('endEffectorType') or robot_state.get_end_effector()
-            _ensure_ec_running(robot_ip, end_effector)
             vel_val = velocity if velocity is not None else 0.15
             acc_val = acceleration if acceleration is not None else 0.15
-            moveit_payload = {
-                'pose': pose,
-                'end_effector_type': end_effector,
-                'velocity': vel_val,
-                'acceleration': acc_val,
-            }
-            print(f"Forwarding movel to /move_lin: {moveit_payload}")
-            resp = http_requests.post(f"{MOVEIT_BRIDGE_URL}/move_lin", json=moveit_payload, timeout=150)
-            if resp.status_code == 503:
-                print("[WARN] Bridge: controller inactive (503) — restarting EC and retrying movel")
-                _ensure_ec_running(robot_ip, end_effector)
-                resp = http_requests.post(f"{MOVEIT_BRIDGE_URL}/move_lin", json=moveit_payload, timeout=150)
-            resp_data = resp.json()
-            if resp_data.get('success'):
-                result_msg = f"Pilz LIN move succeeded ({resp_data.get('executionTimeSeconds', 0):.2f}s)"
-            else:
-                return jsonify({'success': False, 'error': resp_data.get('error', 'movel failed')}), 500
+            result_msg = move_to_pose_l(
+                robot_ip=robot_ip, name=final_position,
+                position={'pose': pose},
+                velocity=vel_val, acceleration=acc_val,
+                tcp=tcp_for_move, payload=payload_for_move, payload_cog=payload_cog_for_move,
+            )
 
         elif command_type == 'movep':
             result_msg = move_to_pose_p(
@@ -470,62 +467,7 @@ def robot_move():
                 acceleration=acceleration if acceleration is not None else 1.2,
                 tcp=tcp_for_move, payload=payload_for_move, payload_cog=payload_cog_for_move,
             )
-        elif command_type == 'planned':
-            # Forward to MoveIt bridge service running in WSL
-            pose = inline_pose
-            if not pose or len(pose) < 6:
-                return jsonify({'success': False, 'error': 'pose [x,y,z,rx,ry,rz] is required for planned moves'}), 400
 
-            # Determine which external_control program to use based on end effector
-            end_effector = data.get('endEffectorType') or robot_state.get_end_effector()
-
-            # Ensure external_control is running (reuse if already PLAYING)
-            _ensure_ec_running(robot_ip, end_effector)
-
-            # Step 2: Convert rotation vector (rx, ry) to yaw in degrees
-            rx, ry = pose[3], pose[4]
-            half_theta = math.atan2(ry, rx)
-            yaw_deg = 2.0 * half_theta * (180.0 / math.pi)
-
-            moveit_payload = {
-                'x': pose[0],
-                'y': pose[1],
-                'z': pose[2],
-                'end_effector_type': end_effector,
-                'no_object': True,
-                'both_loaded': True,
-            }
-
-            if end_effector != 'nailgun':
-                moveit_payload['yaw'] = round(yaw_deg, 2)
-            print(f"Forwarding to MoveIt bridge: {json.dumps(moveit_payload, indent=2)}")
-            resp = http_requests.post(f"{MOVEIT_BRIDGE_URL}/plan_and_execute", json=moveit_payload, timeout=130)
-            if resp.status_code == 503:
-                print("[WARN] Bridge: controller inactive (503) — restarting EC and retrying planned move")
-                _ensure_ec_running(robot_ip, end_effector)
-                resp = http_requests.post(f"{MOVEIT_BRIDGE_URL}/plan_and_execute", json=moveit_payload, timeout=130)
-            resp_data = resp.json()
-            print(f"MoveIt response: {json.dumps(resp_data, indent=2)}")
-
-            # external_control.urp stays running — the lift is now handled
-            # inside move_to_task.py via MoveIt, so no need to stop/reload.
-
-            if resp_data.get('success'):
-                # Verify robot isn't in protective stop after MoveIt execution
-                from ur10_control.ur10_commands import check_safety_mode
-                is_safe, safety_msg = check_safety_mode(robot_ip)
-                if not is_safe:
-                    print(f"Robot safety issue after MoveIt execution: {safety_msg}")
-                    return jsonify({'success': False, 'error': f"Robot safety issue after MoveIt execution: {safety_msg}"}), 500
-                result_msg = resp_data.get('message', 'MoveIt execution completed')
-                # Forward MoveIt timing breakdown
-                moveit_motion_time = resp_data.get('motionTimeSeconds', 0)
-                moveit_setup_time = resp_data.get('setupTimeSeconds', 0)
-                moveit_lift_time = resp_data.get('liftTimeSeconds', 0)
-            else:
-                error_msg = resp_data.get('error', 'MoveIt execution failed')
-                print(f"MoveIt FAILED: {error_msg}")
-                return jsonify({'success': False, 'error': error_msg}), 500
 
         elapsed = time.time() - start_time
 
@@ -535,11 +477,6 @@ def robot_move():
             'message': result_msg,
             'executionTimeSeconds': elapsed
         }
-        # Include MoveIt timing breakdown for planned moves
-        if command_type == 'planned':
-            response_data['planningTimeSeconds'] = moveit_motion_time
-            response_data['setupTimeSeconds'] = moveit_setup_time
-            response_data['liftTimeSeconds'] = moveit_lift_time
         return jsonify(response_data)
 
     except Exception as e:

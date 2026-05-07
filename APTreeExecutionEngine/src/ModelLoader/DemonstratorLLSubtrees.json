@@ -124,11 +124,28 @@
           "actionType": "MoveToLL",
           "instanceName": "moveToObjPosition",
           "contParams": {
-            "moveType": "planned"
+            "moveType": "movej"
           },
           "paramBindings": {
             "client": "{client}",
             "target": "{objposition}"
+          }
+        },
+        {
+          "actionType": "OpenGripperLL",
+          "instanceName": "openGripper",
+          "contParams": {
+            "DigitalOutput": "0"
+          },
+          "paramBindings": {
+            "client": "{client}"
+          }
+        },
+        {
+          "actionType": "LiftLL",
+          "instanceName": "liftUp",
+          "paramBindings": {
+            "client": "{client}"
           }
         },
         {
@@ -152,11 +169,28 @@
           "actionType": "MoveToLL",
           "instanceName": "moveToObjPosition",
           "contParams": {
-            "moveType": "planned"
+            "moveType": "movej"
           },
           "paramBindings": {
             "client": "{client}",
             "target": "{objposition}"
+          }
+        },
+        {
+          "actionType": "OpenGripperLL",
+          "instanceName": "openGripper",
+          "contParams": {
+            "DigitalOutput": "0"
+          },
+          "paramBindings": {
+            "client": "{client}"
+          }
+        },
+        {
+          "actionType": "LiftLL",
+          "instanceName": "liftUp",
+          "paramBindings": {
+            "client": "{client}"
           }
         },
         {
@@ -197,12 +231,26 @@
           "actionType": "NailingLL",
           "instanceName": "nailStep",
           "contParams": {
-            "moveType": "planned"
+            "moveType": "movej"
           },
           "paramBindings": {
             "nailloc": "{nailloc}",
             "client": "{client}",
             "tool": "{ng}"
+          }
+        },
+        {
+          "actionType": "PushDownLL",
+          "instanceName": "pushDown",
+          "paramBindings": {
+            "client": "{client}"
+          }
+        },
+        {
+          "actionType": "LiftLL",
+          "instanceName": "liftUp",
+          "paramBindings": {
+            "client": "{client}"
           }
         }
       ]

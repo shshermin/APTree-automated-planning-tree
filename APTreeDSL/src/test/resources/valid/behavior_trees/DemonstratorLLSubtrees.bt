@@ -36,20 +36,24 @@ BehaviorTree UnstackLLSubtree {
 
 // ── StackML ──
 // ML signature: StackML (stackingobject:Element, existingobject:Element, client:Robot, gripper:Gripper, objposition:Location, robotposition:RobotPosition)
-// Steps: Planned move to object position → MoveJ to robot rest position
+// Steps: MoveJ to object position → open gripper → lift → MoveJ to robot rest position
 BehaviorTree StackLLSubtree {
     Root Sequence StackSequence {
-        Action MoveToLL moveToObjPosition (objposition client "planned")
+        Action MoveToLL moveToObjPosition (objposition client "movej")
+        Action OpenGripperLL openGripper (client 0)
+        Action LiftLL liftUp (client)
         Action MoveToLL moveToRobotPosition (robotposition client "movej")
     }
 }
 
 // ── StackOnTwoML ──
 // ML signature: StackOnTwoML (stackingobj:Element, client:Robot, objposition:Location, robotpos:RobotPosition, existingobj1:Element, existingobj2:Element, vg:Gripper, layer1:Stack, layer2:Stack)
-// Steps: Planned move to object position → MoveJ to robot position
+// Steps: MoveJ to object position → open gripper → lift → MoveJ to robot position
 BehaviorTree StackOnTwoLLSubtree {
     Root Sequence StackOnTwoSequence {
-        Action MoveToLL moveToObjPosition (objposition client "planned")
+        Action MoveToLL moveToObjPosition (objposition client "movej")
+        Action OpenGripperLL openGripper (client 0)
+        Action LiftLL liftUp (client)
         Action MoveToLL moveToRobotPos (robotpos client "movej")
     }
 }
@@ -65,10 +69,12 @@ BehaviorTree TravelLLSubtree {
 
 // ── NailingML ──
 // ML signature: NailingML (obj1:Element, obj2:Element, client:Robot, ng:StaplerGun, rp:RobotPosition)
-// Steps: Execute nailing operation
+// Steps: MoveJ to nail location → push 2mm down (movel) → lift (movel)
 BehaviorTree NailingLLSubtree {
     Root Sequence NailingSequence {
-        Action NailingLL nailStep (client ng nailloc "planned")
+        Action NailingLL nailStep (client ng nailloc "movej")
+        Action PushDownLL pushDown (client)
+        Action LiftLL liftUp (client)
     }
 }
 

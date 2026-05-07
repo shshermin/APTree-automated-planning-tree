@@ -26,7 +26,7 @@
       "properties": {
         "tcpPose": "0.60736,-0.274802,0.339901",
         "joints": "-0.1289,-1.540886,-1.93273,-1.238644,1.554514,1.43369",
-        "tcpOrinetation": "3.14159,0.0,0.0"
+        "tcpOrinetation": "0.0,-3.14159,0.0"
       }
     },
     {
@@ -2892,7 +2892,7 @@
       "name": "temploc3",
       "type": "FinalLocation",
       "properties": {
-        "orientation": "0,1,0",
+        "orientation": "0,-1,0",
         "position": "0.5993800000000005,-0.0027,-0.009"
       } 
     },
