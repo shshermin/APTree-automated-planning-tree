@@ -643,7 +643,7 @@ public List<PActionNode> GetAllActionInstances()
         if (InitialStatePredicates.ContainsKey(key))
         {
             var existingPredicate = InitialStatePredicates[key];
-            LoggingService.LogWarning($"⚠️ PREDICATE_UPDATE: Key '{key}' already exists - updating negation");
+            LoggingService.LogDebug($"🔍 PREDICATE_UPDATE: Key '{key}' already exists - updating negation");
             LoggingService.LogInfo($"   Old isNegated: {existingPredicate.not} → New isNegated: {predicate.not}");
 
             // Update the isNegated property of the existing predicate

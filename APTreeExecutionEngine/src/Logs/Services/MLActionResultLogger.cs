@@ -37,7 +37,7 @@ namespace BehaviorTreeMainProject.Log.Services
         {
             startTime = DateTime.Now;
 
-            base.Initialize("MLActionResult", true, true);
+            base.Initialize("MLActionResult", false, true);
 
             WriteToLog("=== ML Action Result Log ===");
             WriteToLog($"Started at: {startTime:yyyy-MM-dd HH:mm:ss.fff}");

@@ -5,43 +5,39 @@ using BehaviorTreeMainProject.Log.Services;
 using RobotCommand;
 
 /// <summary>
-/// Low-level move action. Inherits ExeAction.
-/// Takes an initial and final position name. The DecoratorLLInputResolver
-/// resolves typed properties from the parent ML action before the first tick,
-/// then BuildCommandRequest() maps them to the robot command.
+/// Combined low-level stack-release action.
+/// Sends a single request to /stack_release which performs:
+///   1. movej to the stack (place) position
+///   2. open gripper
+///   3. lift TCP 10 cm up
+/// Replaces the three-node sequence (MoveToLL → OpenGripperLL → LiftLL) for
+/// StackML and StackOnTwoML subtrees.
 /// </summary>
-public class MoveToLL : ExeAction, ILLInputBindable
+public class StackReleaseLL : ExeAction, ILLInputBindable
 {
-    public string InitialPosition { get; }
-    public string FinalPosition { get; }
+    public MoveType MoveType { get; }
     public double Velocity { get; }
     public double Acceleration { get; }
-    public MoveType MoveType { get; }
 
-    // Typed properties resolved by DecoratorLLInputResolver
+    // Resolved from ML action inputs by DecoratorLLInputResolver
     public RobotPosition TargetPosition { get; set; }
     public Location TargetLocation { get; set; }
 
-    public MoveToLL(
+    public StackReleaseLL(
         string instanceName,
-        string initialPosition,
-        string finalPosition,
         Blackboard<FastName> blackboard,
         MoveType moveType = MoveType.MoveJ,
-        string flaskBaseUrl = null,
-        string robotIp = null,
         double velocity = 1.0,
         double acceleration = 1.0,
+        string flaskBaseUrl = null,
+        string robotIp = null,
         IRobotCommandCommunicator communicator = null
-    ) : base("MoveToLL", instanceName, blackboard, flaskBaseUrl, robotIp, communicator)
+    ) : base("StackReleaseLL", instanceName, blackboard, flaskBaseUrl, robotIp, communicator)
     {
-        InitialPosition = initialPosition;
-        FinalPosition = finalPosition;
+        MoveType = moveType;
         Velocity = velocity;
         Acceleration = acceleration;
-        MoveType = moveType;
-
-        LoggingService.LogInfo($"🤖 MoveToLL: Created '{instanceName}' — {initialPosition} → {finalPosition}");
+        LoggingService.LogInfo($"🤖 StackReleaseLL: Created '{instanceName}'");
     }
 
     public void BindInput(object value)
@@ -57,15 +53,14 @@ public class MoveToLL : ExeAction, ILLInputBindable
     {
         var request = new RobotCommandRequest
         {
-            CommandType = MoveType.ToString().ToLower(),
-            InitialPosition = InitialPosition,
-            FinalPosition = FinalPosition,
+            Endpoint = "/stack_release",
+            CommandType = "stack_release",
+            FinalPosition = "stackpos",
             RobotIp = RobotIp,
             Velocity = Velocity,
             Acceleration = Acceleration
         };
 
-        // Populate joints/pose from resolved typed properties
         if (TargetPosition != null)
         {
             if (TargetPosition.Joints != null)
@@ -76,19 +71,21 @@ public class MoveToLL : ExeAction, ILLInputBindable
                     TargetPosition.TcpPose.X, TargetPosition.TcpPose.Y, TargetPosition.TcpPose.Z,
                     TargetPosition.TcpOrinetation.X, TargetPosition.TcpOrinetation.Y, TargetPosition.TcpOrinetation.Z
                 };
+            request.FinalPosition = TargetPosition.NameKey?.ToString() ?? "stackpos";
             ResolvedPosition = TargetPosition;
         }
         else if (TargetLocation is InitialLocation il && il.Position != null)
         {
             var ori = GetManipulateOrientationFromBlackboard();
             request.Pose = new[] { il.Position.X, il.Position.Y, il.Position.Z, ori[0], ori[1], ori[2] };
+            request.FinalPosition = il.NameKey?.ToString() ?? "stackpos";
         }
         else if (TargetLocation is FinalLocation fl && fl.Position != null)
         {
             double[] ori;
             if (fl.Orientation != null)
             {
-                double theta = Math.Atan2(fl.Orientation.Y, fl.Orientation.X) - Math.PI / 2.0;
+                double theta = Math.Atan2(fl.Orientation.Y, fl.Orientation.X) + Math.PI / 2.0;
                 double halfTheta = theta / 2.0;
                 ori = new[] { Math.PI * Math.Cos(halfTheta), Math.PI * Math.Sin(halfTheta), 0.0 };
             }
@@ -97,6 +94,7 @@ public class MoveToLL : ExeAction, ILLInputBindable
                 ori = GetManipulateOrientationFromBlackboard();
             }
             request.Pose = new[] { fl.Position.X, fl.Position.Y, fl.Position.Z, ori[0], ori[1], ori[2] };
+            request.FinalPosition = fl.NameKey?.ToString() ?? "stackpos";
         }
 
         return request;

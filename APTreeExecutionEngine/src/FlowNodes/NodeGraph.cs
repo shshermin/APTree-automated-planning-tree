@@ -254,11 +254,7 @@ public class NodeGraph
         LoggingService.LogInfo($"   🔍 NodeGraph: Returning {executableNodes.Count} executable nodes");
         if (executableNodes.Count == 0)
         {
-            LoggingService.LogWarning($"   ⚠️ NodeGraph: No executable nodes found! This might indicate:");
-            LoggingService.LogWarning($"   ⚠️ NodeGraph: - All nodes have uncompleted predecessors");
-            LoggingService.LogWarning($"   ⚠️ NodeGraph: - All nodes are already completed or executing");
-            LoggingService.LogWarning($"   ⚠️ NodeGraph: - Temporal constraints are not satisfied");
-            LoggingService.LogWarning($"   ⚠️ NodeGraph: - Node states are incorrect");
+            LoggingService.LogDebug($"   🔍 NodeGraph: No executable nodes found (transient — plan may be loading)");
         }
         return executableNodes;
     }
@@ -523,7 +519,7 @@ public class NodeGraph
     /// </summary>
     public void DestroyAllNodes()
     {
-        LoggingService.LogWarning($"🗑️ NodeGraph: DestroyAllNodes called — will only remove unexecuted nodes");
+        LoggingService.LogDebug($"🗑️ NodeGraph: DestroyAllNodes called — will only remove unexecuted nodes");
 
         var nodesToDestroy = nodes
             .Where(n => n.ActionNode != null &&
@@ -548,7 +544,7 @@ public class NodeGraph
 
         nodes = nodesToKeep;
 
-        LoggingService.LogWarning($"🗑️ NodeGraph: DestroyAllNodes completed — destroyed {nodesToDestroy.Count}, kept {nodesToKeep.Count}");
+        LoggingService.LogDebug($"🗑️ NodeGraph: DestroyAllNodes completed — destroyed {nodesToDestroy.Count}, kept {nodesToKeep.Count}");
     }
 
     /// <summary>
@@ -557,7 +553,7 @@ public class NodeGraph
     /// </summary>
     public void ForceDestroyAllNodes()
     {
-        LoggingService.LogWarning($"🗑️ NodeGraph: ForceDestroyAllNodes called — removing ALL {nodes.Count} nodes");
+        LoggingService.LogDebug($"🗑️ NodeGraph: ForceDestroyAllNodes called — removing ALL {nodes.Count} nodes");
 
         var actionCount = nodes.Count;
         if (actionCount > 0)
@@ -574,7 +570,7 @@ public class NodeGraph
         nodeMap.Clear();
         elapsedTime = 0f;
 
-        LoggingService.LogWarning($"🗑️ NodeGraph: ForceDestroyAllNodes completed — destroyed {actionCount} actions");
+        LoggingService.LogDebug($"🗑️ NodeGraph: ForceDestroyAllNodes completed — destroyed {actionCount} actions");
     }
 
     /// <summary>

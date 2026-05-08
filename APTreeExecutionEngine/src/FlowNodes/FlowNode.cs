@@ -287,7 +287,7 @@ public abstract class FlowNode : BTNode, IEnumerable
     {
         if (actionGraph != null)
         {
-            LoggingService.LogWarning($"🔄 FlowNode: Clearing action graph (HashCode: {actionGraph.GetHashCode()}) for {DebugDisplayName}");
+            LoggingService.LogDebug($"🔄 FlowNode: Clearing action graph (HashCode: {actionGraph.GetHashCode()}) for {DebugDisplayName}");
             
             // Use the new Clear() method to actually remove actions from the NodeGraph
             actionGraph.DestroyAllNodes();
@@ -301,8 +301,8 @@ public abstract class FlowNode : BTNode, IEnumerable
     /// <param name="graph">The NodeGraph to use</param>
     public void ForceSetActionGraph(NodeGraph graph)
     {
-        LoggingService.LogWarning($"⚠️ FlowNode: ForceSetActionGraph called - This bypasses the NodeGraph lock!");
-        LoggingService.LogWarning($"⚠️ FlowNode: Previous HashCode: {actionGraph?.GetHashCode()}, New HashCode: {graph?.GetHashCode()}");
+        LoggingService.LogDebug($"⚠️ FlowNode: ForceSetActionGraph called - This bypasses the NodeGraph lock!");
+        LoggingService.LogDebug($"⚠️ FlowNode: Previous HashCode: {actionGraph?.GetHashCode()}, New HashCode: {graph?.GetHashCode()}");
         actionGraph = graph;
     }
 

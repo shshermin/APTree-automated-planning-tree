@@ -462,7 +462,7 @@ public class DynamicFlowNode : FlowNode
             current = current.ParentNode;
         }
         
-        LoggingService.LogWarning($"⚠️ FlowNode: No parent GenericBTAction found for subtree {DebugDisplayName}");
+        LoggingService.LogDebug($"🔍 FlowNode: No parent GenericBTAction found for subtree {DebugDisplayName}");
         return null;
     }
 

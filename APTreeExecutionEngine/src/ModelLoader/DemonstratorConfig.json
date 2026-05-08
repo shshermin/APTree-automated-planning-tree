@@ -7,7 +7,7 @@
   "subtreePlannerName": "Enhsp",
   "subtreeDomainFile": "./Plannerinputs/static/Demonstrator/DomainMLTruss.pddl",
   "subtreeProblemFile": "./Plannerinputs/static/Demonstrator/ProblemL1L2.pddl",
-  "subtreeEnhspConfig": "opt-hmax",
+  "subtreeEnhspConfig": "sat-hmrph",
   "subtreePlannerPath": "/home/ubuntu/ENHSP-Public/enhsp.jar",
   "subtreeTimeoutSeconds": 30,
   "subtreeExecutionMode": "Sequential",

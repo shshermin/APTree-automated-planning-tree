@@ -121,31 +121,14 @@
       "name": "StackLLSubtree",
       "steps": [
         {
-          "actionType": "MoveToLL",
-          "instanceName": "moveToObjPosition",
+          "actionType": "StackReleaseLL",
+          "instanceName": "stackRelease",
           "contParams": {
             "moveType": "movej"
           },
           "paramBindings": {
             "client": "{client}",
             "target": "{objposition}"
-          }
-        },
-        {
-          "actionType": "OpenGripperLL",
-          "instanceName": "openGripper",
-          "contParams": {
-            "DigitalOutput": "0"
-          },
-          "paramBindings": {
-            "client": "{client}"
-          }
-        },
-        {
-          "actionType": "LiftLL",
-          "instanceName": "liftUp",
-          "paramBindings": {
-            "client": "{client}"
           }
         },
         {
@@ -166,31 +149,14 @@
       "name": "StackOnTwoLLSubtree",
       "steps": [
         {
-          "actionType": "MoveToLL",
-          "instanceName": "moveToObjPosition",
+          "actionType": "StackReleaseLL",
+          "instanceName": "stackRelease",
           "contParams": {
             "moveType": "movej"
           },
           "paramBindings": {
             "client": "{client}",
             "target": "{objposition}"
-          }
-        },
-        {
-          "actionType": "OpenGripperLL",
-          "instanceName": "openGripper",
-          "contParams": {
-            "DigitalOutput": "0"
-          },
-          "paramBindings": {
-            "client": "{client}"
-          }
-        },
-        {
-          "actionType": "LiftLL",
-          "instanceName": "liftUp",
-          "paramBindings": {
-            "client": "{client}"
           }
         },
         {
@@ -228,8 +194,8 @@
       "name": "NailingLLSubtree",
       "steps": [
         {
-          "actionType": "NailingLL",
-          "instanceName": "nailStep",
+          "actionType": "NailAndRetractLL",
+          "instanceName": "nailAndRetract",
           "contParams": {
             "moveType": "movej"
           },
@@ -237,20 +203,6 @@
             "nailloc": "{nailloc}",
             "client": "{client}",
             "tool": "{ng}"
-          }
-        },
-        {
-          "actionType": "PushDownLL",
-          "instanceName": "pushDown",
-          "paramBindings": {
-            "client": "{client}"
-          }
-        },
-        {
-          "actionType": "LiftLL",
-          "instanceName": "liftUp",
-          "paramBindings": {
-            "client": "{client}"
           }
         }
       ]

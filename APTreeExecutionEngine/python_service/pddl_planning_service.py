@@ -50,7 +50,7 @@ def create_plan():
     try:
         # Parse request
         data = request.json
-        print(f"Received planning request: {json.dumps(data, indent=2)}")
+        print(f"Received planning request: domain={data.get('domainFile','?')} problem={data.get('problemFile','?')} planner={data.get('plannerName','?')} config={data.get('enhspConfig','default')}")
         
         # Extract data - handle both old and new request formats
         planning_type = data.get('planningType', 'PDDL')
@@ -109,16 +109,6 @@ def create_plan():
             with open(problem_file_path, 'w', encoding='utf-8') as f:
                 f.write(problem_file_content)
             print(f"✅ Saved inline problem file content to: {problem_file_path}")
-        
-        # Log extracted properties
-        print(f"Extracted PDDL properties:")
-        print(f"  - Domain file: {domain_file_path}")
-        print(f"  - Problem file: {problem_file_path}")
-        print(f"  - Planner path: {planner_path}")
-        print(f"  - Planner name: {planner_name}")
-        print(f"  - Timeout: {timeout_seconds} seconds")
-        print(f"  - Max plan length: {max_plan_length}")
-        print(f"  - ENHSP config: {enhsp_config}")
         
         if planning_type != 'PDDL':
             return jsonify({

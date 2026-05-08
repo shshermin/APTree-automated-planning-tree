@@ -511,7 +511,7 @@ public abstract class ServicePlanning : Service
         HasPlanGenerated = false;
         LastError = null;
         communicationRetryCount = 0;
-        LoggingService.LogWarning($"🔄 {GetType().Name}: Planning service reset");
+        LoggingService.LogDebug($"🔄 {GetType().Name}: Planning service reset");
     }
 
     /// <summary>

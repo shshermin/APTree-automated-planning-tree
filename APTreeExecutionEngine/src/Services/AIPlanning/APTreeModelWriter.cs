@@ -260,7 +260,7 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
 
                 if (!match.Success)
                 {
-                    LoggingService.LogWarning($"⚠️ APTreeModelWriter: Could not find action '{actionInstanceName}' in {Path.GetFileName(filePath)}");
+                    LoggingService.LogDebug($"⚠️ APTreeModelWriter: Could not find action '{actionInstanceName}' in {Path.GetFileName(filePath)}");
                     return;
                 }
 

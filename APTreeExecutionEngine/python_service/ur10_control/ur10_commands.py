@@ -305,7 +305,7 @@ def _send_urscript(robot_ip: str, cmd: str):
     sock.close()
 
 
-def _wait_for_motion_complete(robot_ip: str, timeout: float = 60.0, settle_time: float = 0.3, velocity_threshold: float = 0.01):
+def _wait_for_motion_complete(robot_ip: str, timeout: float = 60.0, settle_time: float = 0.5, velocity_threshold: float = 0.005):
     """Block until the robot has finished moving by polling joint velocities.
 
     Also monitors safety mode from the real-time data packet (offset 812).
@@ -401,7 +401,7 @@ def _wrap_with_tcp(move_cmd: str, tcp, payload=None, payload_cog=None) -> str:
     return "\n".join(lines) + "\n"
 
 
-def move_to_pose(robot_ip: str, name: str, position: dict = None, velocity: float = 0.5, acceleration: float = 1.0, tcp=None, payload=None, payload_cog=None) -> str:
+def move_to_pose(robot_ip: str, name: str, position: dict = None, velocity: float = 1, acceleration: float = 1.0, tcp=None, payload=None, payload_cog=None) -> str:
     """Move the robot to a pose using movej (joint-space interpolation)."""
     if position is None:
         position = get_position(name)

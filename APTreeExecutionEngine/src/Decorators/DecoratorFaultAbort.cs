@@ -201,7 +201,7 @@ public class DecoratorFaultAbort : Decorator
         _waitingForActionToComplete = false;
 
         _replanTriggeredAt = DateTime.Now;
-        LoggingService.LogWarning(
+        LoggingService.LogDebug(
             $"🔴 DecoratorFaultAbort [{nodeName}]: Triggering replan — resetting planner and DFN");
 
         if (AttachedNode?.ServicePlanning is ServicePlanning svc)

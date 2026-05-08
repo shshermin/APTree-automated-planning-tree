@@ -281,9 +281,9 @@ namespace BehaviorTreeMainProject
                 foreach (var kv in enhspDefault.PlannerParameters)
                     mlConfig.PlannerParameters[kv.Key] = kv.Value;
                 mlConfig.PlannerParameters["domainFile"] = "Plannerinputs/static/DomainML.pddl";
-                mlConfig.PlannerParameters["enhspConfig"] = "opt-hmax";
+                mlConfig.PlannerParameters["enhspConfig"] = "sat-hmrph";
                 subtreeConfigurations["ENHSP_ML_Default"] = mlConfig;
-                LogMessage("✅ ServiceSubtreeInject: Registered ENHSP_ML_Default (DomainML.pddl, opt-hmax)");
+                LogMessage("✅ ServiceSubtreeInject: Registered ENHSP_ML_Default (DomainML.pddl, sat-hmrph)");
             }
 
             LogMessage("✅ ServiceSubtreeInject: Initialized default configurations");

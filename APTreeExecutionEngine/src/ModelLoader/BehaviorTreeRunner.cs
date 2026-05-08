@@ -59,7 +59,7 @@ namespace BehaviorTreeMainProject
             string treeName = treeJson.GetProperty("name").GetString();
 
             LoggingService.Initialize(treeName, enableConsole: true, enableFile: true);
-            ExecutionFlowLogger.Initialize(treeName, enableConsole: true, enableFile: true);
+            ExecutionFlowLogger.Initialize(treeName, enableConsole: false, enableFile: true);
             BTNode.EnableRemoteTickForwarding();
 
             LoggingService.LogSection($"BEHAVIOR TREE: {treeName}");

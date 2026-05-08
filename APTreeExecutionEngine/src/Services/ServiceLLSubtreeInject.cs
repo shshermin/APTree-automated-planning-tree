@@ -399,8 +399,8 @@ namespace BehaviorTreeMainProject
                 case "MoveToLL":
                     var target = resolvedParams.GetValueOrDefault("target", "unknown");
                     var moveType = step.MoveType ?? MoveType.MoveJ;
-                    double vel = step.Parameters.TryGetValue("velocity", out var vStr) && double.TryParse(vStr, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var vParsed) ? vParsed : 0.3;
-                    double acc = step.Parameters.TryGetValue("acceleration", out var aStr) && double.TryParse(aStr, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var aParsed) ? aParsed : 0.3;
+                    double vel = step.Parameters.TryGetValue("velocity", out var vStr) && double.TryParse(vStr, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var vParsed) ? vParsed : 1.0;
+                    double acc = step.Parameters.TryGetValue("acceleration", out var aStr) && double.TryParse(aStr, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var aParsed) ? aParsed : 1.0;
                     exeNode = new MoveToLL(stepName, "", target, blackboard, moveType, velocity: vel, acceleration: acc, communicator: communicator);
                     break;
 
@@ -416,6 +416,13 @@ namespace BehaviorTreeMainProject
                     exeNode = new LiftLL(stepName, blackboard, communicator: communicator);
                     break;
 
+                case "StackReleaseLL":
+                    var srMoveType = step.MoveType ?? MoveType.MoveJ;
+                    double srVel = step.Parameters.TryGetValue("velocity", out var srVStr) && double.TryParse(srVStr, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var srVParsed) ? srVParsed : 1.0;
+                    double srAcc = step.Parameters.TryGetValue("acceleration", out var srAStr) && double.TryParse(srAStr, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var srAParsed) ? srAParsed : 1.0;
+                    exeNode = new StackReleaseLL(stepName, blackboard, srMoveType, srVel, srAcc, communicator: communicator);
+                    break;
+
                 case "EquipToolLL":
                     exeNode = new EquipToolLL(stepName, blackboard, communicator: communicator);
                     break;
@@ -426,6 +433,10 @@ namespace BehaviorTreeMainProject
 
                 case "NailingLL":
                     exeNode = new NailingLL(stepName, blackboard, communicator: communicator);
+                    break;
+
+                case "NailAndRetractLL":
+                    exeNode = new NailAndRetractLL(stepName, blackboard, communicator: communicator);
                     break;
 
                 case "PushDownLL":

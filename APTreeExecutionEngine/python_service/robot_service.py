@@ -423,8 +423,8 @@ def robot_move():
             pose = inline_pose
             if (not joints or len(joints) < 6) and (not pose or len(pose) < 6):
                 return jsonify({'success': False, 'error': 'joints [j1..j6] or pose [x,y,z,rx,ry,rz] required for movej'}), 400
-            vel_val = velocity if velocity is not None else 0.3
-            acc_val = acceleration if acceleration is not None else 0.3
+            vel_val = velocity if velocity is not None else 1.0
+            acc_val = acceleration if acceleration is not None else 1.0
             if joints and len(joints) >= 6:
                 position_arg = {'joints': joints}
             else:
@@ -441,8 +441,8 @@ def robot_move():
             pose = inline_pose
             if not pose or len(pose) < 6:
                 return jsonify({'success': False, 'error': 'pose [x,y,z,rx,ry,rz] required for movel'}), 400
-            vel_val = velocity if velocity is not None else 0.15
-            acc_val = acceleration if acceleration is not None else 0.15
+            vel_val = velocity if velocity is not None else 0.5
+            acc_val = acceleration if acceleration is not None else 0.8
             result_msg = move_to_pose_l(
                 robot_ip=robot_ip, name=final_position,
                 position={'pose': pose},
@@ -453,7 +453,7 @@ def robot_move():
         elif command_type == 'movep':
             result_msg = move_to_pose_p(
                 robot_ip=robot_ip, name=final_position, position=position_data,
-                velocity=velocity if velocity is not None else 0.25,
+                velocity=velocity if velocity is not None else 0.5,
                 acceleration=acceleration if acceleration is not None else 1.2,
                 tcp=tcp_for_move, payload=payload_for_move, payload_cog=payload_cog_for_move,
             )
@@ -463,7 +463,7 @@ def robot_move():
                 return jsonify({'success': False, 'error': 'initialPosition (via-point) is required for movec'}), 400
             result_msg = move_to_pose_c(
                 robot_ip=robot_ip, via_name=initial_position, end_name=final_position,
-                velocity=velocity if velocity is not None else 0.25,
+                velocity=velocity if velocity is not None else 0.5,
                 acceleration=acceleration if acceleration is not None else 1.2,
                 tcp=tcp_for_move, payload=payload_for_move, payload_cog=payload_cog_for_move,
             )
@@ -486,6 +486,137 @@ def robot_move():
             'error': str(e),
             'executionTimeSeconds': 0
         }), 500
+
+
+@app.route('/nail_and_retract', methods=['POST'])
+def robot_nail_and_retract():
+    """Move to nail position (movej), push down 2 mm, then lift — all in one call.
+
+    Expected JSON body:
+        finalPosition   (str)   — named target position (for logging)
+        robotIp         (str)   — robot IP (optional, default 192.168.1.100)
+        velocity        (float) — movej velocity (optional, default 0.3)
+        acceleration    (float) — movej acceleration (optional, default 0.3)
+        joints          (list)  — joint angles [j1..j6] (optional)
+        pose            (list)  — TCP pose [x,y,z,rx,ry,rz] (optional)
+    """
+    try:
+        data = request.json
+        print(f"Received nail_and_retract request: {json.dumps(data, indent=2)}")
+
+        final_position = data.get('finalPosition', 'nailpos')
+        robot_ip = data.get('robotIp', DEFAULT_ROBOT_IP)
+        velocity = data.get('velocity', 0.3)
+        acceleration = data.get('acceleration', 0.3)
+        inline_joints = data.get('joints')
+        inline_pose = data.get('pose')
+
+        if (not inline_joints or len(inline_joints) < 6) and (not inline_pose or len(inline_pose) < 6):
+            return jsonify({'success': False, 'error': 'joints [j1..j6] or pose [x,y,z,rx,ry,rz] required'}), 400
+
+        tcp_for_move, payload_for_move, payload_cog_for_move = robot_state.snapshot()
+
+        start_time = time.time()
+
+        # Step 1: movej to nail position
+        if inline_joints and len(inline_joints) >= 6:
+            position_arg = {'joints': inline_joints}
+        else:
+            position_arg = {'pose': inline_pose}
+
+        print(f"nail_and_retract: step 1 — movej to {final_position}")
+        move_to_pose(
+            robot_ip=robot_ip, name=final_position,
+            position=position_arg,
+            velocity=velocity, acceleration=acceleration,
+            tcp=tcp_for_move, payload=payload_for_move, payload_cog=payload_cog_for_move,
+        )
+
+        # Step 2: push down 2 mm
+        print("nail_and_retract: step 2 — push down 2 mm")
+        from ur10_control.ur10_commands import lift_z
+        lift_z(robot_ip, height=-0.002)
+
+        # Step 3: lift back up
+        print("nail_and_retract: step 3 — lift")
+        lift_z(robot_ip)
+
+        elapsed = time.time() - start_time
+        print(f"nail_and_retract completed in {elapsed:.2f}s")
+        return jsonify({'success': True, 'message': f'nail_and_retract at {final_position} done', 'executionTimeSeconds': elapsed})
+
+    except Exception as e:
+        print(f"nail_and_retract failed: {str(e)}")
+        return jsonify({'success': False, 'error': str(e), 'executionTimeSeconds': 0}), 500
+
+
+@app.route('/stack_release', methods=['POST'])
+def robot_stack_release():
+    """Approach a stack position (movej), open gripper, then lift — all in one call.
+
+    Expected JSON body:
+        finalPosition   (str)   — named target position (for logging)
+        robotIp         (str)   — robot IP (optional, default 192.168.1.100)
+        velocity        (float) — movej velocity (optional, default 1.0)
+        acceleration    (float) — movej acceleration (optional, default 1.0)
+        joints          (list)  — joint angles [j1..j6] (optional)
+        pose            (list)  — TCP pose [x,y,z,rx,ry,rz] (optional)
+    """
+    try:
+        data = request.json
+        print(f"Received stack_release request: {json.dumps(data, indent=2)}")
+
+        final_position = data.get('finalPosition', 'stackpos')
+        robot_ip = data.get('robotIp', DEFAULT_ROBOT_IP)
+        velocity = data.get('velocity', 1.0)
+        acceleration = data.get('acceleration', 1.0)
+        inline_joints = data.get('joints')
+        inline_pose = data.get('pose')
+
+        if (not inline_joints or len(inline_joints) < 6) and (not inline_pose or len(inline_pose) < 6):
+            return jsonify({'success': False, 'error': 'joints [j1..j6] or pose [x,y,z,rx,ry,rz] required'}), 400
+
+        tcp_for_move, payload_for_move, payload_cog_for_move = robot_state.snapshot()
+
+        start_time = time.time()
+
+        # Step 1: movej to stack position
+        if inline_joints and len(inline_joints) >= 6:
+            position_arg = {'joints': inline_joints}
+        else:
+            position_arg = {'pose': inline_pose}
+
+        print(f"stack_release: step 1 — movej to {final_position}")
+        move_to_pose(
+            robot_ip=robot_ip, name=final_position,
+            position=position_arg,
+            velocity=velocity, acceleration=acceleration,
+            tcp=tcp_for_move, payload=payload_for_move, payload_cog=payload_cog_for_move,
+        )
+
+        # Step 2: open gripper
+        print("stack_release: step 2 — open gripper")
+        open_cmd = (
+            "def gripper_open():\n"
+            "  set_tool_digital_out(0, True)\n"
+            "  sleep(0.8)\n"
+            "end\n"
+        )
+        _send_urscript(robot_ip, open_cmd)
+        time.sleep(0.8)
+
+        # Step 3: lift
+        print("stack_release: step 3 — lift")
+        from ur10_control.ur10_commands import lift_z
+        lift_z(robot_ip)
+
+        elapsed = time.time() - start_time
+        print(f"stack_release completed in {elapsed:.2f}s")
+        return jsonify({'success': True, 'message': f'stack_release at {final_position} done', 'executionTimeSeconds': elapsed})
+
+    except Exception as e:
+        print(f"stack_release failed: {str(e)}")
+        return jsonify({'success': False, 'error': str(e), 'executionTimeSeconds': 0}), 500
 
 
 if __name__ == '__main__':

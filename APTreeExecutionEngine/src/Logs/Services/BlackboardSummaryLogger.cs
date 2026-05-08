@@ -47,7 +47,7 @@ namespace BehaviorTreeMainProject.Log.Services
 
         private BlackboardSummaryLogger()
         {
-            base.Initialize("BlackboardSummary", true, true);
+            base.Initialize("BlackboardSummary", false, true);
             
             // Initialize tracking dictionaries
             InitializeTrackingDictionaries();
