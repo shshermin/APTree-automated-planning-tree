@@ -4,6 +4,7 @@ import { ActionInstanceModal } from "./modals/InstanceModal";
 import TypeDefinitionModal from "./modals/TypeDefinitionModal";
 import BtNodeWizardModal, { type WizardStage } from "./modals/BtNodeWizardModal";
 import "./Sidebar.css";
+import aptreeLogo from "../../assets/APTree-02.jpg";
 import { CategoryItemList } from "./components/CategoryItemList";
 import SidebarSection from "./components/SidebarSection";
 import {
@@ -198,7 +199,10 @@ export default function Sidebar({ manager, onCreateBehaviorNode, nodeColorOverri
   return (
     <div className={`sidebar ${collapsed ? "sidebar--collapsed" : ""}`}>
       <div className="sidebar-title">
-        <span className="sidebar-title-text">{collapsed ? "" : "APTree"}</span>
+        <div className="sidebar-title-brand">
+          {!collapsed && <img src={aptreeLogo} alt="APTree" className="sidebar-logo" />}
+          <span className="sidebar-title-text">{collapsed ? "" : "APTree"}</span>
+        </div>
         <button
           className="sidebar-collapse-toggle"
           onClick={() => setCollapsed((c) => !c)}
