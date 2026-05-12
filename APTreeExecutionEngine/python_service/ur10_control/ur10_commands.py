@@ -14,6 +14,10 @@ DASHBOARD_PORT = 29999
 REALTIME_PORT = 30003
 POSITIONS_FILE = os.path.join(os.path.dirname(__file__), "positions.json")
 
+# URScript callback: the robot connects back to this host/port after each move.
+PYTHON_HOST_IP = "192.168.1.2"   # Windows host IP on the robot LAN (Ethernet adapter)
+CALLBACK_PORT = 50001             # Port Python listens on for the "done" signal
+
 # Safety mode constants — UR real-time interface, byte offset 812 (CB3 firmware 3.10+)
 SAFETY_MODE_NORMAL = 1
 SAFETY_MODE_REDUCED = 2
@@ -305,69 +309,41 @@ def _send_urscript(robot_ip: str, cmd: str):
     sock.close()
 
 
-def _wait_for_motion_complete(robot_ip: str, timeout: float = 60.0, settle_time: float = 0.5, velocity_threshold: float = 0.005):
-    """Block until the robot has finished moving by polling joint velocities.
+def _wait_for_motion_complete(robot_ip: str, timeout: float = 60.0, **_kwargs):
+    """Block until the robot signals motion complete via URScript socket callback.
 
-    Also monitors safety mode from the real-time data packet (offset 812).
+    The URScript program calls socket_open / socket_send_string / socket_close
+    after the move finishes, sending "done" to PYTHON_HOST_IP:CALLBACK_PORT.
+    This function listens for that signal instead of polling joint velocities.
+
+    Safety mode is re-checked every 2 s while waiting so protective stops and
+    e-stops are still caught promptly.
+
     Raises RobotSafetyError if a protective stop, e-stop, or fault is detected.
 
-    Input:  robot_ip           (str)   — IP address of the UR10.
-            timeout            (float) — Max wait time in seconds (default: 60).
-            settle_time        (float) — How long velocities must stay below threshold (default: 0.3s).
-            velocity_threshold (float) — Max joint velocity (rad/s) to consider "stopped" (default: 0.001).
+    Input:  robot_ip  (str)   — IP address of the UR10 (used for safety checks).
+            timeout   (float) — Max wait time in seconds (default: 60).
     """
-    import time
-
-    time.sleep(0.15)  # give the motion time to start
-
+    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    server.bind(("0.0.0.0", CALLBACK_PORT))
+    server.listen(1)
+    server.settimeout(2.0)  # wake up every 2 s to check safety mode
     start = time.time()
-    settled_since = None
-
-    while time.time() - start < timeout:
-        try:
-            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            sock.settimeout(5)
-            sock.connect((robot_ip, REALTIME_PORT))
-            data = b""
-            while len(data) < 1116:
-                chunk = sock.recv(4096)
-                if not chunk:
-                    break
-                data += chunk
-            sock.close()
-
-            # Check safety mode first (byte offset 812, 8-byte double)
-            if len(data) >= 820:
-                safety_mode = int(round(struct.unpack("!d", data[812:820])[0]))
-                if safety_mode == SAFETY_MODE_PROTECTIVE_STOP:
-                    mode_name = SAFETY_MODE_NAMES.get(safety_mode, str(safety_mode))
-                    print(f"ERROR: Robot entered {mode_name} during motion!")
-                    raise RobotSafetyError(f"Protective stop detected during motion")
-                elif safety_mode in (SAFETY_MODE_SYSTEM_EMERGENCY_STOP, SAFETY_MODE_ROBOT_EMERGENCY_STOP):
-                    raise RobotSafetyError(f"Emergency stop detected during motion")
-                elif safety_mode == SAFETY_MODE_FAULT:
-                    raise RobotSafetyError(f"Safety fault detected during motion")
-                elif safety_mode == SAFETY_MODE_VIOLATION:
-                    raise RobotSafetyError(f"Safety violation detected during motion")
-
-            if len(data) >= 348:
-                # Joint velocities (qd_actual) are at bytes 300:348 — 6 doubles, big-endian
-                velocities = struct.unpack("!6d", data[300:348])
-                max_vel = max(abs(v) for v in velocities)
-
-                if max_vel < velocity_threshold:
-                    if settled_since is None:
-                        settled_since = time.time()
-                    elif time.time() - settled_since >= settle_time:
-                        return  # motion complete
-                else:
-                    settled_since = None
-        except RobotSafetyError:
-            raise  # don't swallow safety errors
-        except (socket.error, ConnectionError):
-            pass  # brief connection hiccup, retry
-
-        time.sleep(0.1)
+    try:
+        while time.time() - start < timeout:
+            try:
+                conn, _ = server.accept()
+                conn.recv(64)   # read "done" (contents not checked — arrival is enough)
+                conn.close()
+                return          # motion complete
+            except socket.timeout:
+                # No callback yet — check safety mode before waiting again
+                is_safe, msg = check_safety_mode(robot_ip)
+                if not is_safe:
+                    raise RobotSafetyError(msg)
+    finally:
+        server.close()
 
     print(f"Warning: _wait_for_motion_complete timed out after {timeout}s")
 
@@ -384,10 +360,15 @@ def _resolve_tcp(tcp):
 
 
 def _wrap_with_tcp(move_cmd: str, tcp, payload=None, payload_cog=None) -> str:
-    """Wrap a move command in a program that sets TCP and payload first."""
+    """Wrap a move command in a URScript function with TCP/payload setup and done-callback.
+
+    The generated script defines and immediately calls move_with_tcp(), which:
+      1. Optionally sets TCP offset and payload.
+      2. Executes the move command.
+      3. Opens a socket back to PYTHON_HOST_IP:CALLBACK_PORT and sends "done",
+         so Python knows the motion has truly finished (not just that it started).
+    """
     tcp = _resolve_tcp(tcp)
-    if tcp is None and payload is None:
-        return move_cmd
     lines = ["def move_with_tcp():"]
     if tcp is not None:
         lines.append(f"  set_tcp(p{tcp})")
@@ -397,7 +378,11 @@ def _wrap_with_tcp(move_cmd: str, tcp, payload=None, payload_cog=None) -> str:
         else:
             lines.append(f"  set_payload({payload})")
     lines.append(f"  {move_cmd.strip()}")
+    lines.append(f'  socket_open("{PYTHON_HOST_IP}", {CALLBACK_PORT}, "cb")')
+    lines.append(f'  socket_send_string("done", "cb")')
+    lines.append(f'  socket_close("cb")')
     lines.append("end")
+    lines.append("move_with_tcp()")
     return "\n".join(lines) + "\n"
 
 
@@ -501,7 +486,11 @@ def lift_z(robot_ip: str, height: float = 0.1, velocity: float = 0.1, accelerati
         "  local crz = curr[5]\n"
         "  movel(p[cx, cy, target_z, crx, cry, crz], "
         f"a={acceleration}, v={velocity})\n"
+        f'  socket_open("{PYTHON_HOST_IP}", {CALLBACK_PORT}, "cb")\n'
+        '  socket_send_string("done", "cb")\n'
+        '  socket_close("cb")\n'
         "end\n"
+        "lift_up()\n"
     )
     _send_urscript(robot_ip, cmd)
     _wait_for_motion_complete(robot_ip)
