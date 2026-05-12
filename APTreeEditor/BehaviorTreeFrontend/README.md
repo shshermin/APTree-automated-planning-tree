@@ -69,7 +69,7 @@ Run backend + frontend:
 ```bash
 # backend (repo root)
 cd APTreeExecutionEngine
-dotnet run --project BehaviorTreeMainProject.csproj --urls http://localhost:5254
+dotnet run --server
 
 # frontend (this folder)
 npm run dev

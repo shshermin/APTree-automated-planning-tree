@@ -480,6 +480,37 @@ function App() {
               );
             }
 
+            // When new flow nodes arrive alongside existing ones, the layout recenters for
+            // the new flow count and new flows would land too close to preserved positions
+            // of existing flows, causing subtree wrappers to overlap. Fix: position each new
+            // flow relative to its left neighbor's actual canvas position (same spacing as
+            // the fresh layout uses between those two flows).
+            const allFlowLayoutNodes = importResult.graph.nodes
+              .filter(n => n.category === FLOW_NODES_KEY)
+              .sort((a, b) => a.x - b.x);
+            if (allFlowLayoutNodes.some(n => !existingById.has(n.id))) {
+              const adjustedFlowX = new Map<string, number>();
+              for (let i = 0; i < allFlowLayoutNodes.length; i++) {
+                const n = allFlowLayoutNodes[i]!;
+                const existing = existingById.get(n.id);
+                if (existing) {
+                  adjustedFlowX.set(n.id, existing.x);
+                } else if (i === 0) {
+                  adjustedFlowX.set(n.id, n.x);
+                } else {
+                  const prev = allFlowLayoutNodes[i - 1]!;
+                  const prevAdjustedX = adjustedFlowX.get(prev.id) ?? prev.x;
+                  adjustedFlowX.set(n.id, prevAdjustedX + (n.x - prev.x));
+                }
+              }
+              for (const n of allFlowLayoutNodes) {
+                if (!existingById.has(n.id)) {
+                  const adjustedX = adjustedFlowX.get(n.id) ?? n.x;
+                  flowOffsets.set(n.id, { dx: adjustedX - n.x, dy: 0 });
+                }
+              }
+            }
+
             // FlowNode → outer nodegraph-wrapper (reachable via a single "contains" edge)
             const wrapperFlowId = new Map<string, string>();
             for (const conn of importResult.graph.connections) {
@@ -501,19 +532,23 @@ function App() {
             };
 
             const mergedNodes = importResult.graph.nodes.map((newNode) => {
-              // FlowNodes: preserve user-placed positions (the draggable layer boxes).
+              const existing = existingById.get(newNode.id);
+              // Preserve user-placed position for regular (non-wrapper) nodes.
+              // Wrapper nodes (renderAsSubtree: true) have their bounds auto-computed
+              // from contained actions; keeping stale sizes breaks geometric containment
+              // in collectSubtree after a replan, so they always get a fresh position
+              // derived from the new layout plus the FlowNode's displacement offset.
+              if (existing && !newNode.renderAsSubtree) {
+                return { ...newNode, x: existing.x, y: existing.y, width: existing.width, height: existing.height };
+              }
+              // New flow nodes get their adjusted position applied via the offset computed above.
               if (newNode.category === FLOW_NODES_KEY) {
-                const existing = existingById.get(newNode.id);
-                if (existing) {
-                  return { ...newNode, x: existing.x, y: existing.y, width: existing.width, height: existing.height };
+                const off = flowOffsets.get(newNode.id);
+                if (off && (off.dx !== 0 || off.dy !== 0)) {
+                  return { ...newNode, x: newNode.x + off.dx, y: newNode.y + off.dy };
                 }
                 return newNode;
               }
-
-              // All other nodes (actions, wrappers, services, decorators):
-              // Always use the fresh layout position + FlowNode displacement offset.
-              // Preserving stale positions here causes wrong visual order after a
-              // replan — a node that moved rows keeps its old position on screen.
 
               // Outer nodegraph wrapper: connected directly to its FlowNode
               const wFlowId = wrapperFlowId.get(newNode.id);
