@@ -98,7 +98,12 @@ public class FactoryAction : Singleton<FactoryAction>
             }
             
             LoggingService.LogInfo($"✅ Successfully created action instance: {instance.GetType().Name}");
-            
+
+            // Resolve null Location-typed parameters from the goal state at birth.
+            // The blackboard is fully populated here, so this is the right place — it avoids
+            // the manual paramResolver.Tick(0f) hack previously done in ServiceLLSubtreeInject.
+            DecoratorParameterResolver.ResolveNullLocationParameters(instance, blackboard);
+
             // Calculate and track timing
             var endTime = DateTime.Now;
             var generationTime = endTime - startTime;

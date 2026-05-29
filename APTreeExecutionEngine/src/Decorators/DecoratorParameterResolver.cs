@@ -29,7 +29,11 @@ public class DecoratorParameterResolver : DecoratorResolveParameters
         ResolveNullLocationParameters(action, blackboard);
     }
 
-    private void ResolveNullLocationParameters(PActionNode action, Blackboard<FastName> blackboard)
+    /// <summary>
+    /// Static entry point so FactoryAction can resolve null Location parameters
+    /// at action birth without needing a decorator instance.
+    /// </summary>
+    public static void ResolveNullLocationParameters(PActionNode action, Blackboard<FastName> blackboard)
     {
         var actionType = action.GetType();
         var actionName = action.InstanceName.ToString();
@@ -94,7 +98,7 @@ public class DecoratorParameterResolver : DecoratorResolveParameters
     /// parameters (e.g., obj1, obj2). If they match, copies any non-null Location values
     /// from the goal predicate to the corresponding null properties on the action.
     /// </summary>
-    private bool TryMatchAndResolve(PActionNode action, Predicate effectPred, Predicate goalPred, System.Collections.Generic.List<PropertyInfo> nullProps)
+    private static bool TryMatchAndResolve(PActionNode action, Predicate effectPred, Predicate goalPred, System.Collections.Generic.List<PropertyInfo> nullProps)
     {
         var predType = effectPred.GetType();
         var predProperties = predType.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
