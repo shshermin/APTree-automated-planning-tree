@@ -121,14 +121,28 @@
       "name": "StackLLSubtree",
       "steps": [
         {
-          "actionType": "StackReleaseLL",
-          "instanceName": "stackRelease",
+          "actionType": "MoveToLL",
+          "instanceName": "moveToStackPos",
           "contParams": {
             "moveType": "plannedj"
           },
           "paramBindings": {
             "client": "{client}",
             "target": "{objposition}"
+          }
+        },
+        {
+          "actionType": "OpenGripperLL",
+          "instanceName": "openGripper",
+          "paramBindings": {
+            "client": "{client}"
+          }
+        },
+        {
+          "actionType": "LiftLL",
+          "instanceName": "liftAfterStack",
+          "paramBindings": {
+            "client": "{client}"
           }
         },
         {
@@ -149,14 +163,28 @@
       "name": "StackOnTwoLLSubtree",
       "steps": [
         {
-          "actionType": "StackReleaseLL",
-          "instanceName": "stackRelease",
+          "actionType": "MoveToLL",
+          "instanceName": "moveToStackPos",
           "contParams": {
             "moveType": "plannedj"
           },
           "paramBindings": {
             "client": "{client}",
             "target": "{objposition}"
+          }
+        },
+        {
+          "actionType": "OpenGripperLL",
+          "instanceName": "openGripper",
+          "paramBindings": {
+            "client": "{client}"
+          }
+        },
+        {
+          "actionType": "LiftLL",
+          "instanceName": "liftAfterStack",
+          "paramBindings": {
+            "client": "{client}"
           }
         },
         {
@@ -194,8 +222,8 @@
       "name": "NailingLLSubtree",
       "steps": [
         {
-          "actionType": "NailAndRetractLL",
-          "instanceName": "nailAndRetract",
+          "actionType": "NailingLL",
+          "instanceName": "moveToNailPos",
           "contParams": {
             "moveType": "plannedj"
           },
@@ -203,6 +231,20 @@
             "nailloc": "{nailloc}",
             "client": "{client}",
             "tool": "{ng}"
+          }
+        },
+        {
+          "actionType": "PushDownLL",
+          "instanceName": "pushDown",
+          "paramBindings": {
+            "client": "{client}"
+          }
+        },
+        {
+          "actionType": "LiftLL",
+          "instanceName": "liftAfterNail",
+          "paramBindings": {
+            "client": "{client}"
           }
         }
       ]

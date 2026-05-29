@@ -12,7 +12,6 @@
 
     ;; Active elements - layer 22
     stick87 - stick
-    cube18 - cube
 
     ;; Layers
     layer20 - stack
@@ -39,7 +38,6 @@
     initlocstick85 - firstposition
     initlocstick86 - firstposition
     initlocstick87 - firstposition
-    initloccube18 - firstposition
 
     ;; Locations - Final (base + active)
     finallocstick83 - finalposition
@@ -48,7 +46,6 @@
     finallocstick85 - finalposition
     finallocstick86 - finalposition
     finallocstick87 - finalposition
-    finalloccube18 - finalposition
     ;; HARDCODED ML-only objects (not in HL problem files)
     equiplocgripper - equipposition
     equiplocstapler - equipposition
@@ -75,9 +72,11 @@
 (clear stick83)
 (clear stick84)
 (clear stick86)
+(clear stick87)
 (clear cube17)
 (attool staplergun1 equiplocstapler)
 (atplace stick86 initlocstick86)
+(atplace stick87 initlocstick87)
 (atagent robot1 rppickup)
 (atfinalposition cube17)
 (atplace cube17 finalloccube17)
@@ -93,8 +92,6 @@
 (fixed stick84)
 (holding robot1 stick85)
 (positionfree initlocstick85)
-(holding robot1 stick87)
-(positionfree initlocstick87)
   )
   (:goal 
     (and

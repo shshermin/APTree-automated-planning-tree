@@ -36,20 +36,24 @@ BehaviorTree UnstackLLSubtree {
 
 // ── StackML ──
 // ML signature: StackML (stackingobject:Element, existingobject:Element, client:Robot, gripper:Gripper, objposition:Location, robotposition:RobotPosition)
-// Steps: movej to stack position + open gripper + lift (one call) → MoveJ to robot rest position
+// Steps: movej to stack position → open gripper → lift → MoveJ to robot rest position
 BehaviorTree StackLLSubtree {
     Root Sequence StackSequence {
-        Action StackReleaseLL stackRelease (objposition client "movej")
+        Action MoveToLL moveToStackPos (objposition client "movej")
+        Action OpenGripperLL openGripper (client 0)
+        Action LiftLL liftAfterStack (client)
         Action MoveToLL moveToRobotPosition (robotposition client "movej")
     }
 }
 
 // ── StackOnTwoML ──
 // ML signature: StackOnTwoML (stackingobj:Element, client:Robot, objposition:Location, robotpos:RobotPosition, existingobj1:Element, existingobj2:Element, vg:Gripper, layer1:Stack, layer2:Stack)
-// Steps: movej to stack position + open gripper + lift (one call) → MoveJ to robot position
+// Steps: movej to stack position → open gripper → lift → MoveJ to robot position
 BehaviorTree StackOnTwoLLSubtree {
     Root Sequence StackOnTwoSequence {
-        Action StackReleaseLL stackRelease (objposition client "movej")
+        Action MoveToLL moveToStackPos (objposition client "movej")
+        Action OpenGripperLL openGripper (client 0)
+        Action LiftLL liftAfterStack (client)
         Action MoveToLL moveToRobotPos (robotpos client "movej")
     }
 }
@@ -65,10 +69,12 @@ BehaviorTree TravelLLSubtree {
 
 // ── NailingML ──
 // ML signature: NailingML (obj1:Element, obj2:Element, client:Robot, ng:StaplerGun, rp:RobotPosition)
-// Steps: movej to nail location + push 2mm down + lift (one call)
+// Steps: movej to nail location → push 2mm down → lift
 BehaviorTree NailingLLSubtree {
     Root Sequence NailingSequence {
-        Action NailAndRetractLL nailAndRetract (client ng nailloc "movej")
+        Action NailingLL moveToNailPos (client ng nailloc "movej")
+        Action PushDownLL pushDown (client)
+        Action LiftLL liftAfterNail (client)
     }
 }
 

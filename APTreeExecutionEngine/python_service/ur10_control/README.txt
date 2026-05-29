@@ -36,6 +36,10 @@ cd APTree-automated-planning-tree/APTreeExecutionEngine/python_service
 source pddl_env/bin/activate
 python pddl_planning_service.py
 
+
+if already taken, kill process with:
+fuser -k 5000/tcp
+
 terminal 3:
 cd c:\Users\sherk\Documents\BehaviorTreeMainProject\APTreeExecutionEngine\python_service
 python robot_service.py

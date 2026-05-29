@@ -1,26 +1,32 @@
 ﻿(define (problem changeendeffectorhl)
   (:domain trussml)
   (:objects 
-    ;; Base elements (layer 18, pre-placed)
-    stick77 - stick
-    stick78 - stick
-    stick79 - stick
-    cube16 - cube
+    ;; Base elements (layer 14, pre-placed)
+    stick60 - stick
+    stick61 - stick
+    stick62 - stick
+    stick63 - stick
+    cube13 - cube
+    cube14 - cube
 
-    ;; Active elements - layer 19
-    stick80 - stick
-    stick81 - stick
-    stick82 - stick
+    ;; Active elements - layer 15
+    stick64 - stick
+    stick65 - stick
+    stick66 - stick
+    stick67 - stick
+    stick68 - stick
 
-    ;; Active elements - layer 20
-    stick83 - stick
-    stick84 - stick
-    cube17 - cube
+    ;; Active elements - layer 16
+    stick69 - stick
+    stick70 - stick
+    stick71 - stick
+    stick72 - stick
+    cube15 - cube
 
     ;; Layers
-    layer18 - stack
-    layer19 - stack
-    layer20 - stack
+    layer14 - stack
+    layer15 - stack
+    layer16 - stack
 
     ;; Agent
     robot1 - robot
@@ -34,29 +40,39 @@
     ;equiplocstapler - equipposition
 
     ;; Robot Positions
-    ;rppickup - rppickup
+   ; rppickup - rppickup
     ;rpmanipulate - rpmanipulate
     ;rptoolchange - rptoolchange
 
     ;; Locations - Initial (active elements only)
-    initlocstick80 - firstposition
-    initlocstick81 - firstposition
-    initlocstick82 - firstposition
-    initlocstick83 - firstposition
-    initlocstick84 - firstposition
-    initloccube17 - firstposition
+    initlocstick64 - firstposition
+    initlocstick65 - firstposition
+    initlocstick66 - firstposition
+    initlocstick67 - firstposition
+    initlocstick68 - firstposition
+    initlocstick69 - firstposition
+    initlocstick70 - firstposition
+    initlocstick71 - firstposition
+    initlocstick72 - firstposition
+    initloccube15 - firstposition
 
     ;; Locations - Final (base + active)
-    finallocstick77 - finalposition
-    finallocstick78 - finalposition
-    finallocstick79 - finalposition
-    finalloccube16 - finalposition
-    finallocstick80 - finalposition
-    finallocstick81 - finalposition
-    finallocstick82 - finalposition
-    finallocstick83 - finalposition
-    finallocstick84 - finalposition
-    finalloccube17 - finalposition
+    finallocstick60 - finalposition
+    finallocstick61 - finalposition
+    finallocstick62 - finalposition
+    finallocstick63 - finalposition
+    finalloccube13 - finalposition
+    finalloccube14 - finalposition
+    finallocstick64 - finalposition
+    finallocstick65 - finalposition
+    finallocstick66 - finalposition
+    finallocstick67 - finalposition
+    finallocstick68 - finalposition
+    finallocstick69 - finalposition
+    finallocstick70 - finalposition
+    finallocstick71 - finalposition
+    finallocstick72 - finalposition
+    finalloccube15 - finalposition
     ;; HARDCODED ML-only objects (not in HL problem files)
     equiplocgripper - equipposition
     equiplocstapler - equipposition
@@ -66,64 +82,94 @@
   )
   (:init  
     (robotequipped robot1)
-(objectfinalposition stick77 finallocstick77)
-(objectfinalposition stick78 finallocstick78)
-(objectfinalposition stick79 finallocstick79)
-(objectfinalposition stick80 finallocstick80)
-(objectfinalposition stick81 finallocstick81)
-(objectfinalposition stick82 finallocstick82)
-(objectfinalposition stick83 finallocstick83)
-(objectfinalposition stick84 finallocstick84)
-(objectfinalposition cube16 finalloccube16)
-(objectfinalposition cube17 finalloccube17)
+(objectfinalposition stick60 finallocstick60)
+(objectfinalposition stick61 finallocstick61)
+(objectfinalposition stick62 finallocstick62)
+(objectfinalposition stick63 finallocstick63)
+(objectfinalposition stick64 finallocstick64)
+(objectfinalposition stick65 finallocstick65)
+(objectfinalposition stick66 finallocstick66)
+(objectfinalposition stick67 finallocstick67)
+(objectfinalposition stick68 finallocstick68)
+(objectfinalposition stick69 finallocstick69)
+(objectfinalposition stick70 finallocstick70)
+(objectfinalposition stick71 finallocstick71)
+(objectfinalposition stick72 finallocstick72)
+(objectfinalposition cube13 finalloccube13)
+(objectfinalposition cube14 finalloccube14)
+(objectfinalposition cube15 finalloccube15)
 (gripperempty robot1)
-(belongstolayer stick77 layer18)
-(belongstolayer stick78 layer18)
-(belongstolayer stick79 layer18)
-(belongstolayer cube16 layer18)
-(belongstolayer stick80 layer19)
-(belongstolayer stick81 layer19)
-(belongstolayer stick82 layer19)
-(belongstolayer stick83 layer20)
-(belongstolayer stick84 layer20)
-(belongstolayer cube17 layer20)
-(clear stick77)
-(clear stick78)
-(clear stick79)
-(clear stick80)
-(clear stick81)
-(clear stick82)
-(clear stick83)
-(clear stick84)
-(clear cube16)
-(clear cube17)
-(atplace stick80 initlocstick80)
-(atplace stick81 initlocstick81)
-(atplace stick82 initlocstick82)
-(atplace stick83 initlocstick83)
-(atplace stick84 initlocstick84)
-(atplace cube17 initloccube17)
+(belongstolayer stick60 layer14)
+(belongstolayer stick61 layer14)
+(belongstolayer stick62 layer14)
+(belongstolayer stick63 layer14)
+(belongstolayer cube13 layer14)
+(belongstolayer cube14 layer14)
+(belongstolayer stick64 layer15)
+(belongstolayer stick65 layer15)
+(belongstolayer stick66 layer15)
+(belongstolayer stick67 layer15)
+(belongstolayer stick68 layer15)
+(belongstolayer stick69 layer16)
+(belongstolayer stick70 layer16)
+(belongstolayer stick71 layer16)
+(belongstolayer stick72 layer16)
+(belongstolayer cube15 layer16)
+(clear stick60)
+(clear stick61)
+(clear stick62)
+(clear stick63)
+(clear stick64)
+(clear stick65)
+(clear stick66)
+(clear stick67)
+(clear stick68)
+(clear stick69)
+(clear stick70)
+(clear stick71)
+(clear stick72)
+(clear cube13)
+(clear cube14)
+(clear cube15)
+(atplace stick64 initlocstick64)
+(atplace stick65 initlocstick65)
+(atplace stick66 initlocstick66)
+(atplace stick67 initlocstick67)
+(atplace stick68 initlocstick68)
+(atplace stick69 initlocstick69)
+(atplace stick70 initlocstick70)
+(atplace stick71 initlocstick71)
+(atplace stick72 initlocstick72)
+(atplace cube15 initloccube15)
 (atagent robot1 rpmanipulate)
 (attool gripper1 equiplocgripper)
 (hastool robot1 staplergun1)
 (positionfree equiplocstapler)
 (activetool staplergun1)
-(atfinalposition cube16)
-(atplace cube16 finalloccube16)
-(accessible cube16)
-(atplace stick77 finallocstick77)
-(accessible stick77)
-(atfinalposition stick77)
-(atplace stick78 finallocstick78)
-(accessible stick78)
-(atfinalposition stick78)
-(atplace stick79 finallocstick79)
-(accessible stick79)
-(atfinalposition stick79)
-(fixed cube16)
-(fixed stick77)
-(fixed stick78)
-(fixed stick79)
+(atplace stick60 finallocstick60)
+(accessible stick60)
+(atfinalposition stick60)
+(atplace stick62 finallocstick62)
+(accessible stick62)
+(atfinalposition stick62)
+(atplace stick61 finallocstick61)
+(accessible stick61)
+(atfinalposition stick61)
+(atfinalposition cube14)
+(atplace cube14 finalloccube14)
+(accessible cube14)
+(atfinalposition cube13)
+(atplace cube13 finalloccube13)
+(accessible cube13)
+(atplace stick63 finallocstick63)
+(accessible stick63)
+(atfinalposition stick63)
+(fixed cube13)
+(fixed cube14)
+(fixed stick60)
+(fixed stick61)
+(fixed stick62)
+(fixed stick63)
   )
   (:goal 
     (and

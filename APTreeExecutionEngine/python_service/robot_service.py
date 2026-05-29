@@ -42,10 +42,10 @@ SUPPORTED_MOVE_TYPES = ['movej', 'movel', 'movep', 'movec', 'planned', 'plannedj
 # cell. All planned-move code paths (/move plannedj/plannedl and the internal
 # _planned_lift helper used by stack_release/nail_and_retract) clamp through
 # these two constants — change here to change global planned speed.
-PLANNED_VEL_CAP = 0.45
-PLANNED_ACC_CAP = 0.45
-PLANNED_DEFAULT_VEL = 0.45
-PLANNED_DEFAULT_ACC = 0.45
+PLANNED_VEL_CAP = 0.36
+PLANNED_ACC_CAP = 0.36
+PLANNED_DEFAULT_VEL = 0.36
+PLANNED_DEFAULT_ACC = 0.36
 
 
 def _rotvec_to_quat_base_frame(rx, ry, rz):

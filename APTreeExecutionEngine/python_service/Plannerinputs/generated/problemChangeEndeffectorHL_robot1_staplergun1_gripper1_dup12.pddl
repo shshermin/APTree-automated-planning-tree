@@ -12,7 +12,6 @@
 
     ;; Active elements - layer 22
     stick87 - stick
-    cube18 - cube
 
     ;; Layers
     layer20 - stack
@@ -39,7 +38,6 @@
     initlocstick85 - firstposition
     initlocstick86 - firstposition
     initlocstick87 - firstposition
-    initloccube18 - firstposition
 
     ;; Locations - Final (base + active)
     finallocstick83 - finalposition
@@ -48,7 +46,6 @@
     finallocstick85 - finalposition
     finallocstick86 - finalposition
     finallocstick87 - finalposition
-    finalloccube18 - finalposition
     ;; HARDCODED ML-only objects (not in HL problem files)
     equiplocgripper - equipposition
     equiplocstapler - equipposition
