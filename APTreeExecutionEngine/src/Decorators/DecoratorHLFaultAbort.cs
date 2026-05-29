@@ -60,6 +60,7 @@ public class DecoratorHLFaultAbort : Decorator
             LoggingService.LogSuccess(
                 $"📋 FAULT_METRIC | t_resume={tResume:HH:mm:ss.fff} | node={nodeName} | type=HL_Dislodge" +
                 $" | recovery_ms={recoveryTime:F0} | replan_latency_ms={replanLatency:F0}");
+            FaultRecoveryLogger.LogResumed(nodeName, success: true);
             _replanTriggeredAt = default;
             _faultDetectedAt = default;
             ClearFaultTimestamp();
@@ -91,6 +92,8 @@ public class DecoratorHLFaultAbort : Decorator
         string name = AttachedNode?.DebugDisplayName ?? "";
         LoggingService.LogWarning(
             $"🔴 DecoratorHLFaultAbort [{name}]: HL fault detected — triggering full HL replan");
+        FaultRecoveryLogger.LogFaultDetected(name, "HL");
+        FaultRecoveryLogger.LogReplanTriggered(name);
 
         // Reset the planning service (clears DecoratorHLStatePatch._patched etc.)
         if (AttachedNode?.ServicePlanning is ServicePlanning svc)

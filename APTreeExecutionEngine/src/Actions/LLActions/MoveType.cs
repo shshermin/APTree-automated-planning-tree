@@ -15,6 +15,12 @@ public enum MoveType
     /// <summary>Circular arc move — requires a via-point. URScript: movec</summary>
     MoveC,
 
-    /// <summary>Call an external motion planner to compute and execute a trajectory.</summary>
-    Planned
+    /// <summary>Call an external motion planner to compute and execute a trajectory (generic, defaults to joint-space PTP).</summary>
+    Planned,
+
+    /// <summary>MoveIt-planned joint-space motion (Pilz PTP). Executed via URScript movej chain.</summary>
+    PlannedJ,
+
+    /// <summary>MoveIt-planned linear Cartesian motion (Pilz LIN). Executed via URScript movej chain.</summary>
+    PlannedL
 }

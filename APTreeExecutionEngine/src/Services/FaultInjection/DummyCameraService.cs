@@ -180,11 +180,29 @@ namespace BehaviorTreeMainProject.Services.FaultInjection
             if (faultType.Equals("DropAfterClose", StringComparison.OrdinalIgnoreCase))
             {
                 var mlFlow = FindOwningMLFlowNode(mlAction);
+                FaultRecoveryLogger.LogFaultInjected(
+                    faultId: fault.Id ?? "",
+                    faultType: faultType,
+                    scope: "LL",
+                    dfnName: mlFlow?.DebugDisplayName ?? "",
+                    mlActionInstance: mlAction.InstanceName.ToString(),
+                    parentHlInstance: mlAction.ParentNode?.DebugDisplayName ?? "",
+                    targetObject: fault.Effects?.DroppedObject ?? "",
+                    extraDetails: $"robot={fault.Effects?.Robot};gripper={fault.Effects?.Gripper}");
                 _wsm.ApplyDrop(fault.Effects, mlFlow);
             }
             else if (faultType.Equals("BlockerOnTop", StringComparison.OrdinalIgnoreCase))
             {
                 var targetHlFlow = FindHLSubtreeForPickUpOfTarget(fault.Effects?.TargetObject ?? "");
+                FaultRecoveryLogger.LogFaultInjected(
+                    faultId: fault.Id ?? "",
+                    faultType: faultType,
+                    scope: "HL",
+                    dfnName: targetHlFlow?.DebugDisplayName ?? "",
+                    mlActionInstance: mlAction.InstanceName.ToString(),
+                    parentHlInstance: mlAction.ParentNode?.DebugDisplayName ?? "",
+                    targetObject: fault.Effects?.TargetObject ?? "",
+                    extraDetails: $"blocker={fault.Effects?.BlockerObject}");
                 _wsm.ApplyBlocker(fault.Effects, targetHlFlow);
             }
             else if (faultType.Equals("DislodgedAfterStack", StringComparison.OrdinalIgnoreCase))
@@ -193,7 +211,18 @@ namespace BehaviorTreeMainProject.Services.FaultInjection
                 if (activeDfn == null)
                     LoggingService.LogWarning($"🧪 DummyCameraService[{fault.Id}]: No active DFN found — DislodgedAfterStack skipped");
                 else
+                {
+                    FaultRecoveryLogger.LogFaultInjected(
+                        faultId: fault.Id ?? "",
+                        faultType: faultType,
+                        scope: "HL",
+                        dfnName: activeDfn.DebugDisplayName,
+                        mlActionInstance: mlAction.InstanceName.ToString(),
+                        parentHlInstance: mlAction.ParentNode?.DebugDisplayName ?? "",
+                        targetObject: fault.Effects?.DislodgedObject ?? "",
+                        extraDetails: $"returnTo={fault.Effects?.ReturnToLocation}");
                     _wsm.ApplyDislodge(fault.Effects, activeDfn);
+                }
             }
             else
             {

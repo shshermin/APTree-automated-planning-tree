@@ -58,7 +58,8 @@ public class StackReleaseLL : ExeAction, ILLInputBindable
             FinalPosition = "stackpos",
             RobotIp = RobotIp,
             Velocity = Velocity,
-            Acceleration = Acceleration
+            Acceleration = Acceleration,
+            MoveType = MoveType.ToString().ToLower()
         };
 
         if (TargetPosition != null)

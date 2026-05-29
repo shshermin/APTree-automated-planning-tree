@@ -10,7 +10,7 @@
           "actionType": "MoveToLL",
           "instanceName": "moveToPickPosition",
           "contParams": {
-            "moveType": "movel"
+            "moveType": "plannedl"
           },
           "paramBindings": {
             "client": "{client}",
@@ -31,7 +31,7 @@
           "actionType": "MoveToLL",
           "instanceName": "moveToRetract",
           "contParams": {
-            "moveType": "movel"
+            "moveType": "plannedl"
           },
           "paramBindings": {
             "client": "{client}",
@@ -48,7 +48,7 @@
           "actionType": "MoveToLL",
           "instanceName": "moveToPutDownPosition",
           "contParams": {
-            "moveType": "movel"
+            "moveType": "plannedl"
           },
           "paramBindings": {
             "client": "{client}",
@@ -69,7 +69,7 @@
           "actionType": "MoveToLL",
           "instanceName": "moveToRetract",
           "contParams": {
-            "moveType": "movel"
+            "moveType": "plannedl"
           },
           "paramBindings": {
             "client": "{client}",
@@ -86,7 +86,7 @@
           "actionType": "MoveToLL",
           "instanceName": "moveToPickPosition",
           "contParams": {
-            "moveType": "movel"
+            "moveType": "plannedl"
           },
           "paramBindings": {
             "client": "{client}",
@@ -107,7 +107,7 @@
           "actionType": "MoveToLL",
           "instanceName": "moveToRetract",
           "contParams": {
-            "moveType": "movel"
+            "moveType": "plannedl"
           },
           "paramBindings": {
             "client": "{client}",
@@ -124,7 +124,7 @@
           "actionType": "StackReleaseLL",
           "instanceName": "stackRelease",
           "contParams": {
-            "moveType": "movej"
+            "moveType": "plannedj"
           },
           "paramBindings": {
             "client": "{client}",
@@ -135,7 +135,7 @@
           "actionType": "MoveToLL",
           "instanceName": "moveToRobotPosition",
           "contParams": {
-            "moveType": "movej"
+            "moveType": "plannedj"
           },
           "paramBindings": {
             "client": "{client}",
@@ -152,7 +152,7 @@
           "actionType": "StackReleaseLL",
           "instanceName": "stackRelease",
           "contParams": {
-            "moveType": "movej"
+            "moveType": "plannedj"
           },
           "paramBindings": {
             "client": "{client}",
@@ -163,7 +163,7 @@
           "actionType": "MoveToLL",
           "instanceName": "moveToRobotPos",
           "contParams": {
-            "moveType": "movej"
+            "moveType": "plannedj"
           },
           "paramBindings": {
             "client": "{client}",
@@ -180,7 +180,7 @@
           "actionType": "MoveToLL",
           "instanceName": "moveToTarget",
           "contParams": {
-            "moveType": "movej"
+            "moveType": "plannedj"
           },
           "paramBindings": {
             "client": "{client}",
@@ -197,7 +197,7 @@
           "actionType": "NailAndRetractLL",
           "instanceName": "nailAndRetract",
           "contParams": {
-            "moveType": "movej"
+            "moveType": "plannedj"
           },
           "paramBindings": {
             "nailloc": "{nailloc}",
@@ -243,7 +243,7 @@
           "actionType": "MoveToLL",
           "instanceName": "moveToPlacePos",
           "contParams": {
-            "moveType": "movel"
+            "moveType": "plannedl"
           },
           "paramBindings": {
             "client": "{client}",
@@ -254,7 +254,7 @@
           "actionType": "LowerLL",
           "instanceName": "lowerObject",
           "contParams": {
-            "moveType": "movel"
+            "moveType": "plannedl"
           },
           "paramBindings": {
             "obj": "{obj}",
@@ -275,7 +275,7 @@
           "actionType": "RetractLL",
           "instanceName": "retractRobot",
           "contParams": {
-            "moveType": "movel"
+            "moveType": "plannedl"
           },
           "paramBindings": {
             "client": "{client}"

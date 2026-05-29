@@ -82,21 +82,19 @@ public class MoveToLL : ExeAction, ILLInputBindable
         {
             var ori = GetManipulateOrientationFromBlackboard();
             request.Pose = new[] { il.Position.X, il.Position.Y, il.Position.Z, ori[0], ori[1], ori[2] };
+            LoggingService.LogInfo($"🧭 MoveToLL[{InstanceName}] InitialLocation: pos=({il.Position.X:F4},{il.Position.Y:F4},{il.Position.Z:F4}) ori(rppickup)=({ori[0]:F4},{ori[1]:F4},{ori[2]:F4}) moveType={MoveType}");
         }
         else if (TargetLocation is FinalLocation fl && fl.Position != null)
         {
-            double[] ori;
-            if (fl.Orientation != null)
-            {
-                double theta = Math.Atan2(fl.Orientation.Y, fl.Orientation.X) - Math.PI / 2.0;
-                double halfTheta = theta / 2.0;
-                ori = new[] { Math.PI * Math.Cos(halfTheta), Math.PI * Math.Sin(halfTheta), 0.0 };
-            }
-            else
-            {
-                ori = GetManipulateOrientationFromBlackboard();
-            }
+            // Force rppickup orientation (tool-down, yaw 0). The per-object yaw
+            // alignment from fl.Orientation was producing a 180° offset versus
+            // the rppickup retract pose, so it is no longer applied here.
+            var ori = GetManipulateOrientationFromBlackboard();
             request.Pose = new[] { fl.Position.X, fl.Position.Y, fl.Position.Z, ori[0], ori[1], ori[2] };
+            string oriSrc = fl.Orientation != null
+                ? $"fl.Orientation=({fl.Orientation.X:F4},{fl.Orientation.Y:F4}) IGNORED — using rppickup"
+                : "fl.Orientation=null — using rppickup";
+            LoggingService.LogInfo($"🧭 MoveToLL[{InstanceName}] FinalLocation: pos=({fl.Position.X:F4},{fl.Position.Y:F4},{fl.Position.Z:F4}) ori=({ori[0]:F4},{ori[1]:F4},{ori[2]:F4}) [{oriSrc}] moveType={MoveType}");
         }
 
         return request;

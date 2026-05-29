@@ -36,5 +36,8 @@ namespace RobotCommand
 
         /// <summary>Height in meters for /lift endpoint. Positive = up, negative = down (press). Null uses robot_service default (0.1 m).</summary>
         public double? Height { get; set; }
+
+        /// <summary>Sub-move type for composite endpoints (/stack_release, /nail_and_retract): "movej", "plannedj", or "plannedl". Controls whether the approach goes straight URScript movej or through MoveIt/Pilz.</summary>
+        public string MoveType { get; set; }
     }
 }

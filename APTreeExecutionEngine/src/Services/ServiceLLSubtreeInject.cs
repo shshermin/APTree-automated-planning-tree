@@ -236,6 +236,8 @@ namespace BehaviorTreeMainProject
                 "movep" => global::MoveType.MoveP,
                 "movec" => global::MoveType.MoveC,
                 "planned" => global::MoveType.Planned,
+                "plannedj" or "planned_j" => global::MoveType.PlannedJ,
+                "plannedl" or "planned_l" => global::MoveType.PlannedL,
                 _ => null
             };
         }

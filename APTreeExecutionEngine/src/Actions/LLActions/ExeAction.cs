@@ -140,7 +140,27 @@ public abstract class ExeAction : PActionNode
             if (commandResult.Success)
             {
                 LoggingService.LogSuccess($"✅ ExeAction: Command succeeded for '{InstanceName}'");
-                RobotCommandLogger.LogCommandEnd(cmdId, true, commandResult.ExecutionTimeSeconds, commandResult.PlanningTimeSeconds);
+                RobotCommandLogger.LogCommandEnd(cmdId, true, commandResult.ExecutionTimeSeconds, commandResult.PlanningTimeSeconds, pointCount: commandResult.PointCount, nominalDurationSeconds: commandResult.NominalDurationSeconds);
+
+                // For compound endpoints (nail_and_retract, stack_release), Python returns
+                // per-step timings. Emit one sub-step record per step so internal gaps and
+                // planning details are visible in the per-command CSV.
+                if (commandResult.Steps != null && commandResult.Steps.Count > 0)
+                {
+                    double offset = 0.0;
+                    foreach (var step in commandResult.Steps)
+                    {
+                        RobotCommandLogger.LogSubStep(
+                            parentCommandId: cmdId,
+                            stepName: step.Name,
+                            durationSec: step.DurationSec,
+                            offsetFromParentStartSec: offset,
+                            planningSec: step.PlanningSec,
+                            pointCount: step.PointCount,
+                            nominalSec: step.NominalSec);
+                        offset += step.DurationSec;
+                    }
+                }
                 HierarchicalTraceLogger.LogLLStep(GetType().Name, InstanceName.ToString(), CommandRequest.CommandType, CommandRequest.FinalPosition, true, commandResult.ExecutionTimeSeconds * 1000.0);
                 NotifyParentMLStep(true);
                 _hasExecuted = true;

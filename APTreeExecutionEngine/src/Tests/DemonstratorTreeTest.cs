@@ -400,6 +400,8 @@ namespace BehaviorTreeMainProject
                 RobotCommandLogger.Close();
                 HierarchicalTraceLogger.GenerateCSVSummary();
                 HierarchicalTraceLogger.Close();
+                FaultRecoveryLogger.GenerateCSVSummary();
+                FaultRecoveryLogger.Close();
                 EndToEndSummaryLogger.GenerateFinalSummary();
                 EndToEndSummaryLogger.Close();
                 LoggingService.Close();

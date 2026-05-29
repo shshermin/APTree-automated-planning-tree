@@ -72,9 +72,9 @@ namespace BehaviorTreeMainProject.Log.Services
         /// <summary>
         /// Log the successful end of a robot command.
         /// </summary>
-        public static void LogCommandEnd(int commandId, bool success, double executionTimeSeconds, double planningTimeSeconds = 0, string? message = null)
+        public static void LogCommandEnd(int commandId, bool success, double executionTimeSeconds, double planningTimeSeconds = 0, string? message = null, int pointCount = 0, double nominalDurationSeconds = 0)
         {
-            Instance.LogCommandEndInternal(commandId, success, executionTimeSeconds, planningTimeSeconds, message, null);
+            Instance.LogCommandEndInternal(commandId, success, executionTimeSeconds, planningTimeSeconds, message, null, pointCount, nominalDurationSeconds);
         }
 
         /// <summary>
@@ -82,7 +82,25 @@ namespace BehaviorTreeMainProject.Log.Services
         /// </summary>
         public static void LogCommandFailed(int commandId, double executionTimeSeconds, string error)
         {
-            Instance.LogCommandEndInternal(commandId, false, executionTimeSeconds, 0, null, error);
+            Instance.LogCommandEndInternal(commandId, false, executionTimeSeconds, 0, null, error, 0, 0);
+        }
+
+        /// <summary>
+        /// Log a sub-step belonging to a compound command (nail_and_retract, stack_release, etc.).
+        /// Creates a child record whose timestamps are anchored to the parent's StartTime plus
+        /// the cumulative offset, so inter-step gaps in the CSV reflect actual Python-side timing.
+        /// </summary>
+        public static void LogSubStep(
+            int parentCommandId,
+            string stepName,
+            double durationSec,
+            double offsetFromParentStartSec,
+            double planningSec = 0,
+            int pointCount = 0,
+            double nominalSec = 0)
+        {
+            Instance.LogSubStepInternal(parentCommandId, stepName, durationSec, offsetFromParentStartSec,
+                                        planningSec, pointCount, nominalSec);
         }
 
         /// <summary>
@@ -143,7 +161,7 @@ namespace BehaviorTreeMainProject.Log.Services
             }
         }
 
-        private void LogCommandEndInternal(int commandId, bool success, double executionTimeSeconds, double planningTimeSeconds, string? message, string? error)
+        private void LogCommandEndInternal(int commandId, bool success, double executionTimeSeconds, double planningTimeSeconds, string? message, string? error, int pointCount, double nominalDurationSeconds)
         {
             lock (lockObject)
             {
@@ -158,6 +176,8 @@ namespace BehaviorTreeMainProject.Log.Services
                 record.Success = success;
                 record.ExecutionTimeSeconds = executionTimeSeconds;
                 record.PlanningTimeSeconds = planningTimeSeconds;
+                record.PointCount = pointCount;
+                record.NominalDurationSeconds = nominalDurationSeconds;
                 record.Error = error;
                 record.Message = message;
                 record.Completed = true;
@@ -178,6 +198,52 @@ namespace BehaviorTreeMainProject.Log.Services
             }
         }
 
+        private void LogSubStepInternal(int parentCommandId, string stepName, double durationSec,
+                                        double offsetFromParentStartSec, double planningSec,
+                                        int pointCount, double nominalSec)
+        {
+            lock (lockObject)
+            {
+                var parent = commandRecords.FirstOrDefault(r => r.CommandNumber == parentCommandId);
+                if (parent == null)
+                {
+                    WriteLog($"[SUBSTEP] WARNING: parent cmd #{parentCommandId} not found for '{stepName}'");
+                    return;
+                }
+
+                commandCounter++;
+                var stepStart = parent.StartTime.AddSeconds(offsetFromParentStartSec);
+                var stepEnd = stepStart.AddSeconds(durationSec);
+                var record = new RobotCommandRecord
+                {
+                    CommandNumber = commandCounter,
+                    StartTime = stepStart,
+                    EndTime = stepEnd,
+                    LLActionType = $"Sub:{parent.LLActionType}",
+                    InstanceName = $"{parent.InstanceName}#{stepName}",
+                    CommandType = stepName,
+                    TargetPosition = parent.TargetPosition,
+                    EndEffectorType = parent.EndEffectorType,
+                    Velocity = parent.Velocity,
+                    Acceleration = parent.Acceleration,
+                    ParentMLAction = parent.ParentMLAction,
+                    Success = true,
+                    ExecutionTimeSeconds = durationSec,
+                    PlanningTimeSeconds = planningSec,
+                    PointCount = pointCount,
+                    NominalDurationSeconds = nominalSec,
+                    Completed = true,
+                    IsSubStep = true,
+                    ParentCommandNumber = parentCommandId,
+                };
+                commandRecords.Add(record);
+
+                WriteLog($"  [SUBSTEP #{commandCounter} of #{parentCommandId}] {stepName} | Dur: {durationSec * 1000.0:F0}ms"
+                    + (planningSec > 0 ? $" | Plan: {planningSec * 1000.0:F0}ms" : "")
+                    + (pointCount > 0 ? $" | Points: {pointCount} | Nominal: {nominalSec:F2}s" : ""));
+            }
+        }
+
         private void GenerateCSVSummaryInternal()
         {
             lock (lockObject)
@@ -189,7 +255,7 @@ namespace BehaviorTreeMainProject.Log.Services
                 var plannerIntervals = PlannerCallLogger.GetCompletedCallIntervals();
 
                 var csvPerCmd = new StringBuilder();
-                csvPerCmd.AppendLine("CmdNumber,Timestamp,LLActionType,InstanceName,CommandType,TargetPosition,EndEffector,Velocity,Acceleration,Pose,Joints,Success,ExecTimeMs,PlanTimeMs,TotalTimeMs,GapFromPrevMs,PlanningInGapMs,BTOverheadMs,ParentMLAction,Error");
+                csvPerCmd.AppendLine("CmdNumber,IsSubStep,ParentCmdNumber,Timestamp,LLActionType,InstanceName,CommandType,TargetPosition,EndEffector,Velocity,Acceleration,Pose,Joints,Success,ExecTimeMs,PlanTimeMs,PointCount,NominalDurationSec,TotalTimeMs,GapFromPrevMs,PlanningInGapMs,BTOverheadMs,ParentMLAction,Error");
 
                 var allGapMs = new List<double>();
                 var allPlanInGapMs = new List<double>();
@@ -235,7 +301,7 @@ namespace BehaviorTreeMainProject.Log.Services
                         allBTOverheadMs.Add(btOverheadMs);
                     }
 
-                    csvPerCmd.AppendLine($"{r.CommandNumber},{r.StartTime:yyyy-MM-dd HH:mm:ss.fff},{r.LLActionType},{r.InstanceName},{r.CommandType},{r.TargetPosition},{r.EndEffectorType},{r.Velocity:F2},{r.Acceleration:F2},\"{poseStr}\",\"{jointsStr}\",{r.Success},{execMs:F2},{planMs:F2},{totalMs:F2},{gapMs:F2},{planningInGapMs:F2},{btOverheadMs:F2},{r.ParentMLAction},{errorEscaped}");
+                    csvPerCmd.AppendLine($"{r.CommandNumber},{r.IsSubStep},{(r.IsSubStep ? r.ParentCommandNumber.ToString() : "")},{r.StartTime:yyyy-MM-dd HH:mm:ss.fff},{r.LLActionType},{r.InstanceName},{r.CommandType},{r.TargetPosition},{r.EndEffectorType},{r.Velocity:F2},{r.Acceleration:F2},\"{poseStr}\",\"{jointsStr}\",{r.Success},{execMs:F2},{planMs:F2},{r.PointCount},{r.NominalDurationSeconds:F3},{totalMs:F2},{gapMs:F2},{planningInGapMs:F2},{btOverheadMs:F2},{r.ParentMLAction},{errorEscaped}");
                 }
 
                 WriteLog("Per-Command CSV:");
@@ -254,8 +320,9 @@ namespace BehaviorTreeMainProject.Log.Services
                     WriteLog($"Warning: Could not write per-command CSV: {ex.Message}");
                 }
 
-                // ── Aggregated summary by command type ───────────
+                // ── Aggregated summary by command type (top-level only; sub-steps would double-count) ───────────
                 var grouped = commandRecords
+                    .Where(r => !r.IsSubStep)
                     .GroupBy(r => r.CommandType)
                     .Select(g => new
                     {
@@ -265,6 +332,8 @@ namespace BehaviorTreeMainProject.Log.Services
                         Failed = g.Count(r => !r.Success),
                         AvgExecTimeMs = g.Where(r => r.Completed).Select(r => r.ExecutionTimeSeconds * 1000.0).DefaultIfEmpty(0).Average(),
                         AvgPlanTimeMs = g.Where(r => r.Completed && r.PlanningTimeSeconds > 0).Select(r => r.PlanningTimeSeconds * 1000.0).DefaultIfEmpty(0).Average(),
+                        AvgPointCount = g.Where(r => r.Completed && r.PointCount > 0).Select(r => (double)r.PointCount).DefaultIfEmpty(0).Average(),
+                        AvgNominalSec = g.Where(r => r.Completed && r.NominalDurationSeconds > 0).Select(r => r.NominalDurationSeconds).DefaultIfEmpty(0).Average(),
                         TotalExecTimeMs = g.Sum(r => r.ExecutionTimeSeconds * 1000.0),
                         TotalPlanTimeMs = g.Sum(r => r.PlanningTimeSeconds * 1000.0)
                     })
@@ -272,23 +341,24 @@ namespace BehaviorTreeMainProject.Log.Services
                     .ToList();
 
                 var csvSummary = new StringBuilder();
-                csvSummary.AppendLine("CommandType,Count,Successful,Failed,SuccessRate,AvgExecTimeMs,AvgPlanTimeMs,TotalExecTimeMs,TotalPlanTimeMs");
+                csvSummary.AppendLine("CommandType,Count,Successful,Failed,SuccessRate,AvgExecTimeMs,AvgPlanTimeMs,AvgPointCount,AvgNominalSec,TotalExecTimeMs,TotalPlanTimeMs");
 
                 foreach (var g in grouped)
                 {
                     var rate = g.Count > 0 ? (double)g.Successful / g.Count * 100 : 0;
-                    csvSummary.AppendLine($"{g.CommandType},{g.Count},{g.Successful},{g.Failed},{rate:F2}%,{g.AvgExecTimeMs:F2},{g.AvgPlanTimeMs:F2},{g.TotalExecTimeMs:F2},{g.TotalPlanTimeMs:F2}");
+                    csvSummary.AppendLine($"{g.CommandType},{g.Count},{g.Successful},{g.Failed},{rate:F2}%,{g.AvgExecTimeMs:F2},{g.AvgPlanTimeMs:F2},{g.AvgPointCount:F1},{g.AvgNominalSec:F3},{g.TotalExecTimeMs:F2},{g.TotalPlanTimeMs:F2}");
                 }
 
-                // TOTAL row
-                var totalCmds = commandRecords.Count;
-                var totalSuccess = commandRecords.Count(r => r.Success);
+                // TOTAL row (top-level only)
+                var topLevel = commandRecords.Where(r => !r.IsSubStep).ToList();
+                var totalCmds = topLevel.Count;
+                var totalSuccess = topLevel.Count(r => r.Success);
                 var totalFailed = totalCmds - totalSuccess;
                 var totalRate = totalCmds > 0 ? (double)totalSuccess / totalCmds * 100 : 0;
-                var avgExec = totalCmds > 0 ? commandRecords.Where(r => r.Completed).Average(r => r.ExecutionTimeSeconds * 1000.0) : 0;
-                var avgPlan = commandRecords.Where(r => r.Completed && r.PlanningTimeSeconds > 0).Select(r => r.PlanningTimeSeconds * 1000.0).DefaultIfEmpty(0).Average();
-                var grandExec = commandRecords.Sum(r => r.ExecutionTimeSeconds * 1000.0);
-                var grandPlan = commandRecords.Sum(r => r.PlanningTimeSeconds * 1000.0);
+                var avgExec = totalCmds > 0 ? topLevel.Where(r => r.Completed).Average(r => r.ExecutionTimeSeconds * 1000.0) : 0;
+                var avgPlan = topLevel.Where(r => r.Completed && r.PlanningTimeSeconds > 0).Select(r => r.PlanningTimeSeconds * 1000.0).DefaultIfEmpty(0).Average();
+                var grandExec = topLevel.Sum(r => r.ExecutionTimeSeconds * 1000.0);
+                var grandPlan = topLevel.Sum(r => r.PlanningTimeSeconds * 1000.0);
 
                 csvSummary.AppendLine($"TOTAL,{totalCmds},{totalSuccess},{totalFailed},{totalRate:F2}%,{avgExec:F2},{avgPlan:F2},{grandExec:F2},{grandPlan:F2}");
 
@@ -361,9 +431,13 @@ namespace BehaviorTreeMainProject.Log.Services
             public bool Success { get; set; }
             public double ExecutionTimeSeconds { get; set; }
             public double PlanningTimeSeconds { get; set; }
+            public int PointCount { get; set; }
+            public double NominalDurationSeconds { get; set; }
             public string? Error { get; set; }
             public string? Message { get; set; }
             public bool Completed { get; set; }
+            public bool IsSubStep { get; set; }
+            public int ParentCommandNumber { get; set; }
         }
     }
 }

@@ -25,12 +25,63 @@ sys.path.insert(0, os.path.join(SCRIPT_DIR, "ur10_control"))
 from ur10_commands import move_to_pose, move_to_pose_l, move_to_pose_p, move_to_pose_c, set_digital_out_sequence
 from ur10_commands import play_program, dashboard_command, set_payload, set_tcp, set_tool_digital_out_open
 from ur10_commands import _send_urscript
+from ur10_commands import _run_urscript_with_done
+from ur10_commands import PYTHON_HOST_IP, CALLBACK_PORT
+from ur10_commands import execute_trajectory as _execute_trajectory
+from ur10_commands import get_current_pose as _get_current_pose
 
 DEFAULT_ROBOT_IP = "192.168.1.100"
 MOVEIT_BRIDGE_URL = "http://127.0.0.1:5002"
 EXTERNAL_CONTROL_NAILGUN = "external_control_n.urp"
 EXTERNAL_CONTROL_GRIPPER = "external_control_g.urp"
-SUPPORTED_MOVE_TYPES = ['movej', 'movel', 'movep', 'movec']
+SUPPORTED_MOVE_TYPES = ['movej', 'movel', 'movep', 'movec', 'planned', 'plannedj', 'plannedl']
+
+# ── Speed governor for MoveIt/Pilz planned moves ────────────────────────────
+# Pilz interprets these as max_velocity_scaling_factor / max_acceleration_scaling_factor
+# (fraction of UR10 joint max). 1.0 = full UR10 speed, which is unsafe for this
+# cell. All planned-move code paths (/move plannedj/plannedl and the internal
+# _planned_lift helper used by stack_release/nail_and_retract) clamp through
+# these two constants — change here to change global planned speed.
+PLANNED_VEL_CAP = 0.45
+PLANNED_ACC_CAP = 0.45
+PLANNED_DEFAULT_VEL = 0.45
+PLANNED_DEFAULT_ACC = 0.45
+
+
+def _rotvec_to_quat_base_frame(rx, ry, rz):
+    """Convert a URScript axis-angle rotation vector to a base_link quaternion.
+
+    URScript pose orientation is (rx, ry, rz) where the *direction* is the
+    rotation axis and the *magnitude* is the rotation angle (radians). The
+    standard rotvec→quat formula is:
+
+        angle = ||(rx,ry,rz)||
+        axis  = (rx,ry,rz) / angle      (or (0,0,1) if angle≈0)
+        q     = (axis * sin(angle/2), cos(angle/2))   # (x, y, z, w)
+
+    Then to express the same rotation in MoveIt's base_link frame — which is
+    rotated 180° about Z relative to the UR robot base — we conjugate by
+    Rz(180°). For pure unit quaternions, that conjugation collapses to
+    negating qx and qy (the same parity rule we already apply to x,y
+    positions). qz, qw are unchanged.
+
+    Returns (qx, qy, qz, qw).
+    """
+    rx = float(rx); ry = float(ry); rz = float(rz)
+    angle = math.sqrt(rx*rx + ry*ry + rz*rz)
+    if angle < 1e-9:
+        qx, qy, qz, qw = 0.0, 0.0, 0.0, 1.0
+    else:
+        s = math.sin(angle / 2.0) / angle
+        qx = rx * s
+        qy = ry * s
+        qz = rz * s
+        qw = math.cos(angle / 2.0)
+    # Rz(180°) conjugation: (qx, qy, qz, qw) → (-qx, -qy, qz, qw)
+    out = (-qx, -qy, qz, qw)
+    print(f"[ORI] rotvec=({rx:+.6f},{ry:+.6f},{rz:+.6f}) angle={angle:.4f}rad "
+          f"-> quat(base_link)=(qx={out[0]:+.6f},qy={out[1]:+.6f},qz={out[2]:+.6f},qw={out[3]:+.6f})", flush=True)
+    return out
 
 
 class RobotState:
@@ -94,6 +145,73 @@ def health():
     return jsonify({'status': 'ok', 'service': 'robot_execution', 'robotIp': DEFAULT_ROBOT_IP})
 
 
+@app.route('/execute_trajectory', methods=['POST'])
+def robot_execute_trajectory():
+    """Execute a pre-planned joint trajectory (from MoveIt) on the UR10 via
+    chained URScript movej commands. The robot is driven directly through
+    port 30002; no External Control / URCap involvement.
+
+    Expected JSON body:
+        joint_names  (list[str]) — joint names in the order matching each
+                                   points[i].positions entry.
+        points       (list)      — [{positions:[6 floats], time_from_start:sec}, ...]
+        robotIp      (str)       — robot IP (optional, default 192.168.1.100)
+
+    The first point is treated as the start state and skipped (the robot is
+    assumed to already be at points[0]).
+    """
+    try:
+        data = request.json or {}
+        joint_names = data.get('joint_names')
+        points = data.get('points')
+        if not joint_names or not isinstance(points, list):
+            return jsonify({
+                'success': False,
+                'error': 'joint_names (list[str]) and points (list[dict]) required'
+            }), 400
+
+        robot_ip = data.get('robotIp') or DEFAULT_ROBOT_IP
+        tcp_for_move, payload_for_move, payload_cog_for_move = robot_state.snapshot()
+        if tcp_for_move:
+            print(f"execute_trajectory: re-applying stored TCP: {tcp_for_move}")
+        if payload_for_move:
+            print(f"execute_trajectory: re-applying stored payload: {payload_for_move} kg")
+
+        nominal_duration = points[-1].get('time_from_start', 0.0) if points else 0.0
+        print(
+            f"/execute_trajectory: received {len(points)} points, "
+            f"nominal_duration={nominal_duration:.2f}s, robot={robot_ip}"
+        )
+
+        start_time = time.time()
+        msg = _execute_trajectory(
+            robot_ip=robot_ip,
+            joint_names=joint_names,
+            points=points,
+            tcp=tcp_for_move,
+            payload=payload_for_move,
+            payload_cog=payload_cog_for_move,
+        )
+        elapsed = time.time() - start_time
+        overhead = elapsed - nominal_duration
+        print(
+            f"/execute_trajectory: done in {elapsed:.2f}s "
+            f"(nominal {nominal_duration:.2f}s, overhead {overhead:+.2f}s) — {msg}"
+        )
+        return jsonify({
+            'success': True,
+            'message': msg,
+            'pointCount': len(points),
+            'nominalDurationSeconds': nominal_duration,
+            'executionTimeSeconds': elapsed,
+            'overheadSeconds': overhead,
+        })
+    except Exception as e:
+        import traceback; traceback.print_exc()
+        print(f"execute_trajectory failed: {e}")
+        return jsonify({'success': False, 'error': str(e), 'executionTimeSeconds': 0}), 500
+
+
 @app.route('/gripper', methods=['POST'])
 def robot_gripper():
     """Send gripper open/close via direct URScript (tool digital outputs)."""
@@ -110,10 +228,14 @@ def robot_gripper():
                 "def gripper_open():\n"
                 "  set_tool_digital_out(0, True)\n"
                 "  sleep(0.8)\n"
+                f'  if socket_open("{PYTHON_HOST_IP}", {CALLBACK_PORT}, "cb"):\n'
+                '    socket_send_string("done", "cb")\n'
+                '    socket_close("cb")\n'
+                '  end\n'
                 "end\n"
+                "gripper_open()\n"
             )
-            _send_urscript(robot_ip, cmd)
-            time.sleep(0.8)  # wait for gripper to finish before returning to C#
+            _run_urscript_with_done(robot_ip, cmd)
             msg = "Gripper opened (TDO0=True)"
         elif command_type == 'close_gripper':
             # TDO0 = False, TDO1 = True → close
@@ -122,10 +244,14 @@ def robot_gripper():
                 "  set_tool_digital_out(0, False)\n"
                 "  set_tool_digital_out(1, True)\n"
                 "  sleep(0.8)\n"
+                f'  if socket_open("{PYTHON_HOST_IP}", {CALLBACK_PORT}, "cb"):\n'
+                '    socket_send_string("done", "cb")\n'
+                '    socket_close("cb")\n'
+                '  end\n'
                 "end\n"
+                "gripper_close()\n"
             )
-            _send_urscript(robot_ip, cmd)
-            time.sleep(0.8)  # wait for gripper to finish before returning to C#
+            _run_urscript_with_done(robot_ip, cmd)
             msg = "Gripper closed (TDO0=False, TDO1=True)"
         else:
             return jsonify({'success': False, 'error': f"Unknown gripper command: {command_type}", 'executionTimeSeconds': 0}), 400
@@ -468,6 +594,135 @@ def robot_move():
                 tcp=tcp_for_move, payload=payload_for_move, payload_cog=payload_cog_for_move,
             )
 
+        elif command_type in ('planned', 'plannedj', 'plannedl'):
+            # MoveIt plans, URScript executes. Two-step:
+            #   1) POST /plan_only on the bridge → joint trajectory
+            #   2) Run trajectory via chained movej over port 30002
+            #
+            # plannedj  → Pilz PTP (joint-space; mimics URScript movej semantics)
+            # plannedl  → Pilz LIN (straight-line Cartesian; mimics URScript movel semantics)
+            # planned   → legacy alias; behaves like plannedj if joints provided, else PTP cartesian
+            is_linear = (command_type == 'plannedl')
+            ee_type = data.get('endEffectorType') or robot_state.get_end_effector()
+            # Both EEs are physically mounted on this workspace; tell the bridge
+            # to disable the inactive one's collisions so Pilz LIN/PTP can plan
+            # without false nailgun_base ↔ table contacts.
+            both_loaded = bool(data.get('bothLoaded', True))
+            no_object = bool(data.get('noObject', True))
+            # Speed comes from the BT model via the C# request; clamped here through
+            # the module-level PLANNED_VEL_CAP / PLANNED_ACC_CAP (top of file).
+            vel_val = min(velocity if velocity is not None else PLANNED_DEFAULT_VEL, PLANNED_VEL_CAP)
+            acc_val = min(acceleration if acceleration is not None else PLANNED_DEFAULT_ACC, PLANNED_ACC_CAP)
+
+            plan_body = {
+                'end_effector_type': ee_type,
+                'velocity': vel_val,
+                'acceleration': acc_val,
+                'both_loaded': both_loaded,
+                'no_object': no_object,
+            }
+
+            if is_linear:
+                # LIN requires a Cartesian target; joints are ignored.
+                if not inline_pose or len(inline_pose) < 6:
+                    return jsonify({'success': False, 'error': 'plannedl requires pose [x,y,z,rx,ry,rz]'}), 400
+                qx, qy, qz, qw = _rotvec_to_quat_base_frame(
+                    inline_pose[3], inline_pose[4], inline_pose[5]
+                )
+                plan_body.update({
+                    'x': float(inline_pose[0]),
+                    'y': float(inline_pose[1]),
+                    'z': float(inline_pose[2]),
+                    'orientation_quat': [qx, qy, qz, qw],
+                    'pipeline_id': 'pilz_industrial_motion_planner',
+                    'planner_id': 'LIN',
+                })
+            elif inline_joints and len(inline_joints) >= 6:
+                # PTP joint-space (matches movej intent).
+                plan_body['joints'] = list(inline_joints)
+                plan_body['use_pilz_ptp'] = True
+            elif inline_pose and len(inline_pose) >= 6:
+                # PTP via Cartesian target (still joint-interpolated under the hood).
+                qx, qy, qz, qw = _rotvec_to_quat_base_frame(
+                    inline_pose[3], inline_pose[4], inline_pose[5]
+                )
+                plan_body.update({
+                    'x': float(inline_pose[0]),
+                    'y': float(inline_pose[1]),
+                    'z': float(inline_pose[2]),
+                    'orientation_quat': [qx, qy, qz, qw],
+                    'pipeline_id': 'pilz_industrial_motion_planner',
+                    'planner_id': 'PTP',
+                })
+            else:
+                return jsonify({'success': False, 'error': f'{command_type} move requires joints[6] or pose[6]'}), 400
+
+            plan_start = time.time()
+            print(f"[PLAN_BODY] command_type={command_type} keys={sorted(plan_body.keys())} "
+                  f"pos=({plan_body.get('x')},{plan_body.get('y')},{plan_body.get('z')}) "
+                  f"quat={plan_body.get('orientation_quat')} "
+                  f"joints={plan_body.get('joints')} planner={plan_body.get('planner_id')}", flush=True)
+            try:
+                plan_resp = http_requests.post(
+                    f"{MOVEIT_BRIDGE_URL}/plan_only",
+                    json=plan_body,
+                    timeout=60,
+                ).json()
+            except Exception as plan_ex:
+                print(f"planned move: bridge /plan_only unreachable: {plan_ex}")
+                return jsonify({'success': False, 'error': f'bridge unreachable: {plan_ex}'}), 502
+            plan_rtt = time.time() - plan_start
+
+            if not plan_resp.get('success'):
+                err = plan_resp.get('error', 'planning failed')
+                print(f"planned move: planning failed: {err}")
+                return jsonify({
+                    'success': False,
+                    'error': err,
+                    'planningTimeSeconds': plan_resp.get('planningTimeSeconds', 0.0),
+                    'executionTimeSeconds': 0.0,
+                }), 500
+
+            plan_time = float(plan_resp.get('planningTimeSeconds', 0.0))
+            nominal = float(plan_resp.get('nominalDurationSeconds', 0.0))
+            n_points = int(plan_resp.get('pointCount', len(plan_resp.get('points', []))))
+            print(
+                f"planned move: bridge plan ok in {plan_rtt:.3f}s "
+                f"(planning={plan_time:.3f}s, points={n_points}, nominal={nominal:.2f}s)"
+            )
+
+            pts = plan_resp.get('points', [])
+            if pts:
+                q0 = pts[0].get('positions')
+                qN = pts[-1].get('positions')
+                tN = pts[-1].get('time_from_start')
+                print(f"[PLAN_OUT] points={len(pts)} nominal={nominal:.2f}s q_start={q0} q_end={qN} t_end={tN}", flush=True)
+            exec_start = time.time()
+            print(f"[EXEC] dispatching trajectory to {robot_ip} ...", flush=True)
+            result_msg = _execute_trajectory(
+                robot_ip=robot_ip,
+                joint_names=plan_resp['joint_names'],
+                points=plan_resp['points'],
+                tcp=tcp_for_move,
+                payload=payload_for_move,
+                payload_cog=payload_cog_for_move,
+            )
+            exec_elapsed = time.time() - exec_start
+            print(f"[EXEC] done in {exec_elapsed:.2f}s (nominal {nominal:.2f}s)", flush=True)
+            total_elapsed = time.time() - start_time
+            print(
+                f"planned move: done | plan_rtt={plan_rtt:.3f}s exec={exec_elapsed:.2f}s "
+                f"(nominal {nominal:.2f}s, overhead {exec_elapsed - nominal:+.2f}s) total={total_elapsed:.2f}s"
+            )
+            return jsonify({
+                'success': True,
+                'message': result_msg,
+                'planningTimeSeconds': plan_time,
+                'executionTimeSeconds': exec_elapsed,
+                'pointCount': n_points,
+                'nominalDurationSeconds': nominal,
+                'totalTimeSeconds': total_elapsed,
+            })
 
         elapsed = time.time() - start_time
 
@@ -486,6 +741,146 @@ def robot_move():
             'error': str(e),
             'executionTimeSeconds': 0
         }), 500
+
+
+def _planned_approach(robot_ip: str, command_type: str,
+                      inline_joints, inline_pose,
+                      velocity: float = None, acceleration: float = None,
+                      ee_type: str = None,
+                      tcp=None, payload=None, payload_cog=None):
+    """Plan+execute a PTP/LIN approach via the MoveIt bridge.
+
+    Mirrors the planned branch of /move so composite endpoints
+    (/stack_release, /nail_and_retract) can honour moveType=plannedj/plannedl
+    instead of falling back to a full-speed URScript movej.
+
+    Returns (planning_sec, point_count, nominal_sec).
+    """
+    is_linear = (command_type == 'plannedl')
+    vel_val = min(velocity if velocity is not None else PLANNED_DEFAULT_VEL, PLANNED_VEL_CAP)
+    acc_val = min(acceleration if acceleration is not None else PLANNED_DEFAULT_ACC, PLANNED_ACC_CAP)
+
+    plan_body = {
+        'end_effector_type': ee_type or robot_state.get_end_effector(),
+        'velocity': vel_val,
+        'acceleration': acc_val,
+        'both_loaded': True,
+        'no_object': True,
+    }
+
+    if is_linear:
+        if not inline_pose or len(inline_pose) < 6:
+            raise ValueError('plannedl requires pose [x,y,z,rx,ry,rz]')
+        qx, qy, qz, qw = _rotvec_to_quat_base_frame(inline_pose[3], inline_pose[4], inline_pose[5])
+        plan_body.update({
+            'x': float(inline_pose[0]), 'y': float(inline_pose[1]), 'z': float(inline_pose[2]),
+            'orientation_quat': [qx, qy, qz, qw],
+            'pipeline_id': 'pilz_industrial_motion_planner', 'planner_id': 'LIN',
+        })
+    elif inline_joints and len(inline_joints) >= 6:
+        plan_body['joints'] = list(inline_joints)
+        plan_body['use_pilz_ptp'] = True
+    elif inline_pose and len(inline_pose) >= 6:
+        qx, qy, qz, qw = _rotvec_to_quat_base_frame(inline_pose[3], inline_pose[4], inline_pose[5])
+        plan_body.update({
+            'x': float(inline_pose[0]), 'y': float(inline_pose[1]), 'z': float(inline_pose[2]),
+            'orientation_quat': [qx, qy, qz, qw],
+            'pipeline_id': 'pilz_industrial_motion_planner', 'planner_id': 'PTP',
+        })
+    else:
+        raise ValueError(f'{command_type} requires joints[6] or pose[6]')
+
+    plan_resp = http_requests.post(f"{MOVEIT_BRIDGE_URL}/plan_only", json=plan_body, timeout=60).json()
+    if not plan_resp.get('success'):
+        raise RuntimeError(plan_resp.get('error', 'planning failed'))
+
+    plan_time = float(plan_resp.get('planningTimeSeconds', 0.0))
+    nominal = float(plan_resp.get('nominalDurationSeconds', 0.0))
+    n_points = int(plan_resp.get('pointCount', len(plan_resp.get('points', []))))
+    _execute_trajectory(
+        robot_ip=robot_ip,
+        joint_names=plan_resp['joint_names'], points=plan_resp['points'],
+        tcp=tcp, payload=payload, payload_cog=payload_cog,
+    )
+    return plan_time, n_points, nominal
+
+
+def _planned_lift(robot_ip: str, height: float, ee_type: str = None,
+                  tcp=None, payload=None, payload_cog=None,
+                  velocity: float = None, acceleration: float = None,
+                  return_stats: bool = False):
+    """Lift TCP straight up by `height` m via the MoveIt bridge (Pilz LIN).
+
+    Reads current TCP pose from the controller, asks the bridge to plan a
+    straight-line move to (x, y, z + height) at the same orientation, then
+    executes via the shared servoj streamer. Collision-aware against the
+    MoveIt scene; speed is bounded by the same PLANNED_VEL_CAP as /move.
+
+    If return_stats is True, returns a dict with planning/point/nominal stats
+    instead of the result string.
+    """
+    pose_info = _get_current_pose(robot_ip)
+    cur = pose_info['tcp_pose']  # [x, y, z, rx, ry, rz]
+    cur_joints = pose_info.get('joints')  # [j1..j6] in radians, j6 = wrist_3
+
+    vel_val = min(velocity if velocity is not None else PLANNED_DEFAULT_VEL, PLANNED_VEL_CAP)
+    acc_val = min(acceleration if acceleration is not None else PLANNED_DEFAULT_ACC, PLANNED_ACC_CAP)
+    # Convert the live URScript rotvec orientation to a base_link quaternion and
+    # send it as orientation_quat — the bridge will use it verbatim, so a
+    # straight-z lift cannot rotate the wrist. (The legacy yaw path went through
+    # a broken 2·atan2(ry,rx) approximation that silently rotated tilted poses.)
+    qx, qy, qz, qw = _rotvec_to_quat_base_frame(cur[3], cur[4], cur[5])
+    plan_body = {
+        'end_effector_type': ee_type or robot_state.get_end_effector(),
+        'velocity': vel_val,
+        'acceleration': acc_val,
+        'both_loaded': True,
+        'no_object': True,
+        'x': float(cur[0]),
+        'y': float(cur[1]),
+        'z': float(cur[2]) + float(height),
+        'orientation_quat': [qx, qy, qz, qw],
+        'pipeline_id': 'pilz_industrial_motion_planner',
+        'planner_id': 'LIN',
+    }
+    # Pin wrist3 to the current value. At tool-down + horizontal-axis π
+    # orientations the IK has two solutions that differ by π on wrist3; without
+    # this lock Pilz LIN can pick the flipped branch and the lift visibly
+    # rotates the wrist 180° versus the pose we just released from.
+    if cur_joints and len(cur_joints) >= 6:
+        plan_body['wrist3_lock'] = float(cur_joints[5])
+
+    plan_start = time.time()
+    plan_resp = http_requests.post(
+        f"{MOVEIT_BRIDGE_URL}/plan_only", json=plan_body, timeout=60
+    ).json()
+    plan_rtt = time.time() - plan_start
+
+    if not plan_resp.get('success'):
+        err = plan_resp.get('error', 'planning failed')
+        print(f"planned lift: planning failed ({err}); falling back to direct movel")
+        from ur10_control.ur10_commands import lift_z
+        msg = lift_z(robot_ip, height=height)
+        if return_stats:
+            return {'message': msg, 'planningSec': 0.0, 'pointCount': 0, 'nominalSec': 0.0, 'fallback': True}
+        return msg
+
+    nominal = float(plan_resp.get('nominalDurationSeconds', 0.0))
+    plan_time = float(plan_resp.get('planningTimeSeconds', plan_rtt))
+    n_points = int(plan_resp.get('pointCount', len(plan_resp.get('points', []))))
+    print(
+        f"planned lift: bridge plan ok in {plan_rtt:.3f}s "
+        f"(points={n_points}, nominal={nominal:.2f}s, dz={height:+.3f}m)"
+    )
+    msg = _execute_trajectory(
+        robot_ip=robot_ip,
+        joint_names=plan_resp['joint_names'],
+        points=plan_resp['points'],
+        tcp=tcp, payload=payload, payload_cog=payload_cog,
+    )
+    if return_stats:
+        return {'message': msg, 'planningSec': plan_time, 'pointCount': n_points, 'nominalSec': nominal, 'fallback': False}
+    return msg
 
 
 @app.route('/nail_and_retract', methods=['POST'])
@@ -517,6 +912,7 @@ def robot_nail_and_retract():
         tcp_for_move, payload_for_move, payload_cog_for_move = robot_state.snapshot()
 
         start_time = time.time()
+        steps = []
 
         # Step 1: movej to nail position
         if inline_joints and len(inline_joints) >= 6:
@@ -525,25 +921,37 @@ def robot_nail_and_retract():
             position_arg = {'pose': inline_pose}
 
         print(f"nail_and_retract: step 1 — movej to {final_position}")
+        t0 = time.time()
         move_to_pose(
             robot_ip=robot_ip, name=final_position,
             position=position_arg,
             velocity=velocity, acceleration=acceleration,
             tcp=tcp_for_move, payload=payload_for_move, payload_cog=payload_cog_for_move,
         )
+        steps.append({'name': 'movej_to_nail', 'durationSec': time.time() - t0,
+                      'planningSec': 0.0, 'pointCount': 0, 'nominalSec': 0.0})
 
-        # Step 2: push down 2 mm
+        # Step 2: push down 2 mm — kept as direct movel because the move is
+        # below MoveIt's planning resolution and intentionally contacts the nail.
         print("nail_and_retract: step 2 — push down 2 mm")
         from ur10_control.ur10_commands import lift_z
+        t0 = time.time()
         lift_z(robot_ip, height=-0.002)
+        steps.append({'name': 'push_down_2mm', 'durationSec': time.time() - t0,
+                      'planningSec': 0.0, 'pointCount': 0, 'nominalSec': 0.0})
 
-        # Step 3: lift back up
+        # Step 3: lift back up — direct movel via lift_z
         print("nail_and_retract: step 3 — lift")
-        lift_z(robot_ip)
+        from ur10_control.ur10_commands import lift_z
+        t0 = time.time()
+        lift_z(robot_ip, height=0.1)
+        steps.append({'name': 'lift', 'durationSec': time.time() - t0,
+                      'planningSec': 0.0, 'pointCount': 0, 'nominalSec': 0.0})
 
         elapsed = time.time() - start_time
         print(f"nail_and_retract completed in {elapsed:.2f}s")
-        return jsonify({'success': True, 'message': f'nail_and_retract at {final_position} done', 'executionTimeSeconds': elapsed})
+        return jsonify({'success': True, 'message': f'nail_and_retract at {final_position} done',
+                        'executionTimeSeconds': elapsed, 'steps': steps})
 
     except Exception as e:
         print(f"nail_and_retract failed: {str(e)}")
@@ -572,6 +980,7 @@ def robot_stack_release():
         acceleration = data.get('acceleration', 1.0)
         inline_joints = data.get('joints')
         inline_pose = data.get('pose')
+        move_type = (data.get('moveType') or 'movej').lower()
 
         if (not inline_joints or len(inline_joints) < 6) and (not inline_pose or len(inline_pose) < 6):
             return jsonify({'success': False, 'error': 'joints [j1..j6] or pose [x,y,z,rx,ry,rz] required'}), 400
@@ -579,40 +988,68 @@ def robot_stack_release():
         tcp_for_move, payload_for_move, payload_cog_for_move = robot_state.snapshot()
 
         start_time = time.time()
+        steps = []
 
-        # Step 1: movej to stack position
-        if inline_joints and len(inline_joints) >= 6:
-            position_arg = {'joints': inline_joints}
+        # Step 1: approach the stack pose. Honour moveType: plannedj/plannedl go
+        # through MoveIt (collision-aware, speed-capped by PLANNED_VEL_CAP);
+        # anything else (default movej) runs as straight URScript at the
+        # requested velocity.
+        print(f"stack_release: step 1 — {move_type} to {final_position}")
+        t0 = time.time()
+        if move_type in ('planned', 'plannedj', 'plannedl'):
+            plan_sec, n_pts, nominal_sec = _planned_approach(
+                robot_ip=robot_ip, command_type=move_type,
+                inline_joints=inline_joints, inline_pose=inline_pose,
+                velocity=velocity, acceleration=acceleration,
+                ee_type=data.get('endEffectorType'),
+                tcp=tcp_for_move, payload=payload_for_move, payload_cog=payload_cog_for_move,
+            )
+            steps.append({'name': f'{move_type}_to_stack', 'durationSec': time.time() - t0,
+                          'planningSec': plan_sec, 'pointCount': n_pts, 'nominalSec': nominal_sec})
         else:
-            position_arg = {'pose': inline_pose}
-
-        print(f"stack_release: step 1 — movej to {final_position}")
-        move_to_pose(
-            robot_ip=robot_ip, name=final_position,
-            position=position_arg,
-            velocity=velocity, acceleration=acceleration,
-            tcp=tcp_for_move, payload=payload_for_move, payload_cog=payload_cog_for_move,
-        )
+            if inline_joints and len(inline_joints) >= 6:
+                position_arg = {'joints': inline_joints}
+            else:
+                position_arg = {'pose': inline_pose}
+            move_to_pose(
+                robot_ip=robot_ip, name=final_position,
+                position=position_arg,
+                velocity=velocity, acceleration=acceleration,
+                tcp=tcp_for_move, payload=payload_for_move, payload_cog=payload_cog_for_move,
+            )
+            steps.append({'name': 'movej_to_stack', 'durationSec': time.time() - t0,
+                          'planningSec': 0.0, 'pointCount': 0, 'nominalSec': 0.0})
 
         # Step 2: open gripper
         print("stack_release: step 2 — open gripper")
+        t0 = time.time()
         open_cmd = (
             "def gripper_open():\n"
             "  set_tool_digital_out(0, True)\n"
             "  sleep(0.8)\n"
+            f'  if socket_open("{PYTHON_HOST_IP}", {CALLBACK_PORT}, "cb"):\n'
+            '    socket_send_string("done", "cb")\n'
+            '    socket_close("cb")\n'
+            '  end\n'
             "end\n"
+            "gripper_open()\n"
         )
-        _send_urscript(robot_ip, open_cmd)
-        time.sleep(0.8)
+        _run_urscript_with_done(robot_ip, open_cmd)
+        steps.append({'name': 'open_gripper', 'durationSec': time.time() - t0,
+                      'planningSec': 0.0, 'pointCount': 0, 'nominalSec': 0.0})
 
-        # Step 3: lift
+        # Step 3: lift — direct movel via lift_z
         print("stack_release: step 3 — lift")
         from ur10_control.ur10_commands import lift_z
-        lift_z(robot_ip)
+        t0 = time.time()
+        lift_z(robot_ip, height=0.1)
+        steps.append({'name': 'lift', 'durationSec': time.time() - t0,
+                      'planningSec': 0.0, 'pointCount': 0, 'nominalSec': 0.0})
 
         elapsed = time.time() - start_time
         print(f"stack_release completed in {elapsed:.2f}s")
-        return jsonify({'success': True, 'message': f'stack_release at {final_position} done', 'executionTimeSeconds': elapsed})
+        return jsonify({'success': True, 'message': f'stack_release at {final_position} done',
+                        'executionTimeSeconds': elapsed, 'steps': steps})
 
     except Exception as e:
         print(f"stack_release failed: {str(e)}")

@@ -122,7 +122,13 @@ EE_LINK_MAP = {
 
 
 def _build_pose(x, y, z, yaw_deg):
-    """Build a geometry_msgs/Pose: tool facing down with the given yaw."""
+    """Build a geometry_msgs/Pose: tool facing down with the given yaw.
+
+    Caller negates x/y to compensate for the 180° Z-rotation between the
+    robot base frame and ROS base_link. The yaw value passed in here is
+    already expressed in the same negated convention (derived by C# from
+    the URScript pose axis-angle), so no further yaw offset is applied.
+    """
     pose = Pose()
     pose.position.x = float(x)
     pose.position.y = float(y)
@@ -155,6 +161,230 @@ def _build_nailgun_path_constraints(target_pose):
 
 
 # ── Flask routes ──────────────────────────────────────────────────────────────
+
+@app.route('/plan_only', methods=['POST'])
+def plan_only():
+    """Plan a motion with MoveIt but do NOT execute. Returns the planned
+    joint trajectory as JSON, intended for execution by robot_service.py
+    via direct URScript movej.
+
+    Expected JSON body (cartesian):
+        x, y, z              (float) — target position (robot frame, will be negated to ROS frame)
+        yaw                  (float) — target yaw in degrees (cartesian only)
+        end_effector_type    (str)   — "gripper" or "nailgun" (default: "gripper")
+        velocity             (float) — velocity scaling 0-1 (default: 0.15)
+        acceleration         (float) — acceleration scaling 0-1 (default: 0.15)
+        planning_time        (float) — max planning seconds (default: 5.0)
+        pipeline_id, planner_id (str) — MoveIt planner selection
+        both_loaded          (bool)  — disable inactive EE collisions
+
+    Or joint-space (overrides cartesian):
+        joints               (list[6]) — joint angles in radians
+        use_pilz_ptp         (bool)    — use Pilz PTP instead of OMPL
+
+    Returns:
+        {success, joint_names: [...], points: [{positions, time_from_start}, ...]}
+    """
+    try:
+        data = request.json or {}
+        end_effector_type = data.get('end_effector_type', 'gripper')
+        velocity = float(data.get('velocity', 0.15))
+        acceleration = float(data.get('acceleration', 0.15))
+        planning_time = float(data.get('planning_time', 5.0))
+        both_loaded = data.get('both_loaded', False)
+        no_object = data.get('no_object', True)
+
+        req_start = time.time()
+        move_to_task.get_logger().info(
+            f'[/plan_only] request: ee={end_effector_type} vel={velocity} acc={acceleration} '
+            f'plan_time={planning_time}s both_loaded={both_loaded} no_object={no_object}'
+        )
+
+        move_to_task.end_effector_link = EE_LINK_MAP.get(end_effector_type, 'tool0')
+
+        setup_start = time.time()
+        if both_loaded and end_effector_type in ('gripper', 'nailgun'):
+            if _last_disabled_ee[0] != end_effector_type:
+                move_to_task.disable_inactive_ee(end_effector_type)
+                _last_disabled_ee[0] = end_effector_type
+                time.sleep(2.0)
+
+        # Nailgun always plans without an attached object
+        if end_effector_type == 'nailgun':
+            no_object = True
+
+        # Attach carried object to the planning scene so collisions include it
+        if not no_object:
+            touch_links = ['gripper_base', 'gripper_left_finger', 'gripper_right_finger', 'tool0']
+            if both_loaded:
+                touch_links.extend(['nailgun_base', 'nailgun_tip'])
+            scene.attach_mesh_object(
+                object_id='target_object',
+                mesh_path='object',
+                link_name='gripper_base',
+                pos=(0.0, 0.0, 0.1225),
+                scale=(1.0, 1.0, 1.0),
+                touch_links=touch_links,
+            )
+            time.sleep(5.0)
+        setup_elapsed = time.time() - setup_start
+
+        plan_start = time.time()
+        joints = data.get('joints')
+        if joints:
+            move_to_task.get_logger().info(
+                f'[/plan_only] planning joint-space, target={[round(v,3) for v in joints]}'
+            )
+            traj = move_to_task.plan_to_joints(
+                joint_values=joints,
+                velocity_scaling=velocity,
+                acceleration_scaling=acceleration,
+                planning_time=planning_time,
+                use_pilz_ptp=bool(data.get('use_pilz_ptp', True)),
+            )
+        else:
+            x, y, z = data.get('x'), data.get('y'), data.get('z')
+            if x is None or y is None or z is None:
+                return jsonify({'success': False, 'error': 'x, y, z (or joints) required'}), 400
+            orientation_quat = data.get('orientation_quat')
+            keep_orientation = bool(data.get('keep_orientation', False))
+            yaw = data.get('yaw')
+            if end_effector_type == 'nailgun':
+                yaw = 90.0
+                keep_orientation = False  # nailgun always pins canonical orientation
+                orientation_quat = None
+            if orientation_quat is not None:
+                if len(orientation_quat) != 4:
+                    return jsonify({'success': False,
+                                    'error': 'orientation_quat must be [qx,qy,qz,qw]'}), 400
+                target_pose = Pose()
+                target_pose.position.x = -float(x)
+                target_pose.position.y = -float(y)
+                target_pose.position.z = float(z)
+                qx, qy, qz, qw = (float(v) for v in orientation_quat)
+                # Normalise defensively — MoveIt rejects non-unit quaternions.
+                n = math.sqrt(qx*qx + qy*qy + qz*qz + qw*qw) or 1.0
+                target_pose.orientation.x = qx / n
+                target_pose.orientation.y = qy / n
+                target_pose.orientation.z = qz / n
+                target_pose.orientation.w = qw / n
+                yaw_log = (f'QUAT({target_pose.orientation.x:.3f},'
+                           f'{target_pose.orientation.y:.3f},'
+                           f'{target_pose.orientation.z:.3f},'
+                           f'{target_pose.orientation.w:.3f})')
+            elif keep_orientation:
+                # Read live EE orientation from TF and reuse it verbatim, so a
+                # straight-z lift cannot rotate the wrist. Position is still
+                # built from x,y,z (with the usual base_link negation).
+                ee_link = EE_LINK_MAP.get(end_effector_type, 'tool0')
+                # Pump TF callbacks before lookup — bridge has no background spin,
+                # so the buffer is empty unless we flush. Mirror the nailgun
+                # press-down path below which also spins before lookup_transform.
+                tf_spin_deadline = time.time() + 1.5
+                tr = None
+                last_tf_ex = None
+                while time.time() < tf_spin_deadline:
+                    rclpy.spin_once(move_to_task, timeout_sec=0.1)
+                    try:
+                        tr = tf_buffer.lookup_transform('base_link', ee_link, rclpy.time.Time())
+                        break
+                    except Exception as tf_ex:
+                        last_tf_ex = tf_ex
+                        continue
+                if tr is None:
+                    move_to_task.get_logger().error(
+                        f'[/plan_only] keep_orientation: TF lookup base_link<-{ee_link} failed: {last_tf_ex}'
+                    )
+                    return jsonify({'success': False,
+                                    'error': f'keep_orientation TF lookup failed: {last_tf_ex}'}), 500
+                target_pose = Pose()
+                target_pose.position.x = -float(x)
+                target_pose.position.y = -float(y)
+                target_pose.position.z = float(z)
+                target_pose.orientation = tr.transform.rotation
+                move_to_task.get_logger().info(
+                    f'[/plan_only] keep_orientation: using live TF orientation '
+                    f'q=({tr.transform.rotation.x:.3f},{tr.transform.rotation.y:.3f},'
+                    f'{tr.transform.rotation.z:.3f},{tr.transform.rotation.w:.3f})'
+                )
+                yaw_log = 'KEEP'
+            else:
+                if yaw is None:
+                    return jsonify({'success': False,
+                                    'error': 'orientation_quat, keep_orientation, or yaw required for cartesian plan'}), 400
+                target_pose = _build_pose(-float(x), -float(y), float(z), float(yaw))
+                yaw_log = f'{yaw}'
+            pipeline = data.get('pipeline_id', 'pilz_industrial_motion_planner')
+            planner = data.get('planner_id', 'PTP')
+            move_to_task.get_logger().info(
+                f'[/plan_only] planning cartesian, target=({x},{y},{z},yaw={yaw_log}) '
+                f'pipeline={pipeline} planner={planner}'
+            )
+            traj = move_to_task.plan_to(
+                target_pose,
+                velocity_scaling=velocity,
+                acceleration_scaling=acceleration,
+                planning_time=planning_time,
+                pipeline_id=pipeline,
+                planner_id=planner,
+                wrist3_lock=data.get('wrist3_lock'),
+            )
+        plan_elapsed = time.time() - plan_start
+
+        if traj is None:
+            total_elapsed = time.time() - req_start
+            move_to_task.get_logger().error(
+                f'[/plan_only] PLANNING FAILED after {plan_elapsed:.3f}s '
+                f'(setup={setup_elapsed:.3f}s, total={total_elapsed:.3f}s)'
+            )
+            return jsonify({
+                'success': False,
+                'error': 'Planning failed',
+                'setupTimeSeconds': setup_elapsed,
+                'planningTimeSeconds': plan_elapsed,
+            }), 500
+
+        # Detach the carried object so subsequent /plan_only calls start clean.
+        # The trajectory was already computed with the object included.
+        if not no_object:
+            try:
+                scene.detach_object('target_object', link_name='gripper_base')
+            except Exception as det_ex:
+                move_to_task.get_logger().warn(f'[/plan_only] detach warning: {det_ex}')
+
+        serialize_start = time.time()
+        jt = traj.joint_trajectory
+        points = []
+        for p in jt.points:
+            t = p.time_from_start.sec + p.time_from_start.nanosec * 1e-9
+            points.append({
+                'positions': list(p.positions),
+                'time_from_start': t,
+            })
+        serialize_elapsed = time.time() - serialize_start
+        nominal_duration = points[-1]['time_from_start'] if points else 0.0
+        total_elapsed = time.time() - req_start
+        move_to_task.get_logger().info(
+            f'[/plan_only] OK: points={len(points)} '
+            f'nominal_duration={nominal_duration:.2f}s | '
+            f'setup={setup_elapsed:.3f}s plan={plan_elapsed:.3f}s '
+            f'serialize={serialize_elapsed:.3f}s total={total_elapsed:.3f}s'
+        )
+        return jsonify({
+            'success': True,
+            'joint_names': list(jt.joint_names),
+            'points': points,
+            'pointCount': len(points),
+            'nominalDurationSeconds': nominal_duration,
+            'setupTimeSeconds': setup_elapsed,
+            'planningTimeSeconds': plan_elapsed,
+            'serializeTimeSeconds': serialize_elapsed,
+            'totalTimeSeconds': total_elapsed,
+        })
+    except Exception as e:
+        import traceback; traceback.print_exc()
+        return jsonify({'success': False, 'error': str(e)}), 500
+
 
 @app.route('/health', methods=['GET'])
 def health():

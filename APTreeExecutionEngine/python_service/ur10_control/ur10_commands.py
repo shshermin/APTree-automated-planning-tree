@@ -5,6 +5,7 @@ No external libraries required — uses Python's built-in socket module.
 """
 
 import json
+import math
 import os
 import socket
 import struct
@@ -16,7 +17,9 @@ POSITIONS_FILE = os.path.join(os.path.dirname(__file__), "positions.json")
 
 # URScript callback: the robot connects back to this host/port after each move.
 PYTHON_HOST_IP = "192.168.1.2"   # Windows host IP on the robot LAN (Ethernet adapter)
-CALLBACK_PORT = 50001             # Port Python listens on for the "done" signal
+# Must be OUTSIDE Windows excluded TCP range (check: netsh int ipv4 show excludedportrange protocol=tcp).
+# 50000-50059 is reserved by Hyper-V/WSL2 on this host, so we use 40001.
+CALLBACK_PORT = 40001             # Port Python listens on for the "done" signal
 
 # Safety mode constants — UR real-time interface, byte offset 812 (CB3 firmware 3.10+)
 SAFETY_MODE_NORMAL = 1
@@ -74,6 +77,21 @@ TCP_OFFSETS = {
     "gripper": [0.00723, 0.00095, 0.148, 0, 0, 0],
     "nailgun": [-0.09515, -0.00026, 0.3165, 0, 0, 0],
 }
+
+# ── URScript move defaults ─────────────────────────────────────────
+# Single place to tune speeds for direct URScript moves (movej / movel / movep /
+# movec / lift_z). Units differ by move type — keep them separate:
+#   movej : v in rad/s (joint speed),  a in rad/s²
+#   movel : v in m/s   (tool speed),    a in m/s²
+# Planned (MoveIt/Pilz) moves live in robot_service.py and are governed by
+# PLANNED_VEL_CAP there, not by these constants.
+MOVEJ_DEFAULT_VEL = 1.0    # rad/s
+MOVEJ_DEFAULT_ACC = 1.0    # rad/s²
+MOVEL_DEFAULT_VEL = 0.25   # m/s
+MOVEL_DEFAULT_ACC = 1.2    # m/s²
+MOVEP_BLEND_RADIUS = 0.05  # m
+LIFT_Z_DEFAULT_VEL = 0.1   # m/s
+LIFT_Z_DEFAULT_ACC = 0.3   # m/s²
 
 # Note: The Dashboard Server is a simple TCP server that accepts text commands and returns responses.
 def dashboard_command(robot_ip: str, command: str) -> str:
@@ -309,7 +327,70 @@ def _send_urscript(robot_ip: str, cmd: str):
     sock.close()
 
 
-def _wait_for_motion_complete(robot_ip: str, timeout: float = 60.0, **_kwargs):
+def _open_done_listener():
+    """Bind and listen on CALLBACK_PORT BEFORE the URScript is sent.
+
+    Returns a server socket ready for accept(). The caller MUST send the
+    URScript only AFTER this returns, otherwise the controller can run
+    socket_open() before Python is listening (connection refused, no "done"
+    callback ever arrives, and the next command can run while the robot is
+    still moving — or while the previous "done" satisfies the new wait).
+    """
+    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    server.bind(("0.0.0.0", CALLBACK_PORT))
+    server.listen(1)
+    server.settimeout(2.0)  # wake up every 2 s to check safety mode
+    return server
+
+
+def _wait_for_controller_ready(robot_ip: str, max_wait: float = 5.0,
+                               vel_threshold: float = 0.01) -> bool:
+    """Poll the real-time interface until all joint velocities are near zero.
+
+    The UR secondary port (30002) silently drops a new URScript if the
+    controller is still executing the previous one. Near-zero velocities
+    indicate the robot is at rest and the interpreter is likely idle.
+    Retries every 0.5 s up to max_wait seconds.
+
+    Returns True when ready, False if max_wait elapses without all |q̇| < threshold.
+    """
+    t_start = time.time()
+    print(f"[READY] checking controller idle (threshold={vel_threshold} rad/s, max_wait={max_wait:.1f}s)", flush=True)
+    deadline = t_start + max_wait
+    attempt = 0
+    while time.time() < deadline:
+        attempt += 1
+        try:
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.settimeout(2.0)
+            sock.connect((robot_ip, REALTIME_PORT))
+            data = b""
+            while len(data) < 348:
+                chunk = sock.recv(4096)
+                if not chunk:
+                    break
+                data += chunk
+            sock.close()
+            if len(data) >= 348:
+                velocities = struct.unpack("!6d", data[300:348])
+                max_vel = max(abs(v) for v in velocities)
+                if all(abs(v) < vel_threshold for v in velocities):
+                    waited = time.time() - t_start
+                    if attempt > 1:
+                        print(f"[READY] controller idle after {waited:.2f}s ({attempt} polls)", flush=True)
+                    return True
+                print(f"[READY] attempt {attempt}: controller busy max|q\u0307|={max_vel:.4f} rad/s — waiting 0.5s", flush=True)
+            else:
+                print(f"[READY] attempt {attempt}: short RT packet ({len(data)} bytes) — waiting 0.5s", flush=True)
+        except Exception as e:
+            print(f"[READY] attempt {attempt}: RT read error: {e} — waiting 0.5s", flush=True)
+        time.sleep(0.5)
+    print(f"[READY] controller not idle after {max_wait:.1f}s — sending URScript anyway", flush=True)
+    return False
+
+
+def _wait_for_motion_complete(robot_ip: str, timeout: float = 60.0, server=None, **_kwargs):
     """Block until the robot signals motion complete via URScript socket callback.
 
     The URScript program calls socket_open / socket_send_string / socket_close
@@ -323,29 +404,68 @@ def _wait_for_motion_complete(robot_ip: str, timeout: float = 60.0, **_kwargs):
 
     Input:  robot_ip  (str)   — IP address of the UR10 (used for safety checks).
             timeout   (float) — Max wait time in seconds (default: 60).
+            server    (sock)  — Pre-bound listener from _open_done_listener().
+                                If None, one is created here (legacy/unsafe — only
+                                use for backwards compatibility; race-prone).
     """
-    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    server.bind(("0.0.0.0", CALLBACK_PORT))
-    server.listen(1)
-    server.settimeout(2.0)  # wake up every 2 s to check safety mode
+    owns_server = server is None
+    if owns_server:
+        server = _open_done_listener()
     start = time.time()
+    print(f"[DONE] waiting for robot callback on {PYTHON_HOST_IP}:{CALLBACK_PORT} (timeout={timeout:.0f}s)", flush=True)
     try:
         while time.time() - start < timeout:
             try:
-                conn, _ = server.accept()
+                conn, addr = server.accept()
                 conn.recv(64)   # read "done" (contents not checked — arrival is enough)
                 conn.close()
+                elapsed = time.time() - start
+                print(f"[DONE] callback received from {addr[0]} after {elapsed:.3f}s", flush=True)
                 return          # motion complete
             except socket.timeout:
+                elapsed = time.time() - start
+                print(f"[DONE] still waiting... {elapsed:.0f}s elapsed", flush=True)
                 # No callback yet — check safety mode before waiting again
                 is_safe, msg = check_safety_mode(robot_ip)
                 if not is_safe:
+                    print(f"[DONE] safety stop detected: {msg}", flush=True)
                     raise RobotSafetyError(msg)
     finally:
-        server.close()
+        if owns_server:
+            server.close()
+        else:
+            server.close()
 
-    print(f"Warning: _wait_for_motion_complete timed out after {timeout}s")
+    print(f"[DONE] WARNING: timed out after {timeout:.0f}s — no 'done' callback received. URScript may have been dropped.", flush=True)
+
+
+def _run_urscript_with_done(robot_ip: str, cmd: str, timeout: float = 60.0):
+    """Bind listener, send URScript, wait for "done" callback.
+
+    Order matters: the listener MUST be bound before _send_urscript so the
+    controller's socket_open call can connect. Use this for every URScript
+    that includes the done-callback handshake (moves, gripper, IO, lift).
+    """
+    print(f"[URSCRIPT] preparing to send {len(cmd.encode())} bytes to {robot_ip}:{SECONDARY_PORT}", flush=True)
+    server = _open_done_listener()
+    try:
+        _wait_for_controller_ready(robot_ip)
+        t_send = time.time()
+        _send_urscript(robot_ip, cmd)
+        print(f"[URSCRIPT] script sent in {(time.time()-t_send)*1000:.1f}ms — waiting for done callback", flush=True)
+        t_wait = time.time()
+        _wait_for_motion_complete(robot_ip, timeout=timeout, server=server)
+        print(f"[URSCRIPT] done in {time.time()-t_wait:.3f}s — settling 0.3s", flush=True)
+    finally:
+        try:
+            server.close()
+        except Exception:
+            pass
+    # The controller sends "done" just before socket_close/end/script-exit.
+    # Without this settle, the next URScript can arrive on port 30002 while the
+    # interpreter is still in its cleanup tail and silently drop the script.
+    time.sleep(0.3)
+    print(f"[URSCRIPT] settle complete — controller ready for next command", flush=True)
 
 
 def _resolve_tcp(tcp):
@@ -378,67 +498,74 @@ def _wrap_with_tcp(move_cmd: str, tcp, payload=None, payload_cog=None) -> str:
         else:
             lines.append(f"  set_payload({payload})")
     lines.append(f"  {move_cmd.strip()}")
-    lines.append(f'  socket_open("{PYTHON_HOST_IP}", {CALLBACK_PORT}, "cb")')
-    lines.append(f'  socket_send_string("done", "cb")')
-    lines.append(f'  socket_close("cb")')
+    # Guard socket_open: on failure URScript would otherwise silently skip the
+    # send/close and the robot would finish without Python ever getting "done".
+    lines.append(f'  if socket_open("{PYTHON_HOST_IP}", {CALLBACK_PORT}, "cb"):')
+    lines.append(f'    socket_send_string("done", "cb")')
+    lines.append(f'    socket_close("cb")')
+    lines.append(f'  end')
     lines.append("end")
     lines.append("move_with_tcp()")
     return "\n".join(lines) + "\n"
 
 
-def move_to_pose(robot_ip: str, name: str, position: dict = None, velocity: float = 1, acceleration: float = 1.0, tcp=None, payload=None, payload_cog=None) -> str:
+def move_to_pose(robot_ip: str, name: str, position: dict = None, velocity: float = None, acceleration: float = None, tcp=None, payload=None, payload_cog=None) -> str:
     """Move the robot to a pose using movej (joint-space interpolation)."""
     if position is None:
         position = get_position(name)
+    v = MOVEJ_DEFAULT_VEL if velocity is None else velocity
+    a = MOVEJ_DEFAULT_ACC if acceleration is None else acceleration
     if "joints" in position:
         joints = position["joints"]
-        cmd = _wrap_with_tcp(f"movej({joints}, a={acceleration}, v={velocity})\n", tcp, payload, payload_cog)
-        _send_urscript(robot_ip, cmd)
-        _wait_for_motion_complete(robot_ip)
+        cmd = _wrap_with_tcp(f"movej({joints}, a={a}, v={v})\n", tcp, payload, payload_cog)
+        _run_urscript_with_done(robot_ip, cmd)
         return f"movej to '{name}' with joints={joints}"
     elif "pose" in position:
         pose = position["pose"]
-        cmd = _wrap_with_tcp(f"movej(p{pose}, a={acceleration}, v={velocity})\n", tcp, payload, payload_cog)
-        _send_urscript(robot_ip, cmd)
-        _wait_for_motion_complete(robot_ip)
+        cmd = _wrap_with_tcp(f"movej(p{pose}, a={a}, v={v})\n", tcp, payload, payload_cog)
+        _run_urscript_with_done(robot_ip, cmd)
         return f"movej to '{name}' with pose={pose}"
     else:
         raise ValueError(f"Position '{name}' has neither 'joints' nor 'pose'")
 
 
-def move_to_pose_l(robot_ip: str, name: str, position: dict = None, velocity: float = 0.25, acceleration: float = 1.2, tcp=None, payload=None, payload_cog=None) -> str:
+def move_to_pose_l(robot_ip: str, name: str, position: dict = None, velocity: float = None, acceleration: float = None, tcp=None, payload=None, payload_cog=None) -> str:
     """Move the robot to a pose using movel (linear TCP interpolation)."""
     if position is None:
         position = get_position(name)
+    v = MOVEL_DEFAULT_VEL if velocity is None else velocity
+    a = MOVEL_DEFAULT_ACC if acceleration is None else acceleration
     pose = position["pose"]
-    cmd = _wrap_with_tcp(f"movel(p{pose}, a={acceleration}, v={velocity})\n", tcp, payload, payload_cog)
-    _send_urscript(robot_ip, cmd)
-    _wait_for_motion_complete(robot_ip)
+    cmd = _wrap_with_tcp(f"movel(p{pose}, a={a}, v={v})\n", tcp, payload, payload_cog)
+    _run_urscript_with_done(robot_ip, cmd)
     return f"movel to '{name}' with pose={pose}"
 
 
-def move_to_pose_p(robot_ip: str, name: str, position: dict = None, velocity: float = 0.25, acceleration: float = 1.2, blend_radius: float = 0.05, tcp=None, payload=None, payload_cog=None) -> str:
+def move_to_pose_p(robot_ip: str, name: str, position: dict = None, velocity: float = None, acceleration: float = None, blend_radius: float = None, tcp=None, payload=None, payload_cog=None) -> str:
     """Move the robot to a pose using movep (process / blend move)."""
     if position is None:
         position = get_position(name)
+    v = MOVEL_DEFAULT_VEL if velocity is None else velocity
+    a = MOVEL_DEFAULT_ACC if acceleration is None else acceleration
+    r = MOVEP_BLEND_RADIUS if blend_radius is None else blend_radius
     pose = position["pose"]
-    cmd = _wrap_with_tcp(f"movep(p{pose}, a={acceleration}, v={velocity}, r={blend_radius})\n", tcp, payload, payload_cog)
-    _send_urscript(robot_ip, cmd)
-    _wait_for_motion_complete(robot_ip)
+    cmd = _wrap_with_tcp(f"movep(p{pose}, a={a}, v={v}, r={r})\n", tcp, payload, payload_cog)
+    _run_urscript_with_done(robot_ip, cmd)
     return f"movep to '{name}' with pose={pose}"
 
 
-def move_to_pose_c(robot_ip: str, via_name: str, end_name: str, via_position: dict = None, end_position: dict = None, velocity: float = 0.25, acceleration: float = 1.2, tcp=None, payload=None, payload_cog=None) -> str:
+def move_to_pose_c(robot_ip: str, via_name: str, end_name: str, via_position: dict = None, end_position: dict = None, velocity: float = None, acceleration: float = None, tcp=None, payload=None, payload_cog=None) -> str:
     """Move the robot along a circular arc using movec (via-point -> end-point)."""
     if via_position is None:
         via_position = get_position(via_name)
     if end_position is None:
         end_position = get_position(end_name)
+    v = MOVEL_DEFAULT_VEL if velocity is None else velocity
+    a = MOVEL_DEFAULT_ACC if acceleration is None else acceleration
     via_pose = via_position["pose"]
     end_pose = end_position["pose"]
-    cmd = _wrap_with_tcp(f"movec(p{via_pose}, p{end_pose}, a={acceleration}, v={velocity})\n", tcp, payload, payload_cog)
-    _send_urscript(robot_ip, cmd)
-    _wait_for_motion_complete(robot_ip)
+    cmd = _wrap_with_tcp(f"movec(p{via_pose}, p{end_pose}, a={a}, v={v})\n", tcp, payload, payload_cog)
+    _run_urscript_with_done(robot_ip, cmd)
     return f"movec via '{via_name}' to '{end_name}'"
 
 
@@ -456,25 +583,27 @@ def set_digital_out_sequence(robot_ip: str) -> str:
         "  set_tool_digital_out(1, True)\n"
         "  sleep(0.5)\n"
         "  set_tool_digital_out(0, False)\n"
+        f'  if socket_open("{PYTHON_HOST_IP}", {CALLBACK_PORT}, "cb"):\n'
+        '    socket_send_string("done", "cb")\n'
+        '    socket_close("cb")\n'
+        '  end\n'
         "end\n"
+        "gripper_seq()\n"
     )
-    _send_urscript(robot_ip, cmd)
+    _run_urscript_with_done(robot_ip, cmd)
     return "Tool digital out sequence: TDO1=True, wait 0.5s, TDO0=False"
 
 
-def lift_z(robot_ip: str, height: float = 0.1, velocity: float = 0.1, acceleration: float = 0.3) -> str:
+def lift_z(robot_ip: str, height: float = 0.1, velocity: float = None, acceleration: float = None) -> str:
     """Move the TCP straight up by `height` meters from the current pose.
 
     Reads the actual TCP pose on the robot controller and does a movel
-    to the same x,y with z + height.
-
-    Input:  robot_ip     (str)   — IP address of the UR10.
-            height       (float) — Distance to lift in meters (default: 0.1 = 10 cm).
-            velocity     (float) — TCP velocity in m/s (default: 0.1).
-            acceleration (float) — TCP acceleration in m/s² (default: 0.3).
-    Output: str — Confirmation message.
+    to the same x,y with z + height. Defaults come from LIFT_Z_DEFAULT_VEL /
+    LIFT_Z_DEFAULT_ACC at the top of this file.
     """
     height = float(height) if height is not None else 0.1
+    velocity = LIFT_Z_DEFAULT_VEL if velocity is None else velocity
+    acceleration = LIFT_Z_DEFAULT_ACC if acceleration is None else acceleration
     cmd = (
         "def lift_up():\n"
         "  local curr = get_actual_tcp_pose()\n"
@@ -486,15 +615,165 @@ def lift_z(robot_ip: str, height: float = 0.1, velocity: float = 0.1, accelerati
         "  local crz = curr[5]\n"
         "  movel(p[cx, cy, target_z, crx, cry, crz], "
         f"a={acceleration}, v={velocity})\n"
-        f'  socket_open("{PYTHON_HOST_IP}", {CALLBACK_PORT}, "cb")\n'
-        '  socket_send_string("done", "cb")\n'
-        '  socket_close("cb")\n'
+        f'  if socket_open("{PYTHON_HOST_IP}", {CALLBACK_PORT}, "cb"):\n'
+        '    socket_send_string("done", "cb")\n'
+        '    socket_close("cb")\n'
+        '  end\n'
         "end\n"
         "lift_up()\n"
     )
-    _send_urscript(robot_ip, cmd)
-    _wait_for_motion_complete(robot_ip)
+    _run_urscript_with_done(robot_ip, cmd)
     return f"Lift: moved TCP up {height}m from current pose"
+
+
+# Joint order URScript expects for movej(q).
+UR_JOINT_NAMES = [
+    'shoulder_pan_joint',
+    'shoulder_lift_joint',
+    'elbow_joint',
+    'wrist_1_joint',
+    'wrist_2_joint',
+    'wrist_3_joint',
+]
+
+
+def execute_trajectory(robot_ip: str, joint_names: list, points: list,
+                       tcp=None, payload: float = None, payload_cog: list = None,
+                       min_segment_time: float = 0.05,
+                       servo_cycle: float = 0.008,
+                       servo_lookahead: float = 0.1,
+                       servo_gain: int = 300) -> str:
+    """Execute a joint-space trajectory (from MoveIt) smoothly via URScript servoj.
+
+    The trajectory's (q, time_from_start) samples are linearly interpolated onto
+    a uniform `servo_cycle` grid (default 8 ms = UR CB3 controller rate). Each
+    grid sample becomes one `servoj(q, t=cycle, lookahead_time=..., gain=...)`
+    call, which the UR servo loop blends continuously — so a dense Pilz LIN/PTP
+    plan replays as a single smooth motion (no per-point decelerations).
+
+    Input:
+        robot_ip      (str)   — IP of the UR10.
+        joint_names   (list)  — joint names matching points[i].positions; reordered
+                                into UR_JOINT_NAMES.
+        points        (list)  — [{'positions': [6 floats], 'time_from_start': sec}, ...]
+        tcp/payload/payload_cog — optional, applied once before the trajectory.
+        min_segment_time — unused (kept for backward compat with older callers).
+        servo_cycle   (float) — controller cycle, 0.008 s for CB3 / 0.002 s for e-Series.
+        servo_lookahead, servo_gain — servoj tuning (UR defaults: 0.1 s, 300).
+    Output: str — Confirmation message.
+    """
+    if not points:
+        return "execute_trajectory: empty trajectory, nothing to do"
+
+    # Reorder columns so points[i].positions[idx] == UR_JOINT_NAMES order.
+    try:
+        idx = [joint_names.index(n) for n in UR_JOINT_NAMES]
+    except ValueError as e:
+        raise ValueError(
+            f"Trajectory missing required UR joint name. joint_names={joint_names}"
+        ) from e
+
+    # Materialise (t, q) samples in UR joint order.
+    samples = []
+    for p in points:
+        t = float(p['time_from_start'])
+        q = [float(p['positions'][i]) for i in idx]
+        samples.append((t, q))
+    samples.sort(key=lambda s: s[0])
+    nominal = samples[-1][0]
+    if nominal <= 0.0 or len(samples) < 2:
+        return "execute_trajectory: trajectory too short, nothing to do"
+
+    # Resample onto uniform servo grid via linear interpolation between samples.
+    grid = []
+    n_steps = max(1, int(math.ceil(nominal / servo_cycle)))
+    j = 0  # index of the lower bracket sample
+    for k in range(1, n_steps + 1):
+        t = min(k * servo_cycle, nominal)
+        while j + 1 < len(samples) - 1 and samples[j + 1][0] < t:
+            j += 1
+        t0, q0 = samples[j]
+        t1, q1 = samples[j + 1]
+        span = t1 - t0
+        a = 0.0 if span <= 1e-9 else max(0.0, min(1.0, (t - t0) / span))
+        q = [q0[i] + a * (q1[i] - q0[i]) for i in range(6)]
+        grid.append(q)
+
+    tcp = _resolve_tcp(tcp)
+    lines = ["def run_traj():"]
+    if tcp is not None:
+        lines.append(f"  set_tcp(p{tcp})")
+    if payload is not None:
+        if payload_cog:
+            lines.append(
+                f"  set_payload({payload}, "
+                f"[{payload_cog[0]}, {payload_cog[1]}, {payload_cog[2]}])"
+            )
+        else:
+            lines.append(f"  set_payload({payload})")
+
+    # Stream the trajectory as one servoj per controller cycle. servoj blocks
+    # for `t` seconds and the script loop runs inside the robot's real-time
+    # context, so the cadence is intrinsically locked to the controller clock.
+    for q in grid:
+        q_str = "[" + ", ".join(f"{v:.6f}" for v in q) + "]"
+        lines.append(
+            f"  servoj({q_str}, t={servo_cycle:.4f}, "
+            f"lookahead_time={servo_lookahead}, gain={servo_gain})"
+        )
+    # stopj decelerates from the servo loop's last commanded velocity to rest
+    # so the final pose settles cleanly before we send the "done" callback.
+    lines.append("  stopj(2.0)")
+    lines.append(f'  if socket_open("{PYTHON_HOST_IP}", {CALLBACK_PORT}, "cb"):')
+    lines.append(f'    socket_send_string("done", "cb")')
+    lines.append(f'    socket_close("cb")')
+    lines.append(f'  end')
+    lines.append("end")
+    lines.append("run_traj()")
+    cmd = "\n".join(lines) + "\n"
+    script_bytes = len(cmd.encode('utf-8'))
+
+    # Bind listener BEFORE sending the script so the controller's socket_open
+    # call cannot beat Python's accept() — a real risk for short trajectories.
+    print(
+        f"[TRAJ] sending trajectory: {len(grid)} servoj setpoints, "
+        f"nominal={nominal:.2f}s, script={script_bytes} bytes → {robot_ip}:{SECONDARY_PORT}",
+        flush=True
+    )
+    server = _open_done_listener()
+    try:
+        _wait_for_controller_ready(robot_ip)
+        send_start = time.time()
+        _send_urscript(robot_ip, cmd)
+        send_elapsed = time.time() - send_start
+        print(f"[TRAJ] script sent in {send_elapsed*1000:.1f}ms — waiting for done callback (timeout={max(60.0, nominal+15.0):.0f}s)", flush=True)
+
+        # Allow nominal duration + 15 s safety margin (network + stopj settle).
+        wait_start = time.time()
+        _wait_for_motion_complete(robot_ip, timeout=max(60.0, nominal + 15.0), server=server)
+        wait_elapsed = time.time() - wait_start
+        print(f"[TRAJ] done in {wait_elapsed:.3f}s (nominal {nominal:.2f}s, overhead {wait_elapsed-nominal:+.2f}s) — settling 0.3s", flush=True)
+        # Settle: controller sends "done" just before socket_close/end/script-exit.
+        # Without this, the next URScript arrives while the interpreter is still
+        # cleaning up and gets silently dropped.
+        time.sleep(0.3)
+        print(f"[TRAJ] settle complete — controller ready for next command", flush=True)
+    finally:
+        try:
+            server.close()
+        except Exception:
+            pass
+
+    overhead = wait_elapsed - nominal
+    print(
+        f"execute_trajectory: servoj setpoints={len(grid)} cycle={servo_cycle*1000:.1f}ms "
+        f"nominal={nominal:.2f}s actual={wait_elapsed:.2f}s overhead={overhead:+.2f}s | "
+        f"script_bytes={script_bytes} send={send_elapsed*1000:.1f}ms"
+    )
+    return (
+        f"Executed trajectory: {len(grid)} servoj setpoints, "
+        f"nominal {nominal:.2f}s, actual {wait_elapsed:.2f}s"
+    )
 
 
 def set_tool_digital_out_open(robot_ip: str) -> str:
@@ -507,9 +786,14 @@ def set_tool_digital_out_open(robot_ip: str) -> str:
         "def gripper_open():\n"
         "  set_tool_digital_out(0, True)\n"
         "  sleep(0.5)\n"
+        f'  if socket_open("{PYTHON_HOST_IP}", {CALLBACK_PORT}, "cb"):\n'
+        '    socket_send_string("done", "cb")\n'
+        '    socket_close("cb")\n'
+        '  end\n'
         "end\n"
+        "gripper_open()\n"
     )
-    _send_urscript(robot_ip, cmd)
+    _run_urscript_with_done(robot_ip, cmd)
     return "Tool digital out: TDO0=True (open), wait 0.5s"
 
 

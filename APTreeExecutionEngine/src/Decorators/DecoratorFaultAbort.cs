@@ -82,6 +82,7 @@ public class DecoratorFaultAbort : Decorator
                 LoggingService.LogSuccess(
                     $"📋 FAULT_METRIC | t_resume={tResume:HH:mm:ss.fff} | node={nodeName} | type=Execution" +
                     $" | recovery_ms={recoveryTime:F0} | replan_latency_ms={replanLatency:F0}");
+                FaultRecoveryLogger.LogResumed(nodeName, success: true);
                 _replanTriggeredAt = default;
                 _faultDetectedAt   = default;
                 ClearFaultTimestamp();
@@ -94,6 +95,7 @@ public class DecoratorFaultAbort : Decorator
         if (_faultDetectedAt == default)
         {
             _faultDetectedAt = ReadFaultTimestamp();
+            FaultRecoveryLogger.LogFaultDetected(AttachedNode?.DebugDisplayName ?? "", "LL");
         }
 
         if (HasActiveInProgressLLAction())
@@ -203,6 +205,7 @@ public class DecoratorFaultAbort : Decorator
         _replanTriggeredAt = DateTime.Now;
         LoggingService.LogDebug(
             $"🔴 DecoratorFaultAbort [{nodeName}]: Triggering replan — resetting planner and DFN");
+        FaultRecoveryLogger.LogReplanTriggered(nodeName);
 
         if (AttachedNode?.ServicePlanning is ServicePlanning svc)
             svc.ResetPlanningService();

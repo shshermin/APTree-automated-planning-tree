@@ -37,6 +37,25 @@ namespace BehaviorTreeMainProject.Log.Services
             }
         }
 
+        /// <summary>
+        /// Returns completed planner calls enriched with plan-length / success info.
+        /// Used by FaultRecoveryLogger to attach the post-fault replan call to each fault event.
+        /// </summary>
+        public static List<(int CallNumber, DateTime Start, DateTime End, double DurationMs, int PlanLength, bool Success, string HLActionInstance)> GetCompletedCalls()
+        {
+            lock (lockObject)
+            {
+                if (instance == null) return new();
+                return instance.callRecords
+                    .Where(r => r.Completed && r.EndTime.HasValue)
+                    .Select(r => (r.CallNumber, r.StartTime, r.EndTime!.Value,
+                                  (r.EndTime.Value - r.StartTime).TotalMilliseconds,
+                                  r.PlanLength, r.Success, r.HLActionInstance))
+                    .OrderBy(t => t.StartTime)
+                    .ToList();
+            }
+        }
+
         public static PlannerCallLogger Instance
         {
             get

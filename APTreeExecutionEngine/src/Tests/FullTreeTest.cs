@@ -112,6 +112,10 @@ namespace BehaviorTreeMainProject
                 HierarchicalTraceLogger.GenerateCSVSummary();
                 HierarchicalTraceLogger.Close();
 
+                // Generate fault recovery CSV summary
+                FaultRecoveryLogger.GenerateCSVSummary();
+                FaultRecoveryLogger.Close();
+
                 // Generate end-to-end summary
                 EndToEndSummaryLogger.GenerateFinalSummary();
                 EndToEndSummaryLogger.Close();
