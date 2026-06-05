@@ -1,7 +1,5 @@
-// Stacked predicates (from spatial analysis)
 Stacked(Stick8 Stick3)
 Stacked(Stick8 Stick4)
-Stacked(Cube18 Stick85)
 Stacked(Cube17 Stick80)
 Stacked(Cube16 Stick73)
 Stacked(Cube15 Stick64)
@@ -92,7 +90,6 @@ Stacked(Stick20 Stick16)
 Stacked(Stick20 Stick15)
 Stacked(Stick11 Stick7)
 Stacked(Stick11 Stick6)
-Stacked(Stick88 Cube18)
 Stacked(Stick88 Stick87)
 Stacked(Stick85 Cube17)
 Stacked(Stick85 Stick83)
@@ -184,7 +181,7 @@ Stacked(Stick26 Stick22)
 Stacked(Stick17 Stick12)
 Stacked(Stick17 Stick13)
 
-// Nailed predicates (from spatial analysis)
+
 Nailed(Stick6 Stick1 nailoc1)
 Nailed(Cube1 Stick1 nailoc2)
 Nailed(Stick6 Stick2 nailoc3)
@@ -280,7 +277,7 @@ Nailed(Stick87 Stick85 nailoc92)
 Nailed(Stick87 Stick86 nailoc93)
 
 
-// AtPlace predicates (elements at final locations)
+
 AtPlace(Stick1 FinalLocStick1)
 AtPlace(Stick2 FinalLocStick2)
 AtPlace(Stick3 FinalLocStick3)
@@ -386,7 +383,7 @@ AtPlace(cube14 finloccube14)
 AtPlace(cube15 finloccube15)
 AtPlace(cube16 finloccube16)
 AtPlace(cube17 finloccube17)
-AtPlace(cube18 finloccube18)
+
 
 // AtFinalPosition predicates
 AtFinalPosition(Stick1)
@@ -494,7 +491,7 @@ AtFinalPosition(cube14)
 AtFinalPosition(cube15)
 AtFinalPosition(cube16)
 AtFinalPosition(cube17)
-AtFinalPosition(cube18)
+
 
 // Fixed predicates
 Fixed(Stick1)
@@ -602,24 +599,13 @@ Fixed(cube14)
 Fixed(cube15)
 Fixed(cube16)
 Fixed(cube17)
-Fixed(cube18)
 
-// GripperEmpty predicates
+
 GripperEmpty(robot1)
-
-// AtAgent predicates
 AtAgent(robot1 homePos)
-
-// AtTool predicates
 AtTool(gripper1 equipLocGripper)
 AtTool(staplergun1 equipLocStapler)
-
-// HasTool predicates
 HasTool(robot1 gripper1)
-
-// RobotEquipped predicates
 RobotEquipped(robot1)
-
-// ActiveTool predicates
 ActiveTool(gripper1)
 

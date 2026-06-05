@@ -386,3 +386,74 @@ NailLocation  nailoc90 (0.20197872499374583,0.6547725513511922,0.342574973082128
 NailLocation  nailoc91 (0.07359190609887309,0.6940243832525764,0.3425499973803941  0,0,1 )
 NailLocation  nailoc92 (0.35846458953213123,0.8379938528982339,0.3785749790258698  0,0,1 )
 NailLocation  nailoc93 (0.3161036953230814,0.7073878290700448,0.3780499769592226  0,0,1 )
+
+// Agent - Robot instance
+Robot robot1 (gripper1 True rpmanipulate)
+
+// Robot positions
+RobotPosition  rpmanipulate (1.656148,-0.959557,-2.051016,-1.70177,1.553554,1.650556  0.133776,0.348742,0.490041  0.0,-3.14159,0.0 )
+RobotPosition  rppickup (-0.1289,-1.540886,-1.93273,-1.238644,1.554514,-1.70790  0.60736,-0.274802,0.339901  0.0,-3.14159,0.0 )
+RobotPosition  rptoolchange (2.086106,-1.186673,-2.39603,-1.12949,1.555172,0.503193  -0.276143,0.385864,0.086921  -3.141491,-0.002589,-0.000081 )
+
+// Tools
+Gripper gripper1 (False True equiplocgripper)
+StaplerGun staplergun1 (False equiplocstapler)
+
+// Equip locations
+EquipLocation  equiplocgripper (0,0,0  0,0,0 )
+EquipLocation  equiplocstapler (0,0,0  0,0,0 )
+
+// Table
+Table table1 ()
+
+// Module
+Demo module1 ()
+
+// Layers (Stack)
+Stack layer0 ()
+Stack layer1 ()
+Stack layer2 ()
+Stack layer3 ()
+Stack layer4 ()
+Stack layer5 ()
+Stack layer6 ()
+Stack layer7 ()
+Stack layer8 ()
+Stack layer9 ()
+Stack layer10 ()
+Stack layer11 ()
+Stack layer12 ()
+Stack layer13 ()
+Stack layer14 ()
+Stack layer15 ()
+Stack layer16 ()
+Stack layer17 ()
+Stack layer18 ()
+Stack layer19 ()
+Stack layer20 ()
+Stack layer21 ()
+Stack layer22 ()
+
+// InitialLocations for cubes
+InitialLocation  initloccube1 (0.5993800000000002,-0.283,-0.009  8.673617379883908E-15,1,-0 )
+InitialLocation  initloccube2 (0.59938,-0.2829999999999999,-0.009  0,1,-0 )
+InitialLocation  initloccube3 (0.59938,-0.2829999999999999,-0.009000000000000008  6.938893903907343E-15,1,-0 )
+InitialLocation  initloccube4 (0.5993800000000001,-0.2830000000000001,-0.009000000000000001  -8.673617379884102E-15,1,0 )
+InitialLocation  initloccube5 (0.59938,-0.2829999999999999,-0.008999999999999994  -8.673617379884013E-15,1,0 )
+InitialLocation  initloccube6 (0.5993800000000001,-0.2830000000000001,-0.00899999999999998  1.040834085586078E-14,1,-0 )
+InitialLocation  initloccube7 (0.59938,-0.2830000000000001,-0.009000000000000008  -6.9388939039073065E-15,1,0 )
+InitialLocation  initloccube8 (0.5993800000000001,-0.2830000000000002,-0.009000000000000008  -6.938893903907222E-15,1,0 )
+InitialLocation  initloccube9 (0.5993800000000001,-0.28299999999999986,-0.009000000000000036  3.469446951953605E-15,1,-0 )
+InitialLocation  initloccube10 (0.59938,-0.2829999999999999,-0.00899999999999998  0,1,-0 )
+InitialLocation  initloccube11 (0.59938,-0.2829999999999998,-0.009000000000000008  5.204170427930408E-15,1,-0 )
+InitialLocation  initloccube12 (0.59938,-0.283,-0.009000000000000008  -8.673617379884042E-15,1,0 )
+InitialLocation  initloccube13 (0.59938,-0.28300000000000014,-0.009000000000000008  -6.938893903907162E-15,1,0 )
+InitialLocation  initloccube14 (0.59938,-0.2830000000000001,-0.009000000000000008  0,1,-0 )
+InitialLocation  initloccube15 (0.59938,-0.2830000000000002,-0.009000000000000008  -5.204170427930453E-15,1,0 )
+InitialLocation  initloccube16 (0.5993800000000001,-0.28300000000000003,-0.009000000000000008  -6.938893903907222E-15,1,0 )
+InitialLocation  initloccube17 (0.5993800000000001,-0.2830000000000001,-0.009000000000000008  1.0408340855860833E-14,1,-0 )
+InitialLocation  temploc2 (0.5993800000000005,-0.2830000000000002,0.009  0,3.14,0 )
+
+// Additional FinalLocations
+FinalLocation  mp5 (0,0,0  0,0,0 )
+FinalLocation  temploc3 (0.5993800000000005,-0.0027,-0.009  0,-1,0 )

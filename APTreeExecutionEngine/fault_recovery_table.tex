@@ -1,0 +1,43 @@
+% ────────────────────────────────────────────────────────────────────────────
+% Fault Injection and Recovery Metrics Table
+% Requires: booktabs, siunitx (or just use manual alignment), amssymb (for \checkmark)
+% ────────────────────────────────────────────────────────────────────────────
+%
+% Fault definitions (DemonstratorFaults.json):
+%   F1  drop_stick6_on_pickup    DropAfterClose      triggered PickUpML (stick6)
+%   F2  blocker_on_stick3        BlockerOnTop        triggered TravelML (stick3)
+%   F3  dislodge_stick5_after_stack  DislodgedAfterStack  triggered StackML (stick2)
+%
+% Metric values derived from PlannerCalls + HierarchicalTrace_ML CSVs:
+%   F3: t_fault ≈ 17:01:49.9  t_resume = 17:02:05.9 (HL plan accepted) → M2=16.0s, M3=2.19s
+%   F2: t_fault ≈ 17:02:08.0  t_resume = 17:03:09.5 (stick3 re-picked up) → M2=61.5s, M3=2.19s
+%   F1: t_fault ≈ 17:05:24.2  t_resume = 17:05:56.8 (stick6 re-picked up from temploc1) → M2=32.6s, M3=2.10s
+%   M2_mean = (16.0 + 61.5 + 32.6)/3 = 36.7 s
+%   M3_mean = (2.19 + 2.19 + 2.10)/3 = 2.16 s
+
+\begin{table}[t]
+\centering
+\caption{Fault injection and recovery evaluation for the APTree demonstrator
+         ($n = 3$ execution faults, one trial each).
+         $M_2$: time to recovery ($t_{\text{resume}} - t_{\text{fault}}$).
+         $M_3$: PDDL replan latency ($t_{\text{plan accepted}} - t_{\text{replan triggered}}$).
+         For F3 the recovery is pure replanning;
+         $t_{\text{resume}}$ is when the new HL plan was accepted.
+         For F1 and F2, $t_{\text{resume}}$ is when all recovery actions completed.}
+\label{tab:fault-recovery}
+\begin{tabular}{clllcS[table-format=2.1]S[table-format=1.2]}
+\toprule
+\textbf{ID} & \textbf{Fault} & \textbf{Physical Effect} & \textbf{Trigger} & \textbf{Replan} &
+  {$M_2$ (s)} & {$M_3$ (s)} \\
+\midrule
+F3 & Dislodgement          & Stick5 returns to init.\ position  & \texttt{StackML}  (stick2) & HL-PDDL & 16.0 & 2.19 \\
+F2 & Obstruction           & Blocker placed atop stick3         & \texttt{TravelML} (stick3) & ML-PDDL & 61.5 & 2.19 \\
+F1 & Drop-after-grasp      & Stick6 dropped to temp.\ location  & \texttt{PickUpML} (stick6) & ML-PDDL & 32.6 & 2.10 \\
+\midrule
+\multicolumn{4}{l}{%
+  $M_1^{(\text{exec})} = \dfrac{3}{3} \times 100 = 100\%$\quad (all faults type: \emph{execution})%
+} & & 36.7$^{\dagger}$ & 2.16$^{\dagger}$ \\
+\bottomrule
+\multicolumn{7}{l}{\footnotesize ${}^\dagger$Mean across the three injected fault instances.}
+\end{tabular}
+\end{table}

@@ -105,7 +105,6 @@ BelongsToLayer(cube17 layer20)
 BelongsToLayer(stick85 layer21)
 BelongsToLayer(stick86 layer21)
 BelongsToLayer(stick87 layer22)
-BelongsToLayer(cube18 layer22)
 BelongsToLayer(stick88 layer23)
 
 // Clear predicates (all elements start clear)
@@ -214,7 +213,6 @@ Clear(cube14)
 Clear(cube15)
 Clear(cube16)
 Clear(cube17)
-Clear(cube18)
 
 // PositionFree predicates
 PositionFree(equiplocgripper)
@@ -326,7 +324,6 @@ AtPlace(cube14 initloccube14)
 AtPlace(cube15 initloccube15)
 AtPlace(cube16 initloccube16)
 AtPlace(cube17 initloccube17)
-AtPlace(cube18 initloccube18)
 AtPlace(table1 mp5)
 
 
@@ -437,7 +434,7 @@ ObjectFinalPosition(cube14 finloccube14)
 ObjectFinalPosition(cube15 finloccube15)
 ObjectFinalPosition(cube16 finloccube16)
 ObjectFinalPosition(cube17 finloccube17)
-ObjectFinalPosition(cube18 finloccube18)
+
 
 // Table predicates
 Fixed(table1)
