@@ -62,6 +62,8 @@ Create or edit a `*Config.json` file (see `src/ModelLoader/DemonstratorConfig.js
 
 ```json
 {
+  "executionActive": true,
+  "executionMode": "Sequential",
   "timeoutSeconds": 30,
   "plannerPath": "/home/ubuntu/ENHSP-Public/enhsp.jar",
   "subtreeConfigName": "ENHSP_Demonstrator",
@@ -214,7 +216,7 @@ docs/
 |---|---|---|
 | `timeoutSeconds` | int | Planner timeout for high-level planning calls |
 | `executionActive` | bool | **Robot execution toggle.** `true` (default): `ServiceLLSubtreeInject` expands ML actions into LL subtrees and sends robot commands. `false`: LL injection is skipped — only HL→ML PDDL planning runs (planning-only mode). |
-| `executionMode` | string | How the planner arranges generated HL plan actions in the NodeGraph: `Sequential` (MEETS constraints — one after another), `Parallel` (OVERLAPS — all at once), or `Hybrid` (mix of both). This is a planner arrangement setting, not a robot execution toggle — see `executionActive` above. |
+| `executionMode` | string | How `ServicePDDLPlanning` wires the HL actions it generates **inside a single DynamicFlowNode** after PDDL planning runs (i.e. the internal NodeGraph within one DFN). `Sequential` (MEETS — one after another), `Parallel` (OVERLAPS — all at once), or `Hybrid`. **Not** related to the ordering between DFNs — that is encoded in the DSL model via `[Meets]` relations. |
 | `plannerPath` | string | Absolute path to `enhsp.jar` on the planning machine |
 | `subtreeConfigName` | string | Name tag for the ML subtree planner config |
 | `subtreePlannerName` | string | Planner type for ML subtrees (e.g. `Enhsp`) |
