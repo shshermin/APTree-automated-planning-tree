@@ -64,16 +64,12 @@ Create or edit a `*Config.json` file (see `src/ModelLoader/DemonstratorConfig.js
 {
   "timeoutSeconds": 30,
   "plannerPath": "/home/ubuntu/ENHSP-Public/enhsp.jar",
-
   "subtreeConfigName": "ENHSP_Demonstrator",
   "subtreePlannerName": "Enhsp",
   "subtreeDomainFile": "./Plannerinputs/static/Demonstrator/DomainMLTruss.pddl",
-  "subtreeProblemFile": "./Plannerinputs/static/Demonstrator/ProblemL1L2.pddl",
   "subtreeEnhspConfig": "sat-hmrph",
   "subtreePlannerPath": "/home/ubuntu/ENHSP-Public/enhsp.jar",
   "subtreeTimeoutSeconds": 30,
-  "subtreeExecutionMode": "Sequential",
-
   "maxTicks": 3500,
   "tickDelayMs": 10
 }
