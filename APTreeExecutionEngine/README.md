@@ -63,7 +63,6 @@ Create or edit a `*Config.json` file (see `src/ModelLoader/DemonstratorConfig.js
 ```json
 {
   "timeoutSeconds": 30,
-  "executionMode": "Sequential",
   "plannerPath": "/home/ubuntu/ENHSP-Public/enhsp.jar",
 
   "subtreeConfigName": "ENHSP_Demonstrator",
