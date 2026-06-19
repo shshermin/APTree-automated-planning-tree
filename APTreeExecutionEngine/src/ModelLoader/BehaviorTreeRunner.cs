@@ -154,7 +154,7 @@ namespace BehaviorTreeMainProject
         {
             LoggingService.LogSection("BUILDING BEHAVIOR TREE FROM JSON");
 
-            var rootComposite = behaviorTree.root as BTFlowNodeComposite;
+            string rootName = rootJson.TryGetProperty("name", out var rn) ? rn.GetString() : "Main";
 
             // Read root nodeGraph
             var nodeGraph = rootJson.GetProperty("nodeGraph");
@@ -164,24 +164,44 @@ namespace BehaviorTreeMainProject
             // Disable global planning phase — each child plans and executes independently
             blackboard.PlanningPhase = false;
             blackboard.CassetteSubtreeCompleted = new bool[nodeCount];
-            blackboard.SetBool(new FastName("ExecutionActive"), true);
+            blackboard.SetBool(new FastName("ExecutionActive"), config.ExecutionActive);
+
+            // Root is a DynamicFlowNode — no planner attached, acts as a sequential container
+            var rootDFN = new DynamicFlowNode(
+                new FastName(rootName),
+                behaviorTree,
+                SuccessCriteria.ALL,
+                1.0f,
+                addRetryDecorator: false);
 
             LoggingService.LogSection("CREATING FLOW NODES AND PLANNERS");
 
+            var wrappers = new List<PActionNode>();
             int plannerIndex = 0;
             foreach (var nodeJson in nodesArray.EnumerateArray())
             {
                 plannerIndex++;
-                var flowNode = CreateFlowNodeFromJson(nodeJson, behaviorTree, plannerIndex);
-                rootComposite.AddChild(flowNode);
+                var childDFN = CreateFlowNodeFromJson(nodeJson, behaviorTree, plannerIndex);
+
+                // Register the child DFN in the blackboard (mirrors what BTNode.AddChild did previously)
+                blackboard.SetFlowNodeInstance(childDFN.InstanceName, childDFN);
+
+                var wrapper = new DynamicFlowNodeWrapper(childDFN, blackboard);
+                wrapper.SetOwiningTree(behaviorTree);
+                wrapper.SetTreeForAllServices(behaviorTree);
+                wrappers.Add(wrapper);
             }
 
-            LoggingService.LogSuccess($"Created {plannerIndex} flow nodes from JSON model");
+            // Build a sequential NodeGraph with MEETS relations between wrappers
+            var sequentialGraph = rootDFN.CreateNodeGraphFromActions(wrappers);
+            rootDFN.ForceSetActionGraph(sequentialGraph);
+
+            LoggingService.LogSuccess($"Created {plannerIndex} flow nodes in sequential NodeGraph (MEETS)");
 
             // Wire up the tree
-            behaviorTree.root = rootComposite;
-            rootComposite.SetOwiningTree(behaviorTree);
-            rootComposite.SetTreeForAllServices(behaviorTree);
+            behaviorTree.root = rootDFN;
+            rootDFN.SetOwiningTree(behaviorTree);
+            rootDFN.SetTreeForAllServices(behaviorTree);
 
             // Store reference in blackboard
             blackboard.SetNodeGraph(new FastName("BehaviorTree"), new NodeGraph());
@@ -410,20 +430,20 @@ namespace BehaviorTreeMainProject
                 BlackboardSummaryLogger.EndTreeTicking();
 
                 // Log flow node statuses
-                var compositeRoot = behaviorTree.root as BTFlowNodeComposite;
-                if (compositeRoot != null)
+                if (behaviorTree.root is DynamicFlowNode rootDFN)
                 {
-                    var children = compositeRoot.GetChildren();
-                    for (int i = 0; i < children.Count; i++)
+                    var graphNodes = rootDFN.GetActionGraph()?.GetAllActionNodes();
+                    if (graphNodes != null)
                     {
-                        if (children[i] is DynamicFlowNode dfn)
+                        foreach (var node in graphNodes)
                         {
-                            var graph = dfn.GetActionGraph();
-                            if (graph == null) continue;
-                            var actionNodes = graph.GetAllActionNodes();
-                            if (actionNodes.Count > 0)
+                            if (node is DynamicFlowNodeWrapper w && w.HighLevelSubtree is DynamicFlowNode dfn)
                             {
-                                LoggingService.LogInfo($"  {dfn.GetNodeName()}: {actionNodes.Count} actions in graph");
+                                var innerGraph = dfn.GetActionGraph();
+                                if (innerGraph == null) continue;
+                                var actionNodes = innerGraph.GetAllActionNodes();
+                                if (actionNodes.Count > 0)
+                                    LoggingService.LogInfo($"  {dfn.GetNodeName()}: {actionNodes.Count} actions in graph");
                             }
                         }
                     }
@@ -456,18 +476,18 @@ namespace BehaviorTreeMainProject
         {
             LoggingService.LogSection($"{treeName} TREE STRUCTURE");
 
-            var rootComposite = behaviorTree.root as BTFlowNodeComposite;
-            if (rootComposite == null) return;
+            if (behaviorTree.root is not DynamicFlowNode rootDFN) return;
 
-            var children = rootComposite.GetChildren();
-            LoggingService.LogInfo($"Root: BTFlowNodeComposite ({rootComposite.GetNodeName()})");
+            var nodes = rootDFN.GetActionGraph()?.GetAllActionNodes();
+            LoggingService.LogInfo($"Root: DynamicFlowNode ({rootDFN.GetNodeName()})");
             LoggingService.LogInfo($"  |");
 
-            for (int i = 0; i < children.Count; i++)
+            if (nodes == null) return;
+            for (int i = 0; i < nodes.Count; i++)
             {
-                string connector = (i < children.Count - 1) ? "|-" : "\\-";
-                if (children[i] is DynamicFlowNode dfn)
+                if (nodes[i] is DynamicFlowNodeWrapper w && w.HighLevelSubtree is DynamicFlowNode dfn)
                 {
+                    string connector = (i < nodes.Count - 1) ? "|-" : "\\-";
                     string plannerInfo = dfn.ServicePlanning != null ? "PDDL" : "none";
                     LoggingService.LogInfo($"  {connector} DynamicFlowNode ({dfn.GetNodeName()}) [planner: {plannerInfo}]");
                 }
@@ -654,6 +674,29 @@ namespace BehaviorTreeMainProject
         }
 
         // ── Helpers ──
+
+        /// <summary>
+        /// A lightweight PActionNode wrapper that holds a DynamicFlowNode as its HL subtree.
+        /// Allows DynamicFlowNodes to be placed inside a parent NodeGraph with MEETS relations,
+        /// using the standard HL-action pattern (IsHighLevelAction + HighLevelSubtree).
+        /// </summary>
+        private class DynamicFlowNodeWrapper : PActionNode
+        {
+            private readonly State _emptyPre;
+            private readonly State _emptyEff;
+            protected override State Preconditions => _emptyPre;
+            protected override State Effects => _emptyEff;
+
+            public DynamicFlowNodeWrapper(DynamicFlowNode childFlow, Blackboard<FastName> blackboard)
+                : base("FlowNodeWrapper", childFlow.DebugDisplayName, blackboard)
+            {
+                _emptyPre = new State(StateType.Precondition, new FastName($"{childFlow.DebugDisplayName}_pre"));
+                _emptyEff = new State(StateType.Effect, new FastName($"{childFlow.DebugDisplayName}_eff"));
+                IsHighLevelAction = true;
+                HighLevelSubtree = childFlow;
+                childFlow.SetParentNode(this);
+            }
+        }
 
         private static SuccessCriteria ParseSuccessCriteria(string value)
         {

@@ -1,6 +1,7 @@
 {
   "timeoutSeconds": 30,
   "executionMode": "Sequential",
+  "executionActive": true,
   "plannerPath": "/home/ubuntu/ENHSP-Public/enhsp.jar",
 
   "subtreeConfigName": "ENHSP_Demonstrator",

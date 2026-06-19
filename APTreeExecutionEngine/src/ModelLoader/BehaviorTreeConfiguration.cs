@@ -76,6 +76,15 @@ namespace BehaviorTreeMainProject.ModelLoader
         /// <summary>Path to action instances text file.</summary>
         public string ActionInstancesFile { get; set; }
 
+        // ── Robot execution toggle ──
+
+        /// <summary>
+        /// When true, ServiceLLSubtreeInject expands ML actions into LL subtrees and
+        /// sends robot commands via the Flask service.
+        /// When false, LL injection is skipped — only HL→ML PDDL planning runs (planning-only mode).
+        /// </summary>
+        public bool ExecutionActive { get; set; } = true;
+
         // ── Tick loop settings ──
 
         /// <summary>Maximum number of ticks before stopping execution.</summary>
