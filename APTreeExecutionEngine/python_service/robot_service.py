@@ -940,6 +940,14 @@ def robot_nail_and_retract():
         steps.append({'name': 'push_down_2mm', 'durationSec': time.time() - t0,
                       'planningSec': 0.0, 'pointCount': 0, 'nominalSec': 0.0})
 
+        # Step 2b: fire nailgun — pulse digital output 0
+        print("nail_and_retract: step 2b — fire nailgun (DO0 pulse)")
+        from ur10_control.ur10_commands import fire_nailgun
+        t0 = time.time()
+        fire_nailgun(robot_ip)
+        steps.append({'name': 'fire_nailgun', 'durationSec': time.time() - t0,
+                      'planningSec': 0.0, 'pointCount': 0, 'nominalSec': 0.0})
+
         # Step 3: lift back up — direct movel via lift_z
         print("nail_and_retract: step 3 — lift")
         from ur10_control.ur10_commands import lift_z

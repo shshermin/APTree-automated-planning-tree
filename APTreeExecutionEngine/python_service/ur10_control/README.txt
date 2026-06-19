@@ -69,3 +69,5 @@ Run:
 dotnet run --project BehaviorTreeMainProject.csproj -- --run src/ModelLoader/BehaviorTreeModel.json --faults ../DemonstratorFaults.json
 
 
+Run without faults:
+dotnet run --project BehaviorTreeMainProject.csproj -- --run src/ModelLoader/BehaviorTreeModel.json

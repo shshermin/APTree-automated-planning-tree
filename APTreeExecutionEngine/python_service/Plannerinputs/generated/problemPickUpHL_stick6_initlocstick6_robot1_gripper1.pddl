@@ -77,8 +77,6 @@
     rppickup - rppickup
     rpmanipulate - rpmanipulate
     rptoolchange - rptoolchange
-    ;; Runtime-injected extra objects
-    temploc1 - firstposition
   )
   (:init  
     (atfinalposition table1)
@@ -120,6 +118,7 @@
 (clear cube1)
 (clear cube2)
 (attool staplergun1 equiplocstapler)
+(atplace stick6 initlocstick6)
 (atplace stick7 initlocstick7)
 (atplace stick8 initlocstick8)
 (atplace stick9 initlocstick9)
@@ -147,22 +146,16 @@
 (atplace cube2 finalloccube2)
 (accessible cube2)
 (stacked cube2 stick5)
-(accessible stick3)
-(clear stickdummy)
-(accessible stickdummy)
-(positionfree temploc2)
-(atplace stickdummy temploc3)
 (positionfree initlocstick3)
 (atfinalposition stick3)
 (atplace stick3 finallocstick3)
+(accessible stick3)
 (stacked stick3 table1)
 (positionfree initlocstick1)
 (atfinalposition stick1)
 (atplace stick1 finallocstick1)
 (accessible stick1)
 (stacked stick1 table1)
-(positionfree initlocstick6)
-(atplace stick6 temploc1)
   )
   (:goal 
     (and

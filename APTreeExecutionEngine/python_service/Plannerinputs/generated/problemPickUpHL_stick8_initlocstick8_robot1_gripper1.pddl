@@ -11,6 +11,7 @@
     stick7 - stick
     stick8 - stick
     stick9 - stick
+     stickdummy - stick
 
     ;; Elements - Cubes
     cube1 - cube
@@ -52,6 +53,7 @@
     initlocstick9 - firstposition
     initloccube1 - firstposition
     initloccube2 - firstposition
+    temploc2 - firstposition
 
     ;; Locations - Final positions
     mp5 - finalposition
@@ -67,9 +69,8 @@
     finalloccube1 - finalposition
     finalloccube2 - finalposition
 
-    temploc2 - firstposition
+    
     temploc3 - finalposition
-    stickdummy - stick
     ;; HARDCODED ML-only objects (not in HL problem files)
     equiplocgripper - equipposition
     equiplocstapler - equipposition
@@ -126,10 +127,6 @@
 (atfinalposition stick4)
 (atplace stick4 finallocstick4)
 (stacked stick4 table1)
-(clear stickdummy)
-(accessible stickdummy)
-(positionfree temploc2)
-(atplace stickdummy temploc3)
 (positionfree initlocstick5)
 (atfinalposition stick5)
 (atplace stick5 finallocstick5)
@@ -138,42 +135,42 @@
 (atfinalposition stick2)
 (atplace stick2 finallocstick2)
 (stacked stick2 table1)
+(positionfree initloccube2)
+(atfinalposition cube2)
+(atplace cube2 finalloccube2)
+(accessible cube2)
+(stacked cube2 stick5)
+(positionfree initlocstick3)
+(atfinalposition stick3)
+(atplace stick3 finallocstick3)
+(stacked stick3 table1)
+(positionfree initlocstick1)
+(atfinalposition stick1)
+(atplace stick1 finallocstick1)
+(stacked stick1 table1)
+(positionfree initlocstick6)
+(atplace stick6 finallocstick6)
+(accessible stick6)
+(stacked stick6 stick2)
+(stacked stick6 stick1)
+(atfinalposition stick6)
+(positionfree initlocstick7)
+(atplace stick7 finallocstick7)
+(accessible stick7)
+(stacked stick7 stick2)
+(stacked stick7 stick3)
+(atfinalposition stick7)
 (positionfree initlocstick9)
 (atplace stick9 finallocstick9)
 (accessible stick9)
 (stacked stick9 stick5)
 (stacked stick9 stick4)
 (atfinalposition stick9)
-(positionfree initloccube2)
-(atfinalposition cube2)
-(atplace cube2 finalloccube2)
-(accessible cube2)
-(stacked cube2 stick5)
-(positionfree initlocstick1)
-(atfinalposition stick1)
-(atplace stick1 finallocstick1)
-(stacked stick1 table1)
 (positionfree initloccube1)
 (atfinalposition cube1)
 (atplace cube1 finalloccube1)
 (accessible cube1)
 (stacked cube1 stick1)
-(positionfree initlocstick3)
-(atfinalposition stick3)
-(atplace stick3 finallocstick3)
-(stacked stick3 table1)
-(positionfree initlocstick6)
-(atplace stick6 finallocstick6)
-(accessible stick6)
-(stacked stick6 stick1)
-(stacked stick6 stick2)
-(atfinalposition stick6)
-(positionfree initlocstick7)
-(atplace stick7 finallocstick7)
-(accessible stick7)
-(stacked stick7 stick3)
-(stacked stick7 stick2)
-(atfinalposition stick7)
   )
   (:goal 
     (and

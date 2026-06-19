@@ -86,14 +86,24 @@ public class MoveToLL : ExeAction, ILLInputBindable
         }
         else if (TargetLocation is FinalLocation fl && fl.Position != null)
         {
-            // Force rppickup orientation (tool-down, yaw 0). The per-object yaw
-            // alignment from fl.Orientation was producing a 180° offset versus
-            // the rppickup retract pose, so it is no longer applied here.
-            var ori = GetManipulateOrientationFromBlackboard();
+            double[] ori;
+            string oriSrc;
+            if (fl.Orientation != null)
+            {
+                // Convert 2D stick direction to gripper yaw in URScript rotvec.
+                // + π/2 corrects for MoveIt's base_link frame being 90° rotated
+                // relative to URScript's base frame.
+                double theta = Math.Atan2(fl.Orientation.Y, fl.Orientation.X) + Math.PI / 2.0;
+                double halfTheta = theta / 2.0;
+                ori = new[] { Math.PI * Math.Cos(halfTheta), Math.PI * Math.Sin(halfTheta), 0.0 };
+                oriSrc = $"fl.Orientation=({fl.Orientation.X:F4},{fl.Orientation.Y:F4}) theta={theta:F4}rad";
+            }
+            else
+            {
+                ori = GetManipulateOrientationFromBlackboard();
+                oriSrc = "fl.Orientation=null — using rppickup";
+            }
             request.Pose = new[] { fl.Position.X, fl.Position.Y, fl.Position.Z, ori[0], ori[1], ori[2] };
-            string oriSrc = fl.Orientation != null
-                ? $"fl.Orientation=({fl.Orientation.X:F4},{fl.Orientation.Y:F4}) IGNORED — using rppickup"
-                : "fl.Orientation=null — using rppickup";
             LoggingService.LogInfo($"🧭 MoveToLL[{InstanceName}] FinalLocation: pos=({fl.Position.X:F4},{fl.Position.Y:F4},{fl.Position.Z:F4}) ori=({ori[0]:F4},{ori[1]:F4},{ori[2]:F4}) [{oriSrc}] moveType={MoveType}");
         }
 

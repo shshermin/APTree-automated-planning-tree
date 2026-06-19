@@ -77,10 +77,6 @@
     rppickup - rppickup
     rpmanipulate - rpmanipulate
     rptoolchange - rptoolchange
-    ;; Runtime-injected extra objects
-    temploc2 - firstposition
-    temploc3 - finalposition
-    stickdummy - stick
   )
   (:init  
     (atfinalposition table1)
@@ -112,6 +108,7 @@
 (hastool robot1 gripper1)
 (clear stick1)
 (clear stick2)
+(clear stick3)
 (clear stick4)
 (clear stick5)
 (clear stick6)
@@ -122,26 +119,35 @@
 (clear cube2)
 (attool staplergun1 equiplocstapler)
 (atplace stick1 initlocstick1)
-(atplace stick2 initlocstick2)
 (atplace stick3 initlocstick3)
-(atplace stick4 initlocstick4)
-(atplace stick5 initlocstick5)
 (atplace stick6 initlocstick6)
 (atplace stick7 initlocstick7)
 (atplace stick8 initlocstick8)
 (atplace stick9 initlocstick9)
 (atplace cube1 initloccube1)
-(atplace cube2 initloccube2)
 (atplace table1 mp5)
-(accessible table1)
+(atagent robot1 rpmanipulate)
 (fixed table1)
 (activetool gripper1)
-(atplace stickdummy temploc2)
-(stacked stickdummy stick3)
-(clear stickdummy)
-(accessible stickdummy)
-(positionfree temploc3)
-(atagent robot1 rppickup)
+(positionfree initlocstick4)
+(atfinalposition stick4)
+(atplace stick4 finallocstick4)
+(accessible stick4)
+(stacked stick4 table1)
+(positionfree initlocstick5)
+(atfinalposition stick5)
+(atplace stick5 finallocstick5)
+(stacked stick5 table1)
+(positionfree initlocstick2)
+(atfinalposition stick2)
+(atplace stick2 finallocstick2)
+(accessible stick2)
+(stacked stick2 table1)
+(positionfree initloccube2)
+(atfinalposition cube2)
+(atplace cube2 finalloccube2)
+(accessible cube2)
+(stacked cube2 stick5)
   )
   (:goal 
     (and

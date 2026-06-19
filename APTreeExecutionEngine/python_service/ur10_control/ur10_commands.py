@@ -19,7 +19,7 @@ POSITIONS_FILE = os.path.join(os.path.dirname(__file__), "positions.json")
 PYTHON_HOST_IP = "192.168.1.2"   # Windows host IP on the robot LAN (Ethernet adapter)
 # Must be OUTSIDE Windows excluded TCP range (check: netsh int ipv4 show excludedportrange protocol=tcp).
 # 50000-50059 is reserved by Hyper-V/WSL2 on this host, so we use 40001.
-CALLBACK_PORT = 40001             # Port Python listens on for the "done" signal
+CALLBACK_PORT = 35001             # Port Python listens on for the "done" signal
 
 # Safety mode constants — UR real-time interface, byte offset 812 (CB3 firmware 3.10+)
 SAFETY_MODE_NORMAL = 1
@@ -721,8 +721,17 @@ def execute_trajectory(robot_ip: str, joint_names: list, points: list,
             f"  servoj({q_str}, t={servo_cycle:.4f}, "
             f"lookahead_time={servo_lookahead}, gain={servo_gain})"
         )
-    # stopj decelerates from the servo loop's last commanded velocity to rest
-    # so the final pose settles cleanly before we send the "done" callback.
+    # Drain the servoj lookahead buffer by repeating the final setpoint for at
+    # least lookahead_time/servo_cycle cycles (~13 at defaults). This lets the
+    # controller fully converge to the target before stopj halts the stream,
+    # avoiding both the short-stop and the jerk from switching to movej.
+    q_final_str = "[" + ", ".join(f"{v:.6f}" for v in grid[-1]) + "]"
+    drain_steps = max(1, int(math.ceil(servo_lookahead / servo_cycle))) + 5
+    for _ in range(drain_steps):
+        lines.append(
+            f"  servoj({q_final_str}, t={servo_cycle:.4f}, "
+            f"lookahead_time={servo_lookahead}, gain={servo_gain})"
+        )
     lines.append("  stopj(2.0)")
     lines.append(f'  if socket_open("{PYTHON_HOST_IP}", {CALLBACK_PORT}, "cb"):')
     lines.append(f'    socket_send_string("done", "cb")')
@@ -795,6 +804,24 @@ def set_tool_digital_out_open(robot_ip: str) -> str:
     )
     _run_urscript_with_done(robot_ip, cmd)
     return "Tool digital out: TDO0=True (open), wait 0.5s"
+
+
+def fire_nailgun(robot_ip: str) -> str:
+    """Fire the nailgun by pulsing digital output 0: True then False."""
+    cmd = (
+        "def fire_nailgun():\n"
+        "  set_digital_out(0, True)\n"
+        "  sleep(0.5)\n"
+        "  set_digital_out(0, False)\n"
+        f'  if socket_open("{PYTHON_HOST_IP}", {CALLBACK_PORT}, "cb"):\n'
+        '    socket_send_string("done", "cb")\n'
+        '    socket_close("cb")\n'
+        '  end\n'
+        "end\n"
+        "fire_nailgun()\n"
+    )
+    _run_urscript_with_done(robot_ip, cmd)
+    return "Nailgun fired: DO0=True, sleep 0.5s, DO0=False"
 
 
 if __name__ == "__main__":
