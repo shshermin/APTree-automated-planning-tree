@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="APTreeEditor/BehaviorTreeFrontend/src/assets/APTree-02.png" alt="APTree Logo" width="300"/>
+</p>
+
 # APTree
 
 This project contains the core components for behavior tree design and execution using the APTree domain specific language.
