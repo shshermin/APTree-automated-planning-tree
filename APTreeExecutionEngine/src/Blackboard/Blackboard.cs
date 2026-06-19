@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Neo4j.Driver;
 using System.Linq;
 using System.Reflection;
 using BehaviorTreeMainProject.Services;
@@ -30,7 +29,7 @@ public class Blackboard<T> : IDisposable where T : class
     Dictionary<FastName, Element>   ElementValues =    new ();
     Dictionary<FastName, Location>   LocationValues =    new ();
     Dictionary<FastName, Agent>   AgentValues =    new ();
-    private Dictionary<FastName, Predicate> InitialStatePredicates = new();
+    private readonly IPredicateStore _initStore;
     private Dictionary<FastName, Predicate> GoalStatePredicates = new();
     Dictionary<FastName, PActionNode> ActionValues = new();
     Dictionary<FastName, IBTNode> FlowNodeValues = new();
@@ -71,6 +70,7 @@ public class Blackboard<T> : IDisposable where T : class
 
     public Blackboard(string uri, string user, string password)
     {
+        _initStore = new DictionaryPredicateStore();
         _envGraph = new EnvironmentGraph(uri, user, password);
     }
 
@@ -79,8 +79,21 @@ public class Blackboard<T> : IDisposable where T : class
     /// </summary>
     public Blackboard()
     {
+        _initStore = new DictionaryPredicateStore();
         _envGraph = null;
     }
+
+    /// <summary>
+    /// Constructor with a custom predicate store (e.g. SqlitePredicateStore).
+    /// </summary>
+    public Blackboard(IPredicateStore store)
+    {
+        _initStore = store ?? throw new ArgumentNullException(nameof(store));
+        _envGraph = null;
+    }
+
+    /// <summary>Exposes the active store type for diagnostics.</summary>
+    public string PredicateStoreType => _initStore.StoreType;
 
     public bool TryGet(FastName key, out int value, int defaultvalue = 0)
     {
@@ -186,12 +199,13 @@ public class Blackboard<T> : IDisposable where T : class
     // Get methods for predicates
     public Predicate GetPredicate(FastName key)
     {
-        if (!InitialStatePredicates.ContainsKey(key))
-        {
+        if (!_initStore.TryGet(key, out var p) || p == null)
             throw new ArgumentException($"Could not find predicate for {key}");
-        }
-        return InitialStatePredicates[key];
+        return p;
     }
+
+    /// <summary>Remove a predicate by key from the init store.</summary>
+    public bool RemovePredicate(FastName key) => _initStore.RemoveKey(key);
 
      // Update corresponding Get methods
 
@@ -495,109 +509,9 @@ public List<PActionNode> GetAllActionInstances()
 
 
     // Set methods for predicates
-    private void SetPredicateSecondary(FastName key, Predicate predicate)
-    {
-        LoggingService.LogInfo($"🔧 BLACKBOARD_SECONDARY: SetPredicateSecondary called with key: {key}");
-        
-        string newPredicateStr = BlackboardExtensions.FormatPredicate(predicate);
-        LoggingService.LogInfo($"🔧 BLACKBOARD_SECONDARY: Formatted predicate string: {newPredicateStr}");
-        
-        LoggingService.LogInfo($"🔧 BLACKBOARD_SECONDARY: Current PredicateValues count: {InitialStatePredicates.Count}");
-        
-        // Check if identical predicate exists
-        if (!InitialStatePredicates.ContainsKey(key))
-        {
-            LoggingService.LogInfo($"🔧 BLACKBOARD_SECONDARY: Key {key} not found in PredicateValues, adding new predicate");
-            InitialStatePredicates[key] = predicate;
-            LoggingService.LogInfo($"🔧 BLACKBOARD_SECONDARY: PredicateValues count after adding: {InitialStatePredicates.Count}");
-            LoggingService.LogSuccess($"🔧 BLACKBOARD_SECONDARY: Successfully added predicate with key: {key}");
-        }
-        else if (BlackboardExtensions.FormatPredicate(InitialStatePredicates[key]) != newPredicateStr)
-        {
-            LoggingService.LogInfo($"🔧 BLACKBOARD_SECONDARY: Key {key} exists but predicate content differs, updating predicate");
-            LoggingService.LogInfo($"🔧 BLACKBOARD_SECONDARY: Old predicate: {BlackboardExtensions.FormatPredicate(InitialStatePredicates[key])}");
-            LoggingService.LogInfo($"🔧 BLACKBOARD_SECONDARY: New predicate: {newPredicateStr}");
-            InitialStatePredicates[key] = predicate;
-            LoggingService.LogInfo($"🔧 BLACKBOARD_SECONDARY: PredicateValues count after updating: {InitialStatePredicates.Count}");
-            LoggingService.LogSuccess($"🔧 BLACKBOARD_SECONDARY: Successfully updated predicate with key: {key}");
-        }
-        else
-        {
-            LoggingService.LogInfo($"🔧 BLACKBOARD_SECONDARY: Key {key} exists and predicate content is identical, no update needed");
-        }
-        
-        // Final verification
-        var finalCount = InitialStatePredicates.Count;
-        var keyExists = InitialStatePredicates.ContainsKey(key);
-        LoggingService.LogInfo($"🔧 BLACKBOARD_SECONDARY: Final verification - Count: {finalCount}, Key exists: {keyExists}");
-    }
     
 
-    public bool HasSimilarPredicate(Predicate newPredicate)
-    {
-        foreach (var existingPredicate in InitialStatePredicates.Values)
-        {
-            // First check if predicates have the same name
-            if (existingPredicate.PredicateName == newPredicate.PredicateName)
-            {
-                LoggingService.LogDebug($"\nComparing predicates:");
-                LoggingService.LogDebug($"New: {newPredicate.PredicateName}");
-                LoggingService.LogDebug($"Existing: {existingPredicate.PredicateName}");
-                
-                // Get properties of both predicates
-                var existingParams = existingPredicate.GetAllProperties();
-                var newParams = newPredicate.GetAllProperties();
-                
-                // Check if all parameter names and values match exactly
-                bool allParamsMatch = true;
-                foreach (var param in newParams)
-                {
-                    // Skip metadata properties
-                    if (param.Key == "PredicateName" || param.Key == "PredicateType" || param.Key == "isNegated")
-                        continue;
-
-                    // If parameter doesn't exist in existing predicate
-                    if (!existingParams.ContainsKey(param.Key))
-                    {
-                        LoggingService.LogDebug($"Parameter {param.Key} not found in existing predicate");
-                        allParamsMatch = false;
-                        break;
-                    }
-
-                    // Compare the actual instance names
-                    var existingValue = existingParams[param.Key];
-                    var newValue = param.Value;
-
-                    LoggingService.LogDebug($"\nComparing parameter {param.Key}:");
-                    LoggingService.LogDebug($"Existing value: {existingValue}");
-                    LoggingService.LogDebug($"New value: {newValue}");
-
-                    // Get the instance identifiers for comparison
-                    var existingId = existingValue?.GetType().GetProperty("InstanceId")?.GetValue(existingValue)?.ToString()
-                        ?? existingValue?.ToString();
-                    var newId = newValue?.GetType().GetProperty("InstanceId")?.GetValue(newValue)?.ToString()
-                        ?? newValue?.ToString();
-
-                    LoggingService.LogDebug($"Existing ID: {existingId}");
-                    LoggingService.LogDebug($"New ID: {newId}");
-
-                    if (existingId != newId)
-                    {
-                        LoggingService.LogInfo("IDs don't match");
-                        allParamsMatch = false;
-                        break;
-                    }
-                }
-                
-                if (allParamsMatch)
-                {
-                    LoggingService.LogInfo("Found similar predicate!");
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
+    public bool HasSimilarPredicate(Predicate newPredicate) => _initStore.HasSimilar(newPredicate);
 /// <summary>
 /// Adds predicate to the graph
 /// </summary>
@@ -631,24 +545,26 @@ public List<PActionNode> GetAllActionInstances()
         LoggingService.LogInfo($"   Type: {predicate.GetType().Name}");
         LoggingService.LogInfo($"   PredicateName: {predicate.PredicateName}");
         LoggingService.LogInfo($"   isNegated: {predicate.not}");
-        LoggingService.LogInfo($"   Current total predicates: {InitialStatePredicates.Count}");
+        LoggingService.LogInfo($"   Current total predicates: {_initStore.Count}");
         LoggingService.LogInfo("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
         
         // NEW: Clean up conflicting atAgent predicates when updating location
         if (predicate.GetPredicateType() == "atAgent" && !predicate.not)
         {
-            CleanupConflictingAtAgentPredicates(predicate);
+            var pddlParams = predicate.GetPDDLParameterValues();
+            if (pddlParams.Count >= 1)
+                _initStore.CleanupAtAgentPredicates(pddlParams[0]);
         }
         // Check if a predicate with the same key already exists
-        if (InitialStatePredicates.ContainsKey(key))
+        if (_initStore.ContainsKey(key))
         {
-            var existingPredicate = InitialStatePredicates[key];
-            LoggingService.LogDebug($"🔍 PREDICATE_UPDATE: Key '{key}' already exists - updating negation");
-            LoggingService.LogInfo($"   Old isNegated: {existingPredicate.not} → New isNegated: {predicate.not}");
+            _initStore.TryGet(key, out var existingPredicate);
+            LoggingService.LogWarning($"⚠️ PREDICATE_UPDATE: Key '{key}' already exists - updating negation");
+            LoggingService.LogInfo($"   Old isNegated: {existingPredicate!.not} → New isNegated: {predicate.not}");
 
             // Update the isNegated property of the existing predicate
             var oldNegationValue = existingPredicate.not;
-            existingPredicate.not = predicate.not;
+            _initStore.UpdateNegation(key, predicate.not);
 
             // Log predicate negation change
             BlackboardTrackingLogger.LogPredicateNegation(key.ToString(), oldNegationValue, predicate.not, "Blackboard", "Updated existing predicate negation");
@@ -659,27 +575,26 @@ public List<PActionNode> GetAllActionInstances()
 
         // Check for identical predicate (different key but same content)
         string newPredicateStr = BlackboardExtensions.FormatPredicate(predicate);
-        if (InitialStatePredicates.Values.Any(p => BlackboardExtensions.FormatPredicate(p) == newPredicateStr))
+        if (_initStore.HasFormattedDuplicate(newPredicateStr))
         {
             LoggingService.LogWarning($"⚠️ PREDICATE_DUPLICATE: Identical predicate content already exists: {newPredicateStr}");
             return;
         }
 
         // Store the predicate in the dictionary
-        InitialStatePredicates[key] = predicate;
-        
+        _initStore.Upsert(key, predicate);
+
         // Log new predicate instance created
         BlackboardTrackingLogger.LogNewInstance(key.ToString(), predicate.GetType().Name, "Blackboard", $"Predicate instance: {predicate.PredicateName}");
-        
+
         // Verify the predicate was actually added
-        var foundInDict = InitialStatePredicates.ContainsKey(key);
-        if (!foundInDict)
+        if (!_initStore.ContainsKey(key))
         {
             LoggingService.LogError($"❌ PREDICATE_ERROR: Failed to add predicate with key {key}!");
         }
         else
         {
-            LoggingService.LogSuccess($"✅ PREDICATE_ADDED: Successfully stored predicate with key: {key} (Total: {InitialStatePredicates.Count})");
+            LoggingService.LogSuccess($"✅ PREDICATE_ADDED: Successfully stored predicate with key: {key} (Total: {_initStore.Count})");
         }
     }
 
@@ -688,8 +603,9 @@ public List<PActionNode> GetAllActionInstances()
     // Implement IDisposable to properly close Neo4j connection
     public void Dispose()
     {
+        _initStore.Dispose();
         _envGraph?.Dispose();
-        
+
         // Close the blackboard tracking logger
         BlackboardTrackingLogger.Close();
     }
@@ -852,7 +768,7 @@ public List<PActionNode> GetAllActionInstances()
     }
      public List<Predicate> GetAllPredicates()
     {
-        return InitialStatePredicates.Values.ToList();
+        return _initStore.All().ToList();
     }
 
     public List<Predicate> GetGoalStatePredicates()
@@ -871,17 +787,7 @@ public List<PActionNode> GetAllActionInstances()
     /// <returns>List of all predicates where isNegated is false</returns>
     public List<Predicate> GetTruePredicates()
     {
-        var truePredicates = new List<Predicate>();
-
-        foreach (var predicate in InitialStatePredicates.Values)
-        {
-            if (!predicate.not)
-            {
-                truePredicates.Add(predicate);
-            }
-        }
-
-        return truePredicates;
+        return _initStore.AllTrue().ToList();
     }
     /// <summary>
     /// Convenience method to retrieve a FinalLocation by name.
@@ -895,51 +801,5 @@ public List<PActionNode> GetAllActionInstances()
         return null;
     }
 
-    private void CleanupConflictingAtAgentPredicates(Predicate newLocationPredicate)
-{
-    try
-    {
-        // Extract robot and location from the new predicate
-        var newLocationStr = newLocationPredicate.GetPDDLParameterValues();
-        if (newLocationStr.Count < 2) return;
 
-        string robotName = newLocationStr[0];
-        string newLocation = newLocationStr[1];
-
-        LoggingService.LogInfo($"🧹 CLEANUP: Cleaning up ALL atAgent predicates for robot {robotName}");
-
-        // Find ALL blackboard keys that contain "atAgent" for this robot
-        var keysToRemove = new List<FastName>();
-        
-        foreach (var kvp in InitialStatePredicates)
-        {
-            string keyName = kvp.Key.ToString();
-            
-            // Check if this key contains "atAgent" and the robot name
-            if (keyName.Contains("atAgent") && keyName.Contains(robotName))
-            {
-                keysToRemove.Add(kvp.Key);
-                LoggingService.LogInfo($"   🗑️ Marking for removal: {keyName}");
-            }
-        }
-
-        // Remove ALL conflicting atAgent predicates
-        foreach (var key in keysToRemove)
-        {
-            InitialStatePredicates.Remove(key);
-            LoggingService.LogInfo($"   ✅ Removed: {key}");
-        }
-
-        LoggingService.LogSuccess($"�� CLEANUP: Removed {keysToRemove.Count} atAgent predicates for robot {robotName}");
-        LoggingService.LogInfo($"   📍 New location will be: {robotName} at {newLocation}");
-    }
-    catch (Exception ex)
-    {
-        LoggingService.LogError($"❌ CLEANUP: Error during cleanup: {ex.Message}");
-    }
-}
-
-
-
-  
 }

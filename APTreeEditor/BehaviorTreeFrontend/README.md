@@ -12,7 +12,7 @@ First-Time Setup
 1. Open a terminal at the repository root.
 2. Change into the frontend app directory:
 	 ```bash
-	 cd frontend/BehaviorTreeFrontend
+	 cd APTreeEditor/BehaviorTreeFrontend
 	 ```
 3. Install dependencies:
 	 ```bash

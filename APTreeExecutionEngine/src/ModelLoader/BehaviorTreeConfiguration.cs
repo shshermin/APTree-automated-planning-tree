@@ -85,6 +85,16 @@ namespace BehaviorTreeMainProject.ModelLoader
         /// </summary>
         public bool ExecutionActive { get; set; } = true;
 
+        // ── Predicate store ──
+
+        /// <summary>
+        /// Which predicate store to use.  Accepted values:
+        ///   "Dictionary"  (default) — in-process Dictionary, zero overhead.
+        ///   "Sqlite"               — Dictionary hot-index + embedded SQLite for
+        ///                            HasSimilar / CleanupAtAgent indexed queries.
+        /// </summary>
+        public string PredicateStoreType { get; set; } = "Dictionary";
+
         // ── Tick loop settings ──
 
         /// <summary>Maximum number of ticks before stopping execution.</summary>

@@ -68,8 +68,10 @@ namespace BehaviorTreeMainProject
 
             try
             {
-                // 2. Create and populate blackboard
-                using var blackboard = new Blackboard<FastName>();
+                // 2. Create and populate blackboard (store chosen by config)
+                var predicateStore = CreatePredicateStore();
+                LoggingService.LogInfo($"[BehaviorTreeRunner] PredicateStore: {predicateStore.StoreType}");
+                using var blackboard = new Blackboard<FastName>(predicateStore);
                 SetupBlackboard(blackboard);
 
                 // 3. Build tree from JSON
@@ -841,5 +843,9 @@ namespace BehaviorTreeMainProject
             catch { }
             return null;
         }
+
+        // ── Predicate store factory ───────────────────────────────────────────
+
+        private IPredicateStore CreatePredicateStore() => new DictionaryPredicateStore();
     }
 }
