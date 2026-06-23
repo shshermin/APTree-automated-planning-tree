@@ -460,7 +460,7 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
         {
             try
             {
-                string filePath = "python_service/Plannerinputs/static/ParameterInstances_PDDL2.txt";
+                string filePath = "python_service/Plannerinputs/static/ParameterInstances_PDDL3.txt";
 
                 if (!File.Exists(filePath))
                 {
@@ -509,7 +509,7 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
         private static HashSet<string> GetDeclaredObjectNames()
         {
             var set = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            string filePath = "python_service/Plannerinputs/static/ParameterInstances_PDDL2.txt";
+            string filePath = "python_service/Plannerinputs/static/ParameterInstances_PDDL3.txt";
             if (!File.Exists(filePath))
                 return set;
 
