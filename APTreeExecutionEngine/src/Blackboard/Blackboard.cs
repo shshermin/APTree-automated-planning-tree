@@ -53,10 +53,11 @@ public class Blackboard<T> : IDisposable where T : class
     public DynamicFlowNode? ChosenExecutingBranch { get; set; } = null;
 
     /// <summary>
-    /// Array to track when each cassette has generated and inserted its subtree
-    /// Index 0 = cassette1, Index 1 = cassette2, Index 2 = cassette3, Index 3 = cassette4
+    /// Array to track when each cassette has generated and inserted its subtree.
+    /// Indexed by cassette number minus 1 (cassette1..cassette12 -> index 0..11).
+    /// Sized for the maximum supported batch layout (3 batches × 4 cassettes).
     /// </summary>
-    public bool[] CassetteSubtreeCompleted { get; set; } = new bool[4] { false, false, false, false };
+    public bool[] CassetteSubtreeCompleted { get; set; } = new bool[12] { false, false, false, false, false, false, false, false, false, false, false, false };
 
     /// <summary>
     /// Tracks the number of completed actions per cassette branch.

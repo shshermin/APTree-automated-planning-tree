@@ -230,7 +230,12 @@ public class DecoratorDynamicPlanningComplete : Decorator
             
         }
         
-        var cassetteNames = new[] { "cassette1", "cassette2", "cassette3", "cassette4" };
+        var cassetteNames = new[]
+        {
+            "cassette1", "cassette2", "cassette3", "cassette4",
+            "cassette5", "cassette6", "cassette7", "cassette8",
+            "cassette9", "cassette10", "cassette11", "cassette12"
+        };
         
         foreach (var cassetteName in cassetteNames)
         {

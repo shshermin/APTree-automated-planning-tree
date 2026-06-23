@@ -156,6 +156,7 @@
         (stacked ?obj)
         (clear ?obj)      
         (not (glued ?obj))  
+        (nailed ?obj)
         (allset ?lay ?mod)
         )
 
@@ -173,6 +174,7 @@
         (stacked ?obj)
         (clear ?obj)
         (not (nailed ?obj))
+        
         )
 
         :effect  
@@ -186,7 +188,7 @@
         (stacked ?obj)
         (clear ?obj)
         (not (nailed ?obj))
-        (glued ?obj)
+        ;glued ?obj)
         (allset ?lay ?mod)
         )
 

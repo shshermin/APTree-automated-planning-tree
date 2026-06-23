@@ -85,6 +85,14 @@ lay9 - stack
 lay10 - stack
 lay11 - stack
 lay12 - stack
+sp1 - stackposition
+sp2 - stackposition
+sp3 - stackposition
+sp4 - stackposition
+sp5 - stackposition
+sp6 - stackposition
+sp7 - stackposition
+sp8 - stackposition
 sp9 - stackposition
 sp10 - stackposition
 sp11 - stackposition
@@ -181,6 +189,9 @@ sp12 - stackposition
 (positionfree sp11)
 (positionfree sp12)
 (robotequipped r1)
+(hastool r1 ng1)
+(positionfree ep3)
+(activetool ng1)
 (positionfree fp65)
 (atplace lp9 pr1)
 (positionfree fp73)
@@ -313,9 +324,6 @@ sp12 - stackposition
 (glued b72)
 (glued b70)
 (glued b69)
-(hastool r1 ng1)
-(positionfree ep3)
-(activetool ng1)
 (nailed b50)
 (nailed b52)
 (nailed b51)

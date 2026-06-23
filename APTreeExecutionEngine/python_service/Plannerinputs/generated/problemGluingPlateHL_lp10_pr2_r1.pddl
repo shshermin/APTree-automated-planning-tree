@@ -85,6 +85,14 @@ lay9 - stack
 lay10 - stack
 lay11 - stack
 lay12 - stack
+sp1 - stackposition
+sp2 - stackposition
+sp3 - stackposition
+sp4 - stackposition
+sp5 - stackposition
+sp6 - stackposition
+sp7 - stackposition
+sp8 - stackposition
 sp9 - stackposition
 sp10 - stackposition
 sp11 - stackposition
@@ -217,6 +225,9 @@ sp12 - stackposition
 (positionfree sp11)
 (positionfree sp12)
 (robotequipped r1)
+(hastool r1 gg1)
+(positionfree ep2)
+(activetool gg1)
 (positionfree fp65)
 (atplace lp9 pr1)
 (positionfree fp73)
@@ -225,9 +236,6 @@ sp12 - stackposition
 (atplace lp11 pr3)
 (positionfree fp89)
 (atplace lp12 pr4)
-(hastool r1 gg1)
-(positionfree ep2)
-(activetool gg1)
 (glued lp9)
   )
   (:goal 

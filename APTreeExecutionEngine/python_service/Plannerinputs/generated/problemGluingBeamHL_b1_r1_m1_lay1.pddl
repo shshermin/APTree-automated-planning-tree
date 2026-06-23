@@ -89,6 +89,14 @@ sp1 - stackposition
 sp2 - stackposition
 sp3 - stackposition
 sp4 - stackposition
+sp5 - stackposition
+sp6 - stackposition
+sp7 - stackposition
+sp8 - stackposition
+sp9 - stackposition
+sp10 - stackposition
+sp11 - stackposition
+sp12 - stackposition
   )
   (:init  
     (atplace tp1 fp5)
@@ -187,6 +195,14 @@ sp4 - stackposition
 (positionfree sp2)
 (positionfree sp3)
 (positionfree sp4)
+(positionfree sp5)
+(positionfree sp6)
+(positionfree sp7)
+(positionfree sp8)
+(positionfree sp9)
+(positionfree sp10)
+(positionfree sp11)
+(positionfree sp12)
 (hastool r1 vg1)
 (robotequipped r1)
 (positionfree ep1)

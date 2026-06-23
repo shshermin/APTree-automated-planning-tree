@@ -1,4 +1,4 @@
-﻿﻿﻿﻿using System;
+﻿﻿using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,11 +20,34 @@ namespace BehaviorTreeMainProject
         private DateTime testStartTime;
         private DateTime testEndTime;
         private IBTNode rootNode; // Store root node for monitoring
+
+        // Flatten the tree to a list of all DynamicFlowNode (cassette) descendants.
+        // Used by logging helpers so they keep working when cassettes are nested inside batch composites.
+        private static List<IBTNode> GetAllCassetteFlowNodes(IBTNode root)
+        {
+            var result = new List<IBTNode>();
+            if (root == null) return result;
+            void Walk(IBTNode n)
+            {
+                if (n is DynamicFlowNode)
+                {
+                    result.Add(n);
+                    return;
+                }
+                if (n is BTFlowNodeComposite c)
+                {
+                    foreach (var ch in c.GetChildren())
+                        Walk(ch);
+                }
+            }
+            Walk(root);
+            return result;
+        }
         
         public async Task RunFullTreeTest()
         {
             // Silence all direct Console.WriteLine calls (factories, blackboard, etc.)
-            // File logging is unaffected — it uses its own StreamWriter via LogFileManager
+            // File logging is unaffected  it uses its own StreamWriter via LogFileManager
             Console.SetOut(TextWriter.Null);
 
             // Initialize logging service (console disabled, file logging only)
@@ -38,8 +61,8 @@ namespace BehaviorTreeMainProject
             
             testStartTime = DateTime.Now;
             
-            LoggingService.LogSection("ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸Ãƒâ€¦Ã¢â‚¬â„¢Ãƒâ€šÃ‚Â³ FULL BEHAVIOR TREE TEST");
-            LoggingService.LogSuccess($"ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸Ãƒâ€¦Ã‚Â¡ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ Started at: {testStartTime:yyyy-MM-dd HH:mm:ss.fff}");
+            LoggingService.LogSection(" FULL BEHAVIOR TREE TEST");
+            LoggingService.LogSuccess($" Started at: {testStartTime:yyyy-MM-dd HH:mm:ss.fff}");
 
             try
             {
@@ -72,9 +95,9 @@ namespace BehaviorTreeMainProject
 
                 testEndTime = DateTime.Now;
                 
-                LoggingService.LogSection("ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸Ãƒâ€¦Ã‚Â½ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â° FULL BEHAVIOR TREE TEST COMPLETED!");
-                LoggingService.LogSuccess($"ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒâ€šÃ‚Â° Finished at: {testEndTime:yyyy-MM-dd HH:mm:ss.fff}");
-                LoggingService.LogSuccess($"ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒâ€šÃ‚Â±ÃƒÆ’Ã‚Â¯Ãƒâ€šÃ‚Â¸Ãƒâ€šÃ‚Â Total test duration: {testEndTime - testStartTime:hh\\:mm\\:ss\\.fff}");
+                LoggingService.LogSection(" FULL BEHAVIOR TREE TEST COMPLETED!");
+                LoggingService.LogSuccess($" Finished at: {testEndTime:yyyy-MM-dd HH:mm:ss.fff}");
+                LoggingService.LogSuccess($" Total test duration: {testEndTime - testStartTime:hh\\:mm\\:ss\\.fff}");
                 
                 // Display execution summary
                 await DisplayExecutionSummary();
@@ -115,7 +138,7 @@ namespace BehaviorTreeMainProject
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"\nÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒâ€¦Ã¢â‚¬â„¢ ERROR during full tree test: {ex.Message}");
+                LoggingService.LogError($"\n ERROR during full tree test: {ex.Message}");
                 LoggingService.LogError($"   Stack trace: {ex.StackTrace}");
                 
                 // Generate summary table even if test failed
@@ -134,13 +157,13 @@ namespace BehaviorTreeMainProject
         // Inspect blackboard contents
         private async Task InspectBlackboard(Blackboard<FastName> blackboard)
         {
-            LoggingService.LogSubsection("ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¹ BLACKBOARD INSPECTION REPORT");
+            LoggingService.LogSubsection(" BLACKBOARD INSPECTION REPORT");
 
             try
             {
                 // 1. CustomProperty Types
                 var entityTypes = blackboard.GetAllEntityTypes();
-                LoggingService.LogInfo($"\nÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸Ãƒâ€šÃ‚ÂÃƒâ€šÃ‚Â·ÃƒÆ’Ã‚Â¯Ãƒâ€šÃ‚Â¸Ãƒâ€šÃ‚Â  ENTITY TYPES ({entityTypes.Count}):");
+                LoggingService.LogInfo($"\n  ENTITY TYPES ({entityTypes.Count}):");
                 foreach (var entityType in entityTypes)
                 {
                     LoggingService.LogInfo($"   - {entityType.ToString()}");
@@ -148,7 +171,7 @@ namespace BehaviorTreeMainProject
 
                 // 2. Predicate Types
                 var predicateTypes = blackboard.GetAllPredicateTypes();
-                LoggingService.LogInfo($"\nÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒâ€šÃ‚Â PREDICATE TYPES ({predicateTypes.Count}):");
+                LoggingService.LogInfo($"\n PREDICATE TYPES ({predicateTypes.Count}):");
                 foreach (var predicateType in predicateTypes)
                 {
                     LoggingService.LogInfo($"   - {predicateType.ToString()}");
@@ -156,7 +179,7 @@ namespace BehaviorTreeMainProject
 
                 // 3. Action Types
                 var actionTypes = blackboard.GetAllActionTypes();
-                LoggingService.LogInfo($"\nÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã‚Â¡Ãƒâ€šÃ‚Â¡ ACTION TYPES ({actionTypes.Count}):");
+                LoggingService.LogInfo($"\n ACTION TYPES ({actionTypes.Count}):");
                 foreach (var actionType in actionTypes)
                 {
                     LoggingService.LogInfo($"   - {actionType.ToString()}");
@@ -164,20 +187,20 @@ namespace BehaviorTreeMainProject
 
                 // 4. Action Instances
                 var actionInstances = blackboard.GetAllActionInstances();
-                LoggingService.LogInfo($"\nÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸Ãƒâ€¦Ã‚Â½Ãƒâ€šÃ‚Â¯ ACTION INSTANCES ({actionInstances.Count}):");
+                LoggingService.LogInfo($"\n ACTION INSTANCES ({actionInstances.Count}):");
                 foreach (var actionInstance in actionInstances)
                 {
                     LoggingService.LogInfo($"   - {actionInstance.InstanceName.ToString()} (Type: {actionInstance.actionType.ToString()})");
                 }
 
                 // 5. Built-in Values
-                LoggingService.LogInfo($"\nÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒâ€šÃ‚Â BUILT-IN VALUES:");
+                LoggingService.LogInfo($"\n BUILT-IN VALUES:");
                 LoggingService.LogInfo($"   - Int Values: {GetDictionaryCount(blackboard, "IntValues")}");
                 if (GetDictionaryCount(blackboard, "IntValues") > 0)
                 {
                     foreach (var item in GetDictionaryItems(blackboard, "IntValues"))
                     {
-                        LoggingService.LogInfo($"     ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¢ {item.Key}: {item.Value}");
+                        LoggingService.LogInfo($"      {item.Key}: {item.Value}");
                     }
                 }
                 
@@ -186,7 +209,7 @@ namespace BehaviorTreeMainProject
                 {
                     foreach (var item in GetDictionaryItems(blackboard, "DoubleValues"))
                     {
-                        LoggingService.LogInfo($"     ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¢ {item.Key}: {item.Value}");
+                        LoggingService.LogInfo($"      {item.Key}: {item.Value}");
                     }
                 }
                 
@@ -195,7 +218,7 @@ namespace BehaviorTreeMainProject
                 {
                     foreach (var item in GetDictionaryItems(blackboard, "BoolValues"))
                     {
-                        LoggingService.LogInfo($"     ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¢ {item.Key}: {item.Value}");
+                        LoggingService.LogInfo($"      {item.Key}: {item.Value}");
                     }
                 }
                 
@@ -204,18 +227,18 @@ namespace BehaviorTreeMainProject
                 {
                     foreach (var item in GetDictionaryItems(blackboard, "StringValues"))
                     {
-                        LoggingService.LogInfo($"     ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¢ {item.Key}: {item.Value}");
+                        LoggingService.LogInfo($"      {item.Key}: {item.Value}");
                     }
                 }
 
                 // 6. CustomProperty Values
-                LoggingService.LogInfo($"\nÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸Ãƒâ€šÃ‚ÂÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬ÂÃƒÆ’Ã‚Â¯Ãƒâ€šÃ‚Â¸Ãƒâ€šÃ‚Â  ENTITY VALUES:");
+                LoggingService.LogInfo($"\n  ENTITY VALUES:");
                 LoggingService.LogInfo($"   - Element Values: {GetDictionaryCount(blackboard, "ElementValues")}");
                 if (GetDictionaryCount(blackboard, "ElementValues") > 0)
                 {
                     foreach (var item in GetDictionaryItems(blackboard, "ElementValues"))
                     {
-                        LoggingService.LogInfo($"     ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¢ {item.Key}: {item.Value}");
+                        LoggingService.LogInfo($"      {item.Key}: {item.Value}");
                     }
                 }
                 
@@ -224,7 +247,7 @@ namespace BehaviorTreeMainProject
                 {
                     foreach (var item in GetDictionaryItems(blackboard, "LocationValues"))
                     {
-                        LoggingService.LogInfo($"     ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¢ {item.Key}: {item.Value}");
+                        LoggingService.LogInfo($"      {item.Key}: {item.Value}");
                     }
                 }
                 
@@ -233,7 +256,7 @@ namespace BehaviorTreeMainProject
                 {
                     foreach (var item in GetDictionaryItems(blackboard, "AgentValues"))
                     {
-                        LoggingService.LogInfo($"     ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¢ {item.Key}: {item.Value}");
+                        LoggingService.LogInfo($"      {item.Key}: {item.Value}");
                     }
                 }
                 
@@ -242,7 +265,7 @@ namespace BehaviorTreeMainProject
                 {
                     foreach (var item in GetDictionaryItems(blackboard, "LayerValues"))
                     {
-                        LoggingService.LogInfo($"     ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¢ {item.Key}: {item.Value}");
+                        LoggingService.LogInfo($"      {item.Key}: {item.Value}");
                     }
                 }
                 
@@ -251,7 +274,7 @@ namespace BehaviorTreeMainProject
                 {
                     foreach (var item in GetDictionaryItems(blackboard, "ModuleValues"))
                     {
-                        LoggingService.LogInfo($"     ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¢ {item.Key}: {item.Value}");
+                        LoggingService.LogInfo($"      {item.Key}: {item.Value}");
                     }
                 }
                 
@@ -260,53 +283,53 @@ namespace BehaviorTreeMainProject
                 {
                     foreach (var item in GetDictionaryItems(blackboard, "ToolValues"))
                     {
-                        LoggingService.LogInfo($"     ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¢ {item.Key}: {item.Value}");
+                        LoggingService.LogInfo($"      {item.Key}: {item.Value}");
                     }
                 }
 
                 // 7. Predicate Values
-                LoggingService.LogInfo($"\nÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒâ€šÃ‚Â PREDICATE VALUES:");
+                LoggingService.LogInfo($"\n PREDICATE VALUES:");
                 LoggingService.LogInfo($"   - Predicate Values: {GetDictionaryCount(blackboard, "PredicateValues")}");
                 if (GetDictionaryCount(blackboard, "PredicateValues") > 0)
                 {
                     foreach (var item in GetDictionaryItems(blackboard, "PredicateValues"))
                     {
-                        LoggingService.LogInfo($"     ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¢ {item.Key}: {item.Value}");
+                        LoggingService.LogInfo($"      {item.Key}: {item.Value}");
                     }
                 }
 
                 // 8. Action Values
-                LoggingService.LogInfo($"\nÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã‚Â¡Ãƒâ€šÃ‚Â¡ ACTION VALUES:");
+                LoggingService.LogInfo($"\n ACTION VALUES:");
                 LoggingService.LogInfo($"   - Action Values: {GetDictionaryCount(blackboard, "ActionValues")}");
                 if (GetDictionaryCount(blackboard, "ActionValues") > 0)
                 {
                     foreach (var item in GetDictionaryItems(blackboard, "ActionValues"))
                     {
-                        LoggingService.LogInfo($"     ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¢ {item.Key}: {item.Value}");
+                        LoggingService.LogInfo($"      {item.Key}: {item.Value}");
                     }
                 }
 
                 // 9. State Values
-                LoggingService.LogInfo($"\nÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸Ãƒâ€¦Ã¢â‚¬â„¢Ãƒâ€šÃ‚Â STATE VALUES:");
+                LoggingService.LogInfo($"\n STATE VALUES:");
                 LoggingService.LogInfo($"   - State Values: {GetDictionaryCount(blackboard, "StateValues")}");
                 if (GetDictionaryCount(blackboard, "StateValues") > 0)
                 {
                     foreach (var item in GetDictionaryItems(blackboard, "StateValues"))
                     {
-                        LoggingService.LogInfo($"     ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¢ {item.Key}: {item.Value}");
+                        LoggingService.LogInfo($"      {item.Key}: {item.Value}");
                     }
                 }
 
                 // 8. NodeGraphs
                 var nodeGraphs = blackboard.GetAllNodeGraphs();
-                LoggingService.LogInfo($"\nÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸Ãƒâ€¦Ã¢â‚¬â„¢Ãƒâ€šÃ‚Â³ NODEGRAPHS ({nodeGraphs.Count}):");
+                LoggingService.LogInfo($"\n NODEGRAPHS ({nodeGraphs.Count}):");
                 foreach (var nodeGraph in nodeGraphs)
                 {
                     LoggingService.LogInfo($"   - NodeGraph with {nodeGraph.GetAllActionNodes().Count} action nodes");
                 }
 
                 // 10. Summary
-                LoggingService.LogInfo($"\nÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒâ€¦Ã‚Â  SUMMARY:");
+                LoggingService.LogInfo($"\n SUMMARY:");
                 LoggingService.LogInfo($"   - CustomProperty Types: {entityTypes.Count}");
                 LoggingService.LogInfo($"   - Predicate Types: {predicateTypes.Count}");
                 LoggingService.LogInfo($"   - Action Types: {actionTypes.Count}");
@@ -317,7 +340,7 @@ namespace BehaviorTreeMainProject
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒâ€¦Ã¢â‚¬â„¢ Error during blackboard inspection: {ex.Message}");
+                LoggingService.LogError($" Error during blackboard inspection: {ex.Message}");
             }
         }
 
@@ -382,121 +405,120 @@ namespace BehaviorTreeMainProject
         {
             try
             {
-                LoggingService.LogInfo("ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸Ãƒâ€¦Ã¢â‚¬â„¢Ãƒâ€šÃ‚Â³ Creating behavior tree with cassette flow nodes...");
+                LoggingService.LogInfo(" Creating behavior tree with cassette flow nodes...");
 
                 // Create behavior tree instance first
                 var behaviorTree = new BehaviorTree();
                 behaviorTree.Initialise(blackboard, "CassetteBehaviorTree");
-                LoggingService.LogSuccess("ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ Created behavior tree instance");
+                LoggingService.LogSuccess(" Created behavior tree instance");
 
-                // Create root composite flow node
-                rootNode = new BTFlowNodeComposite(new FastName("RootComposite"), behaviorTree);
-                //var rootNode = new BTFlowNode_CostBasedComposite(new FastName("RootComposite"), behaviorTree);
-                
+                // Create root composite flow node (Sequential mode: runs batches one at a time)
+                var rootComposite = new BTFlowNodeComposite(new FastName("RootComposite"), behaviorTree);
+                rootComposite.RunChildrenSequentially = true;
+                rootNode = rootComposite;
+
                 // Ensure we start in planning phase
                 blackboard.PlanningPhase = true;
-                // Initialize cassette subtree completion flags to false (four cassettes)
-                blackboard.CassetteSubtreeCompleted = new bool[4] { false, false, false, false };
-                LoggingService.LogInfo("ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒâ€šÃ‚Â§ Starting in PLANNING PHASE - all HL actions will generate NodeGraphs first");
-                LoggingService.LogInfo("ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒâ€šÃ‚Â§ Cassette subtree completion flags initialized to false for all 4 cassettes");
-                LoggingService.LogSuccess("ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ Created root composite flow node");
+                // Initialize cassette subtree completion flags to false for all 12 cassettes (3 batches x 4)
+                blackboard.CassetteSubtreeCompleted = new bool[12]
+                {
+                    false, false, false, false,
+                    false, false, false, false,
+                    false, false, false, false
+                };
+                LoggingService.LogInfo("Starting in PLANNING PHASE - HL actions will generate NodeGraphs first");
+                LoggingService.LogInfo("Cassette subtree completion flags initialized to false for all 12 cassettes");
+                LoggingService.LogSuccess("Created root composite (Sequential mode, 3 batches)");
 
-                // Create four cassette flow nodes
-                var cassette1Node = new DynamicFlowNode(new FastName("cassette1"), behaviorTree, SuccessCriteria.ALL, 1.0f, true);  // Add LowestCost decorator
-                var cassette2Node = new DynamicFlowNode(new FastName("cassette2"), behaviorTree, SuccessCriteria.ALL, 1.0f, true);  // Add LowestCost decorator
-                var cassette3Node = new DynamicFlowNode(new FastName("cassette3"), behaviorTree, SuccessCriteria.ALL, 1.0f, true);  // Add LowestCost decorator
-                var cassette4Node = new DynamicFlowNode(new FastName("cassette4"), behaviorTree, SuccessCriteria.ALL, 1.0f, true);  // Add LowestCost decorator
+                // Wire root into the tree before adding children
+                behaviorTree.root = rootComposite;
+                rootComposite.SetOwiningTree(behaviorTree);
 
-                LoggingService.LogSuccess("ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ Created four cassette flow nodes");
+                // Define the three batches. Each batch is its own composite with 4 cassette
+                // DynamicFlowNodes. The cassettes keep globally unique names cassette1..cassette12
+                // so DecoratorDynamicPlanningComplete.TraverseTreeForAction keeps working.
+                var batchDefs = new (string Name, int FirstCassette, string[] ProblemTags, string ObjectsFile)[]
+                {
+                    ("Batch1_C1toC4",  1, new[] { "C1",  "C2",  "C3",  "C4"  }, "python_service/Plannerinputs/static/ParameterInstances_PDDL.txt"),
+                    ("Batch2_C5toC8",  5, new[] { "C5",  "C6",  "C7",  "C8"  }, "python_service/Plannerinputs/static/ParameterInstances_PDDL2.txt"),
+                    ("Batch3_C9toC12", 9, new[] { "C9",  "C10", "C11", "C12" }, "python_service/Plannerinputs/static/ParameterInstances_PDDL3.txt"),
+                };
 
-                // Add all cassette nodes to the root composite node
-                ((BTFlowNodeComposite)rootNode).AddChild(cassette1Node);
-                ((BTFlowNodeComposite)rootNode).AddChild(cassette2Node);
-                ((BTFlowNodeComposite)rootNode).AddChild(cassette3Node);
-                ((BTFlowNodeComposite)rootNode).AddChild(cassette4Node);
+                foreach (var batch in batchDefs)
+                {
+                    var batchComposite = new BTFlowNodeComposite(new FastName(batch.Name), behaviorTree);
+                    batchComposite.SetOwiningTree(behaviorTree);
 
-                LoggingService.LogSuccess("ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ Added all four cassette nodes to root composite node");
+                    var ownedIndices = new int[4];
+                    for (int i = 0; i < 4; i++)
+                    {
+                        int cassetteNumber = batch.FirstCassette + i;
+                        ownedIndices[i] = cassetteNumber - 1;
 
-                // Add planning phase management service to the root composite node
-                ((BTFlowNodeComposite)rootNode).AddPlanningPhaseService();
-                LoggingService.LogSuccess("ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ Added planning phase management service to root composite node");
+                        var cassetteNode = new DynamicFlowNode(new FastName($"cassette{cassetteNumber}"), behaviorTree, SuccessCriteria.ALL, 1.0f, true);
 
-                // Add fair branch progress decorator for round-robin execution with cross-cassette tool batching
-                rootNode.AddDecorator(new BTDecoratorFairBranchProgress((BTFlowNodeComposite)rootNode));
-                LoggingService.LogSuccess("Added FairBranchProgress decorator to root composite node");
-                
-                
+                        var problemFile = $"./Plannerinputs/static/problem{batch.ProblemTags[i]}.pddl";
+                        var pddlRequest = new PDDLPlanningRequest(
+                            "./Plannerinputs/static/DomainHL.pddl",
+                            problemFile,
+                            "/home/ubuntu/jpddlplus-master/jpddlplus.jar",
+                            "ENHSP",
+                            120) { EnhspConfig = "sat-hadd" };
+                        var pddlPlanner = new ServicePDDLPlanning(behaviorTree, pddlRequest);
+                        pddlPlanner.ExecutionMode = ServicePDDLPlanning.ParallelExecutionMode.Parallel;
+                        allPlanners.Add(pddlPlanner);
 
-                // Set the root node
-                behaviorTree.root = (BTFlowNodeComposite)rootNode;
-                rootNode.SetOwiningTree(behaviorTree);
-                rootNode.SetTreeForAllServices(behaviorTree);
+                        cassetteNode.SetPlanningService(pddlPlanner);
+                        batchComposite.AddChild(cassetteNode);
 
-                // Create PDDL planners for all four cassettes (after behavior tree is created)
-                // Different planners and problem files for each cassette
-                var pddlRequest1 = new PDDLPlanningRequest("./Plannerinputs/static/DomainHL.pddl", "./Plannerinputs/static/problemC9.pddl", "/home/ubuntu/jpddlplus-master/jpddlplus.jar", "ENHSP", 120) { EnhspConfig = "sat-hadd" };
-                var pddlRequest2 = new PDDLPlanningRequest("./Plannerinputs/static/DomainHL.pddl", "./Plannerinputs/static/problemC10.pddl", "/home/ubuntu/jpddlplus-master/jpddlplus.jar", "ENHSP", 120) { EnhspConfig = "sat-hadd" };
-                var pddlRequest3 = new PDDLPlanningRequest("./Plannerinputs/static/DomainHL.pddl", "./Plannerinputs/static/problemC11.pddl", "/home/ubuntu/jpddlplus-master/jpddlplus.jar", "ENHSP", 120) { EnhspConfig = "sat-hadd" };
-                var pddlRequest4 = new PDDLPlanningRequest("./Plannerinputs/static/DomainHL.pddl", "./Plannerinputs/static/problemC12.pddl", "/home/ubuntu/jpddlplus-master/jpddlplus.jar", "ENHSP", 120) { EnhspConfig = "sat-hadd" };
+                        LoggingService.LogInfo($"   cassette{cassetteNumber} -> {problemFile} ({pddlRequest.PlannerName}, {pddlPlanner.ExecutionMode})");
+                    }
 
-                var pddlPlanner1 = new ServicePDDLPlanning(behaviorTree, pddlRequest1);
-                var pddlPlanner2 = new ServicePDDLPlanning(behaviorTree, pddlRequest2);
-                var pddlPlanner3 = new ServicePDDLPlanning(behaviorTree, pddlRequest3);
-                var pddlPlanner4 = new ServicePDDLPlanning(behaviorTree, pddlRequest4);
-                
-                // Track all planners for execution summary
-                allPlanners.Add(pddlPlanner1);
-                allPlanners.Add(pddlPlanner2);
-                allPlanners.Add(pddlPlanner3);
-                allPlanners.Add(pddlPlanner4);
-                
-                // Configure execution modes for the cassettes
-                pddlPlanner1.ExecutionMode = ServicePDDLPlanning.ParallelExecutionMode.Parallel;    // Parallel execution
-                pddlPlanner2.ExecutionMode = ServicePDDLPlanning.ParallelExecutionMode.Parallel;    // Parallel execution
-                pddlPlanner3.ExecutionMode = ServicePDDLPlanning.ParallelExecutionMode.Parallel;    // Parallel execution
-                pddlPlanner4.ExecutionMode = ServicePDDLPlanning.ParallelExecutionMode.Parallel;    // Parallel execution
+                    // Per-batch services and decorators:
+                    //  - PlanningPhaseService: flips PlanningPhase=false when this batch's planners are done.
+                    //  - FairBranchProgress: round-robin / tool-batching across this batch's 4 cassettes.
+                    //  - ServiceBatchEntry: on first tick, re-arm PlanningPhase=true, clear ChosenExecutingBranch,
+                    //    and reset CassetteSubtreeCompleted for this batch's cassette indices.
+                    batchComposite.AddPlanningPhaseService();
+                    batchComposite.AddDecorator(new BTDecoratorFairBranchProgress(batchComposite));
+                    batchComposite.AddService(new ServiceBatchEntry(behaviorTree, batchComposite, ownedIndices, batch.ObjectsFile), false);
 
-                LoggingService.LogInfo("ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ Created PDDL planners for all four cassettes");
-                LoggingService.LogInfo($"ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒâ€šÃ‚Â§ Execution Modes:");
-                LoggingService.LogInfo($"   - Cassette 1: {pddlPlanner1.ExecutionMode} (Planner: {pddlRequest1.PlannerName})");
-                LoggingService.LogInfo($"   - Cassette 2: {pddlPlanner2.ExecutionMode} (Planner: {pddlRequest2.PlannerName})");
-                LoggingService.LogInfo($"   - Cassette 3: {pddlPlanner3.ExecutionMode} (Planner: {pddlRequest3.PlannerName})");
-                LoggingService.LogInfo($"   - Cassette 4: {pddlPlanner4.ExecutionMode} (Planner: {pddlRequest4.PlannerName})");
+                    rootComposite.AddChild(batchComposite);
+                    LoggingService.LogSuccess($"Added batch '{batch.Name}' (cassettes {batch.FirstCassette}..{batch.FirstCassette + 3}) to root");
+                }
 
-                // Set the planning services on all flow nodes
-                cassette1Node.SetPlanningService(pddlPlanner1);
-                cassette2Node.SetPlanningService(pddlPlanner2);
-                cassette3Node.SetPlanningService(pddlPlanner3);
-                cassette4Node.SetPlanningService(pddlPlanner4);
-
-                LoggingService.LogSuccess("ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ Set planning services on all four cassette flow nodes");
-                
-                // Debug: Check if planners are properly configured
-                LoggingService.LogInfo($"ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒâ€šÃ‚Â Planner Debug Info:");
-                LoggingService.LogInfo($"   Cassette 1 - Domain: {pddlRequest1.DomainFile}, Problem: {pddlRequest1.ProblemFile}, Planner: {pddlRequest1.PlannerName}");
-                LoggingService.LogInfo($"   Cassette 2 - Domain: {pddlRequest2.DomainFile}, Problem: {pddlRequest2.ProblemFile}, Planner: {pddlRequest2.PlannerName}");
-                LoggingService.LogInfo($"   Cassette 3 - Domain: {pddlRequest3.DomainFile}, Problem: {pddlRequest3.ProblemFile}, Planner: {pddlRequest3.PlannerName}");
-                LoggingService.LogInfo($"   Cassette 4 - Domain: {pddlRequest4.DomainFile}, Problem: {pddlRequest4.ProblemFile}, Planner: {pddlRequest4.PlannerName}");
+                rootComposite.SetTreeForAllServices(behaviorTree);
 
                 // Store the behavior tree in the blackboard for later use
                 blackboard.SetNodeGraph(new FastName("MainBehaviorTree"), new NodeGraph());
-                LoggingService.LogSuccess("ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ Stored behavior tree reference in blackboard");
+                LoggingService.LogSuccess("Stored behavior tree reference in blackboard");
 
                 // Display tree structure
-                LoggingService.LogInfo("\nÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¹ BEHAVIOR TREE STRUCTURE:");
-                LoggingService.LogInfo($"Root: BTFlowNodeComposite ({((BTFlowNodeComposite)rootNode).GetNodeName()})");
-                LoggingService.LogInfo($"ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒâ€¦Ã¢â‚¬Å“ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ DynamicFlowNode ({cassette1Node.GetNodeName()}) - {pddlRequest1.PlannerName} Planner");
-                LoggingService.LogInfo($"ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒâ€¦Ã¢â‚¬Å“ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ DynamicFlowNode ({cassette2Node.GetNodeName()}) - {pddlRequest2.PlannerName} Planner");
-                LoggingService.LogInfo($"ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒâ€¦Ã¢â‚¬Å“ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ DynamicFlowNode ({cassette3Node.GetNodeName()}) - {pddlRequest3.PlannerName} Planner");
-                LoggingService.LogInfo($"ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ DynamicFlowNode ({cassette4Node.GetNodeName()}) - {pddlRequest4.PlannerName} Planner");
+                LoggingService.LogInfo("\nBEHAVIOR TREE STRUCTURE:");
+                LoggingService.LogInfo($"Root: BTFlowNodeComposite ({rootComposite.GetNodeName()}) [Sequential, 3 batches]");
+                foreach (var rc in rootComposite.GetChildren())
+                {
+                    if (rc is BTFlowNodeComposite bc)
+                    {
+                        LoggingService.LogInfo($"  Batch: {bc.GetNodeName()}");
+                        foreach (var cc in bc.GetChildren())
+                        {
+                            if (cc is DynamicFlowNode dyn)
+                                LoggingService.LogInfo($"    - {dyn.GetNodeName()}");
+                        }
+                    }
+                }
 
-                LoggingService.LogSuccess("\nÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸Ãƒâ€¦Ã‚Â½ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â° Behavior tree with cassette flow nodes created successfully!");
+                LoggingService.LogSuccess("\nBehavior tree with 3 sequential batches created successfully!");
 
                 // Test the tree structure
                 await TestBehaviorTreeStructure(behaviorTree);
                 
                 // Monitor planner execution in real-time
-                await MonitorPlannerExecution();
+                // NOTE: disabled for 3-batch sequential mode. MonitorPlannerExecution waits for ALL
+                // planners in allPlanners to produce graphs synchronously, but batches 2 and 3 only
+                // start planning when they become the active child. Re-enabling it here would deadlock.
+                // await MonitorPlannerExecution();
                 
                 // Display NodeGraph status for each flow node
                 await DisplayNodeGraphStatus(behaviorTree);
@@ -511,7 +533,7 @@ namespace BehaviorTreeMainProject
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒâ€¦Ã¢â‚¬â„¢ Error creating behavior tree: {ex.Message}");
+                LoggingService.LogError($" Error creating behavior tree: {ex.Message}");
                 LoggingService.LogError($"   Stack trace: {ex.StackTrace}");
             }
         }
@@ -521,7 +543,7 @@ namespace BehaviorTreeMainProject
         {
             try
             {
-                LoggingService.LogInfo("\nÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸Ãƒâ€šÃ‚Â§Ãƒâ€šÃ‚Âª Testing behavior tree structure...");
+                LoggingService.LogInfo("\n Testing behavior tree structure...");
 
                 // Track memory usage before tree execution
                 var memoryBefore = GC.GetTotalMemory(false);
@@ -530,7 +552,7 @@ namespace BehaviorTreeMainProject
                 BlackboardSummaryLogger.StartTreeTicking();
                 var result = behaviorTree.Tick(0.0f);
                 BlackboardSummaryLogger.EndTreeTicking();
-                LoggingService.LogSuccess($"ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ Initial tree tick result: {result}");
+                LoggingService.LogSuccess($" Initial tree tick result: {result}");
                 
                 // Track memory usage after tree execution
                 var memoryAfter = GC.GetTotalMemory(false);
@@ -542,8 +564,8 @@ namespace BehaviorTreeMainProject
                 var rootNode = behaviorTree.root as BTFlowNodeComposite;
                 if (rootNode != null)
                 {
-                    var children = rootNode.GetChildren();
-                    LoggingService.LogSuccess($"ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ Root node has {children.Count} children");
+                    var children = GetAllCassetteFlowNodes(rootNode);
+                    LoggingService.LogSuccess($" Root node has {children.Count} cassette descendants");
 
                     for (int i = 0; i < children.Count; i++)
                     {
@@ -560,14 +582,14 @@ namespace BehaviorTreeMainProject
                 }
                 else
                 {
-                    LoggingService.LogError($"ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒâ€¦Ã¢â‚¬â„¢ Root node is not a BTFlowNodeComposite. Actual type: {behaviorTree.root?.GetType().Name ?? "null"}");
+                    LoggingService.LogError($" Root node is not a BTFlowNodeComposite. Actual type: {behaviorTree.root?.GetType().Name ?? "null"}");
                 }
 
-                LoggingService.LogSuccess("ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ Behavior tree structure test completed!");
+                LoggingService.LogSuccess(" Behavior tree structure test completed!");
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒâ€¦Ã¢â‚¬â„¢ Error testing behavior tree structure: {ex.Message}");
+                LoggingService.LogError($" Error testing behavior tree structure: {ex.Message}");
             }
         }
 
@@ -576,38 +598,38 @@ namespace BehaviorTreeMainProject
         {
             try
             {
-                LoggingService.LogSubsection("ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒâ€¦Ã‚Â  NODEGRAPH STATUS REPORT");
+                LoggingService.LogSubsection(" NODEGRAPH STATUS REPORT");
                 LoggingService.LogInfo("=".PadRight(50, '='));
 
                 var rootNode = behaviorTree.root as BTFlowNodeComposite;
                 if (rootNode != null)
                 {
-                    var children = rootNode.GetChildren();
-                    LoggingService.LogInfo($"ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒâ€šÃ‚Â Checking {children.Count} flow nodes for NodeGraph status...\n");
+                    var children = GetAllCassetteFlowNodes(rootNode);
+                    LoggingService.LogInfo($" Checking {children.Count} flow nodes for NodeGraph status...\n");
 
                     for (int i = 0; i < children.Count; i++)
                     {
                         var child = children[i];
                         if (child is DynamicFlowNode dynamicNode)
                         {
-                            LoggingService.LogInfo($"ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸Ãƒâ€¦Ã‚Â½Ãƒâ€šÃ‚Â¯ FLOW NODE {i + 1}: {dynamicNode.GetNodeName()}");
-                            LoggingService.LogInfo($"   ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¹ Node Type: {child.GetType().Name}");
+                            LoggingService.LogInfo($" FLOW NODE {i + 1}: {dynamicNode.GetNodeName()}");
+                            LoggingService.LogInfo($"    Node Type: {child.GetType().Name}");
                             
                             // Check if planning service is set
                             if (dynamicNode.ServicePlanning != null)
                             {
-                                LoggingService.LogInfo($"   ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒâ€šÃ‚Â§ Planning Service: {dynamicNode.ServicePlanning.GetType().Name}");
+                                LoggingService.LogInfo($"    Planning Service: {dynamicNode.ServicePlanning.GetType().Name}");
                                 
                                 // Check if it's a ServicePlanning
                                 if (dynamicNode.ServicePlanning is ServicePlanning plannerService)
                                 {
-                                    LoggingService.LogInfo($"   ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒâ€¦Ã‚Â  Has Generated NodeGraph: {plannerService.HasGeneratedNodeGraph()}");
+                                    LoggingService.LogInfo($"    Has Generated NodeGraph: {plannerService.HasGeneratedNodeGraph()}");
                                     
                                     if (plannerService.HasGeneratedNodeGraph())
                                     {
                                         var generatedGraph = plannerService.GetGeneratedNodeGraph();
                                         var actions = generatedGraph.GetAllActionNodes();
-                                        LoggingService.LogInfo($"   ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒâ€¹Ã¢â‚¬Â  Generated NodeGraph Actions: {actions.Count}");
+                                        LoggingService.LogInfo($"    Generated NodeGraph Actions: {actions.Count}");
                                         
                                         // List the actions
                                         for (int j = 0; j < actions.Count; j++)
@@ -617,19 +639,19 @@ namespace BehaviorTreeMainProject
                                     }
                                     else
                                     {
-                                        LoggingService.LogInfo($"   ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã‚Â¡Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¯Ãƒâ€šÃ‚Â¸Ãƒâ€šÃ‚Â No NodeGraph generated yet");
+                                        LoggingService.LogInfo($"    No NodeGraph generated yet");
                                     }
                                 }
                             }
                             else
                             {
-                                LoggingService.LogInfo($"   ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒâ€¦Ã¢â‚¬â„¢ No planning service set");
+                                LoggingService.LogInfo($"    No planning service set");
                             }
                             
                             // Check the actionGraph
                             var actionGraph = dynamicNode.GetActionGraph();
                             var actionGraphNodes = actionGraph.GetAllActionNodes();
-                            LoggingService.LogInfo($"   ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¹ ActionGraph Nodes: {actionGraphNodes.Count}");
+                            LoggingService.LogInfo($"    ActionGraph Nodes: {actionGraphNodes.Count}");
                             
                             if (actionGraphNodes.Count > 0)
                             {
@@ -644,27 +666,27 @@ namespace BehaviorTreeMainProject
                     }
                 }
 
-                LoggingService.LogSuccess("ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ NodeGraph status report completed!");
+                LoggingService.LogSuccess(" NodeGraph status report completed!");
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒâ€¦Ã¢â‚¬â„¢ Error displaying NodeGraph status: {ex.Message}");
+                LoggingService.LogError($" Error displaying NodeGraph status: {ex.Message}");
             }
         }
 
         // Monitor planner execution in real-time
         private async Task MonitorPlannerExecution()
         {
-            LoggingService.LogInfo("\nÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒâ€šÃ‚Â MONITORING PLANNER EXECUTION");
+            LoggingService.LogInfo("\n MONITORING PLANNER EXECUTION");
             LoggingService.LogInfo("=".PadRight(50, '='));
             
             if (allPlanners.Count == 0)
             {
-                LoggingService.LogWarning("ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã‚Â¡Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¯Ãƒâ€šÃ‚Â¸Ãƒâ€šÃ‚Â No planners to monitor.");
+                LoggingService.LogWarning(" No planners to monitor.");
                 return;
             }
             
-            LoggingService.LogInfo($"ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒâ€šÃ‚Â Monitoring {allPlanners.Count} planners...");
+            LoggingService.LogInfo($" Monitoring {allPlanners.Count} planners...");
             LoggingService.LogInfo("Press any key to stop monitoring and continue...");
             
             var monitoringStartTime = DateTime.Now;
@@ -685,24 +707,24 @@ namespace BehaviorTreeMainProject
                 if ((currentTime - lastStatusTime).TotalSeconds >= 2)
                 {
                     Console.Clear();
-                    LoggingService.LogInfo($"ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒâ€šÃ‚Â PLANNER EXECUTION STATUS - {currentTime:HH:mm:ss}");
+                    LoggingService.LogInfo($" PLANNER EXECUTION STATUS - {currentTime:HH:mm:ss}");
                     LoggingService.LogInfo("=".PadRight(50, '='));
                     
                     var completedCount = allPlanners.Count(p => p.HasCompleted);
                     var executingCount = allPlanners.Count(p => p.IsExecuting);
                     var pendingCount = allPlanners.Count(p => !p.HasCompleted && !p.IsExecuting);
                     
-                    LoggingService.LogInfo($"ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒâ€¦Ã‚Â  Progress: {completedCount}/{allPlanners.Count} completed, {executingCount} executing, {pendingCount} pending");
+                    LoggingService.LogInfo($" Progress: {completedCount}/{allPlanners.Count} completed, {executingCount} executing, {pendingCount} pending");
                     
                                          // Planning phase monitoring
                      if (rootNode is BTFlowNodeComposite compositeNode)
                      {
                          var planningComplete = compositeNode.AreAllPlanningServicesComplete();
-                         LoggingService.LogInfo($"\nÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¹ PLANNING PHASE STATUS:");
+                         LoggingService.LogInfo($"\n PLANNING PHASE STATUS:");
                          LoggingService.LogInfo($"   Planning Complete: {planningComplete}");
                          
-                         var children = compositeNode.GetChildren();
-                         LoggingService.LogInfo("ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒâ€¦Ã‚Â  SUBTREE STATUSES:");
+                         var children = GetAllCassetteFlowNodes(compositeNode);
+                         LoggingService.LogInfo(" SUBTREE STATUSES:");
                          for (int i = 0; i < children.Count; i++)
                          {
                              var child = children[i];
@@ -719,7 +741,7 @@ namespace BehaviorTreeMainProject
                     
                     foreach (var planner in allPlanners)
                     {
-                        var status = planner.HasCompleted ? "ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦" : planner.IsExecuting ? "ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾" : "ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒâ€šÃ‚Â³";
+                        var status = planner.HasCompleted ? "" : planner.IsExecuting ? "" : "";
                         var currentDuration = planner.IsExecuting ? currentTime - planner.StartTime : planner.TotalExecutionDuration;
                         var plannerDuration = planner.IsExecuting ? currentTime - planner.StartTime : planner.PlannerExecutionDuration;
                         
@@ -733,29 +755,29 @@ namespace BehaviorTreeMainProject
                 // Check if all planners are done
                 if (allPlanners.All(p => p.HasCompleted || (!p.IsExecuting && !p.HasCompleted)))
                 {
-                    LoggingService.LogInfo("\nÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ All planners have finished execution!");
+                    LoggingService.LogInfo("\n All planners have finished execution!");
                     break;
                 }
                 
                 await Task.Delay(100); // Small delay to prevent high CPU usage
             }
             
-            LoggingService.LogInfo($"ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒâ€šÃ‚Â±ÃƒÆ’Ã‚Â¯Ãƒâ€šÃ‚Â¸Ãƒâ€šÃ‚Â Monitoring duration: {DateTime.Now - monitoringStartTime:hh\\:mm\\:ss\\.fff}");
+            LoggingService.LogInfo($" Monitoring duration: {DateTime.Now - monitoringStartTime:hh\\:mm\\:ss\\.fff}");
         }
         
         // Display execution summary for all planners
         private async Task DisplayExecutionSummary()
         {
-            LoggingService.LogSubsection("ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒâ€¦Ã‚Â  PLANNER EXECUTION SUMMARY");
+            LoggingService.LogSubsection(" PLANNER EXECUTION SUMMARY");
             LoggingService.LogInfo("=".PadRight(80, '='));
             
             if (allPlanners.Count == 0)
             {
-                LoggingService.LogWarning("ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã‚Â¡Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¯Ãƒâ€šÃ‚Â¸Ãƒâ€šÃ‚Â No planners were executed during this test.");
+                LoggingService.LogWarning(" No planners were executed during this test.");
                 return;
             }
             
-            LoggingService.LogInfo($"ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒâ€šÃ‚Â Total planners executed: {allPlanners.Count}");
+            LoggingService.LogInfo($" Total planners executed: {allPlanners.Count}");
             LoggingService.LogInfo("");
             
             // Sort planners by start time
@@ -764,27 +786,27 @@ namespace BehaviorTreeMainProject
             for (int i = 0; i < sortedPlanners.Count; i++)
             {
                 var planner = sortedPlanners[i];
-                LoggingService.LogInfo($"ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸Ãƒâ€¦Ã‚Â½Ãƒâ€šÃ‚Â¯ PLANNER {i + 1}: {planner.PlannerName}");
-                LoggingService.LogInfo($"   ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸Ãƒâ€¦Ã‚Â¡ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ Started: {planner.StartTime:HH:mm:ss.fff}");
+                LoggingService.LogInfo($" PLANNER {i + 1}: {planner.PlannerName}");
+                LoggingService.LogInfo($"    Started: {planner.StartTime:HH:mm:ss.fff}");
                 
                 if (planner.HasCompleted)
                 {
-                    LoggingService.LogInfo($"   ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ Finished: {planner.EndTime:HH:mm:ss.fff}");
-                    LoggingService.LogInfo($"   ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒâ€šÃ‚Â±ÃƒÆ’Ã‚Â¯Ãƒâ€šÃ‚Â¸Ãƒâ€šÃ‚Â Planner Duration: {planner.PlannerExecutionDuration:hh\\:mm\\:ss\\.fff}");
-                    LoggingService.LogInfo($"   ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒâ€šÃ‚Â±ÃƒÆ’Ã‚Â¯Ãƒâ€šÃ‚Â¸Ãƒâ€šÃ‚Â Total Duration: {planner.TotalExecutionDuration:hh\\:mm\\:ss\\.fff}");
+                    LoggingService.LogInfo($"    Finished: {planner.EndTime:HH:mm:ss.fff}");
+                    LoggingService.LogInfo($"    Planner Duration: {planner.PlannerExecutionDuration:hh\\:mm\\:ss\\.fff}");
+                    LoggingService.LogInfo($"    Total Duration: {planner.TotalExecutionDuration:hh\\:mm\\:ss\\.fff}");
                     
                     if (planner.GeneratedNodeGraph != null)
                     {
-                        LoggingService.LogInfo($"   ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒâ€¦Ã‚Â  Actions Generated: {planner.GeneratedNodeGraph.GetAllActionNodes().Count}");
+                        LoggingService.LogInfo($"    Actions Generated: {planner.GeneratedNodeGraph.GetAllActionNodes().Count}");
                     }
                 }
                 else if (planner.IsExecuting)
                 {
-                    LoggingService.LogInfo($"   ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾ Still executing... (Started: {planner.StartTime:HH:mm:ss.fff})");
+                    LoggingService.LogInfo($"    Still executing... (Started: {planner.StartTime:HH:mm:ss.fff})");
                 }
                 else
                 {
-                    LoggingService.LogError($"   ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒâ€¦Ã¢â‚¬â„¢ Failed or incomplete");
+                    LoggingService.LogError($"    Failed or incomplete");
                 }
                 LoggingService.LogInfo("");
             }
@@ -794,10 +816,10 @@ namespace BehaviorTreeMainProject
             var failedPlanners = allPlanners.Where(p => !p.HasCompleted && !p.IsExecuting).ToList();
             var executingPlanners = allPlanners.Where(p => p.IsExecuting).ToList();
             
-            LoggingService.LogInfo("ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒâ€¹Ã¢â‚¬Â  EXECUTION STATISTICS:");
-            LoggingService.LogInfo($"   ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ Successfully completed: {completedPlanners.Count}");
-            LoggingService.LogError($"   ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒâ€¦Ã¢â‚¬â„¢ Failed: {failedPlanners.Count}");
-            LoggingService.LogInfo($"   ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾ Still executing: {executingPlanners.Count}");
+            LoggingService.LogInfo(" EXECUTION STATISTICS:");
+            LoggingService.LogInfo($"    Successfully completed: {completedPlanners.Count}");
+            LoggingService.LogError($"    Failed: {failedPlanners.Count}");
+            LoggingService.LogInfo($"    Still executing: {executingPlanners.Count}");
             
             if (completedPlanners.Any())
             {
@@ -808,12 +830,12 @@ namespace BehaviorTreeMainProject
                 var minTotalDuration = completedPlanners.Min(p => p.TotalExecutionDuration);
                 var maxTotalDuration = completedPlanners.Max(p => p.TotalExecutionDuration);
                 
-                LoggingService.LogInfo($"   ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒâ€šÃ‚Â±ÃƒÆ’Ã‚Â¯Ãƒâ€šÃ‚Â¸Ãƒâ€šÃ‚Â Average Planner Duration: {avgPlannerDuration:hh\\:mm\\:ss\\.fff}");
-                LoggingService.LogInfo($"   ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒâ€šÃ‚Â±ÃƒÆ’Ã‚Â¯Ãƒâ€šÃ‚Â¸Ãƒâ€šÃ‚Â Average Total Duration: {avgTotalDuration:hh\\:mm\\:ss\\.fff}");
-                LoggingService.LogInfo($"   ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒâ€šÃ‚Â±ÃƒÆ’Ã‚Â¯Ãƒâ€šÃ‚Â¸Ãƒâ€šÃ‚Â Fastest Planner: {minPlannerDuration:hh\\:mm\\:ss\\.fff}");
-                LoggingService.LogInfo($"   ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒâ€šÃ‚Â±ÃƒÆ’Ã‚Â¯Ãƒâ€šÃ‚Â¸Ãƒâ€šÃ‚Â Slowest Planner: {maxPlannerDuration:hh\\:mm\\:ss\\.fff}");
-                LoggingService.LogInfo($"   ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒâ€šÃ‚Â±ÃƒÆ’Ã‚Â¯Ãƒâ€šÃ‚Â¸Ãƒâ€šÃ‚Â Fastest Total: {minTotalDuration:hh\\:mm\\:ss\\.fff}");
-                LoggingService.LogInfo($"   ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒâ€šÃ‚Â±ÃƒÆ’Ã‚Â¯Ãƒâ€šÃ‚Â¸Ãƒâ€šÃ‚Â Slowest Total: {maxTotalDuration:hh\\:mm\\:ss\\.fff}");
+                LoggingService.LogInfo($"    Average Planner Duration: {avgPlannerDuration:hh\\:mm\\:ss\\.fff}");
+                LoggingService.LogInfo($"    Average Total Duration: {avgTotalDuration:hh\\:mm\\:ss\\.fff}");
+                LoggingService.LogInfo($"    Fastest Planner: {minPlannerDuration:hh\\:mm\\:ss\\.fff}");
+                LoggingService.LogInfo($"    Slowest Planner: {maxPlannerDuration:hh\\:mm\\:ss\\.fff}");
+                LoggingService.LogInfo($"    Fastest Total: {minTotalDuration:hh\\:mm\\:ss\\.fff}");
+                LoggingService.LogInfo($"    Slowest Total: {maxTotalDuration:hh\\:mm\\:ss\\.fff}");
             }
             
             LoggingService.LogInfo("=".PadRight(80, '='));
@@ -825,7 +847,7 @@ namespace BehaviorTreeMainProject
         // Display blackboard tracking summary
         private void DisplayBlackboardTrackingSummary()
         {
-            LoggingService.LogSubsection("ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¹ BLACKBOARD TRACKING SUMMARY");
+            LoggingService.LogSubsection(" BLACKBOARD TRACKING SUMMARY");
             LoggingService.LogInfo("=".PadRight(80, '='));
             
             try
@@ -833,23 +855,23 @@ namespace BehaviorTreeMainProject
                 // Get current blackboard tracking statistics
                 var (types, instances, negations) = BlackboardTrackingLogger.GetCurrentCounts();
                 
-                LoggingService.LogInfo($"ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢ Total New Types Added: {types}");
-                LoggingService.LogInfo($"ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢ Total New Instances Created: {instances}");
-                LoggingService.LogInfo($"ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾ Total Predicate Negations: {negations}");
+                LoggingService.LogInfo($" Total New Types Added: {types}");
+                LoggingService.LogInfo($" Total New Instances Created: {instances}");
+                LoggingService.LogInfo($" Total Predicate Negations: {negations}");
                 
-                LoggingService.LogInfo($"ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒâ€šÃ‚Â Blackboard tracking log saved to: {BlackboardTrackingLogger.GetLogFilePath()}");
+                LoggingService.LogInfo($" Blackboard tracking log saved to: {BlackboardTrackingLogger.GetLogFilePath()}");
                 LoggingService.LogInfo("=".PadRight(80, '='));
             }
             catch (Exception ex)
             {
-                LoggingService.LogWarning($"ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã‚Â¡Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¯Ãƒâ€šÃ‚Â¸Ãƒâ€šÃ‚Â Could not retrieve blackboard tracking statistics: {ex.Message}");
+                LoggingService.LogWarning($" Could not retrieve blackboard tracking statistics: {ex.Message}");
             }
         }
         
         // Track subtree status for high-level actions generated by flow nodes
         private async Task TrackSubtreeStatusForHLActions(BehaviorTree behaviorTree)
         {
-            LoggingService.LogSubsection("ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸Ãƒâ€¦Ã¢â‚¬â„¢Ãƒâ€šÃ‚Â³ TRACKING SUBTREE STATUS FOR HL ACTIONS");
+            LoggingService.LogSubsection(" TRACKING SUBTREE STATUS FOR HL ACTIONS");
             LoggingService.LogInfo("=".PadRight(60, '='));
             
                          try
@@ -857,19 +879,19 @@ namespace BehaviorTreeMainProject
                  var rootNode = behaviorTree.root as BTFlowNodeComposite;
                  if (rootNode == null)
                  {
-                     LoggingService.LogError("ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒâ€¦Ã¢â‚¬â„¢ Root node is not a BTFlowNodeComposite");
+                     LoggingService.LogError(" Root node is not a BTFlowNodeComposite");
                      return;
                  }
 
-                var children = rootNode.GetChildren();
-                LoggingService.LogInfo($"ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒâ€šÃ‚Â Tracking subtrees for {children.Count} flow nodes...\n");
+                var children = GetAllCassetteFlowNodes(rootNode);
+                LoggingService.LogInfo($" Tracking subtrees for {children.Count} flow nodes...\n");
 
                 for (int i = 0; i < children.Count; i++)
                 {
                     var child = children[i];
                     if (child is DynamicFlowNode dynamicNode)
                     {
-                        LoggingService.LogInfo($"ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸Ãƒâ€¦Ã‚Â½Ãƒâ€šÃ‚Â¯ FLOW NODE {i + 1}: {dynamicNode.GetNodeName()}");
+                        LoggingService.LogInfo($" FLOW NODE {i + 1}: {dynamicNode.GetNodeName()}");
                         
                         // Check if planning service has generated a NodeGraph
                         if (dynamicNode.ServicePlanning is ServicePlanning plannerService && plannerService.HasGeneratedNodeGraph())
@@ -877,7 +899,7 @@ namespace BehaviorTreeMainProject
                             var generatedGraph = plannerService.GetGeneratedNodeGraph();
                             var actions = generatedGraph.GetAllActionNodes();
                             
-                            LoggingService.LogInfo($"   ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒâ€¦Ã‚Â  Generated {actions.Count} actions from planner");
+                            LoggingService.LogInfo($"    Generated {actions.Count} actions from planner");
                             
                             // Track subtree status for each action
                             for (int j = 0; j < actions.Count; j++)
@@ -885,24 +907,24 @@ namespace BehaviorTreeMainProject
                                 var action = actions[j];
                                 if (action is PActionNode genericAction)
                                 {
-                                    LoggingService.LogInfo($"   ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒâ€šÃ‚Â Action {j + 1}: {action.InstanceName.ToString()}");
+                                    LoggingService.LogInfo($"    Action {j + 1}: {action.InstanceName.ToString()}");
                                     
                                     // Check if this is a high-level action
                                     if (genericAction.IsHighLevelAction)
                                     {
-                                        LoggingService.LogInfo($"      ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ Is High-Level Action: Yes");
+                                        LoggingService.LogInfo($"       Is High-Level Action: Yes");
                                         
                                         // Check if it has a subtree
                                         if (genericAction.HighLevelSubtree != null)
                                         {
-                                            LoggingService.LogInfo($"      ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸Ãƒâ€¦Ã¢â‚¬â„¢Ãƒâ€šÃ‚Â³ Has Subtree: Yes");
-                                            LoggingService.LogInfo($"      ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¹ Subtree Type: {genericAction.HighLevelSubtree.GetType().Name}");
-                                            LoggingService.LogInfo($"      ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒâ€¦Ã‚Â  Subtree Status: {genericAction.HighLevelSubtree.status}");
+                                            LoggingService.LogInfo($"       Has Subtree: Yes");
+                                            LoggingService.LogInfo($"       Subtree Type: {genericAction.HighLevelSubtree.GetType().Name}");
+                                            LoggingService.LogInfo($"       Subtree Status: {genericAction.HighLevelSubtree.status}");
                                             
                                             // Check if subtree has actions
                                             var subtreeActionGraph = genericAction.HighLevelSubtree.GetActionGraph();
                                             var subtreeActions = subtreeActionGraph.GetAllActionNodes();
-                                            LoggingService.LogInfo($"      ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒâ€¹Ã¢â‚¬Â  Subtree Actions: {subtreeActions.Count}");
+                                            LoggingService.LogInfo($"       Subtree Actions: {subtreeActions.Count}");
                                             
                                             // List subtree actions and their status
                                             for (int k = 0; k < subtreeActions.Count; k++)
@@ -913,35 +935,35 @@ namespace BehaviorTreeMainProject
                                         }
                                         else
                                         {
-                                            LoggingService.LogInfo($"      ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒâ€¦Ã¢â‚¬â„¢ Has Subtree: No");
+                                            LoggingService.LogInfo($"       Has Subtree: No");
                                         }
                                         
                                         // Check if it has a planning service
                                         if (genericAction.ServicePlanning != null)
                                         {
-                                            LoggingService.LogInfo($"      ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒâ€šÃ‚Â§ Has Planning Service: Yes ({genericAction.ServicePlanning.GetType().Name})");
+                                            LoggingService.LogInfo($"       Has Planning Service: Yes ({genericAction.ServicePlanning.GetType().Name})");
                                         }
                                         else
                                         {
-                                            LoggingService.LogInfo($"      ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒâ€¦Ã¢â‚¬â„¢ Has Planning Service: No");
+                                            LoggingService.LogInfo($"       Has Planning Service: No");
                                         }
                                     }
                                     else
                                     {
-                                        LoggingService.LogInfo($"      ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒâ€¦Ã¢â‚¬â„¢ Is High-Level Action: No");
+                                        LoggingService.LogInfo($"       Is High-Level Action: No");
                                     }
                                     
                                     // Check if it has a ServiceSubtreeInject
                                     var subtreeService = genericAction.GetSubtreeInjectionService();
                                     if (subtreeService != null)
                                     {
-                                        LoggingService.LogInfo($"      ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒâ€šÃ‚Â§ Has ServiceSubtreeInject: Yes");
+                                        LoggingService.LogInfo($"       Has ServiceSubtreeInject: Yes");
                                         
                                         // Check if any problem files were generated
                                         var generatedFiles = ServicePDDLPlanning.GeneratedProblemFiles;
                                         if (generatedFiles.Count > 0)
                                         {
-                                            LoggingService.LogInfo($"      ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾ Generated Problem Files: {generatedFiles.Count}");
+                                            LoggingService.LogInfo($"       Generated Problem Files: {generatedFiles.Count}");
                                             foreach (var file in generatedFiles)
                                             {
                                                 LoggingService.LogInfo($"         - {file}");
@@ -950,30 +972,30 @@ namespace BehaviorTreeMainProject
                                     }
                                     else
                                     {
-                                        LoggingService.LogInfo($"      ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒâ€¦Ã¢â‚¬â„¢ Has ServiceSubtreeInject: No");
+                                        LoggingService.LogInfo($"       Has ServiceSubtreeInject: No");
                                     }
                                 }
                                 else
                                 {
-                                    LoggingService.LogInfo($"   ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒâ€šÃ‚Â Action {j + 1}: {action.InstanceName.ToString()} (Not a GenericBTAction)");
+                                    LoggingService.LogInfo($"    Action {j + 1}: {action.InstanceName.ToString()} (Not a GenericBTAction)");
                                 }
                                 LoggingService.LogInfo("");
                             }
                         }
                         else
                         {
-                            LoggingService.LogInfo($"   ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã‚Â¡Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¯Ãƒâ€šÃ‚Â¸Ãƒâ€šÃ‚Â No NodeGraph generated yet by planner");
+                            LoggingService.LogInfo($"    No NodeGraph generated yet by planner");
                         }
                         
                         LoggingService.LogInfo("");
                     }
                 }
                 
-                LoggingService.LogSuccess("ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ Subtree status tracking completed!");
+                LoggingService.LogSuccess(" Subtree status tracking completed!");
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒâ€¦Ã¢â‚¬â„¢ Error tracking subtree status: {ex.Message}");
+                LoggingService.LogError($" Error tracking subtree status: {ex.Message}");
                 LoggingService.LogError($"   Stack trace: {ex.StackTrace}");
             }
         }
@@ -981,7 +1003,7 @@ namespace BehaviorTreeMainProject
         // Execute tree with comprehensive logging
         private async Task ExecuteTreeWithComprehensiveLogging(BehaviorTree behaviorTree)
         {
-            LoggingService.LogSection("ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸Ãƒâ€¦Ã‚Â¡ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ EXECUTING TREE WITH COMPREHENSIVE LOGGING");
+            LoggingService.LogSection(" EXECUTING TREE WITH COMPREHENSIVE LOGGING");
             
             try
             {
@@ -991,7 +1013,7 @@ namespace BehaviorTreeMainProject
                 // Dictionary to track action status changes
                 var actionStatusHistory = new Dictionary<string, BTNodeResult>();
                 
-                LoggingService.LogInfo($"ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾ Starting tree execution (max {maxTicks} ticks)...");
+                LoggingService.LogInfo($" Starting tree execution (max {maxTicks} ticks)...");
                 LoggingService.LogInfo("Press any key to stop execution...");
                 
                 while (tickCount < maxTicks)
@@ -1000,14 +1022,14 @@ namespace BehaviorTreeMainProject
                     if (Console.KeyAvailable)
                     {
                         Console.ReadKey(true); // Clear the key
-                        LoggingService.LogWarning("ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒâ€šÃ‚Â¹ÃƒÆ’Ã‚Â¯Ãƒâ€šÃ‚Â¸Ãƒâ€šÃ‚Â Execution stopped by user");
+                        LoggingService.LogWarning(" Execution stopped by user");
                         break;
                     }
                     
                     tickCount++;
                     
                     // Log tick start
-                    LoggingService.LogInfo($"\nÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾ TICK {tickCount} STARTING...");
+                    LoggingService.LogInfo($"\n TICK {tickCount} STARTING...");
                     
                     // Execute one tick
                     BlackboardSummaryLogger.StartTreeTicking();
@@ -1020,8 +1042,8 @@ namespace BehaviorTreeMainProject
                     // Check if tree has finished
                     if (behaviorTree.HasFinished())
                     {
-                        LoggingService.LogSuccess($"\nÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ Tree execution completed after {tickCount} ticks");
-                        LoggingService.LogSuccess($"ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒâ€¦Ã‚Â  Final result: {result}");
+                        LoggingService.LogSuccess($"\n Tree execution completed after {tickCount} ticks");
+                        LoggingService.LogSuccess($" Final result: {result}");
                         break;
                     }
                     
@@ -1031,17 +1053,17 @@ namespace BehaviorTreeMainProject
                 
                 if (tickCount >= maxTicks)
                 {
-                    LoggingService.LogWarning($"\nÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã‚Â¡Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¯Ãƒâ€šÃ‚Â¸Ãƒâ€šÃ‚Â Tree execution stopped after {maxTicks} ticks (max reached)");
+                    LoggingService.LogWarning($"\n Tree execution stopped after {maxTicks} ticks (max reached)");
                 }
                 
                 // Print final status summary
                 LogFinalActionStatusSummary(actionStatusHistory);
                 
-                LoggingService.LogSuccess("ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ Tree execution with comprehensive logging completed!");
+                LoggingService.LogSuccess(" Tree execution with comprehensive logging completed!");
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒâ€¦Ã¢â‚¬â„¢ Error during tree execution: {ex.Message}");
+                LoggingService.LogError($" Error during tree execution: {ex.Message}");
             }
         }
 
@@ -1068,7 +1090,7 @@ namespace BehaviorTreeMainProject
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒâ€¦Ã¢â‚¬â„¢ Error logging comprehensive tick info on tick {tickNumber}: {ex.Message}");
+                LoggingService.LogError($" Error logging comprehensive tick info on tick {tickNumber}: {ex.Message}");
             }
         }
 
@@ -1080,7 +1102,7 @@ namespace BehaviorTreeMainProject
                 var rootNode = behaviorTree.root as BTFlowNodeComposite;
                 if (rootNode == null) return;
 
-                var children = rootNode.GetChildren();
+                var children = GetAllCassetteFlowNodes(rootNode);
                 
                 foreach (var child in children)
                 {
@@ -1091,8 +1113,8 @@ namespace BehaviorTreeMainProject
                         
                         if (nodes.Count > 0)
                         {
-                            LoggingService.LogInfo($"\nÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸Ãƒâ€¦Ã¢â‚¬â„¢Ãƒâ€šÃ‚Â³ NODEGRAPH DETAILS ({dynamicNode.GetNodeName()}) - TICK {tickNumber}:");
-                            LoggingService.LogInfo($"   ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒâ€¦Ã‚Â  Total nodes: {nodes.Count}");
+                            LoggingService.LogInfo($"\n NODEGRAPH DETAILS ({dynamicNode.GetNodeName()}) - TICK {tickNumber}:");
+                            LoggingService.LogInfo($"    Total nodes: {nodes.Count}");
                             
                             // Log each node's details
                             foreach (var action in nodes)
@@ -1102,11 +1124,11 @@ namespace BehaviorTreeMainProject
                                 {
                                     var statusEmoji = action.status switch
                                     {
-                                        BTNodeResult.Success => "ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦",
-                                        BTNodeResult.Failure => "ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒâ€¦Ã¢â‚¬â„¢",
-                                        BTNodeResult.InProgress => "ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾",
-                                        BTNodeResult.ReadyToTick => "ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒâ€šÃ‚Â³",
-                                        _ => "ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ"
+                                        BTNodeResult.Success => "",
+                                        BTNodeResult.Failure => "",
+                                        BTNodeResult.InProgress => "",
+                                        BTNodeResult.ReadyToTick => "",
+                                        _ => ""
                                     };
                                     
                                     LoggingService.LogInfo($"   {statusEmoji} {action.InstanceName}: Status={action.status}, Completed={nodeInfo.IsCompleted}, Predecessors={nodeInfo.Predecessors.Count}");
@@ -1114,7 +1136,7 @@ namespace BehaviorTreeMainProject
                                     // Log order relations for this node
                                     if (nodeInfo.Predecessors.Count > 0)
                                     {
-                                        LoggingService.LogInfo($"      ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¹ Predecessors:");
+                                        LoggingService.LogInfo($"       Predecessors:");
                                         foreach (var pred in nodeInfo.Predecessors)
                                         {
                                             LoggingService.LogInfo($"         - {pred.From.ActionNode.InstanceName} (MEETS)");
@@ -1123,7 +1145,7 @@ namespace BehaviorTreeMainProject
                                     
                                     if (nodeInfo.Successors.Count > 0)
                                     {
-                                        LoggingService.LogInfo($"      ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¹ Successors:");
+                                        LoggingService.LogInfo($"       Successors:");
                                         foreach (var succ in nodeInfo.Successors)
                                         {
                                             LoggingService.LogInfo($"         - {succ.To.ActionNode.InstanceName} (MEETS)");
@@ -1133,7 +1155,7 @@ namespace BehaviorTreeMainProject
                             }
                             
                             // Log all order relations in the graph
-                            LoggingService.LogInfo($"   ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â ALL ORDER RELATIONS:");
+                            LoggingService.LogInfo($"    ALL ORDER RELATIONS:");
                             foreach (var node in nodes)
                             {
                                 var nodeInfo = actionGraph.GetNodeInfo(node);
@@ -1151,7 +1173,7 @@ namespace BehaviorTreeMainProject
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒâ€¦Ã¢â‚¬â„¢ Error logging NodeGraph details: {ex.Message}");
+                LoggingService.LogError($" Error logging NodeGraph details: {ex.Message}");
             }
         }
 
@@ -1173,17 +1195,17 @@ namespace BehaviorTreeMainProject
                     {
                         if (!hasStatusChanges)
                         {
-                            LoggingService.LogInfo($"\nÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾ TICK {tickNumber} - ACTION STATUS CHANGES:");
+                            LoggingService.LogInfo($"\n TICK {tickNumber} - ACTION STATUS CHANGES:");
                             hasStatusChanges = true;
                         }
 
                         var statusEmoji = currentStatus switch
                         {
-                            BTNodeResult.Success => "ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦",
-                            BTNodeResult.Failure => "ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒâ€¦Ã¢â‚¬â„¢",
-                            BTNodeResult.InProgress => "ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾",
-                            BTNodeResult.ReadyToTick => "ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒâ€šÃ‚Â³",
-                            _ => "ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ"
+                            BTNodeResult.Success => "",
+                            BTNodeResult.Failure => "",
+                            BTNodeResult.InProgress => "",
+                            BTNodeResult.ReadyToTick => "",
+                            _ => ""
                         };
 
                         LoggingService.LogInfo($"   {statusEmoji} {actionId}: {currentStatus}");
@@ -1200,12 +1222,12 @@ namespace BehaviorTreeMainProject
                     var completedActions = actionNodes.Count(a => a.status == BTNodeResult.Success);
                     var failedActions = actionNodes.Count(a => a.status == BTNodeResult.Failure);
                     
-                    LoggingService.LogInfo($"   ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒâ€¦Ã‚Â  Tick {tickNumber}: {activeActions} active, {completedActions} completed, {failedActions} failed");
+                    LoggingService.LogInfo($"    Tick {tickNumber}: {activeActions} active, {completedActions} completed, {failedActions} failed");
                 }
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒâ€¦Ã¢â‚¬â„¢ Error logging action status changes: {ex.Message}");
+                LoggingService.LogError($" Error logging action status changes: {ex.Message}");
             }
         }
 
@@ -1217,7 +1239,7 @@ namespace BehaviorTreeMainProject
                 var rootNode = behaviorTree.root as BTFlowNodeComposite;
                 if (rootNode == null) return;
 
-                var children = rootNode.GetChildren();
+                var children = GetAllCassetteFlowNodes(rootNode);
                 bool hasSubtreeChanges = false;
                 
                 foreach (var child in children)
@@ -1241,8 +1263,8 @@ namespace BehaviorTreeMainProject
                                         // Log detailed subtree NodeGraph information
                                         if (subtreeActions.Count > 0)
                                         {
-                                            LoggingService.LogInfo($"\nÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸Ãƒâ€¦Ã¢â‚¬â„¢Ãƒâ€šÃ‚Â³ SUBTREE NODEGRAPH DETAILS ({genericAction.InstanceName}) - TICK {tickNumber}:");
-                                            LoggingService.LogInfo($"   ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒâ€¦Ã‚Â  Total subtree nodes: {subtreeActions.Count}");
+                                            LoggingService.LogInfo($"\n SUBTREE NODEGRAPH DETAILS ({genericAction.InstanceName}) - TICK {tickNumber}:");
+                                            LoggingService.LogInfo($"    Total subtree nodes: {subtreeActions.Count}");
                                             
                                             // Log each subtree node's details
                                             foreach (var subtreeAction in subtreeActions)
@@ -1252,11 +1274,11 @@ namespace BehaviorTreeMainProject
                                                 {
                                                     var statusEmoji = subtreeAction.status switch
                                                     {
-                                                        BTNodeResult.Success => "ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦",
-                                                        BTNodeResult.Failure => "ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒâ€¦Ã¢â‚¬â„¢",
-                                                        BTNodeResult.InProgress => "ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾",
-                                                        BTNodeResult.ReadyToTick => "ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒâ€šÃ‚Â³",
-                                                        _ => "ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ"
+                                                        BTNodeResult.Success => "",
+                                                        BTNodeResult.Failure => "",
+                                                        BTNodeResult.InProgress => "",
+                                                        BTNodeResult.ReadyToTick => "",
+                                                        _ => ""
                                                     };
                                                     
                                                     LoggingService.LogInfo($"   {statusEmoji} {subtreeAction.InstanceName}: Status={subtreeAction.status}, Completed={subtreeNodeInfo.IsCompleted}, Predecessors={subtreeNodeInfo.Predecessors.Count}");
@@ -1264,7 +1286,7 @@ namespace BehaviorTreeMainProject
                                                     // Log order relations for this subtree node
                                                     if (subtreeNodeInfo.Predecessors.Count > 0)
                                                     {
-                                                        LoggingService.LogInfo($"      ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¹ Subtree Predecessors:");
+                                                        LoggingService.LogInfo($"       Subtree Predecessors:");
                                                         foreach (var pred in subtreeNodeInfo.Predecessors)
                                                         {
                                                             LoggingService.LogInfo($"         - {pred.From.ActionNode.InstanceName} (MEETS)");
@@ -1273,7 +1295,7 @@ namespace BehaviorTreeMainProject
                                                     
                                                     if (subtreeNodeInfo.Successors.Count > 0)
                                                     {
-                                                        LoggingService.LogInfo($"      ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¹ Subtree Successors:");
+                                                        LoggingService.LogInfo($"       Subtree Successors:");
                                                         foreach (var succ in subtreeNodeInfo.Successors)
                                                         {
                                                             LoggingService.LogInfo($"         - {succ.To.ActionNode.InstanceName} (MEETS)");
@@ -1283,7 +1305,7 @@ namespace BehaviorTreeMainProject
                                             }
                                             
                                             // Log all order relations in the subtree graph
-                                            LoggingService.LogInfo($"   ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â SUBTREE ORDER RELATIONS:");
+                                            LoggingService.LogInfo($"    SUBTREE ORDER RELATIONS:");
                                             foreach (var subtreeAction in subtreeActions)
                                             {
                                                 var subtreeNodeInfo = subtreeActionGraph.GetNodeInfo(subtreeAction);
@@ -1306,17 +1328,17 @@ namespace BehaviorTreeMainProject
                                             {
                                                 if (!hasSubtreeChanges)
                                                 {
-                                                    LoggingService.LogInfo($"\nÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸Ãƒâ€¦Ã¢â‚¬â„¢Ãƒâ€šÃ‚Â³ TICK {tickNumber} - SUBTREE STATUS UPDATE:");
+                                                    LoggingService.LogInfo($"\n TICK {tickNumber} - SUBTREE STATUS UPDATE:");
                                                     hasSubtreeChanges = true;
                                                 }
                                                 
                                                 var statusEmoji = subtreeAction.status switch
                                                 {
-                                                    BTNodeResult.Success => "ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦",
-                                                    BTNodeResult.Failure => "ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒâ€¦Ã¢â‚¬â„¢",
-                                                    BTNodeResult.InProgress => "ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾",
-                                                    BTNodeResult.ReadyToTick => "ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒâ€šÃ‚Â³",
-                                                    _ => "ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ"
+                                                    BTNodeResult.Success => "",
+                                                    BTNodeResult.Failure => "",
+                                                    BTNodeResult.InProgress => "",
+                                                    BTNodeResult.ReadyToTick => "",
+                                                    _ => ""
                                                 };
                                                 
                                                 LoggingService.LogInfo($"   {statusEmoji} {genericAction.InstanceName} -> {subtreeAction.InstanceName}: {subtreeAction.status}");
@@ -1331,7 +1353,7 @@ namespace BehaviorTreeMainProject
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒâ€¦Ã¢â‚¬â„¢ Error logging subtree status: {ex.Message}");
+                LoggingService.LogError($" Error logging subtree status: {ex.Message}");
             }
         }
         // Log detailed subtree NodeGraph information on every tick
@@ -1342,7 +1364,7 @@ namespace BehaviorTreeMainProject
                 var rootNode = behaviorTree.root as BTFlowNodeComposite;
                 if (rootNode == null) return;
 
-                var children = rootNode.GetChildren();
+                var children = GetAllCassetteFlowNodes(rootNode);
                 
                 foreach (var child in children)
                 {
@@ -1364,7 +1386,7 @@ namespace BehaviorTreeMainProject
                                         
                                         if (subtreeActions.Count > 0)
                                         {
-                                            LoggingService.LogInfo($"\nÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸Ãƒâ€¦Ã¢â‚¬â„¢Ãƒâ€šÃ‚Â³ SUBTREE EXECUTION DETAILS ({genericAction.InstanceName}) - TICK {tickNumber}:");
+                                            LoggingService.LogInfo($"\n SUBTREE EXECUTION DETAILS ({genericAction.InstanceName}) - TICK {tickNumber}:");
                                             
                                             // Count statuses
                                             var succeededCount = subtreeActions.Count(a => a.status == BTNodeResult.Success);
@@ -1372,18 +1394,18 @@ namespace BehaviorTreeMainProject
                                             var inProgressCount = subtreeActions.Count(a => a.status == BTNodeResult.InProgress);
                                             var readyCount = subtreeActions.Count(a => a.status == BTNodeResult.ReadyToTick);
                                             
-                                            LoggingService.LogInfo($"   ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒâ€¦Ã‚Â  Subtree Progress: {succeededCount}ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ {inProgressCount}ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾ {failedCount}ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒâ€¦Ã¢â‚¬â„¢ {readyCount}ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒâ€šÃ‚Â³");
+                                            LoggingService.LogInfo($"    Subtree Progress: {succeededCount} {inProgressCount} {failedCount} {readyCount}");
                                             
                                             // Log each subtree action with its current status
                                             foreach (var subtreeAction in subtreeActions)
                                             {
                                                 var statusEmoji = subtreeAction.status switch
                                                 {
-                                                    BTNodeResult.Success => "ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦",
-                                                    BTNodeResult.Failure => "ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒâ€¦Ã¢â‚¬â„¢",
-                                                    BTNodeResult.InProgress => "ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾",
-                                                    BTNodeResult.ReadyToTick => "ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒâ€šÃ‚Â³",
-                                                    _ => "ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ"
+                                                    BTNodeResult.Success => "",
+                                                    BTNodeResult.Failure => "",
+                                                    BTNodeResult.InProgress => "",
+                                                    BTNodeResult.ReadyToTick => "",
+                                                    _ => ""
                                                 };
                                                 
                                                 var subtreeNodeInfo = subtreeActionGraph.GetNodeInfo(subtreeAction);
@@ -1402,39 +1424,39 @@ namespace BehaviorTreeMainProject
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒâ€¦Ã¢â‚¬â„¢ Error logging detailed subtree NodeGraphs: {ex.Message}");
+                LoggingService.LogError($" Error logging detailed subtree NodeGraphs: {ex.Message}");
             }
         }
 
         // Log final action status summary
         private void LogFinalActionStatusSummary(Dictionary<string, BTNodeResult> actionStatusHistory)
         {
-            LoggingService.LogSubsection("ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒâ€¦Ã‚Â  FINAL ACTION STATUS SUMMARY");
+            LoggingService.LogSubsection(" FINAL ACTION STATUS SUMMARY");
             
             var succeededActions = actionStatusHistory.Where(kvp => kvp.Value == BTNodeResult.Success).ToList();
             var failedActions = actionStatusHistory.Where(kvp => kvp.Value == BTNodeResult.Failure).ToList();
             var inProgressActions = actionStatusHistory.Where(kvp => kvp.Value == BTNodeResult.InProgress).ToList();
             var readyActions = actionStatusHistory.Where(kvp => kvp.Value == BTNodeResult.ReadyToTick).ToList();
 
-            LoggingService.LogSuccess($"ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ SUCCEEDED ({succeededActions.Count}):");
+            LoggingService.LogSuccess($" SUCCEEDED ({succeededActions.Count}):");
             foreach (var action in succeededActions)
             {
                 LoggingService.LogSuccess($"   - {action.Key}");
             }
 
-            LoggingService.LogError($"\nÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒâ€¦Ã¢â‚¬â„¢ FAILED ({failedActions.Count}):");
+            LoggingService.LogError($"\n FAILED ({failedActions.Count}):");
             foreach (var action in failedActions)
             {
                 LoggingService.LogError($"   - {action.Key}");
             }
 
-            LoggingService.LogInfo($"\nÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾ IN PROGRESS ({inProgressActions.Count}):");
+            LoggingService.LogInfo($"\n IN PROGRESS ({inProgressActions.Count}):");
             foreach (var action in inProgressActions)
             {
                 LoggingService.LogInfo($"   - {action.Key}");
             }
 
-            LoggingService.LogInfo($"\nÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒâ€šÃ‚Â³ READY TO TICK ({readyActions.Count}):");
+            LoggingService.LogInfo($"\n READY TO TICK ({readyActions.Count}):");
             foreach (var action in readyActions)
             {
                 LoggingService.LogInfo($"   - {action.Key}");

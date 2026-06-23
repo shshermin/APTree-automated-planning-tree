@@ -85,10 +85,18 @@ lay5 - stack
 lay6 - stack
 lay7 - stack
 lay8 - stack
+sp1 - stackposition
+sp2 - stackposition
+sp3 - stackposition
+sp4 - stackposition
 sp5 - stackposition
 sp6 - stackposition
 sp7 - stackposition
 sp8 - stackposition
+sp9 - stackposition
+sp10 - stackposition
+sp11 - stackposition
+sp12 - stackposition
 
   )
   (:init  
@@ -216,7 +224,14 @@ sp8 - stackposition
 (positionfree sp6)
 (positionfree sp7)
 (positionfree sp8)
+(positionfree sp9)
+(positionfree sp10)
+(positionfree sp11)
+(positionfree sp12)
 (robotequipped r1)
+(hastool r1 gg1)
+(positionfree ep2)
+(activetool gg1)
 (positionfree fp33)
 (atplace lp5 pr1)
 (positionfree fp41)
@@ -225,9 +240,6 @@ sp8 - stackposition
 (atplace lp7 pr3)
 (positionfree fp57)
 (atplace lp8 pr4)
-(hastool r1 gg1)
-(positionfree ep2)
-(activetool gg1)
 (glued lp5)
 (glued lp6)
   )

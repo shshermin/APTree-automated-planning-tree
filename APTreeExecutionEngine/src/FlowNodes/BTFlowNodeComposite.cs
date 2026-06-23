@@ -27,6 +27,11 @@ public class BTFlowNodeComposite : FlowNode
     public CompositeTerminationPolicy TerminationPolicy { get; set; } = CompositeTerminationPolicy.NeverStop;
     public int MaxAttempts { get; set; } = 3;           // For StopAfterMaxAttempts policy
     private int currentAttempt = 0;                     // Track current attempt number
+
+    // When true, tick only the current unfinished child each frame and advance to the next
+    // when it finishes. When false (default), all children are ticked every frame in tickOrder.
+    public bool RunChildrenSequentially { get; set; } = false;
+    private int _currentChildIndex = 0;
     
     public BTFlowNodeComposite(
         FastName nodeName,
@@ -142,40 +147,63 @@ public class BTFlowNodeComposite : FlowNode
             return false; // This will trigger OnTickReturn with failed status
         }
         
-        // Tick children SEQUENTIALLY: tick child i, wait for its result, then tick child i+1.
-        // Each child's Tick() fully completes (including all decorator evaluation, node logic,
-        // and post-processing) before the next child begins. This ensures that blackboard
-        // state changes made by one child's decorators (e.g. LowestCostExecution writing
-        // ChosenExecutingBranch) are fully visible to the next child's decorators
-        // (e.g. ExclusiveBranchGate reading ChosenExecutingBranch).
-        //
-        // Fair progress: if a branch is deprioritized (ahead of others), tick it LAST
-        // so the lagging branches get to run first.
-        int deprioritizedIndex = LinkedBlackboard.DeprioritizedBranchIndex;
-        var tickOrder = new List<int>();
-        for (int i = 0; i < allChildren.Count; i++)
+        if (RunChildrenSequentially)
         {
-            if (i != deprioritizedIndex)
-                tickOrder.Add(i);
-        }
-        if (deprioritizedIndex >= 0 && deprioritizedIndex < allChildren.Count)
-        {
-            tickOrder.Add(deprioritizedIndex);
-            LoggingService.LogInfo($"⚖️ CompositeFlow: Branch {deprioritizedIndex + 1} deprioritized — ticking it last");
-        }
+            // Sequential mode: only tick the current unfinished child this frame.
+            // Advance past any already-finished children first.
+            while (_currentChildIndex < allChildren.Count &&
+                   (allChildren[_currentChildIndex].status == BTNodeResult.Success ||
+                    allChildren[_currentChildIndex].status == BTNodeResult.Failure))
+            {
+                _currentChildIndex++;
+            }
 
-        foreach (int i in tickOrder)
+            if (_currentChildIndex < allChildren.Count)
+            {
+                var child = allChildren[_currentChildIndex];
+                var previousStatus = child.status;
+                LoggingService.LogInfo($"🎯 CompositeFlow[seq]: [{_currentChildIndex + 1}/{allChildren.Count}] Ticking child: {child.DebugDisplayName} (current status: {previousStatus})");
+                child.Tick(inDeltaTime);
+                LoggingService.LogInfo($"📊 CompositeFlow[seq]: [{_currentChildIndex + 1}/{allChildren.Count}] Child {child.DebugDisplayName}: {previousStatus} → {child.status}");
+            }
+        }
+        else
         {
-            var child = allChildren[i];
-            
-            var previousStatus = child.status;
-            
-            LoggingService.LogInfo($"🎯 CompositeFlow: [{i + 1}/{allChildren.Count}] Ticking child: {child.DebugDisplayName} (current status: {previousStatus})");
-            
-            // Tick the child - this call blocks until the child's full tick cycle completes
-            child.Tick(inDeltaTime);
-            
-            LoggingService.LogInfo($"📊 CompositeFlow: [{i + 1}/{allChildren.Count}] Child {child.DebugDisplayName}: {previousStatus} → {child.status}");
+            // Tick children SEQUENTIALLY: tick child i, wait for its result, then tick child i+1.
+            // Each child's Tick() fully completes (including all decorator evaluation, node logic,
+            // and post-processing) before the next child begins. This ensures that blackboard
+            // state changes made by one child's decorators (e.g. LowestCostExecution writing
+            // ChosenExecutingBranch) are fully visible to the next child's decorators
+            // (e.g. ExclusiveBranchGate reading ChosenExecutingBranch).
+            //
+            // Fair progress: if a branch is deprioritized (ahead of others), tick it LAST
+            // so the lagging branches get to run first.
+            int deprioritizedIndex = LinkedBlackboard.DeprioritizedBranchIndex;
+            var tickOrder = new List<int>();
+            for (int i = 0; i < allChildren.Count; i++)
+            {
+                if (i != deprioritizedIndex)
+                    tickOrder.Add(i);
+            }
+            if (deprioritizedIndex >= 0 && deprioritizedIndex < allChildren.Count)
+            {
+                tickOrder.Add(deprioritizedIndex);
+                LoggingService.LogInfo($"⚖️ CompositeFlow: Branch {deprioritizedIndex + 1} deprioritized — ticking it last");
+            }
+
+            foreach (int i in tickOrder)
+            {
+                var child = allChildren[i];
+
+                var previousStatus = child.status;
+
+                LoggingService.LogInfo($"🎯 CompositeFlow: [{i + 1}/{allChildren.Count}] Ticking child: {child.DebugDisplayName} (current status: {previousStatus})");
+
+                // Tick the child - this call blocks until the child's full tick cycle completes
+                child.Tick(inDeltaTime);
+
+                LoggingService.LogInfo($"📊 CompositeFlow: [{i + 1}/{allChildren.Count}] Child {child.DebugDisplayName}: {previousStatus} → {child.status}");
+            }
         }
         
         // Check if any child is still running
@@ -330,7 +358,10 @@ public class BTFlowNodeComposite : FlowNode
         
         // Reset the attempt counter for termination policy
         currentAttempt = 0;
-        
+
+        // Reset sequential-mode cursor
+        _currentChildIndex = 0;
+
         // Reset all child nodes
         var allChildren = GetChildren();
         foreach (var childNode in allChildren)

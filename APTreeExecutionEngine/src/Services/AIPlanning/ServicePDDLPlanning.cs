@@ -32,6 +32,13 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
         
         public ParallelExecutionMode ExecutionMode { get; set; } = ParallelExecutionMode.Sequential;
 
+        // Path to the ParameterInstances objects file used when generating dynamic LL problems
+        // and when computing the in-scope object set for ApplyObjectScopeFilter. Set by
+        // ServiceBatchEntry on batch entry so each batch uses its own object range
+        // (C1-C4 / C5-C8 / C9-C12). Defaults to PDDL3 to preserve prior single-batch behavior.
+        public static string CurrentObjectsFile { get; set; } =
+            "python_service/Plannerinputs/static/ParameterInstances_PDDL3.txt";
+
         // Track generated problem files for debugging (static since generation happens before instance creation)
         private static readonly List<string> s_generatedProblemFiles = new List<string>();
 
@@ -460,16 +467,16 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
         {
             try
             {
-                string filePath = "python_service/Plannerinputs/static/ParameterInstances_PDDL3.txt";
+                string filePath = CurrentObjectsFile;
 
                 if (!File.Exists(filePath))
                 {
-                    LoggingService.LogError($"❌ ServicePDDLPlanning: ParameterInstances_PDDL.txt file not found at {filePath}");
+                    LoggingService.LogError($"❌ ServicePDDLPlanning: objects file not found at {filePath}");
                     return string.Empty;
                 }
 
                 string content = File.ReadAllText(filePath);
-                LoggingService.LogInfo($"✅ ServicePDDLPlanning: Successfully read {content.Length} characters from ParameterInstances_PDDL.txt");
+                LoggingService.LogInfo($"✅ ServicePDDLPlanning: Successfully read {content.Length} characters from {filePath}");
                 return content;
             }
             catch (Exception ex)
@@ -486,6 +493,13 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
         /// when the blackboard still holds leftover predicates for other
         /// cassettes.
         /// </summary>
+        // Predicate types that describe robot/global state and must survive ApplyObjectScopeFilter
+        // regardless of which batch's object set is active. Without this, a stale
+        // atAgent(r1, fpX) from a previous batch gets dropped and the new problem :init
+        // is missing the robot's location entirely.
+        private static readonly HashSet<string> s_scopeFilterWhitelist =
+            new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "atAgent" };
+
         private static List<Predicate> ApplyObjectScopeFilter(List<Predicate> predicates)
         {
             var declared = GetDeclaredObjectNames();
@@ -493,7 +507,8 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
                 return predicates;
 
             var filtered = predicates
-                .Where(p => p.GetParameterValues().All(v => declared.Contains(v)))
+                .Where(p => s_scopeFilterWhitelist.Contains(p.GetPredicateType() ?? string.Empty)
+                            || p.GetParameterValues().All(v => declared.Contains(v)))
                 .ToList();
 
             int dropped = predicates.Count - filtered.Count;
@@ -509,7 +524,7 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
         private static HashSet<string> GetDeclaredObjectNames()
         {
             var set = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            string filePath = "python_service/Plannerinputs/static/ParameterInstances_PDDL3.txt";
+            string filePath = CurrentObjectsFile;
             if (!File.Exists(filePath))
                 return set;
 
