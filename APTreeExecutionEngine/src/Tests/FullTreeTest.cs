@@ -434,10 +434,10 @@ namespace BehaviorTreeMainProject
 
                 // Create PDDL planners for all four cassettes (after behavior tree is created)
                 // Different planners and problem files for each cassette
-                var pddlRequest1 = new PDDLPlanningRequest("./Plannerinputs/static/DomainHL.pddl", "./Plannerinputs/static/problemC1.pddl", "/home/ubuntu/jpddlplus-master/jpddlplus.jar", "ENHSP", 120) { EnhspConfig = "sat-hadd" };
-                var pddlRequest2 = new PDDLPlanningRequest("./Plannerinputs/static/DomainHL.pddl", "./Plannerinputs/static/problemC2.pddl", "/home/ubuntu/jpddlplus-master/jpddlplus.jar", "ENHSP", 120) { EnhspConfig = "sat-hadd" };
-                var pddlRequest3 = new PDDLPlanningRequest("./Plannerinputs/static/DomainHL.pddl", "./Plannerinputs/static/problemC3.pddl", "/home/ubuntu/jpddlplus-master/jpddlplus.jar", "ENHSP", 120) { EnhspConfig = "sat-hadd" };
-                var pddlRequest4 = new PDDLPlanningRequest("./Plannerinputs/static/DomainHL.pddl", "./Plannerinputs/static/problemC4.pddl", "/home/ubuntu/jpddlplus-master/jpddlplus.jar", "ENHSP", 120) { EnhspConfig = "sat-hadd" };
+                var pddlRequest1 = new PDDLPlanningRequest("./Plannerinputs/static/DomainHL.pddl", "./Plannerinputs/static/problemC5.pddl", "/home/ubuntu/jpddlplus-master/jpddlplus.jar", "ENHSP", 120) { EnhspConfig = "sat-hadd" };
+                var pddlRequest2 = new PDDLPlanningRequest("./Plannerinputs/static/DomainHL.pddl", "./Plannerinputs/static/problemC6.pddl", "/home/ubuntu/jpddlplus-master/jpddlplus.jar", "ENHSP", 120) { EnhspConfig = "sat-hadd" };
+                var pddlRequest3 = new PDDLPlanningRequest("./Plannerinputs/static/DomainHL.pddl", "./Plannerinputs/static/problemC7.pddl", "/home/ubuntu/jpddlplus-master/jpddlplus.jar", "ENHSP", 120) { EnhspConfig = "sat-hadd" };
+                var pddlRequest4 = new PDDLPlanningRequest("./Plannerinputs/static/DomainHL.pddl", "./Plannerinputs/static/problemC8.pddl", "/home/ubuntu/jpddlplus-master/jpddlplus.jar", "ENHSP", 120) { EnhspConfig = "sat-hadd" };
 
                 var pddlPlanner1 = new ServicePDDLPlanning(behaviorTree, pddlRequest1);
                 var pddlPlanner2 = new ServicePDDLPlanning(behaviorTree, pddlRequest2);

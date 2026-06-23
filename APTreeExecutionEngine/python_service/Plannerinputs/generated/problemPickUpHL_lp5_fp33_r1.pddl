@@ -1,0 +1,238 @@
+﻿(define (problem pickuphl)
+  (:domain fit)
+  (:objects 
+    fp33 - firstposition
+fp34 - firstposition
+fp35 - firstposition
+fp36 - firstposition
+fp37 - firstposition
+fp38 - firstposition
+fp39 - firstposition
+fp40 - firstposition
+fp41 - firstposition
+fp42 - firstposition
+fp43 - firstposition
+fp44 - firstposition
+fp45 - firstposition
+fp46 - firstposition
+fp47 - firstposition
+fp48 - firstposition
+fp49 - firstposition
+fp50 - firstposition
+fp51 - firstposition
+fp52 - firstposition
+fp53 - firstposition
+fp54 - firstposition
+fp55 - firstposition
+fp56 - firstposition
+fp57 - firstposition
+fp58 - firstposition
+fp59 - firstposition
+fp60 - firstposition
+fp61 - firstposition
+fp62 - firstposition
+fp63 - firstposition
+fp64 - firstposition
+pr1 - positiononrail
+pr2 - positiononrail
+pr3 - positiononrail
+pr4 - positiononrail
+ep1 - equipposition
+ep2 - equipposition
+ep3 - equipposition
+ep4 - equipposition
+r1 - robot
+b25 - beam
+b26 - beam
+b27 - beam
+b28 - beam
+b29 - beam
+b30 - beam
+b31 - beam
+b32 - beam
+b33 - beam
+b34 - beam
+b35 - beam
+b36 - beam
+b37 - beam
+b38 - beam
+b39 - beam
+b40 - beam
+b41 - beam
+b42 - beam
+b43 - beam
+b44 - beam
+b45 - beam
+b46 - beam
+b47 - beam
+b48 - beam
+lp5 - plate
+lp6 - plate
+lp7 - plate
+lp8 - plate
+tp5 - plate
+tp6 - plate
+tp7 - plate
+tp8 - plate
+vg1 - vacgripper
+ng1 - nailgripper
+gg1 - gluegun
+m5 - cassette
+m6 - cassette
+m7 - cassette
+m8 - cassette
+lay5 - stack
+lay6 - stack
+lay7 - stack
+lay8 - stack
+sp5 - stackposition
+sp6 - stackposition
+sp7 - stackposition
+sp8 - stackposition
+
+  )
+  (:init  
+    (attool vg1 ep1)
+(attool gg1 ep2)
+(attool ng1 ep3)
+(atagent r1 pr2)
+(vgempty r1)
+(positionfree pr1)
+(positionfree pr2)
+(positionfree pr3)
+(positionfree pr4)
+(atplace lp5 fp33)
+(atplace tp5 fp37)
+(atplace b25 fp34)
+(atplace b26 fp35)
+(atplace b27 fp36)
+(atplace b28 fp38)
+(atplace b29 fp39)
+(atplace b30 fp40)
+(atplace lp6 fp41)
+(atplace tp6 fp45)
+(atplace b31 fp42)
+(atplace b32 fp43)
+(atplace b33 fp44)
+(atplace b34 fp46)
+(atplace b35 fp47)
+(atplace b36 fp48)
+(atplace lp7 fp49)
+(atplace tp7 fp53)
+(atplace b37 fp50)
+(atplace b38 fp51)
+(atplace b39 fp52)
+(atplace b40 fp54)
+(atplace b41 fp55)
+(atplace b42 fp56)
+(atplace lp8 fp57)
+(atplace tp8 fp61)
+(atplace b43 fp58)
+(atplace b44 fp59)
+(atplace b45 fp60)
+(atplace b46 fp62)
+(atplace b47 fp63)
+(atplace b48 fp64)
+(clear lp5)
+(clear tp5)
+(clear b25)
+(clear b26)
+(clear b27)
+(clear b28)
+(clear b29)
+(clear b30)
+(clear lp6)
+(clear tp6)
+(clear b31)
+(clear b32)
+(clear b33)
+(clear b34)
+(clear b35)
+(clear b36)
+(clear lp7)
+(clear tp7)
+(clear b37)
+(clear b38)
+(clear b39)
+(clear b40)
+(clear b41)
+(clear b42)
+(clear lp8)
+(clear tp8)
+(clear b43)
+(clear b44)
+(clear b45)
+(clear b46)
+(clear b47)
+(clear b48)
+(belongstolayer b25 lay5)
+(belongstolayer b26 lay5)
+(belongstolayer b27 lay5)
+(belongstolayer b28 lay5)
+(belongstolayer b29 lay5)
+(belongstolayer b30 lay5)
+(belongstolayer b31 lay6)
+(belongstolayer b32 lay6)
+(belongstolayer b33 lay6)
+(belongstolayer b34 lay6)
+(belongstolayer b35 lay6)
+(belongstolayer b36 lay6)
+(belongstolayer b37 lay7)
+(belongstolayer b38 lay7)
+(belongstolayer b39 lay7)
+(belongstolayer b40 lay7)
+(belongstolayer b41 lay7)
+(belongstolayer b42 lay7)
+(belongstolayer b43 lay8)
+(belongstolayer b44 lay8)
+(belongstolayer b45 lay8)
+(belongstolayer b46 lay8)
+(belongstolayer b47 lay8)
+(belongstolayer b48 lay8)
+(belongstomodule b25 m5)
+(belongstomodule b26 m5)
+(belongstomodule b27 m5)
+(belongstomodule b28 m5)
+(belongstomodule b29 m5)
+(belongstomodule b30 m5)
+(belongstomodule lp5 m5)
+(belongstomodule tp5 m5)
+(belongstomodule b31 m6)
+(belongstomodule b32 m6)
+(belongstomodule b33 m6)
+(belongstomodule b34 m6)
+(belongstomodule b35 m6)
+(belongstomodule b36 m6)
+(belongstomodule lp6 m6)
+(belongstomodule tp6 m6)
+(belongstomodule b37 m7)
+(belongstomodule b38 m7)
+(belongstomodule b39 m7)
+(belongstomodule b40 m7)
+(belongstomodule b41 m7)
+(belongstomodule b42 m7)
+(belongstomodule lp7 m7)
+(belongstomodule tp7 m7)
+(belongstomodule b43 m8)
+(belongstomodule b44 m8)
+(belongstomodule b45 m8)
+(belongstomodule b46 m8)
+(belongstomodule b47 m8)
+(belongstomodule b48 m8)
+(belongstomodule lp8 m8)
+(belongstomodule tp8 m8)
+(positionfree sp5)
+(positionfree sp6)
+(positionfree sp7)
+(positionfree sp8)
+  )
+  (:goal 
+    (and
+      (holding r1 lp5)
+(not (atplace lp5 fp33))
+(not (clear lp5))
+(positionfree fp33)
+(not (vgempty r1))
+    ) 
+  )
+)

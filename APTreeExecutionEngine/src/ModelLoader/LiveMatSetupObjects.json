@@ -569,7 +569,494 @@
         "level": "4",
         "belongsToModule": "m4"
       }
+    },
+    {
+      "extends": "Location",
+      "name": "fp33",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Location",
+      "name": "fp34",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Location",
+      "name": "fp35",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Location",
+      "name": "fp36",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Location",
+      "name": "fp37",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Location",
+      "name": "fp38",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Location",
+      "name": "fp39",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Location",
+      "name": "fp40",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Location",
+      "name": "fp41",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Location",
+      "name": "fp42",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Location",
+      "name": "fp43",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Location",
+      "name": "fp44",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Location",
+      "name": "fp45",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Location",
+      "name": "fp46",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Location",
+      "name": "fp47",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Location",
+      "name": "fp48",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Location",
+      "name": "fp49",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Location",
+      "name": "fp50",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Location",
+      "name": "fp51",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Location",
+      "name": "fp52",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Location",
+      "name": "fp53",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Location",
+      "name": "fp54",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Location",
+      "name": "fp55",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Location",
+      "name": "fp56",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Location",
+      "name": "fp57",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Location",
+      "name": "fp58",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Location",
+      "name": "fp59",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Location",
+      "name": "fp60",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Location",
+      "name": "fp61",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Location",
+      "name": "fp62",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Location",
+      "name": "fp63",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Location",
+      "name": "fp64",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Module",
+      "name": "m5",
+      "type": "Cassette"
+    },
+    {
+      "extends": "Module",
+      "name": "m6",
+      "type": "Cassette"
+    },
+    {
+      "extends": "Module",
+      "name": "m7",
+      "type": "Cassette"
+    },
+    {
+      "extends": "Module",
+      "name": "m8",
+      "type": "Cassette"
+    },
+    {
+      "extends": "Location",
+      "name": "sp6",
+      "type": "StackPosition"
+    },
+    {
+      "extends": "Location",
+      "name": "sp7",
+      "type": "StackPosition"
+    },
+    {
+      "extends": "Location",
+      "name": "sp8",
+      "type": "StackPosition"
+    },
+    {
+      "extends": "Element",
+      "name": "lp5",
+      "type": "Plate",
+      "properties": {
+        "loc": "fp33"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "lp6",
+      "type": "Plate",
+      "properties": {
+        "loc": "fp41"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "lp7",
+      "type": "Plate",
+      "properties": {
+        "loc": "fp49"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "lp8",
+      "type": "Plate",
+      "properties": {
+        "loc": "fp57"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "tp5",
+      "type": "Plate",
+      "properties": {
+        "loc": "fp37"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "tp6",
+      "type": "Plate",
+      "properties": {
+        "loc": "fp45"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "tp7",
+      "type": "Plate",
+      "properties": {
+        "loc": "fp53"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "tp8",
+      "type": "Plate",
+      "properties": {
+        "loc": "fp61"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "b25",
+      "type": "Beam",
+      "properties": {
+        "loc": "fp34"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "b26",
+      "type": "Beam",
+      "properties": {
+        "loc": "fp35"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "b27",
+      "type": "Beam",
+      "properties": {
+        "loc": "fp36"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "b28",
+      "type": "Beam",
+      "properties": {
+        "loc": "fp38"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "b29",
+      "type": "Beam",
+      "properties": {
+        "loc": "fp39"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "b30",
+      "type": "Beam",
+      "properties": {
+        "loc": "fp40"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "b31",
+      "type": "Beam",
+      "properties": {
+        "loc": "fp42"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "b32",
+      "type": "Beam",
+      "properties": {
+        "loc": "fp43"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "b33",
+      "type": "Beam",
+      "properties": {
+        "loc": "fp44"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "b34",
+      "type": "Beam",
+      "properties": {
+        "loc": "fp46"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "b35",
+      "type": "Beam",
+      "properties": {
+        "loc": "fp47"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "b36",
+      "type": "Beam",
+      "properties": {
+        "loc": "fp48"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "b37",
+      "type": "Beam",
+      "properties": {
+        "loc": "fp50"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "b38",
+      "type": "Beam",
+      "properties": {
+        "loc": "fp51"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "b39",
+      "type": "Beam",
+      "properties": {
+        "loc": "fp52"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "b40",
+      "type": "Beam",
+      "properties": {
+        "loc": "fp54"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "b41",
+      "type": "Beam",
+      "properties": {
+        "loc": "fp55"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "b42",
+      "type": "Beam",
+      "properties": {
+        "loc": "fp56"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "b43",
+      "type": "Beam",
+      "properties": {
+        "loc": "fp58"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "b44",
+      "type": "Beam",
+      "properties": {
+        "loc": "fp59"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "b45",
+      "type": "Beam",
+      "properties": {
+        "loc": "fp60"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "b46",
+      "type": "Beam",
+      "properties": {
+        "loc": "fp62"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "b47",
+      "type": "Beam",
+      "properties": {
+        "loc": "fp63"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "b48",
+      "type": "Beam",
+      "properties": {
+        "loc": "fp64"
+      }
+    },
+    {
+      "extends": "Layer",
+      "name": "lay5",
+      "type": "Stack",
+      "properties": {
+        "level": "5",
+        "belongsToModule": "m5"
+      }
+    },
+    {
+      "extends": "Layer",
+      "name": "lay6",
+      "type": "Stack",
+      "properties": {
+        "level": "6",
+        "belongsToModule": "m6"
+      }
+    },
+    {
+      "extends": "Layer",
+      "name": "lay7",
+      "type": "Stack",
+      "properties": {
+        "level": "7",
+        "belongsToModule": "m7"
+      }
+    },
+    {
+      "extends": "Layer",
+      "name": "lay8",
+      "type": "Stack",
+      "properties": {
+        "level": "8",
+        "belongsToModule": "m8"
+      }
     }
   ],
-  "count": 89
+  "count": 164
 }
