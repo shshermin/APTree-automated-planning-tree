@@ -2,9 +2,9 @@ grammar PlanningServiceTagDefinition extends PlanningService ,de.monticore.taggi
   /* DefaultIdent (using the Name) works too */
    PWorldIdentifier implements ModelElementIdentifier  = "[" identifiesElement:PWorld "]" ;
   /* DefaultIdent (using the Name) works too */
-   PDDLPlannerServiceIdentifier implements ModelElementIdentifier  = "[" identifiesElement:PDDLPlannerService "]" ;
+   ServicePDDLPlanningIdentifier implements ModelElementIdentifier  = "[" identifiesElement:ServicePDDLPlanning "]" ;
   /* DefaultIdent (using the Name) works too */
-   ENHSPIdentifier implements ModelElementIdentifier  = "[" identifiesElement:ENHSP "]" ;
+   PlannerENHSPIdentifier implements ModelElementIdentifier  = "[" identifiesElement:PlannerENHSP "]" ;
   /* DefaultIdent (using the Name) works too */
    DomainIdentifier implements ModelElementIdentifier  = "[" identifiesElement:Domain "]" ;
   /* DefaultIdent (using the Name) works too */
@@ -14,13 +14,13 @@ grammar PlanningServiceTagDefinition extends PlanningService ,de.monticore.taggi
 
   } 
   ;
-  astrule PDDLPlannerServiceIdentifier = method public String getIdentifies(){ 
-    return "PDDLPlannerService";
+  astrule ServicePDDLPlanningIdentifier = method public String getIdentifies(){ 
+    return "ServicePDDLPlanning";
 
   } 
   ;
-  astrule ENHSPIdentifier = method public String getIdentifies(){ 
-    return "ENHSP";
+  astrule PlannerENHSPIdentifier = method public String getIdentifies(){ 
+    return "PlannerENHSP";
 
   } 
   ;

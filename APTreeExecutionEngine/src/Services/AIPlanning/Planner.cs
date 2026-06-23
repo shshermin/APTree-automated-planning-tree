@@ -67,11 +67,11 @@ public abstract class Planner
     public virtual int DefaultTimeoutSeconds => 30;
 
     /// <summary>Maximum number of actions in a plan.</summary>
-    public virtual int DefaultMaxPlanLength => 20;
+    public virtual int DefaultMaxPlanLength => 35;
 
     /// <summary>
     /// Optional ENHSP -planner config name (e.g. "opt-hmax", "opt-blind").
-    /// Null means use the Flask default ("pt-blind").
+    /// Null means use the Flask default ("sat-hadd").
     /// Only relevant when PlannerName == "ENHSP".
     /// </summary>
     public virtual string DefaultEnhspConfig => null;

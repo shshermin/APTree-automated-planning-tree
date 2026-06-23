@@ -26,6 +26,30 @@ grammar CRFTypesConTagDefinition extends CRFTypesCon ,de.monticore.tagging.Tags 
   /* DefaultIdent (using the Name) works too */
    StackPositionIdentifier implements ModelElementIdentifier  = "[" identifiesElement:StackPosition "]" ;
   /* DefaultIdent (using the Name) works too */
+   StickIdentifier implements ModelElementIdentifier  = "[" identifiesElement:Stick "]" ;
+  /* DefaultIdent (using the Name) works too */
+   CubeIdentifier implements ModelElementIdentifier  = "[" identifiesElement:Cube "]" ;
+  /* DefaultIdent (using the Name) works too */
+   InitialLocationIdentifier implements ModelElementIdentifier  = "[" identifiesElement:InitialLocation "]" ;
+  /* DefaultIdent (using the Name) works too */
+   FinalLocationIdentifier implements ModelElementIdentifier  = "[" identifiesElement:FinalLocation "]" ;
+  /* DefaultIdent (using the Name) works too */
+   EquipLocationIdentifier implements ModelElementIdentifier  = "[" identifiesElement:EquipLocation "]" ;
+  /* DefaultIdent (using the Name) works too */
+   RobotPositionIdentifier implements ModelElementIdentifier  = "[" identifiesElement:RobotPosition "]" ;
+  /* DefaultIdent (using the Name) works too */
+   DemoIdentifier implements ModelElementIdentifier  = "[" identifiesElement:Demo "]" ;
+  /* DefaultIdent (using the Name) works too */
+   GripperIdentifier implements ModelElementIdentifier  = "[" identifiesElement:Gripper "]" ;
+  /* DefaultIdent (using the Name) works too */
+   StaplerGunIdentifier implements ModelElementIdentifier  = "[" identifiesElement:StaplerGun "]" ;
+  /* DefaultIdent (using the Name) works too */
+   TableIdentifier implements ModelElementIdentifier  = "[" identifiesElement:Table "]" ;
+  /* DefaultIdent (using the Name) works too */
+   NailLocationIdentifier implements ModelElementIdentifier  = "[" identifiesElement:NailLocation "]" ;
+  /* DefaultIdent (using the Name) works too */
+   RobotLocationIdentifier implements ModelElementIdentifier  = "[" identifiesElement:RobotLocation "]" ;
+  /* DefaultIdent (using the Name) works too */
    HoldingIdentifier implements ModelElementIdentifier  = "[" identifiesElement:Holding "]" ;
   /* DefaultIdent (using the Name) works too */
    AtPlaceIdentifier implements ModelElementIdentifier  = "[" identifiesElement:AtPlace "]" ;
@@ -56,9 +80,87 @@ grammar CRFTypesConTagDefinition extends CRFTypesCon ,de.monticore.tagging.Tags 
   /* DefaultIdent (using the Name) works too */
    VgEmptyIdentifier implements ModelElementIdentifier  = "[" identifiesElement:VgEmpty "]" ;
   /* DefaultIdent (using the Name) works too */
+   AtToolIdentifier implements ModelElementIdentifier  = "[" identifiesElement:AtTool "]" ;
+  /* DefaultIdent (using the Name) works too */
+   RobotEquippedIdentifier implements ModelElementIdentifier  = "[" identifiesElement:RobotEquipped "]" ;
+  /* DefaultIdent (using the Name) works too */
+   ActiveToolIdentifier implements ModelElementIdentifier  = "[" identifiesElement:ActiveTool "]" ;
+  /* DefaultIdent (using the Name) works too */
+   GripperEmptyIdentifier implements ModelElementIdentifier  = "[" identifiesElement:GripperEmpty "]" ;
+  /* DefaultIdent (using the Name) works too */
+   FixedIdentifier implements ModelElementIdentifier  = "[" identifiesElement:Fixed "]" ;
+  /* DefaultIdent (using the Name) works too */
+   AtFinalPositionIdentifier implements ModelElementIdentifier  = "[" identifiesElement:AtFinalPosition "]" ;
+  /* DefaultIdent (using the Name) works too */
+   ObjectFinalPositionIdentifier implements ModelElementIdentifier  = "[" identifiesElement:ObjectFinalPosition "]" ;
+  /* DefaultIdent (using the Name) works too */
+   AccessibleIdentifier implements ModelElementIdentifier  = "[" identifiesElement:Accessible "]" ;
+  /* DefaultIdent (using the Name) works too */
    PickUpHLIdentifier implements ModelElementIdentifier  = "[" identifiesElement:PickUpHL "]" ;
   /* DefaultIdent (using the Name) works too */
    PlaceHLIdentifier implements ModelElementIdentifier  = "[" identifiesElement:PlaceHL "]" ;
+  /* DefaultIdent (using the Name) works too */
+   StackHLIdentifier implements ModelElementIdentifier  = "[" identifiesElement:StackHL "]" ;
+  /* DefaultIdent (using the Name) works too */
+   StackOnMultipleHLIdentifier implements ModelElementIdentifier  = "[" identifiesElement:StackOnMultipleHL "]" ;
+  /* DefaultIdent (using the Name) works too */
+   GluingPlateHLIdentifier implements ModelElementIdentifier  = "[" identifiesElement:GluingPlateHL "]" ;
+  /* DefaultIdent (using the Name) works too */
+   GluingBeamHLIdentifier implements ModelElementIdentifier  = "[" identifiesElement:GluingBeamHL "]" ;
+  /* DefaultIdent (using the Name) works too */
+   NailingHLIdentifier implements ModelElementIdentifier  = "[" identifiesElement:NailingHL "]" ;
+  /* DefaultIdent (using the Name) works too */
+   TravelMLIdentifier implements ModelElementIdentifier  = "[" identifiesElement:TravelML "]" ;
+  /* DefaultIdent (using the Name) works too */
+   EquipeMLIdentifier implements ModelElementIdentifier  = "[" identifiesElement:EquipeML "]" ;
+  /* DefaultIdent (using the Name) works too */
+   DeequipMLIdentifier implements ModelElementIdentifier  = "[" identifiesElement:DeequipML "]" ;
+  /* DefaultIdent (using the Name) works too */
+   InitializeMLIdentifier implements ModelElementIdentifier  = "[" identifiesElement:InitializeML "]" ;
+  /* DefaultIdent (using the Name) works too */
+   CloseToolMLIdentifier implements ModelElementIdentifier  = "[" identifiesElement:CloseToolML "]" ;
+  /* DefaultIdent (using the Name) works too */
+   PickUpMLIdentifier implements ModelElementIdentifier  = "[" identifiesElement:PickUpML "]" ;
+  /* DefaultIdent (using the Name) works too */
+   PutDownMLIdentifier implements ModelElementIdentifier  = "[" identifiesElement:PutDownML "]" ;
+  /* DefaultIdent (using the Name) works too */
+   PlaceMLIdentifier implements ModelElementIdentifier  = "[" identifiesElement:PlaceML "]" ;
+  /* DefaultIdent (using the Name) works too */
+   GluingMLIdentifier implements ModelElementIdentifier  = "[" identifiesElement:GluingML "]" ;
+  /* DefaultIdent (using the Name) works too */
+   NailingMLIdentifier implements ModelElementIdentifier  = "[" identifiesElement:NailingML "]" ;
+  /* DefaultIdent (using the Name) works too */
+   StackMLIdentifier implements ModelElementIdentifier  = "[" identifiesElement:StackML "]" ;
+  /* DefaultIdent (using the Name) works too */
+   StackOnMultipleMLIdentifier implements ModelElementIdentifier  = "[" identifiesElement:StackOnMultipleML "]" ;
+  /* DefaultIdent (using the Name) works too */
+   StackOnTwoMLIdentifier implements ModelElementIdentifier  = "[" identifiesElement:StackOnTwoML "]" ;
+  /* DefaultIdent (using the Name) works too */
+   StackOnTwoHLIdentifier implements ModelElementIdentifier  = "[" identifiesElement:StackOnTwoHL "]" ;
+  /* DefaultIdent (using the Name) works too */
+   ChangeEndeffectorHLIdentifier implements ModelElementIdentifier  = "[" identifiesElement:ChangeEndeffectorHL "]" ;
+  /* DefaultIdent (using the Name) works too */
+   MoveToLLIdentifier implements ModelElementIdentifier  = "[" identifiesElement:MoveToLL "]" ;
+  /* DefaultIdent (using the Name) works too */
+   CloseGripperLLIdentifier implements ModelElementIdentifier  = "[" identifiesElement:CloseGripperLL "]" ;
+  /* DefaultIdent (using the Name) works too */
+   OpenGripperLLIdentifier implements ModelElementIdentifier  = "[" identifiesElement:OpenGripperLL "]" ;
+  /* DefaultIdent (using the Name) works too */
+   LiftLLIdentifier implements ModelElementIdentifier  = "[" identifiesElement:LiftLL "]" ;
+  /* DefaultIdent (using the Name) works too */
+   EquipToolLLIdentifier implements ModelElementIdentifier  = "[" identifiesElement:EquipToolLL "]" ;
+  /* DefaultIdent (using the Name) works too */
+   DeequipToolLLIdentifier implements ModelElementIdentifier  = "[" identifiesElement:DeequipToolLL "]" ;
+  /* DefaultIdent (using the Name) works too */
+   NailingLLIdentifier implements ModelElementIdentifier  = "[" identifiesElement:NailingLL "]" ;
+  /* DefaultIdent (using the Name) works too */
+   LowerLLIdentifier implements ModelElementIdentifier  = "[" identifiesElement:LowerLL "]" ;
+  /* DefaultIdent (using the Name) works too */
+   RetractLLIdentifier implements ModelElementIdentifier  = "[" identifiesElement:RetractLL "]" ;
+  /* DefaultIdent (using the Name) works too */
+   DeactivateToolLLIdentifier implements ModelElementIdentifier  = "[" identifiesElement:DeactivateToolLL "]" ;
+  /* DefaultIdent (using the Name) works too */
+   InitializeLLIdentifier implements ModelElementIdentifier  = "[" identifiesElement:InitializeLL "]" ;
   astrule WorldIdentifier = method public String getIdentifies(){ 
     return "World";
 
@@ -121,6 +223,66 @@ grammar CRFTypesConTagDefinition extends CRFTypesCon ,de.monticore.tagging.Tags 
   ;
   astrule StackPositionIdentifier = method public String getIdentifies(){ 
     return "StackPosition";
+
+  } 
+  ;
+  astrule StickIdentifier = method public String getIdentifies(){ 
+    return "Stick";
+
+  } 
+  ;
+  astrule CubeIdentifier = method public String getIdentifies(){ 
+    return "Cube";
+
+  } 
+  ;
+  astrule InitialLocationIdentifier = method public String getIdentifies(){ 
+    return "InitialLocation";
+
+  } 
+  ;
+  astrule FinalLocationIdentifier = method public String getIdentifies(){ 
+    return "FinalLocation";
+
+  } 
+  ;
+  astrule EquipLocationIdentifier = method public String getIdentifies(){ 
+    return "EquipLocation";
+
+  } 
+  ;
+  astrule RobotPositionIdentifier = method public String getIdentifies(){ 
+    return "RobotPosition";
+
+  } 
+  ;
+  astrule DemoIdentifier = method public String getIdentifies(){ 
+    return "Demo";
+
+  } 
+  ;
+  astrule GripperIdentifier = method public String getIdentifies(){ 
+    return "Gripper";
+
+  } 
+  ;
+  astrule StaplerGunIdentifier = method public String getIdentifies(){ 
+    return "StaplerGun";
+
+  } 
+  ;
+  astrule TableIdentifier = method public String getIdentifies(){ 
+    return "Table";
+
+  } 
+  ;
+  astrule NailLocationIdentifier = method public String getIdentifies(){ 
+    return "NailLocation";
+
+  } 
+  ;
+  astrule RobotLocationIdentifier = method public String getIdentifies(){ 
+    return "RobotLocation";
 
   } 
   ;
@@ -199,6 +361,46 @@ grammar CRFTypesConTagDefinition extends CRFTypesCon ,de.monticore.tagging.Tags 
 
   } 
   ;
+  astrule AtToolIdentifier = method public String getIdentifies(){ 
+    return "AtTool";
+
+  } 
+  ;
+  astrule RobotEquippedIdentifier = method public String getIdentifies(){ 
+    return "RobotEquipped";
+
+  } 
+  ;
+  astrule ActiveToolIdentifier = method public String getIdentifies(){ 
+    return "ActiveTool";
+
+  } 
+  ;
+  astrule GripperEmptyIdentifier = method public String getIdentifies(){ 
+    return "GripperEmpty";
+
+  } 
+  ;
+  astrule FixedIdentifier = method public String getIdentifies(){ 
+    return "Fixed";
+
+  } 
+  ;
+  astrule AtFinalPositionIdentifier = method public String getIdentifies(){ 
+    return "AtFinalPosition";
+
+  } 
+  ;
+  astrule ObjectFinalPositionIdentifier = method public String getIdentifies(){ 
+    return "ObjectFinalPosition";
+
+  } 
+  ;
+  astrule AccessibleIdentifier = method public String getIdentifies(){ 
+    return "Accessible";
+
+  } 
+  ;
   astrule PickUpHLIdentifier = method public String getIdentifies(){ 
     return "PickUpHL";
 
@@ -206,6 +408,161 @@ grammar CRFTypesConTagDefinition extends CRFTypesCon ,de.monticore.tagging.Tags 
   ;
   astrule PlaceHLIdentifier = method public String getIdentifies(){ 
     return "PlaceHL";
+
+  } 
+  ;
+  astrule StackHLIdentifier = method public String getIdentifies(){ 
+    return "StackHL";
+
+  } 
+  ;
+  astrule StackOnMultipleHLIdentifier = method public String getIdentifies(){ 
+    return "StackOnMultipleHL";
+
+  } 
+  ;
+  astrule GluingPlateHLIdentifier = method public String getIdentifies(){ 
+    return "GluingPlateHL";
+
+  } 
+  ;
+  astrule GluingBeamHLIdentifier = method public String getIdentifies(){ 
+    return "GluingBeamHL";
+
+  } 
+  ;
+  astrule NailingHLIdentifier = method public String getIdentifies(){ 
+    return "NailingHL";
+
+  } 
+  ;
+  astrule TravelMLIdentifier = method public String getIdentifies(){ 
+    return "TravelML";
+
+  } 
+  ;
+  astrule EquipeMLIdentifier = method public String getIdentifies(){ 
+    return "EquipeML";
+
+  } 
+  ;
+  astrule DeequipMLIdentifier = method public String getIdentifies(){ 
+    return "DeequipML";
+
+  } 
+  ;
+  astrule InitializeMLIdentifier = method public String getIdentifies(){ 
+    return "InitializeML";
+
+  } 
+  ;
+  astrule CloseToolMLIdentifier = method public String getIdentifies(){ 
+    return "CloseToolML";
+
+  } 
+  ;
+  astrule PickUpMLIdentifier = method public String getIdentifies(){ 
+    return "PickUpML";
+
+  } 
+  ;
+  astrule PutDownMLIdentifier = method public String getIdentifies(){ 
+    return "PutDownML";
+
+  } 
+  ;
+  astrule PlaceMLIdentifier = method public String getIdentifies(){ 
+    return "PlaceML";
+
+  } 
+  ;
+  astrule GluingMLIdentifier = method public String getIdentifies(){ 
+    return "GluingML";
+
+  } 
+  ;
+  astrule NailingMLIdentifier = method public String getIdentifies(){ 
+    return "NailingML";
+
+  } 
+  ;
+  astrule StackMLIdentifier = method public String getIdentifies(){ 
+    return "StackML";
+
+  } 
+  ;
+  astrule StackOnMultipleMLIdentifier = method public String getIdentifies(){ 
+    return "StackOnMultipleML";
+
+  } 
+  ;
+  astrule StackOnTwoMLIdentifier = method public String getIdentifies(){ 
+    return "StackOnTwoML";
+
+  } 
+  ;
+  astrule StackOnTwoHLIdentifier = method public String getIdentifies(){ 
+    return "StackOnTwoHL";
+
+  } 
+  ;
+  astrule ChangeEndeffectorHLIdentifier = method public String getIdentifies(){ 
+    return "ChangeEndeffectorHL";
+
+  } 
+  ;
+  astrule MoveToLLIdentifier = method public String getIdentifies(){ 
+    return "MoveToLL";
+
+  } 
+  ;
+  astrule CloseGripperLLIdentifier = method public String getIdentifies(){ 
+    return "CloseGripperLL";
+
+  } 
+  ;
+  astrule OpenGripperLLIdentifier = method public String getIdentifies(){ 
+    return "OpenGripperLL";
+
+  } 
+  ;
+  astrule LiftLLIdentifier = method public String getIdentifies(){ 
+    return "LiftLL";
+
+  } 
+  ;
+  astrule EquipToolLLIdentifier = method public String getIdentifies(){ 
+    return "EquipToolLL";
+
+  } 
+  ;
+  astrule DeequipToolLLIdentifier = method public String getIdentifies(){ 
+    return "DeequipToolLL";
+
+  } 
+  ;
+  astrule NailingLLIdentifier = method public String getIdentifies(){ 
+    return "NailingLL";
+
+  } 
+  ;
+  astrule LowerLLIdentifier = method public String getIdentifies(){ 
+    return "LowerLL";
+
+  } 
+  ;
+  astrule RetractLLIdentifier = method public String getIdentifies(){ 
+    return "RetractLL";
+
+  } 
+  ;
+  astrule DeactivateToolLLIdentifier = method public String getIdentifies(){ 
+    return "DeactivateToolLL";
+
+  } 
+  ;
+  astrule InitializeLLIdentifier = method public String getIdentifies(){ 
+    return "InitializeLL";
 
   } 
   ;

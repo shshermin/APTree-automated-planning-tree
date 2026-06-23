@@ -14,7 +14,7 @@ from datetime import datetime
 app = Flask(__name__)
 
 # Configuration - these will be overridden by request parameters
-DEFAULT_ENHSP_PATH = "/home/ubuntu/ENHSP-Public/enhsp.jar"  # Default path to ENHSP JAR file
+DEFAULT_ENHSP_PATH = "/home/ubuntu/jpddlplus-master/jpddlplus.jar"  # Default path to ENHSP JAR file
 
 # Get the directory where this script is located
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -215,7 +215,7 @@ def call_enhsp(domain_file, problem_file, planner_path, timeout_seconds, enhsp_c
     """Call ENHSP planner"""
     try:
         # Build ENHSP command (Java application)
-        planner_cfg = enhsp_config if enhsp_config else 'pt-blind'
+        planner_cfg = enhsp_config if enhsp_config else 'sat-hadd'
         cmd = [
             'java', '-jar', planner_path,
             '-o', domain_file,

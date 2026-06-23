@@ -1,6 +1,6 @@
 grammar DynamicBTFlowNode extends PlanningService {
-
-   APTree extends BehaviorTree = "BehaviorTree" name:Name "{" "Root" root:FlowNode "}";
+FinalWorld = (APTree)*;
+    APTree extends BehaviorTree = "BehaviorTree" name:Name "{" "Root" root:FlowNode "}";
     // Dynamic BTflow node definition - separate node type with different keyword
     DynamicFlowNode extends FlowNode = 
       "FlowNode" name:Name "{" 
@@ -9,22 +9,16 @@ grammar DynamicBTFlowNode extends PlanningService {
           childType:ChildType
           nodeGraph:NodeGraph 
       "}";
-
     //enums
-    enum SuccessCriteria = "All" | "Any" | "Count" | "Percentage" | "Signal";
-    enum TemporalType = "Meets" | "Precedes" | "Overlaps" | "During" | "Starts" | "Finishes" | "Contains" | "Equals";
+    enum SuccessCriteria = "All" | "Any" | "Count" | "Percentage" ;
+    enum TemporalType = "Meets" | "Precedes" | "Overlaps" | "Starts" | "Finishes" | "Contains" | "Equals";
     enum ChildType = "AllAction" | "AllFlow"; 
-    
-
     // NodeGraph definition - separate top-level production
     NodeGraph = "NodeGraph" "{"
     (nodes:GraphNode)*
     "}";
-
-GraphNode = node:BTNode ("{"
-    (successors:Relation)+
-"}")?;
-
-Relation = "--[" temptype:TemporalType "]-->" target:Name@BTNode ";";
-    
+    GraphNode = node:BTNode ("{"
+        (successors:Relation)+
+        "}")?;
+    Relation = "--[" temptype:TemporalType "]-->" target:Name@BTNode ";";   
 }

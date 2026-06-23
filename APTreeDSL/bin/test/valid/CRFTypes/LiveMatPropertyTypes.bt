@@ -1,28 +1,28 @@
-Define Beam as Element {loc: Location}
-Define Plate as Element {loc: Location}
-Define Robot as Agent { loc: Location mType: String}
-Define VacGripper as Tool {loc:Location isActive:Boolean}
-Define FirstPos as Location 
+Element Beam {loc: Location}
+Element Plate {loc: Location}
+Agent Robot {loc: Location mType: String}
+Tool VacGripper {loc: Location isActive: Boolean}
+Location FirstPos
 
-Define NailGripper as Tool {loc:Location isActive:Boolean}
+Tool NailGripper {loc: Location isActive: Boolean}
 
-Define GlueGun as Tool {loc:Location isActive:Boolean}
+Tool GlueGun {loc: Location isActive: Boolean}
 
 
 
-Define Stack as Layer {
+Layer Stack {
     level: Integer
     belongsToModule: Module
 }
 
-Define Cassette as Module {
+Module Cassette {
     layers: Layer+
 }
 
-Define PositionOnRail as Location
+Location PositionOnRail
 
-Define EquipPosition as Location
+Location EquipPosition
 
 
 
-Define StackPosition as Location
+Location StackPosition

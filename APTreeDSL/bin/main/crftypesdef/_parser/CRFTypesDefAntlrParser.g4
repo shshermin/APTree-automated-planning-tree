@@ -69,6 +69,16 @@ private String convertSYMBOL(Token t)  {
     return t.getText();
 }
 
+  // convert function for Coordinate
+private String convertCoordinate(Token t)  {
+    return t.getText();
+}
+
+  // convert function for RobotJoints
+private String convertRobotJoints(Token t)  {
+    return t.getText();
+}
+
   // convert function for Double
 private String convertDouble(Token t)  {
     return t.getText();
@@ -156,8 +166,8 @@ private String convertString(Token t)  {
    tmp5=RCURLY)?
   ;
   
-  // ASTClassProd GripperEmpty
-  gripperEmpty : 
+  // ASTClassProd GripEmpty
+  gripEmpty : 
    tmp0=DECORATOR2532005915 ( tmp1=Name) ;
   
   // ASTClassProd CalcDist
@@ -188,22 +198,18 @@ private String convertString(Token t)  {
   
   // ASTClassProd Property
   property : 
-   ( tmp0=Name)  tmp1=COLON tmp2=basicType  (tmp3=PLUS)?;
+  (tmp0=CONT2106194)? ( tmp1=Name)  tmp2=COLON tmp3=basicType  (tmp4=PLUS)?(tmp5=QUESTION)?;
   
   // ASTClassProd PropertyTypeDefinition
   propertyTypeDefinition : 
-   tmp0=DEFINE2043200987 ( tmp1=Name)  tmp2=AS3122 ( tmp3=Name) ( tmp4=LCURLY( tmp5+=property  )*
-   tmp6=RCURLY)?
+   ( tmp0=Name)  ( tmp1=Name) ( tmp2=LCURLY( tmp3+=property  )*
+   tmp4=RCURLY)?
   ;
   
   // ASTClassProd PredicateTypeDefinition
   predicateTypeDefinition : 
-   tmp0=DEFINE2043200987 tmp1=PREDICATE655935895 ( tmp2=Name)  tmp3=LCURLY( tmp4+=property  )*
-   tmp5=RCURLY;
-  
-  // ASTClassProd Dummy
-  dummy : 
-   tmp0=DUMMY66393224 ( tmp1=Name) ;
+   tmp0=PREDICATE655935895 ( tmp1=Name)  tmp2=LCURLY( tmp3+=property  )*
+   tmp4=RCURLY;
   
   // ASTClassProd ActionTypeDefinition
   actionTypeDefinition : 
@@ -211,13 +217,17 @@ private String convertString(Token t)  {
   
   // ASTClassProd PredicateRef
   predicateRef : 
-   tmp0=EXCLAMATIONMARK? ( tmp1=Name)  tmp2=LPAREN( ( tmp3=Name) ( tmp4=COMMA ( tmp5+=Name) )*
+  (tmp0=EXCLAMATIONMARK)? ( tmp1=Name)  tmp2=LPAREN( ( tmp3=Name) ( tmp4=COMMA ( tmp5+=Name) )*
   )?
    tmp6=RPAREN;
   
   // ASTClassProd PlaceTimber
   placeTimber : 
    tmp0=PLACETIMBER936283326;
+  
+  // ASTClassProd Dummy
+  dummy : 
+   tmp0=DUMMY66393224 ( tmp1=Name) ;
   
   // ASTEnumProd ActionLevel
   actionLevel returns [crftypesdef._ast.ASTActionLevel ret = null] 
@@ -270,7 +280,7 @@ private String convertString(Token t)  {
   
   // ASTInterface Decorator
   decorator:
-  tmp0=gripperEmpty;
+  tmp0=gripEmpty;
   
   // ASTInterface CustomProperty
   customProperty:

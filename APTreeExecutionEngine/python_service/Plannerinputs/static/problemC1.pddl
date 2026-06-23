@@ -18,6 +18,7 @@
     fp7 - firstposition 
     fp8 - firstposition                     
     pr1  - positiononrail                                                      
+    sp1  - stackposition
     r1  - robot
     m1 -  cassette
     lay1 - stack   
@@ -33,6 +34,7 @@
      (atplace b5 fp7)
      (atplace b6 fp8)
     (positionfree pr1)
+    (positionfree sp1)
     (clear lp1)
     (clear tp1)
     (clear b1)
@@ -53,6 +55,8 @@
     (belongstomodule b5 m1)
     (belongstolayer b6 lay1) 
     (belongstomodule b6 m1) 
+    (belongstomodule lp1 m1)
+    (belongstomodule tp1 m1)
     (vgempty r1)
     
   )
@@ -61,7 +65,6 @@
   (:goal 
     (and
 (= (freecapacity lp1 ) 0)
-(atplace lp1 pr1)
 (glued lp1)  
 (ontop b1 lp1)
 (ontop b2 lp1)
@@ -69,12 +72,6 @@
 (ontop b4 lp1)
 (ontop b5 lp1)
 (ontop b6 lp1)
-(atplace b1 pr1)
-(atplace b2 pr1)
-(atplace b3 pr1)
-(atplace b4 pr1)
-(atplace b5 pr1)
-(atplace b6 pr1)
 (allset lay1 m1)
 (glued b1)
 (glued b2)
@@ -89,8 +86,8 @@
 (nailed b5)
 (nailed b6)
 (ontop tp1 b1)
-(atplace tp1 pr1)
 (nailed tp1)
+(cassetteAtStack m1 sp1)
 
         ) 
   )

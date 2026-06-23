@@ -1,5 +1,7 @@
 grammar DynamicBTFlowNodeTagDefinition extends DynamicBTFlowNode ,de.monticore.tagging.Tags ,PlanningServiceTagDefinition {
   /* DefaultIdent (using the Name) works too */
+   FinalWorldIdentifier implements ModelElementIdentifier  = "[" identifiesElement:FinalWorld "]" ;
+  /* DefaultIdent (using the Name) works too */
    APTreeIdentifier implements ModelElementIdentifier  = "[" identifiesElement:APTree "]" ;
   /* DefaultIdent (using the Name) works too */
    DynamicFlowNodeIdentifier implements ModelElementIdentifier  = "[" identifiesElement:DynamicFlowNode "]" ;
@@ -9,6 +11,11 @@ grammar DynamicBTFlowNodeTagDefinition extends DynamicBTFlowNode ,de.monticore.t
    GraphNodeIdentifier implements ModelElementIdentifier  = "[" identifiesElement:GraphNode "]" ;
   /* DefaultIdent (using the Name) works too */
    RelationIdentifier implements ModelElementIdentifier  = "[" identifiesElement:Relation "]" ;
+  astrule FinalWorldIdentifier = method public String getIdentifies(){ 
+    return "FinalWorld";
+
+  } 
+  ;
   astrule APTreeIdentifier = method public String getIdentifies(){ 
     return "APTree";
 

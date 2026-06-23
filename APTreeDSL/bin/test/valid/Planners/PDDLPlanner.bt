@@ -1,10 +1,14 @@
 
 
-
-PddlPlanner Enhsp Enhsp1 Domain:PickAndPlaceHL Problem:PlacePlate1
-Domain PickAndPlaceHL LanguageVersion:2.1  Level:HighLevel  {PickUpHL}
+ServicePlanning MyPlanner1 Enhsp Domain:PickAndPlaceHL Problem:PlacePlate1
+Domain PickAndPlaceHL LanguageVersion:2.1  Level:HighLevel  {PickUpHL, PlaceHL}
 Problem PlacePlate1
 
-
-PlanningService MyPlanneSrv Enhsp1
+BehaviorTree MyRobotTree {
+  Root Sequence MainSequence {    
+    Sequence HandlePlate {
+      ServicePlanning MyPlannerSrv1 Enhsp Domain:PickAndPlaceHL Problem:PlacePlate1
+        Action PickUpHL PickUpPlate1 (plate1 fp1 r1) @PickUpMLSubtree    
+        Action PlaceHL PlacePlate1 (plate1 pr1 r1) @PlaceMLSubtree
+    }}}
 

@@ -11,7 +11,7 @@ public abstract class PActionNode : ActionNode
 {
     public override string TypeName => "GenericBTAction";
     public readonly FastName actionType;
-    private readonly Blackboard<FastName> blackboard;
+    protected readonly Blackboard<FastName> blackboard;
     public int cost;
 
     // High-level action support
@@ -191,7 +191,10 @@ public abstract class PActionNode : ActionNode
         
         LoggingService.LogInfo($"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
         LoggingService.LogInfo($"🔧 APPLY_EFFECTS: Completed applyEffects() for action: {InstanceName.ToString()}");
+        OnAfterApplyEffects();
     }
+
+    protected virtual void OnAfterApplyEffects() { }
 
     /// <summary>
     /// Called when the node enters (starts). Checks if preconditions are met from the blackboard.

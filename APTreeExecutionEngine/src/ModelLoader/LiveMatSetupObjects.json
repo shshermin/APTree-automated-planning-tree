@@ -298,6 +298,26 @@
       "type": "StackPosition"
     },
     {
+      "extends": "Location",
+      "name": "sp2",
+      "type": "StackPosition"
+    },
+    {
+      "extends": "Location",
+      "name": "sp3",
+      "type": "StackPosition"
+    },
+    {
+      "extends": "Location",
+      "name": "sp4",
+      "type": "StackPosition"
+    },
+    {
+      "extends": "Location",
+      "name": "sp5",
+      "type": "StackPosition"
+    },
+    {
       "extends": "Agent",
       "name": "r1",
       "type": "Robot",
@@ -551,5 +571,5 @@
       }
     }
   ],
-  "count": 85
+  "count": 89
 }

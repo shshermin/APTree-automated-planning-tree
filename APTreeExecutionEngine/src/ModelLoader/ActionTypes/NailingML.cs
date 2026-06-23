@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using ModelLoader.ParameterTypes;
 using ModelLoader.PredicateTypes;
+using BehaviorTreeMainProject.Log.Services;
 
 namespace BehaviorTreeMainProject
 {
@@ -49,6 +51,26 @@ namespace BehaviorTreeMainProject
 
         protected override State Preconditions => preconditions;
         protected override State Effects => effects;
+
+        protected override void OnAfterApplyEffects()
+        {
+            var name = obj?.NameKey?.ToString() ?? "";
+            if (!(obj is Plate) || !name.StartsWith("tp")) return;
+
+            var number = name.Substring(2); // "tp1" → "1"
+            var allPredicates = blackboard.GetAllPredicates();
+
+            var lay = allPredicates.OfType<Belongstolayer>()
+                .FirstOrDefault(p => p.lay?.NameKey?.ToString() == "lay" + number)?.lay;
+            var mod = allPredicates.OfType<Belongstomodule>()
+                .FirstOrDefault(p => p.mod?.NameKey?.ToString() == "m" + number)?.mod;
+
+            if (lay == null || mod == null) return;
+
+            var allsetPred = new Allset(lay, mod, false);
+            blackboard.SetPredicateSync(allsetPred.PredicateName, allsetPred);
+            LoggingService.LogInfo($"✅ NailingML: {name} nailed → (allset {lay.NameKey} {mod.NameKey})");
+        }
 
     }
 }

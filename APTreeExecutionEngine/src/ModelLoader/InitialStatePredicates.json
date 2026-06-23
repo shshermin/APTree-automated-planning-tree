@@ -667,7 +667,7 @@
       "type": "BelongsToLayer",
       "properties": {
         "not": false,
-        "lay": "lay1",
+        "lay": "lay4",
         "myObject": "b19"
       }
     },
@@ -675,7 +675,7 @@
       "type": "BelongsToLayer",
       "properties": {
         "not": false,
-        "lay": "lay1",
+        "lay": "lay4",
         "myObject": "b20"
       }
     },
@@ -683,7 +683,7 @@
       "type": "BelongsToLayer",
       "properties": {
         "not": false,
-        "lay": "lay1",
+        "lay": "lay4",
         "myObject": "b21"
       }
     },
@@ -691,7 +691,7 @@
       "type": "BelongsToLayer",
       "properties": {
         "not": false,
-        "lay": "lay1",
+        "lay": "lay4",
         "myObject": "b22"
       }
     },
@@ -699,7 +699,7 @@
       "type": "BelongsToLayer",
       "properties": {
         "not": false,
-        "lay": "lay1",
+        "lay": "lay4",
         "myObject": "b23"
       }
     },
@@ -707,7 +707,7 @@
       "type": "BelongsToLayer",
       "properties": {
         "not": false,
-        "lay": "lay1",
+        "lay": "lay4",
         "myObject": "b24"
       }
     },
@@ -999,23 +999,30 @@
       "type": "PositionFree",
       "properties": {
         "not": false,
-        "pos": "pr2"
+        "pos": "sp1"
       }
     },
     {
       "type": "PositionFree",
       "properties": {
         "not": false,
-        "pos": "pr3"
+        "pos": "sp2"
       }
     },
     {
       "type": "PositionFree",
       "properties": {
         "not": false,
-        "pos": "pr4"
+        "pos": "sp3"
+      }
+    },
+    {
+      "type": "PositionFree",
+      "properties": {
+        "not": false,
+        "pos": "sp4"
       }
     }
   ],
-  "count": 132
+  "count": 136
 }

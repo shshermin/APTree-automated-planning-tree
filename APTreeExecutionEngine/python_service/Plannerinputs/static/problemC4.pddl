@@ -18,9 +18,10 @@
     fp31 - firstposition 
     fp32 - firstposition                     
     pr4  - positiononrail                                                      
+    sp4  - stackposition
     r1  - robot
     m4 -  cassette
-    lay1 - stack   
+    lay4 - stack   
   )
   (:init  
    (= (freecapacity lp4) 6)
@@ -33,6 +34,7 @@
      (atplace b23 fp31)
      (atplace b24 fp32)
     (positionfree pr4)
+    (positionfree sp4)
     (clear lp4)
     (clear tp4)
     (clear b19)
@@ -41,18 +43,20 @@
     (clear b22)
     (clear b23)
     (clear b24)
-    (belongstolayer b19 lay1) 
+    (belongstolayer b19 lay4) 
     (belongstomodule b19 m4)
-    (belongstolayer b20 lay1) 
+    (belongstolayer b20 lay4) 
     (belongstomodule b20 m4)
-    (belongstolayer b21 lay1) 
+    (belongstolayer b21 lay4) 
     (belongstomodule b21 m4)
-    (belongstolayer b22 lay1) 
+    (belongstolayer b22 lay4) 
     (belongstomodule b22 m4)
-    (belongstolayer b23 lay1) 
+    (belongstolayer b23 lay4) 
     (belongstomodule b23 m4)
-    (belongstolayer b24 lay1) 
+    (belongstolayer b24 lay4) 
     (belongstomodule b24 m4) 
+    (belongstomodule lp4 m4)
+    (belongstomodule tp4 m4)
     (vgempty r1)
   )
 
@@ -60,7 +64,6 @@
   (:goal 
     (and
 (= (freecapacity lp4 ) 0)
-(atplace lp4 pr4)
 (glued lp4)  
 (ontop b19 lp4)
 (ontop b20 lp4)
@@ -68,13 +71,7 @@
 (ontop b22 lp4)
 (ontop b23 lp4)
 (ontop b24 lp4)
-(atplace b19 pr4)
-(atplace b20 pr4)
-(atplace b21 pr4)
-(atplace b22 pr4)
-(atplace b23 pr4)
-(atplace b24 pr4)
-(allset lay1 m4)
+(allset lay4 m4)
 (glued b19)
 (glued b20)
 (glued b21)
@@ -88,8 +85,8 @@
 (nailed b23)
 (nailed b24)
 (ontop tp4 b19)
-(atplace tp4 pr4)
 (nailed tp4)
+(cassetteAtStack m4 sp4)
 
         ) 
   )

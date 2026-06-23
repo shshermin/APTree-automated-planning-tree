@@ -2,10 +2,8 @@ package tr;grammar BehaviorTreeTR extends de.monticore.types.tr.MCBasicTypesTR {
   fragment 
   // abstract node class
   // flow nodes
-  //concrete flownodes
   // action nodes
   // services and decorators
-  //concrete examples of services
   // Fragment definitions (must come before token definitions that use them)
   token LexTFDIGIT
     ='0'..'9' ;
@@ -23,6 +21,12 @@ package tr;grammar BehaviorTreeTR extends de.monticore.types.tr.MCBasicTypesTR {
     ='-' |'_' |'.' |'/' |'\\' ;
 
   // Token definitions
+  token LexTFCoordinate
+    =('-')? LexTFDIGIT+('.' LexTFDIGIT+)?('E'('-')? LexTFDIGIT+)? ','('-')? LexTFDIGIT+('.' LexTFDIGIT+)?('E'('-')? LexTFDIGIT+)? ','('-')? LexTFDIGIT+('.' LexTFDIGIT+)?('E'('-')? LexTFDIGIT+)? ;
+
+  token LexTFRobotJoints
+    =('-')? LexTFDIGIT+('.' LexTFDIGIT+)?('E'('-')? LexTFDIGIT+)? ','('-')? LexTFDIGIT+('.' LexTFDIGIT+)?('E'('-')? LexTFDIGIT+)? ','('-')? LexTFDIGIT+('.' LexTFDIGIT+)?('E'('-')? LexTFDIGIT+)? ','('-')? LexTFDIGIT+('.' LexTFDIGIT+)?('E'('-')? LexTFDIGIT+)? ','('-')? LexTFDIGIT+('.' LexTFDIGIT+)?('E'('-')? LexTFDIGIT+)? ','('-')? LexTFDIGIT+('.' LexTFDIGIT+)?('E'('-')? LexTFDIGIT+)? ;
+
   token LexTFDouble
     =('-')? LexTFDIGIT+'.' LexTFDIGIT+;
 
@@ -81,24 +85,24 @@ package tr;grammar BehaviorTreeTR extends de.monticore.types.tr.MCBasicTypesTR {
     "list" "<CalcDist>" ? schemaVarName:Name ? "[[" calcDist:CalcDist_Pat "]]" ;
 
 
-  GripperEmpty_Rep implements ITFGripperEmpty , IBehaviorTreeTFPart , ITFDecorator astimplements de.monticore.tf.ast.IReplacement =
-    ("[[" lhs:ITFGripperEmpty ? ReplacementOp rhs:ITFGripperEmpty ? "]]");
+  GripEmpty_Rep implements ITFGripEmpty , IBehaviorTreeTFPart , ITFDecorator astimplements de.monticore.tf.ast.IReplacement =
+    ("[[" lhs:ITFGripEmpty ? ReplacementOp rhs:ITFGripEmpty ? "]]");
 
 
-  GripperEmpty_Pat implements ITFGripperEmpty , ITFDecorator , IBehaviorTreeTFPart astimplements de.monticore.tf.ast.IPattern =
-    "GripperEmpty" schemaVarName:Name | "Decorator" name:TfIdentifierName |(("GripperEmpty" ? schemaVarName:Name|"GripperEmpty" schemaVarName:Name ?)"[["("Decorator" name:TfIdentifierName)"]]");
+  GripEmpty_Pat implements ITFGripEmpty , ITFDecorator , IBehaviorTreeTFPart astimplements de.monticore.tf.ast.IPattern =
+    "GripEmpty" schemaVarName:Name | "Decorator" name:TfIdentifierName |(("GripEmpty" ? schemaVarName:Name|"GripEmpty" schemaVarName:Name ?)"[["("Decorator" name:TfIdentifierName)"]]");
 
 
-  GripperEmpty_Neg implements ITFGripperEmpty , IBehaviorTreeTFPart , ITFDecorator astimplements de.monticore.tf.ast.INegation =
-    "not" "[[" gripperEmpty:ITFGripperEmpty "]]" ;
+  GripEmpty_Neg implements ITFGripEmpty , IBehaviorTreeTFPart , ITFDecorator astimplements de.monticore.tf.ast.INegation =
+    "not" "[[" gripEmpty:ITFGripEmpty "]]" ;
 
 
-  GripperEmpty_Opt implements ITFGripperEmpty , IBehaviorTreeTFPart , ITFDecorator astimplements de.monticore.tf.ast.IOptional =
-    "opt" "[[" gripperEmpty:ITFGripperEmpty "]]" ;
+  GripEmpty_Opt implements ITFGripEmpty , IBehaviorTreeTFPart , ITFDecorator astimplements de.monticore.tf.ast.IOptional =
+    "opt" "[[" gripEmpty:ITFGripEmpty "]]" ;
 
 
-  GripperEmpty_List implements ITFGripperEmpty , IBehaviorTreeTFPart , ITFDecorator astimplements de.monticore.tf.ast.IList =
-    "list" "<GripperEmpty>" ? schemaVarName:Name ? "[[" gripperEmpty:GripperEmpty_Pat "]]" ;
+  GripEmpty_List implements ITFGripEmpty , IBehaviorTreeTFPart , ITFDecorator astimplements de.monticore.tf.ast.IList =
+    "list" "<GripEmpty>" ? schemaVarName:Name ? "[[" gripEmpty:GripEmpty_Pat "]]" ;
 
 
   Place_Rep implements ITFPlace , IBehaviorTreeTFPart , ITFActionNode astimplements de.monticore.tf.ast.IReplacement =
@@ -219,6 +223,14 @@ package tr;grammar BehaviorTreeTR extends de.monticore.types.tr.MCBasicTypesTR {
 
   TfIdentifierSYMBOL implements TfIdentifier =
     identifierToken:LexTFSYMBOL | "[[" identifierToken:LexTFSYMBOL ":-"(newIdentifierSchema:TFSchema|newIdentifierToken:LexTFSYMBOL)? "]]" | "[["(identifierSchema:TFSchema|identifierToken:LexTFSYMBOL)? ":-" newIdentifierToken:LexTFSYMBOL "]]" | "SYMBOL" identifierSchema:TFSchema ";" ;
+
+
+  TfIdentifierCoordinate implements TfIdentifier =
+    identifierToken:LexTFCoordinate | "[[" identifierToken:LexTFCoordinate ":-"(newIdentifierSchema:TFSchema|newIdentifierToken:LexTFCoordinate)? "]]" | "[["(identifierSchema:TFSchema|identifierToken:LexTFCoordinate)? ":-" newIdentifierToken:LexTFCoordinate "]]" | "Coordinate" identifierSchema:TFSchema ";" ;
+
+
+  TfIdentifierRobotJoints implements TfIdentifier =
+    identifierToken:LexTFRobotJoints | "[[" identifierToken:LexTFRobotJoints ":-"(newIdentifierSchema:TFSchema|newIdentifierToken:LexTFRobotJoints)? "]]" | "[["(identifierSchema:TFSchema|identifierToken:LexTFRobotJoints)? ":-" newIdentifierToken:LexTFRobotJoints "]]" | "RobotJoints" identifierSchema:TFSchema ";" ;
 
 
   TfIdentifierDouble implements TfIdentifier =
@@ -342,7 +354,7 @@ package tr;grammar BehaviorTreeTR extends de.monticore.types.tr.MCBasicTypesTR {
   interface ITFParallel extends ITFFlowNode astextends de.monticore.tf.ast.ITFElement ;
   interface ITFPickUp extends ITFActionNode astextends de.monticore.tf.ast.ITFElement ;
   interface ITFPlace extends ITFActionNode astextends de.monticore.tf.ast.ITFElement ;
-  interface ITFGripperEmpty extends ITFDecorator astextends de.monticore.tf.ast.ITFElement ;
+  interface ITFGripEmpty extends ITFDecorator astextends de.monticore.tf.ast.ITFElement ;
   interface ITFCalcDist extends ITFService astextends de.monticore.tf.ast.ITFElement ;
   interface ITFBasicType astextends de.monticore.tf.ast.ITFElement ;
   interface ITFBTNode astextends de.monticore.tf.ast.ITFElement ;
@@ -536,40 +548,40 @@ package tr;grammar BehaviorTreeTR extends de.monticore.types.tr.MCBasicTypesTR {
 
   } 
   ;
-  astrule GripperEmpty_List = method public Class _getTFElementType(){ 
-    return behaviortree._ast.ASTGripperEmpty.class;
+  astrule GripEmpty_List = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTGripEmpty.class;
 
   } 
-   method public ASTITFGripperEmpty getTFElement(){ 
-    return getGripperEmpty();
-
-  } 
-  ;
-  astrule GripperEmpty_Neg = method public Class _getTFElementType(){ 
-    return behaviortree._ast.ASTGripperEmpty.class;
-
-  } 
-   method public ASTITFGripperEmpty getTFElement(){ 
-    return getGripperEmpty();
+   method public ASTITFGripEmpty getTFElement(){ 
+    return getGripEmpty();
 
   } 
   ;
-  astrule GripperEmpty_Pat = method public Class _getTFElementType(){ 
-    return behaviortree._ast.ASTGripperEmpty.class;
+  astrule GripEmpty_Neg = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTGripEmpty.class;
+
+  } 
+   method public ASTITFGripEmpty getTFElement(){ 
+    return getGripEmpty();
 
   } 
   ;
-  astrule GripperEmpty_Opt = method public Class _getTFElementType(){ 
-    return behaviortree._ast.ASTGripperEmpty.class;
-
-  } 
-   method public ASTITFGripperEmpty getTFElement(){ 
-    return getGripperEmpty();
+  astrule GripEmpty_Pat = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTGripEmpty.class;
 
   } 
   ;
-  astrule GripperEmpty_Rep = method public Class _getTFElementType(){ 
-    return behaviortree._ast.ASTGripperEmpty.class;
+  astrule GripEmpty_Opt = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTGripEmpty.class;
+
+  } 
+   method public ASTITFGripEmpty getTFElement(){ 
+    return getGripEmpty();
+
+  } 
+  ;
+  astrule GripEmpty_Rep = method public Class _getTFElementType(){ 
+    return behaviortree._ast.ASTGripEmpty.class;
 
   } 
   ;

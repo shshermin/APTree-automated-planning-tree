@@ -8,13 +8,13 @@ grammar CRFTypesDefTagDefinition extends CRFTypesDef ,de.monticore.tagging.Tags 
   /* DefaultIdent (using the Name) works too */
    PredicateTypeDefinitionIdentifier implements ModelElementIdentifier  = "[" identifiesElement:PredicateTypeDefinition "]" ;
   /* DefaultIdent (using the Name) works too */
-   DummyIdentifier implements ModelElementIdentifier  = "[" identifiesElement:Dummy "]" ;
-  /* DefaultIdent (using the Name) works too */
    ActionTypeDefinitionIdentifier implements ModelElementIdentifier  = "[" identifiesElement:ActionTypeDefinition "]" ;
   /* DefaultIdent (using the Name) works too */
    PredicateRefIdentifier implements ModelElementIdentifier  = "[" identifiesElement:PredicateRef "]" ;
   /* DefaultIdent (using the Name) works too */
    PlaceTimberIdentifier implements ModelElementIdentifier  = "[" identifiesElement:PlaceTimber "]" ;
+  /* DefaultIdent (using the Name) works too */
+   DummyIdentifier implements ModelElementIdentifier  = "[" identifiesElement:Dummy "]" ;
   astrule WorldIdentifier = method public String getIdentifies(){ 
     return "World";
 
@@ -35,11 +35,6 @@ grammar CRFTypesDefTagDefinition extends CRFTypesDef ,de.monticore.tagging.Tags 
 
   } 
   ;
-  astrule DummyIdentifier = method public String getIdentifies(){ 
-    return "Dummy";
-
-  } 
-  ;
   astrule ActionTypeDefinitionIdentifier = method public String getIdentifies(){ 
     return "ActionTypeDefinition";
 
@@ -52,6 +47,11 @@ grammar CRFTypesDefTagDefinition extends CRFTypesDef ,de.monticore.tagging.Tags 
   ;
   astrule PlaceTimberIdentifier = method public String getIdentifies(){ 
     return "PlaceTimber";
+
+  } 
+  ;
+  astrule DummyIdentifier = method public String getIdentifies(){ 
+    return "Dummy";
 
   } 
   ;

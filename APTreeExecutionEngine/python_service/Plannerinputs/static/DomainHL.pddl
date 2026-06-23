@@ -6,13 +6,13 @@
                                                        
     plate beam - element
    
-    stack -layer
+    stack - layer
 
     cassette - module 
 
-    robot -agent    
+    robot - agent   
 
-    vaccumgripper -tool                               
+    vaccumgripper - tool                         
   )
  
   (:predicates
@@ -28,7 +28,8 @@
     (stacked ?obj - element)     
     (glued ?obj - element) 
     (nailed ?obj - element)   
-    (vgempty ?vg -tool)
+    (vgempty ?vg - robot)
+    (cassetteAtStack ?mod - module ?sp - stackposition)
 )
 
   ; assigns the number of element that can be stacked on top of this module
@@ -60,7 +61,7 @@
 
 
      (:action placeHl 
-    :parameters (?obj - element ?p -  location   ?client - robot )
+    :parameters (?obj - element ?p - location   ?client - robot )
     
     :precondition (and
       (not (vgempty ?client))
@@ -98,7 +99,6 @@
       (ontop ?obj1 ?obj2)   
       (stacked ?obj1)    
       (not (holding ?client ?obj1))     
-      (atplace ?obj1 ?pr)           
       (not (clear ?obj2))  
       (clear ?obj1)
       (vgempty ?client)
@@ -109,7 +109,7 @@
     )
      ;robot stacks one biggers object on top of multiple element
     (:action stackonmultipleHL
-    :parameters (?plate - plate ?client - robot ?p -positiononrail  ?mod - module ?lay -layer)
+    :parameters (?plate - plate ?client - robot ?p - positiononrail  ?mod - module ?lay - layer)
     :precondition (and
         (allset ?lay ?mod)
         (holding ?client ?plate)
@@ -125,7 +125,7 @@
           (and (ontop ?plate ?beam)(not(clear ?beam)))        
           )                          
         ) 
-        (atplace ?plate ?p) 
+        (stacked ?plate) 
         (vgempty ?client) 
         (clear ?plate)
                            
@@ -150,10 +150,10 @@
                
     )
        (:action gluingBeamHL
-        :parameters (?obj - beam ?p - positiononrail ?client - robot ?mod - module ?lay -layer )
+        :parameters (?obj - beam ?client - robot ?mod - module ?lay -layer )
         :precondition (and 
         (vgempty ?client)
-        (atplace ?obj ?p) 
+        (stacked ?obj)
         (clear ?obj)      
         (not (glued ?obj))  
         (allset ?lay ?mod)
@@ -167,10 +167,10 @@
 ;robot nail an object
     ;works fine for now
       (:action nailingHL
-        :parameters (?obj - plate ?p - positiononrail ?client - robot )
+        :parameters (?obj - plate ?client - robot )
         :precondition (and 
         (vgempty ?client)
-        (atplace ?obj ?p)
+        (stacked ?obj)
         (clear ?obj)
         (not (nailed ?obj))
         )
@@ -180,10 +180,10 @@
     )
       
           (:action nailingBeamHL
-        :parameters (?obj - beam ?p - positiononrail ?client - robot ?mod - module ?lay - layer)
+        :parameters (?obj - beam ?client - robot ?mod - module ?lay - layer)
         :precondition (and 
         (vgempty ?client)
-        (atplace ?obj ?p)
+        (stacked ?obj)
         (clear ?obj)
         (not (nailed ?obj))
         (glued ?obj)
@@ -192,6 +192,27 @@
 
         :effect  
         (nailed ?obj)              
+    )
+
+    ;robot picks up the assembled cassette and places it at a stack position
+    (:action moveCassetteToStackHL
+        :parameters (?tp - plate ?lp - plate ?pr - positiononrail ?sp - stackposition ?client - robot ?mod - module ?lay - layer)
+        :precondition (and
+            (vgempty ?client)
+            (nailed ?tp)
+            (atplace ?lp ?pr)
+            (belongstomodule ?tp ?mod)
+            (belongstomodule ?lp ?mod)
+            (not (= ?tp ?lp))
+            (allset ?lay ?mod)
+            (positionfree ?sp)
+        )
+        :effect (and
+            (cassetteAtStack ?mod ?sp)
+            (positionfree ?pr)
+            (not (atplace ?lp ?pr))
+            (atplace ?lp ?sp)
+        )
     )
 )
      

@@ -83,12 +83,19 @@ m3 - cassette
 m4 - cassette
 lay1 - stack
 lay2 - stack
-lay3 - stack 
+lay3 - stack
+lay4 - stack
+sp1 - stackposition
+sp2 - stackposition
+sp3 - stackposition
+sp4 - stackposition
   )
   (:init  
     (atplace tp1 fp5)
 (atplace b1 fp2)
+(atplace b2 fp3)
 (atplace b3 fp4)
+(atplace b4 fp6)
 (atplace b5 fp7)
 (atplace b6 fp8)
 (atplace tp2 fp13)
@@ -112,6 +119,7 @@ lay3 - stack
 (atplace b22 fp30)
 (atplace b23 fp31)
 (atplace b24 fp32)
+(clear lp1)
 (clear tp1)
 (clear b1)
 (clear b2)
@@ -143,9 +151,9 @@ lay3 - stack
 (clear b22)
 (clear b23)
 (clear b24)
-(attool gg1 ep2)
+(attool vg1 ep1)
 (attool ng1 ep3)
-(atagent r1 pr1)
+(atagent r1 pr4)
 (vgempty r1)
 (belongstolayer b1 lay1)
 (belongstolayer b2 lay1)
@@ -165,12 +173,12 @@ lay3 - stack
 (belongstolayer b16 lay3)
 (belongstolayer b17 lay3)
 (belongstolayer b18 lay3)
-(belongstolayer b19 lay1)
-(belongstolayer b20 lay1)
-(belongstolayer b21 lay1)
-(belongstolayer b22 lay1)
-(belongstolayer b23 lay1)
-(belongstolayer b24 lay1)
+(belongstolayer b19 lay4)
+(belongstolayer b20 lay4)
+(belongstolayer b21 lay4)
+(belongstolayer b22 lay4)
+(belongstolayer b23 lay4)
+(belongstolayer b24 lay4)
 (belongstomodule b1 m1)
 (belongstomodule b2 m1)
 (belongstomodule b3 m1)
@@ -203,10 +211,11 @@ lay3 - stack
 (belongstomodule b24 m4)
 (belongstomodule lp4 m4)
 (belongstomodule tp4 m4)
-(hastool r1 vg1)
+(positionfree sp1)
+(positionfree sp2)
+(positionfree sp3)
+(positionfree sp4)
 (robotequipped r1)
-(positionfree ep1)
-(activetool vg1)
 (positionfree fp1)
 (atplace lp1 pr1)
 (positionfree fp9)
@@ -215,18 +224,13 @@ lay3 - stack
 (atplace lp3 pr3)
 (positionfree fp25)
 (atplace lp4 pr4)
+(hastool r1 gg1)
+(positionfree ep2)
+(activetool gg1)
 (glued lp1)
 (glued lp2)
 (glued lp3)
 (glued lp4)
-(positionfree fp3)
-(ontop b2 lp1)
-(atplace b2 pr1)
-(stacked b2)
-(positionfree fp6)
-(ontop b4 lp1)
-(atplace b4 pr1)
-(stacked b4)
   )
   (:goal 
     (and

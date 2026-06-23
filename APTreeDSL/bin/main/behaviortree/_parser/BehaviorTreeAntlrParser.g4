@@ -69,6 +69,16 @@ private String convertSYMBOL(Token t)  {
     return t.getText();
 }
 
+  // convert function for Coordinate
+private String convertCoordinate(Token t)  {
+    return t.getText();
+}
+
+  // convert function for RobotJoints
+private String convertRobotJoints(Token t)  {
+    return t.getText();
+}
+
   // convert function for Double
 private String convertDouble(Token t)  {
     return t.getText();
@@ -156,8 +166,8 @@ private String convertString(Token t)  {
    tmp5=RCURLY)?
   ;
   
-  // ASTClassProd GripperEmpty
-  gripperEmpty : 
+  // ASTClassProd GripEmpty
+  gripEmpty : 
    tmp0=DECORATOR2532005915 ( tmp1=Name) ;
   
   // ASTClassProd CalcDist
@@ -212,7 +222,7 @@ private String convertString(Token t)  {
   
   // ASTInterface Decorator
   decorator:
-  tmp0=gripperEmpty;
+  tmp0=gripEmpty;
 
 
 
