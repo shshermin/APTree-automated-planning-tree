@@ -7,7 +7,7 @@
 
   (:types 
     
-    equipposition firstposition positiononrail - location     
+    equipposition firstposition positiononrail stackposition - location     
                                          
     vacgripper nailgripper gluegun - tool 
                                        
@@ -38,6 +38,7 @@
     (belongstolayer ?obj - element ?lay - layer)
     (belongstomodule ?obj - element ?mod - module) 
     (stacked ?obj - element) 
+    (cassetteAtStack ?mod - module ?sp - stackposition)
       
 )
 
@@ -233,5 +234,53 @@
 
         :effect   
         (nailed ?obj)         
+    )
+
+    ;robot picks up an assembled cassette by grabbing its lower plate
+    (:action pickUpCassetteML
+    :parameters (?lp - plate ?mod - cassette ?lay - stack
+                 ?p - location ?client - robot ?vg - vacgripper)
+
+    :precondition (and
+        (hastool ?client ?vg)
+        (activetool ?vg)
+        (vgempty ?client)
+        (atagent ?client ?p)
+        (atplace ?lp ?p)
+        (not (positionfree ?p))
+        (belongstomodule ?lp ?mod)
+        (allset ?lay ?mod)
+        (not (holding ?client ?lp))
+    )
+
+    :effect (and
+        (holding ?client ?lp)
+        (not (atplace ?lp ?p))
+        (not (vgempty ?client))
+        (positionfree ?p)
+    )
+    )
+
+    ;robot places an assembled cassette at a stack position
+    (:action placeCassetteML
+    :parameters (?lp - plate ?mod - cassette
+                 ?sp - stackposition ?client - robot ?vg - vacgripper)
+
+    :precondition (and
+        (hastool ?client ?vg)
+        (activetool ?vg)
+        (holding ?client ?lp)
+        (atagent ?client ?sp)
+        (belongstomodule ?lp ?mod)
+        (positionfree ?sp)
+    )
+
+    :effect (and
+        (atplace ?lp ?sp)
+        (not (holding ?client ?lp))
+        (vgempty ?client)
+        (not (positionfree ?sp))
+        (cassetteAtStack ?mod ?sp)
+    )
     )
 )
