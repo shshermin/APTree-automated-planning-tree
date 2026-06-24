@@ -53,10 +53,21 @@ public class Blackboard<T> : IDisposable where T : class
     public DynamicFlowNode? ChosenExecutingBranch { get; set; } = null;
 
     /// <summary>
-    /// Array to track when each cassette has generated and inserted its subtree
-    /// Index 0 = cassette1, Index 1 = cassette2, Index 2 = cassette3, Index 3 = cassette4
+    /// Index of a branch to tick last for fair scheduling under parallel composites.
+    /// -1 means no branch is deprioritized. Used by BTFlowNodeComposite (non-sequential path).
     /// </summary>
-    public bool[] CassetteSubtreeCompleted { get; set; } = new bool[4] { false, false, false, false };
+    public int DeprioritizedBranchIndex { get; set; } = -1;
+
+    /// <summary>
+    /// Array to track when each cassette has generated and inserted its subtree.
+    /// Index i corresponds to cassette{i+1}. Sized for 3 batches x 4 cassettes = 12.
+    /// </summary>
+    public bool[] CassetteSubtreeCompleted { get; set; } = new bool[12]
+    {
+        false, false, false, false,
+        false, false, false, false,
+        false, false, false, false
+    };
 
     public Blackboard(string uri, string user, string password)
     {

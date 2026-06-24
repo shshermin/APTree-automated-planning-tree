@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
@@ -378,97 +378,90 @@ namespace BehaviorTreeMainProject
         {
             try
             {
-                LoggingService.LogInfo(" Creating behavior tree with cassette flow nodes...");
+                LoggingService.LogInfo(" Creating behavior tree with cassette flow nodes (3 batches x 4 cassettes)...");
 
                 // Create behavior tree instance first
                 var behaviorTree = new BehaviorTree();
                 behaviorTree.Initialise(blackboard, "CassetteBehaviorTree");
                 LoggingService.LogSuccess(" Created behavior tree instance");
 
-                // Create root composite flow node
-                rootNode = new BTFlowNodeComposite(new FastName("RootComposite"), behaviorTree);
-                //var rootNode = new BTFlowNode_CostBasedComposite(new FastName("RootComposite"), behaviorTree);
-                
+                // Root composite runs its batch children one at a time
+                var rootComposite = new BTFlowNodeComposite(new FastName("RootComposite"), behaviorTree);
+                rootComposite.RunChildrenSequentially = true;
+                rootNode = rootComposite;
+
                 // Ensure we start in planning phase
                 blackboard.PlanningPhase = true;
-                // Initialize cassette subtree completion flags to false (four cassettes)
-                blackboard.CassetteSubtreeCompleted = new bool[4] { false, false, false, false };
-                LoggingService.LogInfo(" Starting in PLANNING PHASE - all HL actions will generate NodeGraphs first");
-                LoggingService.LogInfo(" Cassette subtree completion flags initialized to false for all 4 cassettes");
-                LoggingService.LogSuccess(" Created root composite flow node");
+                // 12 cassettes across 3 batches
+                blackboard.CassetteSubtreeCompleted = new bool[12]
+                {
+                    false, false, false, false,
+                    false, false, false, false,
+                    false, false, false, false
+                };
+                LoggingService.LogInfo(" Starting in PLANNING PHASE - HL actions will generate NodeGraphs first");
+                LoggingService.LogInfo(" CassetteSubtreeCompleted initialised to false for 12 cassettes");
+                LoggingService.LogSuccess(" Created root composite (Sequential mode, 3 batches)");
 
-                // Create four cassette flow nodes
-                var cassette1Node = new DynamicFlowNode(new FastName("cassette1"), behaviorTree, SuccessCriteria.ALL, 1.0f, true);  // Add LowestCost decorator
-                var cassette2Node = new DynamicFlowNode(new FastName("cassette2"), behaviorTree, SuccessCriteria.ALL, 1.0f, true);  // Add LowestCost decorator
-                var cassette3Node = new DynamicFlowNode(new FastName("cassette3"), behaviorTree, SuccessCriteria.ALL, 1.0f, true);  // Add LowestCost decorator
-                var cassette4Node = new DynamicFlowNode(new FastName("cassette4"), behaviorTree, SuccessCriteria.ALL, 1.0f, true);  // Add LowestCost decorator
+                // Wire root before adding children
+                behaviorTree.root = rootComposite;
+                rootComposite.SetOwiningTree(behaviorTree);
 
-                LoggingService.LogSuccess(" Created four cassette flow nodes");
+                // Three batches. Each batch is its own composite holding 4 cassette DynamicFlowNodes.
+                // Cassettes keep globally unique names cassette1..cassette12 so tree walks
+                // (e.g. DecoratorDynamicPlanningComplete.TraverseTreeForAction) keep working.
+                // ObjectsFile per batch is pushed into ServicePDDLPlanning.CurrentObjectsFile
+                // by ServiceBatchEntry on first tick of the batch.
+                var batchDefs = new (string Name, int FirstCassette, string[] ProblemTags, string ObjectsFile)[]
+                {
+                    ("Batch1_C1toC4",  1, new[] { "C1",  "C2",  "C3",  "C4"  }, "python_service/Plannerinputs/static/ParameterInstances_PDDL.txt"),
+                    ("Batch2_C5toC8",  5, new[] { "C5",  "C6",  "C7",  "C8"  }, "python_service/Plannerinputs/static/ParameterInstances_PDDL2.txt"),
+                    ("Batch3_C9toC12", 9, new[] { "C9",  "C10", "C11", "C12" }, "python_service/Plannerinputs/static/ParameterInstances_PDDL3.txt"),
+                };
 
-                // Add all cassette nodes to the root composite node
-                ((BTFlowNodeComposite)rootNode).AddChild(cassette1Node);
-                ((BTFlowNodeComposite)rootNode).AddChild(cassette2Node);
-                ((BTFlowNodeComposite)rootNode).AddChild(cassette3Node);
-                ((BTFlowNodeComposite)rootNode).AddChild(cassette4Node);
+                foreach (var batch in batchDefs)
+                {
+                    var batchComposite = new BTFlowNodeComposite(new FastName(batch.Name), behaviorTree);
+                    batchComposite.SetOwiningTree(behaviorTree);
 
-                LoggingService.LogSuccess(" Added all four cassette nodes to root composite node");
+                    var ownedIndices = new int[4];
+                    for (int i = 0; i < 4; i++)
+                    {
+                        int cassetteNumber = batch.FirstCassette + i;
+                        ownedIndices[i] = cassetteNumber - 1;
 
-                // Add planning phase management service to the root composite node
-                ((BTFlowNodeComposite)rootNode).AddPlanningPhaseService();
-                LoggingService.LogSuccess(" Added planning phase management service to root composite node");
-                
-                
+                        var cassetteNode = new DynamicFlowNode(new FastName($"cassette{cassetteNumber}"), behaviorTree, SuccessCriteria.ALL, 1.0f, true);
 
-                // Set the root node
-                behaviorTree.root = (BTFlowNodeComposite)rootNode;
-                rootNode.SetOwiningTree(behaviorTree);
-                rootNode.SetTreeForAllServices(behaviorTree);
+                        var problemFile = $"./Plannerinputs/static/problem{batch.ProblemTags[i]}.pddl";
+                        var pddlRequest = new PDDLPlanningRequest(
+                            "./Plannerinputs/static/DomainHL.pddl",
+                            problemFile,
+                            "/home/ubuntu/jpddlplus-master/jpddlplus.jar",
+                            "ENHSP");
+                        var pddlPlanner = new ServicePDDLPlanning(behaviorTree, pddlRequest);
+                        pddlPlanner.ExecutionMode = ServicePDDLPlanning.ParallelExecutionMode.Parallel;
+                        allPlanners.Add(pddlPlanner);
 
-                // Create PDDL planners for all four cassettes (after behavior tree is created)
-                // Different planners and problem files for each cassette
-                var pddlRequest1 = new PDDLPlanningRequest("./Plannerinputs/static/DomainHL.pddl", "./Plannerinputs/static/problemC5.pddl", "/home/ubuntu/jpddlplus-master/jpddlplus.jar", "ENHSP");
-                var pddlRequest2 = new PDDLPlanningRequest("./Plannerinputs/static/DomainHL.pddl", "./Plannerinputs/static/problemC6.pddl", "/home/ubuntu/jpddlplus-master/jpddlplus.jar", "ENHSP");
-                var pddlRequest3 = new PDDLPlanningRequest("./Plannerinputs/static/DomainHL.pddl", "./Plannerinputs/static/problemC7.pddl", "/home/ubuntu/jpddlplus-master/jpddlplus.jar", "ENHSP");
-                var pddlRequest4 = new PDDLPlanningRequest("./Plannerinputs/static/DomainHL.pddl", "./Plannerinputs/static/problemC8.pddl", "/home/ubuntu/jpddlplus-master/jpddlplus.jar", "ENHSP");
+                        cassetteNode.SetPlanningService(pddlPlanner);
+                        batchComposite.AddChild(cassetteNode);
 
-                var pddlPlanner1 = new ServicePDDLPlanning(behaviorTree, pddlRequest1);
-                var pddlPlanner2 = new ServicePDDLPlanning(behaviorTree, pddlRequest2);
-                var pddlPlanner3 = new ServicePDDLPlanning(behaviorTree, pddlRequest3);
-                var pddlPlanner4 = new ServicePDDLPlanning(behaviorTree, pddlRequest4);
-                
-                // Track all planners for execution summary
-                allPlanners.Add(pddlPlanner1);
-                allPlanners.Add(pddlPlanner2);
-                allPlanners.Add(pddlPlanner3);
-                allPlanners.Add(pddlPlanner4);
-                
-                // Configure execution modes for the cassettes
-                pddlPlanner1.ExecutionMode = ServicePDDLPlanning.ParallelExecutionMode.Parallel;    // Parallel execution
-                pddlPlanner2.ExecutionMode = ServicePDDLPlanning.ParallelExecutionMode.Parallel;    // Parallel execution
-                pddlPlanner3.ExecutionMode = ServicePDDLPlanning.ParallelExecutionMode.Parallel;    // Parallel execution
-                pddlPlanner4.ExecutionMode = ServicePDDLPlanning.ParallelExecutionMode.Parallel;    // Parallel execution
+                        LoggingService.LogInfo($"   cassette{cassetteNumber} -> {problemFile} ({pddlRequest.PlannerName}, {pddlPlanner.ExecutionMode})");
+                    }
 
-                LoggingService.LogInfo(" Created PDDL planners for all four cassettes");
-                LoggingService.LogInfo($" Execution Modes:");
-                LoggingService.LogInfo($"   - Cassette 1: {pddlPlanner1.ExecutionMode} (Planner: {pddlRequest1.PlannerName})");
-                LoggingService.LogInfo($"   - Cassette 2: {pddlPlanner2.ExecutionMode} (Planner: {pddlRequest2.PlannerName})");
-                LoggingService.LogInfo($"   - Cassette 3: {pddlPlanner3.ExecutionMode} (Planner: {pddlRequest3.PlannerName})");
-                LoggingService.LogInfo($"   - Cassette 4: {pddlPlanner4.ExecutionMode} (Planner: {pddlRequest4.PlannerName})");
+                    // Per-batch services:
+                    //  - ServiceBatchEntry: on first tick of this batch, re-arm PlanningPhase=true,
+                    //    reset CassetteSubtreeCompleted for this batch's cassettes, and point
+                    //    ServicePDDLPlanning.CurrentObjectsFile at this batch's objects file.
+                    //  - PlanningPhaseService: flips PlanningPhase=false when this batch's 4 planners
+                    //    have all generated their NodeGraphs (composite-scoped check).
+                    batchComposite.AddService(new ServiceBatchEntry(behaviorTree, batchComposite, ownedIndices, batch.ObjectsFile), false);
+                    batchComposite.AddPlanningPhaseService();
 
-                // Set the planning services on all flow nodes
-                cassette1Node.SetPlanningService(pddlPlanner1);
-                cassette2Node.SetPlanningService(pddlPlanner2);
-                cassette3Node.SetPlanningService(pddlPlanner3);
-                cassette4Node.SetPlanningService(pddlPlanner4);
+                    rootComposite.AddChild(batchComposite);
+                    LoggingService.LogSuccess($" Added batch '{batch.Name}' (cassettes {batch.FirstCassette}..{batch.FirstCassette + 3}) to root");
+                }
 
-                LoggingService.LogSuccess(" Set planning services on all four cassette flow nodes");
-                
-                // Debug: Check if planners are properly configured
-                LoggingService.LogInfo($" Planner Debug Info:");
-                LoggingService.LogInfo($"   Cassette 1 - Domain: {pddlRequest1.DomainFile}, Problem: {pddlRequest1.ProblemFile}, Planner: {pddlRequest1.PlannerName}");
-                LoggingService.LogInfo($"   Cassette 2 - Domain: {pddlRequest2.DomainFile}, Problem: {pddlRequest2.ProblemFile}, Planner: {pddlRequest2.PlannerName}");
-                LoggingService.LogInfo($"   Cassette 3 - Domain: {pddlRequest3.DomainFile}, Problem: {pddlRequest3.ProblemFile}, Planner: {pddlRequest3.PlannerName}");
-                LoggingService.LogInfo($"   Cassette 4 - Domain: {pddlRequest4.DomainFile}, Problem: {pddlRequest4.ProblemFile}, Planner: {pddlRequest4.PlannerName}");
+                rootComposite.SetTreeForAllServices(behaviorTree);
 
                 // Store the behavior tree in the blackboard for later use
                 blackboard.SetNodeGraph(new FastName("MainBehaviorTree"), new NodeGraph());
@@ -476,11 +469,19 @@ namespace BehaviorTreeMainProject
 
                 // Display tree structure
                 LoggingService.LogInfo("\n BEHAVIOR TREE STRUCTURE:");
-                LoggingService.LogInfo($"Root: BTFlowNodeComposite ({((BTFlowNodeComposite)rootNode).GetNodeName()})");
-                LoggingService.LogInfo($" DynamicFlowNode ({cassette1Node.GetNodeName()}) - {pddlRequest1.PlannerName} Planner");
-                LoggingService.LogInfo($" DynamicFlowNode ({cassette2Node.GetNodeName()}) - {pddlRequest2.PlannerName} Planner");
-                LoggingService.LogInfo($" DynamicFlowNode ({cassette3Node.GetNodeName()}) - {pddlRequest3.PlannerName} Planner");
-                LoggingService.LogInfo($" DynamicFlowNode ({cassette4Node.GetNodeName()}) - {pddlRequest4.PlannerName} Planner");
+                LoggingService.LogInfo($"Root: BTFlowNodeComposite ({rootComposite.GetNodeName()}) [Sequential, 3 batches]");
+                foreach (var rc in rootComposite.GetChildren())
+                {
+                    if (rc is BTFlowNodeComposite bc)
+                    {
+                        LoggingService.LogInfo($"  Batch: {bc.GetNodeName()}");
+                        foreach (var cc in bc.GetChildren())
+                        {
+                            if (cc is DynamicFlowNode dyn)
+                                LoggingService.LogInfo($"    - {dyn.GetNodeName()}");
+                        }
+                    }
+                }
 
                 LoggingService.LogSuccess("\n Behavior tree with cassette flow nodes created successfully!");
 

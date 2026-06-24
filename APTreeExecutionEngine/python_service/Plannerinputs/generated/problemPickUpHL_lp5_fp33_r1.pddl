@@ -100,19 +100,14 @@ sp12 - stackposition
 
   )
   (:init  
-    (attool vg1 ep1)
-(attool gg1 ep2)
+    (attool gg1 ep2)
 (attool ng1 ep3)
-(atagent r1 pr2)
+(atagent r1 sp3)
 (vgempty r1)
 (positionfree pr1)
 (positionfree pr2)
 (positionfree pr3)
 (positionfree pr4)
-(positionfree sp1)
-(positionfree sp2)
-(positionfree sp3)
-(positionfree sp4)
 (atplace lp5 fp33)
 (atplace tp5 fp37)
 (atplace b25 fp34)
@@ -241,6 +236,10 @@ sp12 - stackposition
 (positionfree sp10)
 (positionfree sp11)
 (positionfree sp12)
+(hastool r1 vg1)
+(robotequipped r1)
+(positionfree ep1)
+(activetool vg1)
   )
   (:goal 
     (and

@@ -32,6 +32,15 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
         
         public ParallelExecutionMode ExecutionMode { get; set; } = ParallelExecutionMode.Sequential;
 
+        /// <summary>
+        /// Path to the ParameterInstances objects file used when generating dynamic LL problems
+        /// and when computing the in-scope object set for ApplyObjectScopeFilter. Set by
+        /// ServiceBatchEntry on batch entry so each batch uses its own object range
+        /// (C1-C4 / C5-C8 / C9-C12). Defaults to PDDL2 to preserve current single-batch behavior.
+        /// </summary>
+        public static string CurrentObjectsFile { get; set; } =
+            "python_service/Plannerinputs/static/ParameterInstances_PDDL2.txt";
+
         // Track generated problem files for debugging (static since generation happens before instance creation)
         private static readonly List<string> s_generatedProblemFiles = new List<string>();
 
@@ -460,11 +469,11 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
         {
             try
             {
-                string filePath = "python_service/Plannerinputs/static/ParameterInstances_PDDL2.txt";
+                string filePath = CurrentObjectsFile;
 
                 if (!File.Exists(filePath))
                 {
-                    LoggingService.LogError($"❌ ServicePDDLPlanning: ParameterInstances_PDDL.txt file not found at {filePath}");
+                    LoggingService.LogError($"❌ ServicePDDLPlanning: ParameterInstances objects file not found at {filePath}");
                     return string.Empty;
                 }
 
@@ -509,7 +518,7 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
         private static HashSet<string> GetDeclaredObjectNames()
         {
             var set = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            string filePath = "python_service/Plannerinputs/static/ParameterInstances_PDDL2.txt";
+            string filePath = CurrentObjectsFile;
             if (!File.Exists(filePath))
                 return set;
 
