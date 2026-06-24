@@ -8,7 +8,7 @@ using BehaviorTreeMainProject;
  await FullTreeTest.RunTest();
 
 // Toggle: set to false to skip starting the editor/frontend backend after the test.
-const bool runEditorBackend = true;
+const bool runEditorBackend = false;
 if (!runEditorBackend) return;
 
 var builder = WebApplication.CreateBuilder(args);

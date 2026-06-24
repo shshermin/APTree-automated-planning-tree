@@ -80,4 +80,9 @@ m3 - cassette
 m4 - cassette
 lay1 - stack
 lay2 - stack
-lay3 - stack 
+lay3 - stack
+lay4 - stack
+sp1 - stackposition
+sp2 - stackposition
+sp3 - stackposition
+sp4 - stackposition

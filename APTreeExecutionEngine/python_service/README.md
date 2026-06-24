@@ -143,3 +143,16 @@ java -jar /root/enhsp.jar -o /root/domain.pddl -f /root/problemC1.pddl -planner 
 ```
 
 Note: Some planners (like FF and LAMA-FIRST) do not support `:functions` or numeric preconditions (e.g., `>=`). If your PDDL uses those, ENHSP is the recommended planner.
+
+
+
+terminal 1:
+ssh -L 5000:localhost:5000 -i C:\Users\sherk\.ssh\id_ed25519 ubuntu@193.196.52.17
+docker start planutils
+
+Terminal 2: 
+ssh -i C:\Users\sherk\.ssh\id_ed25519 ubuntu@193.196.52.17
+cd APTree-automated-planning-tree/APTreeExecutionEngine/python_service
+source pddl_env/bin/activate
+python pddl_planning_service.py
+

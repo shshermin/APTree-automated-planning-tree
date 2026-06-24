@@ -83,7 +83,12 @@ m3 - cassette
 m4 - cassette
 lay1 - stack
 lay2 - stack
-lay3 - stack 
+lay3 - stack
+lay4 - stack
+sp1 - stackposition
+sp2 - stackposition
+sp3 - stackposition
+sp4 - stackposition
   )
   (:init  
     (atplace lp1 fp1)
@@ -173,12 +178,12 @@ lay3 - stack
 (belongstolayer b16 lay3)
 (belongstolayer b17 lay3)
 (belongstolayer b18 lay3)
-(belongstolayer b19 lay1)
-(belongstolayer b20 lay1)
-(belongstolayer b21 lay1)
-(belongstolayer b22 lay1)
-(belongstolayer b23 lay1)
-(belongstolayer b24 lay1)
+(belongstolayer b19 lay4)
+(belongstolayer b20 lay4)
+(belongstolayer b21 lay4)
+(belongstolayer b22 lay4)
+(belongstolayer b23 lay4)
+(belongstolayer b24 lay4)
 (belongstomodule b1 m1)
 (belongstomodule b2 m1)
 (belongstomodule b3 m1)
@@ -215,6 +220,10 @@ lay3 - stack
 (positionfree pr2)
 (positionfree pr3)
 (positionfree pr4)
+(positionfree sp1)
+(positionfree sp2)
+(positionfree sp3)
+(positionfree sp4)
   )
   (:goal 
     (and
@@ -222,7 +231,7 @@ lay3 - stack
 (not (atplace lp1 fp1))
 (not (clear lp1))
 (positionfree fp1)
-(robotequipped r1)
+(not (vgempty r1))
     ) 
   )
 )
