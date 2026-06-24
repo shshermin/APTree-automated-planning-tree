@@ -667,7 +667,7 @@
       "type": "BelongsToLayer",
       "properties": {
         "not": false,
-        "lay": "lay1",
+        "lay": "lay4",
         "myObject": "b19"
       }
     },
@@ -675,7 +675,7 @@
       "type": "BelongsToLayer",
       "properties": {
         "not": false,
-        "lay": "lay1",
+        "lay": "lay4",
         "myObject": "b20"
       }
     },
@@ -683,7 +683,7 @@
       "type": "BelongsToLayer",
       "properties": {
         "not": false,
-        "lay": "lay1",
+        "lay": "lay4",
         "myObject": "b21"
       }
     },
@@ -691,7 +691,7 @@
       "type": "BelongsToLayer",
       "properties": {
         "not": false,
-        "lay": "lay1",
+        "lay": "lay4",
         "myObject": "b22"
       }
     },
@@ -699,7 +699,7 @@
       "type": "BelongsToLayer",
       "properties": {
         "not": false,
-        "lay": "lay1",
+        "lay": "lay4",
         "myObject": "b23"
       }
     },
@@ -707,7 +707,7 @@
       "type": "BelongsToLayer",
       "properties": {
         "not": false,
-        "lay": "lay1",
+        "lay": "lay4",
         "myObject": "b24"
       }
     },
@@ -999,23 +999,1942 @@
       "type": "PositionFree",
       "properties": {
         "not": false,
-        "pos": "pr2"
+        "pos": "sp1"
       }
     },
     {
       "type": "PositionFree",
       "properties": {
         "not": false,
-        "pos": "pr3"
+        "pos": "sp2"
       }
     },
     {
       "type": "PositionFree",
       "properties": {
         "not": false,
-        "pos": "pr4"
+        "pos": "sp3"
+      }
+    },
+    {
+      "type": "PositionFree",
+      "properties": {
+        "not": false,
+        "pos": "sp4"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp33",
+        "not": false,
+        "item": "lp5"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp37",
+        "not": false,
+        "item": "tp5"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp34",
+        "not": false,
+        "item": "b25"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp35",
+        "not": false,
+        "item": "b26"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp36",
+        "not": false,
+        "item": "b27"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp38",
+        "not": false,
+        "item": "b28"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp39",
+        "not": false,
+        "item": "b29"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp40",
+        "not": false,
+        "item": "b30"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp41",
+        "not": false,
+        "item": "lp6"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp45",
+        "not": false,
+        "item": "tp6"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp42",
+        "not": false,
+        "item": "b31"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp43",
+        "not": false,
+        "item": "b32"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp44",
+        "not": false,
+        "item": "b33"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp46",
+        "not": false,
+        "item": "b34"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp47",
+        "not": false,
+        "item": "b35"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp48",
+        "not": false,
+        "item": "b36"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp49",
+        "not": false,
+        "item": "lp7"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp53",
+        "not": false,
+        "item": "tp7"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp50",
+        "not": false,
+        "item": "b37"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp51",
+        "not": false,
+        "item": "b38"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp52",
+        "not": false,
+        "item": "b39"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp54",
+        "not": false,
+        "item": "b40"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp55",
+        "not": false,
+        "item": "b41"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp56",
+        "not": false,
+        "item": "b42"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp57",
+        "not": false,
+        "item": "lp8"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp61",
+        "not": false,
+        "item": "tp8"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp58",
+        "not": false,
+        "item": "b43"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp59",
+        "not": false,
+        "item": "b44"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp60",
+        "not": false,
+        "item": "b45"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp62",
+        "not": false,
+        "item": "b46"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp63",
+        "not": false,
+        "item": "b47"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp64",
+        "not": false,
+        "item": "b48"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "lp5"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "tp5"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "b25"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "b26"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "b27"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "b28"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "b29"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "b30"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "lp6"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "tp6"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "b31"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "b32"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "b33"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "b34"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "b35"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "b36"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "lp7"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "tp7"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "b37"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "b38"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "b39"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "b40"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "b41"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "b42"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "lp8"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "tp8"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "b43"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "b44"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "b45"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "b46"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "b47"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "b48"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "lay5",
+        "myObject": "b25"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "lay5",
+        "myObject": "b26"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "lay5",
+        "myObject": "b27"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "lay5",
+        "myObject": "b28"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "lay5",
+        "myObject": "b29"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "lay5",
+        "myObject": "b30"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "lay6",
+        "myObject": "b31"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "lay6",
+        "myObject": "b32"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "lay6",
+        "myObject": "b33"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "lay6",
+        "myObject": "b34"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "lay6",
+        "myObject": "b35"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "lay6",
+        "myObject": "b36"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "lay7",
+        "myObject": "b37"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "lay7",
+        "myObject": "b38"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "lay7",
+        "myObject": "b39"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "lay7",
+        "myObject": "b40"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "lay7",
+        "myObject": "b41"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "lay7",
+        "myObject": "b42"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "lay8",
+        "myObject": "b43"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "lay8",
+        "myObject": "b44"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "lay8",
+        "myObject": "b45"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "lay8",
+        "myObject": "b46"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "lay8",
+        "myObject": "b47"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "lay8",
+        "myObject": "b48"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m5",
+        "myObject": "b25"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m5",
+        "myObject": "b26"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m5",
+        "myObject": "b27"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m5",
+        "myObject": "b28"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m5",
+        "myObject": "b29"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m5",
+        "myObject": "b30"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m5",
+        "myObject": "lp5"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m5",
+        "myObject": "tp5"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m6",
+        "myObject": "b31"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m6",
+        "myObject": "b32"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m6",
+        "myObject": "b33"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m6",
+        "myObject": "b34"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m6",
+        "myObject": "b35"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m6",
+        "myObject": "b36"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m6",
+        "myObject": "lp6"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m6",
+        "myObject": "tp6"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m7",
+        "myObject": "b37"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m7",
+        "myObject": "b38"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m7",
+        "myObject": "b39"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m7",
+        "myObject": "b40"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m7",
+        "myObject": "b41"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m7",
+        "myObject": "b42"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m7",
+        "myObject": "lp7"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m7",
+        "myObject": "tp7"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m8",
+        "myObject": "b43"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m8",
+        "myObject": "b44"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m8",
+        "myObject": "b45"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m8",
+        "myObject": "b46"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m8",
+        "myObject": "b47"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m8",
+        "myObject": "b48"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m8",
+        "myObject": "lp8"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m8",
+        "myObject": "tp8"
+      }
+    },
+    {
+      "type": "PositionFree",
+      "properties": {
+        "not": false,
+        "pos": "sp5"
+      }
+    },
+    {
+      "type": "PositionFree",
+      "properties": {
+        "not": false,
+        "pos": "sp6"
+      }
+    },
+    {
+      "type": "PositionFree",
+      "properties": {
+        "not": false,
+        "pos": "sp7"
+      }
+    },
+    {
+      "type": "PositionFree",
+      "properties": {
+        "not": false,
+        "pos": "sp8"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp65",
+        "not": false,
+        "item": "lp9"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp69",
+        "not": false,
+        "item": "tp9"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp66",
+        "not": false,
+        "item": "b49"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp67",
+        "not": false,
+        "item": "b50"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp68",
+        "not": false,
+        "item": "b51"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp70",
+        "not": false,
+        "item": "b52"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp71",
+        "not": false,
+        "item": "b53"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp72",
+        "not": false,
+        "item": "b54"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp73",
+        "not": false,
+        "item": "lp10"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp77",
+        "not": false,
+        "item": "tp10"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp74",
+        "not": false,
+        "item": "b55"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp75",
+        "not": false,
+        "item": "b56"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp76",
+        "not": false,
+        "item": "b57"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp78",
+        "not": false,
+        "item": "b58"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp79",
+        "not": false,
+        "item": "b59"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp80",
+        "not": false,
+        "item": "b60"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp81",
+        "not": false,
+        "item": "lp11"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp85",
+        "not": false,
+        "item": "tp11"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp82",
+        "not": false,
+        "item": "b61"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp83",
+        "not": false,
+        "item": "b62"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp84",
+        "not": false,
+        "item": "b63"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp86",
+        "not": false,
+        "item": "b64"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp87",
+        "not": false,
+        "item": "b65"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp88",
+        "not": false,
+        "item": "b66"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp89",
+        "not": false,
+        "item": "lp12"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp93",
+        "not": false,
+        "item": "tp12"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp90",
+        "not": false,
+        "item": "b67"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp91",
+        "not": false,
+        "item": "b68"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp92",
+        "not": false,
+        "item": "b69"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp94",
+        "not": false,
+        "item": "b70"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp95",
+        "not": false,
+        "item": "b71"
+      }
+    },
+    {
+      "type": "AtPlace",
+      "properties": {
+        "loc": "fp96",
+        "not": false,
+        "item": "b72"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "lp9"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "tp9"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "b49"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "b50"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "b51"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "b52"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "b53"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "b54"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "lp10"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "tp10"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "b55"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "b56"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "b57"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "b58"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "b59"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "b60"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "lp11"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "tp11"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "b61"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "b62"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "b63"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "b64"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "b65"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "b66"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "lp12"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "tp12"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "b67"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "b68"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "b69"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "b70"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "b71"
+      }
+    },
+    {
+      "type": "Clear",
+      "properties": {
+        "not": false,
+        "myObject": "b72"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "lay9",
+        "myObject": "b49"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "lay9",
+        "myObject": "b50"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "lay9",
+        "myObject": "b51"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "lay9",
+        "myObject": "b52"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "lay9",
+        "myObject": "b53"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "lay9",
+        "myObject": "b54"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "lay10",
+        "myObject": "b55"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "lay10",
+        "myObject": "b56"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "lay10",
+        "myObject": "b57"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "lay10",
+        "myObject": "b58"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "lay10",
+        "myObject": "b59"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "lay10",
+        "myObject": "b60"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "lay11",
+        "myObject": "b61"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "lay11",
+        "myObject": "b62"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "lay11",
+        "myObject": "b63"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "lay11",
+        "myObject": "b64"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "lay11",
+        "myObject": "b65"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "lay11",
+        "myObject": "b66"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "lay12",
+        "myObject": "b67"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "lay12",
+        "myObject": "b68"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "lay12",
+        "myObject": "b69"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "lay12",
+        "myObject": "b70"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "lay12",
+        "myObject": "b71"
+      }
+    },
+    {
+      "type": "BelongsToLayer",
+      "properties": {
+        "not": false,
+        "lay": "lay12",
+        "myObject": "b72"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m9",
+        "myObject": "b49"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m9",
+        "myObject": "b50"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m9",
+        "myObject": "b51"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m9",
+        "myObject": "b52"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m9",
+        "myObject": "b53"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m9",
+        "myObject": "b54"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m9",
+        "myObject": "lp9"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m9",
+        "myObject": "tp9"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m10",
+        "myObject": "b55"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m10",
+        "myObject": "b56"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m10",
+        "myObject": "b57"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m10",
+        "myObject": "b58"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m10",
+        "myObject": "b59"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m10",
+        "myObject": "b60"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m10",
+        "myObject": "lp10"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m10",
+        "myObject": "tp10"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m11",
+        "myObject": "b61"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m11",
+        "myObject": "b62"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m11",
+        "myObject": "b63"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m11",
+        "myObject": "b64"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m11",
+        "myObject": "b65"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m11",
+        "myObject": "b66"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m11",
+        "myObject": "lp11"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m11",
+        "myObject": "tp11"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m12",
+        "myObject": "b67"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m12",
+        "myObject": "b68"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m12",
+        "myObject": "b69"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m12",
+        "myObject": "b70"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m12",
+        "myObject": "b71"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m12",
+        "myObject": "b72"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m12",
+        "myObject": "lp12"
+      }
+    },
+    {
+      "type": "BelongsToModule",
+      "properties": {
+        "not": false,
+        "mod": "m12",
+        "myObject": "tp12"
+      }
+    },
+    {
+      "type": "PositionFree",
+      "properties": {
+        "not": false,
+        "pos": "sp9"
+      }
+    },
+    {
+      "type": "PositionFree",
+      "properties": {
+        "not": false,
+        "pos": "sp10"
+      }
+    },
+    {
+      "type": "PositionFree",
+      "properties": {
+        "not": false,
+        "pos": "sp11"
+      }
+    },
+    {
+      "type": "PositionFree",
+      "properties": {
+        "not": false,
+        "pos": "sp12"
       }
     }
   ],
-  "count": 132
+  "count": 381
 }

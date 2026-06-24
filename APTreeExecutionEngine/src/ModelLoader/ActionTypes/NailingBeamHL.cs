@@ -10,37 +10,40 @@ namespace BehaviorTreeMainProject
         // Parameter: obj of type element
         public Element obj { get; private set; }
 
-        // Parameter: pos of type positionOnRail
-        public PositionOnRail pos { get; private set; }
-
         // Parameter: client of type robot
         public Robot client { get; private set; }
+
+        // Parameter: mod of type cassette
+        public Cassette mod { get; private set; }
+
+        // Parameter: lay of type stack
+        public Stack lay { get; private set; }
 
         // Preconditions and Effects as State objects
         private State preconditions;
         private State effects;
 
-        public NailingBeamHL(string actionType, string instanceName, Blackboard<FastName> blackboard, Element obj, PositionOnRail pos, Robot client)
+        public NailingBeamHL(string actionType, string instanceName, Blackboard<FastName> blackboard, Element obj, Robot client, Cassette mod, Stack lay)
             : base(actionType, instanceName, blackboard)
         {
             this.obj = obj;
-            this.pos = pos;
             this.client = client;
+            this.mod = mod;
+            this.lay = lay;
             InitializePredicates();
         }
 
         private void InitializePredicates()
         {
             // Initialize preconditions
-            preconditions = new State(StateType.Precondition, new FastName("nailingHL_preconditions"));
-            preconditions.AddPredicate(new FastName("nailingHL_pre_0"), new Robotequipped(client, false));
-            preconditions.AddPredicate(new FastName("nailingHL_pre_1"), new Atplace(obj, pos, false));
-            preconditions.AddPredicate(new FastName("nailingHL_pre_2"), new Clear(obj, false));
-            preconditions.AddPredicate(new FastName("nailingHL_pre_3"), new Nailed(obj, true));
+            preconditions = new State(StateType.Precondition, new FastName("nailingBeamHL_preconditions"));
+            preconditions.AddPredicate(new FastName("nailingBeamHL_pre_0"), new Vgempty(client, false));
+            preconditions.AddPredicate(new FastName("nailingBeamHL_pre_1"), new Clear(obj, false));
+            preconditions.AddPredicate(new FastName("nailingBeamHL_pre_2"), new Nailed(obj, true));
 
             // Initialize effects
-            effects = new State(StateType.Effect, new FastName("nailingHL_effects"));
-            effects.AddPredicate(new FastName("nailingHL_eff_0"), new Nailed(obj, false));
+            effects = new State(StateType.Effect, new FastName("nailingBeamHL_effects"));
+            effects.AddPredicate(new FastName("nailingBeamHL_eff_0"), new Nailed(obj, false));
         }
 
         protected override State Preconditions => preconditions;

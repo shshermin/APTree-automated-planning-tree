@@ -10,9 +10,6 @@ namespace BehaviorTreeMainProject
         // Parameter: obj of type element
         public Element obj { get; private set; }
 
-        // Parameter: pos of type positionOnRail
-        public PositionOnRail pos { get; private set; }
-
         // Parameter: client of type robot
         public Robot client { get; private set; }
 
@@ -20,11 +17,10 @@ namespace BehaviorTreeMainProject
         private State preconditions;
         private State effects;
 
-        public NailingHL(string actionType, string instanceName, Blackboard<FastName> blackboard, Element obj, PositionOnRail pos, Robot client)
+        public NailingHL(string actionType, string instanceName, Blackboard<FastName> blackboard, Element obj, Robot client)
             : base(actionType, instanceName, blackboard)
         {
             this.obj = obj;
-            this.pos = pos;
             this.client = client;
             InitializePredicates();
         }
@@ -33,10 +29,9 @@ namespace BehaviorTreeMainProject
         {
             // Initialize preconditions
             preconditions = new State(StateType.Precondition, new FastName("nailingHL_preconditions"));
-            preconditions.AddPredicate(new FastName("nailingHL_pre_0"), new Robotequipped(client, false));
-            preconditions.AddPredicate(new FastName("nailingHL_pre_1"), new Atplace(obj, pos, false));
-            preconditions.AddPredicate(new FastName("nailingHL_pre_2"), new Clear(obj, false));
-            preconditions.AddPredicate(new FastName("nailingHL_pre_3"), new Nailed(obj, true));
+            preconditions.AddPredicate(new FastName("nailingHL_pre_0"), new Vgempty(client, false));
+            preconditions.AddPredicate(new FastName("nailingHL_pre_1"), new Clear(obj, false));
+            preconditions.AddPredicate(new FastName("nailingHL_pre_2"), new Nailed(obj, true));
 
             // Initialize effects
             effects = new State(StateType.Effect, new FastName("nailingHL_effects"));
