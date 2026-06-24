@@ -14,7 +14,7 @@ from datetime import datetime
 app = Flask(__name__)
 
 # Configuration - these will be overridden by request parameters
-DEFAULT_ENHSP_PATH = "/home/ubuntu/ENHSP-Public/enhsp.jar"  # Default path to ENHSP JAR file
+DEFAULT_ENHSP_PATH = "/home/ubuntu/jpddlplus-master/jpddlplus.jar"  # Default path to ENHSP JAR file
 
 # Get the directory where this script is located
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))

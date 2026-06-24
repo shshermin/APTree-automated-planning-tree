@@ -191,7 +191,10 @@ public abstract class PActionNode : ActionNode
         
         LoggingService.LogInfo($"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
         LoggingService.LogInfo($"🔧 APPLY_EFFECTS: Completed applyEffects() for action: {InstanceName.ToString()}");
+        OnAfterApplyEffects();
     }
+
+    protected virtual void OnAfterApplyEffects() { }
 
     /// <summary>
     /// Called when the node enters (starts). Checks if preconditions are met from the blackboard.

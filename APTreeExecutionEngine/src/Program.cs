@@ -5,7 +5,11 @@ using System.Text.RegularExpressions;
 using BehaviorTreeMainProject;
 
 // Run the behavior tree test
-// await FullTreeTest.RunTest();
+ await FullTreeTest.RunTest();
+
+// Toggle: set to false to skip starting the editor/frontend backend after the test.
+const bool runEditorBackend = true;
+if (!runEditorBackend) return;
 
 var builder = WebApplication.CreateBuilder(args);
 

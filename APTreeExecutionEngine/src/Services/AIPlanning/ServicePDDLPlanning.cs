@@ -366,6 +366,9 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
                 if (initialstatepredicates == null)
                     throw new InvalidOperationException("initialstatepredicates is null");
 
+                // Drop init predicates whose arguments aren't declared in the objects file
+                initialstatepredicates = ApplyObjectScopeFilter(initialstatepredicates);
+
                 string initialstatepredicatesPDDL = ConvertMultiplePredicatesToPDDL(initialstatepredicates);
                 LoggingService.LogInfo($"📋 ServicePDDLPlanning: Initial state PDDL: {initialstatepredicatesPDDL}");
 
@@ -474,6 +477,51 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
                 LoggingService.LogError($"❌ ServicePDDLPlanning: Error reading ParameterInstances_PDDL.txt: {ex.Message}");
                 return string.Empty;
             }
+        }
+
+        /// <summary>
+        /// Drop init predicates whose arguments are not declared in the
+        /// ParameterInstances objects file. Keeps the generated problem
+        /// consistent with the in-scope object set even when the blackboard
+        /// still holds leftover predicates for objects (e.g. lp5) that are
+        /// no longer declared.
+        /// </summary>
+        private static List<Predicate> ApplyObjectScopeFilter(List<Predicate> predicates)
+        {
+            var declared = GetDeclaredObjectNames();
+            if (declared.Count == 0)
+                return predicates;
+
+            var filtered = predicates
+                .Where(p => p.GetParameterValues().All(v => declared.Contains(v)))
+                .ToList();
+
+            int dropped = predicates.Count - filtered.Count;
+            if (dropped > 0)
+                LoggingService.LogInfo($"🧹 ServicePDDLPlanning: ApplyObjectScopeFilter dropped {dropped} of {predicates.Count} init predicates referencing undeclared objects");
+            return filtered;
+        }
+
+        /// <summary>
+        /// Parse the ParameterInstances objects file and return the set of
+        /// declared object names (case-insensitive).
+        /// </summary>
+        private static HashSet<string> GetDeclaredObjectNames()
+        {
+            var set = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            string filePath = "python_service/Plannerinputs/static/ParameterInstances_PDDL.txt";
+            if (!File.Exists(filePath))
+                return set;
+
+            foreach (var raw in File.ReadAllLines(filePath))
+            {
+                var line = raw.Trim();
+                if (line.Length == 0) continue;
+                int dash = line.IndexOf('-');
+                if (dash > 0)
+                    set.Add(line.Substring(0, dash).Trim());
+            }
+            return set;
         }
 
         /// <summary>
