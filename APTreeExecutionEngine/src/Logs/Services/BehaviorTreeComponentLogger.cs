@@ -774,7 +774,7 @@ namespace BehaviorTreeMainProject.Log.Services
                 foreach (var kvp in flowNodeStats)
                 {
                     var componentType = kvp.Key;
-                    if (componentType.StartsWith("BTFlowNode") || componentType.StartsWith("Decorator") || componentType.StartsWith("BTService") || componentType.StartsWith("Call") || componentType == "ServiceSubtreeInject" || componentType == "GenericBTAction")
+                    if (componentType == "FlowNode" || componentType.StartsWith("BTFlowNode") || componentType.StartsWith("Decorator") || componentType.StartsWith("BTService") || componentType.StartsWith("Call") || componentType == "ServiceSubtreeInject" || componentType == "GenericBTAction")
                     {
                         data[componentType] = kvp.Value.AdditionCount;
                         WriteLog($"🔍 DEBUG: Added {componentType} = {kvp.Value.AdditionCount} to data (from AdditionCount)");

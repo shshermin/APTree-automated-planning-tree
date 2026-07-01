@@ -24,11 +24,11 @@ Define Action PlaceHL {
         client: Robot
     }
     Preconditions {
-        holding(client, objToPlace)
+        Holding(client, objToPlace)
     }    
     Effects {
-        atplace(objToPlace, objLoc)
-        !holding(client, objToPlace)
+        AtPlace(objToPlace, objLoc)
+        !Holding(client, objToPlace)
     }   
 }
 

@@ -158,12 +158,12 @@ Clear(b23)
 Clear(b24)
 
 // BelongsToLayer predicates for problemC4 objects
-BelongsToLayer(b19 lay4)
-BelongsToLayer(b20 lay4)
-BelongsToLayer(b21 lay4)
-BelongsToLayer(b22 lay4)
-BelongsToLayer(b23 lay4)
-BelongsToLayer(b24 lay4)
+BelongsToLayer(b19 lay1)
+BelongsToLayer(b20 lay1)
+BelongsToLayer(b21 lay1)
+BelongsToLayer(b22 lay1)
+BelongsToLayer(b23 lay1)
+BelongsToLayer(b24 lay1)
 
 // BelongsToModule predicates for problemC4 objects
 BelongsToModule(b19 m4)
@@ -176,9 +176,9 @@ BelongsToModule(lp4 m4)
 BelongsToModule(tp4 m4)
 
 
-IsAt(vg1 ep1)
-IsAt(gg1 ep2)
-IsAt(ng1 ep3)
+AtTool(vg1 ep1)
+AtTool(gg1 ep2)
+AtTool(ng1 ep3)
 
 AtAgent(r1 pr2)
 
@@ -187,4 +187,4 @@ VgEmpty(r1)
 
 
 
-//Attoll was replaced by isat. pls double chek
+

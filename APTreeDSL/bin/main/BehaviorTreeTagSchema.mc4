@@ -4,7 +4,7 @@ grammar BehaviorTreeTagSchema extends de.monticore.tagging.TagSchema ,de.montico
    ParallelSchemaIdentifier implements ScopeIdentifier  = "Parallel" ;
    PickUpSchemaIdentifier implements ScopeIdentifier  = "PickUp" ;
    PlaceSchemaIdentifier implements ScopeIdentifier  = "Place" ;
-   GripperEmptySchemaIdentifier implements ScopeIdentifier  = "GripperEmpty" ;
+   GripEmptySchemaIdentifier implements ScopeIdentifier  = "GripEmpty" ;
    CalcDistSchemaIdentifier implements ScopeIdentifier  = "CalcDist" ;
    BasicTypeSchemaIdentifier implements ScopeIdentifier  = "BasicType" ;
   start TagSchema;

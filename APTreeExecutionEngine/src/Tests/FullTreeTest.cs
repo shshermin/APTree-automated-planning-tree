@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
@@ -380,9 +380,10 @@ namespace BehaviorTreeMainProject
             {
                 LoggingService.LogInfo(" Creating behavior tree with cassette flow nodes (3 batches x 4 cassettes)...");
 
-                // Create behavior tree instance first
+                // Create behavior tree instance (set blackboard directly to avoid orphan root composite)
                 var behaviorTree = new BehaviorTree();
-                behaviorTree.Initialise(blackboard, "CassetteBehaviorTree");
+                behaviorTree.linkedBlackboard = blackboard;
+                behaviorTree.DebugDisplayName = "CassetteBehaviorTree";
                 LoggingService.LogSuccess(" Created behavior tree instance");
 
                 // Root composite runs its batch children one at a time

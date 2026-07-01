@@ -103,15 +103,79 @@ package tr;grammar DynamicBTFlowNodeTR extends.tr.PlanningServiceTR {
   APTree_List implements ITFAPTree , IDynamicBTFlowNodeTFPart , ITFBehaviorTree astimplements de.monticore.tf.ast.IList =
     "list" "<APTree>" ? schemaVarName:Name ? "[[" aPTree:APTree_Pat "]]" ;
 
-  enum ITFSuccessCriteria="All"|"Any"|"Count"|"Percentage"|"Signal";
-  enum ITFTemporalType="Meets"|"Precedes"|"Overlaps"|"During"|"Starts"|"Finishes"|"Contains"|"Equals";
+   /*Skipping supers due to empty prod  */ 
+
+  FinalWorld_Rep implements ITFFinalWorld , IDynamicBTFlowNodeTFPart astimplements de.monticore.tf.ast.IReplacement =
+    ("[[" lhs:ITFFinalWorld ? ReplacementOp rhs:ITFFinalWorld ? "]]");
+
+  /* No I?TFPart supers due to emptiness */
+
+  FinalWorld_Pat implements ITFFinalWorld astimplements de.monticore.tf.ast.IPattern =
+    "FinalWorld" schemaVarName:Name |(aPTree:ITFAPTree)*|(("FinalWorld" ? schemaVarName:Name|"FinalWorld" schemaVarName:Name ?)"[["((aPTree:ITFAPTree)*)"]]");
+
+   /*Skipping supers due to empty prod  */ 
+
+  FinalWorld_Neg implements ITFFinalWorld , IDynamicBTFlowNodeTFPart astimplements de.monticore.tf.ast.INegation =
+    "not" "[[" finalWorld:ITFFinalWorld "]]" ;
+
+   /*Skipping supers due to empty prod  */ 
+
+  FinalWorld_Opt implements ITFFinalWorld , IDynamicBTFlowNodeTFPart astimplements de.monticore.tf.ast.IOptional =
+    "opt" "[[" finalWorld:ITFFinalWorld "]]" ;
+
+   /*Skipping supers due to empty prod*/ 
+
+  FinalWorld_List implements ITFFinalWorld , IDynamicBTFlowNodeTFPart astimplements de.monticore.tf.ast.IList =
+    "list" "<FinalWorld>" ? schemaVarName:Name ? "[[" finalWorld:FinalWorld_Pat "]]" ;
+
+  enum ITFSuccessCriteria="All"|"Any"|"Count"|"Percentage";
+  enum ITFTemporalType="Meets"|"Precedes"|"Overlaps"|"Starts"|"Finishes"|"Contains"|"Equals";
   enum ITFChildType="AllAction"|"AllFlow";
+  /* No super rule (interfaces) due to being empty */
+  interface ITFFinalWorld astextends de.monticore.tf.ast.ITFElement ;
   interface ITFAPTree extends ITFBehaviorTree astextends de.monticore.tf.ast.ITFElement ;
   interface ITFDynamicFlowNode extends ITFFlowNode astextends de.monticore.tf.ast.ITFElement ;
   interface ITFNodeGraph astextends de.monticore.tf.ast.ITFElement ;
   interface ITFGraphNode astextends de.monticore.tf.ast.ITFElement ;
   interface ITFRelation astextends de.monticore.tf.ast.ITFElement ;
   interface IDynamicBTFlowNodeTFPart extends ITFPart ;
+  astrule FinalWorld_List = method public Class _getTFElementType(){ 
+    return dynamicbtflownode._ast.ASTFinalWorld.class;
+
+  } 
+   method public ASTITFFinalWorld getTFElement(){ 
+    return getFinalWorld();
+
+  } 
+  ;
+  astrule FinalWorld_Neg = method public Class _getTFElementType(){ 
+    return dynamicbtflownode._ast.ASTFinalWorld.class;
+
+  } 
+   method public ASTITFFinalWorld getTFElement(){ 
+    return getFinalWorld();
+
+  } 
+  ;
+  astrule FinalWorld_Pat = method public Class _getTFElementType(){ 
+    return dynamicbtflownode._ast.ASTFinalWorld.class;
+
+  } 
+  ;
+  astrule FinalWorld_Opt = method public Class _getTFElementType(){ 
+    return dynamicbtflownode._ast.ASTFinalWorld.class;
+
+  } 
+   method public ASTITFFinalWorld getTFElement(){ 
+    return getFinalWorld();
+
+  } 
+  ;
+  astrule FinalWorld_Rep = method public Class _getTFElementType(){ 
+    return dynamicbtflownode._ast.ASTFinalWorld.class;
+
+  } 
+  ;
   astrule APTree_List = method public Class _getTFElementType(){ 
     return dynamicbtflownode._ast.ASTAPTree.class;
 

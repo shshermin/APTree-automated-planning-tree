@@ -3,9 +3,9 @@ grammar CRFTypesDefTagSchema extends de.monticore.tagging.TagSchema ,BehaviorTre
    PropertySchemaIdentifier implements ScopeIdentifier  = "Property" ;
    PropertyTypeDefinitionSchemaIdentifier implements ScopeIdentifier  = "PropertyTypeDefinition" ;
    PredicateTypeDefinitionSchemaIdentifier implements ScopeIdentifier  = "PredicateTypeDefinition" ;
-   DummySchemaIdentifier implements ScopeIdentifier  = "Dummy" ;
    ActionTypeDefinitionSchemaIdentifier implements ScopeIdentifier  = "ActionTypeDefinition" ;
    PredicateRefSchemaIdentifier implements ScopeIdentifier  = "PredicateRef" ;
    PlaceTimberSchemaIdentifier implements ScopeIdentifier  = "PlaceTimber" ;
+   DummySchemaIdentifier implements ScopeIdentifier  = "Dummy" ;
   start TagSchema;
 }

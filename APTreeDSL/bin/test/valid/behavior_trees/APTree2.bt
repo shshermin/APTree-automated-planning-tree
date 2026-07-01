@@ -1,8 +1,8 @@
 BehaviorTree APTree {
     Root FlowNode mainnode {
         All
-        AllFlow
-        NodeGraph {
+        AllFlow 
+        NodeGraph {    
             FlowNode plateseq {
                 All
                 AllAction
@@ -18,9 +18,9 @@ BehaviorTree APTree {
                 AllAction
                 NodeGraph {
                             Action PickUpHL pickuphl2 (beam2 position3 robot1) { 
-                                --[Meets]--> placehl3;
+                                --[Meets]--> placehl3a;
                             }
-                            Action PlaceHL placehl3 (beam2 pr1 robot1) 
+                            Action PlaceHL placehl3a (beam2 pr1 robot1) 
                             Action PickUpHL pickuphl3 (beam2 fp3 robot1) { 
                                 --[Meets]--> placehl4;
                             }

@@ -10,7 +10,7 @@ grammar BehaviorTreeTagDefinition extends BehaviorTree ,de.monticore.tagging.Tag
   /* DefaultIdent (using the Name) works too */
    PlaceIdentifier implements ModelElementIdentifier  = "[" identifiesElement:Place "]" ;
   /* DefaultIdent (using the Name) works too */
-   GripperEmptyIdentifier implements ModelElementIdentifier  = "[" identifiesElement:GripperEmpty "]" ;
+   GripEmptyIdentifier implements ModelElementIdentifier  = "[" identifiesElement:GripEmpty "]" ;
   /* DefaultIdent (using the Name) works too */
    CalcDistIdentifier implements ModelElementIdentifier  = "[" identifiesElement:CalcDist "]" ;
    BasicTypeIdentifier implements ModelElementIdentifier  = "[" identifiesElement:BasicType "]" ;
@@ -39,8 +39,8 @@ grammar BehaviorTreeTagDefinition extends BehaviorTree ,de.monticore.tagging.Tag
 
   } 
   ;
-  astrule GripperEmptyIdentifier = method public String getIdentifies(){ 
-    return "GripperEmpty";
+  astrule GripEmptyIdentifier = method public String getIdentifies(){ 
+    return "GripEmpty";
 
   } 
   ;

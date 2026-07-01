@@ -4,10 +4,10 @@ BehaviorTree MyRobotTree {
       Action PickUpPlate1 
       Action PlacePlate1
     }   
-    Sequence BeamPlacement {
+    Parallel BeamPlacement {
       Sequence HandleBeam1 {
         Action PickUpBeam1 {
-          Decorator GripperEmpty}
+          Decorator GripEmpty}
         Action PlaceBeam1
       }
       Sequence HandleBeam2 {

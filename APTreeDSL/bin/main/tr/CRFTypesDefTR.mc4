@@ -4,6 +4,26 @@ package tr;grammar CRFTypesDefTR extends.tr.BehaviorTreeTR ,de.monticore.types.t
     TFRule ;
 
 
+  Dummy_Rep implements ITFDummy , ICRFTypesDefTFPart , ITFPredicate astimplements de.monticore.tf.ast.IReplacement =
+    ("[[" lhs:ITFDummy ? ReplacementOp rhs:ITFDummy ? "]]");
+
+
+  Dummy_Pat implements ITFDummy , ITFPredicate , ICRFTypesDefTFPart astimplements de.monticore.tf.ast.IPattern =
+    "Dummy" schemaVarName:Name | "Dummy" name:TfIdentifierName |(("Dummy" ? schemaVarName:Name|"Dummy" schemaVarName:Name ?)"[["("Dummy" name:TfIdentifierName)"]]");
+
+
+  Dummy_Neg implements ITFDummy , ICRFTypesDefTFPart , ITFPredicate astimplements de.monticore.tf.ast.INegation =
+    "not" "[[" dummy:ITFDummy "]]" ;
+
+
+  Dummy_Opt implements ITFDummy , ICRFTypesDefTFPart , ITFPredicate astimplements de.monticore.tf.ast.IOptional =
+    "opt" "[[" dummy:ITFDummy "]]" ;
+
+
+  Dummy_List implements ITFDummy , ICRFTypesDefTFPart , ITFPredicate astimplements de.monticore.tf.ast.IList =
+    "list" "<Dummy>" ? schemaVarName:Name ? "[[" dummy:Dummy_Pat "]]" ;
+
+
   PlaceTimber_Rep implements ITFPlaceTimber , ICRFTypesDefTFPart , ITFPActionNode astimplements de.monticore.tf.ast.IReplacement =
     ("[[" lhs:ITFPlaceTimber ? ReplacementOp rhs:ITFPlaceTimber ? "]]");
 
@@ -29,7 +49,7 @@ package tr;grammar CRFTypesDefTR extends.tr.BehaviorTreeTR ,de.monticore.types.t
 
 
   PredicateRef_Pat implements ITFPredicateRef , ICRFTypesDefTFPart astimplements de.monticore.tf.ast.IPattern =
-    "PredicateRef" schemaVarName:Name | "!" ? name:TfIdentifierName "("(args:TfIdentifierName("," args:TfIdentifierName)*)? ")" |(("PredicateRef" ? schemaVarName:Name|"PredicateRef" schemaVarName:Name ?)"[["("!" ? name:TfIdentifierName "("(args:TfIdentifierName("," args:TfIdentifierName)*)? ")")"]]");
+    "PredicateRef" schemaVarName:Name | not:ITFCRFTypesDef_Not_Constant name:TfIdentifierName "("(args:TfIdentifierName("," args:TfIdentifierName)*)? ")" |(("PredicateRef" ? schemaVarName:Name|"PredicateRef" schemaVarName:Name ?)"[["(not:ITFCRFTypesDef_Not_Constant name:TfIdentifierName "("(args:TfIdentifierName("," args:TfIdentifierName)*)? ")")"]]");
 
 
   PredicateRef_Neg implements ITFPredicateRef , ICRFTypesDefTFPart astimplements de.monticore.tf.ast.INegation =
@@ -64,32 +84,12 @@ package tr;grammar CRFTypesDefTR extends.tr.BehaviorTreeTR ,de.monticore.types.t
     "list" "<ActionTypeDefinition>" ? schemaVarName:Name ? "[[" actionTypeDefinition:ActionTypeDefinition_Pat "]]" ;
 
 
-  Dummy_Rep implements ITFDummy , ICRFTypesDefTFPart , ITFPredicate astimplements de.monticore.tf.ast.IReplacement =
-    ("[[" lhs:ITFDummy ? ReplacementOp rhs:ITFDummy ? "]]");
-
-
-  Dummy_Pat implements ITFDummy , ITFPredicate , ICRFTypesDefTFPart astimplements de.monticore.tf.ast.IPattern =
-    "Dummy" schemaVarName:Name | "Dummy" name:TfIdentifierName |(("Dummy" ? schemaVarName:Name|"Dummy" schemaVarName:Name ?)"[["("Dummy" name:TfIdentifierName)"]]");
-
-
-  Dummy_Neg implements ITFDummy , ICRFTypesDefTFPart , ITFPredicate astimplements de.monticore.tf.ast.INegation =
-    "not" "[[" dummy:ITFDummy "]]" ;
-
-
-  Dummy_Opt implements ITFDummy , ICRFTypesDefTFPart , ITFPredicate astimplements de.monticore.tf.ast.IOptional =
-    "opt" "[[" dummy:ITFDummy "]]" ;
-
-
-  Dummy_List implements ITFDummy , ICRFTypesDefTFPart , ITFPredicate astimplements de.monticore.tf.ast.IList =
-    "list" "<Dummy>" ? schemaVarName:Name ? "[[" dummy:Dummy_Pat "]]" ;
-
-
   PredicateTypeDefinition_Rep implements ITFPredicateTypeDefinition , ICRFTypesDefTFPart astimplements de.monticore.tf.ast.IReplacement =
     ("[[" lhs:ITFPredicateTypeDefinition ? ReplacementOp rhs:ITFPredicateTypeDefinition ? "]]");
 
 
   PredicateTypeDefinition_Pat implements ITFPredicateTypeDefinition , ICRFTypesDefTFPart astimplements de.monticore.tf.ast.IPattern =
-    "PredicateTypeDefinition" schemaVarName:Name | "Define" "Predicate" name:TfIdentifierName "{"(property:ITFProperty)*"}" |(("PredicateTypeDefinition" ? schemaVarName:Name|"PredicateTypeDefinition" schemaVarName:Name ?)"[["("Define" "Predicate" name:TfIdentifierName "{"(property:ITFProperty)*"}")"]]");
+    "PredicateTypeDefinition" schemaVarName:Name | "Predicate" name:TfIdentifierName "{"(property:ITFProperty)*"}" |(("PredicateTypeDefinition" ? schemaVarName:Name|"PredicateTypeDefinition" schemaVarName:Name ?)"[["("Predicate" name:TfIdentifierName "{"(property:ITFProperty)*"}")"]]");
 
 
   PredicateTypeDefinition_Neg implements ITFPredicateTypeDefinition , ICRFTypesDefTFPart astimplements de.monticore.tf.ast.INegation =
@@ -109,7 +109,7 @@ package tr;grammar CRFTypesDefTR extends.tr.BehaviorTreeTR ,de.monticore.types.t
 
 
   PropertyTypeDefinition_Pat implements ITFPropertyTypeDefinition , ICRFTypesDefTFPart astimplements de.monticore.tf.ast.IPattern =
-    "PropertyTypeDefinition" schemaVarName:Name | "Define" name:TfIdentifierName "as" superType:TfIdentifierName("{"(property:ITFProperty)*"}")? |(("PropertyTypeDefinition" ? schemaVarName:Name|"PropertyTypeDefinition" schemaVarName:Name ?)"[["("Define" name:TfIdentifierName "as" superType:TfIdentifierName("{"(property:ITFProperty)*"}")?)"]]");
+    "PropertyTypeDefinition" schemaVarName:Name | superType:TfIdentifierName name:TfIdentifierName("{"(property:ITFProperty)*"}")? |(("PropertyTypeDefinition" ? schemaVarName:Name|"PropertyTypeDefinition" schemaVarName:Name ?)"[["(superType:TfIdentifierName name:TfIdentifierName("{"(property:ITFProperty)*"}")?)"]]");
 
 
   PropertyTypeDefinition_Neg implements ITFPropertyTypeDefinition , ICRFTypesDefTFPart astimplements de.monticore.tf.ast.INegation =
@@ -129,7 +129,7 @@ package tr;grammar CRFTypesDefTR extends.tr.BehaviorTreeTR ,de.monticore.types.t
 
 
   Property_Pat implements ITFProperty , ICRFTypesDefTFPart astimplements de.monticore.tf.ast.IPattern =
-    "Property" schemaVarName:Name | name:TfIdentifierName ":" type:ITFBasicType isList:ITFCRFTypesDef_IsList_Constant |(("Property" ? schemaVarName:Name|"Property" schemaVarName:Name ?)"[["(name:TfIdentifierName ":" type:ITFBasicType isList:ITFCRFTypesDef_IsList_Constant)"]]");
+    "Property" schemaVarName:Name | isCont:ITFCRFTypesDef_IsCont_Constant name:TfIdentifierName ":" isList:ITFCRFTypesDef_IsList_Constant type:ITFBasicType isOptional:["?"]? |(("Property" ? schemaVarName:Name|"Property" schemaVarName:Name ?)"[["(isCont:ITFCRFTypesDef_IsCont_Constant name:TfIdentifierName ":" isList:ITFCRFTypesDef_IsList_Constant type:ITFBasicType isOptional:["?"]?)"]]");
 
 
   Property_Neg implements ITFProperty , ICRFTypesDefTFPart astimplements de.monticore.tf.ast.INegation =
@@ -169,6 +169,22 @@ package tr;grammar CRFTypesDefTR extends.tr.BehaviorTreeTR ,de.monticore.types.t
     "list" "<World>" ? schemaVarName:Name ? "[[" world:World_Pat "]]" ;
 
 
+  CRFTypesDef_IsCont_Constant_Pat implements ITFCRFTypesDef_IsCont_Constant astimplements de.monticore.tf.ast.IAttributePattern =
+    IsCont:["Cont"];
+
+
+  CRFTypesDef_IsCont_Constant_Rep implements ITFCRFTypesDef_IsCont_Constant astimplements de.monticore.tf.ast.IAttributeReplacement =
+    "[[" lhs:CRFTypesDef_IsCont_Constant_Pat ":-" "]]" | "[[" ":-" rhs:CRFTypesDef_IsCont_Constant_Pat "]]" ;
+
+
+  CRFTypesDef_IsCont_Constant_Neg implements ITFCRFTypesDef_IsCont_Constant astimplements de.monticore.tf.ast.IAttributeNegation =
+    "not" "[[" CRFTypesDef_IsCont_Constant_Pat "]]" ;
+
+
+  CRFTypesDef_IsCont_Constant_Opt implements ITFCRFTypesDef_IsCont_Constant astimplements de.monticore.tf.ast.IAttributeOptional =
+    "opt" "[[" CRFTypesDef_IsCont_Constant_Pat "]]" ;
+
+
   CRFTypesDef_IsList_Constant_Pat implements ITFCRFTypesDef_IsList_Constant astimplements de.monticore.tf.ast.IAttributePattern =
     IsList:["+"];
 
@@ -183,6 +199,38 @@ package tr;grammar CRFTypesDefTR extends.tr.BehaviorTreeTR ,de.monticore.types.t
 
   CRFTypesDef_IsList_Constant_Opt implements ITFCRFTypesDef_IsList_Constant astimplements de.monticore.tf.ast.IAttributeOptional =
     "opt" "[[" CRFTypesDef_IsList_Constant_Pat "]]" ;
+
+
+  CRFTypesDef_IsOptional_Constant_Pat implements ITFCRFTypesDef_IsOptional_Constant astimplements de.monticore.tf.ast.IAttributePattern =
+    IsOptional:["?"];
+
+
+  CRFTypesDef_IsOptional_Constant_Rep implements ITFCRFTypesDef_IsOptional_Constant astimplements de.monticore.tf.ast.IAttributeReplacement =
+    "[[" lhs:CRFTypesDef_IsOptional_Constant_Pat ":-" "]]" | "[[" ":-" rhs:CRFTypesDef_IsOptional_Constant_Pat "]]" ;
+
+
+  CRFTypesDef_IsOptional_Constant_Neg implements ITFCRFTypesDef_IsOptional_Constant astimplements de.monticore.tf.ast.IAttributeNegation =
+    "not" "[[" CRFTypesDef_IsOptional_Constant_Pat "]]" ;
+
+
+  CRFTypesDef_IsOptional_Constant_Opt implements ITFCRFTypesDef_IsOptional_Constant astimplements de.monticore.tf.ast.IAttributeOptional =
+    "opt" "[[" CRFTypesDef_IsOptional_Constant_Pat "]]" ;
+
+
+  CRFTypesDef_Not_Constant_Pat implements ITFCRFTypesDef_Not_Constant astimplements de.monticore.tf.ast.IAttributePattern =
+    Not:["!"];
+
+
+  CRFTypesDef_Not_Constant_Rep implements ITFCRFTypesDef_Not_Constant astimplements de.monticore.tf.ast.IAttributeReplacement =
+    "[[" lhs:CRFTypesDef_Not_Constant_Pat ":-" "]]" | "[[" ":-" rhs:CRFTypesDef_Not_Constant_Pat "]]" ;
+
+
+  CRFTypesDef_Not_Constant_Neg implements ITFCRFTypesDef_Not_Constant astimplements de.monticore.tf.ast.IAttributeNegation =
+    "not" "[[" CRFTypesDef_Not_Constant_Pat "]]" ;
+
+
+  CRFTypesDef_Not_Constant_Opt implements ITFCRFTypesDef_Not_Constant astimplements de.monticore.tf.ast.IAttributeOptional =
+    "opt" "[[" CRFTypesDef_Not_Constant_Pat "]]" ;
 
    /* do not generate a builder for me */ 
 
@@ -366,22 +414,6 @@ package tr;grammar CRFTypesDefTR extends.tr.BehaviorTreeTR ,de.monticore.types.t
     "opt" "[[" predicate:ITFPredicate "]]" ;
 
 
-  CRFTypesDef_Not_Constant_Pat implements ITFCRFTypesDef_Not_Constant astimplements de.monticore.tf.ast.IAttributePattern =
-    Not:["!"];
-
-
-  CRFTypesDef_Not_Constant_Rep implements ITFCRFTypesDef_Not_Constant astimplements de.monticore.tf.ast.IAttributeReplacement =
-    "[[" lhs:CRFTypesDef_Not_Constant_Pat ":-" "]]" | "[[" ":-" rhs:CRFTypesDef_Not_Constant_Pat "]]" ;
-
-
-  CRFTypesDef_Not_Constant_Neg implements ITFCRFTypesDef_Not_Constant astimplements de.monticore.tf.ast.IAttributeNegation =
-    "not" "[[" CRFTypesDef_Not_Constant_Pat "]]" ;
-
-
-  CRFTypesDef_Not_Constant_Opt implements ITFCRFTypesDef_Not_Constant astimplements de.monticore.tf.ast.IAttributeOptional =
-    "opt" "[[" CRFTypesDef_Not_Constant_Pat "]]" ;
-
-
   PActionNode_Pat implements ITFPActionNode , ICRFTypesDefTFPart astimplements de.monticore.tf.ast.IPattern =
     "PActionNode" schemaVarName:Name | "PActionNode" schemaVarName:Name ? "[[" pActionNode:ITFPActionNode "]]" ;
 
@@ -405,13 +437,16 @@ package tr;grammar CRFTypesDefTR extends.tr.BehaviorTreeTR ,de.monticore.types.t
   /* No super rule (interfaces) due to being empty */
   interface ITFWorld astextends de.monticore.tf.ast.ITFElement ;
   interface ITFProperty astextends de.monticore.tf.ast.ITFElement ;
+  interface ITFCRFTypesDef_IsCont_Constant ;
   interface ITFCRFTypesDef_IsList_Constant ;
+  interface ITFCRFTypesDef_IsOptional_Constant ;
   interface ITFPropertyTypeDefinition astextends de.monticore.tf.ast.ITFElement ;
   interface ITFPredicateTypeDefinition astextends de.monticore.tf.ast.ITFElement ;
-  interface ITFDummy extends ITFPredicate astextends de.monticore.tf.ast.ITFElement ;
   interface ITFActionTypeDefinition astextends de.monticore.tf.ast.ITFElement ;
   interface ITFPredicateRef astextends de.monticore.tf.ast.ITFElement ;
+  interface ITFCRFTypesDef_Not_Constant ;
   interface ITFPlaceTimber extends ITFPActionNode astextends de.monticore.tf.ast.ITFElement ;
+  interface ITFDummy extends ITFPredicate astextends de.monticore.tf.ast.ITFElement ;
   /* NO extends ICRFTypesDefTFPart<?> */
   interface ITFCustomProperty astextends de.monticore.tf.ast.ITFElement ;
   interface ITFLayer extends ITFCustomProperty astextends de.monticore.tf.ast.ITFElement ;
@@ -422,7 +457,6 @@ package tr;grammar CRFTypesDefTR extends.tr.BehaviorTreeTR ,de.monticore.types.t
   interface ITFTool extends ITFCustomProperty astextends de.monticore.tf.ast.ITFElement ;
   interface ITFAgent extends ITFCustomProperty astextends de.monticore.tf.ast.ITFElement ;
   interface ITFPredicate astextends de.monticore.tf.ast.ITFElement ;
-  interface ITFCRFTypesDef_Not_Constant ;
   interface ITFPActionNode astextends de.monticore.tf.ast.ITFElement ;
   interface ICRFTypesDefTFPart extends ITFPart ;
   astrule World_List = method public Class _getTFElementType(){ 
@@ -499,6 +533,16 @@ package tr;grammar CRFTypesDefTR extends.tr.BehaviorTreeTR ,de.monticore.types.t
 
   } 
   ;
+  astrule CRFTypesDef_IsCont_Constant_Neg = method public ASTCRFTypesDef_IsCont_Constant_Pat getTFElement(){ 
+    return getCRFTypesDef_IsCont_Constant_Pat();
+
+  } 
+  ;
+  astrule CRFTypesDef_IsCont_Constant_Opt = method public ASTCRFTypesDef_IsCont_Constant_Pat getTFElement(){ 
+    return getCRFTypesDef_IsCont_Constant_Pat();
+
+  } 
+  ;
   astrule CRFTypesDef_IsList_Constant_Neg = method public ASTCRFTypesDef_IsList_Constant_Pat getTFElement(){ 
     return getCRFTypesDef_IsList_Constant_Pat();
 
@@ -506,6 +550,16 @@ package tr;grammar CRFTypesDefTR extends.tr.BehaviorTreeTR ,de.monticore.types.t
   ;
   astrule CRFTypesDef_IsList_Constant_Opt = method public ASTCRFTypesDef_IsList_Constant_Pat getTFElement(){ 
     return getCRFTypesDef_IsList_Constant_Pat();
+
+  } 
+  ;
+  astrule CRFTypesDef_IsOptional_Constant_Neg = method public ASTCRFTypesDef_IsOptional_Constant_Pat getTFElement(){ 
+    return getCRFTypesDef_IsOptional_Constant_Pat();
+
+  } 
+  ;
+  astrule CRFTypesDef_IsOptional_Constant_Opt = method public ASTCRFTypesDef_IsOptional_Constant_Pat getTFElement(){ 
+    return getCRFTypesDef_IsOptional_Constant_Pat();
 
   } 
   ;
@@ -583,43 +637,6 @@ package tr;grammar CRFTypesDefTR extends.tr.BehaviorTreeTR ,de.monticore.types.t
 
   } 
   ;
-  astrule Dummy_List = method public Class _getTFElementType(){ 
-    return crftypesdef._ast.ASTDummy.class;
-
-  } 
-   method public ASTITFDummy getTFElement(){ 
-    return getDummy();
-
-  } 
-  ;
-  astrule Dummy_Neg = method public Class _getTFElementType(){ 
-    return crftypesdef._ast.ASTDummy.class;
-
-  } 
-   method public ASTITFDummy getTFElement(){ 
-    return getDummy();
-
-  } 
-  ;
-  astrule Dummy_Pat = method public Class _getTFElementType(){ 
-    return crftypesdef._ast.ASTDummy.class;
-
-  } 
-  ;
-  astrule Dummy_Opt = method public Class _getTFElementType(){ 
-    return crftypesdef._ast.ASTDummy.class;
-
-  } 
-   method public ASTITFDummy getTFElement(){ 
-    return getDummy();
-
-  } 
-  ;
-  astrule Dummy_Rep = method public Class _getTFElementType(){ 
-    return crftypesdef._ast.ASTDummy.class;
-
-  } 
-  ;
   astrule ActionTypeDefinition_List = method public Class _getTFElementType(){ 
     return crftypesdef._ast.ASTActionTypeDefinition.class;
 
@@ -694,6 +711,16 @@ package tr;grammar CRFTypesDefTR extends.tr.BehaviorTreeTR ,de.monticore.types.t
 
   } 
   ;
+  astrule CRFTypesDef_Not_Constant_Neg = method public ASTCRFTypesDef_Not_Constant_Pat getTFElement(){ 
+    return getCRFTypesDef_Not_Constant_Pat();
+
+  } 
+  ;
+  astrule CRFTypesDef_Not_Constant_Opt = method public ASTCRFTypesDef_Not_Constant_Pat getTFElement(){ 
+    return getCRFTypesDef_Not_Constant_Pat();
+
+  } 
+  ;
   astrule PlaceTimber_List = method public Class _getTFElementType(){ 
     return crftypesdef._ast.ASTPlaceTimber.class;
 
@@ -728,6 +755,43 @@ package tr;grammar CRFTypesDefTR extends.tr.BehaviorTreeTR ,de.monticore.types.t
   ;
   astrule PlaceTimber_Rep = method public Class _getTFElementType(){ 
     return crftypesdef._ast.ASTPlaceTimber.class;
+
+  } 
+  ;
+  astrule Dummy_List = method public Class _getTFElementType(){ 
+    return crftypesdef._ast.ASTDummy.class;
+
+  } 
+   method public ASTITFDummy getTFElement(){ 
+    return getDummy();
+
+  } 
+  ;
+  astrule Dummy_Neg = method public Class _getTFElementType(){ 
+    return crftypesdef._ast.ASTDummy.class;
+
+  } 
+   method public ASTITFDummy getTFElement(){ 
+    return getDummy();
+
+  } 
+  ;
+  astrule Dummy_Pat = method public Class _getTFElementType(){ 
+    return crftypesdef._ast.ASTDummy.class;
+
+  } 
+  ;
+  astrule Dummy_Opt = method public Class _getTFElementType(){ 
+    return crftypesdef._ast.ASTDummy.class;
+
+  } 
+   method public ASTITFDummy getTFElement(){ 
+    return getDummy();
+
+  } 
+  ;
+  astrule Dummy_Rep = method public Class _getTFElementType(){ 
+    return crftypesdef._ast.ASTDummy.class;
 
   } 
   ;
@@ -1125,16 +1189,6 @@ package tr;grammar CRFTypesDefTR extends.tr.BehaviorTreeTR ,de.monticore.types.t
   ;
   astrule Predicate_Rep = method public Class _getTFElementType(){ 
     return crftypesdef._ast.ASTPredicate.class;
-
-  } 
-  ;
-  astrule CRFTypesDef_Not_Constant_Neg = method public ASTCRFTypesDef_Not_Constant_Pat getTFElement(){ 
-    return getCRFTypesDef_Not_Constant_Pat();
-
-  } 
-  ;
-  astrule CRFTypesDef_Not_Constant_Opt = method public ASTCRFTypesDef_Not_Constant_Pat getTFElement(){ 
-    return getCRFTypesDef_Not_Constant_Pat();
 
   } 
   ;

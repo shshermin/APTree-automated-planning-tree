@@ -24,63 +24,119 @@ public void setMCParser(PlanningServiceAntlrParser in) {
 
 
 // Implicit token
-  NAILGRIPPER82963829 : 'NailGripper';
-  PLANNINGSERVICE2466126968 : 'PlanningService';
+  RETRACTLL975386657 : 'RetractLL';
+  PLACEML1170429126 : 'PlaceML';
   PICKUPHL3620224192 : 'PickUpHL';
-  TRUE2615726 : 'True';
-  BELONGSTOLAYER2307621378 : 'BelongsToLayer';
-  PARALLEL1236046375 : 'Parallel';
+  CLOSETOOLML1864795439 : 'CloseToolML';
   FALSE67643651 : 'False';
   EFFECTS4125692130 : 'Effects';
-  FLOAT97526364 : 'float';
-  BELONGSTOMODULE2857734107 : 'BelongsToModule';
-  PREDICATE655935895 : 'Predicate';
   MIDLEVEL2687243836 : 'MidLevel';
+  NAILINGHL4192252912 : 'NailingHL';
   DEFINE2043200987 : 'Define';
-  POSITIONFREE197966677 : 'PositionFree';
-  LANGUAGEVERSION2396644928 : 'LanguageVersion';
+  ROBOTEQUIPPED4250537801 : 'RobotEquipped';
+  STACKONTWOHL1530592809 : 'StackOnTwoHL';
+  OPENGRIPPERLL2266512385 : 'OpenGripperLL';
   STACKED4061979911 : 'Stacked';
+  STACKML4061979143 : 'StackML';
+  OBJECTFINALPOSITION3686644640 : 'ObjectFinalPosition';
   POSITIONONRAIL1520817338 : 'PositionOnRail';
+  ACCESSIBLE852064214 : 'Accessible';
   EXCLAMATIONMARK : '!';
-  PACKAGE3487904838 : 'package';
-  VOID3625364 : 'void';
-  ENHSP67103580 : 'Enhsp';
+  DEMO2126339 : 'Demo';
   ROOT2553090 : 'Root';
-  PDDLPLANNING1331492089 : 'PDDLPlanning';
   BYTE3039496 : 'byte';
   DOUBLE2969009105 : 'double';
   LPAREN : '(';
   RPAREN : ')';
   STAR : '*';
-  SEQUENCE1414192097 : 'Sequence';
   PLUS : '+';
   COMMA : ',';
-  LOWLEVEL2518442160 : 'LowLevel';
   POINT : '.';
   ALLSET1963935521 : 'AllSet';
+  GRIPPER1952392299 : 'Gripper';
+  COLON : ':';
+  STAPLERGUN2716695255 : 'StaplerGun';
+  LEVEL73313124 : 'Level';
+  SEMI : ';';
+  INITIALLOCATION2697236217 : 'InitialLocation';
+  QUESTION : '?';
+  ISAT2287389 : 'IsAt';
+  AT : '@';
+  EQUIPEML653546164 : 'EquipeML';
+  ROBOTPOSITION114462099 : 'RobotPosition';
+  DEEQUIPML72308238 : 'DeequipML';
+  LIFTLL2275937771 : 'LiftLL';
+  GLUINGBEAMHL3391256933 : 'GluingBeamHL';
+  SERVICEPLANNING2103035154 : 'ServicePlanning';
+  LONG3327612 : 'long';
+  STACKONMULTIPLEML2401736054 : 'StackOnMultipleML';
+  CASSETTE99400638 : 'Cassette';
+  DEACTIVATETOOLLL211699404 : 'DeactivateToolLL';
+  ATAGENT942376562 : 'AtAgent';
+  ONTOP76319446 : 'OnTop';
+  EQUIPTOOLLL252872008 : 'EquipToolLL';
+  FIXED67893076 : 'Fixed';
+  TABLE80563118 : 'Table';
+  CLOSEGRIPPERLL792126547 : 'CloseGripperLL';
+  ATFINALPOSITION3494539052 : 'AtFinalPosition';
+  NAILINGML4192253067 : 'NailingML';
+  PUTDOWNML1107068304 : 'PutDownML';
+  MOVETOLL4255197388 : 'MoveToLL';
+  GLUEGUN1791333035 : 'GlueGun';
+  PLATE77196022 : 'Plate';
+  PLACETIMBER936283326 : 'placetimber';
+  STACKHL4061978988 : 'StackHL';
+  CONT2106194 : 'Cont';
+  CUBE2111573 : 'Cube';
+  ATPLACE956374132 : 'AtPlace';
+  LEXNAME0 : 'ActLevel:';
+  CHAR3052374 : 'char';
+  ACTIVETOOL4037428702 : 'ActiveTool';
+  LCURLY : '{';
+  RCURLY : '}';
+  DUMMY66393224 : 'Dummy';
+  VACGRIPPER3742207603 : 'VacGripper';
+  NAILGRIPPER82963829 : 'NailGripper';
+  TRUE2615726 : 'True';
+  BELONGSTOLAYER2307621378 : 'BelongsToLayer';
+  PARALLEL1236046375 : 'Parallel';
+  FLOAT97526364 : 'float';
+  NAILINGLL4192253036 : 'NailingLL';
+  BELONGSTOMODULE2857734107 : 'BelongsToModule';
+  PREDICATE655935895 : 'Predicate';
+  ROBOTLOCATION1267700767 : 'RobotLocation';
+  PICKUPML3620224347 : 'PickUpML';
+  CHANGEENDEFFECTORHL2533066851 : 'ChangeEndeffectorHL';
+  POSITIONFREE197966677 : 'PositionFree';
+  LANGUAGEVERSION2396644928 : 'LanguageVersion';
+  EQUIPLOCATION1081764837 : 'EquipLocation';
+  LOWERLL2021658657 : 'LowerLL';
+  PACKAGE3487904838 : 'package';
+  VOID3625364 : 'void';
+  ENHSP67103580 : 'Enhsp';
+  SEQUENCE1414192097 : 'Sequence';
+  DEEQUIPTOOLLL260888103 : 'DeequipToolLL';
+  LOWLEVEL2518442160 : 'LowLevel';
   STACK80204392 : 'Stack';
-  AS3122 : 'as';
+  GRIPPEREMPTY2551020450 : 'GripperEmpty';
   GLUED68903087 : 'Glued';
   PRECONDITIONS2093771131 : 'Preconditions';
   FIRSTPOS3809709476 : 'FirstPos';
-  COLON : ':';
+  STICK80212080 : 'Stick';
   PROBLEM1355111039 : 'Problem';
-  LEVEL73313124 : 'Level';
-  SEMI : ';';
-  PDDLPLANNER4155166870 : 'PddlPlanner';
   DOMAIN2052636900 : 'Domain';
+  INITIALIZEML4059202895 : 'InitializeML';
   STACKPOSITION3708807089 : 'StackPosition';
-  ISAT2287389 : 'IsAt';
-  AT : '@';
   ACTION1955883606 : 'Action';
+  INITIALIZELL4059202864 : 'InitializeLL';
   IMPORT3110171557 : 'import';
+  TRAVELML1352502873 : 'TravelML';
+  CONFIG2024042338 : 'Config';
+  GLUINGML3996558065 : 'GluingML';
   PROPERTIES1067411795 : 'Properties';
-  LONG3327612 : 'long';
   CLEAR65193517 : 'Clear';
   BEAM2066383 : 'Beam';
-  CASSETTE99400638 : 'Cassette';
-  ATAGENT942376562 : 'AtAgent';
-  ONTOP76319446 : 'OnTop';
+  GLUINGPLATEHL1790539880 : 'GluingPlateHL';
   EQUIPPOSITION4223493465 : 'EquipPosition';
   VGEMPTY2031789308 : 'VgEmpty';
   HOLDING2756415139 : 'Holding';
@@ -88,23 +144,18 @@ public void setMCParser(PlanningServiceAntlrParser in) {
   SERVICE3648806549 : 'Service';
   BEHAVIORTREE2111599920 : 'BehaviorTree';
   INT104431 : 'int';
-  GLUEGUN1791333035 : 'GlueGun';
-  PLATE77196022 : 'Plate';
   DECORATOR2532005915 : 'Decorator';
-  PLACETIMBER936283326 : 'placetimber';
   HIGHLEVEL1293099746 : 'HighLevel';
   HASTOOL2361600818 : 'HasTool';
   BOOLEAN64711720 : 'boolean';
-  ATPLACE956374132 : 'AtPlace';
-  LEXNAME0 : 'ActLevel:';
   NAILED2325890389 : 'Nailed';
-  CHAR3052374 : 'char';
   SHORT109413500 : 'short';
-  LCURLY : '{';
-  RCURLY : '}';
-  DUMMY66393224 : 'Dummy';
+  FINALLOCATION3956416299 : 'FinalLocation';
+  NAILLOCATION4142947339 : 'NailLocation';
+  STACKONMULTIPLEHL2401735899 : 'StackOnMultipleHL';
   ROBOT79133258 : 'Robot';
-  VACGRIPPER3742207603 : 'VacGripper';
+  ATTOOL1970635915 : 'AtTool';
+  STACKONTWOML1530592964 : 'StackOnTwoML';
 
 // Explicit token
 
@@ -112,6 +163,51 @@ public void setMCParser(PlanningServiceAntlrParser in) {
       fragment NEWLINE 
       :('\r' '\n' |'\r' |'\n' )
       ;
+      // ASTLexProd RobotJoints
+      RobotJoints 
+      :('-' )
+      ?( DIGIT )
+      +('.' ( DIGIT )
+      +)
+      ?('E' ('-' )
+      ?( DIGIT )
+      +)
+      ?',' ('-' )
+      ?( DIGIT )
+      +('.' ( DIGIT )
+      +)
+      ?('E' ('-' )
+      ?( DIGIT )
+      +)
+      ?',' ('-' )
+      ?( DIGIT )
+      +('.' ( DIGIT )
+      +)
+      ?('E' ('-' )
+      ?( DIGIT )
+      +)
+      ?',' ('-' )
+      ?( DIGIT )
+      +('.' ( DIGIT )
+      +)
+      ?('E' ('-' )
+      ?( DIGIT )
+      +)
+      ?',' ('-' )
+      ?( DIGIT )
+      +('.' ( DIGIT )
+      +)
+      ?('E' ('-' )
+      ?( DIGIT )
+      +)
+      ?',' ('-' )
+      ?( DIGIT )
+      +('.' ( DIGIT )
+      +)
+      ?('E' ('-' )
+      ?( DIGIT )
+      +)
+      ?;
       // ASTLexProd ALPHA
       fragment ALPHA 
       :'a'..'z'  |'A'..'Z'  ;
@@ -150,6 +246,30 @@ public void setMCParser(PlanningServiceAntlrParser in) {
       // ASTLexProd LOWER
       fragment LOWER 
       :'a'..'z'  ;
+      // ASTLexProd Coordinate
+      Coordinate 
+      :('-' )
+      ?( DIGIT )
+      +('.' ( DIGIT )
+      +)
+      ?('E' ('-' )
+      ?( DIGIT )
+      +)
+      ?',' ('-' )
+      ?( DIGIT )
+      +('.' ( DIGIT )
+      +)
+      ?('E' ('-' )
+      ?( DIGIT )
+      +)
+      ?',' ('-' )
+      ?( DIGIT )
+      +('.' ( DIGIT )
+      +)
+      ?('E' ('-' )
+      ?( DIGIT )
+      +)
+      ?;
       // ASTLexProd ML_COMMENT
       ML_COMMENT 
       :'/*' (.)

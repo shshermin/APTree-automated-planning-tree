@@ -44,44 +44,44 @@ package tr;grammar PlanningServiceTR extends.tr.CRFTypesConTR {
     "list" "<Domain>" ? schemaVarName:Name ? "[[" domain:Domain_Pat "]]" ;
 
 
-  ENHSP_Rep implements ITFENHSP , IPlanningServiceTFPart , ITFPDDLPlanner astimplements de.monticore.tf.ast.IReplacement =
-    ("[[" lhs:ITFENHSP ? ReplacementOp rhs:ITFENHSP ? "]]");
+  PlannerENHSP_Rep implements ITFPlannerENHSP , IPlanningServiceTFPart , ITFPlannerPDDL astimplements de.monticore.tf.ast.IReplacement =
+    ("[[" lhs:ITFPlannerENHSP ? ReplacementOp rhs:ITFPlannerENHSP ? "]]");
 
 
-  ENHSP_Pat implements ITFENHSP , ITFPDDLPlanner , IPlanningServiceTFPart astimplements de.monticore.tf.ast.IPattern =
-    "ENHSP" schemaVarName:Name | "PddlPlanner" "Enhsp" name:TfIdentifierName "Domain" ":" domain:TfIdentifierName("Problem" ":" problem:TfIdentifierName)? |(("ENHSP" ? schemaVarName:Name|"ENHSP" schemaVarName:Name ?)"[["("PddlPlanner" "Enhsp" name:TfIdentifierName "Domain" ":" domain:TfIdentifierName("Problem" ":" problem:TfIdentifierName)?)"]]");
+  PlannerENHSP_Pat implements ITFPlannerENHSP , ITFPlannerPDDL , IPlanningServiceTFPart astimplements de.monticore.tf.ast.IPattern =
+    "PlannerENHSP" schemaVarName:Name | "Enhsp" "Domain" ":" domain:TfIdentifierName("Problem" ":" problem:TfIdentifierName)?("Config" ":" config:TfIdentifierFILEPATH)? |(("PlannerENHSP" ? schemaVarName:Name|"PlannerENHSP" schemaVarName:Name ?)"[["("Enhsp" "Domain" ":" domain:TfIdentifierName("Problem" ":" problem:TfIdentifierName)?("Config" ":" config:TfIdentifierFILEPATH)?)"]]");
 
 
-  ENHSP_Neg implements ITFENHSP , IPlanningServiceTFPart , ITFPDDLPlanner astimplements de.monticore.tf.ast.INegation =
-    "not" "[[" eNHSP:ITFENHSP "]]" ;
+  PlannerENHSP_Neg implements ITFPlannerENHSP , IPlanningServiceTFPart , ITFPlannerPDDL astimplements de.monticore.tf.ast.INegation =
+    "not" "[[" plannerENHSP:ITFPlannerENHSP "]]" ;
 
 
-  ENHSP_Opt implements ITFENHSP , IPlanningServiceTFPart , ITFPDDLPlanner astimplements de.monticore.tf.ast.IOptional =
-    "opt" "[[" eNHSP:ITFENHSP "]]" ;
+  PlannerENHSP_Opt implements ITFPlannerENHSP , IPlanningServiceTFPart , ITFPlannerPDDL astimplements de.monticore.tf.ast.IOptional =
+    "opt" "[[" plannerENHSP:ITFPlannerENHSP "]]" ;
 
 
-  ENHSP_List implements ITFENHSP , IPlanningServiceTFPart , ITFPDDLPlanner astimplements de.monticore.tf.ast.IList =
-    "list" "<ENHSP>" ? schemaVarName:Name ? "[[" eNHSP:ENHSP_Pat "]]" ;
+  PlannerENHSP_List implements ITFPlannerENHSP , IPlanningServiceTFPart , ITFPlannerPDDL astimplements de.monticore.tf.ast.IList =
+    "list" "<PlannerENHSP>" ? schemaVarName:Name ? "[[" plannerENHSP:PlannerENHSP_Pat "]]" ;
 
 
-  PDDLPlannerService_Rep implements ITFPDDLPlannerService , IPlanningServiceTFPart , ITFPService astimplements de.monticore.tf.ast.IReplacement =
-    ("[[" lhs:ITFPDDLPlannerService ? ReplacementOp rhs:ITFPDDLPlannerService ? "]]");
+  ServicePDDLPlanning_Rep implements ITFServicePDDLPlanning , IPlanningServiceTFPart , ITFServicePlanning astimplements de.monticore.tf.ast.IReplacement =
+    ("[[" lhs:ITFServicePDDLPlanning ? ReplacementOp rhs:ITFServicePDDLPlanning ? "]]");
 
 
-  PDDLPlannerService_Pat implements ITFPDDLPlannerService , ITFPService , IPlanningServiceTFPart astimplements de.monticore.tf.ast.IPattern =
-    "PDDLPlannerService" schemaVarName:Name |("PlanningService"|"PDDLPlanning" "Service")name:TfIdentifierName planner:TfIdentifierName |(("PDDLPlannerService" ? schemaVarName:Name|"PDDLPlannerService" schemaVarName:Name ?)"[["(("PlanningService"|"PDDLPlanning" "Service")name:TfIdentifierName planner:TfIdentifierName)"]]");
+  ServicePDDLPlanning_Pat implements ITFServicePDDLPlanning , ITFServicePlanning , IPlanningServiceTFPart astimplements de.monticore.tf.ast.IPattern =
+    "ServicePDDLPlanning" schemaVarName:Name | "ServicePlanning" name:TfIdentifierName planner:ITFPlanner |(("ServicePDDLPlanning" ? schemaVarName:Name|"ServicePDDLPlanning" schemaVarName:Name ?)"[["("ServicePlanning" name:TfIdentifierName planner:ITFPlanner)"]]");
 
 
-  PDDLPlannerService_Neg implements ITFPDDLPlannerService , IPlanningServiceTFPart , ITFPService astimplements de.monticore.tf.ast.INegation =
-    "not" "[[" pDDLPlannerService:ITFPDDLPlannerService "]]" ;
+  ServicePDDLPlanning_Neg implements ITFServicePDDLPlanning , IPlanningServiceTFPart , ITFServicePlanning astimplements de.monticore.tf.ast.INegation =
+    "not" "[[" servicePDDLPlanning:ITFServicePDDLPlanning "]]" ;
 
 
-  PDDLPlannerService_Opt implements ITFPDDLPlannerService , IPlanningServiceTFPart , ITFPService astimplements de.monticore.tf.ast.IOptional =
-    "opt" "[[" pDDLPlannerService:ITFPDDLPlannerService "]]" ;
+  ServicePDDLPlanning_Opt implements ITFServicePDDLPlanning , IPlanningServiceTFPart , ITFServicePlanning astimplements de.monticore.tf.ast.IOptional =
+    "opt" "[[" servicePDDLPlanning:ITFServicePDDLPlanning "]]" ;
 
 
-  PDDLPlannerService_List implements ITFPDDLPlannerService , IPlanningServiceTFPart , ITFPService astimplements de.monticore.tf.ast.IList =
-    "list" "<PDDLPlannerService>" ? schemaVarName:Name ? "[[" pDDLPlannerService:PDDLPlannerService_Pat "]]" ;
+  ServicePDDLPlanning_List implements ITFServicePDDLPlanning , IPlanningServiceTFPart , ITFServicePlanning astimplements de.monticore.tf.ast.IList =
+    "list" "<ServicePDDLPlanning>" ? schemaVarName:Name ? "[[" servicePDDLPlanning:ServicePDDLPlanning_Pat "]]" ;
 
    /*Skipping supers due to empty prod  */ 
 
@@ -91,7 +91,7 @@ package tr;grammar PlanningServiceTR extends.tr.CRFTypesConTR {
   /* No I?TFPart supers due to emptiness */
 
   PWorld_Pat implements ITFPWorld astimplements de.monticore.tf.ast.IPattern =
-    "PWorld" schemaVarName:Name |(problem:ITFProblem|pDDLPlannerService:ITFPDDLPlannerService|eNHSP:ITFENHSP|domain:ITFDomain)*|(("PWorld" ? schemaVarName:Name|"PWorld" schemaVarName:Name ?)"[["((problem:ITFProblem|pDDLPlannerService:ITFPDDLPlannerService|eNHSP:ITFENHSP|domain:ITFDomain)*)"]]");
+    "PWorld" schemaVarName:Name |(problem:ITFProblem|servicePDDLPlanning:ITFServicePDDLPlanning|plannerENHSP:ITFPlannerENHSP|domain:ITFDomain)*|(("PWorld" ? schemaVarName:Name|"PWorld" schemaVarName:Name ?)"[["((problem:ITFProblem|servicePDDLPlanning:ITFServicePDDLPlanning|plannerENHSP:ITFPlannerENHSP|domain:ITFDomain)*)"]]");
 
    /*Skipping supers due to empty prod  */ 
 
@@ -109,24 +109,24 @@ package tr;grammar PlanningServiceTR extends.tr.CRFTypesConTR {
     "list" "<PWorld>" ? schemaVarName:Name ? "[[" pWorld:PWorld_Pat "]]" ;
 
 
-  PService_Pat implements ITFPService , IPlanningServiceTFPart astimplements de.monticore.tf.ast.IPattern =
-    "PService" schemaVarName:Name | "PService" schemaVarName:Name ? "[[" pService:ITFPService "]]" ;
+  ServicePlanning_Pat implements ITFServicePlanning , IPlanningServiceTFPart astimplements de.monticore.tf.ast.IPattern =
+    "ServicePlanning" schemaVarName:Name | "ServicePlanning" schemaVarName:Name ? "[[" servicePlanning:ITFServicePlanning "]]" ;
 
 
-  PService_Rep implements ITFPService , IPlanningServiceTFPart astimplements de.monticore.tf.ast.IReplacement =
-    ("[[" lhs:ITFPService ? ReplacementOp rhs:ITFPService ? "]]");
+  ServicePlanning_Rep implements ITFServicePlanning , IPlanningServiceTFPart astimplements de.monticore.tf.ast.IReplacement =
+    ("[[" lhs:ITFServicePlanning ? ReplacementOp rhs:ITFServicePlanning ? "]]");
 
 
-  PService_Neg implements ITFPService , IPlanningServiceTFPart astimplements de.monticore.tf.ast.INegation =
-    "not" "[[" pService:ITFPService "]]" ;
+  ServicePlanning_Neg implements ITFServicePlanning , IPlanningServiceTFPart astimplements de.monticore.tf.ast.INegation =
+    "not" "[[" servicePlanning:ITFServicePlanning "]]" ;
 
 
-  PService_List implements ITFPService , IPlanningServiceTFPart astimplements de.monticore.tf.ast.IList =
-    "list" "<PService>" ? schemaVarName:Name ? "[[" pService:PService_Pat "]]" ;
+  ServicePlanning_List implements ITFServicePlanning , IPlanningServiceTFPart astimplements de.monticore.tf.ast.IList =
+    "list" "<ServicePlanning>" ? schemaVarName:Name ? "[[" servicePlanning:ServicePlanning_Pat "]]" ;
 
 
-  PService_Opt implements ITFPService , IPlanningServiceTFPart astimplements de.monticore.tf.ast.IOptional =
-    "opt" "[[" pService:ITFPService "]]" ;
+  ServicePlanning_Opt implements ITFServicePlanning , IPlanningServiceTFPart astimplements de.monticore.tf.ast.IOptional =
+    "opt" "[[" servicePlanning:ITFServicePlanning "]]" ;
 
 
   Planner_Pat implements ITFPlanner , IPlanningServiceTFPart astimplements de.monticore.tf.ast.IPattern =
@@ -149,34 +149,34 @@ package tr;grammar PlanningServiceTR extends.tr.CRFTypesConTR {
     "opt" "[[" planner:ITFPlanner "]]" ;
 
 
-  PDDLPlanner_Pat implements ITFPDDLPlanner , IPlanningServiceTFPart astimplements de.monticore.tf.ast.IPattern =
-    "PDDLPlanner" schemaVarName:Name | "PDDLPlanner" schemaVarName:Name ? "[[" pDDLPlanner:ITFPDDLPlanner "]]" ;
+  PlannerPDDL_Pat implements ITFPlannerPDDL , IPlanningServiceTFPart astimplements de.monticore.tf.ast.IPattern =
+    "PlannerPDDL" schemaVarName:Name | "PlannerPDDL" schemaVarName:Name ? "[[" plannerPDDL:ITFPlannerPDDL "]]" ;
 
 
-  PDDLPlanner_Rep implements ITFPDDLPlanner , IPlanningServiceTFPart astimplements de.monticore.tf.ast.IReplacement =
-    ("[[" lhs:ITFPDDLPlanner ? ReplacementOp rhs:ITFPDDLPlanner ? "]]");
+  PlannerPDDL_Rep implements ITFPlannerPDDL , IPlanningServiceTFPart astimplements de.monticore.tf.ast.IReplacement =
+    ("[[" lhs:ITFPlannerPDDL ? ReplacementOp rhs:ITFPlannerPDDL ? "]]");
 
 
-  PDDLPlanner_Neg implements ITFPDDLPlanner , IPlanningServiceTFPart astimplements de.monticore.tf.ast.INegation =
-    "not" "[[" pDDLPlanner:ITFPDDLPlanner "]]" ;
+  PlannerPDDL_Neg implements ITFPlannerPDDL , IPlanningServiceTFPart astimplements de.monticore.tf.ast.INegation =
+    "not" "[[" plannerPDDL:ITFPlannerPDDL "]]" ;
 
 
-  PDDLPlanner_List implements ITFPDDLPlanner , IPlanningServiceTFPart astimplements de.monticore.tf.ast.IList =
-    "list" "<PDDLPlanner>" ? schemaVarName:Name ? "[[" pDDLPlanner:PDDLPlanner_Pat "]]" ;
+  PlannerPDDL_List implements ITFPlannerPDDL , IPlanningServiceTFPart astimplements de.monticore.tf.ast.IList =
+    "list" "<PlannerPDDL>" ? schemaVarName:Name ? "[[" plannerPDDL:PlannerPDDL_Pat "]]" ;
 
 
-  PDDLPlanner_Opt implements ITFPDDLPlanner , IPlanningServiceTFPart astimplements de.monticore.tf.ast.IOptional =
-    "opt" "[[" pDDLPlanner:ITFPDDLPlanner "]]" ;
+  PlannerPDDL_Opt implements ITFPlannerPDDL , IPlanningServiceTFPart astimplements de.monticore.tf.ast.IOptional =
+    "opt" "[[" plannerPDDL:ITFPlannerPDDL "]]" ;
 
   /* No super rule (interfaces) due to being empty */
   interface ITFPWorld astextends de.monticore.tf.ast.ITFElement ;
-  interface ITFPDDLPlannerService extends ITFPService astextends de.monticore.tf.ast.ITFElement ;
-  interface ITFENHSP extends ITFPDDLPlanner astextends de.monticore.tf.ast.ITFElement ;
+  interface ITFServicePDDLPlanning extends ITFServicePlanning astextends de.monticore.tf.ast.ITFElement ;
+  interface ITFPlannerENHSP extends ITFPlannerPDDL astextends de.monticore.tf.ast.ITFElement ;
   interface ITFDomain astextends de.monticore.tf.ast.ITFElement ;
   interface ITFProblem astextends de.monticore.tf.ast.ITFElement ;
-  interface ITFPService astextends de.monticore.tf.ast.ITFElement ;
+  interface ITFServicePlanning astextends de.monticore.tf.ast.ITFElement ;
   interface ITFPlanner astextends de.monticore.tf.ast.ITFElement ;
-  interface ITFPDDLPlanner astextends de.monticore.tf.ast.ITFElement ;
+  interface ITFPlannerPDDL astextends de.monticore.tf.ast.ITFElement ;
   interface IPlanningServiceTFPart extends ITFPart ;
   astrule PWorld_List = method public Class _getTFElementType(){ 
     return planningservice._ast.ASTPWorld.class;
@@ -215,77 +215,77 @@ package tr;grammar PlanningServiceTR extends.tr.CRFTypesConTR {
 
   } 
   ;
-  astrule PDDLPlannerService_List = method public Class _getTFElementType(){ 
-    return planningservice._ast.ASTPDDLPlannerService.class;
+  astrule ServicePDDLPlanning_List = method public Class _getTFElementType(){ 
+    return planningservice._ast.ASTServicePDDLPlanning.class;
 
   } 
-   method public ASTITFPDDLPlannerService getTFElement(){ 
-    return getPDDLPlannerService();
-
-  } 
-  ;
-  astrule PDDLPlannerService_Neg = method public Class _getTFElementType(){ 
-    return planningservice._ast.ASTPDDLPlannerService.class;
-
-  } 
-   method public ASTITFPDDLPlannerService getTFElement(){ 
-    return getPDDLPlannerService();
+   method public ASTITFServicePDDLPlanning getTFElement(){ 
+    return getServicePDDLPlanning();
 
   } 
   ;
-  astrule PDDLPlannerService_Pat = method public Class _getTFElementType(){ 
-    return planningservice._ast.ASTPDDLPlannerService.class;
+  astrule ServicePDDLPlanning_Neg = method public Class _getTFElementType(){ 
+    return planningservice._ast.ASTServicePDDLPlanning.class;
+
+  } 
+   method public ASTITFServicePDDLPlanning getTFElement(){ 
+    return getServicePDDLPlanning();
 
   } 
   ;
-  astrule PDDLPlannerService_Opt = method public Class _getTFElementType(){ 
-    return planningservice._ast.ASTPDDLPlannerService.class;
-
-  } 
-   method public ASTITFPDDLPlannerService getTFElement(){ 
-    return getPDDLPlannerService();
+  astrule ServicePDDLPlanning_Pat = method public Class _getTFElementType(){ 
+    return planningservice._ast.ASTServicePDDLPlanning.class;
 
   } 
   ;
-  astrule PDDLPlannerService_Rep = method public Class _getTFElementType(){ 
-    return planningservice._ast.ASTPDDLPlannerService.class;
+  astrule ServicePDDLPlanning_Opt = method public Class _getTFElementType(){ 
+    return planningservice._ast.ASTServicePDDLPlanning.class;
+
+  } 
+   method public ASTITFServicePDDLPlanning getTFElement(){ 
+    return getServicePDDLPlanning();
 
   } 
   ;
-  astrule ENHSP_List = method public Class _getTFElementType(){ 
-    return planningservice._ast.ASTENHSP.class;
-
-  } 
-   method public ASTITFENHSP getTFElement(){ 
-    return getENHSP();
+  astrule ServicePDDLPlanning_Rep = method public Class _getTFElementType(){ 
+    return planningservice._ast.ASTServicePDDLPlanning.class;
 
   } 
   ;
-  astrule ENHSP_Neg = method public Class _getTFElementType(){ 
-    return planningservice._ast.ASTENHSP.class;
+  astrule PlannerENHSP_List = method public Class _getTFElementType(){ 
+    return planningservice._ast.ASTPlannerENHSP.class;
 
   } 
-   method public ASTITFENHSP getTFElement(){ 
-    return getENHSP();
-
-  } 
-  ;
-  astrule ENHSP_Pat = method public Class _getTFElementType(){ 
-    return planningservice._ast.ASTENHSP.class;
+   method public ASTITFPlannerENHSP getTFElement(){ 
+    return getPlannerENHSP();
 
   } 
   ;
-  astrule ENHSP_Opt = method public Class _getTFElementType(){ 
-    return planningservice._ast.ASTENHSP.class;
+  astrule PlannerENHSP_Neg = method public Class _getTFElementType(){ 
+    return planningservice._ast.ASTPlannerENHSP.class;
 
   } 
-   method public ASTITFENHSP getTFElement(){ 
-    return getENHSP();
+   method public ASTITFPlannerENHSP getTFElement(){ 
+    return getPlannerENHSP();
 
   } 
   ;
-  astrule ENHSP_Rep = method public Class _getTFElementType(){ 
-    return planningservice._ast.ASTENHSP.class;
+  astrule PlannerENHSP_Pat = method public Class _getTFElementType(){ 
+    return planningservice._ast.ASTPlannerENHSP.class;
+
+  } 
+  ;
+  astrule PlannerENHSP_Opt = method public Class _getTFElementType(){ 
+    return planningservice._ast.ASTPlannerENHSP.class;
+
+  } 
+   method public ASTITFPlannerENHSP getTFElement(){ 
+    return getPlannerENHSP();
+
+  } 
+  ;
+  astrule PlannerENHSP_Rep = method public Class _getTFElementType(){ 
+    return planningservice._ast.ASTPlannerENHSP.class;
 
   } 
   ;
@@ -363,48 +363,48 @@ package tr;grammar PlanningServiceTR extends.tr.CRFTypesConTR {
 
   } 
   ;
-  astrule PService_List = method public Class _getTFElementType(){ 
-    return planningservice._ast.ASTPService.class;
+  astrule ServicePlanning_List = method public Class _getTFElementType(){ 
+    return planningservice._ast.ASTServicePlanning.class;
 
   } 
-   method public ASTITFPService getTFElement(){ 
-    return getPService();
-
-  } 
-  ;
-  astrule PService_Neg = method public Class _getTFElementType(){ 
-    return planningservice._ast.ASTPService.class;
-
-  } 
-   method public ASTITFPService getTFElement(){ 
-    return getPService();
+   method public ASTITFServicePlanning getTFElement(){ 
+    return getServicePlanning();
 
   } 
   ;
-  astrule PService_Pat = method public ASTPService_Pat getRhs(){ 
+  astrule ServicePlanning_Neg = method public Class _getTFElementType(){ 
+    return planningservice._ast.ASTServicePlanning.class;
+
+  } 
+   method public ASTITFServicePlanning getTFElement(){ 
+    return getServicePlanning();
+
+  } 
+  ;
+  astrule ServicePlanning_Pat = method public ASTServicePlanning_Pat getRhs(){ 
     return this;
 
   } 
-   method public ASTPService_Pat getLhs(){ 
+   method public ASTServicePlanning_Pat getLhs(){ 
     return this;
 
   } 
    method public Class _getTFElementType(){ 
-    return ASTPService.class;
+    return ASTServicePlanning.class;
 
   } 
   ;
-  astrule PService_Opt = method public Class _getTFElementType(){ 
-    return planningservice._ast.ASTPService.class;
+  astrule ServicePlanning_Opt = method public Class _getTFElementType(){ 
+    return planningservice._ast.ASTServicePlanning.class;
 
   } 
-   method public ASTITFPService getTFElement(){ 
-    return getPService();
+   method public ASTITFServicePlanning getTFElement(){ 
+    return getServicePlanning();
 
   } 
   ;
-  astrule PService_Rep = method public Class _getTFElementType(){ 
-    return planningservice._ast.ASTPService.class;
+  astrule ServicePlanning_Rep = method public Class _getTFElementType(){ 
+    return planningservice._ast.ASTServicePlanning.class;
 
   } 
   ;
@@ -453,48 +453,48 @@ package tr;grammar PlanningServiceTR extends.tr.CRFTypesConTR {
 
   } 
   ;
-  astrule PDDLPlanner_List = method public Class _getTFElementType(){ 
-    return planningservice._ast.ASTPDDLPlanner.class;
+  astrule PlannerPDDL_List = method public Class _getTFElementType(){ 
+    return planningservice._ast.ASTPlannerPDDL.class;
 
   } 
-   method public ASTITFPDDLPlanner getTFElement(){ 
-    return getPDDLPlanner();
-
-  } 
-  ;
-  astrule PDDLPlanner_Neg = method public Class _getTFElementType(){ 
-    return planningservice._ast.ASTPDDLPlanner.class;
-
-  } 
-   method public ASTITFPDDLPlanner getTFElement(){ 
-    return getPDDLPlanner();
+   method public ASTITFPlannerPDDL getTFElement(){ 
+    return getPlannerPDDL();
 
   } 
   ;
-  astrule PDDLPlanner_Pat = method public ASTPDDLPlanner_Pat getRhs(){ 
+  astrule PlannerPDDL_Neg = method public Class _getTFElementType(){ 
+    return planningservice._ast.ASTPlannerPDDL.class;
+
+  } 
+   method public ASTITFPlannerPDDL getTFElement(){ 
+    return getPlannerPDDL();
+
+  } 
+  ;
+  astrule PlannerPDDL_Pat = method public ASTPlannerPDDL_Pat getRhs(){ 
     return this;
 
   } 
-   method public ASTPDDLPlanner_Pat getLhs(){ 
+   method public ASTPlannerPDDL_Pat getLhs(){ 
     return this;
 
   } 
    method public Class _getTFElementType(){ 
-    return ASTPDDLPlanner.class;
+    return ASTPlannerPDDL.class;
 
   } 
   ;
-  astrule PDDLPlanner_Opt = method public Class _getTFElementType(){ 
-    return planningservice._ast.ASTPDDLPlanner.class;
+  astrule PlannerPDDL_Opt = method public Class _getTFElementType(){ 
+    return planningservice._ast.ASTPlannerPDDL.class;
 
   } 
-   method public ASTITFPDDLPlanner getTFElement(){ 
-    return getPDDLPlanner();
+   method public ASTITFPlannerPDDL getTFElement(){ 
+    return getPlannerPDDL();
 
   } 
   ;
-  astrule PDDLPlanner_Rep = method public Class _getTFElementType(){ 
-    return planningservice._ast.ASTPDDLPlanner.class;
+  astrule PlannerPDDL_Rep = method public Class _getTFElementType(){ 
+    return planningservice._ast.ASTPlannerPDDL.class;
 
   } 
   ;

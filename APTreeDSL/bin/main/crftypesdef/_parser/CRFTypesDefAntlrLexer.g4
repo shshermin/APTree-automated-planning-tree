@@ -56,7 +56,7 @@ public void setMCParser(CRFTypesDefAntlrParser in) {
   DECORATOR2532005915 : 'Decorator';
   PLACETIMBER936283326 : 'placetimber';
   HIGHLEVEL1293099746 : 'HighLevel';
-  AS3122 : 'as';
+  CONT2106194 : 'Cont';
   BOOLEAN64711720 : 'boolean';
   LEXNAME0 : 'ActLevel:';
   PRECONDITIONS2093771131 : 'Preconditions';
@@ -67,9 +67,55 @@ public void setMCParser(CRFTypesDefAntlrParser in) {
   LCURLY : '{';
   RCURLY : '}';
   DUMMY66393224 : 'Dummy';
+  QUESTION : '?';
 
 // Explicit token
 
+      // ASTLexProd RobotJoints
+      RobotJoints 
+      :('-' )
+      ?( DIGIT )
+      +('.' ( DIGIT )
+      +)
+      ?('E' ('-' )
+      ?( DIGIT )
+      +)
+      ?',' ('-' )
+      ?( DIGIT )
+      +('.' ( DIGIT )
+      +)
+      ?('E' ('-' )
+      ?( DIGIT )
+      +)
+      ?',' ('-' )
+      ?( DIGIT )
+      +('.' ( DIGIT )
+      +)
+      ?('E' ('-' )
+      ?( DIGIT )
+      +)
+      ?',' ('-' )
+      ?( DIGIT )
+      +('.' ( DIGIT )
+      +)
+      ?('E' ('-' )
+      ?( DIGIT )
+      +)
+      ?',' ('-' )
+      ?( DIGIT )
+      +('.' ( DIGIT )
+      +)
+      ?('E' ('-' )
+      ?( DIGIT )
+      +)
+      ?',' ('-' )
+      ?( DIGIT )
+      +('.' ( DIGIT )
+      +)
+      ?('E' ('-' )
+      ?( DIGIT )
+      +)
+      ?;
       // ASTLexProd NEWLINE
       fragment NEWLINE 
       :('\r' '\n' |'\r' |'\n' )
@@ -112,6 +158,30 @@ public void setMCParser(CRFTypesDefAntlrParser in) {
       // ASTLexProd LOWER
       fragment LOWER 
       :'a'..'z'  ;
+      // ASTLexProd Coordinate
+      Coordinate 
+      :('-' )
+      ?( DIGIT )
+      +('.' ( DIGIT )
+      +)
+      ?('E' ('-' )
+      ?( DIGIT )
+      +)
+      ?',' ('-' )
+      ?( DIGIT )
+      +('.' ( DIGIT )
+      +)
+      ?('E' ('-' )
+      ?( DIGIT )
+      +)
+      ?',' ('-' )
+      ?( DIGIT )
+      +('.' ( DIGIT )
+      +)
+      ?('E' ('-' )
+      ?( DIGIT )
+      +)
+      ?;
       // ASTLexProd ML_COMMENT
       ML_COMMENT 
       :'/*' (.)

@@ -37,8 +37,8 @@ public class DynamicFlowNode : FlowNode
         // Track this flow node
         LoggingService.TrackNodeStart(nodeName.ToString(), "DynamicFlowNode", System.DateTime.Now);
 
-        // Track flow node initialization
-        BehaviorTreeComponentLogger.TrackFlowNodeInitialization(this.GetType().Name);
+        // Track flow node initialization (unified as "FlowNode")
+        BehaviorTreeComponentLogger.TrackFlowNodeInitialization("FlowNode");
 
         // Automatically add PlanningComplete decorator to dynamic flow nodes
         AddDecorator(new DecoratorPlanningComplete());
