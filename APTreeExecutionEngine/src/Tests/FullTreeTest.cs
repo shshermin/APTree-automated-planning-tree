@@ -407,9 +407,10 @@ namespace BehaviorTreeMainProject
             {
                 LoggingService.LogInfo(" Creating behavior tree with cassette flow nodes...");
 
-                // Create behavior tree instance first
+                // Create behavior tree instance (set blackboard directly to avoid orphan root composite)
                 var behaviorTree = new BehaviorTree();
-                behaviorTree.Initialise(blackboard, "CassetteBehaviorTree");
+                behaviorTree.linkedBlackboard = blackboard;
+                behaviorTree.DebugDisplayName = "CassetteBehaviorTree";
                 LoggingService.LogSuccess(" Created behavior tree instance");
 
                 // Create root composite flow node (Sequential mode: runs batches one at a time)

@@ -524,7 +524,8 @@ namespace BehaviorTreeMainProject
         private DynamicFlowNode CreatePlannerSubtree(SubtreeConfiguration config, string instanceName, Dictionary<string, object> customParameters)
         {
             var subtreeTree = new BehaviorTree();
-            subtreeTree.Initialise(linkedBlackboard, $"{config.Name}_Subtree_{instanceName}");
+            subtreeTree.linkedBlackboard = linkedBlackboard;
+            subtreeTree.DebugDisplayName = $"{config.Name}_Subtree_{instanceName}";
 
             var dynamicFlowNode = new DynamicFlowNode(
                 new FastName($"{config.Name}_DynamicFlow_{instanceName}"),

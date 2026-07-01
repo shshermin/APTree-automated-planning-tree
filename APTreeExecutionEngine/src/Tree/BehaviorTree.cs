@@ -2,7 +2,7 @@ public class BehaviorTree : IBehaviorTree
 {
     public string DebugDisplayName { get; set; } = "Behavior Tree";
 
-    public Blackboard<FastName> linkedBlackboard { get; protected set; }
+    public Blackboard<FastName> linkedBlackboard { get; set; }
 
     public FlowNode root { get;  set; }
 

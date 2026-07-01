@@ -45,8 +45,8 @@ public class BTFlowNodeComposite : FlowNode
         this.TerminationPolicy = terminationPolicy;
         DebugDisplayName = $"CompositeFlow({nodeName.ToString()})";
         
-        // Track flow node initialization
-        BehaviorTreeComponentLogger.TrackFlowNodeInitialization(this.GetType().Name);
+        // Track flow node initialization (unified as "FlowNode")
+        BehaviorTreeComponentLogger.TrackFlowNodeInitialization("FlowNode");
         
         LoggingService.LogInfo($"🔧 CompositeFlow: Created with SuccessCriteria: {successCriteria}, TerminationPolicy: {terminationPolicy}");
     }

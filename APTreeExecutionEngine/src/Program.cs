@@ -1,11 +1,19 @@
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using BehaviorTreeMainProject;
 
+// Set to true to also start the web/frontend server after the test. False = run only the test.
+const bool RunFrontend = false;
+
 // Run the behavior tree test (disabled — uncomment to run before server starts)
  await FullTreeTest.RunTest();
+
+if (!RunFrontend)
+{
+    return;
+}
 
 var builder = WebApplication.CreateBuilder(args);
 
