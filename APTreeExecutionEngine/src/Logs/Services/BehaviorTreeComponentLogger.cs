@@ -27,6 +27,9 @@ namespace BehaviorTreeMainProject.Log.Services
         private int totalSubtreesCleared = 0;
         private int finalActionsRemaining = 0;
 
+        // PRR (Plan Replacement Ratio) tracking
+        private readonly List<PRRRecord> prrRecords = new List<PRRRecord>();
+
         public static BehaviorTreeComponentLogger Instance
         {
             get
@@ -576,6 +579,22 @@ namespace BehaviorTreeMainProject.Log.Services
             Instance.TrackFinalActionsRemainingInternal(actionCount, source);
         }
 
+        /// <summary>
+        /// Track a PRR (Plan Replacement Ratio) event when a replan clears an old plan
+        /// </summary>
+        public static void TrackPRRClear(string subtreeName, int oldPlanNodes, int nodesReplaced, int nodesAlreadyFinished, int totalBTNodes, int totalFlowNodes, int totalActionNodes, int totalMLActions)
+        {
+            Instance.TrackPRRClearInternal(subtreeName, oldPlanNodes, nodesReplaced, nodesAlreadyFinished, totalBTNodes, totalFlowNodes, totalActionNodes, totalMLActions);
+        }
+
+        /// <summary>
+        /// Track when the new plan arrives after a replan, completing the PRR record
+        /// </summary>
+        public static void TrackPRRNewPlan(string subtreeName, int newPlanNodes)
+        {
+            Instance.TrackPRRNewPlanInternal(subtreeName, newPlanNodes);
+        }
+
         // Removed TrackFlowNodeChildCount - simplified tracking doesn't need child count tracking
 
         private void TrackServiceExecutionInternal(string serviceType, bool success)
@@ -682,6 +701,42 @@ namespace BehaviorTreeMainProject.Log.Services
             }
         }
 
+        private void TrackPRRClearInternal(string subtreeName, int oldPlanNodes, int nodesReplaced, int nodesAlreadyFinished, int totalBTNodes, int totalFlowNodes, int totalActionNodes, int totalMLActions)
+        {
+            lock (lockObject)
+            {
+                // Create a new PRR record with the "clear" half filled in
+                prrRecords.Add(new PRRRecord
+                {
+                    Timestamp = DateTime.Now,
+                    SubtreeName = subtreeName,
+                    OldPlanNodes = oldPlanNodes,
+                    NodesReplaced = nodesReplaced,
+                    NodesAlreadyFinished = nodesAlreadyFinished,
+                    NewPlanNodes = -1, // Will be filled in by TrackPRRNewPlan
+                    TotalBTNodes = totalBTNodes,
+                    TotalFlowNodes = totalFlowNodes,
+                    TotalActionNodes = totalActionNodes,
+                    TotalMLActions = totalMLActions
+                });
+                WriteLog($"📊 PRR Clear: {subtreeName} — old plan: {oldPlanNodes} nodes ({nodesReplaced} replaced, {nodesAlreadyFinished} finished), total BT nodes: {totalBTNodes} (flow: {totalFlowNodes}, action: {totalActionNodes}, ML: {totalMLActions})");
+            }
+        }
+
+        private void TrackPRRNewPlanInternal(string subtreeName, int newPlanNodes)
+        {
+            lock (lockObject)
+            {
+                // Find the most recent PRR record for this subtree that hasn't been completed
+                var record = prrRecords.LastOrDefault(r => r.SubtreeName == subtreeName && r.NewPlanNodes == -1);
+                if (record != null)
+                {
+                    record.NewPlanNodes = newPlanNodes;
+                    WriteLog($"📊 PRR Complete: {subtreeName} — old: {record.OldPlanNodes}, new: {newPlanNodes}, PRR: 100% (full subtree replacement)");
+                }
+            }
+        }
+
         // Removed complex decorator and service internal tracking methods - simplified to basic flow node tracking only
 
         /// <summary>
@@ -718,6 +773,12 @@ namespace BehaviorTreeMainProject.Log.Services
                 
                 // Also write to a separate CSV file
                 WriteCSVToFile(csvContent);
+
+                // Write PRR CSV if there are any replan events
+                if (prrRecords.Count > 0)
+                {
+                    WritePRRCSVToFile();
+                }
             }
         }
 
@@ -928,6 +989,53 @@ namespace BehaviorTreeMainProject.Log.Services
             }
         }
 
+        private void WritePRRCSVToFile()
+        {
+            try
+            {
+                var timestamp = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
+                var csvFilePath = $"WrittenLogs/PRRSummary_{timestamp}.csv";
+
+                var csv = new StringBuilder();
+                csv.AppendLine("ReplanNumber,Timestamp,SubtreeName,OldPlanNodes,NodesReplaced,NodesAlreadyFinished,NewPlanNodes,TotalBTNodes,TotalFlowNodes,TotalActionNodes,TotalMLActions,PRR_Subtree_Percent,BTNodeSize_Percent,BTWidthChange_Percent");
+
+                for (int i = 0; i < prrRecords.Count; i++)
+                {
+                    var r = prrRecords[i];
+                    double prrSubtree = r.OldPlanNodes > 0 ? ((double)r.NodesReplaced / r.OldPlanNodes) * 100.0 : 0.0;
+                    double prrBT = r.TotalBTNodes > 0 ? ((double)r.NodesReplaced / r.TotalBTNodes) * 100.0 : 0.0;
+                    // PlanSizeChange = (OldPlanNodes - NewPlanNodes) / max(TotalMLActions, TotalHLActions) * 100
+                    int totalHLActions = r.TotalActionNodes - r.TotalMLActions;
+                    int denominator = Math.Max(r.TotalMLActions, totalHLActions);
+                    double planSizeChange = (r.NewPlanNodes >= 0 && denominator > 0) 
+                        ? Math.Abs(((double)(r.OldPlanNodes - r.NewPlanNodes) / denominator) * 100.0) 
+                        : 0.0;
+                    csv.AppendLine($"{i + 1},{r.Timestamp:yyyy-MM-dd HH:mm:ss.fff},{r.SubtreeName},{r.OldPlanNodes},{r.NodesReplaced},{r.NodesAlreadyFinished},{(r.NewPlanNodes >= 0 ? r.NewPlanNodes.ToString() : "N/A")},{r.TotalBTNodes},{r.TotalFlowNodes},{r.TotalActionNodes},{r.TotalMLActions},{prrSubtree:F1},{prrBT:F1},{planSizeChange:F2}");
+                }
+
+                // Add summary row
+                int totalReplans = prrRecords.Count;
+                double avgOld = prrRecords.Average(r => r.OldPlanNodes);
+                double avgNew = prrRecords.Where(r => r.NewPlanNodes >= 0).DefaultIfEmpty().Average(r => r?.NewPlanNodes ?? 0);
+                double avgPRRSubtree = prrRecords.Where(r => r.OldPlanNodes > 0).Average(r => ((double)r.NodesReplaced / r.OldPlanNodes) * 100.0);
+                double avgPRRBT = prrRecords.Where(r => r.TotalBTNodes > 0).Average(r => ((double)r.NodesReplaced / r.TotalBTNodes) * 100.0);
+                double avgPlanSizeChange = prrRecords.Where(r => r.NewPlanNodes >= 0 && r.TotalActionNodes > 0).Average(r => {
+                    int hl = r.TotalActionNodes - r.TotalMLActions;
+                    int denom = Math.Max(r.TotalMLActions, hl);
+                    return denom > 0 ? Math.Abs(((double)(r.OldPlanNodes - r.NewPlanNodes) / denom) * 100.0) : 0.0;
+                });
+                csv.AppendLine($"SUMMARY,,Total Replans: {totalReplans},{avgOld:F1} avg,,, {avgNew:F1} avg,,,,{avgPRRSubtree:F1} avg,{avgPRRBT:F1} avg,{avgPlanSizeChange:F2} avg");
+                csv.AppendLine($"AVERAGES,,,,,,,,,,,{avgPRRSubtree:F2},{avgPRRBT:F2},{avgPlanSizeChange:F2}");
+
+                System.IO.File.WriteAllText(csvFilePath, csv.ToString(), Encoding.UTF8);
+                WriteLog($"📄 PRR summary CSV written to: {csvFilePath} ({totalReplans} replan events)");
+            }
+            catch (Exception ex)
+            {
+                WriteLog($"⚠️ Error writing PRR CSV file: {ex.Message}");
+            }
+        }
+
         /// <summary>
         /// Close the logger
         /// </summary>
@@ -962,6 +1070,23 @@ namespace BehaviorTreeMainProject.Log.Services
             public int Failures { get; set; } = 0;
             public int Successes { get; set; } = 0;
             public double AverageBranchingFactor { get; set; } = 0.0;
+        }
+
+        /// <summary>
+        /// PRR (Plan Replacement Ratio) record for tracking replan events
+        /// </summary>
+        private class PRRRecord
+        {
+            public DateTime Timestamp { get; set; }
+            public string SubtreeName { get; set; } = "";
+            public int OldPlanNodes { get; set; }
+            public int NodesReplaced { get; set; }
+            public int NodesAlreadyFinished { get; set; }
+            public int NewPlanNodes { get; set; }
+            public int TotalBTNodes { get; set; } // Total nodes in BT (flow nodes + action nodes)
+            public int TotalFlowNodes { get; set; } // Flow nodes only
+            public int TotalActionNodes { get; set; } // Action nodes only
+            public int TotalMLActions { get; set; } // ML action nodes only (IsHighLevelAction == false)
         }
     }
 }

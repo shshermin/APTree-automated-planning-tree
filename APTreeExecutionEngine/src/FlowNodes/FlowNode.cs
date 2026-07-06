@@ -17,6 +17,9 @@ public abstract class FlowNode : BTNode, IEnumerable
     // Replace simple list with node graph structure
     protected NodeGraph actionGraph = new();
 
+    // PRR (Plan Replacement Ratio) tracking - stores old plan size when ClearActionGraph is called during replanning
+    private int _preReplanNodeCount = 0;
+
     // Property to check if NodeGraph is locked (has been set and cannot be replaced)
     public bool IsNodeGraphLocked => actionGraph != null;
 
@@ -238,7 +241,16 @@ public abstract class FlowNode : BTNode, IEnumerable
     public void SetActionGraph(NodeGraph graph)
     {
         LoggingService.LogInfo($"🔧 FlowNode: SetActionGraph called for {DebugDisplayName} - New NodeGraph HashCode: {graph?.GetHashCode()}");
-        LoggingService.LogInfo($"🔧 FlowNode: New NodeGraph has {graph?.GetAllActionNodes().Count ?? 0} actions");
+        int newNodeCount = graph?.GetAllActionNodes().Count ?? 0;
+        LoggingService.LogInfo($"🔧 FlowNode: New NodeGraph has {newNodeCount} actions");
+
+        // PRR logging: only log when this is a replan (previous plan existed and was cleared)
+        if (_preReplanNodeCount > 0 && newNodeCount > 0)
+        {
+            LoggingService.LogWarning($"📊 PRR: Replan detected for {DebugDisplayName} — old plan: {_preReplanNodeCount} nodes, new plan: {newNodeCount} nodes, PRR (subtree-level): 100% (full replacement)");
+            BehaviorTreeComponentLogger.TrackPRRNewPlan(DebugDisplayName, newNodeCount);
+            _preReplanNodeCount = 0; // Reset after logging
+        }
 
         // Simplified tracking - child count tracking removed
 
@@ -288,6 +300,40 @@ public abstract class FlowNode : BTNode, IEnumerable
         {
             LoggingService.LogWarning($"🔄 FlowNode: Clearing action graph (HashCode: {actionGraph.GetHashCode()}) for {DebugDisplayName}");
             
+            // Capture total BT node count BEFORE any removal (for accurate PRR)
+            int totalFlowNodes = LinkedBlackboard?.GetAllFlowNodes().Count ?? 0;
+            int totalActionNodes = LinkedBlackboard?.GetAllActions().Count ?? 0;
+            int totalMLActions = LinkedBlackboard?.GetAllActions().Count(a => a.actionType.ToString().EndsWith("ML")) ?? 0;
+            int totalBTNodes = totalFlowNodes + totalActionNodes;
+
+            // Before destroying, remove non-finished actions from blackboard tracking
+            var allActions = actionGraph.GetAllActionNodes();
+            int totalBeforeClear = allActions.Count;
+            int removedCount = 0;
+            foreach (var action in allActions)
+            {
+                if (action.status != BTNodeResult.Success && action.status != BTNodeResult.Failure)
+                {
+                    if (LinkedBlackboard != null)
+                    {
+                        LinkedBlackboard.RemoveActionInstance(action);
+                        removedCount++;
+                    }
+                }
+            }
+            if (removedCount > 0)
+            {
+                LoggingService.LogInfo($"📊 FlowNode: Removed {removedCount} non-finished actions from blackboard tracking (active count now: {LinkedBlackboard?.GetAllActions().Count ?? 0})");
+            }
+
+            // Store pre-replan node count for PRR calculation (only meaningful if there were nodes)
+            if (totalBeforeClear > 0)
+            {
+                _preReplanNodeCount = totalBeforeClear;
+                LoggingService.LogInfo($"📊 PRR: Pre-replan snapshot for {DebugDisplayName} — old plan had {totalBeforeClear} nodes ({removedCount} replaced, {totalBeforeClear - removedCount} already finished), total BT nodes: {totalBTNodes} (flow: {totalFlowNodes}, action: {totalActionNodes}, ML: {totalMLActions})");
+                BehaviorTreeComponentLogger.TrackPRRClear(DebugDisplayName, totalBeforeClear, removedCount, totalBeforeClear - removedCount, totalBTNodes, totalFlowNodes, totalActionNodes, totalMLActions);
+            }
+
             // Use the new Clear() method to actually remove actions from the NodeGraph
             actionGraph.DestroyAllNodes();
             actionGraph = null;

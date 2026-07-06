@@ -189,8 +189,21 @@ namespace BehaviorTreeMainProject
                 var actionType = pendingAction.actionType.ToString();
                 LogMessage($"🔧 ServiceSubtreeInject: Processing injection for {actionType}");
                 
-                // Use FF for all subtree injections
+                // Determine planner config based on cassette position:
+                // Cassettes 1,2,5,6,9,10 (first two per batch) use LAMA-FIRST; others use FF
                 string configName = "FF_Default";
+                // COMMENTED OUT FOR FF-ONLY TEST RUN:
+                // int cassetteIndex = DecoratorDynamicPlanningComplete.FindCassetteIndexForAction(OwningTree.root, pendingAction);
+                // if (cassetteIndex >= 0 && (cassetteIndex % 4) < 2)
+                // {
+                //     configName = "LAMA-FIRST_Default";
+                //     LogMessage($"🔧 ServiceSubtreeInject: Cassette index {cassetteIndex} → using LAMA-FIRST planner");
+                // }
+                // else
+                // {
+                //     LogMessage($"🔧 ServiceSubtreeInject: Cassette index {cassetteIndex} → using FF planner");
+                // }
+                LogMessage($"🔧 ServiceSubtreeInject: Using FF planner for all cassettes (LAMA-FIRST disabled for test)");
                 
                 // Create instance name from action
                 string instanceName = pendingAction.InstanceName.ToString();
@@ -377,6 +390,10 @@ namespace BehaviorTreeMainProject
             var subtree = CreateSubtree(config, instanceName, customParameters);
             action.SetAsHighLevelAction(subtree, subtree.ServicePlanning);
             LogMessage($"✅ ServiceSubtreeInject: Injected subtree '{configName}' into action '{action.InstanceName.ToString()}'");
+            
+            // Register the DynamicFlowNode in the blackboard so it's counted in total BT node metrics
+            linkedBlackboard.SetFlowNodeInstance(subtree.InstanceName, subtree);
+            LogMessage($"✅ ServiceSubtreeInject: Registered DynamicFlowNode '{subtree.InstanceName}' in blackboard FlowNodeValues");
             
             // Register the subtree in the .bt model file (annotation + BT block)
             RegisterSubtreeInBTModel(action, config, instanceName);

@@ -166,10 +166,10 @@ public class DynamicFlowNode : FlowNode
             else
             {
                 LoggingService.LogInfo($"🔄 FlowNode: Resetting planning service (not completed yet)");
+                // Clear action graph BEFORE ResetPlanningService to get accurate node count for PRR
+                ClearActionGraph();
                 plannerService.ResetPlanningService();
                 planningCompleted = false;
-                // Clear the action graph when resetting planning
-                ClearActionGraph();
             }
         }
         else

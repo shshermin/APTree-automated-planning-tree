@@ -453,18 +453,29 @@ public void SetPredicateType(FastName key, Predicate predicateType)
 
 public void SetActionInstance(FastName key, PActionNode actionInstance)
 {
-    if (!ActionValues.ContainsKey(key))
+    // Generate a unique registration key by appending a counter suffix if the key already exists.
+    // This ensures every action instance (including repeated ones from replanning) is tracked
+    // individually for PRR and node-count metrics. The action's own InstanceName is NOT modified,
+    // so execution logic remains unaffected.
+    FastName registrationKey = key;
+    if (ActionValues.ContainsKey(key))
     {
-        ActionValues[key] = actionInstance;
-        // Log new action instance created
-        BlackboardTrackingLogger.LogNewInstance(key.ToString(), actionInstance.GetType().Name, "Blackboard", $"Action instance: {actionInstance.GetType().Name}");
-        
-        // Track for blackboard summary
-        var startTime = DateTime.Now;
-        // Simulate generation time (since we don't have actual timing)
-        var generationTime = DateTime.Now - startTime;
-        BlackboardSummaryLogger.TrackCreation("ActionInstances", actionInstance.GetType().Name, generationTime);
+        int suffix = 2;
+        while (ActionValues.ContainsKey(new FastName(key.ToString() + "_" + suffix)))
+        {
+            suffix++;
+        }
+        registrationKey = new FastName(key.ToString() + "_" + suffix);
     }
+
+    ActionValues[registrationKey] = actionInstance;
+    // Log new action instance created
+    BlackboardTrackingLogger.LogNewInstance(registrationKey.ToString(), actionInstance.GetType().Name, "Blackboard", $"Action instance: {actionInstance.GetType().Name}");
+    
+    // Track for blackboard summary
+    var startTime = DateTime.Now;
+    var generationTime = DateTime.Now - startTime;
+    BlackboardSummaryLogger.TrackCreation("ActionInstances", actionInstance.GetType().Name, generationTime);
 }
 
 public ActionNode GetAction(FastName key)
@@ -475,6 +486,31 @@ public ActionNode GetAction(FastName key)
         }
         return ActionValues[key];
     }
+
+/// <summary>
+/// Removes a specific action instance from the blackboard tracking dictionary.
+/// Looks up by object reference (not by key name) to handle suffixed keys.
+/// Only removes if the action's state is not finished (not Success and not Failure).
+/// </summary>
+/// <param name="actionInstance">The action instance to remove</param>
+/// <returns>True if the action was found and removed</returns>
+public bool RemoveActionInstance(PActionNode actionInstance)
+{
+    if (actionInstance == null) return false;
+
+    // Only remove non-finished actions (keep Success and Failure for historical tracking)
+    if (actionInstance.status == BTNodeResult.Success || actionInstance.status == BTNodeResult.Failure)
+        return false;
+
+    var keyToRemove = ActionValues.FirstOrDefault(kvp => kvp.Value == actionInstance).Key;
+    if (keyToRemove != null)
+    {
+        ActionValues.Remove(keyToRemove);
+        BlackboardTrackingLogger.LogNewInstance(keyToRemove.ToString(), actionInstance.GetType().Name, "Blackboard", $"Action instance REMOVED: {actionInstance.GetType().Name} (status: {actionInstance.status})");
+        return true;
+    }
+    return false;
+}
 
 /// <summary>
 /// Gets all action instances from the blackboard
