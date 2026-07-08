@@ -156,3 +156,11 @@ cd APTree-automated-planning-tree/APTreeExecutionEngine/python_service
 source pddl_env/bin/activate
 python pddl_planning_service.py
 
+
+
+
+ Enter the container
+sudo docker exec -it planutils bash
+
+# Inside the container:
+planutils activate

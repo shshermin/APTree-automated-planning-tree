@@ -28,7 +28,7 @@ DEFAULT_PLANNER = "ENHSP"  # Default planner to use
 DOCKER_CONTAINER_NAME = "planutils"
 
 # Supported planners
-SUPPORTED_PLANNERS = ["ENHSP", "FF", "LAMA-FIRST"]
+SUPPORTED_PLANNERS = ["ENHSP", "FF", "LAMA-FIRST", "TFD"]
 
 @app.route('/health', methods=['GET'])
 def health_check():
@@ -172,6 +172,8 @@ def create_plan():
             plan_result = call_ff(domain_file, problem_file, timeout_seconds)
         elif planner_name == "LAMA-FIRST":
             plan_result = call_lama_first(domain_file, problem_file, timeout_seconds)
+        elif planner_name == "TFD":
+            plan_result = call_tfd(domain_file, problem_file, timeout_seconds)
         else:
             return jsonify({
                 'success': False,
@@ -399,6 +401,79 @@ def call_lama_first(domain_file, problem_file, timeout_seconds):
         return {'success': False, 'error': 'LAMA-first planning timed out'}
     except Exception as e:
         return {'success': False, 'error': f'Error calling LAMA-first: {str(e)}'}
+
+def call_tfd(domain_file, problem_file, timeout_seconds):
+    """Call TFD (Temporal Fast Downward) planner using existing Docker container"""
+    try:
+        print(f"🔍 Using existing Docker container: {DOCKER_CONTAINER_NAME}")
+        
+        # Get the domain and problem file names (without path)
+        domain_filename = os.path.basename(domain_file)
+        problem_filename = os.path.basename(problem_file)
+        
+        print(f"🔍 Domain file: {domain_filename}")
+        print(f"🔍 Problem file: {problem_filename}")
+        
+        # Pipe file contents via docker exec -i
+        print(f"🔍 DEBUG: Domain source path: {domain_file}")
+        print(f"🔍 DEBUG: Problem source path: {problem_file}")
+
+        for label, src_path, dest_name in [
+            ('domain', domain_file, domain_filename),
+            ('problem', problem_file, problem_filename),
+        ]:
+            print(f"Piping {label} file into container: /root/{dest_name}")
+            try:
+                with open(src_path, 'r') as f:
+                    content = f.read()
+                pipe_result = subprocess.run(
+                    ['docker', 'exec', '-i', DOCKER_CONTAINER_NAME,
+                     'bash', '-c', f'cat > /root/{dest_name}'],
+                    input=content, capture_output=True, text=True, timeout=30
+                )
+                if pipe_result.returncode != 0:
+                    print(f"⚠️ Warning: Failed to pipe {label} file: {pipe_result.stderr}")
+                else:
+                    print(f"✅ {label.capitalize()} file piped successfully to /root/{dest_name}")
+            except Exception as copy_err:
+                print(f"⚠️ Warning: Error piping {label} file: {copy_err}")
+
+        # Execute the TFD planning command in the Docker container.
+        # TFD writes the plan to a file, so we cat it after running.
+        tfd_cmd = [
+            'docker', 'exec', DOCKER_CONTAINER_NAME,
+            'bash', '-c',
+            f'planutils activate && planutils run tfd {domain_filename} {problem_filename} && cat sas_plan'
+        ]
+        
+        print(f"Calling TFD with command: {' '.join(tfd_cmd)}")
+        
+        # Run TFD
+        result = subprocess.run(
+            tfd_cmd,
+            capture_output=True,
+            text=True,
+            timeout=timeout_seconds
+        )
+        
+        print(f"TFD stdout: {result.stdout}")
+        print(f"TFD stderr: {result.stderr}")
+        print(f"🔍 DEBUG: TFD return code: {result.returncode}")
+        print(f"🔍 DEBUG: TFD stdout length: {len(result.stdout)}")
+        print(f"🔍 DEBUG: TFD stdout preview: {repr(result.stdout[:500])}")
+        
+        if result.returncode == 0:
+            return {'success': True, 'raw_output': result.stdout}
+        else:
+            return {
+                'success': False, 
+                'error': f'TFD failed with return code {result.returncode}: {result.stderr}'
+            }
+            
+    except subprocess.TimeoutExpired:
+        return {'success': False, 'error': 'TFD planning timed out'}
+    except Exception as e:
+        return {'success': False, 'error': f'Error calling TFD: {str(e)}'}
 
 if __name__ == '__main__':
     print("Starting PDDL Planning Service...")
