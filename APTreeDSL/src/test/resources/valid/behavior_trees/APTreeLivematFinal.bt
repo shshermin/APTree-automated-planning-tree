@@ -17,90 +17,18 @@ BehaviorTree LiveMat {
                         --[Meets]--> GluingPlateHL_lp1_pr1_r1;
                     }
                     Action GluingPlateHL GluingPlateHL_lp1_pr1_r1 (lp1 pr1 r1) @GluingPlateHL_lp1_pr1_r1Subtree {
-                        --[Meets]--> PickUpHL_b1_fp2_r1;
-                    }
-                    Action PickUpHL PickUpHL_b1_fp2_r1 (b1 fp2 r1) {
-                        --[Meets]--> StackHL_b1_lp1_r1_pr1_lay1_m1;
-                    }
-                    Action StackHL StackHL_b1_lp1_r1_pr1_lay1_m1 (b1 lp1 r1 pr1 lay1 m1) {
                         --[Meets]--> PickUpHL_b2_fp3_r1;
                     }
-                    Action PickUpHL PickUpHL_b2_fp3_r1 (b2 fp3 r1) {
+                    Action PickUpHL PickUpHL_b2_fp3_r1 (b2 fp3 r1) @PickUpHL_b2_fp3_r1Subtree {
                         --[Meets]--> StackHL_b2_lp1_r1_pr1_lay1_m1;
                     }
-                    Action StackHL StackHL_b2_lp1_r1_pr1_lay1_m1 (b2 lp1 r1 pr1 lay1 m1) {
-                        --[Meets]--> PickUpHL_b6_fp8_r1;
+                    Action StackHL StackHL_b2_lp1_r1_pr1_lay1_m1 (b2 lp1 r1 pr1 lay1 m1) @StackHL_b2_lp1_r1_pr1_lay1_m1Subtree {
+                        --[Meets]--> PickUpHL_b1_fp2_r1;
                     }
-                    Action PickUpHL PickUpHL_b6_fp8_r1 (b6 fp8 r1) {
-                        --[Meets]--> StackHL_b6_lp1_r1_pr1_lay1_m1;
+                    Action PickUpHL PickUpHL_b1_fp2_r1 (b1 fp2 r1) @PickUpHL_b1_fp2_r1Subtree {
+                        --[Meets]--> StackHL_b1_lp1_r1_pr1_lay1_m1;
                     }
-                    Action StackHL StackHL_b6_lp1_r1_pr1_lay1_m1 (b6 lp1 r1 pr1 lay1 m1) {
-                        --[Meets]--> PickUpHL_b4_fp6_r1;
-                    }
-                    Action PickUpHL PickUpHL_b4_fp6_r1 (b4 fp6 r1) {
-                        --[Meets]--> StackHL_b4_lp1_r1_pr1_lay1_m1;
-                    }
-                    Action StackHL StackHL_b4_lp1_r1_pr1_lay1_m1 (b4 lp1 r1 pr1 lay1 m1) {
-                        --[Meets]--> PickUpHL_b3_fp4_r1;
-                    }
-                    Action PickUpHL PickUpHL_b3_fp4_r1 (b3 fp4 r1) {
-                        --[Meets]--> StackHL_b3_lp1_r1_pr1_lay1_m1;
-                    }
-                    Action StackHL StackHL_b3_lp1_r1_pr1_lay1_m1 (b3 lp1 r1 pr1 lay1 m1) {
-                        --[Meets]--> PickUpHL_b5_fp7_r1;
-                    }
-                    Action PickUpHL PickUpHL_b5_fp7_r1 (b5 fp7 r1) {
-                        --[Meets]--> StackHL_b5_lp1_r1_pr1_lay1_m1;
-                    }
-                    Action StackHL StackHL_b5_lp1_r1_pr1_lay1_m1 (b5 lp1 r1 pr1 lay1 m1) {
-                        --[Meets]--> NailingBeamHL_b2_r1_m1_lay1;
-                    }
-                    Action NailingBeamHL NailingBeamHL_b2_r1_m1_lay1 (b2 r1 m1 lay1) {
-                        --[Meets]--> NailingBeamHL_b4_r1_m1_lay1;
-                    }
-                    Action NailingBeamHL NailingBeamHL_b4_r1_m1_lay1 (b4 r1 m1 lay1) {
-                        --[Meets]--> NailingBeamHL_b3_r1_m1_lay1;
-                    }
-                    Action NailingBeamHL NailingBeamHL_b3_r1_m1_lay1 (b3 r1 m1 lay1) {
-                        --[Meets]--> NailingBeamHL_b5_r1_m1_lay1;
-                    }
-                    Action NailingBeamHL NailingBeamHL_b5_r1_m1_lay1 (b5 r1 m1 lay1) {
-                        --[Meets]--> NailingBeamHL_b1_r1_m1_lay1;
-                    }
-                    Action NailingBeamHL NailingBeamHL_b1_r1_m1_lay1 (b1 r1 m1 lay1) {
-                        --[Meets]--> NailingBeamHL_b6_r1_m1_lay1;
-                    }
-                    Action NailingBeamHL NailingBeamHL_b6_r1_m1_lay1 (b6 r1 m1 lay1) {
-                        --[Meets]--> GluingBeamHL_b1_r1_m1_lay1;
-                    }
-                    Action GluingBeamHL GluingBeamHL_b1_r1_m1_lay1 (b1 r1 m1 lay1) {
-                        --[Meets]--> GluingBeamHL_b2_r1_m1_lay1;
-                    }
-                    Action GluingBeamHL GluingBeamHL_b2_r1_m1_lay1 (b2 r1 m1 lay1) {
-                        --[Meets]--> GluingBeamHL_b5_r1_m1_lay1;
-                    }
-                    Action GluingBeamHL GluingBeamHL_b5_r1_m1_lay1 (b5 r1 m1 lay1) {
-                        --[Meets]--> GluingBeamHL_b6_r1_m1_lay1;
-                    }
-                    Action GluingBeamHL GluingBeamHL_b6_r1_m1_lay1 (b6 r1 m1 lay1) {
-                        --[Meets]--> GluingBeamHL_b4_r1_m1_lay1;
-                    }
-                    Action GluingBeamHL GluingBeamHL_b4_r1_m1_lay1 (b4 r1 m1 lay1) {
-                        --[Meets]--> GluingBeamHL_b3_r1_m1_lay1;
-                    }
-                    Action GluingBeamHL GluingBeamHL_b3_r1_m1_lay1 (b3 r1 m1 lay1) {
-                        --[Meets]--> PickUpHL_tp1_fp5_r1;
-                    }
-                    Action PickUpHL PickUpHL_tp1_fp5_r1 (tp1 fp5 r1) {
-                        --[Meets]--> StackOnMultipleHL_tp1_r1_pr1_m1_lay1;
-                    }
-                    Action StackOnMultipleHL StackOnMultipleHL_tp1_r1_pr1_m1_lay1 (tp1 r1 pr1 m1 lay1) {
-                        --[Meets]--> NailingHL_tp1_r1;
-                    }
-                    Action NailingHL NailingHL_tp1_r1 (tp1 r1) {
-                        --[Meets]--> MoveCassetteToStackHL_tp1_lp1_pr1_sp1_r1_m1_lay1;
-                    }
-                    Action MoveCassetteToStackHL MoveCassetteToStackHL_tp1_lp1_pr1_sp1_r1_m1_lay1 (tp1 lp1 pr1 sp1 r1 m1 lay1)
+                    Action StackHL StackHL_b1_lp1_r1_pr1_lay1_m1 (b1 lp1 r1 pr1 lay1 m1) @StackHL_b1_lp1_r1_pr1_lay1_m1Subtree
                 }
             }
             FlowNode  Cassette2 {
@@ -480,22 +408,10 @@ BehaviorTree GluingPlateHL_lp1_pr1_r1Subtree {
         ServicePlanning subtreeSrv_GluingPlateHL_lp1_pr1_r1 FF Domain:DomainML.pddl Problem:problemGluingPlateHL_lp1_pr1_r1.pddl
         AllAction
         NodeGraph {
-            Action TravelML TravelML_r1_fp9_ep1 (r1 fp9 ep1) {
-                --[Meets]--> TravelML_r1_ep1_ep2;
-            }
-            Action TravelML TravelML_r1_ep1_ep2 (r1 ep1 ep2) {
-                --[Meets]--> TravelML_r1_ep2_sp4;
-            }
-            Action TravelML TravelML_r1_ep2_sp4 (r1 ep2 sp4) {
-                --[Meets]--> PlaceML_lp2_sp4_r1_vg1;
-            }
-            Action PlaceML PlaceML_lp2_sp4_r1_vg1 (lp2 sp4 r1 vg1) {
-                --[Meets]--> TravelML_r1_sp4_ep1;
-            }
-            Action TravelML TravelML_r1_sp4_ep1 (r1 sp4 ep1) {
-                --[Meets]--> CloseToolML_r1_vg1;
-            }
             Action CloseToolML CloseToolML_r1_vg1 (r1 vg1) {
+                --[Meets]--> TravelML_r1_pr1_ep1;
+            }
+            Action TravelML TravelML_r1_pr1_ep1 (r1 pr1 ep1) {
                 --[Meets]--> DeequipML_r1_vg1_ep1;
             }
             Action DeequipML DeequipML_r1_vg1_ep1 (r1 vg1 ep1) {
@@ -601,7 +517,7 @@ BehaviorTree PickUpHL_b3_fp4_r1Subtree {
         ServicePlanning subtreeSrv_PickUpHL_b3_fp4_r1 FF Domain:DomainML.pddl Problem:problemPickUpHL_b3_fp4_r1.pddl
         AllAction
         NodeGraph {
-            Action TravelML TravelML_r1_pr4_fp4 (r1 pr4 fp4) {
+            Action TravelML TravelML_r1_pr1_fp4 (r1 pr1 fp4) {
                 --[Meets]--> PickUpML_b3_fp4_r1_vg1;
             }
             Action PickUpML PickUpML_b3_fp4_r1_vg1 (b3 fp4 r1 vg1)
@@ -666,7 +582,7 @@ BehaviorTree PickUpHL_b4_fp6_r1Subtree {
         ServicePlanning subtreeSrv_PickUpHL_b4_fp6_r1 FF Domain:DomainML.pddl Problem:problemPickUpHL_b4_fp6_r1.pddl
         AllAction
         NodeGraph {
-            Action TravelML TravelML_r1_pr4_fp6 (r1 pr4 fp6) {
+            Action TravelML TravelML_r1_pr1_fp6 (r1 pr1 fp6) {
                 --[Meets]--> PickUpML_b4_fp6_r1_vg1;
             }
             Action PickUpML PickUpML_b4_fp6_r1_vg1 (b4 fp6 r1 vg1)
@@ -770,7 +686,7 @@ BehaviorTree PickUpHL_b6_fp8_r1Subtree {
         ServicePlanning subtreeSrv_PickUpHL_b6_fp8_r1 FF Domain:DomainML.pddl Problem:problemPickUpHL_b6_fp8_r1.pddl
         AllAction
         NodeGraph {
-            Action TravelML TravelML_r1_pr4_fp8 (r1 pr4 fp8) {
+            Action TravelML TravelML_r1_pr1_fp8 (r1 pr1 fp8) {
                 --[Meets]--> PickUpML_b6_fp8_r1_vg1;
             }
             Action PickUpML PickUpML_b6_fp8_r1_vg1 (b6 fp8 r1 vg1)
@@ -874,7 +790,7 @@ BehaviorTree PickUpHL_b5_fp7_r1Subtree {
         ServicePlanning subtreeSrv_PickUpHL_b5_fp7_r1 FF Domain:DomainML.pddl Problem:problemPickUpHL_b5_fp7_r1.pddl
         AllAction
         NodeGraph {
-            Action TravelML TravelML_r1_pr4_fp7 (r1 pr4 fp7) {
+            Action TravelML TravelML_r1_pr1_fp7 (r1 pr1 fp7) {
                 --[Meets]--> PickUpML_b5_fp7_r1_vg1;
             }
             Action PickUpML PickUpML_b5_fp7_r1_vg1 (b5 fp7 r1 vg1)
@@ -978,28 +894,7 @@ BehaviorTree PickUpHL_b1_fp2_r1Subtree {
         ServicePlanning subtreeSrv_PickUpHL_b1_fp2_r1 FF Domain:DomainML.pddl Problem:problemPickUpHL_b1_fp2_r1.pddl
         AllAction
         NodeGraph {
-            Action TravelML TravelML_r1_pr4_ep2 (r1 pr4 ep2) {
-                --[Meets]--> CloseToolML_r1_gg1;
-            }
-            Action CloseToolML CloseToolML_r1_gg1 (r1 gg1) {
-                --[Meets]--> DeequipML_r1_gg1_ep2;
-            }
-            Action DeequipML DeequipML_r1_gg1_ep2 (r1 gg1 ep2) {
-                --[Meets]--> TravelML_r1_ep2_fp2;
-            }
-            Action TravelML TravelML_r1_ep2_fp2 (r1 ep2 fp2) {
-                --[Meets]--> TravelML_r1_fp2_ep1;
-            }
-            Action TravelML TravelML_r1_fp2_ep1 (r1 fp2 ep1) {
-                --[Meets]--> EquipeML_r1_vg1_ep1;
-            }
-            Action EquipeML EquipeML_r1_vg1_ep1 (r1 vg1 ep1) {
-                --[Meets]--> TravelML_r1_ep1_fp2;
-            }
-            Action TravelML TravelML_r1_ep1_fp2 (r1 ep1 fp2) {
-                --[Meets]--> InitializeML_r1_vg1;
-            }
-            Action InitializeML InitializeML_r1_vg1 (r1 vg1) {
+            Action TravelML TravelML_r1_pr1_fp2 (r1 pr1 fp2) {
                 --[Meets]--> PickUpML_b1_fp2_r1_vg1;
             }
             Action PickUpML PickUpML_b1_fp2_r1_vg1 (b1 fp2 r1 vg1)
@@ -1103,7 +998,28 @@ BehaviorTree PickUpHL_b2_fp3_r1Subtree {
         ServicePlanning subtreeSrv_PickUpHL_b2_fp3_r1 FF Domain:DomainML.pddl Problem:problemPickUpHL_b2_fp3_r1.pddl
         AllAction
         NodeGraph {
-            Action TravelML TravelML_r1_pr4_fp3 (r1 pr4 fp3) {
+            Action TravelML TravelML_r1_pr1_ep2 (r1 pr1 ep2) {
+                --[Meets]--> CloseToolML_r1_gg1;
+            }
+            Action CloseToolML CloseToolML_r1_gg1 (r1 gg1) {
+                --[Meets]--> DeequipML_r1_gg1_ep2;
+            }
+            Action DeequipML DeequipML_r1_gg1_ep2 (r1 gg1 ep2) {
+                --[Meets]--> TravelML_r1_ep2_fp3;
+            }
+            Action TravelML TravelML_r1_ep2_fp3 (r1 ep2 fp3) {
+                --[Meets]--> TravelML_r1_fp3_ep1;
+            }
+            Action TravelML TravelML_r1_fp3_ep1 (r1 fp3 ep1) {
+                --[Meets]--> EquipeML_r1_vg1_ep1;
+            }
+            Action EquipeML EquipeML_r1_vg1_ep1 (r1 vg1 ep1) {
+                --[Meets]--> TravelML_r1_ep1_fp3;
+            }
+            Action TravelML TravelML_r1_ep1_fp3 (r1 ep1 fp3) {
+                --[Meets]--> InitializeML_r1_vg1;
+            }
+            Action InitializeML InitializeML_r1_vg1 (r1 vg1) {
                 --[Meets]--> PickUpML_b2_fp3_r1_vg1;
             }
             Action PickUpML PickUpML_b2_fp3_r1_vg1 (b2 fp3 r1 vg1)
@@ -1657,7 +1573,28 @@ BehaviorTree PickUpHL_tp1_fp5_r1Subtree {
         ServicePlanning subtreeSrv_PickUpHL_tp1_fp5_r1 FF Domain:DomainML.pddl Problem:problemPickUpHL_tp1_fp5_r1.pddl
         AllAction
         NodeGraph {
-            Action TravelML TravelML_r1_pr4_fp5 (r1 pr4 fp5) {
+            Action TravelML TravelML_r1_pr1_ep2 (r1 pr1 ep2) {
+                --[Meets]--> CloseToolML_r1_gg1;
+            }
+            Action CloseToolML CloseToolML_r1_gg1 (r1 gg1) {
+                --[Meets]--> DeequipML_r1_gg1_ep2;
+            }
+            Action DeequipML DeequipML_r1_gg1_ep2 (r1 gg1 ep2) {
+                --[Meets]--> TravelML_r1_ep2_fp5;
+            }
+            Action TravelML TravelML_r1_ep2_fp5 (r1 ep2 fp5) {
+                --[Meets]--> TravelML_r1_fp5_ep1;
+            }
+            Action TravelML TravelML_r1_fp5_ep1 (r1 fp5 ep1) {
+                --[Meets]--> EquipeML_r1_vg1_ep1;
+            }
+            Action EquipeML EquipeML_r1_vg1_ep1 (r1 vg1 ep1) {
+                --[Meets]--> TravelML_r1_ep1_fp5;
+            }
+            Action TravelML TravelML_r1_ep1_fp5 (r1 ep1 fp5) {
+                --[Meets]--> InitializeML_r1_vg1;
+            }
+            Action InitializeML InitializeML_r1_vg1 (r1 vg1) {
                 --[Meets]--> PickUpML_tp1_fp5_r1_vg1;
             }
             Action PickUpML PickUpML_tp1_fp5_r1_vg1 (tp1 fp5 r1 vg1)
@@ -2513,10 +2450,10 @@ BehaviorTree NailingBeamHL_b2_r1_m1_lay1Subtree {
         All
         AllAction
         NodeGraph {
-            Action TravelML TravelML_r1_pr4_ep1 (r1 pr4 ep1) {
-                --[Meets]--> CloseToolML_r1_vg1;
-            }
             Action CloseToolML CloseToolML_r1_vg1 (r1 vg1) {
+                --[Meets]--> TravelML_r1_pr1_ep1;
+            }
+            Action TravelML TravelML_r1_pr1_ep1 (r1 pr1 ep1) {
                 --[Meets]--> DeequipML_r1_vg1_ep1;
             }
             Action DeequipML DeequipML_r1_vg1_ep1 (r1 vg1 ep1) {
@@ -2684,10 +2621,10 @@ BehaviorTree GluingBeamHL_b1_r1_m1_lay1Subtree {
         All
         AllAction
         NodeGraph {
-            Action TravelML TravelML_r1_pr4_ep3 (r1 pr4 ep3) {
-                --[Meets]--> CloseToolML_r1_ng1;
-            }
             Action CloseToolML CloseToolML_r1_ng1 (r1 ng1) {
+                --[Meets]--> TravelML_r1_pr1_ep3;
+            }
+            Action TravelML TravelML_r1_pr1_ep3 (r1 pr1 ep3) {
                 --[Meets]--> DeequipML_r1_ng1_ep3;
             }
             Action DeequipML DeequipML_r1_ng1_ep3 (r1 ng1 ep3) {
@@ -3189,7 +3126,25 @@ BehaviorTree NailingHL_tp1_r1Subtree {
         All
         AllAction
         NodeGraph {
-            Action TravelML TravelML_r1_pr4_pr1 (r1 pr4 pr1) {
+            Action CloseToolML CloseToolML_r1_vg1 (r1 vg1) {
+                --[Meets]--> TravelML_r1_pr1_ep1;
+            }
+            Action TravelML TravelML_r1_pr1_ep1 (r1 pr1 ep1) {
+                --[Meets]--> DeequipML_r1_vg1_ep1;
+            }
+            Action DeequipML DeequipML_r1_vg1_ep1 (r1 vg1 ep1) {
+                --[Meets]--> TravelML_r1_ep1_ep3;
+            }
+            Action TravelML TravelML_r1_ep1_ep3 (r1 ep1 ep3) {
+                --[Meets]--> EquipeML_r1_ng1_ep3;
+            }
+            Action EquipeML EquipeML_r1_ng1_ep3 (r1 ng1 ep3) {
+                --[Meets]--> TravelML_r1_ep3_pr1;
+            }
+            Action TravelML TravelML_r1_ep3_pr1 (r1 ep3 pr1) {
+                --[Meets]--> InitializeML_r1_ng1;
+            }
+            Action InitializeML InitializeML_r1_ng1 (r1 ng1) {
                 --[Meets]--> NailingML_tp1_pr1_r1_ng1;
             }
             Action NailingML NailingML_tp1_pr1_r1_ng1 (tp1 pr1 r1 ng1)
@@ -3297,7 +3252,25 @@ BehaviorTree MoveCassetteToStackHL_tp1_lp1_pr1_sp1_r1_m1_lay1Subtree {
         All
         AllAction
         NodeGraph {
-            Action TravelML TravelML_r1_sp4_pr1 (r1 sp4 pr1) {
+            Action CloseToolML CloseToolML_r1_ng1 (r1 ng1) {
+                --[Meets]--> TravelML_r1_pr1_ep3;
+            }
+            Action TravelML TravelML_r1_pr1_ep3 (r1 pr1 ep3) {
+                --[Meets]--> DeequipML_r1_ng1_ep3;
+            }
+            Action DeequipML DeequipML_r1_ng1_ep3 (r1 ng1 ep3) {
+                --[Meets]--> TravelML_r1_ep3_ep1;
+            }
+            Action TravelML TravelML_r1_ep3_ep1 (r1 ep3 ep1) {
+                --[Meets]--> EquipeML_r1_vg1_ep1;
+            }
+            Action EquipeML EquipeML_r1_vg1_ep1 (r1 vg1 ep1) {
+                --[Meets]--> TravelML_r1_ep1_pr1;
+            }
+            Action TravelML TravelML_r1_ep1_pr1 (r1 ep1 pr1) {
+                --[Meets]--> InitializeML_r1_vg1;
+            }
+            Action InitializeML InitializeML_r1_vg1 (r1 vg1) {
                 --[Meets]--> PickUpCassetteML_lp1_m1_lay1_pr1_r1_vg1;
             }
             Action PickUpCassetteML PickUpCassetteML_lp1_m1_lay1_pr1_r1_vg1 (lp1 m1 lay1 pr1 r1 vg1) {

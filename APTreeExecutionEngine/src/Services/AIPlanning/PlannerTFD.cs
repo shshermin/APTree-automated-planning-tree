@@ -35,19 +35,30 @@ public class PlannerTFD : Planner
     /// <summary>
     /// Parses raw TFD output to extract ordered actions.
     /// Tries temporal format first (timestamp lines), then falls back to sas_plan format.
-    /// Temporal ordering is ignored — actions are returned in the order they appear.
+    /// TFD prints the plan multiple times (original, rescheduled, final). We only keep
+    /// the LAST complete plan block to avoid duplicates.
     /// </summary>
     protected override List<(string Name, string[] Parameters)> ParseRawOutput(string output)
     {
         var lines = output.Split('\n');
 
         // ── Primary: temporal format  "0.000: (action p1 p2) [5.000]" ──────
-        var temporalActions = new List<(double Timestamp, string Name, string[] Parameters)>();
+        // TFD outputs multiple plan blocks. We collect them in segments and keep the last one.
+        var currentBlock = new List<(double Timestamp, string Name, string[] Parameters)>();
+        var lastBlock = new List<(double Timestamp, string Name, string[] Parameters)>();
+        bool inPlanBlock = false;
+
         foreach (var rawLine in lines)
         {
             var match = TemporalLineRegex.Match(rawLine);
             if (match.Success)
             {
+                if (!inPlanBlock)
+                {
+                    inPlanBlock = true;
+                    currentBlock = new List<(double, string, string[])>();
+                }
+
                 var inner = match.Groups[1].Value.Trim();
                 var parts = inner.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                 if (parts.Length >= 1)
@@ -60,10 +71,22 @@ public class PlannerTFD : Planner
                     double.TryParse(timestampStr, System.Globalization.NumberStyles.Float,
                         System.Globalization.CultureInfo.InvariantCulture, out double timestamp);
 
-                    temporalActions.Add((timestamp, actionName, parameters));
+                    currentBlock.Add((timestamp, actionName, parameters));
                 }
             }
+            else if (inPlanBlock)
+            {
+                // Non-matching line ends the current block
+                inPlanBlock = false;
+                if (currentBlock.Count > 0)
+                    lastBlock = currentBlock;
+            }
         }
+        // Handle case where plan block is at the very end of output
+        if (inPlanBlock && currentBlock.Count > 0)
+            lastBlock = currentBlock;
+
+        var temporalActions = lastBlock;
 
         if (temporalActions.Count > 0)
         {

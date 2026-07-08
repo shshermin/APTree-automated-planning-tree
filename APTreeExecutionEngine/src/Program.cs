@@ -5,7 +5,8 @@ using System.Text.RegularExpressions;
 using BehaviorTreeMainProject;
 
 // Run the behavior tree test
- await FullTreeTest.RunTest();
+// await FullTreeTest.RunTest();        // Full 12-cassette test
+ await SingleFlowTest.RunTest();        // Single cassette (problemC1) for comparison benchmarks
 
 // Toggle: set to false to skip starting the editor/frontend backend after the test.
 const bool runEditorBackend = false;
