@@ -846,6 +846,17 @@ namespace BehaviorTreeMainProject
 
         // ── Predicate store factory ───────────────────────────────────────────
 
-        private IPredicateStore CreatePredicateStore() => new DictionaryPredicateStore();
+        private IPredicateStore CreatePredicateStore()
+        {
+            if (string.Equals(config.PredicateStoreType, "Sqlite",
+                    System.StringComparison.OrdinalIgnoreCase))
+            {
+                string path = string.IsNullOrWhiteSpace(config.SqlitePredicateStorePath)
+                    ? ":memory:"
+                    : config.SqlitePredicateStorePath;
+                return new SqlitePredicateStore(path);
+            }
+            return new DictionaryPredicateStore();
+        }
     }
 }

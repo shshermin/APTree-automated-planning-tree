@@ -95,6 +95,15 @@ namespace BehaviorTreeMainProject.ModelLoader
         /// </summary>
         public string PredicateStoreType { get; set; } = "Dictionary";
 
+        /// <summary>
+        /// File path for the SQLite predicate store.
+        /// ":memory:" (default) keeps the database entirely in RAM.
+        /// Set to an absolute path to persist it across runs or inspect it
+        /// with an external tool (e.g. DB Browser for SQLite).
+        /// Ignored when PredicateStoreType != "Sqlite".
+        /// </summary>
+        public string SqlitePredicateStorePath { get; set; } = ":memory:";
+
         // ── Tick loop settings ──
 
         /// <summary>Maximum number of ticks before stopping execution.</summary>
