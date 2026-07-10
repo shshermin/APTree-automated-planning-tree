@@ -22,7 +22,7 @@ public class PlannerTFD : Planner
 {
     public override string[] PlannerNames => new[] { "TFD" };
 
-    public override string DefaultDomainFile => "Plannerinputs/static/DomainML.pddl";
+    public override string DefaultDomainFile => "Plannerinputs/static/DomainTFD.pddl";
     public override string DefaultProblemFile => "Plannerinputs/static/problemC1.pddl";
     public override string DefaultPlannerPath => "tfd";
     public override string DefaultPlannerName => "TFD";

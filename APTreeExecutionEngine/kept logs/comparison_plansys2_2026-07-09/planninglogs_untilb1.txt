@@ -1,0 +1,844 @@
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://193.196.52.17:5000
+Press CTRL+C to quit
+ * Restarting with stat
+Starting PDDL Planning Service...
+Script directory: /home/ubuntu/APTree-automated-planning-tree/APTreeExecutionEngine/python_service
+Supported planners: ENHSP, FF, LAMA-FIRST, TFD
+Default planner: ENHSP
+Default ENHSP path: /home/ubuntu/jpddlplus-master/jpddlplus.jar
+Default ENHSP available: True
+Default domain file path: /home/ubuntu/APTree-automated-planning-tree/APTreeExecutionEngine/python_service/Plannerinputs/static/DomainHL.pddl
+Default domain file available: True
+Default problem file path: /home/ubuntu/APTree-automated-planning-tree/APTreeExecutionEngine/python_service/Plannerinputs/static/problemC1.pddl
+Default problem file available: True
+ * Debugger is active!
+ * Debugger PIN: 141-922-470
+Received planning request: {
+  "planningType": "PDDL",
+  "domainFile": "./Plannerinputs/static/DomainHL.pddl",
+  "problemFile": "./Plannerinputs/static/ProblepartialC1.pddl",
+  "problemFileContent": null,
+  "plannerPath": "/home/ubuntu/jpddlplus-master/jpddlplus.jar",
+  "plannerName": "ENHSP",
+  "timeoutSeconds": 30,
+  "maxPlanLength": 20,
+  "enhspConfig": null
+}
+Extracted PDDL properties:
+  - Domain file: ./Plannerinputs/static/DomainHL.pddl
+  - Problem file: ./Plannerinputs/static/ProblepartialC1.pddl
+  - Planner path: /home/ubuntu/jpddlplus-master/jpddlplus.jar
+  - Planner name: ENHSP
+  - Timeout: 30 seconds
+  - Max plan length: 20
+ENHSP config: pt-blind
+Calling ENHSP with command: java -jar /home/ubuntu/jpddlplus-master/jpddlplus.jar -o ./Plannerinputs/static/DomainHL.pddl -f ./Plannerinputs/static/ProblepartialC1.pddl -planner pt-blind
+ENHSP stdout: ! ====== ! Warning: Unknown planner configuration. Going with default: gbfs with hadd ! ====== !
+Domain parsed
+Problem parsed
+Grounding..
+Grounding Time: 42
+Aibr Preprocessing
+|F|:25
+|X|:2
+|A|:20
+|P|:0
+|E|:0
+H1 Setup Time (msec): 21
+ g(n)= 1.0 h(n)=11.0
+ g(n)= 2.0 h(n)=7.0
+ g(n)= 3.0 h(n)=4.0
+ g(n)= 4.0 h(n)=2.0
+Problem Solved
+
+Found Plan:
+0.0: (pickUpHL lp1 fp1 r1)
+1.0: (placeHl lp1 pr1 r1)
+2.0: (gluingPLateHL lp1 pr1 r1)
+3.0: (pickUpHL b1 fp2 r1)
+4.0: (stackHL b1 lp1 r1 pr1 lay1 m1)
+
+Plan-Length:5
+Metric (Search):5.0
+Planning Time (msec): 42
+Heuristic Time (msec): 15
+Search Time (msec): 38
+Expanded Nodes:7
+States Evaluated:11
+Number of Dead-Ends detected:1
+Number of Duplicates detected:4
+
+ENHSP stderr:
+127.0.0.1 - - [09/Jul/2026 08:06:44] "POST /plan HTTP/1.1" 200 -
+Received planning request: {
+  "planningType": "PDDL",
+  "domainFile": "Plannerinputs/static/DomainTFD.pddl",
+  "problemFile": "Plannerinputs/generated/problemPickUpHL_lp1_fp1_r1.pddl",
+  "problemFileContent": "(define (problem pickuphl)\r\n  (:domain fit)\r\n  (:objects \r\n    fp1 - firstposition\r\nfp2 - firstposition\r\nfp3 - firstposition\r\npr1 - positiononrail\r\npr2 - positiononrail\r\nep1 - equipposition\r\nep2 - equipposition\r\nep3 - equipposition\r\nr1 - robot\r\nb1 - beam\r\nb2 - beam\r\nlp1 - plate\r\nvg1 - vacgripper\r\nng1 - nailgripper\r\ngg1 - gluegun\r\nm1 - cassette\r\nlay1 - stack\r\n  )\r\n  (:init  \r\n    (atplace lp1 fp1)\n(atplace b1 fp2)\n(atplace b2 fp3)\n(clear lp1)\n(clear b1)\n(clear b2)\n(attool vg1 ep1)\n(attool gg1 ep2)\n(attool ng1 ep3)\n(atagent r1 pr2)\n(vgempty r1)\n(belongstolayer b1 lay1)\n(belongstolayer b2 lay1)\n(belongstomodule b1 m1)\n(belongstomodule b2 m1)\n(belongstomodule lp1 m1)\n(positionfree pr1)\n(positionfree pr2)\r\n  )\r\n  (:goal \r\n    (and\r\n      (holding r1 lp1)\n(not (atplace lp1 fp1))\n(not (clear lp1))\n(positionfree fp1)\n(not (vgempty r1))\r\n    ) \r\n  )\r\n)",
+  "plannerPath": "tfd",
+  "plannerName": "TFD",
+  "timeoutSeconds": 30,
+  "maxPlanLength": 20,
+  "enhspConfig": null
+}
+✅ Saved inline problem file content to: /home/ubuntu/APTree-automated-planning-tree/APTreeExecutionEngine/python_service/Plannerinputs/generated/problemPickUpHL_lp1_fp1_r1.pddl
+Extracted PDDL properties:
+  - Domain file: /home/ubuntu/APTree-automated-planning-tree/APTreeExecutionEngine/python_service/Plannerinputs/static/DomainTFD.pddl
+  - Problem file: /home/ubuntu/APTree-automated-planning-tree/APTreeExecutionEngine/python_service/Plannerinputs/generated/problemPickUpHL_lp1_fp1_r1.pddl
+  - Planner path: tfd
+  - Planner name: TFD
+  - Timeout: 30 seconds
+  - Max plan length: 20
+🔍 Using existing Docker container: planutils
+🔍 Domain file: DomainTFD.pddl
+🔍 Problem file: problemPickUpHL_lp1_fp1_r1.pddl
+🔍 DEBUG: Domain source path: /home/ubuntu/APTree-automated-planning-tree/APTreeExecutionEngine/python_service/Plannerinputs/static/DomainTFD.pddl
+🔍 DEBUG: Problem source path: /home/ubuntu/APTree-automated-planning-tree/APTreeExecutionEngine/python_service/Plannerinputs/generated/problemPickUpHL_lp1_fp1_r1.pddl
+Piping domain file into container: /root/DomainTFD.pddl
+✅ Domain file piped successfully to /root/DomainTFD.pddl
+Piping problem file into container: /root/problemPickUpHL_lp1_fp1_r1.pddl
+✅ Problem file piped successfully to /root/problemPickUpHL_lp1_fp1_r1.pddl
+Calling TFD with command: docker exec planutils bash -c planutils activate && rm -f output_plan* sas_plan && planutils run tfd DomainTFD.pddl problemPickUpHL_lp1_fp1_r1.pddl
+TFD stdout:
+   Entering planutils environment...
+
+Parsing...
+Contains quantified condition(s): False
+Instantiating...
+Trivial rules: Converted to facts.
+Starting instantiation [101 rules]...
+Finding invariants...
+Finding invariants... 37 initial candidates
+[0.020s CPU, 0.019s wall-clock]
+Checking invariant weight... [0.000s CPU, 0.000s wall-clock]
+Instantiating groups...
+Choosing groups...
+81 uncovered facts (before using the results from the invariant synthesis)
+34 uncovered facts
+Building translation key...
+Building STRIPS to SAS dictionary...
+Translating task...
+Processing axioms...
+Found 0 axioms that are always true and 0 that are always false
+constrained 134 conditions
+Writing output...
+Done!
+contains_quantified_conditions: 0
+Building causal graph...
+The causal graph is not acyclic.
+variable var19 is not necessary!
+variable var23 is not necessary!
+variable var27 is not necessary!
+44 variables of 47 necessary
+152 of 152 operators necessary.
+0 of 0 Axiom_relational rules necessary.
+0 of 0 Axiom_functional rules necessary.
+Building domain transition graphs...
+solveable in poly time 0
+Building successor generator...
+all_operator_indices.size(): 152
+Writing output...
+printing SG
+44
+done
+
+
+Planner Paramters:
+Anytime Search: Disabled
+Timeout if plan was found: 0 seconds (no timeout)
+Timeout while no plan was found: 0 seconds (no timeout)
+Greedy Search: Disabled
+Verbose: Enabled
+Lazy Heuristic Evaluation: Enabled
+Use caching in heuristic.
+Cyclic CG heuristic: Enabled    Preferred Operators: Enabled
+Makespan heuristic: Disabled    Preferred Operators: Disabled
+No Heuristic: Disabled
+Cg Heuristic Zero Cost Waiting Transitions: Enabled
+Cg Heuristic Fire Waiting Transitions Only If Local Problems Matches State: Disabled
+PrefOpsOrderedMode: Enabled with 1 goals
+PrefOpsCheapestMode: Enabled with 1 goals
+PrefOpsMostExpensiveMode: Disabled with 1000 goals
+PrefOpsRandMode: Disabled with 1000 goals
+PrefOpsConcurrentMode: Disabled
+Reset after solution was found: Enabled
+Reward only preferred operators queue: Disabled
+GValues by: Timestamp
+Queue management mode: Priority based
+Known by logical state only filtering: Disabled
+use_subgoals_to_break_makespan_ties: Disabled
+Reschedule plans: Enabled
+Epsilonize internally: Enabled
+Epsilonize externally: Disabled
+Keep original plans: Enabled
+Plan name: "./output_plan"
+Plan monitor file: "" (no monitoring)
+Monitoring verify timestamps: Disabled
+
+Contains universal conditions: 0
+Giving prior boost to open list 0
+INIT
+Open list sizes (priorities): 0 (-5000),  0 (0),  0 (0),  0 (0),
+Initializing cyclic causal graph heuristic...done.
+Best heuristic values of queues: 120/-1/-1/-1 [expanded 1 state(s)]
+Best heuristic values of queues: 64.98/-1/-1/-1 [expanded 2 state(s)]
+Best heuristic values of queues: 60/-1/-1/-1 [expanded 3 state(s)]
+Best heuristic values of queues: 37.98/-1/-1/-1 [expanded 4 state(s)]
+Best heuristic values of queues: 36/-1/-1/-1 [expanded 5 state(s)]
+Best heuristic values of queues: 32.98/-1/-1/-1 [expanded 6 state(s)]
+Best heuristic values of queues: 16.98/-1/-1/-1 [expanded 7 state(s)]
+Best heuristic values of queues: 15.99/-1/-1/-1 [expanded 8 state(s)]
+Best heuristic values of queues: 12/-1/-1/-1 [expanded 9 state(s)]
+Best heuristic values of queues: 3.88/-1/-1/-1 [expanded 10 state(s)]
+Best heuristic values of queues: 0/-1/-1/-1 [expanded 11 state(s)]
+New solution has been found.
+
+Found new plan:
+0.00000000: (travelml r1 pr2 ep1) [5.00000000]
+5.01000000: (equipeml r1 vg1 ep1) [2.00000000]
+7.02000000: (initializeml r1 vg1) [1.00000000]
+7.03000000: (travelml r1 ep1 fp1) [5.00000000]
+12.04000000: (pickupml lp1 fp1 r1 vg1) [3.00000000]
+Rescheduled Plan:
+0.00100000: (travelml r1 pr2 ep1) [5.00000000]
+5.01100000: (equipeml r1 vg1 ep1) [2.00000000]
+7.02100000: (initializeml r1 vg1) [1.00000000]
+7.02200000: (travelml r1 ep1 fp1) [5.00000000]
+12.03200000: (pickupml lp1 fp1 r1 vg1) [3.00000000]
+Solution with original makespan 15.04 found (ignoring no-moving-targets-rule).
+Plan length: 5 step(s).
+Makespan   : 15.032
+Rescheduled Makespan   : 15.032
+Search time: 0 seconds - Walltime: 0.00377798 seconds
+Total time: 0 seconds - Walltime: 0.010371 seconds
+0.00100000: (travelml r1 pr2 ep1) [5.00000000]
+5.01100000: (equipeml r1 vg1 ep1) [2.00000000]
+7.02100000: (initializeml r1 vg1) [1.00000000]
+7.02200000: (travelml r1 ep1 fp1) [5.00000000]
+12.03200000: (pickupml lp1 fp1 r1 vg1) [3.00000000]
+
+TFD stderr: bash: cannot set terminal process group (611199): Inappropriate ioctl for device
+bash: no job control in this shell
+
+🔍 DEBUG: TFD return code: 0
+🔍 DEBUG: TFD stdout length: 4392
+🔍 DEBUG: TFD stdout preview: '\n   Entering planutils environment...\n\nParsing...\nContains quantified condition(s): False\nInstantiating...\nTrivial rules: Converted to facts.\nStarting instantiation [101 rules]...\nFinding invariants...\nFinding invariants... 37 initial candidates\n[0.020s CPU, 0.019s wall-clock]\nChecking invariant weight... [0.000s CPU, 0.000s wall-clock]\nInstantiating groups...\nChoosing groups...\n81 uncovered facts (before using the results from the invariant synthesis)\n34 uncovered facts\nBuilding translation key'
+127.0.0.1 - - [09/Jul/2026 08:06:45] "POST /plan HTTP/1.1" 200 -
+Received planning request: {
+  "planningType": "PDDL",
+  "domainFile": "Plannerinputs/static/DomainTFD.pddl",
+  "problemFile": "Plannerinputs/generated/problemPlaceHL_lp1_pr1_r1.pddl",
+  "problemFileContent": "(define (problem placehl)\r\n  (:domain fit)\r\n  (:objects \r\n    fp1 - firstposition\r\nfp2 - firstposition\r\nfp3 - firstposition\r\npr1 - positiononrail\r\npr2 - positiononrail\r\nep1 - equipposition\r\nep2 - equipposition\r\nep3 - equipposition\r\nr1 - robot\r\nb1 - beam\r\nb2 - beam\r\nlp1 - plate\r\nvg1 - vacgripper\r\nng1 - nailgripper\r\ngg1 - gluegun\r\nm1 - cassette\r\nlay1 - stack\r\n  )\r\n  (:init  \r\n    (atplace b1 fp2)\n(atplace b2 fp3)\n(clear b1)\n(clear b2)\n(attool gg1 ep2)\n(attool ng1 ep3)\n(atagent r1 fp1)\n(belongstolayer b1 lay1)\n(belongstolayer b2 lay1)\n(belongstomodule b1 m1)\n(belongstomodule b2 m1)\n(belongstomodule lp1 m1)\n(positionfree pr1)\n(positionfree pr2)\n(hastool r1 vg1)\n(robotequipped r1)\n(positionfree ep1)\n(activetool vg1)\n(holding r1 lp1)\n(positionfree fp1)\r\n  )\r\n  (:goal \r\n    (and\r\n      (atplace lp1 pr1)\n(not (holding r1 lp1))\n(clear lp1)\n(not (positionfree pr1))\n(vgempty r1)\r\n    ) \r\n  )\r\n)",
+  "plannerPath": "tfd",
+  "plannerName": "TFD",
+  "timeoutSeconds": 30,
+  "maxPlanLength": 20,
+  "enhspConfig": null
+}
+✅ Saved inline problem file content to: /home/ubuntu/APTree-automated-planning-tree/APTreeExecutionEngine/python_service/Plannerinputs/generated/problemPlaceHL_lp1_pr1_r1.pddl
+Extracted PDDL properties:
+  - Domain file: /home/ubuntu/APTree-automated-planning-tree/APTreeExecutionEngine/python_service/Plannerinputs/static/DomainTFD.pddl
+  - Problem file: /home/ubuntu/APTree-automated-planning-tree/APTreeExecutionEngine/python_service/Plannerinputs/generated/problemPlaceHL_lp1_pr1_r1.pddl
+  - Planner path: tfd
+  - Planner name: TFD
+  - Timeout: 30 seconds
+  - Max plan length: 20
+🔍 Using existing Docker container: planutils
+🔍 Domain file: DomainTFD.pddl
+🔍 Problem file: problemPlaceHL_lp1_pr1_r1.pddl
+🔍 DEBUG: Domain source path: /home/ubuntu/APTree-automated-planning-tree/APTreeExecutionEngine/python_service/Plannerinputs/static/DomainTFD.pddl
+🔍 DEBUG: Problem source path: /home/ubuntu/APTree-automated-planning-tree/APTreeExecutionEngine/python_service/Plannerinputs/generated/problemPlaceHL_lp1_pr1_r1.pddl
+Piping domain file into container: /root/DomainTFD.pddl
+✅ Domain file piped successfully to /root/DomainTFD.pddl
+Piping problem file into container: /root/problemPlaceHL_lp1_pr1_r1.pddl
+✅ Problem file piped successfully to /root/problemPlaceHL_lp1_pr1_r1.pddl
+Calling TFD with command: docker exec planutils bash -c planutils activate && rm -f output_plan* sas_plan && planutils run tfd DomainTFD.pddl problemPlaceHL_lp1_pr1_r1.pddl
+TFD stdout:
+   Entering planutils environment...
+
+Parsing...
+Contains quantified condition(s): False
+Instantiating...
+Trivial rules: Converted to facts.
+Starting instantiation [101 rules]...
+Finding invariants...
+Finding invariants... 37 initial candidates
+[0.020s CPU, 0.021s wall-clock]
+Checking invariant weight... [0.000s CPU, 0.000s wall-clock]
+Instantiating groups...
+Choosing groups...
+81 uncovered facts (before using the results from the invariant synthesis)
+34 uncovered facts
+Building translation key...
+Building STRIPS to SAS dictionary...
+Translating task...
+Processing axioms...
+Found 0 axioms that are always true and 0 that are always false
+constrained 134 conditions
+Writing output...
+Done!
+contains_quantified_conditions: 0
+Building causal graph...
+The causal graph is not acyclic.
+variable var19 is not necessary!
+variable var23 is not necessary!
+variable var27 is not necessary!
+44 variables of 47 necessary
+152 of 152 operators necessary.
+0 of 0 Axiom_relational rules necessary.
+0 of 0 Axiom_functional rules necessary.
+Building domain transition graphs...
+solveable in poly time 0
+Building successor generator...
+all_operator_indices.size(): 152
+Writing output...
+printing SG
+44
+done
+
+
+Planner Paramters:
+Anytime Search: Disabled
+Timeout if plan was found: 0 seconds (no timeout)
+Timeout while no plan was found: 0 seconds (no timeout)
+Greedy Search: Disabled
+Verbose: Enabled
+Lazy Heuristic Evaluation: Enabled
+Use caching in heuristic.
+Cyclic CG heuristic: Enabled    Preferred Operators: Enabled
+Makespan heuristic: Disabled    Preferred Operators: Disabled
+No Heuristic: Disabled
+Cg Heuristic Zero Cost Waiting Transitions: Enabled
+Cg Heuristic Fire Waiting Transitions Only If Local Problems Matches State: Disabled
+PrefOpsOrderedMode: Enabled with 1 goals
+PrefOpsCheapestMode: Enabled with 1 goals
+PrefOpsMostExpensiveMode: Disabled with 1000 goals
+PrefOpsRandMode: Disabled with 1000 goals
+PrefOpsConcurrentMode: Disabled
+Reset after solution was found: Enabled
+Reward only preferred operators queue: Disabled
+GValues by: Timestamp
+Queue management mode: Priority based
+Known by logical state only filtering: Disabled
+use_subgoals_to_break_makespan_ties: Disabled
+Reschedule plans: Enabled
+Epsilonize internally: Enabled
+Epsilonize externally: Disabled
+Keep original plans: Enabled
+Plan name: "./output_plan"
+Plan monitor file: "" (no monitoring)
+Monitoring verify timestamps: Disabled
+
+Contains universal conditions: 0
+Giving prior boost to open list 0
+INIT
+Open list sizes (priorities): 0 (-5000),  0 (0),  0 (0),  0 (0),
+Initializing cyclic causal graph heuristic...done.
+Best heuristic values of queues: 22/-1/-1/-1 [expanded 1 state(s)]
+Best heuristic values of queues: 16.98/-1/-1/-1 [expanded 2 state(s)]
+Best heuristic values of queues: 12/-1/-1/-1 [expanded 3 state(s)]
+Best heuristic values of queues: 3.88/-1/-1/-1 [expanded 4 state(s)]
+Best heuristic values of queues: 0/-1/-1/-1 [expanded 5 state(s)]
+New solution has been found.
+
+Found new plan:
+0.00000000: (travelml r1 fp1 pr1) [5.00000000]
+5.01000000: (placeml lp1 pr1 r1 vg1) [3.00000000]
+Rescheduled Plan:
+0.00100000: (travelml r1 fp1 pr1) [5.00000000]
+5.01100000: (placeml lp1 pr1 r1 vg1) [3.00000000]
+Solution with original makespan 8.01 found (ignoring no-moving-targets-rule).
+Plan length: 2 step(s).
+Makespan   : 8.011
+Rescheduled Makespan   : 8.011
+Search time: 0 seconds - Walltime: 0.001647 seconds
+Total time: 0 seconds - Walltime: 0.00771308 seconds
+0.00100000: (travelml r1 fp1 pr1) [5.00000000]
+5.01100000: (placeml lp1 pr1 r1 vg1) [3.00000000]
+
+TFD stderr: bash: cannot set terminal process group (611266): Inappropriate ioctl for device
+bash: no job control in this shell
+
+🔍 DEBUG: TFD return code: 0
+🔍 DEBUG: TFD stdout length: 3543
+🔍 DEBUG: TFD stdout preview: '\n   Entering planutils environment...\n\nParsing...\nContains quantified condition(s): False\nInstantiating...\nTrivial rules: Converted to facts.\nStarting instantiation [101 rules]...\nFinding invariants...\nFinding invariants... 37 initial candidates\n[0.020s CPU, 0.021s wall-clock]\nChecking invariant weight... [0.000s CPU, 0.000s wall-clock]\nInstantiating groups...\nChoosing groups...\n81 uncovered facts (before using the results from the invariant synthesis)\n34 uncovered facts\nBuilding translation key'
+127.0.0.1 - - [09/Jul/2026 08:06:46] "POST /plan HTTP/1.1" 200 -
+Received planning request: {
+  "planningType": "PDDL",
+  "domainFile": "Plannerinputs/static/DomainTFD.pddl",
+  "problemFile": "Plannerinputs/generated/problemGluingPlateHL_lp1_pr1_r1.pddl",
+  "problemFileContent": "(define (problem gluingplatehl)\r\n  (:domain fit)\r\n  (:objects \r\n    fp1 - firstposition\r\nfp2 - firstposition\r\nfp3 - firstposition\r\npr1 - positiononrail\r\npr2 - positiononrail\r\nep1 - equipposition\r\nep2 - equipposition\r\nep3 - equipposition\r\nr1 - robot\r\nb1 - beam\r\nb2 - beam\r\nlp1 - plate\r\nvg1 - vacgripper\r\nng1 - nailgripper\r\ngg1 - gluegun\r\nm1 - cassette\r\nlay1 - stack\r\n  )\r\n  (:init  \r\n    (atplace b1 fp2)\n(atplace b2 fp3)\n(clear lp1)\n(clear b1)\n(clear b2)\n(attool gg1 ep2)\n(attool ng1 ep3)\n(atagent r1 pr1)\n(vgempty r1)\n(belongstolayer b1 lay1)\n(belongstolayer b2 lay1)\n(belongstomodule b1 m1)\n(belongstomodule b2 m1)\n(belongstomodule lp1 m1)\n(positionfree pr2)\n(hastool r1 vg1)\n(robotequipped r1)\n(positionfree ep1)\n(activetool vg1)\n(positionfree fp1)\n(atplace lp1 pr1)\r\n  )\r\n  (:goal \r\n    (and\r\n      (glued lp1)\r\n    ) \r\n  )\r\n)",
+  "plannerPath": "tfd",
+  "plannerName": "TFD",
+  "timeoutSeconds": 30,
+  "maxPlanLength": 20,
+  "enhspConfig": null
+}
+✅ Saved inline problem file content to: /home/ubuntu/APTree-automated-planning-tree/APTreeExecutionEngine/python_service/Plannerinputs/generated/problemGluingPlateHL_lp1_pr1_r1.pddl
+Extracted PDDL properties:
+  - Domain file: /home/ubuntu/APTree-automated-planning-tree/APTreeExecutionEngine/python_service/Plannerinputs/static/DomainTFD.pddl
+  - Problem file: /home/ubuntu/APTree-automated-planning-tree/APTreeExecutionEngine/python_service/Plannerinputs/generated/problemGluingPlateHL_lp1_pr1_r1.pddl
+  - Planner path: tfd
+  - Planner name: TFD
+  - Timeout: 30 seconds
+  - Max plan length: 20
+🔍 Using existing Docker container: planutils
+🔍 Domain file: DomainTFD.pddl
+🔍 Problem file: problemGluingPlateHL_lp1_pr1_r1.pddl
+🔍 DEBUG: Domain source path: /home/ubuntu/APTree-automated-planning-tree/APTreeExecutionEngine/python_service/Plannerinputs/static/DomainTFD.pddl
+🔍 DEBUG: Problem source path: /home/ubuntu/APTree-automated-planning-tree/APTreeExecutionEngine/python_service/Plannerinputs/generated/problemGluingPlateHL_lp1_pr1_r1.pddl
+Piping domain file into container: /root/DomainTFD.pddl
+✅ Domain file piped successfully to /root/DomainTFD.pddl
+Piping problem file into container: /root/problemGluingPlateHL_lp1_pr1_r1.pddl
+✅ Problem file piped successfully to /root/problemGluingPlateHL_lp1_pr1_r1.pddl
+Calling TFD with command: docker exec planutils bash -c planutils activate && rm -f output_plan* sas_plan && planutils run tfd DomainTFD.pddl problemGluingPlateHL_lp1_pr1_r1.pddl
+TFD stdout:
+   Entering planutils environment...
+
+Parsing...
+Contains quantified condition(s): False
+Instantiating...
+Trivial rules: Converted to facts.
+Starting instantiation [101 rules]...
+Finding invariants...
+Finding invariants... 37 initial candidates
+[0.030s CPU, 0.022s wall-clock]
+Checking invariant weight... [0.000s CPU, 0.000s wall-clock]
+Instantiating groups...
+Choosing groups...
+81 uncovered facts (before using the results from the invariant synthesis)
+34 uncovered facts
+Building translation key...
+Building STRIPS to SAS dictionary...
+Translating task...
+Processing axioms...
+Found 0 axioms that are always true and 0 that are always false
+constrained 134 conditions
+Writing output...
+Done!
+contains_quantified_conditions: 0
+Building causal graph...
+The causal graph is not acyclic.
+variable var19 is not necessary!
+variable var23 is not necessary!
+variable var27 is not necessary!
+44 variables of 47 necessary
+152 of 152 operators necessary.
+0 of 0 Axiom_relational rules necessary.
+0 of 0 Axiom_functional rules necessary.
+Building domain transition graphs...
+solveable in poly time 0
+Building successor generator...
+all_operator_indices.size(): 152
+Writing output...
+printing SG
+44
+done
+
+
+Planner Paramters:
+Anytime Search: Disabled
+Timeout if plan was found: 0 seconds (no timeout)
+Timeout while no plan was found: 0 seconds (no timeout)
+Greedy Search: Disabled
+Verbose: Enabled
+Lazy Heuristic Evaluation: Enabled
+Use caching in heuristic.
+Cyclic CG heuristic: Enabled    Preferred Operators: Enabled
+Makespan heuristic: Disabled    Preferred Operators: Disabled
+No Heuristic: Disabled
+Cg Heuristic Zero Cost Waiting Transitions: Enabled
+Cg Heuristic Fire Waiting Transitions Only If Local Problems Matches State: Disabled
+PrefOpsOrderedMode: Enabled with 1 goals
+PrefOpsCheapestMode: Enabled with 1 goals
+PrefOpsMostExpensiveMode: Disabled with 1000 goals
+PrefOpsRandMode: Disabled with 1000 goals
+PrefOpsConcurrentMode: Disabled
+Reset after solution was found: Enabled
+Reward only preferred operators queue: Disabled
+GValues by: Timestamp
+Queue management mode: Priority based
+Known by logical state only filtering: Disabled
+use_subgoals_to_break_makespan_ties: Disabled
+Reschedule plans: Enabled
+Epsilonize internally: Enabled
+Epsilonize externally: Disabled
+Keep original plans: Enabled
+Plan name: "./output_plan"
+Plan monitor file: "" (no monitoring)
+Monitoring verify timestamps: Disabled
+
+Contains universal conditions: 0
+Giving prior boost to open list 0
+INIT
+Open list sizes (priorities): 0 (-5000),  0 (0),  0 (0),  0 (0),
+Initializing cyclic causal graph heuristic...done.
+Best heuristic values of queues: 24/-1/-1/-1 [expanded 1 state(s)]
+Best heuristic values of queues: 23.98/-1/-1/-1 [expanded 2 state(s)]
+Best heuristic values of queues: 23/-1/-1/-1 [expanded 4 state(s)]
+Best heuristic values of queues: 22.98/-1/-1/-1 [expanded 29 state(s)]
+Best heuristic values of queues: 18/-1/-1/-1 [expanded 31 state(s)]
+Best heuristic values of queues: 15.98/-1/-1/-1 [expanded 33 state(s)]
+Best heuristic values of queues: 14/-1/-1/-1 [expanded 34 state(s)]
+Best heuristic values of queues: 13.98/-1/-1/-1 [expanded 35 state(s)]
+Best heuristic values of queues: 12.98/-1/-1/-1 [expanded 36 state(s)]
+Best heuristic values of queues: 11.99/-1/-1/-1 [expanded 37 state(s)]
+Best heuristic values of queues: 8/-1/-1/-1 [expanded 38 state(s)]
+Best heuristic values of queues: 0/-1/-1/-1 [expanded 40 state(s)]
+New solution has been found.
+
+Found new plan:
+0.00000000: (travelml r1 pr1 ep1) [5.00000000]
+0.01000000: (closetoolml r1 vg1) [1.00000000]
+5.01000000: (deequipml r1 vg1 ep1) [2.00000000]
+7.02000000: (travelml r1 ep1 ep2) [5.00000000]
+12.03000000: (equipeml r1 gg1 ep2) [2.00000000]
+14.04000000: (initializeml r1 gg1) [1.00000000]
+14.05000000: (travelml r1 ep2 pr1) [5.00000000]
+19.06000000: (gluingml lp1 pr1 r1 gg1) [8.00000000]
+Rescheduled Plan:
+0.00100000: (travelml r1 pr1 ep1) [5.00000000]
+0.00100000: (closetoolml r1 vg1) [1.00000000]
+5.01100000: (deequipml r1 vg1 ep1) [2.00000000]
+7.02100000: (travelml r1 ep1 ep2) [5.00000000]
+12.03100000: (equipeml r1 gg1 ep2) [2.00000000]
+14.04100000: (initializeml r1 gg1) [1.00000000]
+14.04200000: (travelml r1 ep2 pr1) [5.00000000]
+19.05200000: (gluingml lp1 pr1 r1 gg1) [8.00000000]
+Solution with original makespan 27.06 found (ignoring no-moving-targets-rule).
+Plan length: 8 step(s).
+Makespan   : 27.052
+Rescheduled Makespan   : 27.052
+Search time: 0 seconds - Walltime: 0.00724101 seconds
+Total time: 0 seconds - Walltime: 0.012881 seconds
+0.00100000: (travelml r1 pr1 ep1) [5.00000000]
+0.00100000: (closetoolml r1 vg1) [1.00000000]
+5.01100000: (deequipml r1 vg1 ep1) [2.00000000]
+7.02100000: (travelml r1 ep1 ep2) [5.00000000]
+12.03100000: (equipeml r1 gg1 ep2) [2.00000000]
+14.04100000: (initializeml r1 gg1) [1.00000000]
+14.04200000: (travelml r1 ep2 pr1) [5.00000000]
+19.05200000: (gluingml lp1 pr1 r1 gg1) [8.00000000]
+
+TFD stderr: bash: cannot set terminal process group (611332): Inappropriate ioctl for device
+bash: no job control in this shell
+
+🔍 DEBUG: TFD return code: 0
+🔍 DEBUG: TFD stdout length: 4897
+🔍 DEBUG: TFD stdout preview: '\n   Entering planutils environment...\n\nParsing...\nContains quantified condition(s): False\nInstantiating...\nTrivial rules: Converted to facts.\nStarting instantiation [101 rules]...\nFinding invariants...\nFinding invariants... 37 initial candidates\n[0.030s CPU, 0.022s wall-clock]\nChecking invariant weight... [0.000s CPU, 0.000s wall-clock]\nInstantiating groups...\nChoosing groups...\n81 uncovered facts (before using the results from the invariant synthesis)\n34 uncovered facts\nBuilding translation key'
+127.0.0.1 - - [09/Jul/2026 08:06:47] "POST /plan HTTP/1.1" 200 -
+Received planning request: {
+  "planningType": "PDDL",
+  "domainFile": "Plannerinputs/static/DomainTFD.pddl",
+  "problemFile": "Plannerinputs/generated/problemPickUpHL_b1_fp2_r1.pddl",
+  "problemFileContent": "(define (problem pickuphl)\r\n  (:domain fit)\r\n  (:objects \r\n    fp1 - firstposition\r\nfp2 - firstposition\r\nfp3 - firstposition\r\npr1 - positiononrail\r\npr2 - positiononrail\r\nep1 - equipposition\r\nep2 - equipposition\r\nep3 - equipposition\r\nr1 - robot\r\nb1 - beam\r\nb2 - beam\r\nlp1 - plate\r\nvg1 - vacgripper\r\nng1 - nailgripper\r\ngg1 - gluegun\r\nm1 - cassette\r\nlay1 - stack\r\n  )\r\n  (:init  \r\n    (atplace b1 fp2)\n(atplace b2 fp3)\n(clear lp1)\n(clear b1)\n(clear b2)\n(attool vg1 ep1)\n(attool ng1 ep3)\n(atagent r1 pr1)\n(vgempty r1)\n(belongstolayer b1 lay1)\n(belongstolayer b2 lay1)\n(belongstomodule b1 m1)\n(belongstomodule b2 m1)\n(belongstomodule lp1 m1)\n(positionfree pr2)\n(robotequipped r1)\n(positionfree fp1)\n(atplace lp1 pr1)\n(hastool r1 gg1)\n(positionfree ep2)\n(activetool gg1)\n(glued lp1)\r\n  )\r\n  (:goal \r\n    (and\r\n      (holding r1 b1)\n(not (atplace b1 fp2))\n(not (clear b1))\n(positionfree fp2)\n(not (vgempty r1))\r\n    ) \r\n  )\r\n)",
+  "plannerPath": "tfd",
+  "plannerName": "TFD",
+  "timeoutSeconds": 30,
+  "maxPlanLength": 20,
+  "enhspConfig": null
+}
+✅ Saved inline problem file content to: /home/ubuntu/APTree-automated-planning-tree/APTreeExecutionEngine/python_service/Plannerinputs/generated/problemPickUpHL_b1_fp2_r1.pddl
+Extracted PDDL properties:
+  - Domain file: /home/ubuntu/APTree-automated-planning-tree/APTreeExecutionEngine/python_service/Plannerinputs/static/DomainTFD.pddl
+  - Problem file: /home/ubuntu/APTree-automated-planning-tree/APTreeExecutionEngine/python_service/Plannerinputs/generated/problemPickUpHL_b1_fp2_r1.pddl
+  - Planner path: tfd
+  - Planner name: TFD
+  - Timeout: 30 seconds
+  - Max plan length: 20
+🔍 Using existing Docker container: planutils
+🔍 Domain file: DomainTFD.pddl
+🔍 Problem file: problemPickUpHL_b1_fp2_r1.pddl
+🔍 DEBUG: Domain source path: /home/ubuntu/APTree-automated-planning-tree/APTreeExecutionEngine/python_service/Plannerinputs/static/DomainTFD.pddl
+🔍 DEBUG: Problem source path: /home/ubuntu/APTree-automated-planning-tree/APTreeExecutionEngine/python_service/Plannerinputs/generated/problemPickUpHL_b1_fp2_r1.pddl
+Piping domain file into container: /root/DomainTFD.pddl
+✅ Domain file piped successfully to /root/DomainTFD.pddl
+Piping problem file into container: /root/problemPickUpHL_b1_fp2_r1.pddl
+✅ Problem file piped successfully to /root/problemPickUpHL_b1_fp2_r1.pddl
+Calling TFD with command: docker exec planutils bash -c planutils activate && rm -f output_plan* sas_plan && planutils run tfd DomainTFD.pddl problemPickUpHL_b1_fp2_r1.pddl
+TFD stdout:
+   Entering planutils environment...
+
+Parsing...
+Contains quantified condition(s): False
+Instantiating...
+Trivial rules: Converted to facts.
+Starting instantiation [101 rules]...
+Finding invariants...
+Finding invariants... 37 initial candidates
+[0.020s CPU, 0.021s wall-clock]
+Checking invariant weight... [0.000s CPU, 0.000s wall-clock]
+Instantiating groups...
+Choosing groups...
+81 uncovered facts (before using the results from the invariant synthesis)
+34 uncovered facts
+Building translation key...
+Building STRIPS to SAS dictionary...
+Translating task...
+Processing axioms...
+Found 0 axioms that are always true and 0 that are always false
+constrained 134 conditions
+Writing output...
+Done!
+contains_quantified_conditions: 0
+Building causal graph...
+The causal graph is not acyclic.
+variable var19 is not necessary!
+variable var23 is not necessary!
+variable var27 is not necessary!
+44 variables of 47 necessary
+152 of 152 operators necessary.
+0 of 0 Axiom_relational rules necessary.
+0 of 0 Axiom_functional rules necessary.
+Building domain transition graphs...
+solveable in poly time 0
+Building successor generator...
+all_operator_indices.size(): 152
+Writing output...
+printing SG
+44
+done
+
+
+Planner Paramters:
+Anytime Search: Disabled
+Timeout if plan was found: 0 seconds (no timeout)
+Timeout while no plan was found: 0 seconds (no timeout)
+Greedy Search: Disabled
+Verbose: Enabled
+Lazy Heuristic Evaluation: Enabled
+Use caching in heuristic.
+Cyclic CG heuristic: Enabled    Preferred Operators: Enabled
+Makespan heuristic: Disabled    Preferred Operators: Disabled
+No Heuristic: Disabled
+Cg Heuristic Zero Cost Waiting Transitions: Enabled
+Cg Heuristic Fire Waiting Transitions Only If Local Problems Matches State: Disabled
+PrefOpsOrderedMode: Enabled with 1 goals
+PrefOpsCheapestMode: Enabled with 1 goals
+PrefOpsMostExpensiveMode: Disabled with 1000 goals
+PrefOpsRandMode: Disabled with 1000 goals
+PrefOpsConcurrentMode: Disabled
+Reset after solution was found: Enabled
+Reward only preferred operators queue: Disabled
+GValues by: Timestamp
+Queue management mode: Priority based
+Known by logical state only filtering: Disabled
+use_subgoals_to_break_makespan_ties: Disabled
+Reschedule plans: Enabled
+Epsilonize internally: Enabled
+Epsilonize externally: Disabled
+Keep original plans: Enabled
+Plan name: "./output_plan"
+Plan monitor file: "" (no monitoring)
+Monitoring verify timestamps: Disabled
+
+Contains universal conditions: 0
+Giving prior boost to open list 0
+INIT
+Open list sizes (priorities): 0 (-5000),  0 (0),  0 (0),  0 (0),
+Initializing cyclic causal graph heuristic...done.
+Best heuristic values of queues: 156/-1/-1/-1 [expanded 1 state(s)]
+Best heuristic values of queues: 148.98/-1/-1/-1 [expanded 2 state(s)]
+Best heuristic values of queues: 112.98/-1/-1/-1 [expanded 3 state(s)]
+Best heuristic values of queues: 111.99/-1/-1/-1 [expanded 4 state(s)]
+Best heuristic values of queues: 108/-1/-1/-1 [expanded 5 state(s)]
+Best heuristic values of queues: 101.98/-1/-1/-1 [expanded 9 state(s)]
+Best heuristic values of queues: 100/-1/-1/-1 [expanded 10 state(s)]
+Best heuristic values of queues: 93.98/-1/-1/-1 [expanded 11 state(s)]
+Best heuristic values of queues: 64.98/-1/-1/-1 [expanded 12 state(s)]
+Best heuristic values of queues: 60/-1/-1/-1 [expanded 13 state(s)]
+Best heuristic values of queues: 37.98/-1/-1/-1 [expanded 14 state(s)]
+Best heuristic values of queues: 36/-1/-1/-1 [expanded 15 state(s)]
+Best heuristic values of queues: 32.98/-1/-1/-1 [expanded 16 state(s)]
+Best heuristic values of queues: 16.98/-1/-1/-1 [expanded 17 state(s)]
+Best heuristic values of queues: 15.99/-1/-1/-1 [expanded 18 state(s)]
+Best heuristic values of queues: 12/-1/-1/-1 [expanded 19 state(s)]
+Best heuristic values of queues: 3.88/-1/-1/-1 [expanded 20 state(s)]
+Best heuristic values of queues: 0/-1/-1/-1 [expanded 21 state(s)]
+New solution has been found.
+
+Found new plan:
+0.00000000: (closetoolml r1 gg1) [1.00000000]
+0.01000000: (travelml r1 pr1 ep1) [5.00000000]
+5.02000000: (travelml r1 ep1 ep2) [5.00000000]
+10.03000000: (deequipml r1 gg1 ep2) [2.00000000]
+12.04000000: (travelml r1 ep2 ep1) [5.00000000]
+17.05000000: (equipeml r1 vg1 ep1) [2.00000000]
+19.06000000: (initializeml r1 vg1) [1.00000000]
+19.07000000: (travelml r1 ep1 fp2) [5.00000000]
+24.08000000: (pickupml b1 fp2 r1 vg1) [3.00000000]
+Rescheduled Plan:
+0.00100000: (closetoolml r1 gg1) [1.00000000]
+0.00100000: (travelml r1 pr1 ep1) [5.00000000]
+5.01100000: (travelml r1 ep1 ep2) [5.00000000]
+10.02100000: (deequipml r1 gg1 ep2) [2.00000000]
+12.03100000: (travelml r1 ep2 ep1) [5.00000000]
+17.04100000: (equipeml r1 vg1 ep1) [2.00000000]
+19.05100000: (initializeml r1 vg1) [1.00000000]
+19.05200000: (travelml r1 ep1 fp2) [5.00000000]
+24.06200000: (pickupml b1 fp2 r1 vg1) [3.00000000]
+Solution with original makespan 27.08 found (ignoring no-moving-targets-rule).
+Plan length: 9 step(s).
+Makespan   : 27.062
+Rescheduled Makespan   : 27.062
+Search time: 0 seconds - Walltime: 0.00651193 seconds
+Total time: 0 seconds - Walltime: 0.012022 seconds
+0.00100000: (closetoolml r1 gg1) [1.00000000]
+0.00100000: (travelml r1 pr1 ep1) [5.00000000]
+5.01100000: (travelml r1 ep1 ep2) [5.00000000]
+10.02100000: (deequipml r1 gg1 ep2) [2.00000000]
+12.03100000: (travelml r1 ep2 ep1) [5.00000000]
+17.04100000: (equipeml r1 vg1 ep1) [2.00000000]
+19.05100000: (initializeml r1 vg1) [1.00000000]
+19.05200000: (travelml r1 ep1 fp2) [5.00000000]
+24.06200000: (pickupml b1 fp2 r1 vg1) [3.00000000]
+
+TFD stderr: bash: cannot set terminal process group (611396): Inappropriate ioctl for device
+bash: no job control in this shell
+
+🔍 DEBUG: TFD return code: 0
+🔍 DEBUG: TFD stdout length: 5468
+🔍 DEBUG: TFD stdout preview: '\n   Entering planutils environment...\n\nParsing...\nContains quantified condition(s): False\nInstantiating...\nTrivial rules: Converted to facts.\nStarting instantiation [101 rules]...\nFinding invariants...\nFinding invariants... 37 initial candidates\n[0.020s CPU, 0.021s wall-clock]\nChecking invariant weight... [0.000s CPU, 0.000s wall-clock]\nInstantiating groups...\nChoosing groups...\n81 uncovered facts (before using the results from the invariant synthesis)\n34 uncovered facts\nBuilding translation key'
+127.0.0.1 - - [09/Jul/2026 08:06:49] "POST /plan HTTP/1.1" 200 -
+Received planning request: {
+  "planningType": "PDDL",
+  "domainFile": "Plannerinputs/static/DomainTFD.pddl",
+  "problemFile": "Plannerinputs/generated/problemStackHL_b1_lp1_r1_pr1_lay1_m1.pddl",
+  "problemFileContent": "(define (problem stackhl)\r\n  (:domain fit)\r\n  (:objects \r\n    fp1 - firstposition\r\nfp2 - firstposition\r\nfp3 - firstposition\r\npr1 - positiononrail\r\npr2 - positiononrail\r\nep1 - equipposition\r\nep2 - equipposition\r\nep3 - equipposition\r\nr1 - robot\r\nb1 - beam\r\nb2 - beam\r\nlp1 - plate\r\nvg1 - vacgripper\r\nng1 - nailgripper\r\ngg1 - gluegun\r\nm1 - cassette\r\nlay1 - stack\r\n  )\r\n  (:init  \r\n    (atplace b2 fp3)\n(clear lp1)\n(clear b2)\n(attool gg1 ep2)\n(attool ng1 ep3)\n(atagent r1 fp2)\n(belongstolayer b1 lay1)\n(belongstolayer b2 lay1)\n(belongstomodule b1 m1)\n(belongstomodule b2 m1)\n(belongstomodule lp1 m1)\n(positionfree pr2)\n(hastool r1 vg1)\n(robotequipped r1)\n(positionfree ep1)\n(activetool vg1)\n(positionfree fp1)\n(atplace lp1 pr1)\n(glued lp1)\n(holding r1 b1)\n(positionfree fp2)\r\n  )\r\n  (:goal \r\n    (and\r\n      (ontop b1 lp1)\n(stacked b1)\n(not (holding r1 b1))\n(atplace b1 pr1)\n(not (clear lp1))\n(clear b1)\n(vgempty r1)\r\n    ) \r\n  )\r\n)",
+  "plannerPath": "tfd",
+  "plannerName": "TFD",
+  "timeoutSeconds": 30,
+  "maxPlanLength": 20,
+  "enhspConfig": null
+}
+✅ Saved inline problem file content to: /home/ubuntu/APTree-automated-planning-tree/APTreeExecutionEngine/python_service/Plannerinputs/generated/problemStackHL_b1_lp1_r1_pr1_lay1_m1.pddl
+Extracted PDDL properties:
+  - Domain file: /home/ubuntu/APTree-automated-planning-tree/APTreeExecutionEngine/python_service/Plannerinputs/static/DomainTFD.pddl
+  - Problem file: /home/ubuntu/APTree-automated-planning-tree/APTreeExecutionEngine/python_service/Plannerinputs/generated/problemStackHL_b1_lp1_r1_pr1_lay1_m1.pddl
+  - Planner path: tfd
+  - Planner name: TFD
+  - Timeout: 30 seconds
+  - Max plan length: 20
+🔍 Using existing Docker container: planutils
+🔍 Domain file: DomainTFD.pddl
+🔍 Problem file: problemStackHL_b1_lp1_r1_pr1_lay1_m1.pddl
+🔍 DEBUG: Domain source path: /home/ubuntu/APTree-automated-planning-tree/APTreeExecutionEngine/python_service/Plannerinputs/static/DomainTFD.pddl
+🔍 DEBUG: Problem source path: /home/ubuntu/APTree-automated-planning-tree/APTreeExecutionEngine/python_service/Plannerinputs/generated/problemStackHL_b1_lp1_r1_pr1_lay1_m1.pddl
+Piping domain file into container: /root/DomainTFD.pddl
+✅ Domain file piped successfully to /root/DomainTFD.pddl
+Piping problem file into container: /root/problemStackHL_b1_lp1_r1_pr1_lay1_m1.pddl
+✅ Problem file piped successfully to /root/problemStackHL_b1_lp1_r1_pr1_lay1_m1.pddl
+Calling TFD with command: docker exec planutils bash -c planutils activate && rm -f output_plan* sas_plan && planutils run tfd DomainTFD.pddl problemStackHL_b1_lp1_r1_pr1_lay1_m1.pddl
+TFD stdout:
+   Entering planutils environment...
+
+Parsing...
+Contains quantified condition(s): False
+Instantiating...
+Trivial rules: Converted to facts.
+Starting instantiation [101 rules]...
+Finding invariants...
+Finding invariants... 37 initial candidates
+[0.020s CPU, 0.022s wall-clock]
+Checking invariant weight... [0.000s CPU, 0.000s wall-clock]
+Instantiating groups...
+Choosing groups...
+81 uncovered facts (before using the results from the invariant synthesis)
+34 uncovered facts
+Building translation key...
+Building STRIPS to SAS dictionary...
+Translating task...
+Processing axioms...
+Found 0 axioms that are always true and 0 that are always false
+constrained 134 conditions
+Writing output...
+Done!
+contains_quantified_conditions: 0
+Building causal graph...
+The causal graph is not acyclic.
+variable var19 is not necessary!
+variable var23 is not necessary!
+variable var27 is not necessary!
+44 variables of 47 necessary
+152 of 152 operators necessary.
+0 of 0 Axiom_relational rules necessary.
+0 of 0 Axiom_functional rules necessary.
+Building domain transition graphs...
+solveable in poly time 0
+Building successor generator...
+all_operator_indices.size(): 152
+Writing output...
+printing SG
+44
+done
+
+
+Planner Paramters:
+Anytime Search: Disabled
+Timeout if plan was found: 0 seconds (no timeout)
+Timeout while no plan was found: 0 seconds (no timeout)
+Greedy Search: Disabled
+Verbose: Enabled
+Lazy Heuristic Evaluation: Enabled
+Use caching in heuristic.
+Cyclic CG heuristic: Enabled    Preferred Operators: Enabled
+Makespan heuristic: Disabled    Preferred Operators: Disabled
+No Heuristic: Disabled
+Cg Heuristic Zero Cost Waiting Transitions: Enabled
+Cg Heuristic Fire Waiting Transitions Only If Local Problems Matches State: Disabled
+PrefOpsOrderedMode: Enabled with 1 goals
+PrefOpsCheapestMode: Enabled with 1 goals
+PrefOpsMostExpensiveMode: Disabled with 1000 goals
+PrefOpsRandMode: Disabled with 1000 goals
+PrefOpsConcurrentMode: Disabled
+Reset after solution was found: Enabled
+Reward only preferred operators queue: Disabled
+GValues by: Timestamp
+Queue management mode: Priority based
+Known by logical state only filtering: Disabled
+use_subgoals_to_break_makespan_ties: Disabled
+Reschedule plans: Enabled
+Epsilonize internally: Enabled
+Epsilonize externally: Disabled
+Keep original plans: Enabled
+Plan name: "./output_plan"
+Plan monitor file: "" (no monitoring)
+Monitoring verify timestamps: Disabled
+
+Contains universal conditions: 0
+Giving prior boost to open list 0
+INIT
+Open list sizes (priorities): 0 (-5000),  0 (0),  0 (0),  0 (0),
+Initializing cyclic causal graph heuristic...done.
+Best heuristic values of queues: 42/-1/-1/-1 [expanded 1 state(s)]
+Best heuristic values of queues: 28.98/-1/-1/-1 [expanded 2 state(s)]
+Best heuristic values of queues: 24/-1/-1/-1 [expanded 3 state(s)]
+Best heuristic values of queues: 4.88/-1/-1/-1 [expanded 4 state(s)]
+Best heuristic values of queues: 0/-1/-1/-1 [expanded 5 state(s)]
+New solution has been found.
+
+Found new plan:
+0.00000000: (travelml r1 fp2 pr1) [5.00000000]
+5.01000000: (stackml b1 lp1 r1 vg1 pr1) [4.00000000]
+Rescheduled Plan:
+0.00100000: (travelml r1 fp2 pr1) [5.00000000]
+5.01100000: (stackml b1 lp1 r1 vg1 pr1) [4.00000000]
+Solution with original makespan 9.01 found (ignoring no-moving-targets-rule).
+Plan length: 2 step(s).
+Makespan   : 9.011
+Rescheduled Makespan   : 9.011
+Search time: 0 seconds - Walltime: 0.00185394 seconds
+Total time: 0 seconds - Walltime: 0.00773501 seconds
+0.00100000: (travelml r1 fp2 pr1) [5.00000000]
+5.01100000: (stackml b1 lp1 r1 vg1 pr1) [4.00000000]
+
+TFD stderr: bash: cannot set terminal process group (611464): Inappropriate ioctl for device
+bash: no job control in this shell
+
+🔍 DEBUG: TFD return code: 0
+🔍 DEBUG: TFD stdout length: 3554
+🔍 DEBUG: TFD stdout preview: '\n   Entering planutils environment...\n\nParsing...\nContains quantified condition(s): False\nInstantiating...\nTrivial rules: Converted to facts.\nStarting instantiation [101 rules]...\nFinding invariants...\nFinding invariants... 37 initial candidates\n[0.020s CPU, 0.022s wall-clock]\nChecking invariant weight... [0.000s CPU, 0.000s wall-clock]\nInstantiating groups...\nChoosing groups...\n81 uncovered facts (before using the results from the invariant synthesis)\n34 uncovered facts\nBuilding translation key'
+127.0.0.1 - - [09/Jul/2026 08:06:52] "POST /plan HTTP/1.1" 200 -

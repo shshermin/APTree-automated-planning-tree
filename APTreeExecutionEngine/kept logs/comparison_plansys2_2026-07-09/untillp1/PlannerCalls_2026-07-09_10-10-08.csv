@@ -1,0 +1,5 @@
+﻿CallNumber,Timestamp,PlannerName,HLActionInstance,ProblemFile,Success,PlannerTimeMs,TotalTimeMs,ActionsGenerated,PlanLength,Error
+1,2026-07-09 10:10:03.326,ENHSP,cassette1,./Plannerinputs/static/ProblepartialC1.pddl,True,701.35,865.37,3,0,
+2,2026-07-09 10:10:04.346,TFD,PickUpHL_lp1_fp1_r1,Plannerinputs/generated/problemPickUpHL_lp1_fp1_r1.pddl,True,765.04,891.28,5,0,
+3,2026-07-09 10:10:05.951,TFD,PlaceHL_lp1_pr1_r1,Plannerinputs/generated/problemPlaceHL_lp1_pr1_r1.pddl,True,746.28,786.24,2,0,
+4,2026-07-09 10:10:07.099,TFD,GluingPlateHL_lp1_pr1_r1,Plannerinputs/generated/problemGluingPlateHL_lp1_pr1_r1.pddl,True,751.07,802.77,8,0,

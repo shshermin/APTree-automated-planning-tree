@@ -1,0 +1,91 @@
+﻿Counter,Timestamp,ActionName,InstanceName,Status,AdditionalInfo,TimeSinceStartMs
+1,2026-07-09 10:10:04.342,PickUpHL,PickUpHL_lp1_fp1_r1,STARTED,"HL subtree tick: TFD_Default_DynamicFlow_PickUpHL_lp1_fp1_r1; DeltaTime: 0.100",0.98
+2,2026-07-09 10:10:05.247,TravelML,TravelML_r1_pr2_ep1,STARTED,"ML action execution; DeltaTime: 0.100",906.30
+3,2026-07-09 10:10:05.248,TravelML,TravelML_r1_pr2_ep1,STARTED,"DeltaTime: 0.100",906.81
+4,2026-07-09 10:10:05.248,TravelML,TravelML_r1_pr2_ep1,COMPLETED,"Action logic completed successfully",907.04
+5,2026-07-09 10:10:05.254,TravelML,TravelML_r1_pr2_ep1,COMPLETED,"Effects applied on exit",912.84
+6,2026-07-09 10:10:05.364,PickUpHL,PickUpHL_lp1_fp1_r1,STARTED,"HL subtree tick: TFD_Default_DynamicFlow_PickUpHL_lp1_fp1_r1; DeltaTime: 0.100",1022.71
+7,2026-07-09 10:10:05.367,EquipeML,EquipeML_r1_vg1_ep1,STARTED,"ML action execution; DeltaTime: 0.100",1026.00
+8,2026-07-09 10:10:05.367,EquipeML,EquipeML_r1_vg1_ep1,STARTED,"DeltaTime: 0.100",1026.06
+9,2026-07-09 10:10:05.367,EquipeML,EquipeML_r1_vg1_ep1,COMPLETED,"Action logic completed successfully",1026.09
+10,2026-07-09 10:10:05.369,EquipeML,EquipeML_r1_vg1_ep1,COMPLETED,"Effects applied on exit",1028.23
+11,2026-07-09 10:10:05.489,PickUpHL,PickUpHL_lp1_fp1_r1,STARTED,"HL subtree tick: TFD_Default_DynamicFlow_PickUpHL_lp1_fp1_r1; DeltaTime: 0.100",1148.24
+12,2026-07-09 10:10:05.492,InitializeML,InitializeML_r1_vg1,STARTED,"ML action execution; DeltaTime: 0.100",1150.69
+13,2026-07-09 10:10:05.492,InitializeML,InitializeML_r1_vg1,STARTED,"DeltaTime: 0.100",1150.75
+14,2026-07-09 10:10:05.492,InitializeML,InitializeML_r1_vg1,COMPLETED,"Action logic completed successfully",1150.79
+15,2026-07-09 10:10:05.493,InitializeML,InitializeML_r1_vg1,COMPLETED,"Effects applied on exit",1151.49
+16,2026-07-09 10:10:05.598,PickUpHL,PickUpHL_lp1_fp1_r1,STARTED,"HL subtree tick: TFD_Default_DynamicFlow_PickUpHL_lp1_fp1_r1; DeltaTime: 0.100",1256.54
+17,2026-07-09 10:10:05.599,TravelML,TravelML_r1_ep1_fp1,STARTED,"ML action execution; DeltaTime: 0.100",1258.42
+18,2026-07-09 10:10:05.599,TravelML,TravelML_r1_ep1_fp1,STARTED,"DeltaTime: 0.100",1258.45
+19,2026-07-09 10:10:05.600,TravelML,TravelML_r1_ep1_fp1,COMPLETED,"Action logic completed successfully",1258.53
+20,2026-07-09 10:10:05.601,TravelML,TravelML_r1_ep1_fp1,COMPLETED,"Effects applied on exit",1259.47
+21,2026-07-09 10:10:05.709,PickUpHL,PickUpHL_lp1_fp1_r1,STARTED,"HL subtree tick: TFD_Default_DynamicFlow_PickUpHL_lp1_fp1_r1; DeltaTime: 0.100",1368.40
+22,2026-07-09 10:10:05.712,PickUpML,PickUpML_lp1_fp1_r1_vg1,STARTED,"ML action execution; DeltaTime: 0.100",1371.21
+23,2026-07-09 10:10:05.712,PickUpML,PickUpML_lp1_fp1_r1_vg1,STARTED,"DeltaTime: 0.100",1371.31
+24,2026-07-09 10:10:05.712,PickUpML,PickUpML_lp1_fp1_r1_vg1,COMPLETED,"Action logic completed successfully",1371.35
+25,2026-07-09 10:10:05.715,PickUpML,PickUpML_lp1_fp1_r1_vg1,COMPLETED,"Effects applied on exit",1373.47
+26,2026-07-09 10:10:05.819,PickUpHL,PickUpHL_lp1_fp1_r1,STARTED,"HL subtree tick: TFD_Default_DynamicFlow_PickUpHL_lp1_fp1_r1; DeltaTime: 0.100",1477.97
+27,2026-07-09 10:10:05.821,PickUpHL,PickUpHL_lp1_fp1_r1,COMPLETED,"Subtree execution completed successfully",1479.91
+28,2026-07-09 10:10:05.821,PickUpHL,PickUpHL_lp1_fp1_r1,STARTED,"DeltaTime: 0.100",1479.98
+29,2026-07-09 10:10:05.821,PickUpHL,PickUpHL_lp1_fp1_r1,COMPLETED,"Action logic completed successfully",1480.02
+30,2026-07-09 10:10:05.825,PickUpHL,PickUpHL_lp1_fp1_r1,COMPLETED,"Effects applied on exit",1483.55
+31,2026-07-09 10:10:05.949,PlaceHL,PlaceHL_lp1_pr1_r1,STARTED,"HL subtree tick: TFD_Default_DynamicFlow_PlaceHL_lp1_pr1_r1; DeltaTime: 0.100",1607.95
+32,2026-07-09 10:10:06.740,TravelML,TravelML_r1_fp1_pr1,STARTED,"ML action execution; DeltaTime: 0.100",2399.28
+33,2026-07-09 10:10:06.740,TravelML,TravelML_r1_fp1_pr1,STARTED,"DeltaTime: 0.100",2399.36
+34,2026-07-09 10:10:06.740,TravelML,TravelML_r1_fp1_pr1,COMPLETED,"Action logic completed successfully",2399.45
+35,2026-07-09 10:10:06.741,TravelML,TravelML_r1_fp1_pr1,COMPLETED,"Effects applied on exit",2400.25
+36,2026-07-09 10:10:06.849,PlaceHL,PlaceHL_lp1_pr1_r1,STARTED,"HL subtree tick: TFD_Default_DynamicFlow_PlaceHL_lp1_pr1_r1; DeltaTime: 0.100",2507.54
+37,2026-07-09 10:10:06.850,PlaceML,PlaceML_lp1_pr1_r1_vg1,STARTED,"ML action execution; DeltaTime: 0.100",2509.28
+38,2026-07-09 10:10:06.850,PlaceML,PlaceML_lp1_pr1_r1_vg1,STARTED,"DeltaTime: 0.100",2509.33
+39,2026-07-09 10:10:06.850,PlaceML,PlaceML_lp1_pr1_r1_vg1,COMPLETED,"Action logic completed successfully",2509.35
+40,2026-07-09 10:10:06.852,PlaceML,PlaceML_lp1_pr1_r1_vg1,COMPLETED,"Effects applied on exit",2511.17
+41,2026-07-09 10:10:06.962,PlaceHL,PlaceHL_lp1_pr1_r1,STARTED,"HL subtree tick: TFD_Default_DynamicFlow_PlaceHL_lp1_pr1_r1; DeltaTime: 0.100",2620.49
+42,2026-07-09 10:10:06.963,PlaceHL,PlaceHL_lp1_pr1_r1,COMPLETED,"Subtree execution completed successfully",2621.80
+43,2026-07-09 10:10:06.963,PlaceHL,PlaceHL_lp1_pr1_r1,STARTED,"DeltaTime: 0.100",2621.84
+44,2026-07-09 10:10:06.963,PlaceHL,PlaceHL_lp1_pr1_r1,COMPLETED,"Action logic completed successfully",2621.86
+45,2026-07-09 10:10:06.965,PlaceHL,PlaceHL_lp1_pr1_r1,COMPLETED,"Effects applied on exit",2624.05
+46,2026-07-09 10:10:07.096,GluingPlateHL,GluingPlateHL_lp1_pr1_r1,STARTED,"HL subtree tick: TFD_Default_DynamicFlow_GluingPlateHL_lp1_pr1_r1; DeltaTime: 0.100",2755.30
+47,2026-07-09 10:10:07.903,TravelML,TravelML_r1_pr1_ep1,STARTED,"ML action execution; DeltaTime: 0.100",3562.25
+48,2026-07-09 10:10:07.903,TravelML,TravelML_r1_pr1_ep1,STARTED,"DeltaTime: 0.100",3562.31
+49,2026-07-09 10:10:07.903,TravelML,TravelML_r1_pr1_ep1,COMPLETED,"Action logic completed successfully",3562.36
+50,2026-07-09 10:10:07.904,TravelML,TravelML_r1_pr1_ep1,COMPLETED,"Effects applied on exit",3562.95
+51,2026-07-09 10:10:08.012,GluingPlateHL,GluingPlateHL_lp1_pr1_r1,STARTED,"HL subtree tick: TFD_Default_DynamicFlow_GluingPlateHL_lp1_pr1_r1; DeltaTime: 0.100",3671.13
+52,2026-07-09 10:10:08.015,CloseToolML,CloseToolML_r1_vg1,STARTED,"ML action execution; DeltaTime: 0.100",3674.10
+53,2026-07-09 10:10:08.015,CloseToolML,CloseToolML_r1_vg1,STARTED,"DeltaTime: 0.100",3674.21
+54,2026-07-09 10:10:08.015,CloseToolML,CloseToolML_r1_vg1,COMPLETED,"Action logic completed successfully",3674.24
+55,2026-07-09 10:10:08.016,CloseToolML,CloseToolML_r1_vg1,COMPLETED,"Effects applied on exit",3674.86
+56,2026-07-09 10:10:08.119,GluingPlateHL,GluingPlateHL_lp1_pr1_r1,STARTED,"HL subtree tick: TFD_Default_DynamicFlow_GluingPlateHL_lp1_pr1_r1; DeltaTime: 0.100",3777.96
+57,2026-07-09 10:10:08.121,DeequipML,DeequipML_r1_vg1_ep1,STARTED,"ML action execution; DeltaTime: 0.100",3780.15
+58,2026-07-09 10:10:08.121,DeequipML,DeequipML_r1_vg1_ep1,STARTED,"DeltaTime: 0.100",3780.19
+59,2026-07-09 10:10:08.121,DeequipML,DeequipML_r1_vg1_ep1,COMPLETED,"Action logic completed successfully",3780.22
+60,2026-07-09 10:10:08.122,DeequipML,DeequipML_r1_vg1_ep1,COMPLETED,"Effects applied on exit",3780.91
+61,2026-07-09 10:10:08.229,GluingPlateHL,GluingPlateHL_lp1_pr1_r1,STARTED,"HL subtree tick: TFD_Default_DynamicFlow_GluingPlateHL_lp1_pr1_r1; DeltaTime: 0.100",3888.38
+62,2026-07-09 10:10:08.232,TravelML,TravelML_r1_ep1_ep2,STARTED,"ML action execution; DeltaTime: 0.100",3890.66
+63,2026-07-09 10:10:08.232,TravelML,TravelML_r1_ep1_ep2,STARTED,"DeltaTime: 0.100",3890.72
+64,2026-07-09 10:10:08.232,TravelML,TravelML_r1_ep1_ep2,COMPLETED,"Action logic completed successfully",3890.78
+65,2026-07-09 10:10:08.233,TravelML,TravelML_r1_ep1_ep2,COMPLETED,"Effects applied on exit",3891.65
+66,2026-07-09 10:10:08.342,GluingPlateHL,GluingPlateHL_lp1_pr1_r1,STARTED,"HL subtree tick: TFD_Default_DynamicFlow_GluingPlateHL_lp1_pr1_r1; DeltaTime: 0.100",4000.85
+67,2026-07-09 10:10:08.345,EquipeML,EquipeML_r1_gg1_ep2,STARTED,"ML action execution; DeltaTime: 0.100",4003.83
+68,2026-07-09 10:10:08.345,EquipeML,EquipeML_r1_gg1_ep2,STARTED,"DeltaTime: 0.100",4003.97
+69,2026-07-09 10:10:08.345,EquipeML,EquipeML_r1_gg1_ep2,COMPLETED,"Action logic completed successfully",4004.03
+70,2026-07-09 10:10:08.346,EquipeML,EquipeML_r1_gg1_ep2,COMPLETED,"Effects applied on exit",4005.36
+71,2026-07-09 10:10:08.452,GluingPlateHL,GluingPlateHL_lp1_pr1_r1,STARTED,"HL subtree tick: TFD_Default_DynamicFlow_GluingPlateHL_lp1_pr1_r1; DeltaTime: 0.100",4110.79
+72,2026-07-09 10:10:08.454,InitializeML,InitializeML_r1_gg1,STARTED,"ML action execution; DeltaTime: 0.100",4112.78
+73,2026-07-09 10:10:08.454,InitializeML,InitializeML_r1_gg1,STARTED,"DeltaTime: 0.100",4112.88
+74,2026-07-09 10:10:08.454,InitializeML,InitializeML_r1_gg1,COMPLETED,"Action logic completed successfully",4113.00
+75,2026-07-09 10:10:08.455,InitializeML,InitializeML_r1_gg1,COMPLETED,"Effects applied on exit",4113.52
+76,2026-07-09 10:10:08.562,GluingPlateHL,GluingPlateHL_lp1_pr1_r1,STARTED,"HL subtree tick: TFD_Default_DynamicFlow_GluingPlateHL_lp1_pr1_r1; DeltaTime: 0.100",4221.30
+77,2026-07-09 10:10:08.564,TravelML,TravelML_r1_ep2_pr1,STARTED,"ML action execution; DeltaTime: 0.100",4223.34
+78,2026-07-09 10:10:08.565,TravelML,TravelML_r1_ep2_pr1,STARTED,"DeltaTime: 0.100",4223.46
+79,2026-07-09 10:10:08.565,TravelML,TravelML_r1_ep2_pr1,COMPLETED,"Action logic completed successfully",4223.71
+80,2026-07-09 10:10:08.566,TravelML,TravelML_r1_ep2_pr1,COMPLETED,"Effects applied on exit",4225.26
+81,2026-07-09 10:10:08.674,GluingPlateHL,GluingPlateHL_lp1_pr1_r1,STARTED,"HL subtree tick: TFD_Default_DynamicFlow_GluingPlateHL_lp1_pr1_r1; DeltaTime: 0.100",4333.24
+82,2026-07-09 10:10:08.677,GluingML,GluingML_lp1_pr1_r1_gg1,STARTED,"ML action execution; DeltaTime: 0.100",4336.42
+83,2026-07-09 10:10:08.678,GluingML,GluingML_lp1_pr1_r1_gg1,STARTED,"DeltaTime: 0.100",4336.55
+84,2026-07-09 10:10:08.678,GluingML,GluingML_lp1_pr1_r1_gg1,COMPLETED,"Action logic completed successfully",4336.61
+85,2026-07-09 10:10:08.679,GluingML,GluingML_lp1_pr1_r1_gg1,COMPLETED,"Effects applied on exit",4337.84
+86,2026-07-09 10:10:08.783,GluingPlateHL,GluingPlateHL_lp1_pr1_r1,STARTED,"HL subtree tick: TFD_Default_DynamicFlow_GluingPlateHL_lp1_pr1_r1; DeltaTime: 0.100",4441.63
+87,2026-07-09 10:10:08.784,GluingPlateHL,GluingPlateHL_lp1_pr1_r1,COMPLETED,"Subtree execution completed successfully",4443.10
+88,2026-07-09 10:10:08.784,GluingPlateHL,GluingPlateHL_lp1_pr1_r1,STARTED,"DeltaTime: 0.100",4443.14
+89,2026-07-09 10:10:08.784,GluingPlateHL,GluingPlateHL_lp1_pr1_r1,COMPLETED,"Action logic completed successfully",4443.15
+90,2026-07-09 10:10:08.786,GluingPlateHL,GluingPlateHL_lp1_pr1_r1,COMPLETED,"Effects applied on exit",4445.43

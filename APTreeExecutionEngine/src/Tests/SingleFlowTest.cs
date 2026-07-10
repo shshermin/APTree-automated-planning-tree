@@ -43,8 +43,10 @@ namespace BehaviorTreeMainProject
                 blackboardWriter.RegisterAllTypes();
 
                 LoggingService.LogSection("REGISTERING ALL INSTANCES FROM FILES");
+                string parameterInstancesFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "src", "ModelLoader", "LiveMatSetupObjects_Partial.json");
+                string predicateInstancesFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "src", "ModelLoader", "InitialStatePredicates_Partial.json");
                 string actionInstancesFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "src", "InputInstances", "ActionInstances.txt");
-                blackboardWriter.RegisterAllInstances(actionInstancesFile);
+                blackboardWriter.RegisterAllInstances(parameterInstancesFile, predicateInstancesFile, actionInstancesFile);
 
                 BlackboardSummaryLogger.CaptureBlackboardState(blackboard);
 

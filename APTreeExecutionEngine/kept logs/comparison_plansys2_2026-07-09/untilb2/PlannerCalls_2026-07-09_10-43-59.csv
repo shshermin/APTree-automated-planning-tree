@@ -1,0 +1,9 @@
+﻿CallNumber,Timestamp,PlannerName,HLActionInstance,ProblemFile,Success,PlannerTimeMs,TotalTimeMs,ActionsGenerated,PlanLength,Error
+1,2026-07-09 10:43:48.644,ENHSP,cassette1,./Plannerinputs/static/ProblepartialC1.pddl,True,839.88,992.53,7,0,
+2,2026-07-09 10:43:49.801,TFD,PickUpHL_lp1_fp1_r1,Plannerinputs/generated/problemPickUpHL_lp1_fp1_r1.pddl,True,754.25,823.91,5,0,
+3,2026-07-09 10:43:51.367,TFD,PlaceHL_lp1_pr1_r1,Plannerinputs/generated/problemPlaceHL_lp1_pr1_r1.pddl,True,753.25,795.26,2,0,
+4,2026-07-09 10:43:52.528,TFD,GluingPlateHL_lp1_pr1_r1,Plannerinputs/generated/problemGluingPlateHL_lp1_pr1_r1.pddl,True,740.29,792.87,8,0,
+5,2026-07-09 10:43:54.378,TFD,PickUpHL_b2_fp3_r1,Plannerinputs/generated/problemPickUpHL_b2_fp3_r1.pddl,True,736.13,819.68,9,0,
+6,2026-07-09 10:43:56.364,TFD,StackHL_b2_lp1_r1_pr1_lay1_m1,Plannerinputs/generated/problemStackHL_b2_lp1_r1_pr1_lay1_m1.pddl,True,717.12,773.66,2,0,
+7,2026-07-09 10:43:57.506,TFD,PickUpHL_b1_fp2_r1,Plannerinputs/generated/problemPickUpHL_b1_fp2_r1.pddl,True,728.56,768.31,2,0,
+8,2026-07-09 10:43:58.662,TFD,StackHL_b1_lp1_r1_pr1_lay1_m1,Plannerinputs/generated/problemStackHL_b1_lp1_r1_pr1_lay1_m1.pddl,True,851.42,893.78,2,0,

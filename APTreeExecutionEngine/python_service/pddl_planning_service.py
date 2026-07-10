@@ -443,7 +443,7 @@ def call_tfd(domain_file, problem_file, timeout_seconds):
         tfd_cmd = [
             'docker', 'exec', DOCKER_CONTAINER_NAME,
             'bash', '-c',
-            f'planutils activate && planutils run tfd {domain_filename} {problem_filename} && cat sas_plan'
+            f'planutils activate && rm -f output_plan* sas_plan && planutils run tfd {domain_filename} {problem_filename}'
         ]
         
         print(f"Calling TFD with command: {' '.join(tfd_cmd)}")

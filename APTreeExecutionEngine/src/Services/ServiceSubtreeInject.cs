@@ -191,7 +191,7 @@ namespace BehaviorTreeMainProject
                 
                 // Determine planner config based on cassette position:
                 // Cassettes 1,2,5,6,9,10 (first two per batch) use LAMA-FIRST; others use FF
-                string configName = "FF_Default";
+                string configName = "TFD_Default";
                 // COMMENTED OUT FOR FF-ONLY TEST RUN:
                 // int cassetteIndex = DecoratorDynamicPlanningComplete.FindCassetteIndexForAction(OwningTree.root, pendingAction);
                 // if (cassetteIndex >= 0 && (cassetteIndex % 4) < 2)
@@ -203,7 +203,7 @@ namespace BehaviorTreeMainProject
                 // {
                 //     LogMessage($"🔧 ServiceSubtreeInject: Cassette index {cassetteIndex} → using FF planner");
                 // }
-                LogMessage($"🔧 ServiceSubtreeInject: Using FF planner for all cassettes (LAMA-FIRST disabled for test)");
+                LogMessage($"🔧 ServiceSubtreeInject: Using TFD planner for all cassettes");
                 
                 // Create instance name from action
                 string instanceName = pendingAction.InstanceName.ToString();

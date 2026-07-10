@@ -1,0 +1,22 @@
+{
+  "predicates": [
+    { "type": "AtPlace", "properties": { "loc": "fp1", "not": false, "item": "lp1" } },
+    { "type": "AtPlace", "properties": { "loc": "fp2", "not": false, "item": "b1" } },
+    { "type": "AtPlace", "properties": { "loc": "fp3", "not": false, "item": "b2" } },
+    { "type": "Clear", "properties": { "not": false, "myObject": "lp1" } },
+    { "type": "Clear", "properties": { "not": false, "myObject": "b1" } },
+    { "type": "Clear", "properties": { "not": false, "myObject": "b2" } },
+    { "type": "AtTool", "properties": { "loc": "ep1", "not": false, "tool": "vg1" } },
+    { "type": "AtTool", "properties": { "loc": "ep2", "not": false, "tool": "gg1" } },
+    { "type": "AtTool", "properties": { "loc": "ep3", "not": false, "tool": "ng1" } },
+    { "type": "AtAgent", "properties": { "not": false, "agent": "r1", "location": "pr2" } },
+    { "type": "VgEmpty", "properties": { "not": false, "client": "r1" } },
+    { "type": "BelongsToLayer", "properties": { "not": false, "lay": "lay1", "myObject": "b1" } },
+    { "type": "BelongsToLayer", "properties": { "not": false, "lay": "lay1", "myObject": "b2" } },
+    { "type": "BelongsToModule", "properties": { "not": false, "mod": "m1", "myObject": "b1" } },
+    { "type": "BelongsToModule", "properties": { "not": false, "mod": "m1", "myObject": "b2" } },
+    { "type": "BelongsToModule", "properties": { "not": false, "mod": "m1", "myObject": "lp1" } },
+    { "type": "PositionFree", "properties": { "not": false, "pos": "pr1" } },
+    { "type": "PositionFree", "properties": { "not": false, "pos": "pr2" } }
+  ]
+}

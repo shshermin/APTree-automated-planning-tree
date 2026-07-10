@@ -1,0 +1,4 @@
+﻿PlannerType,CallCount,SuccessfulCalls,FailedCalls,SuccessRate,AvgPlannerTimeMs,AvgTotalTimeMs,AvgActionsGenerated,AvgPlanLength,TotalPlannerTimeMs,TotalServiceTimeMs
+TFD,5,5,0,100.00%,712.39,869.90,5.2,0.0,3561.94,4349.48
+ENHSP,1,1,0,100.00%,743.20,864.24,5.0,0.0,743.20,864.24
+TOTAL,6,6,0,100.00%,717.52,868.95,5.2,0.0,4305.13,5213.72

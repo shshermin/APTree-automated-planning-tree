@@ -1,0 +1,21 @@
+{
+  "instances": [
+    { "extends": "Location", "name": "fp1", "type": "FirstPos" },
+    { "extends": "Location", "name": "fp2", "type": "FirstPos" },
+    { "extends": "Location", "name": "fp3", "type": "FirstPos" },
+    { "extends": "Location", "name": "pr1", "type": "PositionOnRail" },
+    { "extends": "Location", "name": "pr2", "type": "PositionOnRail" },
+    { "extends": "Location", "name": "ep1", "type": "EquipPosition" },
+    { "extends": "Location", "name": "ep2", "type": "EquipPosition" },
+    { "extends": "Location", "name": "ep3", "type": "EquipPosition" },
+    { "extends": "Agent", "name": "r1", "type": "Robot", "properties": { "loc": "pr2" } },
+    { "extends": "Element", "name": "lp1", "type": "Plate", "properties": { "loc": "fp1" } },
+    { "extends": "Element", "name": "b1", "type": "Beam", "properties": { "loc": "fp2" } },
+    { "extends": "Element", "name": "b2", "type": "Beam", "properties": { "loc": "fp3" } },
+    { "extends": "Tool", "name": "vg1", "type": "VacGripper", "properties": { "loc": "ep1" } },
+    { "extends": "Tool", "name": "ng1", "type": "NailGripper", "properties": { "loc": "ep3" } },
+    { "extends": "Tool", "name": "gg1", "type": "GlueGun", "properties": { "loc": "ep2" } },
+    { "extends": "Module", "name": "m1", "type": "Cassette" },
+    { "extends": "Layer", "name": "lay1", "type": "Stack", "properties": { "level": "1", "belongsToModule": "m1" } }
+  ]
+}

@@ -217,57 +217,48 @@ public class DecoratorDynamicPlanningComplete : Decorator
     }
 
     /// <summary>
-    /// Gets the specific cassette flow nodes by name (cassette1, cassette2, cassette3, cassette4)
-    /// Returns null for cassettes that don't exist
+    /// Dynamically discovers cassette flow nodes registered in the blackboard
+    /// and sets the completion flag for any that have succeeded.
     /// </summary>
-    /// <returns>Dictionary with cassette names as keys and flow nodes as values</returns>
     public void SetFlagForSuccessfulCassetteNodes()
     {
         
         if (LinkedBlackboard == null)
         {
             LoggingService.LogWarning("⚠️ SetFlagForSuccessfulCassetteNodes: LinkedBlackboard is null");
-            
+            return;
         }
         
-        var cassetteNames = new[] { "cassette1", "cassette2", "cassette3", "cassette4" };
+        int totalCassettes = LinkedBlackboard.CassetteSubtreeCompleted.Length;
+        int foundCount = 0;
         
-        foreach (var cassetteName in cassetteNames)
+        for (int i = 0; i < totalCassettes; i++)
         {
+            var cassetteName = $"cassette{i + 1}";
             try
             {
                 var cassetteNode = LinkedBlackboard.GetFlowNode(new FastName(cassetteName)) as DynamicFlowNode;
                 
                 if (cassetteNode != null)
                 {
+                    foundCount++;
                     // Check if the cassette node status is successful
                     if (cassetteNode.status == BTNodeResult.Success)
                     {
-                        // Get the cassette index (cassette1=0, cassette2=1, cassette3=2, cassette4=3)
-                        int cassetteIndex = Array.IndexOf(cassetteNames, cassetteName);
-                        
                         // Set the corresponding flag on blackboard to true
-                        LinkedBlackboard.CassetteSubtreeCompleted[cassetteIndex] = true;
+                        LinkedBlackboard.CassetteSubtreeCompleted[i] = true;
                         
-                        LoggingService.LogSuccess($"✅ Cassette {cassetteName} is successful - set flag[{cassetteIndex}] to true");
+                        LoggingService.LogSuccess($"✅ Cassette {cassetteName} is successful - set flag[{i}] to true");
                     }
-                    else
-                    {
-                        LoggingService.LogInfo($"ℹ️ Cassette {cassetteName} status is {cassetteNode.status} - no action taken");
-                    }
-                }
-                else
-                {
-                    LoggingService.LogInfo($"ℹ️ Cassette flow node not found: {cassetteName}");
                 }
             }
             catch (Exception ex)
             {
-                LoggingService.LogWarning($"⚠️ Error checking cassette {cassetteName}: {ex.Message}");
+                // Cassette doesn't exist in blackboard — skip silently
             }
         }
         
-        LoggingService.LogInfo($"📊 SetFlagForSuccessfulCassetteNodes: Found /4 cassette flow nodes");
+        LoggingService.LogInfo($"📊 SetFlagForSuccessfulCassetteNodes: Found {foundCount}/{totalCassettes} cassette flow nodes");
         
     }
 }
