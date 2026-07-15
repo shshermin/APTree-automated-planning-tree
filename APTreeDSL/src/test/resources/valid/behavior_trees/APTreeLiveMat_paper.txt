@@ -1,0 +1,42 @@
+\begin{lstlisting}[
+    language=MontiCore, 
+    basicstyle=\scriptsize\ttfamily, 
+    basewidth=0.5em,
+    lineskip=-1pt,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{darkgray}\bfseries\itshape,
+    morekeywords={BehaviorTree, Root, FlowNode, NodeGraph, ServicePlanning, Domain, Problem, Enhsp, All, AllFlow, AllAction, Meets},
+    escapechar=§,
+    caption={Excerpt of the initial APTree model for task planning across 12 cassettes in 3 production batches (abbreviated).},
+    label={lst:LiveMat_model_initial}
+]
+BehaviorTree LiveMat {
+  Root FlowNode Main {
+    All
+    AllFlow
+    NodeGraph {
+      FlowNode Batch1_C1toC4 {
+        All
+        AllFlow
+        NodeGraph {
+          FlowNode Cassette1 {
+            ServicePlanning mypddlplanner1 Enhsp Domain:DomainHL Problem:ProblemC1
+            All
+            AllAction
+            NodeGraph { }
+          }
+          FlowNode Cassette2 { ... }
+          FlowNode Cassette3 { ... }
+          FlowNode Cassette4 { ... }
+        }
+      } {
+        --[Meets]--> Batch2_C5toC8;
+      }
+      FlowNode Batch2_C5toC8 { ... } {
+        --[Meets]--> Batch3_C9toC12;
+      }
+      FlowNode Batch3_C9toC12 { ... }
+    }
+  }
+}
+\end{lstlisting}

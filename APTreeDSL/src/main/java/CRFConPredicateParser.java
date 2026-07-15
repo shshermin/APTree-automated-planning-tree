@@ -1,6 +1,6 @@
-import crftypescon.CRFTypesConMill;
-import crftypescon._ast.ASTWorld;
-import crftypescon._parser.CRFTypesConParser;
+import domaintypescon.DomainTypesConMill;
+import domaintypescon._ast.ASTWorld;
+import domaintypescon._parser.DomainTypesConParser;
 import de.se_rwth.commons.logging.Log;
 
 import java.io.*;
@@ -8,7 +8,7 @@ import java.nio.file.*;
 import java.util.Optional;
 
 /**
- * CRFConPredicateParser - Parses predicate models (CRFTypesCon grammar)
+ * CRFConPredicateParser - Parses predicate models (DomainTypesCon grammar)
  * 
  * Reads a predicate model file containing predicate instance/state definitions.
  */
@@ -22,7 +22,7 @@ public class CRFConPredicateParser {
             System.out.println("=== CRF CONCRETE PREDICATE PARSER ===");
             
             // Initialize MontiCore mill
-            CRFTypesConMill.init();
+            DomainTypesConMill.init();
             Log.init();
             Log.enableFailQuick(false);
             
@@ -53,7 +53,7 @@ public class CRFConPredicateParser {
         }
         
         // Create parser and parse
-        CRFTypesConParser parser = CRFTypesConMill.parser();
+        DomainTypesConParser parser = DomainTypesConMill.parser();
         Optional<ASTWorld> result = parser.parse(modelPath);
         
         if (!result.isPresent()) {

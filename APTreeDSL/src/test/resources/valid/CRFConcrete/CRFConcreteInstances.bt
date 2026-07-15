@@ -1,5 +1,5 @@
-// Concrete instance model for CRFTypesCon.
-// Note: CRFTypesCon currently models locations via the "FirstPos" symbol only.
+// Concrete instance model for DomainTypesCon.
+// Note: DomainTypesCon currently models locations via the "FirstPos" symbol only.
 
 Plate plate1 (fp1)
 Beam beam1 (fp2)

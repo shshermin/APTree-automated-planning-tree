@@ -10,16 +10,16 @@ import java.util.Optional;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import crftypescon.CRFTypesConMill;
-import crftypescon._ast.ASTWorld;
-import crftypescon._parser.CRFTypesConParser;
-import crftypesdef._ast.ASTPredicate;
+import domaintypescon.DomainTypesConMill;
+import domaintypescon._ast.ASTWorld;
+import domaintypescon._parser.DomainTypesConParser;
+import domaintypesdef._ast.ASTPredicate;
 import de.se_rwth.commons.logging.Log;
 
 /**
  * InitialStateJsonGenerator - Parses predicate models and exports predicates to JSON.
  * 
- * Reads a CRFTypesCon file containing predicate instances/state definitions.
+ * Reads a DomainTypesCon file containing predicate instances/state definitions.
  */
 public class InitialStateJsonGenerator {
   private static final String BASE_DIR = "src/test/resources/valid/CRFConcrete/";
@@ -81,11 +81,11 @@ public class InitialStateJsonGenerator {
       }
 
       // Initialize MontiCore Mill
-      CRFTypesConMill.init();
+      DomainTypesConMill.init();
 
-      // Parse the file using the CRFTypesCon parser
-      System.out.println("[DEBUG] Parsing with CRFTypesConParser...");
-      CRFTypesConParser conParser = CRFTypesConMill.parser();
+      // Parse the file using the DomainTypesCon parser
+      System.out.println("[DEBUG] Parsing with DomainTypesConParser...");
+      DomainTypesConParser conParser = DomainTypesConMill.parser();
       Optional<ASTWorld> parseResult = conParser.parse(inputPath);
 
       if (!parseResult.isPresent()) {
@@ -120,7 +120,7 @@ public class InitialStateJsonGenerator {
   /**
    * Extract predicate instances from the parsed AST.
    * 
-   * @param world The parsed CRFTypesCon AST
+   * @param world The parsed DomainTypesCon AST
    * @return List of PredicateInstance objects
    */
   private List<PredicateInstance> extractPredicateInstances(ASTWorld world) {

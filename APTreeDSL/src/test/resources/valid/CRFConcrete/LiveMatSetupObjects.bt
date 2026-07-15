@@ -1,5 +1,5 @@
 // LiveMatSetupObjects - Parameter instances for LivingMat project
-// Concrete instance model for CRFTypesCon following APTreeDSL grammar
+// Concrete instance model for DomainTypesCon following APTreeDSL grammar
 // Format: TypeName instanceName (properties)
 
 // Location - FirstPos instances (32 firstPosition locations)

@@ -9,24 +9,24 @@ import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
-import crftypesdef.CRFTypesDefMill;
-import crftypesdef._ast.ASTProperty;
-import crftypesdef._ast.ASTWorld;
-import crftypesdef._parser.CRFTypesDefParser;
+import domaintypesdef.DomainTypesDefMill;
+import domaintypesdef._ast.ASTProperty;
+import domaintypesdef._ast.ASTWorld;
+import domaintypesdef._parser.DomainTypesDefParser;
 import de.se_rwth.commons.logging.Log;
 
 /**
- * CRFPropertyTypeRuleGenerator - Reads CRFTypes model and generates grammar rules for CRFTypesCon.mc4
+ * CRFPropertyTypeRuleGenerator - Reads DomainTypes model and generates grammar rules for DomainTypesCon.mc4
  * 
  * Usage: Provide input model path and output grammar path as arguments.
  * Defaults:
- *  - Input: src/test/resources/valid/CRFTypes/LiveMatPropertyTypes.bt
- *  - Output: src/main/grammars/CRFTypesCon.mc4
+ *  - Input: src/test/resources/valid/DomainTypes/LiveMatPropertyTypes.bt
+ *  - Output: src/main/grammars/DomainTypesCon.mc4
  */
 public class CRFPropertyTypeRuleGenerator {
 
-    private static final String DEFAULT_INPUT_PATH = "src/test/resources/valid/CRFTypes/LiveMatPropertyTypes.bt";
-    private static final String DEFAULT_OUTPUT_PATH = "src/main/grammars/CRFTypesCon.mc4";
+    private static final String DEFAULT_INPUT_PATH = "src/test/resources/valid/DomainTypes/LiveMatPropertyTypes.bt";
+    private static final String DEFAULT_OUTPUT_PATH = "src/main/grammars/DomainTypesCon.mc4";
     
     // Markers to identify the generated section in the target grammar file
     private static final String START_MARKER = "// === GENERATED RULES (DO NOT EDIT BELOW) ===";
@@ -46,7 +46,7 @@ public class CRFPropertyTypeRuleGenerator {
             System.out.println("Output Grammar: " + outputPath);
 
             // 1. Initialize MontiCore Mill
-            CRFTypesDefMill.init();
+            DomainTypesDefMill.init();
             
             // 2. Parse the input model
             File modelFile = new File(inputPath);
@@ -54,7 +54,7 @@ public class CRFPropertyTypeRuleGenerator {
                 throw new FileNotFoundException("Input model file not found: " + inputPath);
             }
             
-            CRFTypesDefParser parser = new CRFTypesDefParser();
+            DomainTypesDefParser parser = new DomainTypesDefParser();
             Optional<ASTWorld> result = parser.parse(inputPath);
             
             if (!result.isPresent()) {

@@ -1,7 +1,7 @@
-import crftypesdef.CRFTypesDefMill;
-import crftypesdef._ast.ASTProperty;
-import crftypesdef._ast.ASTWorld;
-import crftypesdef._parser.CRFTypesDefParser;
+import domaintypesdef.DomainTypesDefMill;
+import domaintypesdef._ast.ASTProperty;
+import domaintypesdef._ast.ASTWorld;
+import domaintypesdef._parser.DomainTypesDefParser;
 import de.se_rwth.commons.logging.Log;
 
 import java.io.File;
@@ -20,7 +20,7 @@ import java.util.Optional;
  */
 public class CSharopCodeGenerator {
 
-    private static final String DEFAULT_INPUT_PATH = "src/test/resources/valid/CRFTypes/LiveMatPropertyTypes.bt";
+    private static final String DEFAULT_INPUT_PATH = "src/test/resources/valid/DomainTypes/LiveMatPropertyTypes.bt";
     private static final String DEFAULT_OUTPUT_DIR = "generated_csharp/GeneratedPropertyTypes";
     private static final String DEFAULT_NAMESPACE = "BehaviorTree.Types";
 
@@ -36,7 +36,7 @@ public class CSharopCodeGenerator {
             System.out.println("Output Dir:  " + outputDir);
 
             // 1. Initialize Mill
-            CRFTypesDefMill.init();
+            DomainTypesDefMill.init();
 
             // 2. Parse input
             File modelFile = new File(inputPath);
@@ -44,7 +44,7 @@ public class CSharopCodeGenerator {
                 throw new FileNotFoundException("Input model file not found: " + inputPath);
             }
 
-            CRFTypesDefParser parser = new CRFTypesDefParser();
+            DomainTypesDefParser parser = new DomainTypesDefParser();
             Optional<ASTWorld> result = parser.parse(inputPath);
 
             if (!result.isPresent()) {
@@ -149,7 +149,7 @@ public class CSharopCodeGenerator {
                 return "float";
 
             default:
-                // Assume it's a custom type (e.g. Layer)
+                // Custom domain type (e.g. Layer) - pass through as-is
                 return mcType;
         }
     }

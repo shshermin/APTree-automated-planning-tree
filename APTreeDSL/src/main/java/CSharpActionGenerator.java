@@ -5,10 +5,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 
-import crftypesdef.CRFTypesDefMill;
-import crftypesdef._ast.ASTProperty;
-import crftypesdef._ast.ASTWorld;
-import crftypesdef._parser.CRFTypesDefParser;
+import domaintypesdef.DomainTypesDefMill;
+import domaintypesdef._ast.ASTProperty;
+import domaintypesdef._ast.ASTWorld;
+import domaintypesdef._parser.DomainTypesDefParser;
 import de.se_rwth.commons.logging.Log;
 
 /**
@@ -20,7 +20,7 @@ import de.se_rwth.commons.logging.Log;
  */
 public class CSharpActionGenerator {
 
-    private static final String DEFAULT_INPUT_PATH = "src/test/resources/valid/CRFTypes/LiveMatActionTypes.bt";
+    private static final String DEFAULT_INPUT_PATH = "src/test/resources/valid/DomainTypes/LiveMatActionTypes.bt";
     private static final String DEFAULT_OUTPUT_DIR = "generated_csharp/actions/";
     private static final String DEFAULT_NAMESPACE = "BehaviorTreeMainProject";
 
@@ -36,7 +36,7 @@ public class CSharpActionGenerator {
             System.out.println("Output Dir:  " + outputDir);
 
             // 1. Initialize Mill
-            CRFTypesDefMill.init();
+            DomainTypesDefMill.init();
 
             // 2. Parse input
             File modelFile = new File(inputPath);
@@ -44,7 +44,7 @@ public class CSharpActionGenerator {
                 throw new FileNotFoundException("Input model file not found: " + inputPath);
             }
 
-            CRFTypesDefParser parser = new CRFTypesDefParser();
+            DomainTypesDefParser parser = new DomainTypesDefParser();
             Optional<ASTWorld> result = parser.parse(inputPath);
 
             if (!result.isPresent()) {
@@ -132,12 +132,12 @@ public class CSharpActionGenerator {
                 cs.append("        {\n");
                 cs.append("            // Initialize preconditions\n");
                 cs.append("            preconditions = new State(StateType.Precondition, new FastName(\"").append(className.toLowerCase()).append("_preconditions\"));\n");
-                cs.append("            // TODO: Add preconditions as needed\n");
-                cs.append("            // Example: preconditions.AddPredicate(new FastName(\"pre_0\"), new PredicateName(param1, param2, false));\n\n");
+                cs.append("            // Preconditions are populated at runtime from PDDL domain definitions\n");
+                cs.append("            // preconditions.AddPredicate(new FastName(\"pre_0\"), new PredicateName(param1, param2, false));\n\n");
                 cs.append("            // Initialize effects\n");
                 cs.append("            effects = new State(StateType.Effect, new FastName(\"").append(className.toLowerCase()).append("_effects\"));\n");
-                cs.append("            // TODO: Add effects as needed\n");
-                cs.append("            // Example: effects.AddPredicate(new FastName(\"eff_0\"), new PredicateName(param1, param2, true));\n");
+                cs.append("            // Effects are populated at runtime from PDDL domain definitions\n");
+                cs.append("            // effects.AddPredicate(new FastName(\"eff_0\"), new PredicateName(param1, param2, true));\n");
                 cs.append("        }\n\n");
 
                 // Property overrides
@@ -224,7 +224,7 @@ public class CSharpActionGenerator {
                 return "string"; // Enum mapping usually simpler as string in generation unless logic exists
 
             default:
-                // Assume it's a custom type (e.g. Layer)
+                // Custom domain type (e.g. Layer) - pass through as-is
                 return mcType;
         }
     }

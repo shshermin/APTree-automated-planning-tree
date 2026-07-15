@@ -235,7 +235,7 @@ task runCRFActionTypeParser(type: JavaExec) {
 }
 
 task generateCRFPropertyTypeRules(type: JavaExec) {
-    description = 'Generates grammar rules for CRFTypesCon.mc4 from CRFPropertyTypes.bt'
+    description = 'Generates grammar rules for DomainTypesCon.mc4 from CRFPropertyTypes.bt'
     dependsOn 'compileJava'
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'CRFPropertyTypeRuleGenerator'
@@ -243,7 +243,7 @@ task generateCRFPropertyTypeRules(type: JavaExec) {
 }
 
 task generateCRFActionTypeRules(type: JavaExec) {
-   description = 'Generates action type grammar rules for CRFTypesCon.mc4 from CRFActionTypes.bt'
+   description = 'Generates action type grammar rules for DomainTypesCon.mc4 from CRFActionTypes.bt'
    dependsOn 'compileJava'
    classpath = sourceSets.main.runtimeClasspath
    mainClass = 'CRFActionTypeRuleGenerator'
@@ -251,7 +251,7 @@ task generateCRFActionTypeRules(type: JavaExec) {
 }
 
 task generateCRFPredicateTypeRules(type: JavaExec) {
-    description = 'Generates predicate grammar rules for CRFTypesCon.mc4 from CRFPredicateTypes.bt'
+    description = 'Generates predicate grammar rules for DomainTypesCon.mc4 from CRFPredicateTypes.bt'
     dependsOn 'compileJava'
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'CRFPredicateTypeRuleGenerator'
@@ -261,7 +261,7 @@ task generateCRFPredicateTypeRules(type: JavaExec) {
 
 
 task runCRFConPropertyParser(type: JavaExec) {
-    description = 'Parses concrete property instances (CRFTypesCon grammar)'
+    description = 'Parses concrete property instances (DomainTypesCon grammar)'
     dependsOn 'compileJava'
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'CRFConPropertyParser'
@@ -270,7 +270,7 @@ task runCRFConPropertyParser(type: JavaExec) {
 }
 
 task runCRFConPredicateParser(type: JavaExec) {
-    description = 'Parses predicate models (CRFTypesCon grammar)'
+    description = 'Parses predicate models (DomainTypesCon grammar)'
     dependsOn 'compileJava'
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'CRFConPredicateParser'

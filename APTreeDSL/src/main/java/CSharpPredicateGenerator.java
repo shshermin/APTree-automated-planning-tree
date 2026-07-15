@@ -5,10 +5,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 
-import crftypesdef.CRFTypesDefMill;
-import crftypesdef._ast.ASTProperty;
-import crftypesdef._ast.ASTWorld;
-import crftypesdef._parser.CRFTypesDefParser;
+import domaintypesdef.DomainTypesDefMill;
+import domaintypesdef._ast.ASTProperty;
+import domaintypesdef._ast.ASTWorld;
+import domaintypesdef._parser.DomainTypesDefParser;
 import de.se_rwth.commons.logging.Log;
 
 /**
@@ -20,7 +20,7 @@ import de.se_rwth.commons.logging.Log;
  */
 public class CSharpPredicateGenerator {
 
-    private static final String DEFAULT_INPUT_PATH = "src/test/resources/valid/CRFTypes/LiveMatPredicaetTypes.bt";
+    private static final String DEFAULT_INPUT_PATH = "src/test/resources/valid/DomainTypes/LiveMatPredicaetTypes.bt";
     private static final String DEFAULT_OUTPUT_DIR = "generated_csharp/predicates/";
     private static final String DEFAULT_NAMESPACE = "BehaviorTree.Predicates";
 
@@ -36,7 +36,7 @@ public class CSharpPredicateGenerator {
             System.out.println("Output Dir:  " + outputDir);
 
             // 1. Initialize Mill
-            CRFTypesDefMill.init();
+            DomainTypesDefMill.init();
 
             // 2. Parse input
             File modelFile = new File(inputPath);
@@ -44,7 +44,7 @@ public class CSharpPredicateGenerator {
                 throw new FileNotFoundException("Input model file not found: " + inputPath);
             }
 
-            CRFTypesDefParser parser = new CRFTypesDefParser();
+            DomainTypesDefParser parser = new DomainTypesDefParser();
             Optional<ASTWorld> result = parser.parse(inputPath);
 
             if (!result.isPresent()) {
@@ -146,8 +146,7 @@ public class CSharpPredicateGenerator {
 
                     cs.append("                ");
                     if (isList) {
-                         // Handling lists might be tricky with NameKey, assume robust ToString or similar
-                         // For now just outputting something basic or skipping deep list handling as per simple example
+                         // List properties use ToString() for serialization
                          cs.append(propName).append("?.ToString() ?? \"null\"");
                     } else if (isBasicType) {
                          cs.append(propName).append(".ToString()");

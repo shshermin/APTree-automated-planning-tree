@@ -7,27 +7,23 @@ A [MontiCore](https://www.se-rwth.de/research/MontiCore/)-based Domain Specific 
 ### Requirements
 
 - **Java 11+** (configured via Gradle toolchains)
-- **Gradle wrapper** included (no separate installation needed)
+- **Gradle** 7.x+ (system install)
 
 ### Build
 
 ```bash
-# Windows
-gradlew.bat build
-
-# macOS/Linux
-./gradlew build
+gradle build
 ```
 
 ## Common Commands
 
 | Command | Purpose |
 |---------|---------|
-| `gradlew.bat clean build` | Full rebuild |
-| `gradlew.bat test` | Run tests |
-| `gradlew.bat tasks` | List all available tasks |
-| `gradlew.bat generateCSharpParameterTypes` | Generate C# parameter types |
-| `gradlew.bat runAPTreeTool` | Analyze APTree models |
+| `gradle clean build` | Full rebuild |
+| `gradle test` | Run tests |
+| `gradle tasks` | List all available tasks |
+| `gradle generateCSharpParameterTypes` | Generate C# parameter types |
+| `gradle runAPTreeTool` | Analyze APTree models |
 
 ## Project Structure
 

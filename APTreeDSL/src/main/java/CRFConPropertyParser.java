@@ -1,6 +1,6 @@
-import crftypescon.CRFTypesConMill;
-import crftypescon._ast.ASTWorld;
-import crftypescon._parser.CRFTypesConParser;
+import domaintypescon.DomainTypesConMill;
+import domaintypescon._ast.ASTWorld;
+import domaintypescon._parser.DomainTypesConParser;
 import de.se_rwth.commons.logging.Log;
 
 import java.io.*;
@@ -8,9 +8,9 @@ import java.nio.file.*;
 import java.util.Optional;
 
 /**
- * CRFConPropertyParser - Parses concrete property instances (CRFTypesCon grammar)
+ * CRFConPropertyParser - Parses concrete property instances (DomainTypesCon grammar)
  * 
- * Reads a CRFTypesCon file containing concrete property instance definitions.
+ * Reads a DomainTypesCon file containing concrete property instance definitions.
  */
 public class CRFConPropertyParser {
 
@@ -22,7 +22,7 @@ public class CRFConPropertyParser {
             System.out.println("=== CRF CONCRETE PROPERTY PARSER ===");
             
             // Initialize MontiCore mill
-            CRFTypesConMill.init();
+            DomainTypesConMill.init();
             Log.init();
             Log.enableFailQuick(false);
             
@@ -53,7 +53,7 @@ public class CRFConPropertyParser {
         }
         
         // Create parser and parse
-        CRFTypesConParser parser = CRFTypesConMill.parser();
+        DomainTypesConParser parser = DomainTypesConMill.parser();
         Optional<ASTWorld> result = parser.parse(modelPath);
         
         if (!result.isPresent()) {

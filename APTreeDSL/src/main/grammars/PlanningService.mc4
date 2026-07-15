@@ -1,4 +1,4 @@
-grammar PlanningService extends CRFTypesCon {
+grammar PlanningService extends DomainTypesCon {
  
  PWorld = (Problem| ServicePDDLPlanning | PlannerENHSP | Domain )*;
 //planning service

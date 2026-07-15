@@ -69,16 +69,6 @@ private String convertSYMBOL(Token t)  {
     return t.getText();
 }
 
-  // convert function for Coordinate
-private String convertCoordinate(Token t)  {
-    return t.getText();
-}
-
-  // convert function for RobotJoints
-private String convertRobotJoints(Token t)  {
-    return t.getText();
-}
-
   // convert function for Double
 private String convertDouble(Token t)  {
     return t.getText();

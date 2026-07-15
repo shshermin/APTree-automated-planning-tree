@@ -1,10 +1,10 @@
-import crftypescon._parser.CRFTypesConParser;
-import crftypescon._ast.ASTWorld;
-import crftypescon._symboltable.CRFTypesConArtifactScope;
-import crftypescon._symboltable.ICRFTypesConArtifactScope;
-import crftypescon._symboltable.CRFTypesConSymbols2Json;
-import crftypesdef._symboltable.ElementSymbol;
-import crftypescon.CRFTypesConMill;
+import domaintypescon._parser.DomainTypesConParser;
+import domaintypescon._ast.ASTWorld;
+import domaintypescon._symboltable.DomainTypesConArtifactScope;
+import domaintypescon._symboltable.IDomainTypesConArtifactScope;
+import domaintypescon._symboltable.DomainTypesConSymbols2Json;
+import domaintypesdef._symboltable.ElementSymbol;
+import domaintypescon.DomainTypesConMill;
 import de.se_rwth.commons.logging.Log;
 
 import java.io.File;
@@ -40,7 +40,7 @@ public class InstanceSymbolsGenerator {
             System.out.println("Input model: " + input);
             System.out.println("Output dir:  " + outDir);
 
-            CRFTypesConMill.init();
+            DomainTypesConMill.init();
 
             // Ensure output directory exists
             Path outPath = Paths.get(outDir);
@@ -54,7 +54,7 @@ public class InstanceSymbolsGenerator {
             }
 
             // Build initial artifact scope from AST
-            ICRFTypesConArtifactScope initial = CRFTypesConMill.scopesGenitorDelegator().createFromAST(world);
+            IDomainTypesConArtifactScope initial = DomainTypesConMill.scopesGenitorDelegator().createFromAST(world);
 
             // Collect all Element symbols (covers Beam/Plate/Robot/FirstPosition)
             Collection<ElementSymbol> elements = initial.getElementSymbols().values();
@@ -66,11 +66,11 @@ public class InstanceSymbolsGenerator {
             int count = 0;
             for (ElementSymbol el : elements) {
                 String name = el.getName();
-                CRFTypesConArtifactScope single = new CRFTypesConArtifactScope();
+                DomainTypesConArtifactScope single = new DomainTypesConArtifactScope();
                 single.setName(name); // ensures loader searches <name>.sym
                 single.add(el);       // add as ElementSymbol
 
-                String json = new CRFTypesConSymbols2Json().serialize(single);
+                String json = new DomainTypesConSymbols2Json().serialize(single);
                 Path symPath = outPath.resolve(name + ".sym");
                 try (FileWriter fw = new FileWriter(symPath.toFile())) {
                     fw.write(json);
@@ -93,7 +93,7 @@ public class InstanceSymbolsGenerator {
             System.err.println("  CWD: " + System.getProperty("user.dir"));
             return null;
         }
-        CRFTypesConParser parser = new CRFTypesConParser();
+        DomainTypesConParser parser = new DomainTypesConParser();
         Optional<ASTWorld> res = parser.parse(modelPath);
         if (res.isEmpty()) {
             Log.getFindings().forEach(f -> System.err.println("  " + f.buildMsg()));

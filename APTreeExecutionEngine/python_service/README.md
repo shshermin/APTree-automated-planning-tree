@@ -1,122 +1,94 @@
-# Python Planning Service (BW Cloud VM Guide)
+# PDDL Planning Service
 
-First, you need an SSH key to access the VM.
+A REST API service that invokes PDDL planners (ENHSP, FF, LAMA-FIRST, TFD) and returns plan results.
 
-## 1) Connect to the VM
+## Requirements
 
-```bash
-ssh -i ~/.ssh/id_ed25519 ubuntu@193.196.52.17
-```
-ssh -i C:\Users\sherk\.ssh\id_ed25519 ubuntu@193.196.52.17
+| Dependency | Version | Purpose |
+|---|---|---|
+| Python | 3.10+ | Runtime |
+| Java JRE | 17+ | ENHSP planner execution |
+| Docker | 24.0+ | (Optional) planutils-based planners (FF, LAMA-FIRST) |
 
-## 1b) SSH Tunnel (for C# execution engine)
+## Setup
 
-The C# execution engine connects to `http://localhost:5000`. To forward that
-port from your local machine to the VM, open a separate terminal and run:
-
-```bash
-ssh -L 5000:localhost:5000 -i ~/.ssh/id_ed25519 ubuntu@193.196.52.17
-```
-ssh -L 5000:localhost:5000 -i C:\Users\sherk\.ssh\id_ed25519 ubuntu@193.196.52.17
-Keep this terminal open while running the execution engine.
-
-## 2) Project directory on the VM
+### 1. Create and activate a virtual environment
 
 ```bash
-cd APTree-automated-planning-tree/APTreeExecutionEngine/python_service
-```
+cd APTreeExecutionEngine/python_service
 
-## 3) Python environment and service start
-
-Install packages once:
-
-```bash
-sudo apt update
-sudo apt install -y python3-venv python3-pip openjdk-17-jre
-```
-
-Create the virtual environment once:
-
-```bash
 python3 -m venv pddl_env
+source pddl_env/bin/activate          # Linux/macOS
+# pddl_env\Scripts\activate           # Windows
 ```
 
-Activate and install dependencies:
+### 2. Install dependencies
 
 ```bash
-source pddl_env/bin/activate
-python -m pip install flask requests
+pip install -r requirements.txt
 ```
 
-Start the service:
+### 3. Provide the ENHSP JAR
 
-```bash
-python pddl_planning_service.py
-```
-
-## 4) Health check
-
-```bash
-curl http://localhost:5000/health
-```
-
-## 5) Provide the ENHSP JAR on the VM
-
-The JAR must be present. We use:
-
-```
-/home/ubuntu/ENHSP-Public/enhsp.jar
-```
-
-If you have it locally, copy it to the VM:
-
-```bash
-scp -i ~/.ssh/id_ed25519 /path/to/enhsp.jar ubuntu@193.196.52.17:/home/ubuntu/ENHSP-Public/enhsp.jar
-```
-
-## 6) Default ENHSP path in the service
-
-In `pddl_planning_service.py`:
+Place the ENHSP JAR at the path configured in `pddl_planning_service.py`:
 
 ```python
 DEFAULT_ENHSP_PATH = "/home/ubuntu/ENHSP-Public/enhsp.jar"
 ```
 
-## 7) Test planning (ENHSP)
+Or pass the path via the API request body (`plannerPath` field).
+
+For Docker deployment, place `enhsp.jar` in this directory and it will be copied into the container automatically.
+
+## Running the Service
+
+```bash
+python pddl_planning_service.py
+```
+
+The service listens on port **5000**.
+
+## Health Check
+
+```bash
+curl http://localhost:5000/health
+```
+
+## Supported Planners
+
+| Planner | Type | Backend |
+|---|---|---|
+| ENHSP | Numeric / temporal | Local JAR (Java) |
+| FF | Classical | planutils Docker container |
+| LAMA-FIRST | Satisficing | planutils Docker container |
+| TFD | Temporal | planutils Docker container |
+
+## Example Request
 
 ```bash
 curl -X POST http://localhost:5000/plan \
   -H "Content-Type: application/json" \
   -d '{
-    "planningType":"PDDL",
-    "plannerName":"ENHSP",
-    "domainFile":"Plannerinputs/static/domain.pddl",
-    "problemFile":"Plannerinputs/static/problemC1.pddl",
-    "timeoutSeconds":120
+    "planningType": "PDDL",
+    "plannerName": "ENHSP",
+    "domainFile": "Plannerinputs/static/domain.pddl",
+    "problemFile": "Plannerinputs/static/problemC1.pddl",
+    "timeoutSeconds": 120
   }'
 ```
 
-## 8) Optional: Planutils (Docker)
+## Docker-based Planners (FF, LAMA-FIRST)
 
-Install Docker:
+These require the `planutils` container:
 
 ```bash
-sudo apt update
+# Install Docker (if needed)
 sudo apt install -y docker.io
 sudo systemctl enable --now docker
-```
 
-Start the Planutils container (optional):
-
-```bash
-sudo docker run -it --name planutils --privileged aiplanning/planutils:latest bash
-```
-
-Inside the container:
-
-```bash
-planutils activate
-planutils list
+# Start the planutils container
+docker run -d --name planutils --privileged aiplanning/planutils:latest tail -f /dev/null
+docker start planutils
 ```
 
 ## 9) Copy domain/problem files into the Planutils container

@@ -8,15 +8,15 @@ import java.util.Optional;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import crftypescon.CRFTypesConMill;
-import crftypescon._ast.ASTWorld;
-import crftypescon._parser.CRFTypesConParser;
+import domaintypescon.DomainTypesConMill;
+import domaintypescon._ast.ASTWorld;
+import domaintypescon._parser.DomainTypesConParser;
 import de.se_rwth.commons.logging.Log;
 
 /**
  * LiveMatSetupObjectsGenerator - Parses LiveMatSetupObjects.bt using MontiCore grammar
  * 
- * Reads a LiveMatSetupObjects file in APTreeDSL CRFTypesCon grammar format and exports 
+ * Reads a LiveMatSetupObjects file in APTreeDSL DomainTypesCon grammar format and exports 
  * all parameter instances to JSON format.
  * 
  * Expected grammar format:
@@ -72,11 +72,11 @@ public class LiveMatSetupObjectsGenerator {
       }
 
       // Initialize MontiCore Mill
-      CRFTypesConMill.init();
+      DomainTypesConMill.init();
 
       // Parse the file using the MontiCore parser
-      System.out.println("[DEBUG] Parsing with CRFTypesConParser...");
-      CRFTypesConParser parser = CRFTypesConMill.parser();
+      System.out.println("[DEBUG] Parsing with DomainTypesConParser...");
+      DomainTypesConParser parser = DomainTypesConMill.parser();
       Optional<ASTWorld> parseResult = parser.parse(inputPath);
 
       if (!parseResult.isPresent()) {
@@ -111,14 +111,14 @@ public class LiveMatSetupObjectsGenerator {
   /**
    * Extract parameter instances from the parsed AST
    * 
-   * @param world The parsed CRFTypesCon AST
+   * @param world The parsed DomainTypesCon AST
    * @return List of ParameterInstance objects
    */
   private List<ParameterInstance> extractParameterInstances(ASTWorld world) {
     List<ParameterInstance> instances = new ArrayList<>();
     
     // Use reflection to discover all getter methods for symbol types
-    var scope = CRFTypesConMill.scopesGenitorDelegator().createFromAST(world);
+    var scope = DomainTypesConMill.scopesGenitorDelegator().createFromAST(world);
     
     try {
       java.util.Set<String> loadedNames = new java.util.HashSet<>();
