@@ -52,51 +52,6 @@ public void setMCParser(BehaviorTreeAntlrParser in) {
 
 // Explicit token
 
-      // ASTLexProd RobotJoints
-      RobotJoints 
-      :('-' )
-      ?( DIGIT )
-      +('.' ( DIGIT )
-      +)
-      ?('E' ('-' )
-      ?( DIGIT )
-      +)
-      ?',' ('-' )
-      ?( DIGIT )
-      +('.' ( DIGIT )
-      +)
-      ?('E' ('-' )
-      ?( DIGIT )
-      +)
-      ?',' ('-' )
-      ?( DIGIT )
-      +('.' ( DIGIT )
-      +)
-      ?('E' ('-' )
-      ?( DIGIT )
-      +)
-      ?',' ('-' )
-      ?( DIGIT )
-      +('.' ( DIGIT )
-      +)
-      ?('E' ('-' )
-      ?( DIGIT )
-      +)
-      ?',' ('-' )
-      ?( DIGIT )
-      +('.' ( DIGIT )
-      +)
-      ?('E' ('-' )
-      ?( DIGIT )
-      +)
-      ?',' ('-' )
-      ?( DIGIT )
-      +('.' ( DIGIT )
-      +)
-      ?('E' ('-' )
-      ?( DIGIT )
-      +)
-      ?;
       // ASTLexProd NEWLINE
       fragment NEWLINE 
       :('\r' '\n' |'\r' |'\n' )
@@ -139,30 +94,6 @@ public void setMCParser(BehaviorTreeAntlrParser in) {
       // ASTLexProd LOWER
       fragment LOWER 
       :'a'..'z'  ;
-      // ASTLexProd Coordinate
-      Coordinate 
-      :('-' )
-      ?( DIGIT )
-      +('.' ( DIGIT )
-      +)
-      ?('E' ('-' )
-      ?( DIGIT )
-      +)
-      ?',' ('-' )
-      ?( DIGIT )
-      +('.' ( DIGIT )
-      +)
-      ?('E' ('-' )
-      ?( DIGIT )
-      +)
-      ?',' ('-' )
-      ?( DIGIT )
-      +('.' ( DIGIT )
-      +)
-      ?('E' ('-' )
-      ?( DIGIT )
-      +)
-      ?;
       // ASTLexProd ML_COMMENT
       ML_COMMENT 
       :'/*' (.)

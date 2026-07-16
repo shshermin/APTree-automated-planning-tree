@@ -149,7 +149,7 @@ public class CSharopCodeGenerator {
                 return "float";
 
             default:
-                // Assume it's a custom type (e.g. Layer)
+                // Custom domain type (e.g. Layer) - pass through as-is
                 return mcType;
         }
     }

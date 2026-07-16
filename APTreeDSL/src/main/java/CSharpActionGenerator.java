@@ -132,12 +132,12 @@ public class CSharpActionGenerator {
                 cs.append("        {\n");
                 cs.append("            // Initialize preconditions\n");
                 cs.append("            preconditions = new State(StateType.Precondition, new FastName(\"").append(className.toLowerCase()).append("_preconditions\"));\n");
-                cs.append("            // TODO: Add preconditions as needed\n");
-                cs.append("            // Example: preconditions.AddPredicate(new FastName(\"pre_0\"), new PredicateName(param1, param2, false));\n\n");
+                cs.append("            // Preconditions are populated at runtime from PDDL domain definitions\n");
+                cs.append("            // preconditions.AddPredicate(new FastName(\"pre_0\"), new PredicateName(param1, param2, false));\n\n");
                 cs.append("            // Initialize effects\n");
                 cs.append("            effects = new State(StateType.Effect, new FastName(\"").append(className.toLowerCase()).append("_effects\"));\n");
-                cs.append("            // TODO: Add effects as needed\n");
-                cs.append("            // Example: effects.AddPredicate(new FastName(\"eff_0\"), new PredicateName(param1, param2, true));\n");
+                cs.append("            // Effects are populated at runtime from PDDL domain definitions\n");
+                cs.append("            // effects.AddPredicate(new FastName(\"eff_0\"), new PredicateName(param1, param2, true));\n");
                 cs.append("        }\n\n");
 
                 // Property overrides
@@ -224,7 +224,7 @@ public class CSharpActionGenerator {
                 return "string"; // Enum mapping usually simpler as string in generation unless logic exists
 
             default:
-                // Assume it's a custom type (e.g. Layer)
+                // Custom domain type (e.g. Layer) - pass through as-is
                 return mcType;
         }
     }

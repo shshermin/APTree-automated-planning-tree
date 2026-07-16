@@ -1,6 +1,7 @@
 grammar CRFTypesCon extends CRFTypesDef, de.monticore.MCBasics {
 
-////////// ?????? I am not sure why do we get errors if we dont include this world thing!
+// Override required: the concrete grammar must enumerate all concrete symbol types
+// so the MontiCore parser can recognize them in the world definition.
 @Override
 World = ( PropertyTypeDefinition | Property | PredicateTypeDefinition | ActionTypeDefinition | Beam | Plate | FirstPos | Robot | VacGripper | Holding | AtPlace | AtTool | NailGripper | GlueGun | Stack | Cassette | PositionOnRail | EquipPosition | StackPosition | IsAt | AtAgent | HasTool | Clear | OnTop | AllSet | BelongsToLayer | BelongsToModule | PositionFree | Stacked | Glued | Nailed | VgEmpty)*;
 

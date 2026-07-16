@@ -1,4 +1,4 @@
-package tr;grammar PlanningServiceTR extends.tr.CRFTypesConTR {
+package tr;grammar PlanningServiceTR extends.tr.DomainTypesConTR {
 
   PlanningServiceTFRule =
     TFRule ;
@@ -9,7 +9,7 @@ package tr;grammar PlanningServiceTR extends.tr.CRFTypesConTR {
 
 
   Problem_Pat implements ITFProblem , IPlanningServiceTFPart astimplements de.monticore.tf.ast.IPattern =
-    "Problem" schemaVarName:Name | "Problem" name:TfIdentifierName |(("Problem" ? schemaVarName:Name|"Problem" schemaVarName:Name ?)"[["("Problem" name:TfIdentifierName)"]]");
+    "Problem" schemaVarName:Name | "Problem" name:TfIdentifierName "Domain" ":" domain:TfIdentifierName |(("Problem" ? schemaVarName:Name|"Problem" schemaVarName:Name ?)"[["("Problem" name:TfIdentifierName "Domain" ":" domain:TfIdentifierName)"]]");
 
 
   Problem_Neg implements ITFProblem , IPlanningServiceTFPart astimplements de.monticore.tf.ast.INegation =
@@ -49,7 +49,7 @@ package tr;grammar PlanningServiceTR extends.tr.CRFTypesConTR {
 
 
   PlannerENHSP_Pat implements ITFPlannerENHSP , ITFPlannerPDDL , IPlanningServiceTFPart astimplements de.monticore.tf.ast.IPattern =
-    "PlannerENHSP" schemaVarName:Name | "Enhsp" "Domain" ":" domain:TfIdentifierName("Problem" ":" problem:TfIdentifierName)?("Config" ":" config:TfIdentifierFILEPATH)? |(("PlannerENHSP" ? schemaVarName:Name|"PlannerENHSP" schemaVarName:Name ?)"[["("Enhsp" "Domain" ":" domain:TfIdentifierName("Problem" ":" problem:TfIdentifierName)?("Config" ":" config:TfIdentifierFILEPATH)?)"]]");
+    "PlannerENHSP" schemaVarName:Name | "Enhsp" "Domain" ":" domain:TfIdentifierName("Problem" ":" problem:TfIdentifierName)? |(("PlannerENHSP" ? schemaVarName:Name|"PlannerENHSP" schemaVarName:Name ?)"[["("Enhsp" "Domain" ":" domain:TfIdentifierName("Problem" ":" problem:TfIdentifierName)?)"]]");
 
 
   PlannerENHSP_Neg implements ITFPlannerENHSP , IPlanningServiceTFPart , ITFPlannerPDDL astimplements de.monticore.tf.ast.INegation =

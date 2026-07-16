@@ -146,8 +146,7 @@ public class CSharpPredicateGenerator {
 
                     cs.append("                ");
                     if (isList) {
-                         // Handling lists might be tricky with NameKey, assume robust ToString or similar
-                         // For now just outputting something basic or skipping deep list handling as per simple example
+                         // List properties use ToString() for serialization
                          cs.append(propName).append("?.ToString() ?? \"null\"");
                     } else if (isBasicType) {
                          cs.append(propName).append(".ToString()");

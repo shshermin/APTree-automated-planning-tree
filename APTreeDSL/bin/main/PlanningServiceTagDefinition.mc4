@@ -1,4 +1,4 @@
-grammar PlanningServiceTagDefinition extends PlanningService ,de.monticore.tagging.Tags ,CRFTypesConTagDefinition {
+grammar PlanningServiceTagDefinition extends PlanningService ,de.monticore.tagging.Tags ,DomainTypesConTagDefinition {
   /* DefaultIdent (using the Name) works too */
    PWorldIdentifier implements ModelElementIdentifier  = "[" identifiesElement:PWorld "]" ;
   /* DefaultIdent (using the Name) works too */

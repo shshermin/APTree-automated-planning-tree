@@ -69,16 +69,6 @@ private String convertSYMBOL(Token t)  {
     return t.getText();
 }
 
-  // convert function for Coordinate
-private String convertCoordinate(Token t)  {
-    return t.getText();
-}
-
-  // convert function for RobotJoints
-private String convertRobotJoints(Token t)  {
-    return t.getText();
-}
-
   // convert function for Double
 private String convertDouble(Token t)  {
     return t.getText();
@@ -196,12 +186,12 @@ private String convertString(Token t)  {
   
   // ASTClassProd World
   world : 
-  ( tmp0+=propertyTypeDefinition  | tmp1+=property  | tmp2+=predicateTypeDefinition  | tmp3+=actionTypeDefinition  | tmp4+=beam  | tmp5+=plate  | tmp6+=firstPos  | tmp7+=robot  | tmp8+=vacGripper  | tmp9+=holding  | tmp10+=atPlace  | tmp11+=atTool  | tmp12+=nailGripper  | tmp13+=glueGun  | tmp14+=stack  | tmp15+=cassette  | tmp16+=positionOnRail  | tmp17+=equipPosition  | tmp18+=stackPosition  | tmp19+=isAt  | tmp20+=atAgent  | tmp21+=hasTool  | tmp22+=clear  | tmp23+=onTop  | tmp24+=allSet  | tmp25+=belongsToLayer  | tmp26+=belongsToModule  | tmp27+=positionFree  | tmp28+=stacked  | tmp29+=glued  | tmp30+=nailed  | tmp31+=vgEmpty  | tmp32+=stick  | tmp33+=cube  | tmp34+=initialLocation  | tmp35+=finalLocation  | tmp36+=equipLocation  | tmp37+=robotPosition  | tmp38+=demo  | tmp39+=staplerGun  | tmp40+=robotEquipped  | tmp41+=activeTool  | tmp42+=gripperEmpty  | tmp43+=fixed  | tmp44+=atFinalPosition  | tmp45+=objectFinalPosition  | tmp46+=gripper  | tmp47+=table  | tmp48+=accessible  | tmp49+=nailLocation  | tmp50+=robotLocation  )*
+  ( tmp0+=propertyTypeDefinition  | tmp1+=property  | tmp2+=predicateTypeDefinition  | tmp3+=actionTypeDefinition  | tmp4+=beam  | tmp5+=plate  | tmp6+=firstPos  | tmp7+=robot  | tmp8+=vacGripper  | tmp9+=holding  | tmp10+=atPlace  | tmp11+=atTool  | tmp12+=nailGripper  | tmp13+=glueGun  | tmp14+=stack  | tmp15+=cassette  | tmp16+=positionOnRail  | tmp17+=equipPosition  | tmp18+=stackPosition  | tmp19+=isAt  | tmp20+=atAgent  | tmp21+=hasTool  | tmp22+=clear  | tmp23+=onTop  | tmp24+=allSet  | tmp25+=belongsToLayer  | tmp26+=belongsToModule  | tmp27+=positionFree  | tmp28+=stacked  | tmp29+=glued  | tmp30+=nailed  | tmp31+=vgEmpty  )*
   ;
   
   // ASTClassProd Property
   property : 
-  (tmp0=CONT2106194)? ( tmp1=Name)  tmp2=COLON tmp3=basicType  (tmp4=PLUS)?(tmp5=QUESTION)?;
+   ( tmp0=Name)  tmp1=COLON tmp2=basicType  (tmp3=PLUS)?;
   
   // ASTClassProd PropertyTypeDefinition
   propertyTypeDefinition : 
@@ -233,14 +223,14 @@ private String convertString(Token t)  {
    tmp0=DUMMY66393224 ( tmp1=Name) ;
   
   // ASTEnumProd ActionLevel
-  actionLevel returns [crftypesdef._ast.ASTActionLevel ret = null] 
+  actionLevel returns [domaintypesdef._ast.ASTActionLevel ret = null] 
   : 
   e_0=HIGHLEVEL1293099746
-  {$ret = crftypesdef._ast.ASTActionLevel.HIGHLEVEL;}|
+  {$ret = domaintypesdef._ast.ASTActionLevel.HIGHLEVEL;}|
   e_1=MIDLEVEL2687243836
-  {$ret = crftypesdef._ast.ASTActionLevel.MIDLEVEL;}|
+  {$ret = domaintypesdef._ast.ASTActionLevel.MIDLEVEL;}|
   e_2=LOWLEVEL2518442160
-  {$ret = crftypesdef._ast.ASTActionLevel.LOWLEVEL;};
+  {$ret = domaintypesdef._ast.ASTActionLevel.LOWLEVEL;};
   
   
   
@@ -261,7 +251,7 @@ private String convertString(Token t)  {
   
   // ASTClassProd Robot
   robot : 
-   tmp0=ROBOT79133258 ( tmp1=Name)  tmp2=LPAREN ( tmp3=Name)  tmp4=r__boolean   ( tmp5=Name)  tmp6=RPAREN;
+   tmp0=ROBOT79133258 ( tmp1=Name)  tmp2=LPAREN ( tmp3=Name)  ( tmp4=Name)  tmp5=RPAREN;
   
   // ASTClassProd VacGripper
   vacGripper : 
@@ -281,7 +271,7 @@ private String convertString(Token t)  {
   
   // ASTClassProd Stack
   stack : 
-   tmp0=STACK80204392 ( tmp1=Name)  tmp2=LPAREN tmp3=RPAREN;
+   tmp0=STACK80204392 ( tmp1=Name)  tmp2=LPAREN ( tmp3=Integer)  ( tmp4=Name)  tmp5=RPAREN;
   
   // ASTClassProd Cassette
   cassette : 
@@ -298,54 +288,6 @@ private String convertString(Token t)  {
   // ASTClassProd StackPosition
   stackPosition : 
    tmp0=STACKPOSITION3708807089 ( tmp1=Name)  tmp2=LPAREN tmp3=RPAREN;
-  
-  // ASTClassProd Stick
-  stick : 
-   tmp0=STICK80212080 ( tmp1=Name)  tmp2=LPAREN tmp3=RPAREN;
-  
-  // ASTClassProd Cube
-  cube : 
-   tmp0=CUBE2111573 ( tmp1=Name)  tmp2=LPAREN tmp3=RPAREN;
-  
-  // ASTClassProd InitialLocation
-  initialLocation : 
-   tmp0=INITIALLOCATION2697236217 ( tmp1=Name)  tmp2=LPAREN ( tmp3=Coordinate)  ( tmp4=Coordinate)  tmp5=RPAREN;
-  
-  // ASTClassProd FinalLocation
-  finalLocation : 
-   tmp0=FINALLOCATION3956416299 ( tmp1=Name)  tmp2=LPAREN ( tmp3=Coordinate)  ( tmp4=Coordinate)  tmp5=RPAREN;
-  
-  // ASTClassProd EquipLocation
-  equipLocation : 
-   tmp0=EQUIPLOCATION1081764837 ( tmp1=Name)  tmp2=LPAREN ( tmp3=Coordinate)  ( tmp4=Coordinate)  tmp5=RPAREN;
-  
-  // ASTClassProd RobotPosition
-  robotPosition : 
-   tmp0=ROBOTPOSITION114462099 ( tmp1=Name)  tmp2=LPAREN ( tmp3=RobotJoints)  ( tmp4=Coordinate)  ( tmp5=Coordinate)  tmp6=RPAREN;
-  
-  // ASTClassProd Demo
-  demo : 
-   tmp0=DEMO2126339 ( tmp1=Name)  tmp2=LPAREN tmp3=RPAREN;
-  
-  // ASTClassProd Gripper
-  gripper : 
-   tmp0=GRIPPER1952392299 ( tmp1=Name)  tmp2=LPAREN tmp3=r__boolean   tmp4=r__boolean   ( tmp5=Name)  tmp6=RPAREN;
-  
-  // ASTClassProd StaplerGun
-  staplerGun : 
-   tmp0=STAPLERGUN2716695255 ( tmp1=Name)  tmp2=LPAREN tmp3=r__boolean   ( tmp4=Name)  tmp5=RPAREN;
-  
-  // ASTClassProd Table
-  table : 
-   tmp0=TABLE80563118 ( tmp1=Name)  tmp2=LPAREN tmp3=RPAREN;
-  
-  // ASTClassProd NailLocation
-  nailLocation : 
-   tmp0=NAILLOCATION4142947339 ( tmp1=Name)  tmp2=LPAREN ( tmp3=Coordinate)  ( tmp4=Coordinate)  tmp5=RPAREN;
-  
-  // ASTClassProd RobotLocation
-  robotLocation : 
-   tmp0=ROBOTLOCATION1267700767 ( tmp1=Name)  tmp2=LPAREN ( tmp3=RobotJoints)  ( tmp4=Coordinate)  ( tmp5=Coordinate)  tmp6=RPAREN;
   
   // ASTClassProd Holding
   holding : 
@@ -393,7 +335,7 @@ private String convertString(Token t)  {
   
   // ASTClassProd Stacked
   stacked : 
-  (tmp0=EXCLAMATIONMARK)? tmp1=STACKED4061979911 tmp2=LPAREN ( tmp3=Name)  ( tmp4=Name)  tmp5=RPAREN;
+  (tmp0=EXCLAMATIONMARK)? tmp1=STACKED4061979911 tmp2=LPAREN ( tmp3=Name)  tmp4=RPAREN;
   
   // ASTClassProd Glued
   glued : 
@@ -401,8 +343,7 @@ private String convertString(Token t)  {
   
   // ASTClassProd Nailed
   nailed : 
-  (tmp0=EXCLAMATIONMARK)? tmp1=NAILED2325890389 tmp2=LPAREN ( tmp3=Name)  ( tmp4=Name) ( ( tmp5=Name) )?
-   tmp6=RPAREN;
+  (tmp0=EXCLAMATIONMARK)? tmp1=NAILED2325890389 tmp2=LPAREN ( tmp3=Name)  tmp4=RPAREN;
   
   // ASTClassProd VgEmpty
   vgEmpty : 
@@ -412,39 +353,11 @@ private String convertString(Token t)  {
   atTool : 
   (tmp0=EXCLAMATIONMARK)? tmp1=ATTOOL1970635915 tmp2=LPAREN ( tmp3=Name)  ( tmp4=Name)  tmp5=RPAREN;
   
-  // ASTClassProd RobotEquipped
-  robotEquipped : 
-  (tmp0=EXCLAMATIONMARK)? tmp1=ROBOTEQUIPPED4250537801 tmp2=LPAREN ( tmp3=Name)  tmp4=RPAREN;
-  
-  // ASTClassProd ActiveTool
-  activeTool : 
-  (tmp0=EXCLAMATIONMARK)? tmp1=ACTIVETOOL4037428702 tmp2=LPAREN ( tmp3=Name)  tmp4=RPAREN;
-  
-  // ASTClassProd GripperEmpty
-  gripperEmpty : 
-  (tmp0=EXCLAMATIONMARK)? tmp1=GRIPPEREMPTY2551020450 tmp2=LPAREN ( tmp3=Name)  tmp4=RPAREN;
-  
-  // ASTClassProd Fixed
-  fixed : 
-  (tmp0=EXCLAMATIONMARK)? tmp1=FIXED67893076 tmp2=LPAREN ( tmp3=Name)  tmp4=RPAREN;
-  
-  // ASTClassProd AtFinalPosition
-  atFinalPosition : 
-  (tmp0=EXCLAMATIONMARK)? tmp1=ATFINALPOSITION3494539052 tmp2=LPAREN ( tmp3=Name)  tmp4=RPAREN;
-  
-  // ASTClassProd ObjectFinalPosition
-  objectFinalPosition : 
-  (tmp0=EXCLAMATIONMARK)? tmp1=OBJECTFINALPOSITION3686644640 tmp2=LPAREN ( tmp3=Name)  ( tmp4=Name)  tmp5=RPAREN;
-  
-  // ASTClassProd Accessible
-  accessible : 
-  (tmp0=EXCLAMATIONMARK)? tmp1=ACCESSIBLE852064214 tmp2=LPAREN ( tmp3=Name)  tmp4=RPAREN;
-  
   // ASTClassProd PickUpHL
   pickUpHL : 
-   tmp0=ACTION1955883606 tmp1=PICKUPHL3620224192 ( tmp2=Name)  tmp3=LPAREN ( tmp4=Name)  ( tmp5=Name)  ( tmp6=Name)  ( tmp7=Name)  tmp8=RPAREN( tmp9=LCURLY( tmp10+=decorator  | tmp11+=service  )*
-   tmp12=RCURLY)?
-  ( tmp13=AT ( tmp14=Name) )?
+   tmp0=ACTION1955883606 tmp1=PICKUPHL3620224192 ( tmp2=Name)  tmp3=LPAREN ( tmp4=Name)  ( tmp5=Name)  ( tmp6=Name)  tmp7=RPAREN( tmp8=LCURLY( tmp9+=decorator  | tmp10+=service  )*
+   tmp11=RCURLY)?
+  ( tmp12=AT ( tmp13=Name) )?
   ;
   
   // ASTClassProd PlaceHL
@@ -456,9 +369,9 @@ private String convertString(Token t)  {
   
   // ASTClassProd StackHL
   stackHL : 
-   tmp0=ACTION1955883606 tmp1=STACKHL4061978988 ( tmp2=Name)  tmp3=LPAREN ( tmp4=Name)  ( tmp5=Name)  ( tmp6=Name)  ( tmp7=Name)  ( tmp8=Name)  tmp9=RPAREN( tmp10=LCURLY( tmp11+=decorator  | tmp12+=service  )*
-   tmp13=RCURLY)?
-  ( tmp14=AT ( tmp15=Name) )?
+   tmp0=ACTION1955883606 tmp1=STACKHL4061978988 ( tmp2=Name)  tmp3=LPAREN ( tmp4=Name)  ( tmp5=Name)  ( tmp6=Name)  ( tmp7=Name)  ( tmp8=Name)  ( tmp9=Name)  tmp10=RPAREN( tmp11=LCURLY( tmp12+=decorator  | tmp13+=service  )*
+   tmp14=RCURLY)?
+  ( tmp15=AT ( tmp16=Name) )?
   ;
   
   // ASTClassProd StackOnMultipleHL
@@ -484,9 +397,9 @@ private String convertString(Token t)  {
   
   // ASTClassProd NailingHL
   nailingHL : 
-   tmp0=ACTION1955883606 tmp1=NAILINGHL4192252912 ( tmp2=Name)  tmp3=LPAREN ( tmp4=Name)  ( tmp5=Name)  ( tmp6=Name)  ( tmp7=Name)  tmp8=RPAREN( tmp9=LCURLY( tmp10+=decorator  | tmp11+=service  )*
-   tmp12=RCURLY)?
-  ( tmp13=AT ( tmp14=Name) )?
+   tmp0=ACTION1955883606 tmp1=NAILINGHL4192252912 ( tmp2=Name)  tmp3=LPAREN ( tmp4=Name)  ( tmp5=Name)  ( tmp6=Name)  tmp7=RPAREN( tmp8=LCURLY( tmp9+=decorator  | tmp10+=service  )*
+   tmp11=RCURLY)?
+  ( tmp12=AT ( tmp13=Name) )?
   ;
   
   // ASTClassProd TravelML
@@ -498,16 +411,16 @@ private String convertString(Token t)  {
   
   // ASTClassProd EquipeML
   equipeML : 
-   tmp0=ACTION1955883606 tmp1=EQUIPEML653546164 ( tmp2=Name)  tmp3=LPAREN ( tmp4=Name)  ( tmp5=Name)  ( tmp6=Name)  ( tmp7=Name)  tmp8=RPAREN( tmp9=LCURLY( tmp10+=decorator  | tmp11+=service  )*
-   tmp12=RCURLY)?
-  ( tmp13=AT ( tmp14=Name) )?
+   tmp0=ACTION1955883606 tmp1=EQUIPEML653546164 ( tmp2=Name)  tmp3=LPAREN ( tmp4=Name)  ( tmp5=Name)  ( tmp6=Name)  tmp7=RPAREN( tmp8=LCURLY( tmp9+=decorator  | tmp10+=service  )*
+   tmp11=RCURLY)?
+  ( tmp12=AT ( tmp13=Name) )?
   ;
   
   // ASTClassProd DeequipML
   deequipML : 
-   tmp0=ACTION1955883606 tmp1=DEEQUIPML72308238 ( tmp2=Name)  tmp3=LPAREN ( tmp4=Name)  ( tmp5=Name)  ( tmp6=Name)  ( tmp7=Name)  tmp8=RPAREN( tmp9=LCURLY( tmp10+=decorator  | tmp11+=service  )*
-   tmp12=RCURLY)?
-  ( tmp13=AT ( tmp14=Name) )?
+   tmp0=ACTION1955883606 tmp1=DEEQUIPML72308238 ( tmp2=Name)  tmp3=LPAREN ( tmp4=Name)  ( tmp5=Name)  ( tmp6=Name)  tmp7=RPAREN( tmp8=LCURLY( tmp9+=decorator  | tmp10+=service  )*
+   tmp11=RCURLY)?
+  ( tmp12=AT ( tmp13=Name) )?
   ;
   
   // ASTClassProd InitializeML
@@ -526,16 +439,9 @@ private String convertString(Token t)  {
   
   // ASTClassProd PickUpML
   pickUpML : 
-   tmp0=ACTION1955883606 tmp1=PICKUPML3620224347 ( tmp2=Name)  tmp3=LPAREN ( tmp4=Name)  ( tmp5=Name)  ( tmp6=Name)  ( tmp7=Name)  ( tmp8=Name)  tmp9=RPAREN( tmp10=LCURLY( tmp11+=decorator  | tmp12+=service  )*
-   tmp13=RCURLY)?
-  ( tmp14=AT ( tmp15=Name) )?
-  ;
-  
-  // ASTClassProd PutDownML
-  putDownML : 
-   tmp0=ACTION1955883606 tmp1=PUTDOWNML1107068304 ( tmp2=Name)  tmp3=LPAREN ( tmp4=Name)  ( tmp5=Name)  ( tmp6=Name)  ( tmp7=Name)  ( tmp8=Name)  tmp9=RPAREN( tmp10=LCURLY( tmp11+=decorator  | tmp12+=service  )*
-   tmp13=RCURLY)?
-  ( tmp14=AT ( tmp15=Name) )?
+   tmp0=ACTION1955883606 tmp1=PICKUPML3620224347 ( tmp2=Name)  tmp3=LPAREN ( tmp4=Name)  ( tmp5=Name)  ( tmp6=Name)  ( tmp7=Name)  tmp8=RPAREN( tmp9=LCURLY( tmp10+=decorator  | tmp11+=service  )*
+   tmp12=RCURLY)?
+  ( tmp13=AT ( tmp14=Name) )?
   ;
   
   // ASTClassProd PlaceML
@@ -554,16 +460,16 @@ private String convertString(Token t)  {
   
   // ASTClassProd NailingML
   nailingML : 
-   tmp0=ACTION1955883606 tmp1=NAILINGML4192253067 ( tmp2=Name)  tmp3=LPAREN ( tmp4=Name)  ( tmp5=Name)  ( tmp6=Name)  ( tmp7=Name)  ( tmp8=Name)  tmp9=RPAREN( tmp10=LCURLY( tmp11+=decorator  | tmp12+=service  )*
-   tmp13=RCURLY)?
-  ( tmp14=AT ( tmp15=Name) )?
+   tmp0=ACTION1955883606 tmp1=NAILINGML4192253067 ( tmp2=Name)  tmp3=LPAREN ( tmp4=Name)  ( tmp5=Name)  ( tmp6=Name)  ( tmp7=Name)  tmp8=RPAREN( tmp9=LCURLY( tmp10+=decorator  | tmp11+=service  )*
+   tmp12=RCURLY)?
+  ( tmp13=AT ( tmp14=Name) )?
   ;
   
   // ASTClassProd StackML
   stackML : 
-   tmp0=ACTION1955883606 tmp1=STACKML4061979143 ( tmp2=Name)  tmp3=LPAREN ( tmp4=Name)  ( tmp5=Name)  ( tmp6=Name)  ( tmp7=Name)  ( tmp8=Name)  ( tmp9=Name)  tmp10=RPAREN( tmp11=LCURLY( tmp12+=decorator  | tmp13+=service  )*
-   tmp14=RCURLY)?
-  ( tmp15=AT ( tmp16=Name) )?
+   tmp0=ACTION1955883606 tmp1=STACKML4061979143 ( tmp2=Name)  tmp3=LPAREN ( tmp4=Name)  ( tmp5=Name)  ( tmp6=Name)  ( tmp7=Name)  ( tmp8=Name)  tmp9=RPAREN( tmp10=LCURLY( tmp11+=decorator  | tmp12+=service  )*
+   tmp13=RCURLY)?
+  ( tmp14=AT ( tmp15=Name) )?
   ;
   
   // ASTClassProd StackOnMultipleML
@@ -571,104 +477,6 @@ private String convertString(Token t)  {
    tmp0=ACTION1955883606 tmp1=STACKONMULTIPLEML2401736054 ( tmp2=Name)  tmp3=LPAREN ( tmp4=Name)  ( tmp5=Name)  ( tmp6=Name)  ( tmp7=Name)  ( tmp8=Name)  ( tmp9=Name)  tmp10=RPAREN( tmp11=LCURLY( tmp12+=decorator  | tmp13+=service  )*
    tmp14=RCURLY)?
   ( tmp15=AT ( tmp16=Name) )?
-  ;
-  
-  // ASTClassProd StackOnTwoML
-  stackOnTwoML : 
-   tmp0=ACTION1955883606 tmp1=STACKONTWOML1530592964 ( tmp2=Name)  tmp3=LPAREN ( tmp4=Name)  ( tmp5=Name)  ( tmp6=Name)  ( tmp7=Name)  ( tmp8=Name)  ( tmp9=Name)  ( tmp10=Name)  ( tmp11=Name)  ( tmp12=Name)  tmp13=RPAREN( tmp14=LCURLY( tmp15+=decorator  | tmp16+=service  )*
-   tmp17=RCURLY)?
-  ( tmp18=AT ( tmp19=Name) )?
-  ;
-  
-  // ASTClassProd StackOnTwoHL
-  stackOnTwoHL : 
-   tmp0=ACTION1955883606 tmp1=STACKONTWOHL1530592809 ( tmp2=Name)  tmp3=LPAREN ( tmp4=Name)  ( tmp5=Name)  ( tmp6=Name)  ( tmp7=Name)  ( tmp8=Name)  ( tmp9=Name)  ( tmp10=Name)  ( tmp11=Name)  tmp12=RPAREN( tmp13=LCURLY( tmp14+=decorator  | tmp15+=service  )*
-   tmp16=RCURLY)?
-  ( tmp17=AT ( tmp18=Name) )?
-  ;
-  
-  // ASTClassProd ChangeEndeffectorHL
-  changeEndeffectorHL : 
-   tmp0=ACTION1955883606 tmp1=CHANGEENDEFFECTORHL2533066851 ( tmp2=Name)  tmp3=LPAREN ( tmp4=Name)  ( tmp5=Name)  ( tmp6=Name)  tmp7=RPAREN( tmp8=LCURLY( tmp9+=decorator  | tmp10+=service  )*
-   tmp11=RCURLY)?
-  ( tmp12=AT ( tmp13=Name) )?
-  ;
-  
-  // ASTClassProd MoveToLL
-  moveToLL : 
-   tmp0=ACTION1955883606 tmp1=MOVETOLL4255197388 ( tmp2=Name)  tmp3=LPAREN ( tmp4=Name)  ( tmp5=Name)  ( tmp6=Name)  tmp7=RPAREN( tmp8=LCURLY( tmp9+=decorator  | tmp10+=service  )*
-   tmp11=RCURLY)?
-  ( tmp12=AT ( tmp13=Name) )?
-  ;
-  
-  // ASTClassProd CloseGripperLL
-  closeGripperLL : 
-   tmp0=ACTION1955883606 tmp1=CLOSEGRIPPERLL792126547 ( tmp2=Name)  tmp3=LPAREN ( tmp4=Name)  ( tmp5=Integer)  tmp6=RPAREN( tmp7=LCURLY( tmp8+=decorator  | tmp9+=service  )*
-   tmp10=RCURLY)?
-  ( tmp11=AT ( tmp12=Name) )?
-  ;
-  
-  // ASTClassProd OpenGripperLL
-  openGripperLL : 
-   tmp0=ACTION1955883606 tmp1=OPENGRIPPERLL2266512385 ( tmp2=Name)  tmp3=LPAREN ( tmp4=Name)  ( tmp5=Integer)  tmp6=RPAREN( tmp7=LCURLY( tmp8+=decorator  | tmp9+=service  )*
-   tmp10=RCURLY)?
-  ( tmp11=AT ( tmp12=Name) )?
-  ;
-  
-  // ASTClassProd LiftLL
-  liftLL : 
-   tmp0=ACTION1955883606 tmp1=LIFTLL2275937771 ( tmp2=Name)  tmp3=LPAREN ( tmp4=Name)  ( tmp5=Name)  tmp6=RPAREN( tmp7=LCURLY( tmp8+=decorator  | tmp9+=service  )*
-   tmp10=RCURLY)?
-  ( tmp11=AT ( tmp12=Name) )?
-  ;
-  
-  // ASTClassProd EquipToolLL
-  equipToolLL : 
-   tmp0=ACTION1955883606 tmp1=EQUIPTOOLLL252872008 ( tmp2=Name)  tmp3=LPAREN ( tmp4=Name)  ( tmp5=Name)  tmp6=RPAREN( tmp7=LCURLY( tmp8+=decorator  | tmp9+=service  )*
-   tmp10=RCURLY)?
-  ( tmp11=AT ( tmp12=Name) )?
-  ;
-  
-  // ASTClassProd DeequipToolLL
-  deequipToolLL : 
-   tmp0=ACTION1955883606 tmp1=DEEQUIPTOOLLL260888103 ( tmp2=Name)  tmp3=LPAREN ( tmp4=Name)  ( tmp5=Name)  tmp6=RPAREN( tmp7=LCURLY( tmp8+=decorator  | tmp9+=service  )*
-   tmp10=RCURLY)?
-  ( tmp11=AT ( tmp12=Name) )?
-  ;
-  
-  // ASTClassProd NailingLL
-  nailingLL : 
-   tmp0=ACTION1955883606 tmp1=NAILINGLL4192253036 ( tmp2=Name)  tmp3=LPAREN ( tmp4=Name)  ( tmp5=Name)  ( tmp6=Name)  ( tmp7=Name)  tmp8=RPAREN( tmp9=LCURLY( tmp10+=decorator  | tmp11+=service  )*
-   tmp12=RCURLY)?
-  ( tmp13=AT ( tmp14=Name) )?
-  ;
-  
-  // ASTClassProd LowerLL
-  lowerLL : 
-   tmp0=ACTION1955883606 tmp1=LOWERLL2021658657 ( tmp2=Name)  tmp3=LPAREN ( tmp4=Name)  ( tmp5=Name)  ( tmp6=Name)  tmp7=RPAREN( tmp8=LCURLY( tmp9+=decorator  | tmp10+=service  )*
-   tmp11=RCURLY)?
-  ( tmp12=AT ( tmp13=Name) )?
-  ;
-  
-  // ASTClassProd RetractLL
-  retractLL : 
-   tmp0=ACTION1955883606 tmp1=RETRACTLL975386657 ( tmp2=Name)  tmp3=LPAREN ( tmp4=Name)  ( tmp5=Name)  tmp6=RPAREN( tmp7=LCURLY( tmp8+=decorator  | tmp9+=service  )*
-   tmp10=RCURLY)?
-  ( tmp11=AT ( tmp12=Name) )?
-  ;
-  
-  // ASTClassProd DeactivateToolLL
-  deactivateToolLL : 
-   tmp0=ACTION1955883606 tmp1=DEACTIVATETOOLLL211699404 ( tmp2=Name)  tmp3=LPAREN ( tmp4=Name)  ( tmp5=Name)  tmp6=RPAREN( tmp7=LCURLY( tmp8+=decorator  | tmp9+=service  )*
-   tmp10=RCURLY)?
-  ( tmp11=AT ( tmp12=Name) )?
-  ;
-  
-  // ASTClassProd InitializeLL
-  initializeLL : 
-   tmp0=ACTION1955883606 tmp1=INITIALIZELL4059202864 ( tmp2=Name)  tmp3=LPAREN ( tmp4=Name)  tmp5=RPAREN( tmp6=LCURLY( tmp7+=decorator  | tmp8+=service  )*
-   tmp9=RCURLY)?
-  ( tmp10=AT ( tmp11=Name) )?
   ;
   
   // ASTClassProd PWorld
@@ -683,7 +491,6 @@ private String convertString(Token t)  {
   // ASTClassProd PlannerENHSP
   plannerENHSP : 
    tmp0=ENHSP67103580 tmp1=DOMAIN2052636900 tmp2=COLON ( tmp3=Name) ( tmp4=PROBLEM1355111039 tmp5=COLON ( tmp6=Name) )?
-  ( tmp7=CONFIG2024042338 tmp8=COLON ( tmp9=FILEPATH) )?
   ;
   
   // ASTClassProd Domain
@@ -693,7 +500,7 @@ private String convertString(Token t)  {
   
   // ASTClassProd Problem
   problem : 
-   tmp0=PROBLEM1355111039 ( tmp1=Name) ;
+   tmp0=PROBLEM1355111039 ( tmp1=Name)  tmp2=DOMAIN2052636900 tmp3=COLON ( tmp4=Name) ;
   
   
   
@@ -817,8 +624,7 @@ private String convertString(Token t)  {
   
   // ASTInterface Module
   module:
-  tmp0=cassette |
-  tmp1=demo;
+  tmp0=cassette;
   
   // ASTInterface Text
   text:
@@ -829,29 +635,18 @@ private String convertString(Token t)  {
   tmp0=firstPos |
   tmp1=positionOnRail |
   tmp2=equipPosition |
-  tmp3=stackPosition |
-  tmp4=initialLocation |
-  tmp5=finalLocation |
-  tmp6=equipLocation |
-  tmp7=robotPosition |
-  tmp8=nailLocation |
-  tmp9=robotLocation;
+  tmp3=stackPosition;
   
   // ASTInterface Element
   element:
   tmp0=beam |
-  tmp1=plate |
-  tmp2=stick |
-  tmp3=cube |
-  tmp4=table;
+  tmp1=plate;
   
   // ASTInterface Tool
   tool:
   tmp0=vacGripper |
   tmp1=nailGripper |
-  tmp2=glueGun |
-  tmp3=gripper |
-  tmp4=staplerGun;
+  tmp2=glueGun;
   
   // ASTInterface Agent
   agent:
@@ -875,14 +670,7 @@ private String convertString(Token t)  {
   tmp13=nailed |
   tmp14=vgEmpty |
   tmp15=atTool |
-  tmp16=robotEquipped |
-  tmp17=activeTool |
-  tmp18=gripperEmpty |
-  tmp19=fixed |
-  tmp20=atFinalPosition |
-  tmp21=objectFinalPosition |
-  tmp22=accessible |
-  tmp23=dummy;
+  tmp16=dummy;
   
   // ASTInterface PActionNode
   pActionNode:
@@ -899,27 +687,12 @@ private String convertString(Token t)  {
   tmp10=initializeML |
   tmp11=closeToolML |
   tmp12=pickUpML |
-  tmp13=putDownML |
-  tmp14=placeML |
-  tmp15=gluingML |
-  tmp16=nailingML |
-  tmp17=stackML |
-  tmp18=stackOnMultipleML |
-  tmp19=stackOnTwoML |
-  tmp20=stackOnTwoHL |
-  tmp21=changeEndeffectorHL |
-  tmp22=moveToLL |
-  tmp23=closeGripperLL |
-  tmp24=openGripperLL |
-  tmp25=liftLL |
-  tmp26=equipToolLL |
-  tmp27=deequipToolLL |
-  tmp28=nailingLL |
-  tmp29=lowerLL |
-  tmp30=retractLL |
-  tmp31=deactivateToolLL |
-  tmp32=initializeLL |
-  tmp33=placeTimber;
+  tmp13=placeML |
+  tmp14=gluingML |
+  tmp15=nailingML |
+  tmp16=stackML |
+  tmp17=stackOnMultipleML |
+  tmp18=placeTimber;
   
   // ASTInterface ServicePlanning
   servicePlanning:

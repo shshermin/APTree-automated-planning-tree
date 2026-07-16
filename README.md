@@ -1,32 +1,118 @@
-# APTree
+# APTree – Automated Planning Trees
 
-This project contains the core components for behavior tree design and execution using the APTree domain specific language.
+This repository contains the implementation of APTree, a framework for behavior tree design and execution with integrated PDDL planning. The project consists of two main components: a domain-specific language (DSL) and an execution engine with a Python planning service.
 
-## Structure
+---
 
-### APTreeDSL
-A Gradle-based Domain-Specific Language (DSL) implemented using the [MontiCore language workbench](https://www.se-rwth.de/research/MontiCore/) for defining behavior trees using a custom syntax.
-- **Location**: `APTreeDSL/`
-- **Build**: Gradle
-- **Output**: behavior tree models and validates syntax based on APTree DSL
+## System Requirements
 
-### APTreeExecutionEngine
-A C# application that executes behavior trees compatible with APTree at runtime.
-- **Location**: `APTreeExecutionEngine/`
-- **Build**: .NET/C#
-- **Features**: 
-  - Behavior tree execution
-  - Action execution with logging
-  - Python service integration for planning
+| Dependency | Version | Purpose |
+|---|---|---|
+| Java JDK | 11+ | APTreeDSL grammar compilation (Gradle toolchains) |
+| Gradle | 7.x+ | Build system for APTreeDSL |
+| .NET SDK | 8.0 | Execution engine (ASP.NET Core backend) |
+| Python | 3.10+ | PDDL planning service |
+| Docker | 24.0+ | (Optional) Container-based planners (FF, LAMA-FIRST) |
 
-## Getting Started
+**Supported operating systems:** Linux (native), Windows, macOS.
 
-1. Define and validate behavior trees using the DSL in `APTreeDSL/`
-3. Execute trees using the C# engine in `APTreeExecutionEngine/`
+The PDDL planning service uses ENHSP (Java-based) by default, which runs on all platforms. Docker-based planners (FF, LAMA-FIRST) require a Linux environment or Docker because the `planutils` container relies on Linux-based solver binaries.
 
+---
+
+## Project Structure
+
+```
+APTreeDSL/               MontiCore-based DSL for behavior tree definitions
+APTreeExecutionEngine/   C# execution engine + Python planning service
+```
+
+---
+
+## Setup
+
+### 1. APTreeDSL (Behavior Tree DSL)
+
+```bash
+cd APTreeDSL
+gradle build
+```
+
+See [APTreeDSL/README.md](APTreeDSL/README.md) for available Gradle tasks (parsing, code generation, testing).
+
+### 2. APTreeExecutionEngine (C# Backend)
+
+```bash
+cd APTreeExecutionEngine
+dotnet restore BehaviorTreeMainProject.csproj
+dotnet run --project BehaviorTreeMainProject.csproj --urls http://localhost:5254
+```
+
+### 3. Python Planning Service
+
+```bash
+cd APTreeExecutionEngine/python_service
+
+# Create virtual environment
+python3 -m venv pddl_env
+source pddl_env/bin/activate        # Linux/macOS
+# pddl_env\Scripts\activate         # Windows
+
+# Install pinned dependencies
+pip install -r requirements.txt
+
+# Start the service
+python pddl_planning_service.py
+```
+
+The service listens on port `5000` and supports the following planners:
+- **ENHSP** (numeric planning, via bundled JAR)
+- **FF** (classical planning, via `planutils` Docker container)
+- **LAMA-FIRST** (satisficing planning, via `planutils` Docker container)
+
+For Docker-based planners (FF, LAMA-FIRST), ensure the `planutils` container is running:
+```bash
+docker start planutils
+```
+
+---
+
+## Reproducing the Experiments
+
+1. Start the planning service (see above).
+2. Use the execution engine to run a behavior tree file:
+   ```bash
+   cd APTreeExecutionEngine
+   dotnet run --project BehaviorTreeMainProject.csproj
+   ```
+3. Behavior tree input files are located in `APTreeDSL/src/test/resources/valid/behavior_trees/`.
+4. Logged results (timing, action execution summaries) are stored in `APTreeExecutionEngine/kept logs/`.
+
+### DSL Validation and Parsing
+
+```bash
+cd APTreeDSL
+gradle test                        # Run all grammar and parsing tests
+gradle runAPTreeTool               # Analyze APTree models
+gradle runBehaviorTreeParser       # Parse behavior tree files
+```
+
+Test reports are generated at `APTreeDSL/target/reports/allTests/`.
+
+---
+
+## Pinned Versions
+
+| Component | Version |
+|---|---|
+| MontiCore | 7.8.0 |
+| .NET SDK | 8.0 |
+| Python dependencies | See [`requirements.txt`](APTreeExecutionEngine/python_service/requirements.txt) |
+| Gradle | 7.x+ (system install) |
+
+---
 
 ## Documentation
 
-See individual project READMEs for detailed setup and usage instructions:
-- [APTreeDSL README](APTreeDSL/README.md)
-- [APTreeExecutionEngine README](APTreeExecutionEngine/README.txt)
+- [APTreeDSL README](APTreeDSL/README.md) – DSL grammar, build tasks, code generation
+- [Planning Service README](APTreeExecutionEngine/python_service/README.md) – PDDL planner configuration

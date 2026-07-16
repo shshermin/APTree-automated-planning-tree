@@ -31,15 +31,9 @@ public class CRFPredicateTypeRuleGenerator {
     // Prefix for the World rule
     private static final String WORLD_RULE_PREFIX = "World = (PropertyTypeDefinition | Property | PredicateTypeDefinition | ActionTypeDefinition";
 
-    // We do NOT update the World rule here, assuming Predicates are used inside Actions/Preconditions/Effects
-    // But wait, the World rule DOES contain PredicateTypeDefinition, but usually we don't put 'Holding' or 'AtPlace' 
-    // directly in the World sequence of the grammar unless they are top-level constructs.
-    // In CRFTypesCon.mc4, Predicates inherit from Predicate. They are usually referenced via Name@Predicate.
-    // However, if we want them to be parsable as individual lines (maybe for testing?), we might need them in World.
-    // The previous request didn't ask to update World, but I'll make it consistent if needed. 
-    // Looking at CRFTypesCon.mc4: World = (... | PredicateTypeDefinition | ...) 
-    // It doesn't seem the concrete predicates (Holding, AtPlace) are in the World rule in the current file.
-    // So I won't touch World rule for now.
+    // Concrete predicate rules (Holding, AtPlace, etc.) extend Predicate and are referenced via Name@Predicate.
+    // They are included in the World rule of CRFTypesCon.mc4 to enable top-level parsing.
+    // This generator only updates the predicate rules section; the World rule is managed separately.
 
     public static void main(String[] args) {
         try {
@@ -188,11 +182,8 @@ public class CRFPredicateTypeRuleGenerator {
             content = before + System.lineSeparator() + newBlock.toString() + System.lineSeparator() + after;
         }
         
-        // Update the World rule
-        // Assuming World rule is already correctly formed by PropertyType generator or manually,
-        // we want to append predicate names to the existing World rule structure.
-        // It's tricky to rebuild the whole World rule cleanly if we don't know what properties are there.
-        // However, if we assume the World rule ends with ")*;", we can try to insert before that.
+        // Update the World rule by appending new predicate names.
+        // The World rule is expected to follow the pattern: World = ( ... )*;
         
         // Regex to match existing World rule content inside parens
         // World = ( ... )*;
