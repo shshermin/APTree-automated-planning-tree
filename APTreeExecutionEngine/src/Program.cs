@@ -1,11 +1,12 @@
 ﻿﻿using BehaviorTreeMainProject;
 
-// Usage: dotnet run [--server | --test | --loadtest | --run <model.json> [config.json] [--faults <faults.json>]]
-//   --server   : frontend API server only  (default)
-//   --test     : DemonstratorTreeTest only
-//   --loadtest : JsonBTLoadTest only
-//   --run      : Run BT from JSON model + optional config file
-//   --faults   : Optional fault-injection config file
+// Usage: dotnet run [--server | --test | --loadtest | --parityt | --run <model.json> [config.json] [--faults <faults.json>]]
+//   --server    : frontend API server only  (default)
+//   --test      : DemonstratorTreeTest only
+//   --loadtest  : JsonBTLoadTest only
+//   --parity    : PredicateStoreParityTest — diffs Dictionary vs. Sqlite store
+//   --run       : Run BT from JSON model + optional config file
+//   --faults    : Optional fault-injection config file
 
 var mode = args.FirstOrDefault(a => a.StartsWith("--") && a != "--faults") ?? "--server";
 
@@ -26,6 +27,9 @@ switch (mode)
         break;
     case "--loadtest":
         await JsonBTLoadTest.RunTest();
+        break;
+    case "--parity":
+        BehaviorTreeMainProject.Tests.PredicateStoreParityTest.Run();
         break;
     case "--run":
         var modelPath = remainingArgs.ElementAtOrDefault(0)

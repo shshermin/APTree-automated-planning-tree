@@ -89,11 +89,12 @@ namespace BehaviorTreeMainProject.ModelLoader
 
         /// <summary>
         /// Which predicate store to use.  Accepted values:
-        ///   "Dictionary"  (default) — in-process Dictionary, zero overhead.
-        ///   "Sqlite"               — Dictionary hot-index + embedded SQLite for
-        ///                            HasSimilar / CleanupAtAgent indexed queries.
+        ///   "Sqlite"      (default) — Dictionary hot-index + embedded SQLite for
+        ///                             HasSimilar / CleanupAtAgent indexed queries.
+        ///   "Dictionary"            — in-process Dictionary only; zero overhead,
+        ///                             use as fallback if SQLite causes issues.
         /// </summary>
-        public string PredicateStoreType { get; set; } = "Dictionary";
+        public string PredicateStoreType { get; set; } = "Sqlite";
 
         /// <summary>
         /// File path for the SQLite predicate store.
