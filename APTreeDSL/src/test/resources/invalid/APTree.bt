@@ -1,43 +1,48 @@
-
-
-BehaviorTree APTree {
-    root FlowNode Main { // EID13 // EID15
+BehaviorTree APTree3 { // EID13
+    Root FlowNode Main {
+        // EID14 
         All
         AllFlow
-        NodeGraph {    
-            FlowNode  HandlePlate {
-                // EID3
-                Decorator DuplicateDecorator // EID5
-                ALL // EID14 
-                AllAction
-                
-                NodeGraph { 
-                          
-                          Action PlaceHL PickUpPlate1 (plate1 lp1)  {   // EID2
-                            --[Meets]--> PickUpPlate2; // EID16 
-                    }
-                          Action PickUpHL PickUpPlate2 (plate2 r1 fp5) {PlanningService MyPddlPlanner2 Enhsp1 } //EID4 //EID6 // EID12
-                    
-                }
-            } 
-            FlowNode BeamPlacement {
-                PlanningService MyPddlPlanner1 Enhsp2 // EID17 // EID18
-                Decorator DuplicateDecorator // EID5
+        NodeGraph {
+            FlowNode PickupSequence {   // EID4
+                ServicePlanning MyPlannerSrv1 Enhsp Domain:DomainML Problem:problempickupHL Config: pt-blind  // EID1
                 All
-                AllAction               
+                AllAction
                 NodeGraph {
-                            Action PlaceHL PlaceBeam1 (vg1 pr2 r1) {  // EID8 // EID16 //EID18
-                                --[Meets]--> PickUpBeam1 // EID11  //EID19
-                            }
-                            Action PickUpHL PickUpBeam1 (column1 fp2 r1)   // EID10 
-                            Action PickUpHL PickupBeam2 (beam2 fp3 r1) { //EID18
-                                --[Meets]--> PlaceBeam2;
-                            }
-                            Action PlaceHL PlaceBeam2 (beam2 pr3 r1) {Action Pass()}  // EID1 // EID9
-                }}}}} 
 
+                    Action EquipeML EquipVg1 (r1 vg1 ep1) {   // EID5
+                        --[Meets]--> InitVg1;
+                    }
+                    Action TravelML TravelToEp1 (r1 pr2 ep1) { // EID9
+                        --[Meets]--> EquipVg1;
+                    }   
+                    Action InitializeML InitVg1 (r1 vg1) {   // EID7
+                        --[Meets]--> TravelToFp9;
+                    }
+                    Action TravelML TravelToFp9 (human ep1 fp9) {  // EID10
+                        --[Meets]--> PickupLp2; 
+                    }
+                    Action PickUpML PickupLp2 (lp24 rp r1 vg1)  // EID8 //EID6
+                }
+            }
+        
+        FlowNode PlaceSequence {
+            ServicePlanning MissingDomainSrv Enhsp Domain:MissingDomain Problem:problemPlace // EID2
+                All
+                AllAction
+                NodeGraph {
+                }
+            }
 
-
-
+        FlowNode UnsupportedFfSequence {
+            ServicePlanning UnsupportedFfSrv FF Domain:PickAndPlaceHL Problem:problemPlace // EID3
+                All
+                AllAction
+                NodeGraph {
+                }
+            }
+        } // EID11 
+    }
+}
 
 

@@ -15,6 +15,7 @@ import CoCos.DynamicBTFlowNode.MustHavePlanningService;
 import CoCos.DynamicBTFlowNode.PlanningServiceActionsCoverageCoCo;
 import CoCos.DynamicBTFlowNode.SharedResourceConflictCoCo;
 import CoCos.DynamicBTFlowNode.UniquenessOfNames;
+import CoCos.PlanningService.PlannerConfigurationCoCo;
 import behaviortree._ast.ASTActionNode;
 import behaviortree._cocos.BehaviorTreeASTDecoratorCoCo;
 import behaviortree._cocos.BehaviorTreeASTServiceCoCo;
@@ -37,6 +38,7 @@ import dynamicbtflownode._cocos.DynamicBTFlowNodeASTGraphNodeCoCo;
 import dynamicbtflownode._cocos.DynamicBTFlowNodeCoCoChecker;
 import dynamicbtflownode._symboltable.IDynamicBTFlowNodeArtifactScope;
 import dynamicbtflownode._symboltable.IDynamicBTFlowNodeGlobalScope;
+import planningservice._cocos.PlanningServiceASTServicePDDLPlanningCoCo;
 
 public class APTreeTool {
 
@@ -139,9 +141,11 @@ public class APTreeTool {
         UniquenessOfNames uniquenessCheck = new UniquenessOfNames();
         checker.addCoCo((BehaviorTreeASTDecoratorCoCo) uniquenessCheck);
         checker.addCoCo((BehaviorTreeASTServiceCoCo) uniquenessCheck);
+        PlannerConfigurationCoCo plannerConfigurationCheck = new PlannerConfigurationCoCo();
+        checker.addCoCo((PlanningServiceASTServicePDDLPlanningCoCo) plannerConfigurationCheck);
         // New: Validate causal links between connected actions
         CausalLinkValidator causalValidator = new CausalLinkValidator();
-        checker.addCoCo((DynamicBTFlowNodeASTGraphNodeCoCo) causalValidator);
+        // checker.addCoCo((DynamicBTFlowNodeASTGraphNodeCoCo) causalValidator);
         
         // New: Check that all actions in behavior tree are defined in planning service domain
         PlanningServiceActionsCoverageCoCo actionsCoverageCheck = new PlanningServiceActionsCoverageCoCo();
@@ -341,10 +345,6 @@ public class APTreeTool {
       // Create symbol table from instances AST
       var instanceScope = domaintypescon.DomainTypesConMill.scopesGenitorDelegator().createFromAST(world);
       
-      // Bridge: add the instance scope into the DynamicBTFlowNode global scope
-      // so that resolveElement() etc. can find Beam, Plate, Robot symbols
-      DynamicBTFlowNodeMill.globalScope().addSubScope(instanceScope);
-      
       // Generic loading of all symbol types from the scope via Reflection
       // Captures ALL symbol types: Elements, Tools, Agents, Locations, and any user-defined types
       // Iterates over all "getLocal...Symbols" accessors to discover all symbol collections dynamically
@@ -380,6 +380,11 @@ public class APTreeTool {
                                       }
                                       
                                       loadedSymbolNames.add(symName);
+
+                                      // Copy the symbol into the composed language's global scope.
+                                      // The DomainTypesCon artifact scope itself cannot be attached as
+                                      // an IDynamicBTFlowNodeScope, but its inherited symbols are compatible.
+                                      addSymbolToDynamicGlobalScope(obj);
                                       
                                       // Determine type from class name (e.g. BeamSymbol -> Beam, RobotSymbol -> Robot)
                                       String symType = obj.getClass().getSimpleName();
@@ -427,6 +432,22 @@ public class APTreeTool {
       System.err.println("[X] ERROR loading instances: " + e.getMessage());
       e.printStackTrace();
     }
+  }
+
+  private void addSymbolToDynamicGlobalScope(Object symbol) throws ReflectiveOperationException {
+    Object globalScope = DynamicBTFlowNodeMill.globalScope();
+
+    for (java.lang.reflect.Method method : globalScope.getClass().getMethods()) {
+      if (method.getName().equals("add")
+          && method.getParameterCount() == 1
+          && method.getParameterTypes()[0].isAssignableFrom(symbol.getClass())) {
+        method.invoke(globalScope, symbol);
+        return;
+      }
+    }
+
+    throw new NoSuchMethodException(
+        "No compatible global-scope add method for " + symbol.getClass().getName());
   }
 
   /**

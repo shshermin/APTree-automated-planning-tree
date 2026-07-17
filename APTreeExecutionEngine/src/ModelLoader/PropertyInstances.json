@@ -1,6 +1,555 @@
 {
   "instances": [
-    
+    {
+      "extends": "Element",
+      "name": "lp1",
+      "type": "Plate",
+      "properties": {
+        "loc": "fp1"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "lp2",
+      "type": "Plate",
+      "properties": {
+        "loc": "fp9"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "lp3",
+      "type": "Plate",
+      "properties": {
+        "loc": "fp17"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "lp4",
+      "type": "Plate",
+      "properties": {
+        "loc": "fp25"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "tp1",
+      "type": "Plate",
+      "properties": {
+        "loc": "fp5"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "tp2",
+      "type": "Plate",
+      "properties": {
+        "loc": "fp13"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "tp3",
+      "type": "Plate",
+      "properties": {
+        "loc": "fp21"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "tp4",
+      "type": "Plate",
+      "properties": {
+        "loc": "fp29"
+      }
+    },
+    {
+      "extends": "Agent",
+      "name": "r1",
+      "type": "Robot",
+      "properties": {
+        "loc": "pr2",
+        "mType": "ur10"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "b1",
+      "type": "Beam",
+      "properties": {
+        "loc": "fp2"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "b2",
+      "type": "Beam",
+      "properties": {
+        "loc": "fp3"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "b3",
+      "type": "Beam",
+      "properties": {
+        "loc": "fp4"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "b4",
+      "type": "Beam",
+      "properties": {
+        "loc": "fp6"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "b5",
+      "type": "Beam",
+      "properties": {
+        "loc": "fp7"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "b6",
+      "type": "Beam",
+      "properties": {
+        "loc": "fp8"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "b7",
+      "type": "Beam",
+      "properties": {
+        "loc": "fp10"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "b8",
+      "type": "Beam",
+      "properties": {
+        "loc": "fp11"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "b9",
+      "type": "Beam",
+      "properties": {
+        "loc": "fp12"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "b10",
+      "type": "Beam",
+      "properties": {
+        "loc": "fp14"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "b11",
+      "type": "Beam",
+      "properties": {
+        "loc": "fp15"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "b12",
+      "type": "Beam",
+      "properties": {
+        "loc": "fp16"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "b13",
+      "type": "Beam",
+      "properties": {
+        "loc": "fp18"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "b14",
+      "type": "Beam",
+      "properties": {
+        "loc": "fp19"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "b15",
+      "type": "Beam",
+      "properties": {
+        "loc": "fp20"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "b16",
+      "type": "Beam",
+      "properties": {
+        "loc": "fp22"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "b17",
+      "type": "Beam",
+      "properties": {
+        "loc": "fp23"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "b18",
+      "type": "Beam",
+      "properties": {
+        "loc": "fp24"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "b19",
+      "type": "Beam",
+      "properties": {
+        "loc": "fp26"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "b20",
+      "type": "Beam",
+      "properties": {
+        "loc": "fp27"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "b21",
+      "type": "Beam",
+      "properties": {
+        "loc": "fp28"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "b22",
+      "type": "Beam",
+      "properties": {
+        "loc": "fp30"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "b23",
+      "type": "Beam",
+      "properties": {
+        "loc": "fp31"
+      }
+    },
+    {
+      "extends": "Element",
+      "name": "b24",
+      "type": "Beam",
+      "properties": {
+        "loc": "fp32"
+      }
+    },
+    {
+      "extends": "Tool",
+      "name": "vg1",
+      "type": "VacGripper",
+      "properties": {
+        "loc": "ep1"
+      }
+    },
+    {
+      "extends": "Module",
+      "name": "m1",
+      "type": "Cassette"
+    },
+    {
+      "extends": "Module",
+      "name": "m2",
+      "type": "Cassette"
+    },
+    {
+      "extends": "Module",
+      "name": "m3",
+      "type": "Cassette"
+    },
+    {
+      "extends": "Module",
+      "name": "m4",
+      "type": "Cassette"
+    },
+    {
+      "extends": "Tool",
+      "name": "gg1",
+      "type": "GlueGun",
+      "properties": {
+        "loc": "ep2"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "fp1",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Location",
+      "name": "fp2",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Location",
+      "name": "fp3",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Location",
+      "name": "fp4",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Location",
+      "name": "fp5",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Location",
+      "name": "fp6",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Location",
+      "name": "fp7",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Location",
+      "name": "fp8",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Location",
+      "name": "fp9",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Location",
+      "name": "fp10",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Location",
+      "name": "fp11",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Location",
+      "name": "fp12",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Location",
+      "name": "fp13",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Location",
+      "name": "fp14",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Location",
+      "name": "fp15",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Location",
+      "name": "fp16",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Location",
+      "name": "fp17",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Location",
+      "name": "fp18",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Location",
+      "name": "fp19",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Location",
+      "name": "fp20",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Location",
+      "name": "fp21",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Location",
+      "name": "fp22",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Location",
+      "name": "fp23",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Location",
+      "name": "fp24",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Location",
+      "name": "fp25",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Location",
+      "name": "fp26",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Location",
+      "name": "fp27",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Location",
+      "name": "fp28",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Location",
+      "name": "fp29",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Location",
+      "name": "fp30",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Location",
+      "name": "fp31",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Location",
+      "name": "fp32",
+      "type": "FirstPos"
+    },
+    {
+      "extends": "Location",
+      "name": "pr1",
+      "type": "PositionOnRail"
+    },
+    {
+      "extends": "Location",
+      "name": "pr2",
+      "type": "PositionOnRail"
+    },
+    {
+      "extends": "Location",
+      "name": "pr3",
+      "type": "PositionOnRail"
+    },
+    {
+      "extends": "Location",
+      "name": "pr4",
+      "type": "PositionOnRail"
+    },
+    {
+      "extends": "Tool",
+      "name": "ng1",
+      "type": "NailGripper",
+      "properties": {
+        "loc": "ep3"
+      }
+    },
+    {
+      "extends": "Layer",
+      "name": "lay1",
+      "type": "Stack",
+      "properties": {
+        "level": "1",
+        "belongsToModule": "m1"
+      }
+    },
+    {
+      "extends": "Layer",
+      "name": "lay2",
+      "type": "Stack",
+      "properties": {
+        "level": "2",
+        "belongsToModule": "m2"
+      }
+    },
+    {
+      "extends": "Layer",
+      "name": "lay3",
+      "type": "Stack",
+      "properties": {
+        "level": "3",
+        "belongsToModule": "m3"
+      }
+    },
+    {
+      "extends": "Layer",
+      "name": "lay4",
+      "type": "Stack",
+      "properties": {
+        "level": "4",
+        "belongsToModule": "m4"
+      }
+    },
+    {
+      "extends": "Location",
+      "name": "ep1",
+      "type": "EquipPosition"
+    },
+    {
+      "extends": "Location",
+      "name": "ep2",
+      "type": "EquipPosition"
+    },
+    {
+      "extends": "Location",
+      "name": "ep3",
+      "type": "EquipPosition"
+    },
+    {
+      "extends": "Location",
+      "name": "ep4",
+      "type": "EquipPosition"
+    },
+    {
+      "extends": "Location",
+      "name": "sp1",
+      "type": "StackPosition"
+    }
   ],
-  "count": 0
+  "count": 85
 }

@@ -1,11 +1,11 @@
-BehaviorTree APTree3 { // EID13
-    Root FlowNode Main {
+Root APTree3 { // EID13
+    BehaviorTree FlowNode Main {
         // EID14 
         All
         AllFlow
         NodeGraph {
-            FlowNode PickupSequence {   // EID4
-                ServicePlanning MyPlannerSrv1 Enhsp Domain:DomainML Problem:problempickupHL Config: pt-blind  // EID1
+            Action PickupSequence {   // EID4
+                ServicePlanning MyPlannerSrv1 Enhsp Domain:DomainnumericalML Problem:problempickupHL Config: opt-bt  // EID1 // EID3
                 All
                 AllAction
                 NodeGraph {
@@ -27,22 +27,14 @@ BehaviorTree APTree3 { // EID13
             }
         
         FlowNode PlaceSequence {
-            ServicePlanning MissingDomainSrv Enhsp Domain:MissingDomain Problem:problemPlace // EID2
+            ServicePlanning MyPlannerSrv1 Enhsp Problem:problemPlace // EID2
                 All
                 AllAction
                 NodeGraph {
                 }
-            }
-
-        FlowNode UnsupportedFfSequence {
-            ServicePlanning UnsupportedFfSrv FF Domain:PickAndPlaceHL Problem:problemPlace // EID3
-                All
-                AllAction
-                NodeGraph {
-                }
-            }
+        }
         } // EID11 
+        }
     }
 }
-
 
