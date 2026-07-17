@@ -31,9 +31,15 @@ public class CRFPredicateTypeRuleGenerator {
     // Prefix for the World rule
     private static final String WORLD_RULE_PREFIX = "World = (PropertyTypeDefinition | Property | PredicateTypeDefinition | ActionTypeDefinition";
 
-    // Concrete predicate rules (Holding, AtPlace, etc.) extend Predicate and are referenced via Name@Predicate.
-    // They are included in the World rule of CRFTypesCon.mc4 to enable top-level parsing.
-    // This generator only updates the predicate rules section; the World rule is managed separately.
+    // We do NOT update the World rule here, assuming Predicates are used inside Actions/Preconditions/Effects
+    // But wait, the World rule DOES contain PredicateTypeDefinition, but usually we don't put 'Holding' or 'AtPlace' 
+    // directly in the World sequence of the grammar unless they are top-level constructs.
+    // In CRFTypesCon.mc4, Predicates inherit from Predicate. They are usually referenced via Name@Predicate.
+    // However, if we want them to be parsable as individual lines (maybe for testing?), we might need them in World.
+    // The previous request didn't ask to update World, but I'll make it consistent if needed. 
+    // Looking at CRFTypesCon.mc4: World = (... | PredicateTypeDefinition | ...) 
+    // It doesn't seem the concrete predicates (Holding, AtPlace) are in the World rule in the current file.
+    // So I won't touch World rule for now.
 
     public static void main(String[] args) {
         try {
@@ -117,19 +123,26 @@ public class CRFPredicateTypeRuleGenerator {
 
             // Append arguments
             for (ASTProperty prop : properties) {
-                // Each property adds a space before it
-                rule.append(" ");
-
                 String pName = prop.getName();
                 String pType = prop.getType().getName();
+                boolean isOptional = prop.isIsOptional();
+                boolean isCont = prop.isIsCont();
 
-                // rule: pName:Name@pType
-                rule.append(pName)
-                    .append(":Name@")
-                    .append(pType);
-
+                // Build the field fragment: pName:Name@pType
+                String field = pName + ":Name@" + pType;
                 if (prop.isIsList()) {
-                    rule.append("+");
+                    field += "+";
+                }
+
+                rule.append(" ");
+                if (isOptional) {
+                    rule.append("(").append(field).append(")?");
+                } else {
+                    rule.append(field);
+                }
+
+                if (isCont) {
+                    System.out.println("  [Cont] " + predName + "." + pName + " marked as continuous (excluded from task planning)");
                 }
             }
 
@@ -148,23 +161,53 @@ public class CRFPredicateTypeRuleGenerator {
 
         String content = new String(Files.readAllBytes(path));
 
-        // Construct the new block content
+        // --- Merge logic: append new rules, overwrite if same name exists ---
+        int startIdx = content.indexOf(START_MARKER);
+        int endIdx = content.indexOf(END_MARKER);
+        
+        // Parse existing rules from the block (keyed by rule name)
+        java.util.LinkedHashMap<String, String> mergedRules = new java.util.LinkedHashMap<>();
+        
+        if (startIdx >= 0 && endIdx > startIdx) {
+            String existingBlock = content.substring(startIdx + START_MARKER.length(), endIdx).trim();
+            for (String line : existingBlock.split("\\r?\\n")) {
+                String trimmed = line.trim();
+                if (!trimmed.isEmpty()) {
+                    String ruleName = extractRuleName(trimmed);
+                    if (ruleName != null) {
+                        mergedRules.put(ruleName, trimmed);
+                    }
+                }
+            }
+        }
+        
+        // Merge new rules: overwrite existing by name, add new ones
+        for (String rule : newRules) {
+            String trimmed = rule.trim();
+            if (!trimmed.isEmpty()) {
+                String ruleName = extractRuleName(trimmed);
+                if (ruleName != null) {
+                    if (mergedRules.containsKey(ruleName)) {
+                        System.out.println("  Overwriting existing predicate: " + ruleName);
+                    } else {
+                        System.out.println("  Adding new predicate: " + ruleName);
+                    }
+                    mergedRules.put(ruleName, trimmed);
+                }
+            }
+        }
+        
+        // Rebuild the block
         StringBuilder newBlock = new StringBuilder();
         newBlock.append(START_MARKER).append(System.lineSeparator());
-        for (String rule : newRules) {
+        for (String rule : mergedRules.values()) {
             newBlock.append(rule).append(System.lineSeparator());
         }
         newBlock.append(END_MARKER);
 
-        String newContent;
-
-        // Logic to replace existing block or insert new one
-        int startIdx = content.indexOf(START_MARKER);
-        int endIdx = content.indexOf(END_MARKER);
-
         if (startIdx >= 0 && endIdx > startIdx) {
-            // Replace existing block
-            System.out.println("Updating existing predicate rule block...");
+            // Replace existing block with merged content
+            System.out.println("Updating existing predicate rule block (merge mode)...");
             String before = content.substring(0, startIdx);
             String after = content.substring(endIdx + END_MARKER.length());
             content = before + newBlock.toString() + after;
@@ -178,15 +221,13 @@ public class CRFPredicateTypeRuleGenerator {
             String before = content.substring(0, lastBrace);
             String after = content.substring(lastBrace);
 
-            // Add a newline before the block if needed
             content = before + System.lineSeparator() + newBlock.toString() + System.lineSeparator() + after;
         }
         
-        // Update the World rule by appending new predicate names.
-        // The World rule is expected to follow the pattern: World = ( ... )*;
+        // Collect ALL predicate names from merged rules for the World rule update
+        List<String> allPredNames = new ArrayList<>(mergedRules.keySet());
         
-        // Regex to match existing World rule content inside parens
-        // World = ( ... )*;
+        // Update the World rule
         String worldPattern = "(World\\s*=\\s*\\()(.*?)(\\)\\*;)";
         java.util.regex.Matcher m = Pattern.compile(worldPattern, Pattern.DOTALL).matcher(content);
         
@@ -197,10 +238,8 @@ public class CRFPredicateTypeRuleGenerator {
             String suffix = m.group(3);
             
             StringBuilder additionalContent = new StringBuilder();
-            for (String name : predNames) {
-                // adding if not already present to avoid duplicates
-                // simplistic check: if " | Name" or "Name |" or "Name" exists
-                 if (!existingContent.contains(name)) { // simple check, might have false positive if substring
+            for (String name : allPredNames) {
+                 if (!existingContent.contains(name)) { 
                     additionalContent.append(" | ").append(name);
                  }
             }
@@ -211,5 +250,16 @@ public class CRFPredicateTypeRuleGenerator {
         }
 
         Files.write(path, content.getBytes());
+    }
+    
+    /**
+     * Extract the rule name (first word) from a grammar rule line.
+     * E.g., "Holding extends Predicate = ..." -> "Holding"
+     */
+    private static String extractRuleName(String ruleLine) {
+        String trimmed = ruleLine.trim();
+        String[] tokens = trimmed.split("\\s+");
+        if (tokens.length < 1) return null;
+        return tokens[0];
     }
 }

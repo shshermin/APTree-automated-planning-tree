@@ -21,8 +21,8 @@ import de.se_rwth.commons.logging.Log;
 public class CSharpPredicateGenerator {
 
     private static final String DEFAULT_INPUT_PATH = "src/test/resources/valid/CRFTypes/LiveMatPredicaetTypes.bt";
-    private static final String DEFAULT_OUTPUT_DIR = "generated_csharp/predicates/";
-    private static final String DEFAULT_NAMESPACE = "BehaviorTree.Predicates";
+    private static final String DEFAULT_OUTPUT_DIR = "../APTreeExecutionEngine/src/ModelLoader/PredicateTypes";
+    private static final String DEFAULT_NAMESPACE = "ModelLoader.PredicateTypes";
 
     public static void main(String[] args) {
         try {
@@ -66,29 +66,23 @@ public class CSharpPredicateGenerator {
             // Iterate over Predicate Type Definitions
             for (var def : world.getPredicateTypeDefinitionList()) {
                 String className = def.getName();
-                // Assuming all predicates extend a base Predicate class in C# or interface
                 String superType = "Predicate"; 
                 
                 StringBuilder cs = new StringBuilder();
 
-                // Namespace
-                cs.append("using System;\n");
-                cs.append("using System.Collections.Generic;\n");
-                cs.append("using BehaviorTree.Types;\n\n"); // Assuming Property Types are here
-                cs.append("namespace ").append(namespace).append(" {\n\n");
+                // Using statement
+                cs.append("using System;\n\n");
+
+                // Namespace (new-line brace style)
+                cs.append("namespace ").append(namespace).append("\n{\n");
 
                 // Class Declaration
-                cs.append("    public class ").append(className);
-                if (superType != null && !superType.isEmpty()) {
-                    cs.append(" : ").append(superType);
-                }
-                cs.append(" {\n");
+                cs.append("    public class ").append(className).append(" : ").append(superType).append("\n");
+                cs.append("    {\n");
 
-                // Add not property
-                cs.append("        public bool not { get; set; }\n");
-
-                // Properties/Arguments of the predicate
-                for (ASTProperty prop : def.getPropertyList()) {
+                // Properties/Arguments of the predicate (no redundant 'not' property)
+                java.util.List<ASTProperty> propertyList = def.getPropertyList();
+                for (ASTProperty prop : propertyList) {
                     String propName = prop.getName();
                     String propType = mapTypeToCSharp(prop.getType().getName());
                     boolean isList = prop.isIsList();
@@ -102,13 +96,13 @@ public class CSharpPredicateGenerator {
                     cs.append(propName).append(" { get; set; }\n");
                 }
 
-                // Constructor
+                // Constructor — required properties first, then optional with defaults
                 cs.append("\n        public ").append(className).append("(");
                 
-                // Constructor arguments
-                java.util.List<ASTProperty> propertyList = def.getPropertyList();
+                // Required properties first
                 for (int i = 0; i < propertyList.size(); i++) {
                     ASTProperty prop = propertyList.get(i);
+                    if (prop.isIsOptional()) continue;
                     String propName = prop.getName();
                     String propType = mapTypeToCSharp(prop.getType().getName());
                     boolean isList = prop.isIsList();
@@ -120,25 +114,51 @@ public class CSharpPredicateGenerator {
                     }
                     cs.append(propName).append(", ");
                 }
-                cs.append("bool isNegated) : base(isNegated)\n");
+                // isNegated (required)
+                cs.append("bool isNegated");
+                // Optional properties with null defaults
+                for (int i = 0; i < propertyList.size(); i++) {
+                    ASTProperty prop = propertyList.get(i);
+                    if (!prop.isIsOptional()) continue;
+                    String propName = prop.getName();
+                    String propType = mapTypeToCSharp(prop.getType().getName());
+                    boolean isList = prop.isIsList();
+
+                    cs.append(", ");
+                    if (isList) {
+                        cs.append("List<").append(propType).append("> ");
+                    } else {
+                        cs.append(propType).append(" ");
+                    }
+                    cs.append(propName).append(" = null");
+                }
+                cs.append(") : base(isNegated)\n");
                 cs.append("        {\n");
                 cs.append("            PredicateType = new FastName(\"").append(className.toLowerCase()).append("\");\n");
                 
-                // Assign properties
+                // Assign all properties
                 for (ASTProperty prop : propertyList) {
                     cs.append("            this.").append(prop.getName()).append(" = ").append(prop.getName()).append(";\n");
                 }
                 cs.append("            this.PredicateName = GetUniqueKey();\n");
                 cs.append("        }\n");
 
-                // Override GetParameterValues
-                cs.append("\n        public override List<string> GetParameterValues()\n");
+                // Override GetPDDLParameterValues (excludes Cont properties — discrete/symbolic only)
+                cs.append("\n        public override List<string> GetPDDLParameterValues()\n");
                 cs.append("        {\n");
                 cs.append("            return new List<string>\n");
                 cs.append("            {\n");
                 
-                for (int i = 0; i < propertyList.size(); i++) {
-                    ASTProperty prop = propertyList.get(i);
+                // Filter out Cont (continuous) properties — they are not discrete planning parameters
+                java.util.List<ASTProperty> discreteProps = new java.util.ArrayList<>();
+                for (ASTProperty prop : propertyList) {
+                    if (!prop.isIsCont()) {
+                        discreteProps.add(prop);
+                    }
+                }
+
+                for (int i = 0; i < discreteProps.size(); i++) {
+                    ASTProperty prop = discreteProps.get(i);
                     String propName = prop.getName();
                     String propType = mapTypeToCSharp(prop.getType().getName());
                     boolean isList = prop.isIsList();
@@ -146,16 +166,14 @@ public class CSharpPredicateGenerator {
 
                     cs.append("                ");
                     if (isList) {
-                         // List properties use ToString() for serialization
                          cs.append(propName).append("?.ToString() ?? \"null\"");
                     } else if (isBasicType) {
                          cs.append(propName).append(".ToString()");
                     } else {
-                         // Check if likely nullable or complex
                          cs.append(propName).append("?.NameKey?.ToString() ?? \"null\"");
                     }
                     
-                    if (i < propertyList.size() - 1) {
+                    if (i < discreteProps.size() - 1) {
                         cs.append(",\n");
                     } else {
                         cs.append("\n");

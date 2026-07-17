@@ -124,11 +124,9 @@ public class CRFPropertyTypeRuleGenerator {
             
             // Append properties
             for (ASTProperty prop : properties) {
-               // Each property adds a space before it
-               rule.append(" ");
-               
                String pName = prop.getName();
                String pType = prop.getType().getName();
+               boolean isOptional = prop.isIsOptional();
                
                // Map 'STRING_VALUE' or 'string' to 'Name' as requested
                if ("STRING_VALUE".equals(pType) || "string".equalsIgnoreCase(pType)) {
@@ -142,18 +140,24 @@ public class CRFPropertyTypeRuleGenerator {
                // Determine if this is a primitive type or a reference type
                boolean isPrimitive = isPrimitiveType(pType);
                
-               // For reference types (Element, Location, Agent, etc.), use Name@Type format
-               // For primitives (Boolean, Integer, Name), use Type format
+               // Build the field fragment
+               String field;
                if (isPrimitive) {
-                   rule.append(pName).append(":").append(pType);
+                   field = pName + ":" + pType;
                } else {
-                   // Reference type - use symbol reference format
-                   rule.append(pName).append(":Name@").append(pType);
+                   field = pName + ":Name@" + pType;
                }
                
                // Check if it's a list (marked by + in the model)
                if (prop.isIsList()) {
-                   rule.append("+");
+                   field += "+";
+               }
+
+               rule.append(" ");
+               if (isOptional) {
+                   rule.append("(").append(field).append(")?");
+               } else {
+                   rule.append(field);
                }
             }
             
@@ -172,7 +176,10 @@ public class CRFPropertyTypeRuleGenerator {
         return typeName.equals("Boolean") || 
                typeName.equals("Integer") || 
                typeName.equals("Name") ||
-               typeName.equals("String");
+               typeName.equals("String") ||
+               typeName.equals("Double") ||
+               typeName.equals("Coordinate") ||
+               typeName.equals("RobotJoints");
     }
     
     private static void updateGrammarFile(String grammarPath, List<String> newRules, List<String> typeNames) throws IOException {
@@ -183,23 +190,53 @@ public class CRFPropertyTypeRuleGenerator {
         
         String content = new String(Files.readAllBytes(path));
         
-        // Construct the new block content
+        // --- Merge logic: append new rules, overwrite if same name exists ---
+        int startIdx = content.indexOf(START_MARKER);
+        int endIdx = content.indexOf(END_MARKER);
+        
+        // Parse existing rules from the block (keyed by rule name)
+        java.util.LinkedHashMap<String, String> mergedRules = new java.util.LinkedHashMap<>();
+        
+        if (startIdx >= 0 && endIdx > startIdx) {
+            String existingBlock = content.substring(startIdx + START_MARKER.length(), endIdx).trim();
+            for (String line : existingBlock.split("\\r?\\n")) {
+                String trimmed = line.trim();
+                if (!trimmed.isEmpty()) {
+                    String ruleName = extractRuleName(trimmed);
+                    if (ruleName != null) {
+                        mergedRules.put(ruleName, trimmed);
+                    }
+                }
+            }
+        }
+        
+        // Merge new rules: overwrite existing by name, add new ones
+        for (String rule : newRules) {
+            String trimmed = rule.trim();
+            if (!trimmed.isEmpty()) {
+                String ruleName = extractRuleName(trimmed);
+                if (ruleName != null) {
+                    if (mergedRules.containsKey(ruleName)) {
+                        System.out.println("  Overwriting existing rule: " + ruleName);
+                    } else {
+                        System.out.println("  Adding new rule: " + ruleName);
+                    }
+                    mergedRules.put(ruleName, trimmed);
+                }
+            }
+        }
+        
+        // Rebuild the block
         StringBuilder newBlock = new StringBuilder();
         newBlock.append(START_MARKER).append(System.lineSeparator());
-        for (String rule : newRules) {
+        for (String rule : mergedRules.values()) {
             newBlock.append(rule).append(System.lineSeparator());
         }
         newBlock.append(END_MARKER);
         
-        String newContent;
-        
-        // Logic to replace existing block or insert new one
-        int startIdx = content.indexOf(START_MARKER);
-        int endIdx = content.indexOf(END_MARKER);
-        
         if (startIdx >= 0 && endIdx > startIdx) {
             // Replace existing block
-            System.out.println("Updating existing rule block...");
+            System.out.println("Updating existing rule block (merge mode)...");
             String before = content.substring(0, startIdx);
             String after = content.substring(endIdx + END_MARKER.length());
             content = before + newBlock.toString() + after;
@@ -213,9 +250,11 @@ public class CRFPropertyTypeRuleGenerator {
             String before = content.substring(0, lastBrace);
             String after = content.substring(lastBrace);
             
-            // Add a newline before the block if needed
             content = before + System.lineSeparator() + newBlock.toString() + System.lineSeparator() + after;
         }
+
+        // Collect ALL type names from merged rules for the World rule update
+        List<String> allTypeNames = new ArrayList<>(mergedRules.keySet());
 
         // Update the World rule (Append-only mode to preserve other generated types)
         String worldPattern = "(World\\s*=\\s*\\()(.*?)(\\)\\*;)";
@@ -228,7 +267,7 @@ public class CRFPropertyTypeRuleGenerator {
             String suffix = m.group(3);
             
             StringBuilder additionalContent = new StringBuilder();
-            for (String name : typeNames) {
+            for (String name : allTypeNames) {
                  if (!existingContent.contains(name)) { 
                     additionalContent.append(" | ").append(name);
                  }
@@ -240,5 +279,22 @@ public class CRFPropertyTypeRuleGenerator {
         }
         
         Files.write(path, content.getBytes());
+    }
+    
+    /**
+     * Extract the rule name (first word) from a grammar rule line.
+     * E.g., "symbol Beam extends Element = ..." -> "Beam"
+     * Handles both "symbol X ..." and "X extends ..." patterns.
+     */
+    private static String extractRuleName(String ruleLine) {
+        String trimmed = ruleLine.trim();
+        String[] tokens = trimmed.split("\\s+");
+        if (tokens.length < 2) return null;
+        // If the line starts with "symbol", the name is the second token
+        if ("symbol".equals(tokens[0])) {
+            return tokens[1];
+        }
+        // Otherwise first token is the name (e.g., "Beam extends ...")
+        return tokens[0];
     }
 }
