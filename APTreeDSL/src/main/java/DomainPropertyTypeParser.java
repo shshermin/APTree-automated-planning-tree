@@ -1,25 +1,25 @@
-import crftypesdef._parser.CRFTypesDefParser;
-import crftypesdef._ast.ASTWorld;
-import crftypesdef.CRFTypesDefMill;
+import domaintypesdef._parser.DomainTypesDefParser;
+import domaintypesdef._ast.ASTWorld;
+import domaintypesdef.DomainTypesDefMill;
 
 import java.io.*;
 import java.nio.file.*;
 import java.util.Optional;
 
 /**
- * CRFPredicateTypeParser - Reads CRFTypes model.
+ * DomainPropertyTypeParser - Reads CRFTypes model.
  */
-public class CRFPredicateTypeParser {
+public class DomainPropertyTypeParser {
 
     private static final String BASE_DIR = "src/test/resources/valid/CRFTypes/";
-    private static final String DEFAULT_FILE = "CRFPredicateTypes.bt";
+    private static final String DEFAULT_FILE = "CRFPropertyTypes.bt";
     
     public static void main(String[] args) {
         try {
-            System.out.println("=== CRF PREDICATE TYPE PARSER ===");
+            System.out.println("=== CRF PROPERTY TYPE PARSER ===");
             
             // Initialize MontiCore mill
-            CRFTypesDefMill.init();
+            DomainTypesDefMill.init();
             
             // Parse the CRFTypes model
             String fileName = args.length > 0 ? args[0] : DEFAULT_FILE;
@@ -48,7 +48,7 @@ public class CRFPredicateTypeParser {
         }
         
         // Create parser and parse
-        CRFTypesDefParser parser = new CRFTypesDefParser();
+        DomainTypesDefParser parser = new DomainTypesDefParser();
         Optional<ASTWorld> result = parser.parse(modelPath);
         
         if (!result.isPresent()) {
@@ -57,7 +57,6 @@ public class CRFPredicateTypeParser {
         
         ASTWorld world = result.get();
         System.out.println(" Parsed model: " + modelPath);
-        System.out.println("  Found " + world.getPredicateTypeDefinitionList().size() + " PredicateTypeDefinitions");
         
         return world;
     }

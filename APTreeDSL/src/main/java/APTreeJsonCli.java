@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import crftypescon.CRFTypesConMill;
-import crftypescon._ast.ASTPickUpHL;
-import crftypescon._ast.ASTPlaceHL;
-import crftypescon._ast.ASTWorld;
-import crftypescon._parser.CRFTypesConParser;
-import crftypescon._visitor.CRFTypesConVisitor2;
-import crftypesdef._symboltable.ElementSymbol;
+import domaintypescon.DomainTypesConMill;
+import domaintypescon._ast.ASTPickUpHL;
+import domaintypescon._ast.ASTPlaceHL;
+import domaintypescon._ast.ASTWorld;
+import domaintypescon._parser.DomainTypesConParser;
+import domaintypescon._visitor.DomainTypesConVisitor2;
+import domaintypesdef._symboltable.ElementSymbol;
 import de.se_rwth.commons.logging.Log;
 import dynamicbtflownode.DynamicBTFlowNodeMill;
 import dynamicbtflownode._ast.ASTAPTree;
@@ -122,8 +122,8 @@ public class APTreeJsonCli {
       // COMMENTED OUT: skip CoCo checks during import
       // DynamicBTFlowNodeCoCoChecker checker = new DynamicBTFlowNodeCoCoChecker();
       // ElementExistsCoCo elementCheck = new ElementExistsCoCo();
-      // checker.addCoCo((crftypescon._cocos.CRFTypesConASTPickUpHLCoCo) elementCheck);
-      // checker.addCoCo((crftypescon._cocos.CRFTypesConASTPlaceHLCoCo) elementCheck);
+      // checker.addCoCo((domaintypescon._cocos.DomainTypesConASTPickUpHLCoCo) elementCheck);
+      // checker.addCoCo((domaintypescon._cocos.DomainTypesConASTPlaceHLCoCo) elementCheck);
       // checker.checkAll((ASTDynamicBTFlowNodeNode) ast);
 
       List<String> findings = collectFindings();
@@ -137,9 +137,9 @@ public class APTreeJsonCli {
 
   private void loadConcreteInstancesIntoGlobalScope(String instancesFile) {
     try {
-      CRFTypesConMill.init();
+      DomainTypesConMill.init();
 
-      CRFTypesConParser parser = new CRFTypesConParser();
+      DomainTypesConParser parser = new DomainTypesConParser();
       Optional<ASTWorld> result = parser.parse(instancesFile);
 
       if (result.isEmpty()) {
@@ -147,7 +147,7 @@ public class APTreeJsonCli {
         return;
       }
 
-      var instanceScope = CRFTypesConMill.scopesGenitorDelegator().createFromAST(result.get());
+      var instanceScope = DomainTypesConMill.scopesGenitorDelegator().createFromAST(result.get());
 
       for (var beamSymbol : instanceScope.getLocalBeamSymbols()) {
         DynamicBTFlowNodeMill.globalScope().add(beamSymbol);
@@ -196,7 +196,7 @@ public class APTreeJsonCli {
 
     var traverser = DynamicBTFlowNodeMill.traverser();
 
-    traverser.add4CRFTypesCon(new CRFTypesConVisitor2() {
+    traverser.add4DomainTypesCon(new DomainTypesConVisitor2() {
       @Override
       public void visit(ASTPickUpHL node) {
         String elementName = node.getObj();

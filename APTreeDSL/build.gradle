@@ -188,10 +188,10 @@ task runPDDLPlannerParser(type: JavaExec) {
 }
 
 
-task runCRFPropertyTypeParser(type: JavaExec) {
+task runDomainPropertyTypeParser(type: JavaExec) {
     dependsOn 'compileJava'
     classpath = sourceSets.main.runtimeClasspath
-    mainClass = 'CRFPropertyTypeParser'
+    mainClass = 'DomainPropertyTypeParser'
     workingDir = projectDir
     args = [project.properties.get('modelName', 'CRFPropertyTypes.bt')]
 }
@@ -219,61 +219,61 @@ task generateCSharpActionTypes(type: JavaExec) {
 
 
 
-task runCRFPredicateTypeParser(type: JavaExec) {
+task runDomainPredicateTypeParser(type: JavaExec) {
     dependsOn 'compileJava'
     classpath = sourceSets.main.runtimeClasspath
-    mainClass = 'CRFPredicateTypeParser'
+    mainClass = 'DomainPredicateTypeParser'
     workingDir = projectDir
 }
 
 
-task runCRFActionTypeParser(type: JavaExec) {
+task runDomainActionTypeParser(type: JavaExec) {
     dependsOn 'compileJava'
     classpath = sourceSets.main.runtimeClasspath
-    mainClass = 'CRFActionTypeParser'
+    mainClass = 'DomainActionTypeParser'
     workingDir = projectDir
 }
 
-task generateCRFPropertyTypeRules(type: JavaExec) {
-    description = 'Generates grammar rules for CRFTypesCon.mc4 from CRFPropertyTypes.bt'
+task generateDomainPropertyTypeRules(type: JavaExec) {
+    description = 'Generates grammar rules for DomainTypesCon.mc4 from CRFPropertyTypes.bt'
     dependsOn 'compileJava'
     classpath = sourceSets.main.runtimeClasspath
-    mainClass = 'CRFPropertyTypeRuleGenerator'
+    mainClass = 'DomainPropertyTypeRuleGenerator'
     workingDir = projectDir
 }
 
-task generateCRFActionTypeRules(type: JavaExec) {
-   description = 'Generates action type grammar rules for CRFTypesCon.mc4 from CRFActionTypes.bt'
+task generateDomainActionTypeRules(type: JavaExec) {
+   description = 'Generates action type grammar rules for DomainTypesCon.mc4 from CRFActionTypes.bt'
    dependsOn 'compileJava'
    classpath = sourceSets.main.runtimeClasspath
-   mainClass = 'CRFActionTypeRuleGenerator'
+   mainClass = 'DomainActionTypeRuleGenerator'
    workingDir = projectDir
 }
 
-task generateCRFPredicateTypeRules(type: JavaExec) {
-    description = 'Generates predicate grammar rules for CRFTypesCon.mc4 from CRFPredicateTypes.bt'
+task generateDomainPredicateTypeRules(type: JavaExec) {
+    description = 'Generates predicate grammar rules for DomainTypesCon.mc4 from CRFPredicateTypes.bt'
     dependsOn 'compileJava'
     classpath = sourceSets.main.runtimeClasspath
-    mainClass = 'CRFPredicateTypeRuleGenerator'
+    mainClass = 'DomainPredicateTypeRuleGenerator'
     workingDir = projectDir
 }
 
 
 
-task runCRFConPropertyParser(type: JavaExec) {
-    description = 'Parses concrete property instances (CRFTypesCon grammar)'
+task runDomainConPropertyParser(type: JavaExec) {
+    description = 'Parses concrete property instances (DomainTypesCon grammar)'
     dependsOn 'compileJava'
     classpath = sourceSets.main.runtimeClasspath
-    mainClass = 'CRFConPropertyParser'
+    mainClass = 'DomainConPropertyParser'
     workingDir = projectDir
     args = [project.properties.get('modelName', 'LiveMatSetupObjects.bt')]
 }
 
-task runCRFConPredicateParser(type: JavaExec) {
-    description = 'Parses predicate models (CRFTypesCon grammar)'
+task runDomainConPredicateParser(type: JavaExec) {
+    description = 'Parses predicate models (DomainTypesCon grammar)'
     dependsOn 'compileJava'
     classpath = sourceSets.main.runtimeClasspath
-    mainClass = 'CRFConPredicateParser'
+    mainClass = 'DomainConPredicateParser'
     workingDir = projectDir
     args = [project.properties.get('modelName', 'LiveMatInitialState.bt')]
 }

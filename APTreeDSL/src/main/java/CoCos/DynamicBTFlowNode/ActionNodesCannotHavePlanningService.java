@@ -2,8 +2,8 @@ package CoCos.DynamicBTFlowNode;
 
 import java.util.List;
 
-import crftypesdef._ast.ASTPActionNode;
-import crftypesdef._cocos.CRFTypesDefASTPActionNodeCoCo;
+import domaintypesdef._ast.ASTPActionNode;
+import domaintypesdef._cocos.DomainTypesDefASTPActionNodeCoCo;
 import behaviortree._ast.ASTService;
 import de.se_rwth.commons.logging.Log;
 import planningservice._ast.ASTServicePlanning;
@@ -16,7 +16,7 @@ import planningservice._ast.ASTServicePlanning;
  * 
  * Error code: 0xDF002
  */
-public class ActionNodesCannotHavePlanningService implements CRFTypesDefASTPActionNodeCoCo {
+public class ActionNodesCannotHavePlanningService implements DomainTypesDefASTPActionNodeCoCo {
 
   @Override
   public void check(ASTPActionNode node) {

@@ -1,15 +1,15 @@
-import crftypesdef._parser.CRFTypesDefParser;
-import crftypesdef._ast.ASTWorld;
-import crftypesdef.CRFTypesDefMill;
+import domaintypesdef._parser.DomainTypesDefParser;
+import domaintypesdef._ast.ASTWorld;
+import domaintypesdef.DomainTypesDefMill;
 
 import java.io.*;
 import java.nio.file.*;
 import java.util.Optional;
 
 /**
- * CRFActionTypeParser - Reads CRFActionTypes model.
+ * DomainActionTypeParser - Reads CRFActionTypes model.
  */
-public class CRFActionTypeParser {
+public class DomainActionTypeParser {
 
     private static final String BASE_DIR = "src/test/resources/valid/CRFTypes/";
     private static final String DEFAULT_FILE = "CRFActionTypes.bt";
@@ -19,7 +19,7 @@ public class CRFActionTypeParser {
             System.out.println("=== CRF ACTION TYPE PARSER ===");
             
             // Initialize MontiCore mill
-            CRFTypesDefMill.init();
+            DomainTypesDefMill.init();
             
             // Parse the CRFActionTypes model
             String fileName = args.length > 0 ? args[0] : DEFAULT_FILE;
@@ -48,7 +48,7 @@ public class CRFActionTypeParser {
         }
         
         // Create parser and parse
-        CRFTypesDefParser parser = new CRFTypesDefParser();
+        DomainTypesDefParser parser = new DomainTypesDefParser();
         Optional<ASTWorld> result = parser.parse(modelPath);
         
         if (!result.isPresent()) {

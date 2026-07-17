@@ -1,5 +1,5 @@
 
-grammar CRFTypesDef extends BehaviorTree, de.monticore.types.MCBasicTypes {
+grammar DomainTypesDef extends BehaviorTree, de.monticore.types.MCBasicTypes {
 // Parameter Type definition
   // 1. Root container
  World = (PropertyTypeDefinition | Property | PredicateTypeDefinition | ActionTypeDefinition)*;

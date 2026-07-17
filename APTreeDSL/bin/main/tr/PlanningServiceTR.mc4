@@ -9,7 +9,7 @@ package tr;grammar PlanningServiceTR extends.tr.DomainTypesConTR {
 
 
   Problem_Pat implements ITFProblem , IPlanningServiceTFPart astimplements de.monticore.tf.ast.IPattern =
-    "Problem" schemaVarName:Name | "Problem" name:TfIdentifierName "Domain" ":" domain:TfIdentifierName |(("Problem" ? schemaVarName:Name|"Problem" schemaVarName:Name ?)"[["("Problem" name:TfIdentifierName "Domain" ":" domain:TfIdentifierName)"]]");
+    "Problem" schemaVarName:Name | "Problem" name:TfIdentifierName |(("Problem" ? schemaVarName:Name|"Problem" schemaVarName:Name ?)"[["("Problem" name:TfIdentifierName)"]]");
 
 
   Problem_Neg implements ITFProblem , IPlanningServiceTFPart astimplements de.monticore.tf.ast.INegation =
@@ -44,12 +44,32 @@ package tr;grammar PlanningServiceTR extends.tr.DomainTypesConTR {
     "list" "<Domain>" ? schemaVarName:Name ? "[[" domain:Domain_Pat "]]" ;
 
 
+  PlannerFF_Rep implements ITFPlannerFF , IPlanningServiceTFPart , ITFPlannerPDDL astimplements de.monticore.tf.ast.IReplacement =
+    ("[[" lhs:ITFPlannerFF ? ReplacementOp rhs:ITFPlannerFF ? "]]");
+
+
+  PlannerFF_Pat implements ITFPlannerFF , ITFPlannerPDDL , IPlanningServiceTFPart astimplements de.monticore.tf.ast.IPattern =
+    "PlannerFF" schemaVarName:Name | "FF" "Domain" ":" domain:TfIdentifierName("Problem" ":" problem:TfIdentifierName)? |(("PlannerFF" ? schemaVarName:Name|"PlannerFF" schemaVarName:Name ?)"[["("FF" "Domain" ":" domain:TfIdentifierName("Problem" ":" problem:TfIdentifierName)?)"]]");
+
+
+  PlannerFF_Neg implements ITFPlannerFF , IPlanningServiceTFPart , ITFPlannerPDDL astimplements de.monticore.tf.ast.INegation =
+    "not" "[[" plannerFF:ITFPlannerFF "]]" ;
+
+
+  PlannerFF_Opt implements ITFPlannerFF , IPlanningServiceTFPart , ITFPlannerPDDL astimplements de.monticore.tf.ast.IOptional =
+    "opt" "[[" plannerFF:ITFPlannerFF "]]" ;
+
+
+  PlannerFF_List implements ITFPlannerFF , IPlanningServiceTFPart , ITFPlannerPDDL astimplements de.monticore.tf.ast.IList =
+    "list" "<PlannerFF>" ? schemaVarName:Name ? "[[" plannerFF:PlannerFF_Pat "]]" ;
+
+
   PlannerENHSP_Rep implements ITFPlannerENHSP , IPlanningServiceTFPart , ITFPlannerPDDL astimplements de.monticore.tf.ast.IReplacement =
     ("[[" lhs:ITFPlannerENHSP ? ReplacementOp rhs:ITFPlannerENHSP ? "]]");
 
 
   PlannerENHSP_Pat implements ITFPlannerENHSP , ITFPlannerPDDL , IPlanningServiceTFPart astimplements de.monticore.tf.ast.IPattern =
-    "PlannerENHSP" schemaVarName:Name | "Enhsp" "Domain" ":" domain:TfIdentifierName("Problem" ":" problem:TfIdentifierName)? |(("PlannerENHSP" ? schemaVarName:Name|"PlannerENHSP" schemaVarName:Name ?)"[["("Enhsp" "Domain" ":" domain:TfIdentifierName("Problem" ":" problem:TfIdentifierName)?)"]]");
+    "PlannerENHSP" schemaVarName:Name | "Enhsp" "Domain" ":" domain:TfIdentifierName("Problem" ":" problem:TfIdentifierName)?("Config" ":" config:TfIdentifierFILEPATH)? |(("PlannerENHSP" ? schemaVarName:Name|"PlannerENHSP" schemaVarName:Name ?)"[["("Enhsp" "Domain" ":" domain:TfIdentifierName("Problem" ":" problem:TfIdentifierName)?("Config" ":" config:TfIdentifierFILEPATH)?)"]]");
 
 
   PlannerENHSP_Neg implements ITFPlannerENHSP , IPlanningServiceTFPart , ITFPlannerPDDL astimplements de.monticore.tf.ast.INegation =
@@ -172,6 +192,7 @@ package tr;grammar PlanningServiceTR extends.tr.DomainTypesConTR {
   interface ITFPWorld astextends de.monticore.tf.ast.ITFElement ;
   interface ITFServicePDDLPlanning extends ITFServicePlanning astextends de.monticore.tf.ast.ITFElement ;
   interface ITFPlannerENHSP extends ITFPlannerPDDL astextends de.monticore.tf.ast.ITFElement ;
+  interface ITFPlannerFF extends ITFPlannerPDDL astextends de.monticore.tf.ast.ITFElement ;
   interface ITFDomain astextends de.monticore.tf.ast.ITFElement ;
   interface ITFProblem astextends de.monticore.tf.ast.ITFElement ;
   interface ITFServicePlanning astextends de.monticore.tf.ast.ITFElement ;
@@ -286,6 +307,43 @@ package tr;grammar PlanningServiceTR extends.tr.DomainTypesConTR {
   ;
   astrule PlannerENHSP_Rep = method public Class _getTFElementType(){ 
     return planningservice._ast.ASTPlannerENHSP.class;
+
+  } 
+  ;
+  astrule PlannerFF_List = method public Class _getTFElementType(){ 
+    return planningservice._ast.ASTPlannerFF.class;
+
+  } 
+   method public ASTITFPlannerFF getTFElement(){ 
+    return getPlannerFF();
+
+  } 
+  ;
+  astrule PlannerFF_Neg = method public Class _getTFElementType(){ 
+    return planningservice._ast.ASTPlannerFF.class;
+
+  } 
+   method public ASTITFPlannerFF getTFElement(){ 
+    return getPlannerFF();
+
+  } 
+  ;
+  astrule PlannerFF_Pat = method public Class _getTFElementType(){ 
+    return planningservice._ast.ASTPlannerFF.class;
+
+  } 
+  ;
+  astrule PlannerFF_Opt = method public Class _getTFElementType(){ 
+    return planningservice._ast.ASTPlannerFF.class;
+
+  } 
+   method public ASTITFPlannerFF getTFElement(){ 
+    return getPlannerFF();
+
+  } 
+  ;
+  astrule PlannerFF_Rep = method public Class _getTFElementType(){ 
+    return planningservice._ast.ASTPlannerFF.class;
 
   } 
   ;

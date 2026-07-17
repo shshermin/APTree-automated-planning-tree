@@ -10,10 +10,10 @@ import java.util.Optional;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import crftypescon.CRFTypesConMill;
-import crftypescon._ast.ASTWorld;
-import crftypescon._parser.CRFTypesConParser;
-import crftypesdef._ast.ASTPredicate;
+import domaintypescon.DomainTypesConMill;
+import domaintypescon._ast.ASTWorld;
+import domaintypescon._parser.DomainTypesConParser;
+import domaintypesdef._ast.ASTPredicate;
 import de.se_rwth.commons.logging.Log;
 
 /**
@@ -94,10 +94,10 @@ public class GoalStateJsonGenerator {
         return;
       }
 
-      CRFTypesConMill.init();
+      DomainTypesConMill.init();
 
-      System.out.println("[DEBUG] Parsing with CRFTypesConParser...");
-      CRFTypesConParser conParser = CRFTypesConMill.parser();
+      System.out.println("[DEBUG] Parsing with DomainTypesConParser...");
+      DomainTypesConParser conParser = DomainTypesConMill.parser();
       Optional<ASTWorld> parseResult = conParser.parse(inputPath);
 
       if (!parseResult.isPresent()) {

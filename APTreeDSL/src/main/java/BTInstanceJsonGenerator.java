@@ -17,8 +17,8 @@ import behaviortree._ast.ASTBTNode;
 import behaviortree._ast.ASTDecorator;
 import behaviortree._ast.ASTFlowNode;
 import behaviortree._ast.ASTService;
-import crftypescon._ast.ASTWorld;
-import crftypescon._parser.CRFTypesConParser;
+import domaintypescon._ast.ASTWorld;
+import domaintypescon._parser.DomainTypesConParser;
 import de.se_rwth.commons.logging.Log;
 import dynamicbtflownode.DynamicBTFlowNodeMill;
 import dynamicbtflownode._ast.ASTAPTree;
@@ -386,9 +386,6 @@ public class BTInstanceJsonGenerator {
             sJson.put("problem", enhsp.getProblem());
             sJson.put("problemPath", basePath + "/" + enhsp.getProblem() + ".pddl");
           }
-          if (enhsp.isPresentConfig()) {
-            sJson.put("config", enhsp.getConfig());
-          }
         } else if (planner instanceof planningservice._ast.ASTPlannerPDDL) {
           planningservice._ast.ASTPlannerPDDL pddlPlanner = (planningservice._ast.ASTPlannerPDDL) planner;
           sJson.put("plannerType", "PDDL");
@@ -438,7 +435,7 @@ public class BTInstanceJsonGenerator {
     JSONObject params = new JSONObject();
 
     try {
-      // Known parameter getters per action type (from CRFTypesCon.mc4 grammar)
+      // Known parameter getters per action type (from DomainTypesCon.mc4 grammar)
       Map<String, String[]> typeGetters = new LinkedHashMap<>();
       typeGetters.put("ASTPickUpHL", new String[]{"getObj", "getGrabPos", "getClient"});
       typeGetters.put("ASTPlaceHL", new String[]{"getObj", "getPlacePos", "getClient"});
@@ -605,8 +602,8 @@ public class BTInstanceJsonGenerator {
   private void loadConcreteInstances(String instancesFile) {
     System.out.println("[DEBUG] Loading concrete instances from: " + instancesFile);
     try {
-      crftypescon.CRFTypesConMill.init();
-      CRFTypesConParser parser = crftypescon.CRFTypesConMill.parser();
+      domaintypescon.DomainTypesConMill.init();
+      DomainTypesConParser parser = domaintypescon.DomainTypesConMill.parser();
       Optional<ASTWorld> result = parser.parse(instancesFile);
 
       if (result.isEmpty()) {
@@ -615,7 +612,7 @@ public class BTInstanceJsonGenerator {
       }
 
       ASTWorld world = result.get();
-      var instanceScope = crftypescon.CRFTypesConMill.scopesGenitorDelegator().createFromAST(world);
+      var instanceScope = domaintypescon.DomainTypesConMill.scopesGenitorDelegator().createFromAST(world);
       DynamicBTFlowNodeMill.globalScope().addSubScope(instanceScope);
 
       System.out.println("[OK] Loaded concrete instances into global scope");

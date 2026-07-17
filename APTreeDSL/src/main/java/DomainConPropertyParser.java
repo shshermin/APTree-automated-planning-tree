@@ -1,27 +1,32 @@
-import crftypesdef._parser.CRFTypesDefParser;
-import crftypesdef._ast.ASTWorld;
-import crftypesdef.CRFTypesDefMill;
+import domaintypescon.DomainTypesConMill;
+import domaintypescon._ast.ASTWorld;
+import domaintypescon._parser.DomainTypesConParser;
+import de.se_rwth.commons.logging.Log;
 
 import java.io.*;
 import java.nio.file.*;
 import java.util.Optional;
 
 /**
- * CRFPropertyTypeParser - Reads CRFTypes model.
+ * DomainConPropertyParser - Parses concrete property instances (DomainTypesCon grammar)
+ * 
+ * Reads a DomainTypesCon file containing concrete property instance definitions.
  */
-public class CRFPropertyTypeParser {
+public class DomainConPropertyParser {
 
-    private static final String BASE_DIR = "src/test/resources/valid/CRFTypes/";
-    private static final String DEFAULT_FILE = "CRFPropertyTypes.bt";
+    private static final String BASE_DIR = "src/test/resources/valid/CRFConcrete/";
+    private static final String DEFAULT_FILE = "LiveMatSetupObjects.bt";
     
     public static void main(String[] args) {
         try {
-            System.out.println("=== CRF PROPERTY TYPE PARSER ===");
+            System.out.println("=== CRF CONCRETE PROPERTY PARSER ===");
             
             // Initialize MontiCore mill
-            CRFTypesDefMill.init();
+            DomainTypesConMill.init();
+            Log.init();
+            Log.enableFailQuick(false);
             
-            // Parse the CRFTypes model
+            // Parse the concrete property model
             String fileName = args.length > 0 ? args[0] : DEFAULT_FILE;
             String modelPath = BASE_DIR + fileName;
             
@@ -38,7 +43,7 @@ public class CRFPropertyTypeParser {
     }
     
     /**
-     * Parse the CRFTypes model and return the ASTWorld
+     * Parse the concrete property model and return the ASTWorld
      */
     public static ASTWorld parseModel(String modelPath) throws IOException {
         // Check if file exists
@@ -48,16 +53,14 @@ public class CRFPropertyTypeParser {
         }
         
         // Create parser and parse
-        CRFTypesDefParser parser = new CRFTypesDefParser();
+        DomainTypesConParser parser = DomainTypesConMill.parser();
         Optional<ASTWorld> result = parser.parse(modelPath);
         
         if (!result.isPresent()) {
-            throw new RuntimeException("Failed to parse model: " + modelPath);
+            throw new IOException("Failed to parse model: " + modelPath);
         }
         
-        ASTWorld world = result.get();
-        System.out.println(" Parsed model: " + modelPath);
-        
-        return world;
+        return result.get();
     }
 }
+

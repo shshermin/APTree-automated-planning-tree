@@ -45,6 +45,7 @@ public void setMCParser(DynamicBTFlowNodeAntlrParser in) {
   DOUBLE2969009105 : 'double';
   LPAREN : '(';
   RPAREN : ')';
+  NAILINGBEAMHL3906350591 : 'NailingBeamHL';
   STAR : '*';
   PLUS : '+';
   COMMA : ',';
@@ -110,9 +111,11 @@ public void setMCParser(DynamicBTFlowNodeAntlrParser in) {
   INITIALIZEML4059202895 : 'InitializeML';
   STACKPOSITION3708807089 : 'StackPosition';
   FLOWNODE2093957232 : 'FlowNode';
+  FF2240 : 'FF';
   ACTION1955883606 : 'Action';
   IMPORT3110171557 : 'import';
   TRAVELML1352502873 : 'TravelML';
+  CONFIG2024042338 : 'Config';
   GLUINGML3996558065 : 'GluingML';
   PROPERTIES1067411795 : 'Properties';
   ANY65996 : 'Any';

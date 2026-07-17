@@ -1,12 +1,12 @@
-package CoCos.CRFTypesDef;
+package CoCos.DomainTypesDef;
 
 import java.util.Set;
 
-import crftypesdef._ast.ASTPropertyTypeDefinition;
-import crftypesdef._cocos.CRFTypesDefASTPropertyTypeDefinitionCoCo;
+import domaintypesdef._ast.ASTPropertyTypeDefinition;
+import domaintypesdef._cocos.DomainTypesDefASTPropertyTypeDefinitionCoCo;
 import de.se_rwth.commons.logging.Log;
 
-public class NewTypesInheritFromCustomTypes implements CRFTypesDefASTPropertyTypeDefinitionCoCo{
+public class NewTypesInheritFromCustomTypes implements DomainTypesDefASTPropertyTypeDefinitionCoCo{
 
  
  // Define the whitelist of allowed supertypes

@@ -1,3 +1,4 @@
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -9,36 +10,41 @@ import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
-import crftypesdef.CRFTypesDefMill;
-import crftypesdef._ast.ASTProperty;
-import crftypesdef._ast.ASTWorld;
-import crftypesdef._parser.CRFTypesDefParser;
+import domaintypesdef.DomainTypesDefMill;
+import domaintypesdef._ast.ASTProperty;
+import domaintypesdef._ast.ASTWorld;
+import domaintypesdef._parser.DomainTypesDefParser;
 import de.se_rwth.commons.logging.Log;
 
 /**
- * CRFPropertyTypeRuleGenerator - Reads CRFTypes model and generates grammar rules for CRFTypesCon.mc4
- * 
- * Usage: Provide input model path and output grammar path as arguments.
- * Defaults:
- *  - Input: src/test/resources/valid/CRFTypes/LiveMatPropertyTypes.bt
- *  - Output: src/main/grammars/CRFTypesCon.mc4
+ * DomainPredicateTypeRuleGenerator - Reads CRFPredicateTypes model and generates grammar rules for DomainTypesCon.mc4
  */
-public class CRFPropertyTypeRuleGenerator {
+public class DomainPredicateTypeRuleGenerator {
 
-    private static final String DEFAULT_INPUT_PATH = "src/test/resources/valid/CRFTypes/LiveMatPropertyTypes.bt";
-    private static final String DEFAULT_OUTPUT_PATH = "src/main/grammars/CRFTypesCon.mc4";
-    
+    private static final String DEFAULT_INPUT_PATH = "src/test/resources/valid/CRFTypes/LiveMatPredicaetTypes.bt";
+    private static final String DEFAULT_OUTPUT_PATH = "src/main/grammars/DomainTypesCon.mc4";
+
     // Markers to identify the generated section in the target grammar file
-    private static final String START_MARKER = "// === GENERATED RULES (DO NOT EDIT BELOW) ===";
-    private static final String END_MARKER = "// === END GENERATED RULES ===";
-    
+    private static final String START_MARKER = "// === GENERATED PREDICATE RULES (DO NOT EDIT BELOW) ===";
+    private static final String END_MARKER = "// === END GENERATED PREDICATE RULES ===";
+
     // Prefix for the World rule
     private static final String WORLD_RULE_PREFIX = "World = (PropertyTypeDefinition | Property | PredicateTypeDefinition | ActionTypeDefinition";
 
+    // We do NOT update the World rule here, assuming Predicates are used inside Actions/Preconditions/Effects
+    // But wait, the World rule DOES contain PredicateTypeDefinition, but usually we don't put 'Holding' or 'AtPlace' 
+    // directly in the World sequence of the grammar unless they are top-level constructs.
+    // In DomainTypesCon.mc4, Predicates inherit from Predicate. They are usually referenced via Name@Predicate.
+    // However, if we want them to be parsable as individual lines (maybe for testing?), we might need them in World.
+    // The previous request didn't ask to update World, but I'll make it consistent if needed. 
+    // Looking at DomainTypesCon.mc4: World = (... | PredicateTypeDefinition | ...) 
+    // It doesn't seem the concrete predicates (Holding, AtPlace) are in the World rule in the current file.
+    // So I won't touch World rule for now.
+
     public static void main(String[] args) {
         try {
-            System.out.println("=== CRF PROPERTY TYPE RULE GENERATOR ===");
-            
+            System.out.println("=== CRF PREDICATE TYPE RULE GENERATOR ===");
+
             String inputPath = args.length > 0 ? args[0] : DEFAULT_INPUT_PATH;
             String outputPath = args.length > 1 ? args[1] : DEFAULT_OUTPUT_PATH;
 
@@ -46,37 +52,37 @@ public class CRFPropertyTypeRuleGenerator {
             System.out.println("Output Grammar: " + outputPath);
 
             // 1. Initialize MontiCore Mill
-            CRFTypesDefMill.init();
-            
+            DomainTypesDefMill.init();
+
             // 2. Parse the input model
             File modelFile = new File(inputPath);
             if (!modelFile.exists()) {
                 throw new FileNotFoundException("Input model file not found: " + inputPath);
             }
-            
-            CRFTypesDefParser parser = new CRFTypesDefParser();
+
+            DomainTypesDefParser parser = new DomainTypesDefParser();
             Optional<ASTWorld> result = parser.parse(inputPath);
-            
+
             if (!result.isPresent()) {
                 System.err.println("✗ Failed to parse model.");
                 if (Log.getErrorCount() > 0) {
-                     Log.getFindings().forEach(f -> System.out.println(f.toString()));
+                    Log.getFindings().forEach(f -> System.out.println(f.toString()));
                 }
                 return;
             }
-            
+
             ASTWorld world = result.get();
             System.out.println("✓ Parsed model successfully.");
-            
+
             // 3. Generate grammar rules from AST
             List<String> generatedRules = generateRules(world);
             
             // Collect generated type names for World rule update
-            List<String> typeNames = new ArrayList<>();
-            world.getPropertyTypeDefinitionList().forEach(def -> typeNames.add(def.getName()));
-            
+            List<String> predNames = new ArrayList<>();
+            world.getPredicateTypeDefinitionList().forEach(def -> predNames.add(def.getName()));
+
             if (generatedRules.isEmpty()) {
-                System.out.println("No property definitions found. No rules generated.");
+                System.out.println("No predicate definitions found. No rules generated.");
             } else {
                 System.out.println("Generated " + generatedRules.size() + " rules.");
                 for (String r : generatedRules) {
@@ -84,9 +90,9 @@ public class CRFPropertyTypeRuleGenerator {
                 }
             }
 
-            // 4. Inject rules into the grammar file and update World rule
-            updateGrammarFile(outputPath, generatedRules, typeNames);
-            
+            // 4. Inject rules into the grammar file
+            updateGrammarFile(outputPath, generatedRules, predNames);
+
             System.out.println("✓ Grammar file updated successfully.");
 
         } catch (Exception e) {
@@ -95,101 +101,58 @@ public class CRFPropertyTypeRuleGenerator {
             System.exit(1);
         }
     }
-    
+
     private static List<String> generateRules(ASTWorld world) {
         List<String> rules = new ArrayList<>();
-        
-        // Iterate over all PropertyTypeDefinitions in the World
-        // World -> (PropertyTypeDefinition | ...)*
-        // We need to filter for ASTPropertyTypeDefinition
-        
-        world.getPropertyTypeDefinitionList().forEach(def -> {
+
+        // Iterate over all PredicateTypeDefintion in the World
+        world.getPredicateTypeDefinitionList().forEach(def -> {
             StringBuilder rule = new StringBuilder();
-            
+
             // Extract data from AST
-            String typeName = def.getName();
-            String superType = def.getSuperType(); // e.g., Element, Location
+            String predName = def.getName();
             List<ASTProperty> properties = def.getPropertyList();
+
+            // Format: RuleName extends Predicate = "!"? "RuleName" "(" arg1:Name@Type arg2:Name@Type ")";
+            // Example: Holding extends Predicate = "!"? "Holding" "(" item:Name@Element agent:Name@Agent ")";
             
-            // Format: symbol <Name> extends <SuperType> = "<Name>" name:Name "(" <props> ")";
-            rule.append("symbol ")
-                .append(typeName)
-                .append(" extends ")
-                .append(superType)
-                .append(" = \"")
-                .append(typeName)
-                .append("\" name:Name \"(\""); // Opening paren for properties
-            
-            // No longer inject inherited 'loc' property for any type. All properties must be explicitly listed in the model.
-            
-            // Append properties
+            rule.append(predName)
+                .append(" extends Predicate = not:[\"!\"]? \"")
+                .append(predName)
+                .append("\" \"(\"");
+
+            // Append arguments
             for (ASTProperty prop : properties) {
-               String pName = prop.getName();
-               String pType = prop.getType().getName();
-               boolean isOptional = prop.isIsOptional();
-               
-               // Map 'STRING_VALUE' or 'string' to 'Name' as requested
-               if ("STRING_VALUE".equals(pType) || "string".equalsIgnoreCase(pType)) {
-                   pType = "Name";
-               }
-               // Map 'BOOLEAN_VALUE', 'Boolean', or 'boolean' to 'Boolean' as in the grammar
-               if ("BOOLEAN_VALUE".equalsIgnoreCase(pType) || "Boolean".equalsIgnoreCase(pType)) {
-                   pType = "Boolean";
-               }
+                String pName = prop.getName();
+                String pType = prop.getType().getName();
 
-               // Determine if this is a primitive type or a reference type
-               boolean isPrimitive = isPrimitiveType(pType);
-               
-               // Build the field fragment
-               String field;
-               if (isPrimitive) {
-                   field = pName + ":" + pType;
-               } else {
-                   field = pName + ":Name@" + pType;
-               }
-               
-               // Check if it's a list (marked by + in the model)
-               if (prop.isIsList()) {
-                   field += "+";
-               }
+                // Build the field fragment: pName:Name@pType
+                String field = pName + ":Name@" + pType;
+                if (prop.isIsList()) {
+                    field += "+";
+                }
 
-               rule.append(" ");
-               if (isOptional) {
-                   rule.append("(").append(field).append(")?");
-               } else {
-                   rule.append(field);
-               }
+                rule.append(" ");
+                {
+                    rule.append(field);
+                }
             }
-            
+
             rule.append(" \")\";");
             rules.add(rule.toString());
         });
-        
+
         return rules;
     }
-    
-    /**
-     * Determine if a type is a primitive type (Boolean, Integer, Name) or a reference type (Element, Location, etc.)
-     * Primitive types are used directly, while reference types use Name@Type format for symbol references.
-     */
-    private static boolean isPrimitiveType(String typeName) {
-        return typeName.equals("Boolean") || 
-               typeName.equals("Integer") || 
-               typeName.equals("Name") ||
-               typeName.equals("String") ||
-               typeName.equals("Double") ||
-               typeName.equals("Coordinate") ||
-               typeName.equals("RobotJoints");
-    }
-    
-    private static void updateGrammarFile(String grammarPath, List<String> newRules, List<String> typeNames) throws IOException {
+
+    private static void updateGrammarFile(String grammarPath, List<String> newRules, List<String> predNames) throws IOException {
         Path path = Paths.get(grammarPath);
         if (!Files.exists(path)) {
             throw new FileNotFoundException("Target grammar file not found: " + grammarPath);
         }
-        
+
         String content = new String(Files.readAllBytes(path));
-        
+
         // --- Merge logic: append new rules, overwrite if same name exists ---
         int startIdx = content.indexOf(START_MARKER);
         int endIdx = content.indexOf(END_MARKER);
@@ -217,9 +180,9 @@ public class CRFPropertyTypeRuleGenerator {
                 String ruleName = extractRuleName(trimmed);
                 if (ruleName != null) {
                     if (mergedRules.containsKey(ruleName)) {
-                        System.out.println("  Overwriting existing rule: " + ruleName);
+                        System.out.println("  Overwriting existing predicate: " + ruleName);
                     } else {
-                        System.out.println("  Adding new rule: " + ruleName);
+                        System.out.println("  Adding new predicate: " + ruleName);
                     }
                     mergedRules.put(ruleName, trimmed);
                 }
@@ -233,41 +196,41 @@ public class CRFPropertyTypeRuleGenerator {
             newBlock.append(rule).append(System.lineSeparator());
         }
         newBlock.append(END_MARKER);
-        
+
         if (startIdx >= 0 && endIdx > startIdx) {
-            // Replace existing block
-            System.out.println("Updating existing rule block (merge mode)...");
+            // Replace existing block with merged content
+            System.out.println("Updating existing predicate rule block (merge mode)...");
             String before = content.substring(0, startIdx);
             String after = content.substring(endIdx + END_MARKER.length());
             content = before + newBlock.toString() + after;
         } else {
             // Append at the end (before the last closing brace)
-             System.out.println("Inserting new rule block...");
+            System.out.println("Inserting new predicate rule block...");
             int lastBrace = content.lastIndexOf("}");
             if (lastBrace < 0) {
                 throw new RuntimeException("Malformed grammar file: Missing closing brace '}'");
             }
             String before = content.substring(0, lastBrace);
             String after = content.substring(lastBrace);
-            
+
             content = before + System.lineSeparator() + newBlock.toString() + System.lineSeparator() + after;
         }
-
-        // Collect ALL type names from merged rules for the World rule update
-        List<String> allTypeNames = new ArrayList<>(mergedRules.keySet());
-
-        // Update the World rule (Append-only mode to preserve other generated types)
+        
+        // Collect ALL predicate names from merged rules for the World rule update
+        List<String> allPredNames = new ArrayList<>(mergedRules.keySet());
+        
+        // Update the World rule
         String worldPattern = "(World\\s*=\\s*\\()(.*?)(\\)\\*;)";
         java.util.regex.Matcher m = Pattern.compile(worldPattern, Pattern.DOTALL).matcher(content);
         
         if (m.find()) {
-            System.out.println("Updating World rule with properties...");
+            System.out.println("Updating World rule with predicates...");
             String prefix = m.group(1);
             String existingContent = m.group(2);
             String suffix = m.group(3);
             
             StringBuilder additionalContent = new StringBuilder();
-            for (String name : allTypeNames) {
+            for (String name : allPredNames) {
                  if (!existingContent.contains(name)) { 
                     additionalContent.append(" | ").append(name);
                  }
@@ -275,26 +238,20 @@ public class CRFPropertyTypeRuleGenerator {
             
             content = content.substring(0, m.start()) + prefix + existingContent + additionalContent.toString() + suffix + content.substring(m.end());
         } else {
-            System.out.println("Warning: World rule not marked for update (pattern not found).");
+             System.out.println("Warning: World rule not marked for update (pattern not found).");
         }
-        
+
         Files.write(path, content.getBytes());
     }
     
     /**
      * Extract the rule name (first word) from a grammar rule line.
-     * E.g., "symbol Beam extends Element = ..." -> "Beam"
-     * Handles both "symbol X ..." and "X extends ..." patterns.
+     * E.g., "Holding extends Predicate = ..." -> "Holding"
      */
     private static String extractRuleName(String ruleLine) {
         String trimmed = ruleLine.trim();
         String[] tokens = trimmed.split("\\s+");
-        if (tokens.length < 2) return null;
-        // If the line starts with "symbol", the name is the second token
-        if ("symbol".equals(tokens[0])) {
-            return tokens[1];
-        }
-        // Otherwise first token is the name (e.g., "Beam extends ...")
+        if (tokens.length < 1) return null;
         return tokens[0];
     }
 }

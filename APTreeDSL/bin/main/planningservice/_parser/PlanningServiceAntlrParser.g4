@@ -207,7 +207,7 @@ private String convertString(Token t)  {
   
   // ASTClassProd PredicateRef
   predicateRef : 
-  (tmp0=EXCLAMATIONMARK)? ( tmp1=Name)  tmp2=LPAREN( ( tmp3=Name) ( tmp4=COMMA ( tmp5+=Name) )*
+   tmp0=EXCLAMATIONMARK? ( tmp1=Name)  tmp2=LPAREN( ( tmp3=Name) ( tmp4=COMMA ( tmp5+=Name) )*
   )?
    tmp6=RPAREN;
   
@@ -392,6 +392,13 @@ private String convertString(Token t)  {
   ( tmp14=AT ( tmp15=Name) )?
   ;
   
+  // ASTClassProd NailingBeamHL
+  nailingBeamHL : 
+   tmp0=ACTION1955883606 tmp1=NAILINGBEAMHL3906350591 ( tmp2=Name)  tmp3=LPAREN ( tmp4=Name)  ( tmp5=Name)  ( tmp6=Name)  ( tmp7=Name)  ( tmp8=Name)  tmp9=RPAREN( tmp10=LCURLY( tmp11+=decorator  | tmp12+=service  )*
+   tmp13=RCURLY)?
+  ( tmp14=AT ( tmp15=Name) )?
+  ;
+  
   // ASTClassProd NailingHL
   nailingHL : 
    tmp0=ACTION1955883606 tmp1=NAILINGHL4192252912 ( tmp2=Name)  tmp3=LPAREN ( tmp4=Name)  ( tmp5=Name)  ( tmp6=Name)  tmp7=RPAREN( tmp8=LCURLY( tmp9+=decorator  | tmp10+=service  )*
@@ -488,6 +495,12 @@ private String convertString(Token t)  {
   // ASTClassProd PlannerENHSP
   plannerENHSP : 
    tmp0=ENHSP67103580 tmp1=DOMAIN2052636900 tmp2=COLON ( tmp3=Name) ( tmp4=PROBLEM1355111039 tmp5=COLON ( tmp6=Name) )?
+  ( tmp7=CONFIG2024042338 tmp8=COLON ( tmp9=FILEPATH) )?
+  ;
+  
+  // ASTClassProd PlannerFF
+  plannerFF : 
+   tmp0=FF2240 tmp1=DOMAIN2052636900 tmp2=COLON ( tmp3=Name) ( tmp4=PROBLEM1355111039 tmp5=COLON ( tmp6=Name) )?
   ;
   
   // ASTClassProd Domain
@@ -497,7 +510,7 @@ private String convertString(Token t)  {
   
   // ASTClassProd Problem
   problem : 
-   tmp0=PROBLEM1355111039 ( tmp1=Name)  tmp2=DOMAIN2052636900 tmp3=COLON ( tmp4=Name) ;
+   tmp0=PROBLEM1355111039 ( tmp1=Name) ;
   
   
   
@@ -609,19 +622,20 @@ private String convertString(Token t)  {
   tmp3=stackOnMultipleHL |
   tmp4=gluingPlateHL |
   tmp5=gluingBeamHL |
-  tmp6=nailingHL |
-  tmp7=travelML |
-  tmp8=equipeML |
-  tmp9=deequipML |
-  tmp10=initializeML |
-  tmp11=closeToolML |
-  tmp12=pickUpML |
-  tmp13=placeML |
-  tmp14=gluingML |
-  tmp15=nailingML |
-  tmp16=stackML |
-  tmp17=stackOnMultipleML |
-  tmp18=placeTimber;
+  tmp6=nailingBeamHL |
+  tmp7=nailingHL |
+  tmp8=travelML |
+  tmp9=equipeML |
+  tmp10=deequipML |
+  tmp11=initializeML |
+  tmp12=closeToolML |
+  tmp13=pickUpML |
+  tmp14=placeML |
+  tmp15=gluingML |
+  tmp16=nailingML |
+  tmp17=stackML |
+  tmp18=stackOnMultipleML |
+  tmp19=placeTimber;
   
   // ASTInterface ServicePlanning
   servicePlanning:
@@ -633,7 +647,8 @@ private String convertString(Token t)  {
   
   // ASTInterface PlannerPDDL
   plannerPDDL:
-  tmp0=plannerENHSP;
+  tmp0=plannerENHSP |
+  tmp1=plannerFF;
 
 
 

@@ -1,12 +1,12 @@
-package CoCos.CRFTypesCon;
+package CoCos.DomainTypesCon;
 
-import crftypescon._ast.ASTPickUpHL;
-import crftypescon._ast.ASTPlaceHL;
-import crftypescon._cocos.CRFTypesConASTPickUpHLCoCo;
-import crftypescon._cocos.CRFTypesConASTPlaceHLCoCo;
+import domaintypescon._ast.ASTPickUpHL;
+import domaintypescon._ast.ASTPlaceHL;
+import domaintypescon._cocos.DomainTypesConASTPickUpHLCoCo;
+import domaintypescon._cocos.DomainTypesConASTPlaceHLCoCo;
 import de.se_rwth.commons.logging.Log;
 
-public class ElementExistsCoCo implements CRFTypesConASTPickUpHLCoCo, CRFTypesConASTPlaceHLCoCo {
+public class ElementExistsCoCo implements DomainTypesConASTPickUpHLCoCo, DomainTypesConASTPlaceHLCoCo {
 
 @Override
 public void check(ASTPickUpHL node) {

@@ -5,10 +5,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 
-import crftypesdef.CRFTypesDefMill;
-import crftypesdef._ast.ASTProperty;
-import crftypesdef._ast.ASTWorld;
-import crftypesdef._parser.CRFTypesDefParser;
+import domaintypesdef.DomainTypesDefMill;
+import domaintypesdef._ast.ASTProperty;
+import domaintypesdef._ast.ASTWorld;
+import domaintypesdef._parser.DomainTypesDefParser;
 import de.se_rwth.commons.logging.Log;
 
 /**
@@ -36,7 +36,7 @@ public class CSharopCodeGenerator {
             System.out.println("Output Dir:  " + outputDir);
 
             // 1. Initialize Mill
-            CRFTypesDefMill.init();
+            DomainTypesDefMill.init();
 
             // 2. Parse input
             File modelFile = new File(inputPath);
@@ -44,7 +44,7 @@ public class CSharopCodeGenerator {
                 throw new FileNotFoundException("Input model file not found: " + inputPath);
             }
 
-            CRFTypesDefParser parser = new CRFTypesDefParser();
+            DomainTypesDefParser parser = new DomainTypesDefParser();
             Optional<ASTWorld> result = parser.parse(inputPath);
 
             if (!result.isPresent()) {
@@ -121,7 +121,7 @@ public class CSharopCodeGenerator {
                     boolean first = true;
                     // Required properties first
                     for (int i = 0; i < properties.size(); i++) {
-                        if (properties.get(i).isIsOptional()) continue;
+                        if (false) continue;
                         if (!first) cs.append(", ");
                         first = false;
                         String propType = mapTypeToCSharp(properties.get(i).getType().getName());
@@ -136,7 +136,7 @@ public class CSharopCodeGenerator {
                     }
                     // Optional properties with null defaults
                     for (int i = 0; i < properties.size(); i++) {
-                        if (!properties.get(i).isIsOptional()) continue;
+                        if (!false) continue;
                         if (!first) cs.append(", ");
                         first = false;
                         String propType = mapTypeToCSharp(properties.get(i).getType().getName());
@@ -164,7 +164,7 @@ public class CSharopCodeGenerator {
                     cs.append("        public ").append(className).append("(string name");
                     // Required properties first
                     for (int i = 0; i < properties.size(); i++) {
-                        if (properties.get(i).isIsOptional()) continue;
+                        if (false) continue;
                         cs.append(", ");
                         String propType = mapTypeToCSharp(properties.get(i).getType().getName());
                         boolean isList = properties.get(i).isIsList();
@@ -178,7 +178,7 @@ public class CSharopCodeGenerator {
                     }
                     // Optional properties with null defaults
                     for (int i = 0; i < properties.size(); i++) {
-                        if (!properties.get(i).isIsOptional()) continue;
+                        if (!false) continue;
                         cs.append(", ");
                         String propType = mapTypeToCSharp(properties.get(i).getType().getName());
                         boolean isList = properties.get(i).isIsList();

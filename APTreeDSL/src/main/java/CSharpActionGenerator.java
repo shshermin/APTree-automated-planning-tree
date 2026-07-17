@@ -5,11 +5,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 
-import crftypesdef.CRFTypesDefMill;
-import crftypesdef._ast.ASTPredicateRef;
-import crftypesdef._ast.ASTProperty;
-import crftypesdef._ast.ASTWorld;
-import crftypesdef._parser.CRFTypesDefParser;
+import domaintypesdef.DomainTypesDefMill;
+import domaintypesdef._ast.ASTPredicateRef;
+import domaintypesdef._ast.ASTProperty;
+import domaintypesdef._ast.ASTWorld;
+import domaintypesdef._parser.DomainTypesDefParser;
 import de.se_rwth.commons.logging.Log;
 
 /**
@@ -37,7 +37,7 @@ public class CSharpActionGenerator {
             System.out.println("Output Dir:  " + outputDir);
 
             // 1. Initialize Mill
-            CRFTypesDefMill.init();
+            DomainTypesDefMill.init();
 
             // 2. Parse input
             File modelFile = new File(inputPath);
@@ -45,7 +45,7 @@ public class CSharpActionGenerator {
                 throw new FileNotFoundException("Input model file not found: " + inputPath);
             }
 
-            CRFTypesDefParser parser = new CRFTypesDefParser();
+            DomainTypesDefParser parser = new DomainTypesDefParser();
             Optional<ASTWorld> result = parser.parse(inputPath);
 
             if (!result.isPresent()) {
@@ -89,7 +89,7 @@ public class CSharpActionGenerator {
                     String propName = prop.getName();
                     String propType = mapTypeToCSharp(prop.getType().getName());
                     boolean isList = prop.isIsList();
-                    boolean isCont = prop.isIsCont();
+                    boolean isCont = false;
 
                     cs.append("        // Parameter: ").append(propName).append(" of type ").append(propType);
                     if (isCont) cs.append(" [Cont]");
@@ -112,7 +112,7 @@ public class CSharpActionGenerator {
                 cs.append("        public ").append(className).append("(string actionType, string instanceName, Blackboard<FastName> blackboard");
                 // Required properties first
                 for (ASTProperty prop : propertyList) {
-                    if (prop.isIsOptional()) continue;
+                    if (false) continue;
                     String propName = prop.getName();
                     String propType = mapTypeToCSharp(prop.getType().getName());
                     boolean isList = prop.isIsList();
@@ -126,7 +126,7 @@ public class CSharpActionGenerator {
                 }
                 // Optional properties with null defaults
                 for (ASTProperty prop : propertyList) {
-                    if (!prop.isIsOptional()) continue;
+                    if (!false) continue;
                     String propName = prop.getName();
                     String propType = mapTypeToCSharp(prop.getType().getName());
                     boolean isList = prop.isIsList();
@@ -159,7 +159,7 @@ public class CSharpActionGenerator {
                 int preIdx = 0;
                 for (ASTPredicateRef precon : def.getPreconsList()) {
                     String predName = precon.getName();
-                    boolean isNot = precon.isNot();
+                    boolean isNot = false;
                     cs.append("            preconditions.AddPredicate(new FastName(\"").append(camelName).append("_pre_").append(preIdx).append("\"), new ").append(predName).append("(");
                     for (int i = 0; i < precon.sizeArgs(); i++) {
                         if (i > 0) cs.append(", ");
@@ -175,7 +175,7 @@ public class CSharpActionGenerator {
                 int effIdx = 0;
                 for (ASTPredicateRef effect : def.getEffectsList()) {
                     String predName = effect.getName();
-                    boolean isNot = effect.isNot();
+                    boolean isNot = false;
                     cs.append("            effects.AddPredicate(new FastName(\"").append(camelName).append("_eff_").append(effIdx).append("\"), new ").append(predName).append("(");
                     for (int i = 0; i < effect.sizeArgs(); i++) {
                         if (i > 0) cs.append(", ");

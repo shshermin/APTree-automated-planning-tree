@@ -8,7 +8,7 @@ import java.util.Optional;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import CoCos.CRFTypesCon.ElementExistsCoCo;
+import CoCos.DomainTypesCon.ElementExistsCoCo;
 import CoCos.DynamicBTFlowNode.ActionNodesCannotHavePlanningService;
 import CoCos.DynamicBTFlowNode.CausalLinkValidator;
 import CoCos.DynamicBTFlowNode.MustHavePlanningService;
@@ -18,15 +18,15 @@ import CoCos.DynamicBTFlowNode.UniquenessOfNames;
 import behaviortree._ast.ASTActionNode;
 import behaviortree._cocos.BehaviorTreeASTDecoratorCoCo;
 import behaviortree._cocos.BehaviorTreeASTServiceCoCo;
-import crftypescon._ast.ASTPickUpHL;
-import crftypescon._ast.ASTPlaceHL;
-import crftypescon._ast.ASTWorld;
-import crftypescon._cocos.CRFTypesConASTPickUpHLCoCo;
-import crftypescon._cocos.CRFTypesConASTPlaceHLCoCo;
-import crftypescon._parser.CRFTypesConParser;
-import crftypescon._visitor.CRFTypesConVisitor2;
-import crftypesdef._cocos.CRFTypesDefASTPActionNodeCoCo;
-import crftypesdef._symboltable.ElementSymbol;
+import domaintypescon._ast.ASTPickUpHL;
+import domaintypescon._ast.ASTPlaceHL;
+import domaintypescon._ast.ASTWorld;
+import domaintypescon._cocos.DomainTypesConASTPickUpHLCoCo;
+import domaintypescon._cocos.DomainTypesConASTPlaceHLCoCo;
+import domaintypescon._parser.DomainTypesConParser;
+import domaintypescon._visitor.DomainTypesConVisitor2;
+import domaintypesdef._cocos.DomainTypesDefASTPActionNodeCoCo;
+import domaintypesdef._symboltable.ElementSymbol;
 import de.se_rwth.commons.logging.Log;
 import dynamicbtflownode.DynamicBTFlowNodeMill;
 import dynamicbtflownode._ast.ASTAPTree;
@@ -127,14 +127,14 @@ public class APTreeTool {
         DynamicBTFlowNodeCoCoChecker checker = new DynamicBTFlowNodeCoCoChecker();
         // Add custom checks (must register for each node type explicitly to avoid ambiguity)
         ElementExistsCoCo elementCheck = new ElementExistsCoCo();
-        checker.addCoCo((CRFTypesConASTPickUpHLCoCo) elementCheck);
-        checker.addCoCo((CRFTypesConASTPlaceHLCoCo) elementCheck);
+        checker.addCoCo((DomainTypesConASTPickUpHLCoCo) elementCheck);
+        checker.addCoCo((DomainTypesConASTPlaceHLCoCo) elementCheck);
         // New: Every FlowNode must have at least one PlanningService
         MustHavePlanningService planningServiceCheck = new MustHavePlanningService();
        // checker.addCoCo(planningServiceCheck);
         // New: Action nodes cannot have PlanningService (generic, works with all ASTPActionNode subclasses)
         ActionNodesCannotHavePlanningService actionNodeCheck = new ActionNodesCannotHavePlanningService();
-        checker.addCoCo((CRFTypesDefASTPActionNodeCoCo) actionNodeCheck);
+        checker.addCoCo((DomainTypesDefASTPActionNodeCoCo) actionNodeCheck);
         // New: Decorator and service names must be unique
         UniquenessOfNames uniquenessCheck = new UniquenessOfNames();
         checker.addCoCo((BehaviorTreeASTDecoratorCoCo) uniquenessCheck);
@@ -323,11 +323,11 @@ public class APTreeTool {
     System.out.println("Loading concrete instances from: " + instancesFile);
     
     try {
-      // Initialize CRFTypesCon mill (separate from DynamicBTFlowNode)
-      crftypescon.CRFTypesConMill.init();
+      // Initialize DomainTypesCon mill (separate from DynamicBTFlowNode)
+      domaintypescon.DomainTypesConMill.init();
       
       // Parse the concrete instances model
-      CRFTypesConParser parser = crftypescon.CRFTypesConMill.parser();
+      DomainTypesConParser parser = domaintypescon.DomainTypesConMill.parser();
       Optional<ASTWorld> result = parser.parse(instancesFile);
       
       if (result.isEmpty()) {
@@ -339,7 +339,7 @@ public class APTreeTool {
       System.out.println("[OK] Parsed instances: " + instancesFile);
       
       // Create symbol table from instances AST
-      var instanceScope = crftypescon.CRFTypesConMill.scopesGenitorDelegator().createFromAST(world);
+      var instanceScope = domaintypescon.DomainTypesConMill.scopesGenitorDelegator().createFromAST(world);
       
       // Bridge: add the instance scope into the DynamicBTFlowNode global scope
       // so that resolveElement() etc. can find Beam, Plate, Robot symbols
@@ -638,7 +638,7 @@ public class APTreeTool {
     // Create a traverser for the full language hierarchy
     var traverser = DynamicBTFlowNodeMill.traverser();
     
-    traverser.add4CRFTypesCon(new CRFTypesConVisitor2() {
+    traverser.add4DomainTypesCon(new DomainTypesConVisitor2() {
       @Override
       public void visit(ASTPickUpHL node) {
         String elementName = node.getObj();

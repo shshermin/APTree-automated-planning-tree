@@ -9,18 +9,18 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * CRFActionTypeRuleGenerator - Reads CRFActionTypes model and generates grammar rules for CRFTypesCon.mc4
+ * DomainActionTypeRuleGenerator - Reads CRFActionTypes model and generates grammar rules for DomainTypesCon.mc4
  * Uses regex-based parsing to handle custom types (Stack, Cassette, etc.) without grammar constraints.
  *
  * Usage: Provide input model path and output grammar path as arguments.
  * Defaults:
  *  - Input: src/test/resources/valid/CRFTypes/LiveMatActionTypes.bt
- *  - Output: src/main/grammars/CRFTypesCon.mc4
+ *  - Output: src/main/grammars/DomainTypesCon.mc4
  */
-public class CRFActionTypeRuleGenerator {
+public class DomainActionTypeRuleGenerator {
 
     private static final String DEFAULT_INPUT_PATH = "src/test/resources/valid/CRFTypes/LiveMatActionTypes.bt";
-    private static final String DEFAULT_OUTPUT_PATH = "src/main/grammars/CRFTypesCon.mc4";
+    private static final String DEFAULT_OUTPUT_PATH = "src/main/grammars/DomainTypesCon.mc4";
 
     // Markers to identify the generated section in the target grammar file
     private static final String START_MARKER = "// === GENERATED ACTION RULES (DO NOT EDIT BELOW) ===";
@@ -79,7 +79,7 @@ public class CRFActionTypeRuleGenerator {
                 if (!actLevel.endsWith("LEVEL")) {
                     actLevel = actLevel + "LEVEL";
                 }
-                String astrule = "astrule " + action.name + " = method public crftypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=crftypesdef._ast.ASTActionLevel." + actLevel + "; } return actLevel; } ;";
+                String astrule = "astrule " + action.name + " = method public domaintypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=domaintypesdef._ast.ASTActionLevel." + actLevel + "; } return actLevel; } ;";
                 rules.add(astrule);
                 
                 // Add blank line between action groups (except after the last one)

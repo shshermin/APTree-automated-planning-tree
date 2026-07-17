@@ -5,10 +5,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 
-import crftypesdef.CRFTypesDefMill;
-import crftypesdef._ast.ASTProperty;
-import crftypesdef._ast.ASTWorld;
-import crftypesdef._parser.CRFTypesDefParser;
+import domaintypesdef.DomainTypesDefMill;
+import domaintypesdef._ast.ASTProperty;
+import domaintypesdef._ast.ASTWorld;
+import domaintypesdef._parser.DomainTypesDefParser;
 import de.se_rwth.commons.logging.Log;
 
 /**
@@ -36,7 +36,7 @@ public class CSharpPredicateGenerator {
             System.out.println("Output Dir:  " + outputDir);
 
             // 1. Initialize Mill
-            CRFTypesDefMill.init();
+            DomainTypesDefMill.init();
 
             // 2. Parse input
             File modelFile = new File(inputPath);
@@ -44,7 +44,7 @@ public class CSharpPredicateGenerator {
                 throw new FileNotFoundException("Input model file not found: " + inputPath);
             }
 
-            CRFTypesDefParser parser = new CRFTypesDefParser();
+            DomainTypesDefParser parser = new DomainTypesDefParser();
             Optional<ASTWorld> result = parser.parse(inputPath);
 
             if (!result.isPresent()) {
@@ -102,7 +102,7 @@ public class CSharpPredicateGenerator {
                 // Required properties first
                 for (int i = 0; i < propertyList.size(); i++) {
                     ASTProperty prop = propertyList.get(i);
-                    if (prop.isIsOptional()) continue;
+                    if (false) continue;
                     String propName = prop.getName();
                     String propType = mapTypeToCSharp(prop.getType().getName());
                     boolean isList = prop.isIsList();
@@ -119,7 +119,7 @@ public class CSharpPredicateGenerator {
                 // Optional properties with null defaults
                 for (int i = 0; i < propertyList.size(); i++) {
                     ASTProperty prop = propertyList.get(i);
-                    if (!prop.isIsOptional()) continue;
+                    if (!false) continue;
                     String propName = prop.getName();
                     String propType = mapTypeToCSharp(prop.getType().getName());
                     boolean isList = prop.isIsList();
@@ -152,7 +152,7 @@ public class CSharpPredicateGenerator {
                 // Filter out Cont (continuous) properties — they are not discrete planning parameters
                 java.util.List<ASTProperty> discreteProps = new java.util.ArrayList<>();
                 for (ASTProperty prop : propertyList) {
-                    if (!prop.isIsCont()) {
+                    if (!false) {
                         discreteProps.add(prop);
                     }
                 }
