@@ -5,7 +5,7 @@ BehaviorTree APTree3 { // EID13
         AllFlow
         NodeGraph {
             FlowNode PickupSequence {   // EID4
-                ServicePlanning MyPlannerSrv1 Enhsp Domain:DomainML Problem:problempickupHL Config: pt-blind  // EID1
+                ServicePlanning MyPlannerSrv1 Enhsp Domain:DomainML Problem:problempickupHL Config: "pt-blind"  // EID1
                 All
                 AllAction
                 NodeGraph {

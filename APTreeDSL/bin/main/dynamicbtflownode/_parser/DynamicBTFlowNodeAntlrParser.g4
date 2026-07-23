@@ -498,7 +498,7 @@ private String convertString(Token t)  {
   // ASTClassProd PlannerENHSP
   plannerENHSP : 
    tmp0=ENHSP67103580 tmp1=DOMAIN2052636900 tmp2=COLON ( tmp3=Name) ( tmp4=PROBLEM1355111039 tmp5=COLON ( tmp6=Name) )?
-  ( tmp7=CONFIG2024042338 tmp8=COLON ( tmp9=FILEPATH) )?
+  ( tmp7=CONFIG2024042338 tmp8=COLON ( tmp9=String) )?
   ;
   
   // ASTClassProd PlannerFF

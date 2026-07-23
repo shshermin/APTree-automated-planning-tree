@@ -69,7 +69,7 @@ package tr;grammar PlanningServiceTR extends.tr.DomainTypesConTR {
 
 
   PlannerENHSP_Pat implements ITFPlannerENHSP , ITFPlannerPDDL , IPlanningServiceTFPart astimplements de.monticore.tf.ast.IPattern =
-    "PlannerENHSP" schemaVarName:Name | "Enhsp" "Domain" ":" domain:TfIdentifierName("Problem" ":" problem:TfIdentifierName)?("Config" ":" config:TfIdentifierFILEPATH)? |(("PlannerENHSP" ? schemaVarName:Name|"PlannerENHSP" schemaVarName:Name ?)"[["("Enhsp" "Domain" ":" domain:TfIdentifierName("Problem" ":" problem:TfIdentifierName)?("Config" ":" config:TfIdentifierFILEPATH)?)"]]");
+    "PlannerENHSP" schemaVarName:Name | "Enhsp" "Domain" ":" domain:TfIdentifierName("Problem" ":" problem:TfIdentifierName)?("Config" ":" config:TfIdentifierString)? |(("PlannerENHSP" ? schemaVarName:Name|"PlannerENHSP" schemaVarName:Name ?)"[["("Enhsp" "Domain" ":" domain:TfIdentifierName("Problem" ":" problem:TfIdentifierName)?("Config" ":" config:TfIdentifierString)?)"]]");
 
 
   PlannerENHSP_Neg implements ITFPlannerENHSP , IPlanningServiceTFPart , ITFPlannerPDDL astimplements de.monticore.tf.ast.INegation =

@@ -7,8 +7,8 @@ ServicePDDLPlanning extends ServicePlanning = "ServicePlanning"  name:Name plann
   
 // Planners
 abstract Planner ;
-abstract PlannerPDDL extends Planner =  "Domain" ":" domain:Name@Domain   ("Problem" ":" problem:Name@Problem)? ("Config" ":" config:FILEPATH)?;
-PlannerENHSP extends PlannerPDDL = "Enhsp"  "Domain" ":" domain:Name@Domain   ("Problem" ":" problem:Name@Problem)? ("Config" ":" config:FILEPATH)?;
+abstract PlannerPDDL extends Planner =  "Domain" ":" domain:Name@Domain   ("Problem" ":" problem:Name@Problem)? ("Config" ":" config:String)?;
+PlannerENHSP extends PlannerPDDL = "Enhsp"  "Domain" ":" domain:Name@Domain   ("Problem" ":" problem:Name@Problem)? ("Config" ":" config:String)?;
 PlannerFF extends PlannerPDDL = "FF"  "Domain" ":" domain:Name@Domain   ("Problem" ":" problem:Name@Problem)?;
 symbol Domain = "Domain" name:Name  "LanguageVersion" ":" language:Double "Level" ":" actLev:ActionLevel "{" supportedActs:Name@PActionNode ("," supportedActs:Name@PActionNode)* "}";
 symbol Problem = "Problem" name:Name;
