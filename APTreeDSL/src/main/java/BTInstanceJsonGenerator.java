@@ -2,8 +2,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -386,6 +384,9 @@ public class BTInstanceJsonGenerator {
             sJson.put("problem", enhsp.getProblem());
             sJson.put("problemPath", basePath + "/" + enhsp.getProblem() + ".pddl");
           }
+          if (enhsp.isPresentConfig()) {
+            sJson.put("enhspConfig", stripQuotes(enhsp.getConfig()));
+          }
         } else if (planner instanceof planningservice._ast.ASTPlannerPDDL) {
           planningservice._ast.ASTPlannerPDDL pddlPlanner = (planningservice._ast.ASTPlannerPDDL) planner;
           sJson.put("plannerType", "PDDL");
@@ -395,12 +396,22 @@ public class BTInstanceJsonGenerator {
             sJson.put("problem", pddlPlanner.getProblem());
             sJson.put("problemPath", basePath + "/" + pddlPlanner.getProblem() + ".pddl");
           }
+          if (pddlPlanner.isPresentConfig()) {
+            sJson.put("config", stripQuotes(pddlPlanner.getConfig()));
+          }
         }
       }
 
       arr.add(sJson);
     }
     return arr;
+  }
+
+  private String stripQuotes(String value) {
+    if (value != null && value.length() >= 2 && value.startsWith("\"") && value.endsWith("\"")) {
+      return value.substring(1, value.length() - 1);
+    }
+    return value;
   }
 
   private JSONArray exportDecorators(List<? extends ASTDecorator> decorators) {
