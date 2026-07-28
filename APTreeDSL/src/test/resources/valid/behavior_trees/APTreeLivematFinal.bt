@@ -6,6 +6,9 @@ BehaviorTree LiveMat {
         AllFlow
         NodeGraph {
             FlowNode Batch1_C1toC4 {
+                Service planningPhase
+                Service batchManager
+                Decorator fairProgress
                 All
                 AllFlow
                 NodeGraph {
@@ -406,6 +409,9 @@ BehaviorTree LiveMat {
                 --[Meets]--> Batch2_C5toC8;
             }
             FlowNode Batch2_C5toC8 {
+                Service planningPhase
+                Service batchManager
+                Decorator fairProgress
                 All
                 AllFlow
                 NodeGraph {
@@ -806,6 +812,9 @@ BehaviorTree LiveMat {
                 --[Meets]--> Batch3_C9toC12;
             }
             FlowNode Batch3_C9toC12 {
+                Service planningPhase
+                Service batchManager
+                Decorator fairProgress
                 All
                 AllFlow
                 NodeGraph {
@@ -1256,20 +1265,6 @@ BehaviorTree PickUpHL_lp2_fp9_r1Subtree {
     }
 }
 
-BehaviorTree PlaceHL_lp2_pr2_r1Subtree {
-    Root FlowNode FF_Default_DynamicFlow_PlaceHL_lp2_pr2_r1 {
-        ServicePlanning subtreeSrv_PlaceHL_lp2_pr2_r1 FF Domain:DomainML Problem:problemPlaceHL_lp2_pr2_r1
-        All
-        AllAction
-        NodeGraph {
-            Action TravelML TravelML_r1_fp9_pr2 (r1 fp9 pr2) {
-                --[Meets]--> PlaceML_lp2_pr2_r1_vg1;
-            }
-            Action PlaceML PlaceML_lp2_pr2_r1_vg1 (lp2 pr2 r1 vg1)
-        }
-    }
-}
-
 BehaviorTree PickUpHL_lp3_fp17_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_lp3_fp17_r1 {
         ServicePlanning subtreeSrv_PickUpHL_lp3_fp17_r1 FF Domain:DomainML Problem:problemPickUpHL_lp3_fp17_r1
@@ -1596,6 +1591,20 @@ BehaviorTree PickUpHL_b7_fp10_r1Subtree {
                 --[Meets]--> PickUpML_b7_fp10_r1_vg1;
             }
             Action PickUpML PickUpML_b7_fp10_r1_vg1 (b7 fp10 r1 vg1)
+        }
+    }
+}
+
+BehaviorTree StackHL_b7_lp2_r1_pr2_lay2_m2Subtree {
+    Root FlowNode FF_Default_DynamicFlow_StackHL_b7_lp2_r1_pr2_lay2_m2 {
+        ServicePlanning subtreeSrv_StackHL_b7_lp2_r1_pr2_lay2_m2 FF Domain:DomainML Problem:problemStackHL_b7_lp2_r1_pr2_lay2_m2
+        All
+        AllAction
+        NodeGraph {
+            Action TravelML TravelML_r1_fp10_pr2 (r1 fp10 pr2) {
+                --[Meets]--> StackML_b7_lp2_r1_vg1_pr2;
+            }
+            Action StackML StackML_b7_lp2_r1_vg1_pr2 (b7 lp2 r1 vg1 pr2)
         }
     }
 }
@@ -2008,7 +2017,7 @@ BehaviorTree StackHL_b22_lp4_r1_pr4_lay4_m4Subtree {
 
 BehaviorTree PickUpHL_b21_fp28_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b21_fp28_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b21_fp28_r1 FF Domain:DomainML Problem:problemPickUpHL_b21_fp28_r1
+        ServicePlanning subtreeSrv_PickUpHL_b21_fp28_r1 FF Domain:DomainML
         All
         AllAction
         NodeGraph {
@@ -3600,20 +3609,6 @@ BehaviorTree StackHL_b40_lp7_r1_pr3_lay7_m7Subtree {
                 --[Meets]--> StackML_b40_lp7_r1_vg1_pr3;
             }
             Action StackML StackML_b40_lp7_r1_vg1_pr3 (b40 lp7 r1 vg1 pr3)
-        }
-    }
-}
-
-BehaviorTree PickUpHL_b39_fp52_r1Subtree {
-    Root FlowNode FF_Default_DynamicFlow_PickUpHL_b39_fp52_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b39_fp52_r1 FF Domain:DomainML Problem:problemPickUpHL_b39_fp52_r1
-        All
-        AllAction
-        NodeGraph {
-            Action TravelML TravelML_r1_pr3_fp52 (r1 pr3 fp52) {
-                --[Meets]--> PickUpML_b39_fp52_r1_vg1;
-            }
-            Action PickUpML PickUpML_b39_fp52_r1_vg1 (b39 fp52 r1 vg1)
         }
     }
 }
@@ -5964,6 +5959,17 @@ BehaviorTree GluingBeamHL_b52_r1_m9_lay9Subtree {
     }
 }
 
+BehaviorTree GluingBeamHL_b51_r1_m9_lay9Subtree {
+    Root FlowNode FF_Default_DynamicFlow_GluingBeamHL_b51_r1_m9_lay9 {
+        ServicePlanning subtreeSrv_GluingBeamHL_b51_r1_m9_lay9 FF Domain:DomainML Problem:problemGluingBeamHL_b51_r1_m9_lay9
+        All
+        AllAction
+        NodeGraph {
+            Action GluingML GluingML_b51_pr1_r1_gg1 (b51 pr1 r1 gg1)
+        }
+    }
+}
+
 BehaviorTree GluingBeamHL_b55_r1_m10_lay10Subtree {
     Root FlowNode FF_Default_DynamicFlow_GluingBeamHL_b55_r1_m10_lay10 {
         ServicePlanning subtreeSrv_GluingBeamHL_b55_r1_m10_lay10 FF Domain:DomainML Problem:problemGluingBeamHL_b55_r1_m10_lay10
@@ -5985,17 +5991,6 @@ BehaviorTree GluingBeamHL_b56_r1_m10_lay10Subtree {
         AllAction
         NodeGraph {
             Action GluingML GluingML_b56_pr2_r1_gg1 (b56 pr2 r1 gg1)
-        }
-    }
-}
-
-BehaviorTree GluingBeamHL_b59_r1_m10_lay10Subtree {
-    Root FlowNode FF_Default_DynamicFlow_GluingBeamHL_b59_r1_m10_lay10 {
-        ServicePlanning subtreeSrv_GluingBeamHL_b59_r1_m10_lay10 FF Domain:DomainML Problem:problemGluingBeamHL_b59_r1_m10_lay10
-        All
-        AllAction
-        NodeGraph {
-            Action GluingML GluingML_b59_pr2_r1_gg1 (b59 pr2 r1 gg1)
         }
     }
 }
@@ -6469,45 +6464,6 @@ BehaviorTree MoveCassetteToStackHL_tp12_lp12_pr4_sp12_r1_m12_lay12Subtree {
                 --[Meets]--> PlaceCassetteML_lp12_m12_sp12_r1_vg1;
             }
             Action PlaceCassetteML PlaceCassetteML_lp12_m12_sp12_r1_vg1 (lp12 m12 sp12 r1 vg1)
-        }
-    }
-}
-
-BehaviorTree StackHL_b7_lp2_r1_pr2_lay2_m2Subtree {
-    Root FlowNode FF_Default_DynamicFlow_StackHL_b7_lp2_r1_pr2_lay2_m2 {
-        ServicePlanning subtreeSrv_StackHL_b7_lp2_r1_pr2_lay2_m2 FF Domain:DomainML Problem:problemStackHL_b7_lp2_r1_pr2_lay2_m2
-        All
-        AllAction
-        NodeGraph {
-            Action TravelML TravelML_r1_fp10_pr2 (r1 fp10 pr2) {
-                --[Meets]--> StackML_b7_lp2_r1_vg1_pr2;
-            }
-            Action StackML StackML_b7_lp2_r1_vg1_pr2 (b7 lp2 r1 vg1 pr2)
-        }
-    }
-}
-
-BehaviorTree PickUpHL_b9_fp12_r1Subtree {
-    Root FlowNode FF_Default_DynamicFlow_PickUpHL_b9_fp12_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b9_fp12_r1 FF Domain:DomainML Problem:problemPickUpHL_b9_fp12_r1
-        All
-        AllAction
-        NodeGraph {
-            Action TravelML TravelML_r1_pr2_fp12 (r1 pr2 fp12) {
-                --[Meets]--> PickUpML_b9_fp12_r1_vg1;
-            }
-            Action PickUpML PickUpML_b9_fp12_r1_vg1 (b9 fp12 r1 vg1)
-        }
-    }
-}
-
-BehaviorTree GluingBeamHL_b51_r1_m9_lay9Subtree {
-    Root FlowNode FF_Default_DynamicFlow_GluingBeamHL_b51_r1_m9_lay9 {
-        ServicePlanning subtreeSrv_GluingBeamHL_b51_r1_m9_lay9 FF Domain:DomainML Problem:problemGluingBeamHL_b51_r1_m9_lay9
-        All
-        AllAction
-        NodeGraph {
-            Action GluingML GluingML_b51_pr1_r1_gg1 (b51 pr1 r1 gg1)
         }
     }
 }

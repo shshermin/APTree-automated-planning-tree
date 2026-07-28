@@ -1,9 +1,0 @@
-grammar DynamicBTFlowNodeTagSchema extends de.monticore.tagging.TagSchema ,PlanningServiceTagSchema {
-   FinalWorldSchemaIdentifier implements ScopeIdentifier  = "FinalWorld" ;
-   APTreeSchemaIdentifier implements ScopeIdentifier  = "APTree" ;
-   DynamicFlowNodeSchemaIdentifier implements ScopeIdentifier  = "DynamicFlowNode" ;
-   NodeGraphSchemaIdentifier implements ScopeIdentifier  = "NodeGraph" ;
-   GraphNodeSchemaIdentifier implements ScopeIdentifier  = "GraphNode" ;
-   RelationSchemaIdentifier implements ScopeIdentifier  = "Relation" ;
-  start TagSchema;
-}
