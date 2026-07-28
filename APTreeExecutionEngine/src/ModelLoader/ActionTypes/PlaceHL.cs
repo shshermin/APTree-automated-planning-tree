@@ -7,6 +7,8 @@ namespace BehaviorTreeMainProject
 {
     public class PlaceHL : PActionNode
     {
+        public override ActionLevel Level => ActionLevel.HighLevel;
+
         // Parameter: obj of type element
         public Element obj { get; private set; }
 

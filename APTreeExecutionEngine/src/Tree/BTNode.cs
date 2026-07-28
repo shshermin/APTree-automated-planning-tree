@@ -452,10 +452,11 @@ public abstract class BTNode : IBTNode
                 BehaviorTreeComponentLogger.TrackActionSuccess("GenericBTAction");
 
                 // Log ML action result to the compact ML-only log
-                var className = this.GetType().Name;
-                if (className.EndsWith("ML"))
+                var action = (PActionNode)this;
+                var className = GetType().Name;
+                if (action.Level == ActionLevel.MidLevel)
                 {
-                    MLActionResultLogger.Instance.LogSuccess(className, ((PActionNode)this).InstanceName.ToString());
+                    MLActionResultLogger.Instance.LogSuccess(className, action.InstanceName.ToString());
                 }
             }
             // Simplified tracking - detailed node success tracking removed
@@ -474,10 +475,11 @@ public abstract class BTNode : IBTNode
                 BehaviorTreeComponentLogger.TrackActionFailure("GenericBTAction");
 
                 // Log ML action result to the compact ML-only log
-                var className = this.GetType().Name;
-                if (className.EndsWith("ML"))
+                var action = (PActionNode)this;
+                var className = GetType().Name;
+                if (action.Level == ActionLevel.MidLevel)
                 {
-                    MLActionResultLogger.Instance.LogFailure(className, ((PActionNode)this).InstanceName.ToString());
+                    MLActionResultLogger.Instance.LogFailure(className, action.InstanceName.ToString());
                 }
             }
             // Simplified tracking - detailed node failure tracking removed

@@ -7,6 +7,8 @@ namespace BehaviorTreeMainProject
 {
     public class GluingPlateHL : PActionNode
     {
+        public override ActionLevel Level => ActionLevel.HighLevel;
+
         // Parameter: obj of type plate
         public Plate obj { get; private set; }
 

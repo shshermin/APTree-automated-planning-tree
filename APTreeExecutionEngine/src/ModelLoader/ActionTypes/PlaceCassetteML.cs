@@ -7,6 +7,8 @@ namespace BehaviorTreeMainProject
 {
     public class PlaceCassetteML : PActionNode
     {
+        public override ActionLevel Level => ActionLevel.MidLevel;
+
         // Parameter: lp of type plate
         public Plate lp { get; private set; }
 

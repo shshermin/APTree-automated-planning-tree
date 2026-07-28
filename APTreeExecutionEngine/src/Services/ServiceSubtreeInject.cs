@@ -114,7 +114,7 @@ namespace BehaviorTreeMainProject
 
         /// <summary>
         /// Service tick method - implements the required logic:
-        /// 1. Check if action is HL by checking the name
+        /// 1. Check whether the action is declared as high-level
         /// 2. If not HL, return true
         /// 3. If HL, inject the subtree
         /// 4. Return true if injection successful, false otherwise
@@ -128,12 +128,12 @@ namespace BehaviorTreeMainProject
             {
                 var actionType = pendingAction.actionType.ToString();
                 LogMessage($"🔍 ServiceSubtreeInject: Processing queued action: {actionType}");
-                LogMessage($"🔍 ServiceSubtreeInject: Action type ends with 'HL': {actionType.EndsWith("HL")}");
+                LogMessage($"🔍 ServiceSubtreeInject: Action level: {pendingAction.Level}");
                 
-                // 1. Check if the action is HL by checking the name of the action
-                if (!actionType.EndsWith("HL"))
+                // 1. Check whether the action is explicitly declared as high-level
+                if (pendingAction.Level != ActionLevel.HighLevel)
                 {
-                    LogMessage($"🔍 ServiceSubtreeInject: Action {actionType} is not a high-level action (no 'HL' suffix)");
+                    LogMessage($"🔍 ServiceSubtreeInject: Action {actionType} is not a high-level action");
                     // 2. If it is not HL return true
                     return true;
                 }

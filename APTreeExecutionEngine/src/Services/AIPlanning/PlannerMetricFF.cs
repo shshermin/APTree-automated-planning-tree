@@ -78,8 +78,11 @@ public class PlannerMetricFF : Planner
                     previous.Parameters[0] == action.Parameters[0] &&
                     previous.Parameters[2] == action.Parameters[1])
                 {
-                    simplified[^1] = (previous.Name,
-                        new[] { previous.Parameters[0], previous.Parameters[1], action.Parameters[2] });
+                    if (previous.Parameters[1] == action.Parameters[2])
+                        simplified.RemoveAt(simplified.Count - 1);
+                    else
+                        simplified[^1] = (previous.Name,
+                            new[] { previous.Parameters[0], previous.Parameters[1], action.Parameters[2] });
                     continue;
                 }
             }

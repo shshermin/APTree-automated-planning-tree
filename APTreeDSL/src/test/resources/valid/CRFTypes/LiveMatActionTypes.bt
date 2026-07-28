@@ -112,16 +112,17 @@ Define Action GluingBeamHL {
     ActLevel: HighLevel
     Properties {
         obj: Beam
-        pos: PositionOnRail
-        client: Robot       
+        client: Robot
         mod: Cassette
         lay: Stack
     }
     Preconditions {
-        !robotequipped(client)
-        atplace(obj, pos)
+        vgempty(client)
+        stacked(obj)
         clear(obj)
         !glued(obj)
+        nailed(obj)
+        allset(lay, mod)
     }
     Effects {
         glued(obj)
@@ -133,17 +134,16 @@ Define Action NailingBeamHL {
     ActLevel: HighLevel
     Properties {
         obj: Beam
-        pos: PositionOnRail
         client: Robot
         mod: Cassette
         lay: Stack
     }
     Preconditions {
-        !robotequipped(client)
-        atplace(obj, pos)
+        vgempty(client)
+        stacked(obj)
         clear(obj)
-        glued(obj)
         !nailed(obj)
+        allset(lay, mod)
     }
     Effects {
         nailed(obj)
@@ -154,18 +154,46 @@ Define Action NailingBeamHL {
 Define Action NailingHL {
     ActLevel: HighLevel
     Properties {
-        obj: Element
-        pos: PositionOnRail
+        obj: Plate
         client: Robot
     }
     Preconditions {
-        robotequipped(client)
-        atplace(obj, pos)
+        vgempty(client)
+        stacked(obj)
         clear(obj)
         !nailed(obj)
     }
     Effects {
         nailed(obj)
+    }
+}
+
+// Robot moves an assembled cassette to a free stack position
+Define Action MoveCassetteToStackHL {
+    ActLevel: HighLevel
+    Properties {
+        tp: Plate
+        lp: Plate
+        pr: PositionOnRail
+        sp: StackPosition
+        client: Robot
+        mod: Cassette
+        lay: Stack
+    }
+    Preconditions {
+        vgempty(client)
+        nailed(tp)
+        atplace(lp, pr)
+        belongstomodule(tp, mod)
+        belongstomodule(lp, mod)
+        allset(lay, mod)
+        positionfree(sp)
+    }
+    Effects {
+        cassetteAtStack(mod, sp)
+        positionfree(pr)
+        !atplace(lp, pr)
+        atplace(lp, sp)
     }
 }
 
@@ -407,5 +435,62 @@ Define Action StackOnMultipleML {
         atplace(plate, pos)
         vgempty(client)
         !clear(plate)
+    }
+}
+
+// Robot picks up an assembled cassette by its lower plate
+Define Action PickUpCassetteML {
+    ActLevel: MidLevel
+    Properties {
+        lp: Plate
+        mod: Cassette
+        lay: Stack
+        p: Location
+        client: Robot
+        vg: VacGripper
+    }
+    Preconditions {
+        hasTool(client, vg)
+        activeTool(vg)
+        vgempty(client)
+        atAgent(client, p)
+        atplace(lp, p)
+        !positionfree(p)
+        belongstomodule(lp, mod)
+        allset(lay, mod)
+        !holding(client, lp)
+    }
+    Effects {
+        holding(client, lp)
+        !atplace(lp, p)
+        !vgempty(client)
+        positionfree(p)
+    }
+}
+
+// Robot places an assembled cassette at a stack position
+Define Action PlaceCassetteML {
+    ActLevel: MidLevel
+    Properties {
+        lp: Plate
+        mod: Cassette
+        sp: StackPosition
+        client: Robot
+        vg: VacGripper
+    }
+    Preconditions {
+        hasTool(client, vg)
+        activeTool(vg)
+        holding(client, lp)
+        atAgent(client, sp)
+        belongstomodule(lp, mod)
+        positionfree(sp)
+    }
+    Effects {
+        atplace(lp, sp)
+        !holding(client, lp)
+        vgempty(client)
+        !positionfree(sp)
+        cassetteAtStack(mod, sp)
     }
 }

@@ -7,6 +7,8 @@ namespace BehaviorTreeMainProject
 {
     public class StackOnMultipleML : PActionNode
     {
+        public override ActionLevel Level => ActionLevel.MidLevel;
+
         // Parameter: plate of type plate
         public Plate plate { get; private set; }
 

@@ -7,6 +7,8 @@ namespace BehaviorTreeMainProject
 {
     public class MoveCassetteToStackHL : PActionNode
     {
+        public override ActionLevel Level => ActionLevel.HighLevel;
+
         // Parameter: tp of type plate (top plate)
         public Plate tp { get; private set; }
 

@@ -9,6 +9,8 @@ namespace BehaviorTreeMainProject
 {
     public class NailingML : PActionNode
     {
+        public override ActionLevel Level => ActionLevel.MidLevel;
+
         // Parameter: obj of type element
         public Element obj { get; private set; }
 

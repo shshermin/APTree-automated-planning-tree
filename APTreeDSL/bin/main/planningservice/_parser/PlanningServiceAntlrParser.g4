@@ -387,23 +387,23 @@ private String convertString(Token t)  {
   
   // ASTClassProd GluingBeamHL
   gluingBeamHL : 
-   tmp0=ACTION1955883606 tmp1=GLUINGBEAMHL3391256933 ( tmp2=Name)  tmp3=LPAREN ( tmp4=Name)  ( tmp5=Name)  ( tmp6=Name)  ( tmp7=Name)  ( tmp8=Name)  tmp9=RPAREN( tmp10=LCURLY( tmp11+=decorator  | tmp12+=service  )*
-   tmp13=RCURLY)?
-  ( tmp14=AT ( tmp15=Name) )?
+   tmp0=ACTION1955883606 tmp1=GLUINGBEAMHL3391256933 ( tmp2=Name)  tmp3=LPAREN ( tmp4=Name)  ( tmp5=Name)  ( tmp6=Name)  ( tmp7=Name)  tmp8=RPAREN( tmp9=LCURLY( tmp10+=decorator  | tmp11+=service  )*
+   tmp12=RCURLY)?
+  ( tmp13=AT ( tmp14=Name) )?
   ;
   
   // ASTClassProd NailingBeamHL
   nailingBeamHL : 
-   tmp0=ACTION1955883606 tmp1=NAILINGBEAMHL3906350591 ( tmp2=Name)  tmp3=LPAREN ( tmp4=Name)  ( tmp5=Name)  ( tmp6=Name)  ( tmp7=Name)  ( tmp8=Name)  tmp9=RPAREN( tmp10=LCURLY( tmp11+=decorator  | tmp12+=service  )*
-   tmp13=RCURLY)?
-  ( tmp14=AT ( tmp15=Name) )?
+   tmp0=ACTION1955883606 tmp1=NAILINGBEAMHL3906350591 ( tmp2=Name)  tmp3=LPAREN ( tmp4=Name)  ( tmp5=Name)  ( tmp6=Name)  ( tmp7=Name)  tmp8=RPAREN( tmp9=LCURLY( tmp10+=decorator  | tmp11+=service  )*
+   tmp12=RCURLY)?
+  ( tmp13=AT ( tmp14=Name) )?
   ;
   
   // ASTClassProd NailingHL
   nailingHL : 
-   tmp0=ACTION1955883606 tmp1=NAILINGHL4192252912 ( tmp2=Name)  tmp3=LPAREN ( tmp4=Name)  ( tmp5=Name)  ( tmp6=Name)  tmp7=RPAREN( tmp8=LCURLY( tmp9+=decorator  | tmp10+=service  )*
-   tmp11=RCURLY)?
-  ( tmp12=AT ( tmp13=Name) )?
+   tmp0=ACTION1955883606 tmp1=NAILINGHL4192252912 ( tmp2=Name)  tmp3=LPAREN ( tmp4=Name)  ( tmp5=Name)  tmp6=RPAREN( tmp7=LCURLY( tmp8+=decorator  | tmp9+=service  )*
+   tmp10=RCURLY)?
+  ( tmp11=AT ( tmp12=Name) )?
   ;
   
   // ASTClassProd TravelML
@@ -481,6 +481,27 @@ private String convertString(Token t)  {
    tmp0=ACTION1955883606 tmp1=STACKONMULTIPLEML2401736054 ( tmp2=Name)  tmp3=LPAREN ( tmp4=Name)  ( tmp5=Name)  ( tmp6=Name)  ( tmp7=Name)  ( tmp8=Name)  ( tmp9=Name)  tmp10=RPAREN( tmp11=LCURLY( tmp12+=decorator  | tmp13+=service  )*
    tmp14=RCURLY)?
   ( tmp15=AT ( tmp16=Name) )?
+  ;
+  
+  // ASTClassProd MoveCassetteToStackHL
+  moveCassetteToStackHL : 
+   tmp0=ACTION1955883606 tmp1=MOVECASSETTETOSTACKHL238054562 ( tmp2=Name)  tmp3=LPAREN ( tmp4=Name)  ( tmp5=Name)  ( tmp6=Name)  ( tmp7=Name)  ( tmp8=Name)  ( tmp9=Name)  ( tmp10=Name)  tmp11=RPAREN( tmp12=LCURLY( tmp13+=decorator  | tmp14+=service  )*
+   tmp15=RCURLY)?
+  ( tmp16=AT ( tmp17=Name) )?
+  ;
+  
+  // ASTClassProd PickUpCassetteML
+  pickUpCassetteML : 
+   tmp0=ACTION1955883606 tmp1=PICKUPCASSETTEML1372816793 ( tmp2=Name)  tmp3=LPAREN ( tmp4=Name)  ( tmp5=Name)  ( tmp6=Name)  ( tmp7=Name)  ( tmp8=Name)  ( tmp9=Name)  tmp10=RPAREN( tmp11=LCURLY( tmp12+=decorator  | tmp13+=service  )*
+   tmp14=RCURLY)?
+  ( tmp15=AT ( tmp16=Name) )?
+  ;
+  
+  // ASTClassProd PlaceCassetteML
+  placeCassetteML : 
+   tmp0=ACTION1955883606 tmp1=PLACECASSETTEML3009544708 ( tmp2=Name)  tmp3=LPAREN ( tmp4=Name)  ( tmp5=Name)  ( tmp6=Name)  ( tmp7=Name)  ( tmp8=Name)  tmp9=RPAREN( tmp10=LCURLY( tmp11+=decorator  | tmp12+=service  )*
+   tmp13=RCURLY)?
+  ( tmp14=AT ( tmp15=Name) )?
   ;
   
   // ASTClassProd PWorld
@@ -635,7 +656,10 @@ private String convertString(Token t)  {
   tmp16=nailingML |
   tmp17=stackML |
   tmp18=stackOnMultipleML |
-  tmp19=placeTimber;
+  tmp19=moveCassetteToStackHL |
+  tmp20=pickUpCassetteML |
+  tmp21=placeCassetteML |
+  tmp22=placeTimber;
   
   // ASTInterface ServicePlanning
   servicePlanning:

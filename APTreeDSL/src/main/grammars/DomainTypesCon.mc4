@@ -57,13 +57,13 @@ astrule StackOnMultipleHL = method public domaintypesdef._ast.ASTActionLevel get
 GluingPlateHL extends PActionNode = "Action" "GluingPlateHL" name:Name "(" obj:Name@Plate pos:Name@PositionOnRail client:Name@Robot ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
 astrule GluingPlateHL = method public domaintypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=domaintypesdef._ast.ASTActionLevel.HIGHLEVEL; } return actLevel; } ;
 
-GluingBeamHL extends PActionNode = "Action" "GluingBeamHL" name:Name "(" obj:Name@Beam pos:Name@PositionOnRail client:Name@Robot mod:Name@Cassette lay:Name@Stack ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
+GluingBeamHL extends PActionNode = "Action" "GluingBeamHL" name:Name "(" obj:Name@Beam client:Name@Robot mod:Name@Cassette lay:Name@Stack ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
 astrule GluingBeamHL = method public domaintypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=domaintypesdef._ast.ASTActionLevel.HIGHLEVEL; } return actLevel; } ;
 
-NailingBeamHL extends PActionNode = "Action" "NailingBeamHL" name:Name "(" obj:Name@Beam pos:Name@PositionOnRail client:Name@Robot mod:Name@Cassette lay:Name@Stack ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
+NailingBeamHL extends PActionNode = "Action" "NailingBeamHL" name:Name "(" obj:Name@Beam client:Name@Robot mod:Name@Cassette lay:Name@Stack ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
 astrule NailingBeamHL = method public domaintypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=domaintypesdef._ast.ASTActionLevel.HIGHLEVEL; } return actLevel; } ;
 
-NailingHL extends PActionNode = "Action" "NailingHL" name:Name "(" obj:Name@Element pos:Name@PositionOnRail client:Name@Robot ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
+NailingHL extends PActionNode = "Action" "NailingHL" name:Name "(" obj:Name@Plate client:Name@Robot ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
 astrule NailingHL = method public domaintypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=domaintypesdef._ast.ASTActionLevel.HIGHLEVEL; } return actLevel; } ;
 
 TravelML extends PActionNode = "Action" "TravelML" name:Name "(" client:Name@Robot from:Name@Location to:Name@Location ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
@@ -99,8 +99,17 @@ astrule StackML = method public domaintypesdef._ast.ASTActionLevel getActLevel()
 StackOnMultipleML extends PActionNode = "Action" "StackOnMultipleML" name:Name "(" plate:Name@Plate client:Name@Robot pos:Name@PositionOnRail vg:Name@VacGripper mod:Name@Cassette lay:Name@Stack ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
 astrule StackOnMultipleML = method public domaintypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=domaintypesdef._ast.ASTActionLevel.MIDLEVEL; } return actLevel; } ;
 
+MoveCassetteToStackHL extends PActionNode = "Action" "MoveCassetteToStackHL" name:Name "(" tp:Name@Plate lp:Name@Plate pr:Name@PositionOnRail sp:Name@StackPosition client:Name@Robot mod:Name@Cassette lay:Name@Stack ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
+astrule MoveCassetteToStackHL = method public domaintypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=domaintypesdef._ast.ASTActionLevel.HIGHLEVEL; } return actLevel; } ;
 
+PickUpCassetteML extends PActionNode = "Action" "PickUpCassetteML" name:Name "(" lp:Name@Plate mod:Name@Cassette lay:Name@Stack p:Name@Location client:Name@Robot vg:Name@VacGripper ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
+astrule PickUpCassetteML = method public domaintypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=domaintypesdef._ast.ASTActionLevel.MIDLEVEL; } return actLevel; } ;
+
+PlaceCassetteML extends PActionNode = "Action" "PlaceCassetteML" name:Name "(" lp:Name@Plate mod:Name@Cassette sp:Name@StackPosition client:Name@Robot vg:Name@VacGripper ")" ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)? ;
+astrule PlaceCassetteML = method public domaintypesdef._ast.ASTActionLevel getActLevel() { if(actLevel==null){ actLevel=domaintypesdef._ast.ASTActionLevel.MIDLEVEL; } return actLevel; } ;
 // === END GENERATED ACTION RULES ===
+
+
 
 
 

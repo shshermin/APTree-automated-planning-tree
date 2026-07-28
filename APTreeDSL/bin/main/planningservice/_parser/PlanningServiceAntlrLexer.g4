@@ -55,12 +55,14 @@ public void setMCParser(PlanningServiceAntlrParser in) {
   EQUIPEML653546164 : 'EquipeML';
   DEEQUIPML72308238 : 'DeequipML';
   GLUINGBEAMHL3391256933 : 'GluingBeamHL';
+  PICKUPCASSETTEML1372816793 : 'PickUpCassetteML';
   SERVICEPLANNING2103035154 : 'ServicePlanning';
   LONG3327612 : 'long';
   STACKONMULTIPLEML2401736054 : 'StackOnMultipleML';
   CASSETTE99400638 : 'Cassette';
   ATAGENT942376562 : 'AtAgent';
   ONTOP76319446 : 'OnTop';
+  PLACECASSETTEML3009544708 : 'PlaceCassetteML';
   NAILINGML4192253067 : 'NailingML';
   GLUEGUN1791333035 : 'GlueGun';
   PLATE77196022 : 'Plate';
@@ -80,6 +82,7 @@ public void setMCParser(PlanningServiceAntlrParser in) {
   FLOAT97526364 : 'float';
   BELONGSTOMODULE2857734107 : 'BelongsToModule';
   PREDICATE655935895 : 'Predicate';
+  MOVECASSETTETOSTACKHL238054562 : 'MoveCassetteToStackHL';
   PICKUPML3620224347 : 'PickUpML';
   POSITIONFREE197966677 : 'PositionFree';
   LANGUAGEVERSION2396644928 : 'LanguageVersion';

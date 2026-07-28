@@ -7,6 +7,8 @@ namespace BehaviorTreeMainProject
 {
     public class StackHL : PActionNode
     {
+        public override ActionLevel Level => ActionLevel.HighLevel;
+
         // Parameter: obj1 of type element
         public Element obj1 { get; private set; }
 

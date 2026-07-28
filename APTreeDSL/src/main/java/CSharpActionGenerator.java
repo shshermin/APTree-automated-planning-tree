@@ -81,6 +81,9 @@ public class CSharpActionGenerator {
                 cs.append("    public class ").append(className).append(" : ").append(superClass).append("\n");
                 cs.append("    {\n");
 
+                String actionLevel = mapActionLevelToCSharp(def.getActLevel().name());
+                cs.append("        public override ActionLevel Level => ActionLevel.").append(actionLevel).append(";\n\n");
+
                 // Properties/Arguments of the action
                 // Cont properties get public set (resolved at runtime by decorators)
                 // Regular properties get private set
@@ -232,6 +235,19 @@ public class CSharpActionGenerator {
                 return true;
             default:
                 return false;
+        }
+    }
+
+    private static String mapActionLevelToCSharp(String actionLevel) {
+        switch (actionLevel) {
+            case "HIGHLEVEL":
+                return "HighLevel";
+            case "MIDLEVEL":
+                return "MidLevel";
+            case "LOWLEVEL":
+                return "LowLevel";
+            default:
+                throw new IllegalArgumentException("Unsupported action level: " + actionLevel);
         }
     }
 
