@@ -18,12 +18,19 @@ import de.se_rwth.commons.logging.Log;
 
 /**
  * InitialStateJsonGenerator - Parses predicate models and exports predicates to JSON.
- * 
- * Reads a DomainTypesCon file containing predicate instances/state definitions.
+ *
+ * Convention-based usage (preferred):
+ *   java InitialStateJsonGenerator &lt;treeName&gt;
+ *   Resolves:
+ *     Input:  src/test/resources/valid/CRFConcrete/{treeName}InitState.bt
+ *     Output: ../APTreeExecutionEngine/src/ModelLoader/{treeName}InitState.json
+ *
+ * Explicit paths (legacy):
+ *   java InitialStateJsonGenerator &lt;inputPath&gt; &lt;outputPath&gt;
  */
 public class InitialStateJsonGenerator {
-  private static final String BASE_DIR = "src/test/resources/valid/CRFConcrete/";
-  private static final String DEFAULT_FILE = "LiveMatInitialState.bt";
+  private static final String INSTANCES_DIR = "src/test/resources/valid/CRFConcrete/";
+  private static final String OUTPUT_DIR = "../APTreeExecutionEngine/src/ModelLoader/";
 
   private static class PredicateInstance {
     String type;
@@ -44,12 +51,25 @@ public class InitialStateJsonGenerator {
     Log.enableFailQuick(false);
 
     InitialStateJsonGenerator generator = new InitialStateJsonGenerator();
-    String filePath = args.length > 0 ? args[0] : DEFAULT_FILE;
-    String outputPath = args.length > 1 ? args[1] : "../APTreeExecutionEngine/src/ModelLoader/InitialStatePredicates.json";
-    String resolvedPath = resolveInputPath(filePath);
+    String filePath;
+    String outputPath;
 
-    System.out.println("Processing predicate model: " + resolvedPath);
-    generator.parseAndExport(resolvedPath, outputPath);
+    if (args.length == 1 && !args[0].contains("/") && !args[0].contains("\\") && !args[0].endsWith(".bt")) {
+      // Convention mode: single treeName argument
+      String treeName = args[0];
+      filePath = INSTANCES_DIR + treeName + "InitState.bt";
+      outputPath = OUTPUT_DIR + treeName + "InitState.json";
+      System.out.println("[Convention] Tree: " + treeName);
+    } else {
+      // Legacy mode: explicit paths
+      filePath = args.length > 0 ? args[0] : INSTANCES_DIR + "LiveMatInitialState.bt";
+      outputPath = args.length > 1 ? args[1] : OUTPUT_DIR + "InitState.json";
+      filePath = resolveInputPath(filePath);
+    }
+
+    System.out.println("Processing predicate model: " + filePath);
+    System.out.println("Output: " + outputPath);
+    generator.parseAndExport(filePath, outputPath);
   }
 
   private static String resolveInputPath(String filePath) {
@@ -58,7 +78,7 @@ public class InitialStateJsonGenerator {
       return filePath;
     }
 
-    File baseDirPath = new File(BASE_DIR + filePath);
+    File baseDirPath = new File(INSTANCES_DIR + filePath);
     if (baseDirPath.exists()) {
       return baseDirPath.getPath();
     }

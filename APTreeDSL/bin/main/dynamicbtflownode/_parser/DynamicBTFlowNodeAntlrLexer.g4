@@ -39,12 +39,14 @@ public void setMCParser(DynamicBTFlowNodeAntlrParser in) {
   STACKED4061979911 : 'Stacked';
   STACKML4061979143 : 'StackML';
   POSITIONONRAIL1520817338 : 'PositionOnRail';
+  HUMAN70086925 : 'Human';
   EXCLAMATIONMARK : '!';
   ROOT2553090 : 'Root';
   BYTE3039496 : 'byte';
   DOUBLE2969009105 : 'double';
   LPAREN : '(';
   RPAREN : ')';
+  NAILINGBEAMHL3906350591 : 'NailingBeamHL';
   STAR : '*';
   PLUS : '+';
   COMMA : ',';
@@ -62,6 +64,7 @@ public void setMCParser(DynamicBTFlowNodeAntlrParser in) {
   OVERLAPS594454828 : 'Overlaps';
   STARTS2486350961 : 'Starts';
   GLUINGBEAMHL3391256933 : 'GluingBeamHL';
+  PICKUPCASSETTEML1372816793 : 'PickUpCassetteML';
   SERVICEPLANNING2103035154 : 'ServicePlanning';
   LONG3327612 : 'long';
   STACKONMULTIPLEML2401736054 : 'StackOnMultipleML';
@@ -69,6 +72,7 @@ public void setMCParser(DynamicBTFlowNodeAntlrParser in) {
   ATAGENT942376562 : 'AtAgent';
   ONTOP76319446 : 'OnTop';
   PERCENTAGE1071632058 : 'Percentage';
+  PLACECASSETTEML3009544708 : 'PlaceCassetteML';
   NAILINGML4192253067 : 'NailingML';
   GLUEGUN1791333035 : 'GlueGun';
   PLATE77196022 : 'Plate';
@@ -90,6 +94,7 @@ public void setMCParser(DynamicBTFlowNodeAntlrParser in) {
   FLOAT97526364 : 'float';
   BELONGSTOMODULE2857734107 : 'BelongsToModule';
   PREDICATE655935895 : 'Predicate';
+  MOVECASSETTETOSTACKHL238054562 : 'MoveCassetteToStackHL';
   PICKUPML3620224347 : 'PickUpML';
   POSITIONFREE197966677 : 'PositionFree';
   LANGUAGEVERSION2396644928 : 'LanguageVersion';
@@ -110,9 +115,11 @@ public void setMCParser(DynamicBTFlowNodeAntlrParser in) {
   INITIALIZEML4059202895 : 'InitializeML';
   STACKPOSITION3708807089 : 'StackPosition';
   FLOWNODE2093957232 : 'FlowNode';
+  FF2240 : 'FF';
   ACTION1955883606 : 'Action';
   IMPORT3110171557 : 'import';
   TRAVELML1352502873 : 'TravelML';
+  CONFIG2024042338 : 'Config';
   GLUINGML3996558065 : 'GluingML';
   PROPERTIES1067411795 : 'Properties';
   ANY65996 : 'Any';

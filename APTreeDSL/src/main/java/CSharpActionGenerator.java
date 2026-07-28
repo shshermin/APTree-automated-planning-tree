@@ -6,6 +6,7 @@ import java.nio.file.Paths;
 import java.util.Optional;
 
 import domaintypesdef.DomainTypesDefMill;
+import domaintypesdef._ast.ASTPredicateRef;
 import domaintypesdef._ast.ASTProperty;
 import domaintypesdef._ast.ASTWorld;
 import domaintypesdef._parser.DomainTypesDefParser;
@@ -20,8 +21,8 @@ import de.se_rwth.commons.logging.Log;
  */
 public class CSharpActionGenerator {
 
-    private static final String DEFAULT_INPUT_PATH = "src/test/resources/valid/DomainTypes/LiveMatActionTypes.bt";
-    private static final String DEFAULT_OUTPUT_DIR = "generated_csharp/actions/";
+    private static final String DEFAULT_INPUT_PATH = "src/test/resources/valid/CRFTypes/LiveMatActionTypes.bt";
+    private static final String DEFAULT_OUTPUT_DIR = "../APTreeExecutionEngine/src/ModelLoader/ActionTypes";
     private static final String DEFAULT_NAMESPACE = "BehaviorTreeMainProject";
 
     public static void main(String[] args) {
@@ -80,21 +81,29 @@ public class CSharpActionGenerator {
                 cs.append("    public class ").append(className).append(" : ").append(superClass).append("\n");
                 cs.append("    {\n");
 
-                // Properties/Arguments of the action with private set
+                String actionLevel = mapActionLevelToCSharp(def.getActLevel().name());
+                cs.append("        public override ActionLevel Level => ActionLevel.").append(actionLevel).append(";\n\n");
+
+                // Properties/Arguments of the action
+                // Cont properties get public set (resolved at runtime by decorators)
+                // Regular properties get private set
                 java.util.List<ASTProperty> propertyList = def.getPropertyList();
                 for (ASTProperty prop : propertyList) {
                     String propName = prop.getName();
                     String propType = mapTypeToCSharp(prop.getType().getName());
                     boolean isList = prop.isIsList();
+                    boolean isCont = false;
 
-                    cs.append("        // Parameter: ").append(propName).append(" of type ").append(propType).append("\n");
+                    cs.append("        // Parameter: ").append(propName).append(" of type ").append(propType);
+                    if (isCont) cs.append(" [Cont]");
+                    cs.append("\n");
                     cs.append("        public ");
                     if (isList) {
                         cs.append("List<").append(propType).append("> ");
                     } else {
                         cs.append(propType).append(" ");
                     }
-                    cs.append(propName).append(" { get; private set; }\n\n");
+                    cs.append(propName).append(isCont ? " { get; set; }" : " { get; private set; }").append("\n\n");
                 }
 
                 // Add preconditions and effects state fields
@@ -102,9 +111,11 @@ public class CSharpActionGenerator {
                 cs.append("        private State preconditions;\n");
                 cs.append("        private State effects;\n\n");
 
-                // Constructor
+                // Constructor — required properties first, then optional with defaults
                 cs.append("        public ").append(className).append("(string actionType, string instanceName, Blackboard<FastName> blackboard");
+                // Required properties first
                 for (ASTProperty prop : propertyList) {
+                    if (false) continue;
                     String propName = prop.getName();
                     String propType = mapTypeToCSharp(prop.getType().getName());
                     boolean isList = prop.isIsList();
@@ -115,6 +126,20 @@ public class CSharpActionGenerator {
                         cs.append(propType).append(" ");
                     }
                     cs.append(propName);
+                }
+                // Optional properties with null defaults
+                for (ASTProperty prop : propertyList) {
+                    if (!false) continue;
+                    String propName = prop.getName();
+                    String propType = mapTypeToCSharp(prop.getType().getName());
+                    boolean isList = prop.isIsList();
+                    cs.append(", ");
+                    if (isList) {
+                        cs.append("List<").append(propType).append("> ");
+                    } else {
+                        cs.append(propType).append(" ");
+                    }
+                    cs.append(propName).append(" = null");
                 }
                 cs.append(")\n");
                 cs.append("            : base(actionType, instanceName, blackboard)\n");
@@ -128,16 +153,41 @@ public class CSharpActionGenerator {
                 cs.append("        }\n\n");
 
                 // InitializePredicates method
+                String camelName = Character.toLowerCase(className.charAt(0)) + className.substring(1);
                 cs.append("        private void InitializePredicates()\n");
                 cs.append("        {\n");
                 cs.append("            // Initialize preconditions\n");
-                cs.append("            preconditions = new State(StateType.Precondition, new FastName(\"").append(className.toLowerCase()).append("_preconditions\"));\n");
-                cs.append("            // Preconditions are populated at runtime from PDDL domain definitions\n");
-                cs.append("            // preconditions.AddPredicate(new FastName(\"pre_0\"), new PredicateName(param1, param2, false));\n\n");
-                cs.append("            // Initialize effects\n");
-                cs.append("            effects = new State(StateType.Effect, new FastName(\"").append(className.toLowerCase()).append("_effects\"));\n");
-                cs.append("            // Effects are populated at runtime from PDDL domain definitions\n");
-                cs.append("            // effects.AddPredicate(new FastName(\"eff_0\"), new PredicateName(param1, param2, true));\n");
+                cs.append("            preconditions = new State(StateType.Precondition, new FastName(\"").append(camelName).append("_preconditions\"));\n");
+
+                int preIdx = 0;
+                for (ASTPredicateRef precon : def.getPreconsList()) {
+                    String predName = precon.getName();
+                    boolean isNot = false;
+                    cs.append("            preconditions.AddPredicate(new FastName(\"").append(camelName).append("_pre_").append(preIdx).append("\"), new ").append(predName).append("(");
+                    for (int i = 0; i < precon.sizeArgs(); i++) {
+                        if (i > 0) cs.append(", ");
+                        cs.append(precon.getArgs(i));
+                    }
+                    cs.append(", ").append(isNot).append("));\n");
+                    preIdx++;
+                }
+
+                cs.append("\n            // Initialize effects\n");
+                cs.append("            effects = new State(StateType.Effect, new FastName(\"").append(camelName).append("_effects\"));\n");
+
+                int effIdx = 0;
+                for (ASTPredicateRef effect : def.getEffectsList()) {
+                    String predName = effect.getName();
+                    boolean isNot = false;
+                    cs.append("            effects.AddPredicate(new FastName(\"").append(camelName).append("_eff_").append(effIdx).append("\"), new ").append(predName).append("(");
+                    for (int i = 0; i < effect.sizeArgs(); i++) {
+                        if (i > 0) cs.append(", ");
+                        cs.append(effect.getArgs(i));
+                    }
+                    cs.append(", ").append(isNot).append("));\n");
+                    effIdx++;
+                }
+
                 cs.append("        }\n\n");
 
                 // Property overrides
@@ -188,6 +238,19 @@ public class CSharpActionGenerator {
         }
     }
 
+    private static String mapActionLevelToCSharp(String actionLevel) {
+        switch (actionLevel) {
+            case "HIGHLEVEL":
+                return "HighLevel";
+            case "MIDLEVEL":
+                return "MidLevel";
+            case "LOWLEVEL":
+                return "LowLevel";
+            default:
+                throw new IllegalArgumentException("Unsupported action level: " + actionLevel);
+        }
+    }
+
     /**
      * Maps MontiCore/Basic types to C# types.
      */
@@ -224,7 +287,7 @@ public class CSharpActionGenerator {
                 return "string"; // Enum mapping usually simpler as string in generation unless logic exists
 
             default:
-                // Custom domain type (e.g. Layer) - pass through as-is
+                // Assume it's a custom type (e.g. Layer)
                 return mcType;
         }
     }

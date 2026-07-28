@@ -2,8 +2,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,8 +46,20 @@ import planningservice._ast.ASTServicePDDLPlanning;
 public class BTInstanceJsonGenerator {
 
   private static final String DEFAULT_BT_MODEL = "src/test/resources/valid/behavior_trees/APTreeLiveMat.bt";
-  private static final String DEFAULT_INSTANCES = "src/test/resources/valid/CRFConcrete/LiveMatSetupObjects.bt";
+  private static final String DEFAULT_INSTANCES = "src/test/resources/valid/CRFConcrete/LiveMatSceneObjects.bt";
   private static final String DEFAULT_OUTPUT = "../APTreeExecutionEngine/src/ModelLoader/BehaviorTreeModel.json";
+
+  /**
+   * Base path for PDDL files relative to the Flask python_service directory.
+   * Convention: ./Plannerinputs/static/{TreeName}/
+   */
+  private static final String PDDL_CONVENTION_PREFIX = "./Plannerinputs/static";
+
+  /**
+   * Absolute base path where the PDDL convention folder will be created on disk.
+   * Relative to the APTreeDSL project directory (where Gradle runs).
+   */
+  private static final String PDDL_FOLDER_BASE = "../APTreeExecutionEngine/python_service/Plannerinputs/static";
 
   // ──────────────────────────────────────────────────────────────────────────
   // Entry point
@@ -123,6 +133,10 @@ public class BTInstanceJsonGenerator {
       for (ASTAPTree tree : finalWorld.getAPTreeList()) {
         JSONObject treeJson = exportTree(tree);
         treesArray.add(treeJson);
+
+        // Create convention-based PDDL folder for this tree
+        String treeName = tree.getName();
+        createPddlConventionFolder(treeName);
       }
 
       root.put("behaviorTrees", treesArray);
@@ -151,10 +165,14 @@ public class BTInstanceJsonGenerator {
     JSONObject treeJson = new JSONObject();
     treeJson.put("name", tree.getName());
 
+    // Convention-based PDDL base path: ./Plannerinputs/static/{TreeName}
+    String basePath = PDDL_CONVENTION_PREFIX + "/" + tree.getName();
+    treeJson.put("basePath", basePath);
+
     // Export the root flow node
     ASTFlowNode rootFlow = tree.getRoot();
     if (rootFlow != null) {
-      treeJson.put("root", exportFlowNode(rootFlow));
+      treeJson.put("root", exportFlowNode(rootFlow, basePath));
     }
 
     return treeJson;
@@ -163,15 +181,15 @@ public class BTInstanceJsonGenerator {
   /**
    * Export a FlowNode (Sequence, Parallel, or DynamicFlowNode) to JSON.
    */
-  private JSONObject exportFlowNode(ASTFlowNode flow) {
+  private JSONObject exportFlowNode(ASTFlowNode flow, String basePath) {
     JSONObject flowJson = new JSONObject();
 
     // Basic info
     flowJson.put("name", flow.getName());
     flowJson.put("type", getFlowNodeType(flow));
 
-    // Services
-    JSONArray servicesArray = exportServices(flow.getServiceList());
+    // Services (with convention-resolved paths)
+    JSONArray servicesArray = exportServices(flow.getServiceList(), basePath);
     if (!servicesArray.isEmpty()) {
       flowJson.put("services", servicesArray);
     }
@@ -199,7 +217,7 @@ public class BTInstanceJsonGenerator {
       // NodeGraph
       ASTNodeGraph nodeGraph = dynFlow.getNodeGraph();
       if (nodeGraph != null) {
-        flowJson.put("nodeGraph", exportNodeGraph(nodeGraph));
+        flowJson.put("nodeGraph", exportNodeGraph(nodeGraph, basePath));
       }
     }
 
@@ -209,9 +227,9 @@ public class BTInstanceJsonGenerator {
       JSONArray childrenArray = new JSONArray();
       for (ASTBTNode child : children) {
         if (child instanceof ASTFlowNode) {
-          childrenArray.add(exportFlowNode((ASTFlowNode) child));
+          childrenArray.add(exportFlowNode((ASTFlowNode) child, basePath));
         } else if (child instanceof ASTActionNode) {
-          childrenArray.add(exportActionNode((ASTActionNode) child));
+          childrenArray.add(exportActionNode((ASTActionNode) child, basePath));
         }
       }
       if (!childrenArray.isEmpty()) {
@@ -226,7 +244,7 @@ public class BTInstanceJsonGenerator {
    * Export a NodeGraph to JSON.
    * The node graph contains action/flow nodes and their temporal relations.
    */
-  private JSONObject exportNodeGraph(ASTNodeGraph graph) {
+  private JSONObject exportNodeGraph(ASTNodeGraph graph, String basePath) {
     JSONObject graphJson = new JSONObject();
 
     // First pass: collect all nodes and build name→index map
@@ -240,9 +258,9 @@ public class BTInstanceJsonGenerator {
 
       JSONObject nodeJson;
       if (btNode instanceof ASTFlowNode) {
-        nodeJson = exportFlowNode((ASTFlowNode) btNode);
+        nodeJson = exportFlowNode((ASTFlowNode) btNode, basePath);
       } else if (btNode instanceof ASTActionNode) {
-        nodeJson = exportActionNode((ASTActionNode) btNode);
+        nodeJson = exportActionNode((ASTActionNode) btNode, basePath);
       } else {
         nodeJson = new JSONObject();
         nodeJson.put("name", btNode.getName());
@@ -288,7 +306,7 @@ public class BTInstanceJsonGenerator {
   /**
    * Export an ActionNode to JSON, including its parameters.
    */
-  private JSONObject exportActionNode(ASTActionNode action) {
+  private JSONObject exportActionNode(ASTActionNode action, String basePath) {
     JSONObject actionJson = new JSONObject();
 
     actionJson.put("name", action.getName());
@@ -319,7 +337,7 @@ public class BTInstanceJsonGenerator {
     }
 
     // Services on action node
-    JSONArray servicesArray = exportServices(action.getServiceList());
+    JSONArray servicesArray = exportServices(action.getServiceList(), basePath);
     if (!servicesArray.isEmpty()) {
       actionJson.put("services", servicesArray);
     }
@@ -337,7 +355,7 @@ public class BTInstanceJsonGenerator {
   // Services & Decorators
   // ──────────────────────────────────────────────────────────────────────────
 
-  private JSONArray exportServices(List<? extends ASTService> services) {
+  private JSONArray exportServices(List<? extends ASTService> services, String basePath) {
     JSONArray arr = new JSONArray();
     if (services == null) return arr;
 
@@ -352,15 +370,48 @@ public class BTInstanceJsonGenerator {
       }
       sJson.put("type", serviceType);
 
-      // For ServicePDDLPlanning, extract planner reference
+      // For ServicePDDLPlanning, extract planner details and resolve paths via convention
       if (service instanceof ASTServicePDDLPlanning) {
         ASTServicePDDLPlanning pddlService = (ASTServicePDDLPlanning) service;
-        sJson.put("plannerRef", pddlService.getPlanner());
+        planningservice._ast.ASTPlanner planner = pddlService.getPlanner();
+
+        if (planner instanceof planningservice._ast.ASTPlannerENHSP) {
+          planningservice._ast.ASTPlannerENHSP enhsp = (planningservice._ast.ASTPlannerENHSP) planner;
+          sJson.put("plannerType", "Enhsp");
+          sJson.put("domain", enhsp.getDomain());
+          sJson.put("domainPath", basePath + "/" + enhsp.getDomain() + ".pddl");
+          if (enhsp.isPresentProblem()) {
+            sJson.put("problem", enhsp.getProblem());
+            sJson.put("problemPath", basePath + "/" + enhsp.getProblem() + ".pddl");
+          }
+          if (enhsp.isPresentConfig()) {
+            sJson.put("enhspConfig", stripQuotes(enhsp.getConfig()));
+          }
+        } else if (planner instanceof planningservice._ast.ASTPlannerPDDL) {
+          planningservice._ast.ASTPlannerPDDL pddlPlanner = (planningservice._ast.ASTPlannerPDDL) planner;
+          sJson.put("plannerType", "PDDL");
+          sJson.put("domain", pddlPlanner.getDomain());
+          sJson.put("domainPath", basePath + "/" + pddlPlanner.getDomain() + ".pddl");
+          if (pddlPlanner.isPresentProblem()) {
+            sJson.put("problem", pddlPlanner.getProblem());
+            sJson.put("problemPath", basePath + "/" + pddlPlanner.getProblem() + ".pddl");
+          }
+          if (pddlPlanner.isPresentConfig()) {
+            sJson.put("config", stripQuotes(pddlPlanner.getConfig()));
+          }
+        }
       }
 
       arr.add(sJson);
     }
     return arr;
+  }
+
+  private String stripQuotes(String value) {
+    if (value != null && value.length() >= 2 && value.startsWith("\"") && value.endsWith("\"")) {
+      return value.substring(1, value.length() - 1);
+    }
+    return value;
   }
 
   private JSONArray exportDecorators(List<? extends ASTDecorator> decorators) {
@@ -528,6 +579,30 @@ public class BTInstanceJsonGenerator {
       return value.toString();
     } catch (Exception e) {
       return null;
+    }
+  }
+
+  // ──────────────────────────────────────────────────────────────────────────
+  // Convention-based PDDL folder creation
+  // ──────────────────────────────────────────────────────────────────────────
+
+  /**
+   * Creates the convention PDDL folder for a tree: Plannerinputs/static/{TreeName}/
+   * If the folder already exists, it is left untouched (no overwrite).
+   */
+  private void createPddlConventionFolder(String treeName) {
+    File folder = new File(PDDL_FOLDER_BASE, treeName);
+    if (folder.exists()) {
+      System.out.println("[OK] PDDL folder already exists: " + folder.getPath() + " (not overwritten)");
+    } else {
+      boolean created = folder.mkdirs();
+      if (created) {
+        System.out.println("[OK] Created PDDL convention folder: " + folder.getPath());
+        System.out.println("     Place your domain/problem .pddl files here.");
+        System.out.println("     Convention: {DomainName}.pddl, {ProblemName}.pddl");
+      } else {
+        System.err.println("[!] Could not create PDDL folder: " + folder.getPath());
+      }
     }
   }
 

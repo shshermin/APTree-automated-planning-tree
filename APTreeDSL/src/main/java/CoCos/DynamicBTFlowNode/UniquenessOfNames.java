@@ -53,11 +53,8 @@ public class UniquenessOfNames implements BehaviorTreeASTDecoratorCoCo, Behavior
         String sourcePos = astNode.get_SourcePositionStart() != null ? 
             astNode.get_SourcePositionStart().toString() : "unknown";
         
-        System.out.println("[DEBUG] Visiting " + type + ": '" + name + "' at " + sourcePos + " (id: " + nodeId + ")");
-        
         if (registry.containsKey(name)) {
             String previousType = registry.get(name);
-            System.out.println("[DEBUG] -> DUPLICATE FOUND: '" + name + "' was already registered as " + previousType);
             Log.error(
                 String.format("0xDF003 Duplicate name '%s': Already used as a %s. Current element is a %s.", 
                     name, previousType, type),
@@ -65,7 +62,6 @@ public class UniquenessOfNames implements BehaviorTreeASTDecoratorCoCo, Behavior
             );
         } else {
             registry.put(name, type);
-            System.out.println("[DEBUG] -> Added to registry as " + type);
         }
     }
 }

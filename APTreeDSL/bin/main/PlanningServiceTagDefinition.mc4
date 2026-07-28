@@ -6,6 +6,8 @@ grammar PlanningServiceTagDefinition extends PlanningService ,de.monticore.taggi
   /* DefaultIdent (using the Name) works too */
    PlannerENHSPIdentifier implements ModelElementIdentifier  = "[" identifiesElement:PlannerENHSP "]" ;
   /* DefaultIdent (using the Name) works too */
+   PlannerFFIdentifier implements ModelElementIdentifier  = "[" identifiesElement:PlannerFF "]" ;
+  /* DefaultIdent (using the Name) works too */
    DomainIdentifier implements ModelElementIdentifier  = "[" identifiesElement:Domain "]" ;
   /* DefaultIdent (using the Name) works too */
    ProblemIdentifier implements ModelElementIdentifier  = "[" identifiesElement:Problem "]" ;
@@ -21,6 +23,11 @@ grammar PlanningServiceTagDefinition extends PlanningService ,de.monticore.taggi
   ;
   astrule PlannerENHSPIdentifier = method public String getIdentifies(){ 
     return "PlannerENHSP";
+
+  } 
+  ;
+  astrule PlannerFFIdentifier = method public String getIdentifies(){ 
+    return "PlannerFF";
 
   } 
   ;

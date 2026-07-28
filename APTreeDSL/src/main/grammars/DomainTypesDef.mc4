@@ -41,7 +41,7 @@ grammar DomainTypesDef extends BehaviorTree, de.monticore.types.MCBasicTypes {
     "}";
 
 // predicate reference with Name arguments (comma-separated)
-PredicateRef = not:["!"]? name:Name  "(" (args:Name ("," args:Name)*)? ")";
+PredicateRef = "!"? name:Name  "(" (args:Name ("," args:Name)*)? ")";
 
 
  PlaceTimber extends PActionNode = "placetimber";
