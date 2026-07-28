@@ -1,6 +1,7 @@
 {
   "behaviorTrees": [
     {
+      "basePath": ".\/Plannerinputs\/static\/LiveMat",
       "root": {
         "childType": "ALLFLOW",
         "successCriteria": "ALL",
@@ -9,94 +10,398 @@
         "nodeGraph": {
           "nodes": [
             {
-              "childType": "ALLACTION",
+              "childType": "ALLFLOW",
               "successCriteria": "ALL",
-              "name": "HandleCassette1",
+              "decorators": [
+                {
+                  "name": "fairProgress",
+                  "type": "GripEmpty"
+                }
+              ],
+              "name": "Batch1_C1toC4",
               "services": [
                 {
-                  "name": "mypddlplanner1",
-                  "plannerRef": "Enhsp1",
-                  "type": "ServicePDDLPlanner"
+                  "name": "planningPhase",
+                  "type": "CalcDist"
                 }
               ],
               "type": "DynamicFlowNode",
               "nodeGraph": {
                 "nodes": [
-                  
+                  {
+                    "childType": "ALLACTION",
+                    "successCriteria": "ALL",
+                    "name": "Cassette1",
+                    "services": [
+                      {
+                        "domainPath": ".\/Plannerinputs\/static\/LiveMat\/DomainHL.pddl",
+                        "plannerType": "Enhsp",
+                        "problem": "ProblemC1",
+                        "enhspConfig": "sat-hadd",
+                        "problemPath": ".\/Plannerinputs\/static\/LiveMat\/ProblemC1.pddl",
+                        "domain": "DomainHL",
+                        "name": "mypddlplanner1",
+                        "type": "ServicePDDLPlanning"
+                      }
+                    ],
+                    "type": "DynamicFlowNode",
+                    "nodeGraph": {
+                      "nodes": [
+                        
+                      ],
+                      "nodeCount": 0,
+                      "relationCount": 0
+                    }
+                  },
+                  {
+                    "childType": "ALLACTION",
+                    "successCriteria": "ALL",
+                    "name": "Cassette2",
+                    "services": [
+                      {
+                        "domainPath": ".\/Plannerinputs\/static\/LiveMat\/DomainHL.pddl",
+                        "plannerType": "Enhsp",
+                        "problem": "ProblemC2",
+                        "enhspConfig": "sat-hadd",
+                        "problemPath": ".\/Plannerinputs\/static\/LiveMat\/ProblemC2.pddl",
+                        "domain": "DomainHL",
+                        "name": "mypddlplanner2",
+                        "type": "ServicePDDLPlanning"
+                      }
+                    ],
+                    "type": "DynamicFlowNode",
+                    "nodeGraph": {
+                      "nodes": [
+                        
+                      ],
+                      "nodeCount": 0,
+                      "relationCount": 0
+                    }
+                  },
+                  {
+                    "childType": "ALLACTION",
+                    "successCriteria": "ALL",
+                    "name": "Cassette3",
+                    "services": [
+                      {
+                        "domainPath": ".\/Plannerinputs\/static\/LiveMat\/DomainHL.pddl",
+                        "plannerType": "Enhsp",
+                        "problem": "ProblemC3",
+                        "enhspConfig": "sat-hadd",
+                        "problemPath": ".\/Plannerinputs\/static\/LiveMat\/ProblemC3.pddl",
+                        "domain": "DomainHL",
+                        "name": "mypddlplanner3",
+                        "type": "ServicePDDLPlanning"
+                      }
+                    ],
+                    "type": "DynamicFlowNode",
+                    "nodeGraph": {
+                      "nodes": [
+                        
+                      ],
+                      "nodeCount": 0,
+                      "relationCount": 0
+                    }
+                  },
+                  {
+                    "childType": "ALLACTION",
+                    "successCriteria": "ALL",
+                    "name": "Cassette4",
+                    "services": [
+                      {
+                        "domainPath": ".\/Plannerinputs\/static\/LiveMat\/DomainHL.pddl",
+                        "plannerType": "Enhsp",
+                        "problem": "ProblemC4",
+                        "enhspConfig": "sat-hadd",
+                        "problemPath": ".\/Plannerinputs\/static\/LiveMat\/ProblemC4.pddl",
+                        "domain": "DomainHL",
+                        "name": "mypddlplanner4",
+                        "type": "ServicePDDLPlanning"
+                      }
+                    ],
+                    "type": "DynamicFlowNode",
+                    "nodeGraph": {
+                      "nodes": [
+                        
+                      ],
+                      "nodeCount": 0,
+                      "relationCount": 0
+                    }
+                  }
                 ],
-                "nodeCount": 0,
+                "nodeCount": 4,
                 "relationCount": 0
               }
             },
             {
-              "childType": "ALLACTION",
+              "childType": "ALLFLOW",
               "successCriteria": "ALL",
-              "name": "HandleCassette2",
+              "decorators": [
+                {
+                  "name": "fairProgress",
+                  "type": "GripEmpty"
+                }
+              ],
+              "name": "Batch2_C5toC8",
               "services": [
                 {
-                  "name": "mypddlplanner2",
-                  "plannerRef": "Enhsp2",
-                  "type": "ServicePDDLPlanner"
+                  "name": "planningPhase",
+                  "type": "CalcDist"
                 }
               ],
               "type": "DynamicFlowNode",
               "nodeGraph": {
                 "nodes": [
-                  
+                  {
+                    "childType": "ALLACTION",
+                    "successCriteria": "ALL",
+                    "name": "Cassette5",
+                    "services": [
+                      {
+                        "domainPath": ".\/Plannerinputs\/static\/LiveMat\/DomainHL.pddl",
+                        "plannerType": "Enhsp",
+                        "problem": "ProblemC5",
+                        "enhspConfig": "sat-hadd",
+                        "problemPath": ".\/Plannerinputs\/static\/LiveMat\/ProblemC5.pddl",
+                        "domain": "DomainHL",
+                        "name": "mypddlplanner5",
+                        "type": "ServicePDDLPlanning"
+                      }
+                    ],
+                    "type": "DynamicFlowNode",
+                    "nodeGraph": {
+                      "nodes": [
+                        
+                      ],
+                      "nodeCount": 0,
+                      "relationCount": 0
+                    }
+                  },
+                  {
+                    "childType": "ALLACTION",
+                    "successCriteria": "ALL",
+                    "name": "Cassette6",
+                    "services": [
+                      {
+                        "domainPath": ".\/Plannerinputs\/static\/LiveMat\/DomainHL.pddl",
+                        "plannerType": "Enhsp",
+                        "problem": "ProblemC6",
+                        "enhspConfig": "sat-hadd",
+                        "problemPath": ".\/Plannerinputs\/static\/LiveMat\/ProblemC6.pddl",
+                        "domain": "DomainHL",
+                        "name": "mypddlplanner6",
+                        "type": "ServicePDDLPlanning"
+                      }
+                    ],
+                    "type": "DynamicFlowNode",
+                    "nodeGraph": {
+                      "nodes": [
+                        
+                      ],
+                      "nodeCount": 0,
+                      "relationCount": 0
+                    }
+                  },
+                  {
+                    "childType": "ALLACTION",
+                    "successCriteria": "ALL",
+                    "name": "Cassette7",
+                    "services": [
+                      {
+                        "domainPath": ".\/Plannerinputs\/static\/LiveMat\/DomainHL.pddl",
+                        "plannerType": "Enhsp",
+                        "problem": "ProblemC7",
+                        "enhspConfig": "sat-hadd",
+                        "problemPath": ".\/Plannerinputs\/static\/LiveMat\/ProblemC7.pddl",
+                        "domain": "DomainHL",
+                        "name": "mypddlplanner7",
+                        "type": "ServicePDDLPlanning"
+                      }
+                    ],
+                    "type": "DynamicFlowNode",
+                    "nodeGraph": {
+                      "nodes": [
+                        
+                      ],
+                      "nodeCount": 0,
+                      "relationCount": 0
+                    }
+                  },
+                  {
+                    "childType": "ALLACTION",
+                    "successCriteria": "ALL",
+                    "name": "Cassette8",
+                    "services": [
+                      {
+                        "domainPath": ".\/Plannerinputs\/static\/LiveMat\/DomainHL.pddl",
+                        "plannerType": "Enhsp",
+                        "problem": "ProblemC8",
+                        "enhspConfig": "sat-hadd",
+                        "problemPath": ".\/Plannerinputs\/static\/LiveMat\/ProblemC8.pddl",
+                        "domain": "DomainHL",
+                        "name": "mypddlplanner8",
+                        "type": "ServicePDDLPlanning"
+                      }
+                    ],
+                    "type": "DynamicFlowNode",
+                    "nodeGraph": {
+                      "nodes": [
+                        
+                      ],
+                      "nodeCount": 0,
+                      "relationCount": 0
+                    }
+                  }
                 ],
-                "nodeCount": 0,
+                "nodeCount": 4,
                 "relationCount": 0
               }
             },
             {
-              "childType": "ALLACTION",
+              "childType": "ALLFLOW",
               "successCriteria": "ALL",
-              "name": "HandleCassette3",
+              "decorators": [
+                {
+                  "name": "fairProgress",
+                  "type": "GripEmpty"
+                }
+              ],
+              "name": "Batch3_C9toC12",
               "services": [
                 {
-                  "name": "mypddlplanner3",
-                  "plannerRef": "Enhsp3",
-                  "type": "ServicePDDLPlanner"
+                  "name": "planningPhase",
+                  "type": "CalcDist"
                 }
               ],
               "type": "DynamicFlowNode",
               "nodeGraph": {
                 "nodes": [
-                  
+                  {
+                    "childType": "ALLACTION",
+                    "successCriteria": "ALL",
+                    "name": "Cassette9",
+                    "services": [
+                      {
+                        "domainPath": ".\/Plannerinputs\/static\/LiveMat\/DomainHL.pddl",
+                        "plannerType": "Enhsp",
+                        "problem": "ProblemC9",
+                        "enhspConfig": "sat-hadd",
+                        "problemPath": ".\/Plannerinputs\/static\/LiveMat\/ProblemC9.pddl",
+                        "domain": "DomainHL",
+                        "name": "mypddlplanner9",
+                        "type": "ServicePDDLPlanning"
+                      }
+                    ],
+                    "type": "DynamicFlowNode",
+                    "nodeGraph": {
+                      "nodes": [
+                        
+                      ],
+                      "nodeCount": 0,
+                      "relationCount": 0
+                    }
+                  },
+                  {
+                    "childType": "ALLACTION",
+                    "successCriteria": "ALL",
+                    "name": "Cassette10",
+                    "services": [
+                      {
+                        "domainPath": ".\/Plannerinputs\/static\/LiveMat\/DomainHL.pddl",
+                        "plannerType": "Enhsp",
+                        "problem": "ProblemC10",
+                        "enhspConfig": "sat-hadd",
+                        "problemPath": ".\/Plannerinputs\/static\/LiveMat\/ProblemC10.pddl",
+                        "domain": "DomainHL",
+                        "name": "mypddlplanner10",
+                        "type": "ServicePDDLPlanning"
+                      }
+                    ],
+                    "type": "DynamicFlowNode",
+                    "nodeGraph": {
+                      "nodes": [
+                        
+                      ],
+                      "nodeCount": 0,
+                      "relationCount": 0
+                    }
+                  },
+                  {
+                    "childType": "ALLACTION",
+                    "successCriteria": "ALL",
+                    "name": "Cassette11",
+                    "services": [
+                      {
+                        "domainPath": ".\/Plannerinputs\/static\/LiveMat\/DomainHL.pddl",
+                        "plannerType": "Enhsp",
+                        "problem": "ProblemC11",
+                        "enhspConfig": "sat-hadd",
+                        "problemPath": ".\/Plannerinputs\/static\/LiveMat\/ProblemC11.pddl",
+                        "domain": "DomainHL",
+                        "name": "mypddlplanner11",
+                        "type": "ServicePDDLPlanning"
+                      }
+                    ],
+                    "type": "DynamicFlowNode",
+                    "nodeGraph": {
+                      "nodes": [
+                        
+                      ],
+                      "nodeCount": 0,
+                      "relationCount": 0
+                    }
+                  },
+                  {
+                    "childType": "ALLACTION",
+                    "successCriteria": "ALL",
+                    "name": "Cassette12",
+                    "services": [
+                      {
+                        "domainPath": ".\/Plannerinputs\/static\/LiveMat\/DomainHL.pddl",
+                        "plannerType": "Enhsp",
+                        "problem": "ProblemC12",
+                        "enhspConfig": "sat-hadd",
+                        "problemPath": ".\/Plannerinputs\/static\/LiveMat\/ProblemC12.pddl",
+                        "domain": "DomainHL",
+                        "name": "mypddlplanner12",
+                        "type": "ServicePDDLPlanning"
+                      }
+                    ],
+                    "type": "DynamicFlowNode",
+                    "nodeGraph": {
+                      "nodes": [
+                        
+                      ],
+                      "nodeCount": 0,
+                      "relationCount": 0
+                    }
+                  }
                 ],
-                "nodeCount": 0,
-                "relationCount": 0
-              }
-            },
-            {
-              "childType": "ALLACTION",
-              "successCriteria": "ALL",
-              "name": "HandleCassette4",
-              "services": [
-                {
-                  "name": "mypddlplanner4",
-                  "plannerRef": "Enhsp4",
-                  "type": "ServicePDDLPlanner"
-                }
-              ],
-              "type": "DynamicFlowNode",
-              "nodeGraph": {
-                "nodes": [
-                  
-                ],
-                "nodeCount": 0,
+                "nodeCount": 4,
                 "relationCount": 0
               }
             }
           ],
-          "nodeCount": 4,
-          "relationCount": 0
+          "nodeCount": 3,
+          "relationCount": 2,
+          "relations": [
+            {
+              "temporalType": "MEETS",
+              "from": "Batch1_C1toC4",
+              "to": "Batch2_C5toC8"
+            },
+            {
+              "temporalType": "MEETS",
+              "from": "Batch2_C5toC8",
+              "to": "Batch3_C9toC12"
+            }
+          ]
         }
       },
       "name": "LiveMat"
     }
   ],
-  "generatedAt": "2026-02-17T19:23:15.631161100",
+  "generatedAt": "2026-07-28T14:35:51.235460300",
   "treeCount": 1,
   "sourceFile": "src\/test\/resources\/valid\/behavior_trees\/APTreeLiveMat.bt"
 }

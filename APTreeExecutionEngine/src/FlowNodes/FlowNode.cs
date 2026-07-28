@@ -7,6 +7,15 @@ public abstract class FlowNode : BTNode, IEnumerable
 {
     // is this node allowed to have children?
     public override bool HasChildren => true;
+
+    /// <summary>
+    /// Return all direct children (action nodes + flow nodes). Override in subclasses
+    /// that hold flow-node children.
+    /// </summary>
+    public virtual List<IBTNode> GetChildren()
+    {
+        return actionGraph.GetAllActionNodes().Cast<IBTNode>().ToList();
+    }
   
     // public override string DebugDisplayName { get; protected set; } = "FlowNode";
     public SuccessCriteria successCriteria { get; protected set; }

@@ -32,7 +32,7 @@ public class BTDecoratorFairBranchProgress : Decorator
     /// <summary>
     /// Reference to the root composite node so we can inspect child branches.
     /// </summary>
-    private BTFlowNodeComposite _rootComposite;
+    private FlowNode _rootComposite;
 
     /// <summary>
     /// Snapshot of child statuses from the previous tick, used to detect new successes.
@@ -46,7 +46,7 @@ public class BTDecoratorFairBranchProgress : Decorator
     /// </summary>
     private int _chosenBranchProgressAtLock = 0;
 
-    public BTDecoratorFairBranchProgress(BTFlowNodeComposite rootComposite) : base(false)
+    public BTDecoratorFairBranchProgress(FlowNode rootComposite) : base(false)
     {
         _rootComposite = rootComposite;
         _previousChildStatuses = new BTNodeResult[4];

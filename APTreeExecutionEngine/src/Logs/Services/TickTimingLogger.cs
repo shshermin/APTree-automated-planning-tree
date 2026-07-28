@@ -200,8 +200,6 @@ namespace BehaviorTreeMainProject.Log.Services
             // Categorize into main types
             if (typeName.Contains("GenericBTAction"))
                 return "GenericBTAction";
-            else if (typeName.Contains("BTFlowNodeComposite"))
-                return "BTFlowNodeComposite";
             else if (typeName.Contains("DynamicFlowNode"))
             {
                 // For dynamic flow nodes, try to determine the planner type

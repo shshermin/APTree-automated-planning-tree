@@ -68,9 +68,9 @@ public class ServicePlanningPhaseManager : Service
     private bool AreAllPlanningServicesComplete()
     {
         // Since this service is attached to a composite node, we can directly access it
-        if (AttachedNode is BTFlowNodeComposite compositeNode)
+        if (AttachedNode is FlowNode flowNode)
         {
-            var children = compositeNode.GetChildren();
+            var children = flowNode.GetChildren();
             
             foreach (var child in children)
             {
@@ -92,12 +92,12 @@ public class ServicePlanningPhaseManager : Service
                         return false; // No planning service means not ready
                     }
                 }
-                else if (child is BTFlowNodeComposite childCompositeNode)
+                else if (child is FlowNode childFlowNode)
                 {
-                    // Recursively check composite nodes
-                    if (!childCompositeNode.AreAllPlanningServicesComplete())
+                    // Recursively check child flow nodes
+                    if (!AreChildPlanningServicesComplete(childFlowNode))
                     {
-                        return false; // Child composite still planning
+                        return false;
                     }
                 }
             }
@@ -105,8 +105,22 @@ public class ServicePlanningPhaseManager : Service
         
         return true; // All planning complete
     }
-    
 
-    
-
+    private bool AreChildPlanningServicesComplete(FlowNode node)
+    {
+        foreach (var child in node.GetChildren())
+        {
+            if (child is DynamicFlowNode dn)
+            {
+                if (dn.ServicePlanning is ServicePlanning ps && !ps.HasGeneratedNodeGraph())
+                    return false;
+            }
+            else if (child is FlowNode fn)
+            {
+                if (!AreChildPlanningServicesComplete(fn))
+                    return false;
+            }
+        }
+        return true;
+    }
 }

@@ -60,7 +60,7 @@ namespace BehaviorTreeMainProject.Log.Services
         {
             // Initialize simplified flow node tracking
             flowNodeStats["DynamicFlowNode"] = new FlowNodeStats();
-            flowNodeStats["BTFlowNodeComposite"] = new FlowNodeStats();
+            flowNodeStats["DynamicFlowNode_AllFlow"] = new FlowNodeStats();
             
             // Initialize decorator tracking
             flowNodeStats["DecoratorPlanningComplete"] = new FlowNodeStats();

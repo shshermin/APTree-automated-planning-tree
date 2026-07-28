@@ -47,14 +47,48 @@ public class DynamicFlowNode : FlowNode
     /// </summary>
     private HashSet<string> _finishedNodeNames = new HashSet<string>();
 
+    /// <summary>
+    /// Typed graph for flow-node children (AllFlow mode). Mirrors the actionGraph
+    /// used for AllAction, using the same temporal constraint evaluation.
+    /// </summary>
+    private readonly FlowNodeGraph _flowGraph = new FlowNodeGraph();
+
+    /// <summary>
+    /// Whether this node holds flow-node children (AllFlow) rather than action children (AllAction).
+    /// </summary>
+    public bool IsAllFlow => _flowGraph.Count > 0;
+
+    /// <summary>
+    /// Register a temporal relation between two child flow nodes.
+    /// </summary>
+    public void AddFlowRelation(string fromName, string toName, TemporalType constraint = TemporalType.MEETS)
+    {
+        var from = _flowGraph.GetAllNodes().FirstOrDefault(n =>
+            string.Equals(n.InstanceName.ToString(), fromName, StringComparison.OrdinalIgnoreCase));
+        var to = _flowGraph.GetAllNodes().FirstOrDefault(n =>
+            string.Equals(n.InstanceName.ToString(), toName, StringComparison.OrdinalIgnoreCase));
+        if (from != null && to != null)
+            _flowGraph.AddRelation(from, to, constraint);
+    }
+
     public override string DebugDisplayName { get; protected set; } = "DynamicFlowNode";
+
+    /// <summary>
+    /// Add the planning phase management service to this node.
+    /// </summary>
+    public void AddPlanningPhaseService()
+    {
+        var service = new ServicePlanningPhaseManager(OwningTree, this);
+        AddService(service, false);
+        LoggingService.LogInfo($"🔧 DynamicFlowNode: Added PlanningPhaseManager service to {DebugDisplayName}");
+    }
 
     public DynamicFlowNode(
         FastName nodeName,
         IBehaviorTree owningTree,
         SuccessCriteria successCriteria = SuccessCriteria.ALL,
         float threshold = 1.0f,
-        bool addLowestCostDecorator = false)  // New parameter to control decorator addition
+        bool addLeafDecorators = false)  // Only add planning/gate decorators for leaf (AllAction) nodes
         : base(nodeName, successCriteria, threshold)
     {
         this.OwningTree = owningTree;
@@ -66,22 +100,52 @@ public class DynamicFlowNode : FlowNode
         // Track flow node initialization (unified as "FlowNode")
         BehaviorTreeComponentLogger.TrackFlowNodeInitialization("FlowNode");
 
-        // Automatically add PlanningComplete decorator to dynamic flow nodes
-        AddDecorator(new DecoratorPlanningComplete());
-        LoggingService.LogInfo($"🔧 DynamicFlowNode: Added PlanningComplete decorator to {nodeName.ToString()}");
+        // These decorators are only relevant for leaf (AllAction) nodes that receive
+        // planned action graphs. AllFlow composites must tick freely during planning
+        // and should not be gated by ExclusiveBranchGate.
+        if (addLeafDecorators)
+        {
+            AddDecorator(new DecoratorPlanningComplete());
+            LoggingService.LogInfo($"🔧 DynamicFlowNode: Added PlanningComplete decorator to {nodeName.ToString()}");
 
-        // Add RetryOnFailure decorator: when all children finish but success criteria not met,
-        // this post-processing decorator resets failed children and converts Failure → InProgress
-        AddDecorator(new DecoratorRetryOnFailure(this));
-        LoggingService.LogInfo($"🔧 DynamicFlowNode: Added RetryOnFailure decorator to {nodeName.ToString()}");
+            AddDecorator(new DecoratorRetryOnFailure(this));
+            LoggingService.LogInfo($"🔧 DynamicFlowNode: Added RetryOnFailure decorator to {nodeName.ToString()}");
 
-        // Add ExclusiveBranchGate: enforces that only the chosen branch (set by
-        // FairBranchProgress) can proceed. Non-chosen cassettes are blocked here,
-        // which prevents their children's ServiceSubtreeInject from firing ML planning.
-        // During planning phase the gate allows all through (ChosenExecutingBranch is null).
-        AddDecorator(new DecoratorExclusiveBranchGate(this));
-        LoggingService.LogInfo($"🔧 DynamicFlowNode: Added ExclusiveBranchGate decorator to {nodeName.ToString()}");
+            AddDecorator(new DecoratorExclusiveBranchGate(this));
+            LoggingService.LogInfo($"🔧 DynamicFlowNode: Added ExclusiveBranchGate decorator to {nodeName.ToString()}");
+        }
         
+    }
+
+    /// <summary>
+    /// Add a child node. Flow-node children are stored separately for AllFlow mode.
+    /// </summary>
+    public override IBTNode AddChild(IBTNode childNode)
+    {
+        childNode.SetOwiningTree(OwningTree);
+        childNode.SetTreeForAllServices(OwningTree);
+
+        if (childNode is FlowNode flowNode)
+        {
+            _flowGraph.AddNode(flowNode);
+            LinkedBlackboard.SetFlowNodeInstance(flowNode.InstanceName, flowNode);
+        }
+        else if (childNode is PActionNode actionNode)
+        {
+            actionGraph.AddNode(actionNode);
+            LinkedBlackboard.SetActionInstance(actionNode.InstanceName, actionNode);
+            if (actionNode is PActionNode action)
+                action.SetTreeForSubtreeInjectionService(OwningTree);
+        }
+
+        return childNode;
+    }
+
+    public override List<IBTNode> GetChildren()
+    {
+        if (IsAllFlow)
+            return _flowGraph.GetAllNodes().Cast<IBTNode>().ToList();
+        return base.GetChildren();
     }
 
     /// <summary>
@@ -98,6 +162,31 @@ public class DynamicFlowNode : FlowNode
 
     protected override bool OnTick_NodeLogic(float inDeltaTime)
     {
+        // AllFlow: evaluate success criteria on flow children (mirrors AllAction logic)
+        if (IsAllFlow)
+        {
+            var children = _flowGraph.GetAllNodes();
+            int successCount = children.Count(c => c.status == BTNodeResult.Success);
+            int failedCount = children.Count(c => c.status == BTNodeResult.Failure);
+            bool anyInProgress = children.Any(c => !c.HasFinished);
+
+            if (successCriteria == SuccessCriteria.ALL && successCount == children.Count)
+            {
+                LoggingService.LogInfo($"   ✅ DFN[AllFlow]: All {children.Count} flow children succeeded");
+                status = BTNodeResult.Success;
+                return true;
+            }
+            if (anyInProgress)
+            {
+                status = BTNodeResult.InProgress;
+                return true;
+            }
+            // All finished but criteria not met
+            LoggingService.LogError($"   ❌ DFN[AllFlow]: All children finished ({successCount} success, {failedCount} failed) but criteria not met");
+            status = BTNodeResult.Failure;
+            return false;
+        }
+
         LoggingService.LogInfo($"🚨 DEBUG: DynamicFlowNode.OnTick_NodeLogic called for {DebugDisplayName}");
         LoggingService.LogInfo($"🔍 FlowNode: Current LastStatus: {status}");
         LoggingService.LogInfo($"🔍 FlowNode: HasChildren: {HasChildren}");
@@ -261,6 +350,10 @@ public class DynamicFlowNode : FlowNode
 
     protected override bool OnTick_Children(float inDeltaTime)
     {
+        // AllFlow mode: tick child flow nodes instead of action graph
+        if (IsAllFlow)
+            return OnTick_FlowChildren(inDeltaTime);
+
         // Increment tick counter
         tickCount++;
         LoggingService.LogInfo($"🚨 DEBUG: DynamicFlowNode.OnTick_Children called for {DebugDisplayName} - Tick #{tickCount}");
@@ -339,7 +432,80 @@ public class DynamicFlowNode : FlowNode
         // Continue ticking - OnTick_NodeLogic will evaluate success criteria
         return true;
     }
-    
+
+    /// <summary>
+    /// Returns flow-node children whose predecessors have all succeeded.
+    /// Mirrors actionGraph.GetExecutableNodes() for the AllFlow case.
+    /// </summary>
+    public List<FlowNode> GetExecutableFlowNodes()
+    {
+        return _flowGraph.GetExecutableNodes();
+    }
+
+    /// <summary>
+    /// Tick child flow nodes (AllFlow mode). Uses GetExecutableFlowNodes() to determine
+    /// which children are ready, same pattern as OnTick_Children uses GetExecutableNodes
+    /// for action nodes. Success criteria evaluation is in OnTick_NodeLogic.
+    /// </summary>
+    private bool OnTick_FlowChildren(float inDeltaTime)
+    {
+        tickCount++;
+        var allChildren = _flowGraph.GetAllNodes();
+
+        if (allChildren.Count == 0)
+            return false;
+
+        var executableNodes = _flowGraph.GetExecutableNodes();
+        LoggingService.LogInfo($"   📊 DFN[AllFlow]: Found {executableNodes.Count} executable flow nodes");
+
+        if (executableNodes.Count == 0)
+        {
+            LoggingService.LogInfo($"   ⏳ DFN[AllFlow]: No executable flow children (waiting for predecessors)");
+            return true;
+        }
+
+        // Apply deprioritized-branch ordering from FairBranchProgress
+        int deprioritizedIndex = LinkedBlackboard.DeprioritizedBranchIndex;
+        var ordered = new List<FlowNode>();
+        for (int i = 0; i < executableNodes.Count; i++)
+        {
+            int globalIndex = allChildren.IndexOf(executableNodes[i]);
+            if (globalIndex != deprioritizedIndex)
+                ordered.Add(executableNodes[i]);
+        }
+        if (deprioritizedIndex >= 0 && deprioritizedIndex < allChildren.Count)
+        {
+            var depChild = allChildren[deprioritizedIndex];
+            if (executableNodes.Contains(depChild))
+                ordered.Add(depChild);
+        }
+
+        foreach (var child in ordered)
+        {
+            var previousStatus = child.status;
+            LoggingService.LogInfo($"   ⚡ DFN[AllFlow]: Ticking {child.DebugDisplayName} (status: {previousStatus})");
+
+            if (child.status == BTNodeResult.ReadyToTick)
+                _flowGraph.MarkNodeStarted(child);
+
+            child.Tick(inDeltaTime);
+            LoggingService.LogInfo($"   📊 DFN[AllFlow]: {child.DebugDisplayName}: {previousStatus} → {child.status}");
+
+            if (child.status == BTNodeResult.Success)
+                _flowGraph.MarkNodeCompleted(child);
+
+            // Update Progress counter when a child finishes for the first time
+            if (child.HasFinished && _finishedNodeNames.Add(child.InstanceName.ToString()))
+            {
+                Progress++;
+                LoggingService.LogInfo($"   📈 Progress: {Progress} children finished in {DebugDisplayName}");
+            }
+        }
+
+        // Continue ticking — OnTick_NodeLogic will evaluate success criteria
+        return true;
+    }
+
     // New method to get executable actions
     public List<PActionNode> GetExecutableActions()
     {

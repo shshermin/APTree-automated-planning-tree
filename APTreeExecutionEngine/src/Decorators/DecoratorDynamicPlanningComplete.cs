@@ -160,17 +160,9 @@ public class DecoratorDynamicPlanningComplete : Decorator
         // If this node has children, recursively check them
         if (node.HasChildren)
         {
-            if (node is BTFlowNodeComposite compositeNode)
+            if (node is DynamicFlowNode dynamicNode)
             {
-                var children = compositeNode.GetChildren();
-                foreach (var child in children)
-                {
-                    var result = TraverseTreeForAction(child, targetAction);
-                    if (result >= 0) return result;
-                }
-            }
-            else if (node is DynamicFlowNode dynamicNode)
-            {
+                // For DynamicFlowNode, check both flow children and action graph
                 var actionGraph = dynamicNode.GetActionGraph();
                 if (actionGraph != null)
                 {
@@ -179,16 +171,26 @@ public class DecoratorDynamicPlanningComplete : Decorator
                     {
                         if (actionNode == targetAction)
                         {
-                            var dynName = dynamicNode.GetNodeName().ToLower();
-                            if (dynName.StartsWith("cassette"))
-                            {
-                                if (int.TryParse(dynName.Substring("cassette".Length), out int cassetteNumber))
-                                {
-                                    return cassetteNumber - 1;
-                                }
-                            }
+                            return actionNodes.IndexOf(actionNode);
                         }
+                        var result = TraverseTreeForAction(actionNode, targetAction);
+                        if (result >= 0) return result;
                     }
+                }
+                // Also traverse flow-node children
+                foreach (var child in dynamicNode.GetChildren())
+                {
+                    var result = TraverseTreeForAction(child, targetAction);
+                    if (result >= 0) return result;
+                }
+            }
+            else if (node is FlowNode fn)
+            {
+                var children = fn.GetChildren();
+                foreach (var child in children)
+                {
+                    var result = TraverseTreeForAction(child, targetAction);
+                    if (result >= 0) return result;
                 }
             }
         }
@@ -241,7 +243,9 @@ public class DecoratorDynamicPlanningComplete : Decorator
         {
             try
             {
-                var cassetteNode = LinkedBlackboard.GetFlowNode(new FastName(cassetteName)) as DynamicFlowNode;
+                var cassetteNode = LinkedBlackboard.GetFlowNode(new FastName(cassetteName)) as DynamicFlowNode
+                    ?? LinkedBlackboard.GetFlowNode(new FastName(
+                        char.ToUpperInvariant(cassetteName[0]) + cassetteName.Substring(1))) as DynamicFlowNode;
                 
                 if (cassetteNode != null)
                 {
