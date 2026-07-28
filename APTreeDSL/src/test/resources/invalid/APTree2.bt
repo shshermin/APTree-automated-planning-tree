@@ -13,10 +13,10 @@ Root APTree3 { // EID13
                     Action EquipeML EquipVg1 (r1 vg1 ep1) {   // EID5
                         --[Meets]--> InitVg1;
                     }
-                    Action TravelML TravelToEp1 (r1 pr2 ep1) { // EID9
+                    Action TravelML TravelToEp1 (r1 pr2 ep1 fp9) { // EID9
                         --[Meets]--> EquipVg1;
                     }   
-                    Action InitializeML InitVg1 (r1 vg1) {   // EID7
+                    Action Initialize InitVg1 (r1 vg1) {   // EID7
                         --[Meets]--> TravelToFp9;
                     }
                     Action TravelML TravelToFp9 (human ep1 fp9) {  // EID10

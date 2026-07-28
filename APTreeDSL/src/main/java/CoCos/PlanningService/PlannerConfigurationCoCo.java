@@ -29,14 +29,14 @@ public class PlannerConfigurationCoCo implements PlanningServiceASTServicePDDLPl
         && (!capabilities.isPresent() || !capabilities.get().supportsConfig(pddlPlanner.getConfig()))) {
       String supported = capabilities.map(value -> String.join(", ", value.getConfigs())).orElse("none");
       Log.error(String.format(
-          "0xDF006 EID1 Planner '%s' does not support config '%s'. Supported configs: %s.",
+          "0xDF006 Planner '%s' does not support config '%s'. Supported configs: %s.",
           plannerName, pddlPlanner.getConfig(), supported), planner.get_SourcePositionStart());
     }
 
     Optional<DomainMetadata> domain = PlanningDomainCatalog.resolve(pddlPlanner.getDomain());
     if (!domain.isPresent()) {
       Log.error(String.format(
-          "0xDF007 EID2 Planning domain file '%s.pddl' is not specified or cannot be resolved.",
+          "0xDF007 Planning domain file '%s.pddl' is not specified or cannot be resolved.",
           pddlPlanner.getDomain()), planner.get_SourcePositionStart());
       return;
     }
@@ -44,7 +44,7 @@ public class PlannerConfigurationCoCo implements PlanningServiceASTServicePDDLPl
     if (capabilities.isPresent()
         && domain.get().getLanguageVersion() > capabilities.get().getMaximumPddlVersion()) {
       Log.error(String.format(
-          "0xDF008 EID3 Planner '%s' supports PDDL up to %.1f, but domain '%s' uses PDDL %.1f.",
+          "0xDF008 Planner '%s' supports PDDL up to %.1f, but domain '%s' uses PDDL %.1f.",
           plannerName, capabilities.get().getMaximumPddlVersion(), domain.get().getName(),
           domain.get().getLanguageVersion()), planner.get_SourcePositionStart());
     }

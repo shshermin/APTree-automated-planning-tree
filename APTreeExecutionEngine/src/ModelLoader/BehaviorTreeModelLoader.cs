@@ -22,16 +22,20 @@ public static class BehaviorTreeModelLoader
 
         var treeElement = modelDocument.RootElement.GetProperty("behaviorTrees")
             .EnumerateArray()
-            .FirstOrDefault(tree => string.Equals(
-                tree.GetProperty("name").GetString(), config.TreeName, StringComparison.OrdinalIgnoreCase));
+            .FirstOrDefault();
 
         if (treeElement.ValueKind == JsonValueKind.Undefined)
-            throw new InvalidOperationException($"Behavior tree '{config.TreeName}' was not found in '{modelPath}'.");
+            throw new InvalidOperationException($"No behavior trees found in '{modelPath}'.");
+
+        var treeName = treeElement.TryGetProperty("root", out var rootEl) &&
+                       rootEl.TryGetProperty("name", out var nameEl)
+                       ? nameEl.GetString() ?? "BehaviorTree"
+                       : "BehaviorTree";
 
         var behaviorTree = new BehaviorTree
         {
             linkedBlackboard = blackboard,
-            DebugDisplayName = config.TreeName
+            DebugDisplayName = treeName
         };
         var planners = new List<ServicePlanning>();
         var root = BuildFlowNode(treeElement.GetProperty("root"), behaviorTree, config, planners);
@@ -41,7 +45,6 @@ public static class BehaviorTreeModelLoader
         root.SetTreeForAllServices(behaviorTree);
 
         blackboard.PlanningPhase = true;
-        blackboard.CassetteSubtreeCompleted = new bool[config.CassetteCount];
         blackboard.SetNodeGraph(new FastName("MainBehaviorTree"), new NodeGraph());
 
         return new LoadedBehaviorTree { Tree = behaviorTree, Planners = planners };
@@ -93,15 +96,8 @@ public static class BehaviorTreeModelLoader
                 dynamicNode.AddPlanningPhaseService();
             if (HasNamedDecorator(node, "fairProgress"))
                 dynamicNode.AddDecorator(new BTDecoratorFairBranchProgress(dynamicNode));
-
-            // Attach deployment-specific batch entry service from config
-            var batch = config.Batches.FirstOrDefault(candidate =>
-                string.Equals(candidate.NodeName, name, StringComparison.OrdinalIgnoreCase));
-            if (batch != null)
-            {
-                dynamicNode.AddService(new ServiceBatchEntry(
-                    behaviorTree, dynamicNode, batch.CassetteIndices, batch.ObjectsFile), false);
-            }
+            if (HasNamedService(node, "batchManager"))
+                dynamicNode.AddService(new ServiceBatchManager(behaviorTree, dynamicNode), false);
 
             return dynamicNode;
         }
@@ -141,11 +137,7 @@ public static class BehaviorTreeModelLoader
                 : null
         };
 
-        var planner = new ServicePDDLPlanning(behaviorTree, request)
-        {
-            ExecutionMode = Enum.Parse<ServicePDDLPlanning.ParallelExecutionMode>(
-                config.PlannerExecutionMode, ignoreCase: true)
-        };
+        var planner = new ServicePDDLPlanning(behaviorTree, request);
         flowNode.SetPlanningService(planner);
         planners.Add(planner);
     }
@@ -225,19 +217,8 @@ public static class BehaviorTreeModelLoader
 public sealed class BehaviorTreeExecutionConfig
 {
     public string ModelPath { get; set; } = "BehaviorTreeModel.json";
-    public string TreeName { get; set; } = "LiveMat";
     public string PddlBasePath { get; set; } = "Plannerinputs/static";
     public string PlannerPath { get; set; } = "/home/ubuntu/jpddlplus-master/jpddlplus.jar";
     public string PlannerName { get; set; } = "ENHSP";
     public int TimeoutSeconds { get; set; } = 120;
-    public string PlannerExecutionMode { get; set; } = "Parallel";
-    public int CassetteCount { get; set; } = 12;
-    public List<BehaviorTreeBatchConfig> Batches { get; set; } = new();
-}
-
-public sealed class BehaviorTreeBatchConfig
-{
-    public string NodeName { get; set; } = "";
-    public int[] CassetteIndices { get; set; } = Array.Empty<int>();
-    public string? ObjectsFile { get; set; }
 }

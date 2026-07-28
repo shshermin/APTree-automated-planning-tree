@@ -124,6 +124,7 @@ public class DynamicFlowNode : FlowNode
     {
         childNode.SetOwiningTree(OwningTree);
         childNode.SetTreeForAllServices(OwningTree);
+        childNode.SetParentNode(this);
 
         if (childNode is FlowNode flowNode)
         {

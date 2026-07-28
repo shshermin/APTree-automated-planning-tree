@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import CoCos.DomainTypesCon.ElementExistsCoCo;
+import CoCos.DomainTypesCon.ParameterInstanceExistsCoCo;
 import CoCos.DynamicBTFlowNode.ActionNodesCannotHavePlanningService;
 import CoCos.DynamicBTFlowNode.CausalLinkValidator;
 import CoCos.DynamicBTFlowNode.MustHavePlanningService;
@@ -92,8 +93,18 @@ public class APTreeTool {
         IDynamicBTFlowNodeGlobalScope gs = DynamicBTFlowNodeMill.globalScope();
         IDynamicBTFlowNodeArtifactScope as;
         
+        long errorsBefore = Log.getErrorCount();
         as = DynamicBTFlowNodeMill.scopesGenitorDelegator().createFromAST(world);
+        // Suppress MontiCore's internal 0xA7003/0xA7303 errors from scope creation
+        // (unresolved symbol references will be caught by CoCos with better messages)
+        Log.getFindings().removeIf(f -> f.getMsg().contains("0xA7003") || f.getMsg().contains("0xA7303"));
         as.setEnclosingScope(gs);
+        // Set a name on the artifact scope so scope-chain resolution doesn't throw
+        // 0xA7003 when calling getName() on a nameless scope
+        as.setName(modelFile);
+        
+        // Also set names on any sub-scopes that may be unnamed
+        setNamesOnUnnamedScopes(as, modelFile);
         
         // 6. Run CoCo Checks
         DynamicBTFlowNodeCoCoChecker checker = new DynamicBTFlowNodeCoCoChecker();
@@ -113,6 +124,9 @@ public class APTreeTool {
         checker.addCoCo((BehaviorTreeASTServiceCoCo) uniquenessCheck);
         PlannerConfigurationCoCo plannerConfigurationCheck = new PlannerConfigurationCoCo();
         checker.addCoCo((PlanningServiceASTServicePDDLPlanningCoCo) plannerConfigurationCheck);
+        // New: Check that all action parameters resolve to known instances of the correct type
+        ParameterInstanceExistsCoCo paramCheck = new ParameterInstanceExistsCoCo();
+        checker.addCoCo((DomainTypesDefASTPActionNodeCoCo) paramCheck);
         // New: Validate causal links between connected actions
         CausalLinkValidator causalValidator = new CausalLinkValidator();
         // checker.addCoCo((DynamicBTFlowNodeASTGraphNodeCoCo) causalValidator);
@@ -127,9 +141,12 @@ public class APTreeTool {
         // Register all action instances to build type mapping
         registerActionInstances(ast, causalValidator);
         
-        System.out.println("[DEBUG] Running CoCo checks on AST...");
         // Add default CoCos here if any exist in the language definition
         checker.checkAll((ASTDynamicBTFlowNodeNode) ast);
+        
+        // Remove MontiCore internal scope-resolution errors (0xA7003/0xA7303)
+        // Our CoCos produce better messages for the same issues (0xDF020)
+        Log.getFindings().removeIf(f -> f.getMsg().contains("0xA7003") || f.getMsg().contains("0xA7303"));
         
         // Report all collected errors (pre-validation + CoCos)
         if (!validationErrors.isEmpty() || Log.getErrorCount() > 0) {
@@ -221,7 +238,7 @@ public class APTreeTool {
                                       // an IDynamicBTFlowNodeScope, but its inherited symbols are compatible.
                                       addSymbolToDynamicGlobalScope(obj);
                                       
-                                        System.out.println("  - Adding symbol: " + symName);
+                                        // Symbol loaded silently
                                       count++;
                                   } catch (Exception symbolEx) {
                                       // Skip symbols that don't have getName or can't be processed
@@ -251,13 +268,24 @@ public class APTreeTool {
   private void addSymbolToDynamicGlobalScope(Object symbol) throws ReflectiveOperationException {
     Object globalScope = DynamicBTFlowNodeMill.globalScope();
 
+    // Find the most specific add() method for this symbol type.
+    // getMethods() order is unspecified, so we must pick the most specific match
+    // (e.g., add(RobotSymbol) over add(AgentSymbol)) to ensure correct symbol table registration.
+    java.lang.reflect.Method bestMatch = null;
     for (java.lang.reflect.Method method : globalScope.getClass().getMethods()) {
       if (method.getName().equals("add")
           && method.getParameterCount() == 1
           && method.getParameterTypes()[0].isAssignableFrom(symbol.getClass())) {
-        method.invoke(globalScope, symbol);
-        return;
+        if (bestMatch == null
+            || bestMatch.getParameterTypes()[0].isAssignableFrom(method.getParameterTypes()[0])) {
+          bestMatch = method;
+        }
       }
+    }
+
+    if (bestMatch != null) {
+      bestMatch.invoke(globalScope, symbol);
+      return;
     }
 
     throw new NoSuchMethodException(
@@ -283,7 +311,7 @@ public class APTreeTool {
           // Extract action type from class name (ASTPickUpHL -> PickUpHL)
           String actionType = extractActionType(actionNode);
           validator.registerActionInstance(instanceName, actionType);
-          System.out.println("[DEBUG] Registered action: " + instanceName + " (type: " + actionType + ")");
+          // Action registered silently
         }
       }
     });
@@ -353,5 +381,23 @@ public class APTreeTool {
     ast.accept(traverser);
     
     return errors;
+  }
+
+  /**
+   * Walk all sub-scopes and assign a name to any scope that doesn't have one.
+   * MontiCore's scope-chain resolution calls getName() on every scope in the chain;
+   * if a scope has Optional.empty() as its name, it throws 0xA7003.
+   */
+  private void setNamesOnUnnamedScopes(dynamicbtflownode._symboltable.IDynamicBTFlowNodeScope scope, String baseName) {
+    if (scope instanceof dynamicbtflownode._symboltable.DynamicBTFlowNodeScope) {
+      dynamicbtflownode._symboltable.DynamicBTFlowNodeScope concreteScope =
+          (dynamicbtflownode._symboltable.DynamicBTFlowNodeScope) scope;
+      if (!concreteScope.isPresentName()) {
+        concreteScope.setName(baseName);
+      }
+      for (dynamicbtflownode._symboltable.IDynamicBTFlowNodeScope sub : concreteScope.getSubScopes()) {
+        setNamesOnUnnamedScopes(sub, baseName);
+      }
+    }
   }
 }

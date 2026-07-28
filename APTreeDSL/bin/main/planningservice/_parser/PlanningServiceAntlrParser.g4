@@ -183,7 +183,7 @@ private String convertString(Token t)  {
   
   // ASTClassProd World
   world : 
-  ( tmp0+=propertyTypeDefinition  | tmp1+=property  | tmp2+=predicateTypeDefinition  | tmp3+=actionTypeDefinition  | tmp4+=beam  | tmp5+=plate  | tmp6+=firstPos  | tmp7+=robot  | tmp8+=vacGripper  | tmp9+=holding  | tmp10+=atPlace  | tmp11+=atTool  | tmp12+=nailGripper  | tmp13+=glueGun  | tmp14+=stack  | tmp15+=cassette  | tmp16+=positionOnRail  | tmp17+=equipPosition  | tmp18+=stackPosition  | tmp19+=isAt  | tmp20+=atAgent  | tmp21+=hasTool  | tmp22+=clear  | tmp23+=onTop  | tmp24+=allSet  | tmp25+=belongsToLayer  | tmp26+=belongsToModule  | tmp27+=positionFree  | tmp28+=stacked  | tmp29+=glued  | tmp30+=nailed  | tmp31+=vgEmpty  )*
+  ( tmp0+=propertyTypeDefinition  | tmp1+=property  | tmp2+=predicateTypeDefinition  | tmp3+=actionTypeDefinition  | tmp4+=beam  | tmp5+=plate  | tmp6+=firstPos  | tmp7+=robot  | tmp8+=human  | tmp9+=vacGripper  | tmp10+=holding  | tmp11+=atPlace  | tmp12+=atTool  | tmp13+=nailGripper  | tmp14+=glueGun  | tmp15+=stack  | tmp16+=cassette  | tmp17+=positionOnRail  | tmp18+=equipPosition  | tmp19+=stackPosition  | tmp20+=isAt  | tmp21+=atAgent  | tmp22+=hasTool  | tmp23+=clear  | tmp24+=onTop  | tmp25+=allSet  | tmp26+=belongsToLayer  | tmp27+=belongsToModule  | tmp28+=positionFree  | tmp29+=stacked  | tmp30+=glued  | tmp31+=nailed  | tmp32+=vgEmpty  )*
   ;
   
   // ASTClassProd Property
@@ -285,6 +285,10 @@ private String convertString(Token t)  {
   // ASTClassProd StackPosition
   stackPosition : 
    tmp0=STACKPOSITION3708807089 ( tmp1=Name)  tmp2=LPAREN tmp3=RPAREN;
+  
+  // ASTClassProd Human
+  human : 
+   tmp0=HUMAN70086925 ( tmp1=Name)  tmp2=LPAREN ( tmp3=Name)  tmp4=RPAREN;
   
   // ASTClassProd Holding
   holding : 
@@ -613,7 +617,8 @@ private String convertString(Token t)  {
   
   // ASTInterface Agent
   agent:
-  tmp0=robot;
+  tmp0=robot |
+  tmp1=human;
   
   // ASTInterface Predicate
   predicate:

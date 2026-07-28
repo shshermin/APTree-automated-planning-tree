@@ -39,6 +39,7 @@ public void setMCParser(DynamicBTFlowNodeAntlrParser in) {
   STACKED4061979911 : 'Stacked';
   STACKML4061979143 : 'StackML';
   POSITIONONRAIL1520817338 : 'PositionOnRail';
+  HUMAN70086925 : 'Human';
   EXCLAMATIONMARK : '!';
   ROOT2553090 : 'Root';
   BYTE3039496 : 'byte';

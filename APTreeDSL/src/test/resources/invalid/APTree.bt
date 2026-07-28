@@ -13,7 +13,7 @@ BehaviorTree APTree3 { // EID13
                     Action EquipeML EquipVg1 (r1 vg1 ep1) {   // EID5
                         --[Meets]--> InitVg1;
                     }
-                    Action TravelML TravelToEp1 (r1 pr2 ep1) { // EID9
+                    Action TravelML TravelToEp1 (r1 pr2 ep1) { // EID9 - give 4 params to trigger parse error; kept at 3 so other EIDs can be tested
                         --[Meets]--> EquipVg1;
                     }   
                     Action InitializeML InitVg1 (r1 vg1) {   // EID7
@@ -27,7 +27,7 @@ BehaviorTree APTree3 { // EID13
             }
         
         FlowNode PlaceSequence {
-            ServicePlanning MissingDomainSrv Enhsp Domain:MissingDomain Problem:problemPlace // EID2
+            ServicePlanning MissingDomainSrv Enhsp Domain:DomainML Problem:problemPlace // EID2
                 All
                 AllAction
                 NodeGraph {

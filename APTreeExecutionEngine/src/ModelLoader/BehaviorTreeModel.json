@@ -23,6 +23,10 @@
                 {
                   "name": "planningPhase",
                   "type": "CalcDist"
+                },
+                {
+                  "name": "batchManager",
+                  "type": "CalcDist"
                 }
               ],
               "type": "DynamicFlowNode",
@@ -147,6 +151,10 @@
                 {
                   "name": "planningPhase",
                   "type": "CalcDist"
+                },
+                {
+                  "name": "batchManager",
+                  "type": "CalcDist"
                 }
               ],
               "type": "DynamicFlowNode",
@@ -270,6 +278,10 @@
               "services": [
                 {
                   "name": "planningPhase",
+                  "type": "CalcDist"
+                },
+                {
+                  "name": "batchManager",
                   "type": "CalcDist"
                 }
               ],
@@ -401,7 +413,7 @@
       "name": "LiveMat"
     }
   ],
-  "generatedAt": "2026-07-28T14:35:51.235460300",
+  "generatedAt": "2026-07-28T15:37:45.998893400",
   "treeCount": 1,
   "sourceFile": "src\/test\/resources\/valid\/behavior_trees\/APTreeLiveMat.bt"
 }

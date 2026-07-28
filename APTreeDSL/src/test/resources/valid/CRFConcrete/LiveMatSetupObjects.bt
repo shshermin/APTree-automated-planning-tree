@@ -129,6 +129,9 @@ StackPosition sp12 ()
 // Agent - Robot instances (1)
 Robot r1 (pr2 ur10)
 
+// Agent - Human instances (1)
+Human human (pr1)
+
 // Element - Beam instances (72)
 Beam b1 (fp2)
 Beam b2 (fp3)
