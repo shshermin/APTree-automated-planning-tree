@@ -61,6 +61,32 @@ public class PlannerMetricFF : Planner
             actions.Add((actionName, parameters));
         }
 
-        return actions;
+        return SimplifyConsecutiveTravelActions(actions);
+    }
+
+    private static List<(string Name, string[] Parameters)> SimplifyConsecutiveTravelActions(
+        List<(string Name, string[] Parameters)> actions)
+    {
+        var simplified = new List<(string Name, string[] Parameters)>();
+
+        foreach (var action in actions)
+        {
+            if (action.Name == "travelml" && action.Parameters.Length == 3 && simplified.Count > 0)
+            {
+                var previous = simplified[^1];
+                if (previous.Name == "travelml" && previous.Parameters.Length == 3 &&
+                    previous.Parameters[0] == action.Parameters[0] &&
+                    previous.Parameters[2] == action.Parameters[1])
+                {
+                    simplified[^1] = (previous.Name,
+                        new[] { previous.Parameters[0], previous.Parameters[1], action.Parameters[2] });
+                    continue;
+                }
+            }
+
+            simplified.Add(action);
+        }
+
+        return simplified;
     }
 }
