@@ -105,7 +105,6 @@ sp4 - stackposition
 (atplace b10 fp14)
 (atplace b11 fp15)
 (atplace b12 fp16)
-(atplace lp3 fp17)
 (atplace tp3 fp21)
 (atplace b13 fp18)
 (atplace b14 fp19)
@@ -155,7 +154,7 @@ sp4 - stackposition
 (clear b24)
 (attool gg1 ep2)
 (attool ng1 ep3)
-(atagent r1 pr2)
+(atagent r1 pr3)
 (vgempty r1)
 (belongstolayer b1 lay1)
 (belongstolayer b2 lay1)
@@ -213,7 +212,6 @@ sp4 - stackposition
 (belongstomodule b24 m4)
 (belongstomodule lp4 m4)
 (belongstomodule tp4 m4)
-(positionfree pr3)
 (positionfree pr4)
 (positionfree sp1)
 (positionfree sp2)
@@ -227,6 +225,8 @@ sp4 - stackposition
 (atplace lp1 pr1)
 (positionfree fp9)
 (atplace lp2 pr2)
+(positionfree fp17)
+(atplace lp3 pr3)
   )
   (:goal 
     (and
