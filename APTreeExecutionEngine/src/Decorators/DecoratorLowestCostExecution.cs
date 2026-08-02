@@ -18,9 +18,9 @@ public class DecoratorLowestCostExecution : Decorator
     public override BTNodeResult PostProcessTickResult(BTNodeResult InResult) => InResult;
     public int lowestCost;
 
-    public DecoratorLowestCostExecution(DynamicFlowNode AttachedNode) : base(false)
+    public DecoratorLowestCostExecution(FlowNode attachedNode) : base(false)
     {
-        this.AttachedNode = AttachedNode;
+        this.AttachedNode = attachedNode;
     }
 
 
@@ -36,7 +36,11 @@ public class DecoratorLowestCostExecution : Decorator
             {
                 LoggingService.LogInfo($"🔓 LowestCostDecorator: Chosen branch '{currentChosen.InstanceName}' reached SUCCESS. Clearing chosen branch for re-evaluation.");
                 LinkedBlackboard.ChosenExecutingBranch = null;
-                currentChosen = null;
+
+                // Selection runs before the batch's children. Give those children one pass
+                // to inject any follow-up subtree unlocked by the completed branch, then
+                // compare the refreshed candidate set on the next batch tick.
+                return true;
             }
             else
             {
@@ -51,17 +55,7 @@ public class DecoratorLowestCostExecution : Decorator
             ChooseNextBranch();
         }
 
-        // ── Step 3: After choosing, also gate here — only the chosen branch passes ──
-        // This catches the case where ExclusiveBranchGate let us through because no branch 
-        // was chosen yet, but LowestCost just picked a DIFFERENT branch than this one.
-        var finalChosen = LinkedBlackboard.ChosenExecutingBranch;
-        if (finalChosen != null && AttachedNode != finalChosen)
-        {
-            LoggingService.LogInfo($"⏳ LowestCostDecorator: '{AttachedNode.InstanceName}' is NOT the chosen branch (chosen: '{finalChosen.InstanceName}') — BLOCKING");
-            return false;
-        }
-
-        LoggingService.LogSuccess($"✅ LowestCostDecorator: '{AttachedNode.InstanceName}' IS the chosen branch — ALLOW execution");
+        // Gating is handled by ExclusiveBranchGate which walks the parent chain correctly
         return true;
     }
 

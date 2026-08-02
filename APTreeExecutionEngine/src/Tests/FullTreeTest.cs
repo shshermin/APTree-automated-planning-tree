@@ -20,14 +20,21 @@ namespace BehaviorTreeMainProject
         private DateTime testStartTime;
         private DateTime testEndTime;
         private IBTNode rootNode; // Store root node for monitoring
+        private readonly bool useModelLoader;
+
+        public FullTreeTest(bool useModelLoader = false)
+        {
+            this.useModelLoader = useModelLoader;
+        }
         
         public async Task RunFullTreeTest()
         {
             // Initialize logging service
-            LoggingService.Initialize("FullTreeTest", enableConsole: false, enableFile: true);
+            var testName = useModelLoader ? "ModelLoaderFullTreeTest" : "FullTreeTest";
+            LoggingService.Initialize(testName, enableConsole: false, enableFile: true);
             
             // Initialize execution flow logger
-            ExecutionFlowLogger.Initialize("FullTreeTest", enableConsole: false, enableFile: true);
+            ExecutionFlowLogger.Initialize(testName, enableConsole: false, enableFile: true);
             
             // BlackboardTrackingLogger is automatically initialized when first accessed
             // No need to call Initialize() explicitly
@@ -64,7 +71,10 @@ namespace BehaviorTreeMainProject
 
                 // Create behavior tree with cassette flow nodes
                 LoggingService.LogSection("CREATING BEHAVIOR TREE WITH CASSETTE FLOW NODES");
-                await CreateCassetteBehaviorTree(blackboard);
+                if (useModelLoader)
+                    await CreateModelLoadedBehaviorTree(blackboard);
+                else
+                    await CreateCassetteBehaviorTree(blackboard);
 
                 testEndTime = DateTime.Now;
                 
@@ -125,6 +135,24 @@ namespace BehaviorTreeMainProject
                 
                 throw;
             }
+        }
+
+        private async Task CreateModelLoadedBehaviorTree(Blackboard<FastName> blackboard)
+        {
+            var configPath = Path.Combine(
+                AppDomain.CurrentDomain.BaseDirectory,
+                "..", "..", "..", "src", "ModelLoader", "LiveMatExecutionConfig.json");
+            var loaded = BehaviorTreeModelLoader.Load(configPath, blackboard);
+
+            rootNode = loaded.Tree.root;
+            allPlanners.AddRange(loaded.Planners);
+
+            LoggingService.LogSuccess($"Loaded behavior tree model with {allPlanners.Count} planners");
+            await TestBehaviorTreeStructure(loaded.Tree);
+            await MonitorPlannerExecution();
+            await DisplayNodeGraphStatus(loaded.Tree);
+            await TrackSubtreeStatusForHLActions(loaded.Tree);
+            await ExecuteTreeWithComprehensiveLogging(loaded.Tree);
         }
 
         // Inspect blackboard contents
@@ -457,6 +485,7 @@ namespace BehaviorTreeMainProject
                     //    have all generated their NodeGraphs (composite-scoped check).
                     batchComposite.AddService(new ServiceBatchEntry(behaviorTree, batchComposite, ownedIndices, batch.ObjectsFile), false);
                     batchComposite.AddPlanningPhaseService();
+                    batchComposite.AddDecorator(new DecoratorLowestCostExecution(batchComposite));
 
                     rootComposite.AddChild(batchComposite);
                     LoggingService.LogSuccess($" Added batch '{batch.Name}' (cassettes {batch.FirstCassette}..{batch.FirstCassette + 3}) to root");
@@ -1457,9 +1486,9 @@ namespace BehaviorTreeMainProject
         }
 
         // Public method to run the test from Program.cs
-        public static async Task RunTest()
+        public static async Task RunTest(bool useModelLoader = false)
         {
-            var test = new FullTreeTest();
+            var test = new FullTreeTest(useModelLoader);
             await test.RunFullTreeTest();
         }
     }

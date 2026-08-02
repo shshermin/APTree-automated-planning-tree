@@ -353,9 +353,6 @@ namespace BehaviorTreeMainProject
                 // Add the ExclusiveBranchGate decorator BEFORE LowestCost — it evaluates first
                 subtree.AddDecorator(new DecoratorExclusiveBranchGate(subtree as DynamicFlowNode));
                 LogMessage($"🔧 ServiceSubtreeInject: Added ExclusiveBranchGate decorator to flow node '{subtree.DebugDisplayName}'");
-                // add the lowestcost decorator (evaluates after ExclusiveBranchGate)
-                subtree.AddDecorator(new DecoratorLowestCostExecution(subtree as DynamicFlowNode));
-                LogMessage($"🔧 ServiceSubtreeInject: Added LowestCostExecution decorator to flow node '{subtree.DebugDisplayName}'");
                 // DEBUG: Check if the decorator is actually in the list
                 var decoratorCount = subtree.GetType().GetField("Decorators", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.GetValue(subtree) as System.Collections.Generic.List<object>;
                 if (decoratorCount != null)

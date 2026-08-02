@@ -10,7 +10,7 @@ public abstract class Decorator : IBTDecorator
 
     public Blackboard<FastName> LinkedBlackboard => OwningTree.linkedBlackboard;
     public PActionNode? AttachedAction { get; protected set; }
-    public DynamicFlowNode? AttachedNode { get; protected set; }
+    public FlowNode? AttachedNode { get; protected set; }
     public abstract bool CanPostProcessTickResult { get; }
     public abstract BTNodeResult PostProcessTickResult(BTNodeResult InResult);
   
