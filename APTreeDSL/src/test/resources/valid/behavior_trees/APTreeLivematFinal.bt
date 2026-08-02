@@ -1207,7 +1207,7 @@ BehaviorTree LiveMat {
 
 BehaviorTree PickUpHL_lp1_fp1_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_lp1_fp1_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_lp1_fp1_r1 FF Domain:DomainML Problem:problemPickUpHL_lp1_fp1_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_lp1_fp1_r1 FF Domain:DomainML Problem:problemPickUpHL_lp1_fp1_r1
         All
         AllAction
         NodeGraph {
@@ -1230,7 +1230,7 @@ BehaviorTree PickUpHL_lp1_fp1_r1Subtree {
 
 BehaviorTree PlaceHL_lp1_pr1_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PlaceHL_lp1_pr1_r1 {
-        ServicePlanning subtreeSrv_PlaceHL_lp1_pr1_r1 FF Domain:DomainML Problem:problemPlaceHL_lp1_pr1_r1.pddl
+        ServicePlanning subtreeSrv_PlaceHL_lp1_pr1_r1 FF Domain:DomainML Problem:problemPlaceHL_lp1_pr1_r1
         All
         AllAction
         NodeGraph {
@@ -1244,7 +1244,7 @@ BehaviorTree PlaceHL_lp1_pr1_r1Subtree {
 
 BehaviorTree PickUpHL_lp2_fp9_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_lp2_fp9_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_lp2_fp9_r1 FF Domain:DomainML Problem:problemPickUpHL_lp2_fp9_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_lp2_fp9_r1 FF Domain:DomainML Problem:problemPickUpHL_lp2_fp9_r1
         All
         AllAction
         NodeGraph {
@@ -1258,7 +1258,7 @@ BehaviorTree PickUpHL_lp2_fp9_r1Subtree {
 
 BehaviorTree PlaceHL_lp2_pr2_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PlaceHL_lp2_pr2_r1 {
-        ServicePlanning subtreeSrv_PlaceHL_lp2_pr2_r1 FF Domain:DomainML Problem:problemPlaceHL_lp2_pr2_r1.pddl
+        ServicePlanning subtreeSrv_PlaceHL_lp2_pr2_r1 FF Domain:DomainML Problem:problemPlaceHL_lp2_pr2_r1
         All
         AllAction
         NodeGraph {
@@ -1272,7 +1272,7 @@ BehaviorTree PlaceHL_lp2_pr2_r1Subtree {
 
 BehaviorTree PickUpHL_lp3_fp17_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_lp3_fp17_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_lp3_fp17_r1 FF Domain:DomainML Problem:problemPickUpHL_lp3_fp17_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_lp3_fp17_r1 FF Domain:DomainML Problem:problemPickUpHL_lp3_fp17_r1
         All
         AllAction
         NodeGraph {
@@ -1286,7 +1286,7 @@ BehaviorTree PickUpHL_lp3_fp17_r1Subtree {
 
 BehaviorTree PlaceHL_lp3_pr3_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PlaceHL_lp3_pr3_r1 {
-        ServicePlanning subtreeSrv_PlaceHL_lp3_pr3_r1 FF Domain:DomainML Problem:problemPlaceHL_lp3_pr3_r1.pddl
+        ServicePlanning subtreeSrv_PlaceHL_lp3_pr3_r1 FF Domain:DomainML Problem:problemPlaceHL_lp3_pr3_r1
         All
         AllAction
         NodeGraph {
@@ -1300,7 +1300,7 @@ BehaviorTree PlaceHL_lp3_pr3_r1Subtree {
 
 BehaviorTree PickUpHL_lp4_fp25_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_lp4_fp25_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_lp4_fp25_r1 FF Domain:DomainML Problem:problemPickUpHL_lp4_fp25_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_lp4_fp25_r1 FF Domain:DomainML Problem:problemPickUpHL_lp4_fp25_r1
         All
         AllAction
         NodeGraph {
@@ -1314,7 +1314,7 @@ BehaviorTree PickUpHL_lp4_fp25_r1Subtree {
 
 BehaviorTree PlaceHL_lp4_pr4_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PlaceHL_lp4_pr4_r1 {
-        ServicePlanning subtreeSrv_PlaceHL_lp4_pr4_r1 FF Domain:DomainML Problem:problemPlaceHL_lp4_pr4_r1.pddl
+        ServicePlanning subtreeSrv_PlaceHL_lp4_pr4_r1 FF Domain:DomainML Problem:problemPlaceHL_lp4_pr4_r1
         All
         AllAction
         NodeGraph {
@@ -1328,7 +1328,7 @@ BehaviorTree PlaceHL_lp4_pr4_r1Subtree {
 
 BehaviorTree GluingPlateHL_lp1_pr1_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_GluingPlateHL_lp1_pr1_r1 {
-        ServicePlanning subtreeSrv_GluingPlateHL_lp1_pr1_r1 FF Domain:DomainML Problem:problemGluingPlateHL_lp1_pr1_r1.pddl
+        ServicePlanning subtreeSrv_GluingPlateHL_lp1_pr1_r1 FF Domain:DomainML Problem:problemGluingPlateHL_lp1_pr1_r1
         All
         AllAction
         NodeGraph {
@@ -1360,7 +1360,7 @@ BehaviorTree GluingPlateHL_lp1_pr1_r1Subtree {
 
 BehaviorTree GluingPlateHL_lp2_pr2_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_GluingPlateHL_lp2_pr2_r1 {
-        ServicePlanning subtreeSrv_GluingPlateHL_lp2_pr2_r1 FF Domain:DomainML Problem:problemGluingPlateHL_lp2_pr2_r1.pddl
+        ServicePlanning subtreeSrv_GluingPlateHL_lp2_pr2_r1 FF Domain:DomainML Problem:problemGluingPlateHL_lp2_pr2_r1
         All
         AllAction
         NodeGraph {
@@ -1374,7 +1374,7 @@ BehaviorTree GluingPlateHL_lp2_pr2_r1Subtree {
 
 BehaviorTree GluingPlateHL_lp3_pr3_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_GluingPlateHL_lp3_pr3_r1 {
-        ServicePlanning subtreeSrv_GluingPlateHL_lp3_pr3_r1 FF Domain:DomainML Problem:problemGluingPlateHL_lp3_pr3_r1.pddl
+        ServicePlanning subtreeSrv_GluingPlateHL_lp3_pr3_r1 FF Domain:DomainML Problem:problemGluingPlateHL_lp3_pr3_r1
         All
         AllAction
         NodeGraph {
@@ -1388,7 +1388,7 @@ BehaviorTree GluingPlateHL_lp3_pr3_r1Subtree {
 
 BehaviorTree GluingPlateHL_lp4_pr4_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_GluingPlateHL_lp4_pr4_r1 {
-        ServicePlanning subtreeSrv_GluingPlateHL_lp4_pr4_r1 FF Domain:DomainML Problem:problemGluingPlateHL_lp4_pr4_r1.pddl
+        ServicePlanning subtreeSrv_GluingPlateHL_lp4_pr4_r1 FF Domain:DomainML Problem:problemGluingPlateHL_lp4_pr4_r1
         All
         AllAction
         NodeGraph {
@@ -1402,7 +1402,7 @@ BehaviorTree GluingPlateHL_lp4_pr4_r1Subtree {
 
 BehaviorTree PickUpHL_b1_fp2_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b1_fp2_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b1_fp2_r1 FF Domain:DomainML Problem:problemPickUpHL_b1_fp2_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b1_fp2_r1 FF Domain:DomainML Problem:problemPickUpHL_b1_fp2_r1
         All
         AllAction
         NodeGraph {
@@ -1437,7 +1437,7 @@ BehaviorTree PickUpHL_b1_fp2_r1Subtree {
 
 BehaviorTree StackHL_b1_lp1_r1_pr1_lay1_m1Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b1_lp1_r1_pr1_lay1_m1 {
-        ServicePlanning subtreeSrv_StackHL_b1_lp1_r1_pr1_lay1_m1 FF Domain:DomainML Problem:problemStackHL_b1_lp1_r1_pr1_lay1_m1.pddl
+        ServicePlanning subtreeSrv_StackHL_b1_lp1_r1_pr1_lay1_m1 FF Domain:DomainML Problem:problemStackHL_b1_lp1_r1_pr1_lay1_m1
         All
         AllAction
         NodeGraph {
@@ -1451,7 +1451,7 @@ BehaviorTree StackHL_b1_lp1_r1_pr1_lay1_m1Subtree {
 
 BehaviorTree PickUpHL_b2_fp3_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b2_fp3_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b2_fp3_r1 FF Domain:DomainML Problem:problemPickUpHL_b2_fp3_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b2_fp3_r1 FF Domain:DomainML Problem:problemPickUpHL_b2_fp3_r1
         All
         AllAction
         NodeGraph {
@@ -1465,7 +1465,7 @@ BehaviorTree PickUpHL_b2_fp3_r1Subtree {
 
 BehaviorTree StackHL_b2_lp1_r1_pr1_lay1_m1Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b2_lp1_r1_pr1_lay1_m1 {
-        ServicePlanning subtreeSrv_StackHL_b2_lp1_r1_pr1_lay1_m1 FF Domain:DomainML Problem:problemStackHL_b2_lp1_r1_pr1_lay1_m1.pddl
+        ServicePlanning subtreeSrv_StackHL_b2_lp1_r1_pr1_lay1_m1 FF Domain:DomainML Problem:problemStackHL_b2_lp1_r1_pr1_lay1_m1
         All
         AllAction
         NodeGraph {
@@ -1479,7 +1479,7 @@ BehaviorTree StackHL_b2_lp1_r1_pr1_lay1_m1Subtree {
 
 BehaviorTree PickUpHL_b6_fp8_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b6_fp8_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b6_fp8_r1 FF Domain:DomainML Problem:problemPickUpHL_b6_fp8_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b6_fp8_r1 FF Domain:DomainML Problem:problemPickUpHL_b6_fp8_r1
         All
         AllAction
         NodeGraph {
@@ -1493,7 +1493,7 @@ BehaviorTree PickUpHL_b6_fp8_r1Subtree {
 
 BehaviorTree StackHL_b6_lp1_r1_pr1_lay1_m1Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b6_lp1_r1_pr1_lay1_m1 {
-        ServicePlanning subtreeSrv_StackHL_b6_lp1_r1_pr1_lay1_m1 FF Domain:DomainML Problem:problemStackHL_b6_lp1_r1_pr1_lay1_m1.pddl
+        ServicePlanning subtreeSrv_StackHL_b6_lp1_r1_pr1_lay1_m1 FF Domain:DomainML Problem:problemStackHL_b6_lp1_r1_pr1_lay1_m1
         All
         AllAction
         NodeGraph {
@@ -1507,7 +1507,7 @@ BehaviorTree StackHL_b6_lp1_r1_pr1_lay1_m1Subtree {
 
 BehaviorTree PickUpHL_b4_fp6_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b4_fp6_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b4_fp6_r1 FF Domain:DomainML Problem:problemPickUpHL_b4_fp6_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b4_fp6_r1 FF Domain:DomainML Problem:problemPickUpHL_b4_fp6_r1
         All
         AllAction
         NodeGraph {
@@ -1521,7 +1521,7 @@ BehaviorTree PickUpHL_b4_fp6_r1Subtree {
 
 BehaviorTree StackHL_b4_lp1_r1_pr1_lay1_m1Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b4_lp1_r1_pr1_lay1_m1 {
-        ServicePlanning subtreeSrv_StackHL_b4_lp1_r1_pr1_lay1_m1 FF Domain:DomainML Problem:problemStackHL_b4_lp1_r1_pr1_lay1_m1.pddl
+        ServicePlanning subtreeSrv_StackHL_b4_lp1_r1_pr1_lay1_m1 FF Domain:DomainML Problem:problemStackHL_b4_lp1_r1_pr1_lay1_m1
         All
         AllAction
         NodeGraph {
@@ -1535,7 +1535,7 @@ BehaviorTree StackHL_b4_lp1_r1_pr1_lay1_m1Subtree {
 
 BehaviorTree PickUpHL_b3_fp4_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b3_fp4_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b3_fp4_r1 FF Domain:DomainML Problem:problemPickUpHL_b3_fp4_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b3_fp4_r1 FF Domain:DomainML Problem:problemPickUpHL_b3_fp4_r1
         All
         AllAction
         NodeGraph {
@@ -1549,7 +1549,7 @@ BehaviorTree PickUpHL_b3_fp4_r1Subtree {
 
 BehaviorTree StackHL_b3_lp1_r1_pr1_lay1_m1Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b3_lp1_r1_pr1_lay1_m1 {
-        ServicePlanning subtreeSrv_StackHL_b3_lp1_r1_pr1_lay1_m1 FF Domain:DomainML Problem:problemStackHL_b3_lp1_r1_pr1_lay1_m1.pddl
+        ServicePlanning subtreeSrv_StackHL_b3_lp1_r1_pr1_lay1_m1 FF Domain:DomainML Problem:problemStackHL_b3_lp1_r1_pr1_lay1_m1
         All
         AllAction
         NodeGraph {
@@ -1563,7 +1563,7 @@ BehaviorTree StackHL_b3_lp1_r1_pr1_lay1_m1Subtree {
 
 BehaviorTree PickUpHL_b5_fp7_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b5_fp7_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b5_fp7_r1 FF Domain:DomainML Problem:problemPickUpHL_b5_fp7_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b5_fp7_r1 FF Domain:DomainML Problem:problemPickUpHL_b5_fp7_r1
         All
         AllAction
         NodeGraph {
@@ -1577,7 +1577,7 @@ BehaviorTree PickUpHL_b5_fp7_r1Subtree {
 
 BehaviorTree StackHL_b5_lp1_r1_pr1_lay1_m1Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b5_lp1_r1_pr1_lay1_m1 {
-        ServicePlanning subtreeSrv_StackHL_b5_lp1_r1_pr1_lay1_m1 FF Domain:DomainML Problem:problemStackHL_b5_lp1_r1_pr1_lay1_m1.pddl
+        ServicePlanning subtreeSrv_StackHL_b5_lp1_r1_pr1_lay1_m1 FF Domain:DomainML Problem:problemStackHL_b5_lp1_r1_pr1_lay1_m1
         All
         AllAction
         NodeGraph {
@@ -1591,7 +1591,7 @@ BehaviorTree StackHL_b5_lp1_r1_pr1_lay1_m1Subtree {
 
 BehaviorTree PickUpHL_b7_fp10_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b7_fp10_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b7_fp10_r1 FF Domain:DomainML Problem:problemPickUpHL_b7_fp10_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b7_fp10_r1 FF Domain:DomainML Problem:problemPickUpHL_b7_fp10_r1
         All
         AllAction
         NodeGraph {
@@ -1605,7 +1605,7 @@ BehaviorTree PickUpHL_b7_fp10_r1Subtree {
 
 BehaviorTree PickUpHL_b8_fp11_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b8_fp11_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b8_fp11_r1 FF Domain:DomainML Problem:problemPickUpHL_b8_fp11_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b8_fp11_r1 FF Domain:DomainML Problem:problemPickUpHL_b8_fp11_r1
         All
         AllAction
         NodeGraph {
@@ -1619,7 +1619,7 @@ BehaviorTree PickUpHL_b8_fp11_r1Subtree {
 
 BehaviorTree StackHL_b8_lp2_r1_pr2_lay2_m2Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b8_lp2_r1_pr2_lay2_m2 {
-        ServicePlanning subtreeSrv_StackHL_b8_lp2_r1_pr2_lay2_m2 FF Domain:DomainML Problem:problemStackHL_b8_lp2_r1_pr2_lay2_m2.pddl
+        ServicePlanning subtreeSrv_StackHL_b8_lp2_r1_pr2_lay2_m2 FF Domain:DomainML Problem:problemStackHL_b8_lp2_r1_pr2_lay2_m2
         All
         AllAction
         NodeGraph {
@@ -1633,7 +1633,7 @@ BehaviorTree StackHL_b8_lp2_r1_pr2_lay2_m2Subtree {
 
 BehaviorTree PickUpHL_b12_fp16_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b12_fp16_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b12_fp16_r1 FF Domain:DomainML Problem:problemPickUpHL_b12_fp16_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b12_fp16_r1 FF Domain:DomainML Problem:problemPickUpHL_b12_fp16_r1
         All
         AllAction
         NodeGraph {
@@ -1647,7 +1647,7 @@ BehaviorTree PickUpHL_b12_fp16_r1Subtree {
 
 BehaviorTree StackHL_b12_lp2_r1_pr2_lay2_m2Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b12_lp2_r1_pr2_lay2_m2 {
-        ServicePlanning subtreeSrv_StackHL_b12_lp2_r1_pr2_lay2_m2 FF Domain:DomainML Problem:problemStackHL_b12_lp2_r1_pr2_lay2_m2.pddl
+        ServicePlanning subtreeSrv_StackHL_b12_lp2_r1_pr2_lay2_m2 FF Domain:DomainML Problem:problemStackHL_b12_lp2_r1_pr2_lay2_m2
         All
         AllAction
         NodeGraph {
@@ -1661,7 +1661,7 @@ BehaviorTree StackHL_b12_lp2_r1_pr2_lay2_m2Subtree {
 
 BehaviorTree PickUpHL_b10_fp14_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b10_fp14_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b10_fp14_r1 FF Domain:DomainML Problem:problemPickUpHL_b10_fp14_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b10_fp14_r1 FF Domain:DomainML Problem:problemPickUpHL_b10_fp14_r1
         All
         AllAction
         NodeGraph {
@@ -1675,7 +1675,7 @@ BehaviorTree PickUpHL_b10_fp14_r1Subtree {
 
 BehaviorTree StackHL_b10_lp2_r1_pr2_lay2_m2Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b10_lp2_r1_pr2_lay2_m2 {
-        ServicePlanning subtreeSrv_StackHL_b10_lp2_r1_pr2_lay2_m2 FF Domain:DomainML Problem:problemStackHL_b10_lp2_r1_pr2_lay2_m2.pddl
+        ServicePlanning subtreeSrv_StackHL_b10_lp2_r1_pr2_lay2_m2 FF Domain:DomainML Problem:problemStackHL_b10_lp2_r1_pr2_lay2_m2
         All
         AllAction
         NodeGraph {
@@ -1689,7 +1689,7 @@ BehaviorTree StackHL_b10_lp2_r1_pr2_lay2_m2Subtree {
 
 BehaviorTree StackHL_b9_lp2_r1_pr2_lay2_m2Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b9_lp2_r1_pr2_lay2_m2 {
-        ServicePlanning subtreeSrv_StackHL_b9_lp2_r1_pr2_lay2_m2 FF Domain:DomainML Problem:problemStackHL_b9_lp2_r1_pr2_lay2_m2.pddl
+        ServicePlanning subtreeSrv_StackHL_b9_lp2_r1_pr2_lay2_m2 FF Domain:DomainML Problem:problemStackHL_b9_lp2_r1_pr2_lay2_m2
         All
         AllAction
         NodeGraph {
@@ -1703,7 +1703,7 @@ BehaviorTree StackHL_b9_lp2_r1_pr2_lay2_m2Subtree {
 
 BehaviorTree PickUpHL_b11_fp15_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b11_fp15_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b11_fp15_r1 FF Domain:DomainML Problem:problemPickUpHL_b11_fp15_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b11_fp15_r1 FF Domain:DomainML Problem:problemPickUpHL_b11_fp15_r1
         All
         AllAction
         NodeGraph {
@@ -1717,7 +1717,7 @@ BehaviorTree PickUpHL_b11_fp15_r1Subtree {
 
 BehaviorTree StackHL_b11_lp2_r1_pr2_lay2_m2Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b11_lp2_r1_pr2_lay2_m2 {
-        ServicePlanning subtreeSrv_StackHL_b11_lp2_r1_pr2_lay2_m2 FF Domain:DomainML Problem:problemStackHL_b11_lp2_r1_pr2_lay2_m2.pddl
+        ServicePlanning subtreeSrv_StackHL_b11_lp2_r1_pr2_lay2_m2 FF Domain:DomainML Problem:problemStackHL_b11_lp2_r1_pr2_lay2_m2
         All
         AllAction
         NodeGraph {
@@ -1731,7 +1731,7 @@ BehaviorTree StackHL_b11_lp2_r1_pr2_lay2_m2Subtree {
 
 BehaviorTree PickUpHL_b13_fp18_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b13_fp18_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b13_fp18_r1 FF Domain:DomainML Problem:problemPickUpHL_b13_fp18_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b13_fp18_r1 FF Domain:DomainML Problem:problemPickUpHL_b13_fp18_r1
         All
         AllAction
         NodeGraph {
@@ -1745,7 +1745,7 @@ BehaviorTree PickUpHL_b13_fp18_r1Subtree {
 
 BehaviorTree StackHL_b13_lp3_r1_pr3_lay3_m3Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b13_lp3_r1_pr3_lay3_m3 {
-        ServicePlanning subtreeSrv_StackHL_b13_lp3_r1_pr3_lay3_m3 FF Domain:DomainML Problem:problemStackHL_b13_lp3_r1_pr3_lay3_m3.pddl
+        ServicePlanning subtreeSrv_StackHL_b13_lp3_r1_pr3_lay3_m3 FF Domain:DomainML Problem:problemStackHL_b13_lp3_r1_pr3_lay3_m3
         All
         AllAction
         NodeGraph {
@@ -1759,7 +1759,7 @@ BehaviorTree StackHL_b13_lp3_r1_pr3_lay3_m3Subtree {
 
 BehaviorTree PickUpHL_b14_fp19_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b14_fp19_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b14_fp19_r1 FF Domain:DomainML Problem:problemPickUpHL_b14_fp19_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b14_fp19_r1 FF Domain:DomainML Problem:problemPickUpHL_b14_fp19_r1
         All
         AllAction
         NodeGraph {
@@ -1773,7 +1773,7 @@ BehaviorTree PickUpHL_b14_fp19_r1Subtree {
 
 BehaviorTree StackHL_b14_lp3_r1_pr3_lay3_m3Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b14_lp3_r1_pr3_lay3_m3 {
-        ServicePlanning subtreeSrv_StackHL_b14_lp3_r1_pr3_lay3_m3 FF Domain:DomainML Problem:problemStackHL_b14_lp3_r1_pr3_lay3_m3.pddl
+        ServicePlanning subtreeSrv_StackHL_b14_lp3_r1_pr3_lay3_m3 FF Domain:DomainML Problem:problemStackHL_b14_lp3_r1_pr3_lay3_m3
         All
         AllAction
         NodeGraph {
@@ -1787,7 +1787,7 @@ BehaviorTree StackHL_b14_lp3_r1_pr3_lay3_m3Subtree {
 
 BehaviorTree PickUpHL_b18_fp24_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b18_fp24_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b18_fp24_r1 FF Domain:DomainML Problem:problemPickUpHL_b18_fp24_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b18_fp24_r1 FF Domain:DomainML Problem:problemPickUpHL_b18_fp24_r1
         All
         AllAction
         NodeGraph {
@@ -1801,7 +1801,7 @@ BehaviorTree PickUpHL_b18_fp24_r1Subtree {
 
 BehaviorTree StackHL_b18_lp3_r1_pr3_lay3_m3Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b18_lp3_r1_pr3_lay3_m3 {
-        ServicePlanning subtreeSrv_StackHL_b18_lp3_r1_pr3_lay3_m3 FF Domain:DomainML Problem:problemStackHL_b18_lp3_r1_pr3_lay3_m3.pddl
+        ServicePlanning subtreeSrv_StackHL_b18_lp3_r1_pr3_lay3_m3 FF Domain:DomainML Problem:problemStackHL_b18_lp3_r1_pr3_lay3_m3
         All
         AllAction
         NodeGraph {
@@ -1815,7 +1815,7 @@ BehaviorTree StackHL_b18_lp3_r1_pr3_lay3_m3Subtree {
 
 BehaviorTree PickUpHL_b16_fp22_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b16_fp22_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b16_fp22_r1 FF Domain:DomainML Problem:problemPickUpHL_b16_fp22_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b16_fp22_r1 FF Domain:DomainML Problem:problemPickUpHL_b16_fp22_r1
         All
         AllAction
         NodeGraph {
@@ -1829,7 +1829,7 @@ BehaviorTree PickUpHL_b16_fp22_r1Subtree {
 
 BehaviorTree StackHL_b16_lp3_r1_pr3_lay3_m3Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b16_lp3_r1_pr3_lay3_m3 {
-        ServicePlanning subtreeSrv_StackHL_b16_lp3_r1_pr3_lay3_m3 FF Domain:DomainML Problem:problemStackHL_b16_lp3_r1_pr3_lay3_m3.pddl
+        ServicePlanning subtreeSrv_StackHL_b16_lp3_r1_pr3_lay3_m3 FF Domain:DomainML Problem:problemStackHL_b16_lp3_r1_pr3_lay3_m3
         All
         AllAction
         NodeGraph {
@@ -1843,7 +1843,7 @@ BehaviorTree StackHL_b16_lp3_r1_pr3_lay3_m3Subtree {
 
 BehaviorTree PickUpHL_b15_fp20_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b15_fp20_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b15_fp20_r1 FF Domain:DomainML Problem:problemPickUpHL_b15_fp20_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b15_fp20_r1 FF Domain:DomainML Problem:problemPickUpHL_b15_fp20_r1
         All
         AllAction
         NodeGraph {
@@ -1857,7 +1857,7 @@ BehaviorTree PickUpHL_b15_fp20_r1Subtree {
 
 BehaviorTree StackHL_b15_lp3_r1_pr3_lay3_m3Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b15_lp3_r1_pr3_lay3_m3 {
-        ServicePlanning subtreeSrv_StackHL_b15_lp3_r1_pr3_lay3_m3 FF Domain:DomainML Problem:problemStackHL_b15_lp3_r1_pr3_lay3_m3.pddl
+        ServicePlanning subtreeSrv_StackHL_b15_lp3_r1_pr3_lay3_m3 FF Domain:DomainML Problem:problemStackHL_b15_lp3_r1_pr3_lay3_m3
         All
         AllAction
         NodeGraph {
@@ -1871,7 +1871,7 @@ BehaviorTree StackHL_b15_lp3_r1_pr3_lay3_m3Subtree {
 
 BehaviorTree PickUpHL_b17_fp23_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b17_fp23_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b17_fp23_r1 FF Domain:DomainML Problem:problemPickUpHL_b17_fp23_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b17_fp23_r1 FF Domain:DomainML Problem:problemPickUpHL_b17_fp23_r1
         All
         AllAction
         NodeGraph {
@@ -1885,7 +1885,7 @@ BehaviorTree PickUpHL_b17_fp23_r1Subtree {
 
 BehaviorTree StackHL_b17_lp3_r1_pr3_lay3_m3Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b17_lp3_r1_pr3_lay3_m3 {
-        ServicePlanning subtreeSrv_StackHL_b17_lp3_r1_pr3_lay3_m3 FF Domain:DomainML Problem:problemStackHL_b17_lp3_r1_pr3_lay3_m3.pddl
+        ServicePlanning subtreeSrv_StackHL_b17_lp3_r1_pr3_lay3_m3 FF Domain:DomainML Problem:problemStackHL_b17_lp3_r1_pr3_lay3_m3
         All
         AllAction
         NodeGraph {
@@ -1899,7 +1899,7 @@ BehaviorTree StackHL_b17_lp3_r1_pr3_lay3_m3Subtree {
 
 BehaviorTree PickUpHL_b19_fp26_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b19_fp26_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b19_fp26_r1 FF Domain:DomainML Problem:problemPickUpHL_b19_fp26_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b19_fp26_r1 FF Domain:DomainML Problem:problemPickUpHL_b19_fp26_r1
         All
         AllAction
         NodeGraph {
@@ -1913,7 +1913,7 @@ BehaviorTree PickUpHL_b19_fp26_r1Subtree {
 
 BehaviorTree StackHL_b19_lp4_r1_pr4_lay4_m4Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b19_lp4_r1_pr4_lay4_m4 {
-        ServicePlanning subtreeSrv_StackHL_b19_lp4_r1_pr4_lay4_m4 FF Domain:DomainML Problem:problemStackHL_b19_lp4_r1_pr4_lay4_m4.pddl
+        ServicePlanning subtreeSrv_StackHL_b19_lp4_r1_pr4_lay4_m4 FF Domain:DomainML Problem:problemStackHL_b19_lp4_r1_pr4_lay4_m4
         All
         AllAction
         NodeGraph {
@@ -1927,7 +1927,7 @@ BehaviorTree StackHL_b19_lp4_r1_pr4_lay4_m4Subtree {
 
 BehaviorTree PickUpHL_b20_fp27_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b20_fp27_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b20_fp27_r1 FF Domain:DomainML Problem:problemPickUpHL_b20_fp27_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b20_fp27_r1 FF Domain:DomainML Problem:problemPickUpHL_b20_fp27_r1
         All
         AllAction
         NodeGraph {
@@ -1941,7 +1941,7 @@ BehaviorTree PickUpHL_b20_fp27_r1Subtree {
 
 BehaviorTree StackHL_b20_lp4_r1_pr4_lay4_m4Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b20_lp4_r1_pr4_lay4_m4 {
-        ServicePlanning subtreeSrv_StackHL_b20_lp4_r1_pr4_lay4_m4 FF Domain:DomainML Problem:problemStackHL_b20_lp4_r1_pr4_lay4_m4.pddl
+        ServicePlanning subtreeSrv_StackHL_b20_lp4_r1_pr4_lay4_m4 FF Domain:DomainML Problem:problemStackHL_b20_lp4_r1_pr4_lay4_m4
         All
         AllAction
         NodeGraph {
@@ -1955,7 +1955,7 @@ BehaviorTree StackHL_b20_lp4_r1_pr4_lay4_m4Subtree {
 
 BehaviorTree PickUpHL_b24_fp32_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b24_fp32_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b24_fp32_r1 FF Domain:DomainML Problem:problemPickUpHL_b24_fp32_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b24_fp32_r1 FF Domain:DomainML Problem:problemPickUpHL_b24_fp32_r1
         All
         AllAction
         NodeGraph {
@@ -1969,7 +1969,7 @@ BehaviorTree PickUpHL_b24_fp32_r1Subtree {
 
 BehaviorTree StackHL_b24_lp4_r1_pr4_lay4_m4Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b24_lp4_r1_pr4_lay4_m4 {
-        ServicePlanning subtreeSrv_StackHL_b24_lp4_r1_pr4_lay4_m4 FF Domain:DomainML Problem:problemStackHL_b24_lp4_r1_pr4_lay4_m4.pddl
+        ServicePlanning subtreeSrv_StackHL_b24_lp4_r1_pr4_lay4_m4 FF Domain:DomainML Problem:problemStackHL_b24_lp4_r1_pr4_lay4_m4
         All
         AllAction
         NodeGraph {
@@ -1983,7 +1983,7 @@ BehaviorTree StackHL_b24_lp4_r1_pr4_lay4_m4Subtree {
 
 BehaviorTree PickUpHL_b22_fp30_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b22_fp30_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b22_fp30_r1 FF Domain:DomainML Problem:problemPickUpHL_b22_fp30_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b22_fp30_r1 FF Domain:DomainML Problem:problemPickUpHL_b22_fp30_r1
         All
         AllAction
         NodeGraph {
@@ -1997,7 +1997,7 @@ BehaviorTree PickUpHL_b22_fp30_r1Subtree {
 
 BehaviorTree StackHL_b22_lp4_r1_pr4_lay4_m4Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b22_lp4_r1_pr4_lay4_m4 {
-        ServicePlanning subtreeSrv_StackHL_b22_lp4_r1_pr4_lay4_m4 FF Domain:DomainML Problem:problemStackHL_b22_lp4_r1_pr4_lay4_m4.pddl
+        ServicePlanning subtreeSrv_StackHL_b22_lp4_r1_pr4_lay4_m4 FF Domain:DomainML Problem:problemStackHL_b22_lp4_r1_pr4_lay4_m4
         All
         AllAction
         NodeGraph {
@@ -2011,7 +2011,7 @@ BehaviorTree StackHL_b22_lp4_r1_pr4_lay4_m4Subtree {
 
 BehaviorTree PickUpHL_b21_fp28_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b21_fp28_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b21_fp28_r1 FF Domain:DomainML Problem:problemPickUpHL_b21_fp28_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b21_fp28_r1 FF Domain:DomainML Problem:problemPickUpHL_b21_fp28_r1
         All
         AllAction
         NodeGraph {
@@ -2025,7 +2025,7 @@ BehaviorTree PickUpHL_b21_fp28_r1Subtree {
 
 BehaviorTree StackHL_b21_lp4_r1_pr4_lay4_m4Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b21_lp4_r1_pr4_lay4_m4 {
-        ServicePlanning subtreeSrv_StackHL_b21_lp4_r1_pr4_lay4_m4 FF Domain:DomainML Problem:problemStackHL_b21_lp4_r1_pr4_lay4_m4.pddl
+        ServicePlanning subtreeSrv_StackHL_b21_lp4_r1_pr4_lay4_m4 FF Domain:DomainML Problem:problemStackHL_b21_lp4_r1_pr4_lay4_m4
         All
         AllAction
         NodeGraph {
@@ -2039,7 +2039,7 @@ BehaviorTree StackHL_b21_lp4_r1_pr4_lay4_m4Subtree {
 
 BehaviorTree PickUpHL_b23_fp31_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b23_fp31_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b23_fp31_r1 FF Domain:DomainML Problem:problemPickUpHL_b23_fp31_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b23_fp31_r1 FF Domain:DomainML Problem:problemPickUpHL_b23_fp31_r1
         All
         AllAction
         NodeGraph {
@@ -2053,7 +2053,7 @@ BehaviorTree PickUpHL_b23_fp31_r1Subtree {
 
 BehaviorTree StackHL_b23_lp4_r1_pr4_lay4_m4Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b23_lp4_r1_pr4_lay4_m4 {
-        ServicePlanning subtreeSrv_StackHL_b23_lp4_r1_pr4_lay4_m4 FF Domain:DomainML Problem:problemStackHL_b23_lp4_r1_pr4_lay4_m4.pddl
+        ServicePlanning subtreeSrv_StackHL_b23_lp4_r1_pr4_lay4_m4 FF Domain:DomainML Problem:problemStackHL_b23_lp4_r1_pr4_lay4_m4
         All
         AllAction
         NodeGraph {
@@ -2067,7 +2067,7 @@ BehaviorTree StackHL_b23_lp4_r1_pr4_lay4_m4Subtree {
 
 BehaviorTree NailingBeamHL_b2_r1_m1_lay1Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingBeamHL_b2_r1_m1_lay1 {
-        ServicePlanning subtreeSrv_NailingBeamHL_b2_r1_m1_lay1 FF Domain:DomainML Problem:problemNailingBeamHL_b2_r1_m1_lay1.pddl
+        ServicePlanning subtreeSrv_NailingBeamHL_b2_r1_m1_lay1 FF Domain:DomainML Problem:problemNailingBeamHL_b2_r1_m1_lay1
         All
         AllAction
         NodeGraph {
@@ -2099,7 +2099,7 @@ BehaviorTree NailingBeamHL_b2_r1_m1_lay1Subtree {
 
 BehaviorTree NailingBeamHL_b4_r1_m1_lay1Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingBeamHL_b4_r1_m1_lay1 {
-        ServicePlanning subtreeSrv_NailingBeamHL_b4_r1_m1_lay1 FF Domain:DomainML Problem:problemNailingBeamHL_b4_r1_m1_lay1.pddl
+        ServicePlanning subtreeSrv_NailingBeamHL_b4_r1_m1_lay1 FF Domain:DomainML Problem:problemNailingBeamHL_b4_r1_m1_lay1
         All
         AllAction
         NodeGraph {
@@ -2110,7 +2110,7 @@ BehaviorTree NailingBeamHL_b4_r1_m1_lay1Subtree {
 
 BehaviorTree NailingBeamHL_b3_r1_m1_lay1Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingBeamHL_b3_r1_m1_lay1 {
-        ServicePlanning subtreeSrv_NailingBeamHL_b3_r1_m1_lay1 FF Domain:DomainML Problem:problemNailingBeamHL_b3_r1_m1_lay1.pddl
+        ServicePlanning subtreeSrv_NailingBeamHL_b3_r1_m1_lay1 FF Domain:DomainML Problem:problemNailingBeamHL_b3_r1_m1_lay1
         All
         AllAction
         NodeGraph {
@@ -2121,7 +2121,7 @@ BehaviorTree NailingBeamHL_b3_r1_m1_lay1Subtree {
 
 BehaviorTree NailingBeamHL_b5_r1_m1_lay1Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingBeamHL_b5_r1_m1_lay1 {
-        ServicePlanning subtreeSrv_NailingBeamHL_b5_r1_m1_lay1 FF Domain:DomainML Problem:problemNailingBeamHL_b5_r1_m1_lay1.pddl
+        ServicePlanning subtreeSrv_NailingBeamHL_b5_r1_m1_lay1 FF Domain:DomainML Problem:problemNailingBeamHL_b5_r1_m1_lay1
         All
         AllAction
         NodeGraph {
@@ -2132,7 +2132,7 @@ BehaviorTree NailingBeamHL_b5_r1_m1_lay1Subtree {
 
 BehaviorTree NailingBeamHL_b1_r1_m1_lay1Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingBeamHL_b1_r1_m1_lay1 {
-        ServicePlanning subtreeSrv_NailingBeamHL_b1_r1_m1_lay1 FF Domain:DomainML Problem:problemNailingBeamHL_b1_r1_m1_lay1.pddl
+        ServicePlanning subtreeSrv_NailingBeamHL_b1_r1_m1_lay1 FF Domain:DomainML Problem:problemNailingBeamHL_b1_r1_m1_lay1
         All
         AllAction
         NodeGraph {
@@ -2143,7 +2143,7 @@ BehaviorTree NailingBeamHL_b1_r1_m1_lay1Subtree {
 
 BehaviorTree NailingBeamHL_b6_r1_m1_lay1Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingBeamHL_b6_r1_m1_lay1 {
-        ServicePlanning subtreeSrv_NailingBeamHL_b6_r1_m1_lay1 FF Domain:DomainML Problem:problemNailingBeamHL_b6_r1_m1_lay1.pddl
+        ServicePlanning subtreeSrv_NailingBeamHL_b6_r1_m1_lay1 FF Domain:DomainML Problem:problemNailingBeamHL_b6_r1_m1_lay1
         All
         AllAction
         NodeGraph {
@@ -2154,7 +2154,7 @@ BehaviorTree NailingBeamHL_b6_r1_m1_lay1Subtree {
 
 BehaviorTree NailingBeamHL_b8_r1_m2_lay2Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingBeamHL_b8_r1_m2_lay2 {
-        ServicePlanning subtreeSrv_NailingBeamHL_b8_r1_m2_lay2 FF Domain:DomainML Problem:problemNailingBeamHL_b8_r1_m2_lay2.pddl
+        ServicePlanning subtreeSrv_NailingBeamHL_b8_r1_m2_lay2 FF Domain:DomainML Problem:problemNailingBeamHL_b8_r1_m2_lay2
         All
         AllAction
         NodeGraph {
@@ -2168,7 +2168,7 @@ BehaviorTree NailingBeamHL_b8_r1_m2_lay2Subtree {
 
 BehaviorTree NailingBeamHL_b10_r1_m2_lay2Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingBeamHL_b10_r1_m2_lay2 {
-        ServicePlanning subtreeSrv_NailingBeamHL_b10_r1_m2_lay2 FF Domain:DomainML Problem:problemNailingBeamHL_b10_r1_m2_lay2.pddl
+        ServicePlanning subtreeSrv_NailingBeamHL_b10_r1_m2_lay2 FF Domain:DomainML Problem:problemNailingBeamHL_b10_r1_m2_lay2
         All
         AllAction
         NodeGraph {
@@ -2179,7 +2179,7 @@ BehaviorTree NailingBeamHL_b10_r1_m2_lay2Subtree {
 
 BehaviorTree NailingBeamHL_b9_r1_m2_lay2Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingBeamHL_b9_r1_m2_lay2 {
-        ServicePlanning subtreeSrv_NailingBeamHL_b9_r1_m2_lay2 FF Domain:DomainML Problem:problemNailingBeamHL_b9_r1_m2_lay2.pddl
+        ServicePlanning subtreeSrv_NailingBeamHL_b9_r1_m2_lay2 FF Domain:DomainML Problem:problemNailingBeamHL_b9_r1_m2_lay2
         All
         AllAction
         NodeGraph {
@@ -2190,7 +2190,7 @@ BehaviorTree NailingBeamHL_b9_r1_m2_lay2Subtree {
 
 BehaviorTree NailingBeamHL_b11_r1_m2_lay2Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingBeamHL_b11_r1_m2_lay2 {
-        ServicePlanning subtreeSrv_NailingBeamHL_b11_r1_m2_lay2 FF Domain:DomainML Problem:problemNailingBeamHL_b11_r1_m2_lay2.pddl
+        ServicePlanning subtreeSrv_NailingBeamHL_b11_r1_m2_lay2 FF Domain:DomainML Problem:problemNailingBeamHL_b11_r1_m2_lay2
         All
         AllAction
         NodeGraph {
@@ -2201,7 +2201,7 @@ BehaviorTree NailingBeamHL_b11_r1_m2_lay2Subtree {
 
 BehaviorTree NailingBeamHL_b7_r1_m2_lay2Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingBeamHL_b7_r1_m2_lay2 {
-        ServicePlanning subtreeSrv_NailingBeamHL_b7_r1_m2_lay2 FF Domain:DomainML Problem:problemNailingBeamHL_b7_r1_m2_lay2.pddl
+        ServicePlanning subtreeSrv_NailingBeamHL_b7_r1_m2_lay2 FF Domain:DomainML Problem:problemNailingBeamHL_b7_r1_m2_lay2
         All
         AllAction
         NodeGraph {
@@ -2212,7 +2212,7 @@ BehaviorTree NailingBeamHL_b7_r1_m2_lay2Subtree {
 
 BehaviorTree NailingBeamHL_b12_r1_m2_lay2Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingBeamHL_b12_r1_m2_lay2 {
-        ServicePlanning subtreeSrv_NailingBeamHL_b12_r1_m2_lay2 FF Domain:DomainML Problem:problemNailingBeamHL_b12_r1_m2_lay2.pddl
+        ServicePlanning subtreeSrv_NailingBeamHL_b12_r1_m2_lay2 FF Domain:DomainML Problem:problemNailingBeamHL_b12_r1_m2_lay2
         All
         AllAction
         NodeGraph {
@@ -2223,7 +2223,7 @@ BehaviorTree NailingBeamHL_b12_r1_m2_lay2Subtree {
 
 BehaviorTree NailingBeamHL_b14_r1_m3_lay3Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingBeamHL_b14_r1_m3_lay3 {
-        ServicePlanning subtreeSrv_NailingBeamHL_b14_r1_m3_lay3 FF Domain:DomainML Problem:problemNailingBeamHL_b14_r1_m3_lay3.pddl
+        ServicePlanning subtreeSrv_NailingBeamHL_b14_r1_m3_lay3 FF Domain:DomainML Problem:problemNailingBeamHL_b14_r1_m3_lay3
         All
         AllAction
         NodeGraph {
@@ -2237,7 +2237,7 @@ BehaviorTree NailingBeamHL_b14_r1_m3_lay3Subtree {
 
 BehaviorTree NailingBeamHL_b16_r1_m3_lay3Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingBeamHL_b16_r1_m3_lay3 {
-        ServicePlanning subtreeSrv_NailingBeamHL_b16_r1_m3_lay3 FF Domain:DomainML Problem:problemNailingBeamHL_b16_r1_m3_lay3.pddl
+        ServicePlanning subtreeSrv_NailingBeamHL_b16_r1_m3_lay3 FF Domain:DomainML Problem:problemNailingBeamHL_b16_r1_m3_lay3
         All
         AllAction
         NodeGraph {
@@ -2248,7 +2248,7 @@ BehaviorTree NailingBeamHL_b16_r1_m3_lay3Subtree {
 
 BehaviorTree NailingBeamHL_b15_r1_m3_lay3Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingBeamHL_b15_r1_m3_lay3 {
-        ServicePlanning subtreeSrv_NailingBeamHL_b15_r1_m3_lay3 FF Domain:DomainML Problem:problemNailingBeamHL_b15_r1_m3_lay3.pddl
+        ServicePlanning subtreeSrv_NailingBeamHL_b15_r1_m3_lay3 FF Domain:DomainML Problem:problemNailingBeamHL_b15_r1_m3_lay3
         All
         AllAction
         NodeGraph {
@@ -2259,7 +2259,7 @@ BehaviorTree NailingBeamHL_b15_r1_m3_lay3Subtree {
 
 BehaviorTree NailingBeamHL_b17_r1_m3_lay3Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingBeamHL_b17_r1_m3_lay3 {
-        ServicePlanning subtreeSrv_NailingBeamHL_b17_r1_m3_lay3 FF Domain:DomainML Problem:problemNailingBeamHL_b17_r1_m3_lay3.pddl
+        ServicePlanning subtreeSrv_NailingBeamHL_b17_r1_m3_lay3 FF Domain:DomainML Problem:problemNailingBeamHL_b17_r1_m3_lay3
         All
         AllAction
         NodeGraph {
@@ -2270,7 +2270,7 @@ BehaviorTree NailingBeamHL_b17_r1_m3_lay3Subtree {
 
 BehaviorTree NailingBeamHL_b13_r1_m3_lay3Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingBeamHL_b13_r1_m3_lay3 {
-        ServicePlanning subtreeSrv_NailingBeamHL_b13_r1_m3_lay3 FF Domain:DomainML Problem:problemNailingBeamHL_b13_r1_m3_lay3.pddl
+        ServicePlanning subtreeSrv_NailingBeamHL_b13_r1_m3_lay3 FF Domain:DomainML Problem:problemNailingBeamHL_b13_r1_m3_lay3
         All
         AllAction
         NodeGraph {
@@ -2281,7 +2281,7 @@ BehaviorTree NailingBeamHL_b13_r1_m3_lay3Subtree {
 
 BehaviorTree NailingBeamHL_b18_r1_m3_lay3Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingBeamHL_b18_r1_m3_lay3 {
-        ServicePlanning subtreeSrv_NailingBeamHL_b18_r1_m3_lay3 FF Domain:DomainML Problem:problemNailingBeamHL_b18_r1_m3_lay3.pddl
+        ServicePlanning subtreeSrv_NailingBeamHL_b18_r1_m3_lay3 FF Domain:DomainML Problem:problemNailingBeamHL_b18_r1_m3_lay3
         All
         AllAction
         NodeGraph {
@@ -2292,7 +2292,7 @@ BehaviorTree NailingBeamHL_b18_r1_m3_lay3Subtree {
 
 BehaviorTree NailingBeamHL_b20_r1_m4_lay4Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingBeamHL_b20_r1_m4_lay4 {
-        ServicePlanning subtreeSrv_NailingBeamHL_b20_r1_m4_lay4 FF Domain:DomainML Problem:problemNailingBeamHL_b20_r1_m4_lay4.pddl
+        ServicePlanning subtreeSrv_NailingBeamHL_b20_r1_m4_lay4 FF Domain:DomainML Problem:problemNailingBeamHL_b20_r1_m4_lay4
         All
         AllAction
         NodeGraph {
@@ -2306,7 +2306,7 @@ BehaviorTree NailingBeamHL_b20_r1_m4_lay4Subtree {
 
 BehaviorTree NailingBeamHL_b22_r1_m4_lay4Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingBeamHL_b22_r1_m4_lay4 {
-        ServicePlanning subtreeSrv_NailingBeamHL_b22_r1_m4_lay4 FF Domain:DomainML Problem:problemNailingBeamHL_b22_r1_m4_lay4.pddl
+        ServicePlanning subtreeSrv_NailingBeamHL_b22_r1_m4_lay4 FF Domain:DomainML Problem:problemNailingBeamHL_b22_r1_m4_lay4
         All
         AllAction
         NodeGraph {
@@ -2317,7 +2317,7 @@ BehaviorTree NailingBeamHL_b22_r1_m4_lay4Subtree {
 
 BehaviorTree NailingBeamHL_b21_r1_m4_lay4Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingBeamHL_b21_r1_m4_lay4 {
-        ServicePlanning subtreeSrv_NailingBeamHL_b21_r1_m4_lay4 FF Domain:DomainML Problem:problemNailingBeamHL_b21_r1_m4_lay4.pddl
+        ServicePlanning subtreeSrv_NailingBeamHL_b21_r1_m4_lay4 FF Domain:DomainML Problem:problemNailingBeamHL_b21_r1_m4_lay4
         All
         AllAction
         NodeGraph {
@@ -2328,7 +2328,7 @@ BehaviorTree NailingBeamHL_b21_r1_m4_lay4Subtree {
 
 BehaviorTree NailingBeamHL_b23_r1_m4_lay4Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingBeamHL_b23_r1_m4_lay4 {
-        ServicePlanning subtreeSrv_NailingBeamHL_b23_r1_m4_lay4 FF Domain:DomainML Problem:problemNailingBeamHL_b23_r1_m4_lay4.pddl
+        ServicePlanning subtreeSrv_NailingBeamHL_b23_r1_m4_lay4 FF Domain:DomainML Problem:problemNailingBeamHL_b23_r1_m4_lay4
         All
         AllAction
         NodeGraph {
@@ -2339,7 +2339,7 @@ BehaviorTree NailingBeamHL_b23_r1_m4_lay4Subtree {
 
 BehaviorTree NailingBeamHL_b19_r1_m4_lay4Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingBeamHL_b19_r1_m4_lay4 {
-        ServicePlanning subtreeSrv_NailingBeamHL_b19_r1_m4_lay4 FF Domain:DomainML Problem:problemNailingBeamHL_b19_r1_m4_lay4.pddl
+        ServicePlanning subtreeSrv_NailingBeamHL_b19_r1_m4_lay4 FF Domain:DomainML Problem:problemNailingBeamHL_b19_r1_m4_lay4
         All
         AllAction
         NodeGraph {
@@ -2350,7 +2350,7 @@ BehaviorTree NailingBeamHL_b19_r1_m4_lay4Subtree {
 
 BehaviorTree NailingBeamHL_b24_r1_m4_lay4Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingBeamHL_b24_r1_m4_lay4 {
-        ServicePlanning subtreeSrv_NailingBeamHL_b24_r1_m4_lay4 FF Domain:DomainML Problem:problemNailingBeamHL_b24_r1_m4_lay4.pddl
+        ServicePlanning subtreeSrv_NailingBeamHL_b24_r1_m4_lay4 FF Domain:DomainML Problem:problemNailingBeamHL_b24_r1_m4_lay4
         All
         AllAction
         NodeGraph {
@@ -2361,7 +2361,7 @@ BehaviorTree NailingBeamHL_b24_r1_m4_lay4Subtree {
 
 BehaviorTree GluingBeamHL_b1_r1_m1_lay1Subtree {
     Root FlowNode FF_Default_DynamicFlow_GluingBeamHL_b1_r1_m1_lay1 {
-        ServicePlanning subtreeSrv_GluingBeamHL_b1_r1_m1_lay1 FF Domain:DomainML Problem:problemGluingBeamHL_b1_r1_m1_lay1.pddl
+        ServicePlanning subtreeSrv_GluingBeamHL_b1_r1_m1_lay1 FF Domain:DomainML Problem:problemGluingBeamHL_b1_r1_m1_lay1
         All
         AllAction
         NodeGraph {
@@ -2393,7 +2393,7 @@ BehaviorTree GluingBeamHL_b1_r1_m1_lay1Subtree {
 
 BehaviorTree GluingBeamHL_b2_r1_m1_lay1Subtree {
     Root FlowNode FF_Default_DynamicFlow_GluingBeamHL_b2_r1_m1_lay1 {
-        ServicePlanning subtreeSrv_GluingBeamHL_b2_r1_m1_lay1 FF Domain:DomainML Problem:problemGluingBeamHL_b2_r1_m1_lay1.pddl
+        ServicePlanning subtreeSrv_GluingBeamHL_b2_r1_m1_lay1 FF Domain:DomainML Problem:problemGluingBeamHL_b2_r1_m1_lay1
         All
         AllAction
         NodeGraph {
@@ -2404,7 +2404,7 @@ BehaviorTree GluingBeamHL_b2_r1_m1_lay1Subtree {
 
 BehaviorTree GluingBeamHL_b5_r1_m1_lay1Subtree {
     Root FlowNode FF_Default_DynamicFlow_GluingBeamHL_b5_r1_m1_lay1 {
-        ServicePlanning subtreeSrv_GluingBeamHL_b5_r1_m1_lay1 FF Domain:DomainML Problem:problemGluingBeamHL_b5_r1_m1_lay1.pddl
+        ServicePlanning subtreeSrv_GluingBeamHL_b5_r1_m1_lay1 FF Domain:DomainML Problem:problemGluingBeamHL_b5_r1_m1_lay1
         All
         AllAction
         NodeGraph {
@@ -2415,7 +2415,7 @@ BehaviorTree GluingBeamHL_b5_r1_m1_lay1Subtree {
 
 BehaviorTree GluingBeamHL_b6_r1_m1_lay1Subtree {
     Root FlowNode FF_Default_DynamicFlow_GluingBeamHL_b6_r1_m1_lay1 {
-        ServicePlanning subtreeSrv_GluingBeamHL_b6_r1_m1_lay1 FF Domain:DomainML Problem:problemGluingBeamHL_b6_r1_m1_lay1.pddl
+        ServicePlanning subtreeSrv_GluingBeamHL_b6_r1_m1_lay1 FF Domain:DomainML Problem:problemGluingBeamHL_b6_r1_m1_lay1
         All
         AllAction
         NodeGraph {
@@ -2426,7 +2426,7 @@ BehaviorTree GluingBeamHL_b6_r1_m1_lay1Subtree {
 
 BehaviorTree GluingBeamHL_b4_r1_m1_lay1Subtree {
     Root FlowNode FF_Default_DynamicFlow_GluingBeamHL_b4_r1_m1_lay1 {
-        ServicePlanning subtreeSrv_GluingBeamHL_b4_r1_m1_lay1 FF Domain:DomainML Problem:problemGluingBeamHL_b4_r1_m1_lay1.pddl
+        ServicePlanning subtreeSrv_GluingBeamHL_b4_r1_m1_lay1 FF Domain:DomainML Problem:problemGluingBeamHL_b4_r1_m1_lay1
         All
         AllAction
         NodeGraph {
@@ -2437,7 +2437,7 @@ BehaviorTree GluingBeamHL_b4_r1_m1_lay1Subtree {
 
 BehaviorTree GluingBeamHL_b3_r1_m1_lay1Subtree {
     Root FlowNode FF_Default_DynamicFlow_GluingBeamHL_b3_r1_m1_lay1 {
-        ServicePlanning subtreeSrv_GluingBeamHL_b3_r1_m1_lay1 FF Domain:DomainML Problem:problemGluingBeamHL_b3_r1_m1_lay1.pddl
+        ServicePlanning subtreeSrv_GluingBeamHL_b3_r1_m1_lay1 FF Domain:DomainML Problem:problemGluingBeamHL_b3_r1_m1_lay1
         All
         AllAction
         NodeGraph {
@@ -2448,7 +2448,7 @@ BehaviorTree GluingBeamHL_b3_r1_m1_lay1Subtree {
 
 BehaviorTree GluingBeamHL_b7_r1_m2_lay2Subtree {
     Root FlowNode FF_Default_DynamicFlow_GluingBeamHL_b7_r1_m2_lay2 {
-        ServicePlanning subtreeSrv_GluingBeamHL_b7_r1_m2_lay2 FF Domain:DomainML Problem:problemGluingBeamHL_b7_r1_m2_lay2.pddl
+        ServicePlanning subtreeSrv_GluingBeamHL_b7_r1_m2_lay2 FF Domain:DomainML Problem:problemGluingBeamHL_b7_r1_m2_lay2
         All
         AllAction
         NodeGraph {
@@ -2462,7 +2462,7 @@ BehaviorTree GluingBeamHL_b7_r1_m2_lay2Subtree {
 
 BehaviorTree GluingBeamHL_b8_r1_m2_lay2Subtree {
     Root FlowNode FF_Default_DynamicFlow_GluingBeamHL_b8_r1_m2_lay2 {
-        ServicePlanning subtreeSrv_GluingBeamHL_b8_r1_m2_lay2 FF Domain:DomainML Problem:problemGluingBeamHL_b8_r1_m2_lay2.pddl
+        ServicePlanning subtreeSrv_GluingBeamHL_b8_r1_m2_lay2 FF Domain:DomainML Problem:problemGluingBeamHL_b8_r1_m2_lay2
         All
         AllAction
         NodeGraph {
@@ -2473,7 +2473,7 @@ BehaviorTree GluingBeamHL_b8_r1_m2_lay2Subtree {
 
 BehaviorTree GluingBeamHL_b11_r1_m2_lay2Subtree {
     Root FlowNode FF_Default_DynamicFlow_GluingBeamHL_b11_r1_m2_lay2 {
-        ServicePlanning subtreeSrv_GluingBeamHL_b11_r1_m2_lay2 FF Domain:DomainML Problem:problemGluingBeamHL_b11_r1_m2_lay2.pddl
+        ServicePlanning subtreeSrv_GluingBeamHL_b11_r1_m2_lay2 FF Domain:DomainML Problem:problemGluingBeamHL_b11_r1_m2_lay2
         All
         AllAction
         NodeGraph {
@@ -2484,7 +2484,7 @@ BehaviorTree GluingBeamHL_b11_r1_m2_lay2Subtree {
 
 BehaviorTree GluingBeamHL_b12_r1_m2_lay2Subtree {
     Root FlowNode FF_Default_DynamicFlow_GluingBeamHL_b12_r1_m2_lay2 {
-        ServicePlanning subtreeSrv_GluingBeamHL_b12_r1_m2_lay2 FF Domain:DomainML Problem:problemGluingBeamHL_b12_r1_m2_lay2.pddl
+        ServicePlanning subtreeSrv_GluingBeamHL_b12_r1_m2_lay2 FF Domain:DomainML Problem:problemGluingBeamHL_b12_r1_m2_lay2
         All
         AllAction
         NodeGraph {
@@ -2495,7 +2495,7 @@ BehaviorTree GluingBeamHL_b12_r1_m2_lay2Subtree {
 
 BehaviorTree GluingBeamHL_b10_r1_m2_lay2Subtree {
     Root FlowNode FF_Default_DynamicFlow_GluingBeamHL_b10_r1_m2_lay2 {
-        ServicePlanning subtreeSrv_GluingBeamHL_b10_r1_m2_lay2 FF Domain:DomainML Problem:problemGluingBeamHL_b10_r1_m2_lay2.pddl
+        ServicePlanning subtreeSrv_GluingBeamHL_b10_r1_m2_lay2 FF Domain:DomainML Problem:problemGluingBeamHL_b10_r1_m2_lay2
         All
         AllAction
         NodeGraph {
@@ -2506,7 +2506,7 @@ BehaviorTree GluingBeamHL_b10_r1_m2_lay2Subtree {
 
 BehaviorTree GluingBeamHL_b9_r1_m2_lay2Subtree {
     Root FlowNode FF_Default_DynamicFlow_GluingBeamHL_b9_r1_m2_lay2 {
-        ServicePlanning subtreeSrv_GluingBeamHL_b9_r1_m2_lay2 FF Domain:DomainML Problem:problemGluingBeamHL_b9_r1_m2_lay2.pddl
+        ServicePlanning subtreeSrv_GluingBeamHL_b9_r1_m2_lay2 FF Domain:DomainML Problem:problemGluingBeamHL_b9_r1_m2_lay2
         All
         AllAction
         NodeGraph {
@@ -2517,7 +2517,7 @@ BehaviorTree GluingBeamHL_b9_r1_m2_lay2Subtree {
 
 BehaviorTree GluingBeamHL_b13_r1_m3_lay3Subtree {
     Root FlowNode FF_Default_DynamicFlow_GluingBeamHL_b13_r1_m3_lay3 {
-        ServicePlanning subtreeSrv_GluingBeamHL_b13_r1_m3_lay3 FF Domain:DomainML Problem:problemGluingBeamHL_b13_r1_m3_lay3.pddl
+        ServicePlanning subtreeSrv_GluingBeamHL_b13_r1_m3_lay3 FF Domain:DomainML Problem:problemGluingBeamHL_b13_r1_m3_lay3
         All
         AllAction
         NodeGraph {
@@ -2531,7 +2531,7 @@ BehaviorTree GluingBeamHL_b13_r1_m3_lay3Subtree {
 
 BehaviorTree GluingBeamHL_b14_r1_m3_lay3Subtree {
     Root FlowNode FF_Default_DynamicFlow_GluingBeamHL_b14_r1_m3_lay3 {
-        ServicePlanning subtreeSrv_GluingBeamHL_b14_r1_m3_lay3 FF Domain:DomainML Problem:problemGluingBeamHL_b14_r1_m3_lay3.pddl
+        ServicePlanning subtreeSrv_GluingBeamHL_b14_r1_m3_lay3 FF Domain:DomainML Problem:problemGluingBeamHL_b14_r1_m3_lay3
         All
         AllAction
         NodeGraph {
@@ -2542,7 +2542,7 @@ BehaviorTree GluingBeamHL_b14_r1_m3_lay3Subtree {
 
 BehaviorTree GluingBeamHL_b17_r1_m3_lay3Subtree {
     Root FlowNode FF_Default_DynamicFlow_GluingBeamHL_b17_r1_m3_lay3 {
-        ServicePlanning subtreeSrv_GluingBeamHL_b17_r1_m3_lay3 FF Domain:DomainML Problem:problemGluingBeamHL_b17_r1_m3_lay3.pddl
+        ServicePlanning subtreeSrv_GluingBeamHL_b17_r1_m3_lay3 FF Domain:DomainML Problem:problemGluingBeamHL_b17_r1_m3_lay3
         All
         AllAction
         NodeGraph {
@@ -2553,7 +2553,7 @@ BehaviorTree GluingBeamHL_b17_r1_m3_lay3Subtree {
 
 BehaviorTree GluingBeamHL_b18_r1_m3_lay3Subtree {
     Root FlowNode FF_Default_DynamicFlow_GluingBeamHL_b18_r1_m3_lay3 {
-        ServicePlanning subtreeSrv_GluingBeamHL_b18_r1_m3_lay3 FF Domain:DomainML Problem:problemGluingBeamHL_b18_r1_m3_lay3.pddl
+        ServicePlanning subtreeSrv_GluingBeamHL_b18_r1_m3_lay3 FF Domain:DomainML Problem:problemGluingBeamHL_b18_r1_m3_lay3
         All
         AllAction
         NodeGraph {
@@ -2564,7 +2564,7 @@ BehaviorTree GluingBeamHL_b18_r1_m3_lay3Subtree {
 
 BehaviorTree GluingBeamHL_b16_r1_m3_lay3Subtree {
     Root FlowNode FF_Default_DynamicFlow_GluingBeamHL_b16_r1_m3_lay3 {
-        ServicePlanning subtreeSrv_GluingBeamHL_b16_r1_m3_lay3 FF Domain:DomainML Problem:problemGluingBeamHL_b16_r1_m3_lay3.pddl
+        ServicePlanning subtreeSrv_GluingBeamHL_b16_r1_m3_lay3 FF Domain:DomainML Problem:problemGluingBeamHL_b16_r1_m3_lay3
         All
         AllAction
         NodeGraph {
@@ -2575,7 +2575,7 @@ BehaviorTree GluingBeamHL_b16_r1_m3_lay3Subtree {
 
 BehaviorTree GluingBeamHL_b15_r1_m3_lay3Subtree {
     Root FlowNode FF_Default_DynamicFlow_GluingBeamHL_b15_r1_m3_lay3 {
-        ServicePlanning subtreeSrv_GluingBeamHL_b15_r1_m3_lay3 FF Domain:DomainML Problem:problemGluingBeamHL_b15_r1_m3_lay3.pddl
+        ServicePlanning subtreeSrv_GluingBeamHL_b15_r1_m3_lay3 FF Domain:DomainML Problem:problemGluingBeamHL_b15_r1_m3_lay3
         All
         AllAction
         NodeGraph {
@@ -2586,7 +2586,7 @@ BehaviorTree GluingBeamHL_b15_r1_m3_lay3Subtree {
 
 BehaviorTree GluingBeamHL_b19_r1_m4_lay4Subtree {
     Root FlowNode FF_Default_DynamicFlow_GluingBeamHL_b19_r1_m4_lay4 {
-        ServicePlanning subtreeSrv_GluingBeamHL_b19_r1_m4_lay4 FF Domain:DomainML Problem:problemGluingBeamHL_b19_r1_m4_lay4.pddl
+        ServicePlanning subtreeSrv_GluingBeamHL_b19_r1_m4_lay4 FF Domain:DomainML Problem:problemGluingBeamHL_b19_r1_m4_lay4
         All
         AllAction
         NodeGraph {
@@ -2600,7 +2600,7 @@ BehaviorTree GluingBeamHL_b19_r1_m4_lay4Subtree {
 
 BehaviorTree GluingBeamHL_b20_r1_m4_lay4Subtree {
     Root FlowNode FF_Default_DynamicFlow_GluingBeamHL_b20_r1_m4_lay4 {
-        ServicePlanning subtreeSrv_GluingBeamHL_b20_r1_m4_lay4 FF Domain:DomainML Problem:problemGluingBeamHL_b20_r1_m4_lay4.pddl
+        ServicePlanning subtreeSrv_GluingBeamHL_b20_r1_m4_lay4 FF Domain:DomainML Problem:problemGluingBeamHL_b20_r1_m4_lay4
         All
         AllAction
         NodeGraph {
@@ -2611,7 +2611,7 @@ BehaviorTree GluingBeamHL_b20_r1_m4_lay4Subtree {
 
 BehaviorTree GluingBeamHL_b23_r1_m4_lay4Subtree {
     Root FlowNode FF_Default_DynamicFlow_GluingBeamHL_b23_r1_m4_lay4 {
-        ServicePlanning subtreeSrv_GluingBeamHL_b23_r1_m4_lay4 FF Domain:DomainML Problem:problemGluingBeamHL_b23_r1_m4_lay4.pddl
+        ServicePlanning subtreeSrv_GluingBeamHL_b23_r1_m4_lay4 FF Domain:DomainML Problem:problemGluingBeamHL_b23_r1_m4_lay4
         All
         AllAction
         NodeGraph {
@@ -2622,7 +2622,7 @@ BehaviorTree GluingBeamHL_b23_r1_m4_lay4Subtree {
 
 BehaviorTree GluingBeamHL_b24_r1_m4_lay4Subtree {
     Root FlowNode FF_Default_DynamicFlow_GluingBeamHL_b24_r1_m4_lay4 {
-        ServicePlanning subtreeSrv_GluingBeamHL_b24_r1_m4_lay4 FF Domain:DomainML Problem:problemGluingBeamHL_b24_r1_m4_lay4.pddl
+        ServicePlanning subtreeSrv_GluingBeamHL_b24_r1_m4_lay4 FF Domain:DomainML Problem:problemGluingBeamHL_b24_r1_m4_lay4
         All
         AllAction
         NodeGraph {
@@ -2633,7 +2633,7 @@ BehaviorTree GluingBeamHL_b24_r1_m4_lay4Subtree {
 
 BehaviorTree GluingBeamHL_b22_r1_m4_lay4Subtree {
     Root FlowNode FF_Default_DynamicFlow_GluingBeamHL_b22_r1_m4_lay4 {
-        ServicePlanning subtreeSrv_GluingBeamHL_b22_r1_m4_lay4 FF Domain:DomainML Problem:problemGluingBeamHL_b22_r1_m4_lay4.pddl
+        ServicePlanning subtreeSrv_GluingBeamHL_b22_r1_m4_lay4 FF Domain:DomainML Problem:problemGluingBeamHL_b22_r1_m4_lay4
         All
         AllAction
         NodeGraph {
@@ -2644,7 +2644,7 @@ BehaviorTree GluingBeamHL_b22_r1_m4_lay4Subtree {
 
 BehaviorTree GluingBeamHL_b21_r1_m4_lay4Subtree {
     Root FlowNode FF_Default_DynamicFlow_GluingBeamHL_b21_r1_m4_lay4 {
-        ServicePlanning subtreeSrv_GluingBeamHL_b21_r1_m4_lay4 FF Domain:DomainML Problem:problemGluingBeamHL_b21_r1_m4_lay4.pddl
+        ServicePlanning subtreeSrv_GluingBeamHL_b21_r1_m4_lay4 FF Domain:DomainML Problem:problemGluingBeamHL_b21_r1_m4_lay4
         All
         AllAction
         NodeGraph {
@@ -2655,7 +2655,7 @@ BehaviorTree GluingBeamHL_b21_r1_m4_lay4Subtree {
 
 BehaviorTree PickUpHL_tp1_fp5_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_tp1_fp5_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_tp1_fp5_r1 FF Domain:DomainML Problem:problemPickUpHL_tp1_fp5_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_tp1_fp5_r1 FF Domain:DomainML Problem:problemPickUpHL_tp1_fp5_r1
         All
         AllAction
         NodeGraph {
@@ -2669,7 +2669,7 @@ BehaviorTree PickUpHL_tp1_fp5_r1Subtree {
 
 BehaviorTree StackOnMultipleHL_tp1_r1_pr1_m1_lay1Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackOnMultipleHL_tp1_r1_pr1_m1_lay1 {
-        ServicePlanning subtreeSrv_StackOnMultipleHL_tp1_r1_pr1_m1_lay1 FF Domain:DomainML Problem:problemStackOnMultipleHL_tp1_r1_pr1_m1_lay1.pddl
+        ServicePlanning subtreeSrv_StackOnMultipleHL_tp1_r1_pr1_m1_lay1 FF Domain:DomainML Problem:problemStackOnMultipleHL_tp1_r1_pr1_m1_lay1
         All
         AllAction
         NodeGraph {
@@ -2683,7 +2683,7 @@ BehaviorTree StackOnMultipleHL_tp1_r1_pr1_m1_lay1Subtree {
 
 BehaviorTree PickUpHL_tp2_fp13_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_tp2_fp13_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_tp2_fp13_r1 FF Domain:DomainML Problem:problemPickUpHL_tp2_fp13_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_tp2_fp13_r1 FF Domain:DomainML Problem:problemPickUpHL_tp2_fp13_r1
         All
         AllAction
         NodeGraph {
@@ -2697,7 +2697,7 @@ BehaviorTree PickUpHL_tp2_fp13_r1Subtree {
 
 BehaviorTree StackOnMultipleHL_tp2_r1_pr2_m2_lay2Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackOnMultipleHL_tp2_r1_pr2_m2_lay2 {
-        ServicePlanning subtreeSrv_StackOnMultipleHL_tp2_r1_pr2_m2_lay2 FF Domain:DomainML Problem:problemStackOnMultipleHL_tp2_r1_pr2_m2_lay2.pddl
+        ServicePlanning subtreeSrv_StackOnMultipleHL_tp2_r1_pr2_m2_lay2 FF Domain:DomainML Problem:problemStackOnMultipleHL_tp2_r1_pr2_m2_lay2
         All
         AllAction
         NodeGraph {
@@ -2711,7 +2711,7 @@ BehaviorTree StackOnMultipleHL_tp2_r1_pr2_m2_lay2Subtree {
 
 BehaviorTree PickUpHL_tp3_fp21_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_tp3_fp21_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_tp3_fp21_r1 FF Domain:DomainML Problem:problemPickUpHL_tp3_fp21_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_tp3_fp21_r1 FF Domain:DomainML Problem:problemPickUpHL_tp3_fp21_r1
         All
         AllAction
         NodeGraph {
@@ -2725,7 +2725,7 @@ BehaviorTree PickUpHL_tp3_fp21_r1Subtree {
 
 BehaviorTree StackOnMultipleHL_tp3_r1_pr3_m3_lay3Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackOnMultipleHL_tp3_r1_pr3_m3_lay3 {
-        ServicePlanning subtreeSrv_StackOnMultipleHL_tp3_r1_pr3_m3_lay3 FF Domain:DomainML Problem:problemStackOnMultipleHL_tp3_r1_pr3_m3_lay3.pddl
+        ServicePlanning subtreeSrv_StackOnMultipleHL_tp3_r1_pr3_m3_lay3 FF Domain:DomainML Problem:problemStackOnMultipleHL_tp3_r1_pr3_m3_lay3
         All
         AllAction
         NodeGraph {
@@ -2739,7 +2739,7 @@ BehaviorTree StackOnMultipleHL_tp3_r1_pr3_m3_lay3Subtree {
 
 BehaviorTree PickUpHL_tp4_fp29_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_tp4_fp29_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_tp4_fp29_r1 FF Domain:DomainML Problem:problemPickUpHL_tp4_fp29_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_tp4_fp29_r1 FF Domain:DomainML Problem:problemPickUpHL_tp4_fp29_r1
         All
         AllAction
         NodeGraph {
@@ -2771,7 +2771,7 @@ BehaviorTree PickUpHL_tp4_fp29_r1Subtree {
 
 BehaviorTree StackOnMultipleHL_tp4_r1_pr4_m4_lay4Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackOnMultipleHL_tp4_r1_pr4_m4_lay4 {
-        ServicePlanning subtreeSrv_StackOnMultipleHL_tp4_r1_pr4_m4_lay4 FF Domain:DomainML Problem:problemStackOnMultipleHL_tp4_r1_pr4_m4_lay4.pddl
+        ServicePlanning subtreeSrv_StackOnMultipleHL_tp4_r1_pr4_m4_lay4 FF Domain:DomainML Problem:problemStackOnMultipleHL_tp4_r1_pr4_m4_lay4
         All
         AllAction
         NodeGraph {
@@ -2785,7 +2785,7 @@ BehaviorTree StackOnMultipleHL_tp4_r1_pr4_m4_lay4Subtree {
 
 BehaviorTree NailingHL_tp1_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingHL_tp1_r1 {
-        ServicePlanning subtreeSrv_NailingHL_tp1_r1 FF Domain:DomainML Problem:problemNailingHL_tp1_r1.pddl
+        ServicePlanning subtreeSrv_NailingHL_tp1_r1 FF Domain:DomainML Problem:problemNailingHL_tp1_r1
         All
         AllAction
         NodeGraph {
@@ -2799,7 +2799,7 @@ BehaviorTree NailingHL_tp1_r1Subtree {
 
 BehaviorTree NailingHL_tp2_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingHL_tp2_r1 {
-        ServicePlanning subtreeSrv_NailingHL_tp2_r1 FF Domain:DomainML Problem:problemNailingHL_tp2_r1.pddl
+        ServicePlanning subtreeSrv_NailingHL_tp2_r1 FF Domain:DomainML Problem:problemNailingHL_tp2_r1
         All
         AllAction
         NodeGraph {
@@ -2813,7 +2813,7 @@ BehaviorTree NailingHL_tp2_r1Subtree {
 
 BehaviorTree NailingHL_tp3_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingHL_tp3_r1 {
-        ServicePlanning subtreeSrv_NailingHL_tp3_r1 FF Domain:DomainML Problem:problemNailingHL_tp3_r1.pddl
+        ServicePlanning subtreeSrv_NailingHL_tp3_r1 FF Domain:DomainML Problem:problemNailingHL_tp3_r1
         All
         AllAction
         NodeGraph {
@@ -2827,7 +2827,7 @@ BehaviorTree NailingHL_tp3_r1Subtree {
 
 BehaviorTree NailingHL_tp4_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingHL_tp4_r1 {
-        ServicePlanning subtreeSrv_NailingHL_tp4_r1 FF Domain:DomainML Problem:problemNailingHL_tp4_r1.pddl
+        ServicePlanning subtreeSrv_NailingHL_tp4_r1 FF Domain:DomainML Problem:problemNailingHL_tp4_r1
         All
         AllAction
         NodeGraph {
@@ -2859,7 +2859,7 @@ BehaviorTree NailingHL_tp4_r1Subtree {
 
 BehaviorTree MoveCassetteToStackHL_tp1_lp1_pr1_sp1_r1_m1_lay1Subtree {
     Root FlowNode FF_Default_DynamicFlow_MoveCassetteToStackHL_tp1_lp1_pr1_sp1_r1_m1_lay1 {
-        ServicePlanning subtreeSrv_MoveCassetteToStackHL_tp1_lp1_pr1_sp1_r1_m1_lay1 FF Domain:DomainML Problem:problemMoveCassetteToStackHL_tp1_lp1_pr1_sp1_r1_m1_lay1.pddl
+        ServicePlanning subtreeSrv_MoveCassetteToStackHL_tp1_lp1_pr1_sp1_r1_m1_lay1 FF Domain:DomainML Problem:problemMoveCassetteToStackHL_tp1_lp1_pr1_sp1_r1_m1_lay1
         All
         AllAction
         NodeGraph {
@@ -2879,7 +2879,7 @@ BehaviorTree MoveCassetteToStackHL_tp1_lp1_pr1_sp1_r1_m1_lay1Subtree {
 
 BehaviorTree MoveCassetteToStackHL_tp2_lp2_pr2_sp2_r1_m2_lay2Subtree {
     Root FlowNode FF_Default_DynamicFlow_MoveCassetteToStackHL_tp2_lp2_pr2_sp2_r1_m2_lay2 {
-        ServicePlanning subtreeSrv_MoveCassetteToStackHL_tp2_lp2_pr2_sp2_r1_m2_lay2 FF Domain:DomainML Problem:problemMoveCassetteToStackHL_tp2_lp2_pr2_sp2_r1_m2_lay2.pddl
+        ServicePlanning subtreeSrv_MoveCassetteToStackHL_tp2_lp2_pr2_sp2_r1_m2_lay2 FF Domain:DomainML Problem:problemMoveCassetteToStackHL_tp2_lp2_pr2_sp2_r1_m2_lay2
         All
         AllAction
         NodeGraph {
@@ -2899,7 +2899,7 @@ BehaviorTree MoveCassetteToStackHL_tp2_lp2_pr2_sp2_r1_m2_lay2Subtree {
 
 BehaviorTree MoveCassetteToStackHL_tp3_lp3_pr3_sp3_r1_m3_lay3Subtree {
     Root FlowNode FF_Default_DynamicFlow_MoveCassetteToStackHL_tp3_lp3_pr3_sp3_r1_m3_lay3 {
-        ServicePlanning subtreeSrv_MoveCassetteToStackHL_tp3_lp3_pr3_sp3_r1_m3_lay3 FF Domain:DomainML Problem:problemMoveCassetteToStackHL_tp3_lp3_pr3_sp3_r1_m3_lay3.pddl
+        ServicePlanning subtreeSrv_MoveCassetteToStackHL_tp3_lp3_pr3_sp3_r1_m3_lay3 FF Domain:DomainML Problem:problemMoveCassetteToStackHL_tp3_lp3_pr3_sp3_r1_m3_lay3
         All
         AllAction
         NodeGraph {
@@ -2919,7 +2919,7 @@ BehaviorTree MoveCassetteToStackHL_tp3_lp3_pr3_sp3_r1_m3_lay3Subtree {
 
 BehaviorTree MoveCassetteToStackHL_tp4_lp4_pr4_sp4_r1_m4_lay4Subtree {
     Root FlowNode FF_Default_DynamicFlow_MoveCassetteToStackHL_tp4_lp4_pr4_sp4_r1_m4_lay4 {
-        ServicePlanning subtreeSrv_MoveCassetteToStackHL_tp4_lp4_pr4_sp4_r1_m4_lay4 FF Domain:DomainML Problem:problemMoveCassetteToStackHL_tp4_lp4_pr4_sp4_r1_m4_lay4.pddl
+        ServicePlanning subtreeSrv_MoveCassetteToStackHL_tp4_lp4_pr4_sp4_r1_m4_lay4 FF Domain:DomainML Problem:problemMoveCassetteToStackHL_tp4_lp4_pr4_sp4_r1_m4_lay4
         All
         AllAction
         NodeGraph {
@@ -2957,7 +2957,7 @@ BehaviorTree MoveCassetteToStackHL_tp4_lp4_pr4_sp4_r1_m4_lay4Subtree {
 
 BehaviorTree PickUpHL_lp5_fp33_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_lp5_fp33_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_lp5_fp33_r1 FF Domain:DomainML Problem:problemPickUpHL_lp5_fp33_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_lp5_fp33_r1 FF Domain:DomainML Problem:problemPickUpHL_lp5_fp33_r1
         All
         AllAction
         NodeGraph {
@@ -2971,7 +2971,7 @@ BehaviorTree PickUpHL_lp5_fp33_r1Subtree {
 
 BehaviorTree PlaceHL_lp5_pr1_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PlaceHL_lp5_pr1_r1 {
-        ServicePlanning subtreeSrv_PlaceHL_lp5_pr1_r1 FF Domain:DomainML Problem:problemPlaceHL_lp5_pr1_r1.pddl
+        ServicePlanning subtreeSrv_PlaceHL_lp5_pr1_r1 FF Domain:DomainML Problem:problemPlaceHL_lp5_pr1_r1
         All
         AllAction
         NodeGraph {
@@ -2985,7 +2985,7 @@ BehaviorTree PlaceHL_lp5_pr1_r1Subtree {
 
 BehaviorTree PickUpHL_lp6_fp41_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_lp6_fp41_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_lp6_fp41_r1 FF Domain:DomainML Problem:problemPickUpHL_lp6_fp41_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_lp6_fp41_r1 FF Domain:DomainML Problem:problemPickUpHL_lp6_fp41_r1
         All
         AllAction
         NodeGraph {
@@ -2999,7 +2999,7 @@ BehaviorTree PickUpHL_lp6_fp41_r1Subtree {
 
 BehaviorTree PlaceHL_lp6_pr2_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PlaceHL_lp6_pr2_r1 {
-        ServicePlanning subtreeSrv_PlaceHL_lp6_pr2_r1 FF Domain:DomainML Problem:problemPlaceHL_lp6_pr2_r1.pddl
+        ServicePlanning subtreeSrv_PlaceHL_lp6_pr2_r1 FF Domain:DomainML Problem:problemPlaceHL_lp6_pr2_r1
         All
         AllAction
         NodeGraph {
@@ -3013,7 +3013,7 @@ BehaviorTree PlaceHL_lp6_pr2_r1Subtree {
 
 BehaviorTree PickUpHL_lp7_fp49_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_lp7_fp49_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_lp7_fp49_r1 FF Domain:DomainML Problem:problemPickUpHL_lp7_fp49_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_lp7_fp49_r1 FF Domain:DomainML Problem:problemPickUpHL_lp7_fp49_r1
         All
         AllAction
         NodeGraph {
@@ -3027,7 +3027,7 @@ BehaviorTree PickUpHL_lp7_fp49_r1Subtree {
 
 BehaviorTree PlaceHL_lp7_pr3_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PlaceHL_lp7_pr3_r1 {
-        ServicePlanning subtreeSrv_PlaceHL_lp7_pr3_r1 FF Domain:DomainML Problem:problemPlaceHL_lp7_pr3_r1.pddl
+        ServicePlanning subtreeSrv_PlaceHL_lp7_pr3_r1 FF Domain:DomainML Problem:problemPlaceHL_lp7_pr3_r1
         All
         AllAction
         NodeGraph {
@@ -3041,7 +3041,7 @@ BehaviorTree PlaceHL_lp7_pr3_r1Subtree {
 
 BehaviorTree PickUpHL_lp8_fp57_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_lp8_fp57_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_lp8_fp57_r1 FF Domain:DomainML Problem:problemPickUpHL_lp8_fp57_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_lp8_fp57_r1 FF Domain:DomainML Problem:problemPickUpHL_lp8_fp57_r1
         All
         AllAction
         NodeGraph {
@@ -3055,7 +3055,7 @@ BehaviorTree PickUpHL_lp8_fp57_r1Subtree {
 
 BehaviorTree PlaceHL_lp8_pr4_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PlaceHL_lp8_pr4_r1 {
-        ServicePlanning subtreeSrv_PlaceHL_lp8_pr4_r1 FF Domain:DomainML Problem:problemPlaceHL_lp8_pr4_r1.pddl
+        ServicePlanning subtreeSrv_PlaceHL_lp8_pr4_r1 FF Domain:DomainML Problem:problemPlaceHL_lp8_pr4_r1
         All
         AllAction
         NodeGraph {
@@ -3069,7 +3069,7 @@ BehaviorTree PlaceHL_lp8_pr4_r1Subtree {
 
 BehaviorTree GluingPlateHL_lp5_pr1_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_GluingPlateHL_lp5_pr1_r1 {
-        ServicePlanning subtreeSrv_GluingPlateHL_lp5_pr1_r1 FF Domain:DomainML Problem:problemGluingPlateHL_lp5_pr1_r1.pddl
+        ServicePlanning subtreeSrv_GluingPlateHL_lp5_pr1_r1 FF Domain:DomainML Problem:problemGluingPlateHL_lp5_pr1_r1
         All
         AllAction
         NodeGraph {
@@ -3101,7 +3101,7 @@ BehaviorTree GluingPlateHL_lp5_pr1_r1Subtree {
 
 BehaviorTree GluingPlateHL_lp6_pr2_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_GluingPlateHL_lp6_pr2_r1 {
-        ServicePlanning subtreeSrv_GluingPlateHL_lp6_pr2_r1 FF Domain:DomainML Problem:problemGluingPlateHL_lp6_pr2_r1.pddl
+        ServicePlanning subtreeSrv_GluingPlateHL_lp6_pr2_r1 FF Domain:DomainML Problem:problemGluingPlateHL_lp6_pr2_r1
         All
         AllAction
         NodeGraph {
@@ -3115,7 +3115,7 @@ BehaviorTree GluingPlateHL_lp6_pr2_r1Subtree {
 
 BehaviorTree GluingPlateHL_lp7_pr3_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_GluingPlateHL_lp7_pr3_r1 {
-        ServicePlanning subtreeSrv_GluingPlateHL_lp7_pr3_r1 FF Domain:DomainML Problem:problemGluingPlateHL_lp7_pr3_r1.pddl
+        ServicePlanning subtreeSrv_GluingPlateHL_lp7_pr3_r1 FF Domain:DomainML Problem:problemGluingPlateHL_lp7_pr3_r1
         All
         AllAction
         NodeGraph {
@@ -3129,7 +3129,7 @@ BehaviorTree GluingPlateHL_lp7_pr3_r1Subtree {
 
 BehaviorTree GluingPlateHL_lp8_pr4_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_GluingPlateHL_lp8_pr4_r1 {
-        ServicePlanning subtreeSrv_GluingPlateHL_lp8_pr4_r1 FF Domain:DomainML Problem:problemGluingPlateHL_lp8_pr4_r1.pddl
+        ServicePlanning subtreeSrv_GluingPlateHL_lp8_pr4_r1 FF Domain:DomainML Problem:problemGluingPlateHL_lp8_pr4_r1
         All
         AllAction
         NodeGraph {
@@ -3143,7 +3143,7 @@ BehaviorTree GluingPlateHL_lp8_pr4_r1Subtree {
 
 BehaviorTree PickUpHL_b25_fp34_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b25_fp34_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b25_fp34_r1 FF Domain:DomainML Problem:problemPickUpHL_b25_fp34_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b25_fp34_r1 FF Domain:DomainML Problem:problemPickUpHL_b25_fp34_r1
         All
         AllAction
         NodeGraph {
@@ -3178,7 +3178,7 @@ BehaviorTree PickUpHL_b25_fp34_r1Subtree {
 
 BehaviorTree StackHL_b25_lp5_r1_pr1_lay5_m5Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b25_lp5_r1_pr1_lay5_m5 {
-        ServicePlanning subtreeSrv_StackHL_b25_lp5_r1_pr1_lay5_m5 FF Domain:DomainML Problem:problemStackHL_b25_lp5_r1_pr1_lay5_m5.pddl
+        ServicePlanning subtreeSrv_StackHL_b25_lp5_r1_pr1_lay5_m5 FF Domain:DomainML Problem:problemStackHL_b25_lp5_r1_pr1_lay5_m5
         All
         AllAction
         NodeGraph {
@@ -3192,7 +3192,7 @@ BehaviorTree StackHL_b25_lp5_r1_pr1_lay5_m5Subtree {
 
 BehaviorTree PickUpHL_b26_fp35_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b26_fp35_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b26_fp35_r1 FF Domain:DomainML Problem:problemPickUpHL_b26_fp35_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b26_fp35_r1 FF Domain:DomainML Problem:problemPickUpHL_b26_fp35_r1
         All
         AllAction
         NodeGraph {
@@ -3206,7 +3206,7 @@ BehaviorTree PickUpHL_b26_fp35_r1Subtree {
 
 BehaviorTree StackHL_b26_lp5_r1_pr1_lay5_m5Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b26_lp5_r1_pr1_lay5_m5 {
-        ServicePlanning subtreeSrv_StackHL_b26_lp5_r1_pr1_lay5_m5 FF Domain:DomainML Problem:problemStackHL_b26_lp5_r1_pr1_lay5_m5.pddl
+        ServicePlanning subtreeSrv_StackHL_b26_lp5_r1_pr1_lay5_m5 FF Domain:DomainML Problem:problemStackHL_b26_lp5_r1_pr1_lay5_m5
         All
         AllAction
         NodeGraph {
@@ -3220,7 +3220,7 @@ BehaviorTree StackHL_b26_lp5_r1_pr1_lay5_m5Subtree {
 
 BehaviorTree PickUpHL_b30_fp40_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b30_fp40_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b30_fp40_r1 FF Domain:DomainML Problem:problemPickUpHL_b30_fp40_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b30_fp40_r1 FF Domain:DomainML Problem:problemPickUpHL_b30_fp40_r1
         All
         AllAction
         NodeGraph {
@@ -3234,7 +3234,7 @@ BehaviorTree PickUpHL_b30_fp40_r1Subtree {
 
 BehaviorTree StackHL_b30_lp5_r1_pr1_lay5_m5Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b30_lp5_r1_pr1_lay5_m5 {
-        ServicePlanning subtreeSrv_StackHL_b30_lp5_r1_pr1_lay5_m5 FF Domain:DomainML Problem:problemStackHL_b30_lp5_r1_pr1_lay5_m5.pddl
+        ServicePlanning subtreeSrv_StackHL_b30_lp5_r1_pr1_lay5_m5 FF Domain:DomainML Problem:problemStackHL_b30_lp5_r1_pr1_lay5_m5
         All
         AllAction
         NodeGraph {
@@ -3248,7 +3248,7 @@ BehaviorTree StackHL_b30_lp5_r1_pr1_lay5_m5Subtree {
 
 BehaviorTree PickUpHL_b28_fp38_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b28_fp38_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b28_fp38_r1 FF Domain:DomainML Problem:problemPickUpHL_b28_fp38_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b28_fp38_r1 FF Domain:DomainML Problem:problemPickUpHL_b28_fp38_r1
         All
         AllAction
         NodeGraph {
@@ -3262,7 +3262,7 @@ BehaviorTree PickUpHL_b28_fp38_r1Subtree {
 
 BehaviorTree StackHL_b28_lp5_r1_pr1_lay5_m5Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b28_lp5_r1_pr1_lay5_m5 {
-        ServicePlanning subtreeSrv_StackHL_b28_lp5_r1_pr1_lay5_m5 FF Domain:DomainML Problem:problemStackHL_b28_lp5_r1_pr1_lay5_m5.pddl
+        ServicePlanning subtreeSrv_StackHL_b28_lp5_r1_pr1_lay5_m5 FF Domain:DomainML Problem:problemStackHL_b28_lp5_r1_pr1_lay5_m5
         All
         AllAction
         NodeGraph {
@@ -3276,7 +3276,7 @@ BehaviorTree StackHL_b28_lp5_r1_pr1_lay5_m5Subtree {
 
 BehaviorTree PickUpHL_b27_fp36_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b27_fp36_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b27_fp36_r1 FF Domain:DomainML Problem:problemPickUpHL_b27_fp36_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b27_fp36_r1 FF Domain:DomainML Problem:problemPickUpHL_b27_fp36_r1
         All
         AllAction
         NodeGraph {
@@ -3290,7 +3290,7 @@ BehaviorTree PickUpHL_b27_fp36_r1Subtree {
 
 BehaviorTree StackHL_b27_lp5_r1_pr1_lay5_m5Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b27_lp5_r1_pr1_lay5_m5 {
-        ServicePlanning subtreeSrv_StackHL_b27_lp5_r1_pr1_lay5_m5 FF Domain:DomainML Problem:problemStackHL_b27_lp5_r1_pr1_lay5_m5.pddl
+        ServicePlanning subtreeSrv_StackHL_b27_lp5_r1_pr1_lay5_m5 FF Domain:DomainML Problem:problemStackHL_b27_lp5_r1_pr1_lay5_m5
         All
         AllAction
         NodeGraph {
@@ -3304,7 +3304,7 @@ BehaviorTree StackHL_b27_lp5_r1_pr1_lay5_m5Subtree {
 
 BehaviorTree PickUpHL_b29_fp39_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b29_fp39_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b29_fp39_r1 FF Domain:DomainML Problem:problemPickUpHL_b29_fp39_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b29_fp39_r1 FF Domain:DomainML Problem:problemPickUpHL_b29_fp39_r1
         All
         AllAction
         NodeGraph {
@@ -3318,7 +3318,7 @@ BehaviorTree PickUpHL_b29_fp39_r1Subtree {
 
 BehaviorTree StackHL_b29_lp5_r1_pr1_lay5_m5Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b29_lp5_r1_pr1_lay5_m5 {
-        ServicePlanning subtreeSrv_StackHL_b29_lp5_r1_pr1_lay5_m5 FF Domain:DomainML Problem:problemStackHL_b29_lp5_r1_pr1_lay5_m5.pddl
+        ServicePlanning subtreeSrv_StackHL_b29_lp5_r1_pr1_lay5_m5 FF Domain:DomainML Problem:problemStackHL_b29_lp5_r1_pr1_lay5_m5
         All
         AllAction
         NodeGraph {
@@ -3332,7 +3332,7 @@ BehaviorTree StackHL_b29_lp5_r1_pr1_lay5_m5Subtree {
 
 BehaviorTree PickUpHL_b31_fp42_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b31_fp42_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b31_fp42_r1 FF Domain:DomainML Problem:problemPickUpHL_b31_fp42_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b31_fp42_r1 FF Domain:DomainML Problem:problemPickUpHL_b31_fp42_r1
         All
         AllAction
         NodeGraph {
@@ -3346,7 +3346,7 @@ BehaviorTree PickUpHL_b31_fp42_r1Subtree {
 
 BehaviorTree StackHL_b31_lp6_r1_pr2_lay6_m6Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b31_lp6_r1_pr2_lay6_m6 {
-        ServicePlanning subtreeSrv_StackHL_b31_lp6_r1_pr2_lay6_m6 FF Domain:DomainML Problem:problemStackHL_b31_lp6_r1_pr2_lay6_m6.pddl
+        ServicePlanning subtreeSrv_StackHL_b31_lp6_r1_pr2_lay6_m6 FF Domain:DomainML Problem:problemStackHL_b31_lp6_r1_pr2_lay6_m6
         All
         AllAction
         NodeGraph {
@@ -3360,7 +3360,7 @@ BehaviorTree StackHL_b31_lp6_r1_pr2_lay6_m6Subtree {
 
 BehaviorTree PickUpHL_b32_fp43_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b32_fp43_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b32_fp43_r1 FF Domain:DomainML Problem:problemPickUpHL_b32_fp43_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b32_fp43_r1 FF Domain:DomainML Problem:problemPickUpHL_b32_fp43_r1
         All
         AllAction
         NodeGraph {
@@ -3374,7 +3374,7 @@ BehaviorTree PickUpHL_b32_fp43_r1Subtree {
 
 BehaviorTree StackHL_b32_lp6_r1_pr2_lay6_m6Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b32_lp6_r1_pr2_lay6_m6 {
-        ServicePlanning subtreeSrv_StackHL_b32_lp6_r1_pr2_lay6_m6 FF Domain:DomainML Problem:problemStackHL_b32_lp6_r1_pr2_lay6_m6.pddl
+        ServicePlanning subtreeSrv_StackHL_b32_lp6_r1_pr2_lay6_m6 FF Domain:DomainML Problem:problemStackHL_b32_lp6_r1_pr2_lay6_m6
         All
         AllAction
         NodeGraph {
@@ -3388,7 +3388,7 @@ BehaviorTree StackHL_b32_lp6_r1_pr2_lay6_m6Subtree {
 
 BehaviorTree PickUpHL_b36_fp48_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b36_fp48_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b36_fp48_r1 FF Domain:DomainML Problem:problemPickUpHL_b36_fp48_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b36_fp48_r1 FF Domain:DomainML Problem:problemPickUpHL_b36_fp48_r1
         All
         AllAction
         NodeGraph {
@@ -3402,7 +3402,7 @@ BehaviorTree PickUpHL_b36_fp48_r1Subtree {
 
 BehaviorTree StackHL_b36_lp6_r1_pr2_lay6_m6Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b36_lp6_r1_pr2_lay6_m6 {
-        ServicePlanning subtreeSrv_StackHL_b36_lp6_r1_pr2_lay6_m6 FF Domain:DomainML Problem:problemStackHL_b36_lp6_r1_pr2_lay6_m6.pddl
+        ServicePlanning subtreeSrv_StackHL_b36_lp6_r1_pr2_lay6_m6 FF Domain:DomainML Problem:problemStackHL_b36_lp6_r1_pr2_lay6_m6
         All
         AllAction
         NodeGraph {
@@ -3416,7 +3416,7 @@ BehaviorTree StackHL_b36_lp6_r1_pr2_lay6_m6Subtree {
 
 BehaviorTree PickUpHL_b34_fp46_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b34_fp46_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b34_fp46_r1 FF Domain:DomainML Problem:problemPickUpHL_b34_fp46_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b34_fp46_r1 FF Domain:DomainML Problem:problemPickUpHL_b34_fp46_r1
         All
         AllAction
         NodeGraph {
@@ -3430,7 +3430,7 @@ BehaviorTree PickUpHL_b34_fp46_r1Subtree {
 
 BehaviorTree StackHL_b34_lp6_r1_pr2_lay6_m6Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b34_lp6_r1_pr2_lay6_m6 {
-        ServicePlanning subtreeSrv_StackHL_b34_lp6_r1_pr2_lay6_m6 FF Domain:DomainML Problem:problemStackHL_b34_lp6_r1_pr2_lay6_m6.pddl
+        ServicePlanning subtreeSrv_StackHL_b34_lp6_r1_pr2_lay6_m6 FF Domain:DomainML Problem:problemStackHL_b34_lp6_r1_pr2_lay6_m6
         All
         AllAction
         NodeGraph {
@@ -3444,7 +3444,7 @@ BehaviorTree StackHL_b34_lp6_r1_pr2_lay6_m6Subtree {
 
 BehaviorTree PickUpHL_b33_fp44_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b33_fp44_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b33_fp44_r1 FF Domain:DomainML Problem:problemPickUpHL_b33_fp44_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b33_fp44_r1 FF Domain:DomainML Problem:problemPickUpHL_b33_fp44_r1
         All
         AllAction
         NodeGraph {
@@ -3458,7 +3458,7 @@ BehaviorTree PickUpHL_b33_fp44_r1Subtree {
 
 BehaviorTree StackHL_b33_lp6_r1_pr2_lay6_m6Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b33_lp6_r1_pr2_lay6_m6 {
-        ServicePlanning subtreeSrv_StackHL_b33_lp6_r1_pr2_lay6_m6 FF Domain:DomainML Problem:problemStackHL_b33_lp6_r1_pr2_lay6_m6.pddl
+        ServicePlanning subtreeSrv_StackHL_b33_lp6_r1_pr2_lay6_m6 FF Domain:DomainML Problem:problemStackHL_b33_lp6_r1_pr2_lay6_m6
         All
         AllAction
         NodeGraph {
@@ -3472,7 +3472,7 @@ BehaviorTree StackHL_b33_lp6_r1_pr2_lay6_m6Subtree {
 
 BehaviorTree PickUpHL_b35_fp47_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b35_fp47_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b35_fp47_r1 FF Domain:DomainML Problem:problemPickUpHL_b35_fp47_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b35_fp47_r1 FF Domain:DomainML Problem:problemPickUpHL_b35_fp47_r1
         All
         AllAction
         NodeGraph {
@@ -3486,7 +3486,7 @@ BehaviorTree PickUpHL_b35_fp47_r1Subtree {
 
 BehaviorTree StackHL_b35_lp6_r1_pr2_lay6_m6Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b35_lp6_r1_pr2_lay6_m6 {
-        ServicePlanning subtreeSrv_StackHL_b35_lp6_r1_pr2_lay6_m6 FF Domain:DomainML Problem:problemStackHL_b35_lp6_r1_pr2_lay6_m6.pddl
+        ServicePlanning subtreeSrv_StackHL_b35_lp6_r1_pr2_lay6_m6 FF Domain:DomainML Problem:problemStackHL_b35_lp6_r1_pr2_lay6_m6
         All
         AllAction
         NodeGraph {
@@ -3500,7 +3500,7 @@ BehaviorTree StackHL_b35_lp6_r1_pr2_lay6_m6Subtree {
 
 BehaviorTree PickUpHL_b37_fp50_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b37_fp50_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b37_fp50_r1 FF Domain:DomainML Problem:problemPickUpHL_b37_fp50_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b37_fp50_r1 FF Domain:DomainML Problem:problemPickUpHL_b37_fp50_r1
         All
         AllAction
         NodeGraph {
@@ -3514,7 +3514,7 @@ BehaviorTree PickUpHL_b37_fp50_r1Subtree {
 
 BehaviorTree StackHL_b37_lp7_r1_pr3_lay7_m7Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b37_lp7_r1_pr3_lay7_m7 {
-        ServicePlanning subtreeSrv_StackHL_b37_lp7_r1_pr3_lay7_m7 FF Domain:DomainML Problem:problemStackHL_b37_lp7_r1_pr3_lay7_m7.pddl
+        ServicePlanning subtreeSrv_StackHL_b37_lp7_r1_pr3_lay7_m7 FF Domain:DomainML Problem:problemStackHL_b37_lp7_r1_pr3_lay7_m7
         All
         AllAction
         NodeGraph {
@@ -3528,7 +3528,7 @@ BehaviorTree StackHL_b37_lp7_r1_pr3_lay7_m7Subtree {
 
 BehaviorTree PickUpHL_b38_fp51_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b38_fp51_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b38_fp51_r1 FF Domain:DomainML Problem:problemPickUpHL_b38_fp51_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b38_fp51_r1 FF Domain:DomainML Problem:problemPickUpHL_b38_fp51_r1
         All
         AllAction
         NodeGraph {
@@ -3542,7 +3542,7 @@ BehaviorTree PickUpHL_b38_fp51_r1Subtree {
 
 BehaviorTree StackHL_b38_lp7_r1_pr3_lay7_m7Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b38_lp7_r1_pr3_lay7_m7 {
-        ServicePlanning subtreeSrv_StackHL_b38_lp7_r1_pr3_lay7_m7 FF Domain:DomainML Problem:problemStackHL_b38_lp7_r1_pr3_lay7_m7.pddl
+        ServicePlanning subtreeSrv_StackHL_b38_lp7_r1_pr3_lay7_m7 FF Domain:DomainML Problem:problemStackHL_b38_lp7_r1_pr3_lay7_m7
         All
         AllAction
         NodeGraph {
@@ -3556,7 +3556,7 @@ BehaviorTree StackHL_b38_lp7_r1_pr3_lay7_m7Subtree {
 
 BehaviorTree PickUpHL_b42_fp56_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b42_fp56_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b42_fp56_r1 FF Domain:DomainML Problem:problemPickUpHL_b42_fp56_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b42_fp56_r1 FF Domain:DomainML Problem:problemPickUpHL_b42_fp56_r1
         All
         AllAction
         NodeGraph {
@@ -3570,7 +3570,7 @@ BehaviorTree PickUpHL_b42_fp56_r1Subtree {
 
 BehaviorTree StackHL_b42_lp7_r1_pr3_lay7_m7Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b42_lp7_r1_pr3_lay7_m7 {
-        ServicePlanning subtreeSrv_StackHL_b42_lp7_r1_pr3_lay7_m7 FF Domain:DomainML Problem:problemStackHL_b42_lp7_r1_pr3_lay7_m7.pddl
+        ServicePlanning subtreeSrv_StackHL_b42_lp7_r1_pr3_lay7_m7 FF Domain:DomainML Problem:problemStackHL_b42_lp7_r1_pr3_lay7_m7
         All
         AllAction
         NodeGraph {
@@ -3584,7 +3584,7 @@ BehaviorTree StackHL_b42_lp7_r1_pr3_lay7_m7Subtree {
 
 BehaviorTree PickUpHL_b40_fp54_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b40_fp54_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b40_fp54_r1 FF Domain:DomainML Problem:problemPickUpHL_b40_fp54_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b40_fp54_r1 FF Domain:DomainML Problem:problemPickUpHL_b40_fp54_r1
         All
         AllAction
         NodeGraph {
@@ -3598,7 +3598,7 @@ BehaviorTree PickUpHL_b40_fp54_r1Subtree {
 
 BehaviorTree StackHL_b40_lp7_r1_pr3_lay7_m7Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b40_lp7_r1_pr3_lay7_m7 {
-        ServicePlanning subtreeSrv_StackHL_b40_lp7_r1_pr3_lay7_m7 FF Domain:DomainML Problem:problemStackHL_b40_lp7_r1_pr3_lay7_m7.pddl
+        ServicePlanning subtreeSrv_StackHL_b40_lp7_r1_pr3_lay7_m7 FF Domain:DomainML Problem:problemStackHL_b40_lp7_r1_pr3_lay7_m7
         All
         AllAction
         NodeGraph {
@@ -3612,7 +3612,7 @@ BehaviorTree StackHL_b40_lp7_r1_pr3_lay7_m7Subtree {
 
 BehaviorTree PickUpHL_b39_fp52_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b39_fp52_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b39_fp52_r1 FF Domain:DomainML Problem:problemPickUpHL_b39_fp52_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b39_fp52_r1 FF Domain:DomainML Problem:problemPickUpHL_b39_fp52_r1
         All
         AllAction
         NodeGraph {
@@ -3626,7 +3626,7 @@ BehaviorTree PickUpHL_b39_fp52_r1Subtree {
 
 BehaviorTree StackHL_b39_lp7_r1_pr3_lay7_m7Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b39_lp7_r1_pr3_lay7_m7 {
-        ServicePlanning subtreeSrv_StackHL_b39_lp7_r1_pr3_lay7_m7 FF Domain:DomainML Problem:problemStackHL_b39_lp7_r1_pr3_lay7_m7.pddl
+        ServicePlanning subtreeSrv_StackHL_b39_lp7_r1_pr3_lay7_m7 FF Domain:DomainML Problem:problemStackHL_b39_lp7_r1_pr3_lay7_m7
         All
         AllAction
         NodeGraph {
@@ -3640,7 +3640,7 @@ BehaviorTree StackHL_b39_lp7_r1_pr3_lay7_m7Subtree {
 
 BehaviorTree PickUpHL_b41_fp55_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b41_fp55_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b41_fp55_r1 FF Domain:DomainML Problem:problemPickUpHL_b41_fp55_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b41_fp55_r1 FF Domain:DomainML Problem:problemPickUpHL_b41_fp55_r1
         All
         AllAction
         NodeGraph {
@@ -3654,7 +3654,7 @@ BehaviorTree PickUpHL_b41_fp55_r1Subtree {
 
 BehaviorTree StackHL_b41_lp7_r1_pr3_lay7_m7Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b41_lp7_r1_pr3_lay7_m7 {
-        ServicePlanning subtreeSrv_StackHL_b41_lp7_r1_pr3_lay7_m7 FF Domain:DomainML Problem:problemStackHL_b41_lp7_r1_pr3_lay7_m7.pddl
+        ServicePlanning subtreeSrv_StackHL_b41_lp7_r1_pr3_lay7_m7 FF Domain:DomainML Problem:problemStackHL_b41_lp7_r1_pr3_lay7_m7
         All
         AllAction
         NodeGraph {
@@ -3668,7 +3668,7 @@ BehaviorTree StackHL_b41_lp7_r1_pr3_lay7_m7Subtree {
 
 BehaviorTree PickUpHL_b43_fp58_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b43_fp58_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b43_fp58_r1 FF Domain:DomainML Problem:problemPickUpHL_b43_fp58_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b43_fp58_r1 FF Domain:DomainML Problem:problemPickUpHL_b43_fp58_r1
         All
         AllAction
         NodeGraph {
@@ -3682,7 +3682,7 @@ BehaviorTree PickUpHL_b43_fp58_r1Subtree {
 
 BehaviorTree StackHL_b43_lp8_r1_pr4_lay8_m8Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b43_lp8_r1_pr4_lay8_m8 {
-        ServicePlanning subtreeSrv_StackHL_b43_lp8_r1_pr4_lay8_m8 FF Domain:DomainML Problem:problemStackHL_b43_lp8_r1_pr4_lay8_m8.pddl
+        ServicePlanning subtreeSrv_StackHL_b43_lp8_r1_pr4_lay8_m8 FF Domain:DomainML Problem:problemStackHL_b43_lp8_r1_pr4_lay8_m8
         All
         AllAction
         NodeGraph {
@@ -3696,7 +3696,7 @@ BehaviorTree StackHL_b43_lp8_r1_pr4_lay8_m8Subtree {
 
 BehaviorTree PickUpHL_b44_fp59_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b44_fp59_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b44_fp59_r1 FF Domain:DomainML Problem:problemPickUpHL_b44_fp59_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b44_fp59_r1 FF Domain:DomainML Problem:problemPickUpHL_b44_fp59_r1
         All
         AllAction
         NodeGraph {
@@ -3710,7 +3710,7 @@ BehaviorTree PickUpHL_b44_fp59_r1Subtree {
 
 BehaviorTree StackHL_b44_lp8_r1_pr4_lay8_m8Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b44_lp8_r1_pr4_lay8_m8 {
-        ServicePlanning subtreeSrv_StackHL_b44_lp8_r1_pr4_lay8_m8 FF Domain:DomainML Problem:problemStackHL_b44_lp8_r1_pr4_lay8_m8.pddl
+        ServicePlanning subtreeSrv_StackHL_b44_lp8_r1_pr4_lay8_m8 FF Domain:DomainML Problem:problemStackHL_b44_lp8_r1_pr4_lay8_m8
         All
         AllAction
         NodeGraph {
@@ -3724,7 +3724,7 @@ BehaviorTree StackHL_b44_lp8_r1_pr4_lay8_m8Subtree {
 
 BehaviorTree PickUpHL_b48_fp64_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b48_fp64_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b48_fp64_r1 FF Domain:DomainML Problem:problemPickUpHL_b48_fp64_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b48_fp64_r1 FF Domain:DomainML Problem:problemPickUpHL_b48_fp64_r1
         All
         AllAction
         NodeGraph {
@@ -3738,7 +3738,7 @@ BehaviorTree PickUpHL_b48_fp64_r1Subtree {
 
 BehaviorTree StackHL_b48_lp8_r1_pr4_lay8_m8Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b48_lp8_r1_pr4_lay8_m8 {
-        ServicePlanning subtreeSrv_StackHL_b48_lp8_r1_pr4_lay8_m8 FF Domain:DomainML Problem:problemStackHL_b48_lp8_r1_pr4_lay8_m8.pddl
+        ServicePlanning subtreeSrv_StackHL_b48_lp8_r1_pr4_lay8_m8 FF Domain:DomainML Problem:problemStackHL_b48_lp8_r1_pr4_lay8_m8
         All
         AllAction
         NodeGraph {
@@ -3752,7 +3752,7 @@ BehaviorTree StackHL_b48_lp8_r1_pr4_lay8_m8Subtree {
 
 BehaviorTree PickUpHL_b46_fp62_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b46_fp62_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b46_fp62_r1 FF Domain:DomainML Problem:problemPickUpHL_b46_fp62_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b46_fp62_r1 FF Domain:DomainML Problem:problemPickUpHL_b46_fp62_r1
         All
         AllAction
         NodeGraph {
@@ -3766,7 +3766,7 @@ BehaviorTree PickUpHL_b46_fp62_r1Subtree {
 
 BehaviorTree StackHL_b46_lp8_r1_pr4_lay8_m8Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b46_lp8_r1_pr4_lay8_m8 {
-        ServicePlanning subtreeSrv_StackHL_b46_lp8_r1_pr4_lay8_m8 FF Domain:DomainML Problem:problemStackHL_b46_lp8_r1_pr4_lay8_m8.pddl
+        ServicePlanning subtreeSrv_StackHL_b46_lp8_r1_pr4_lay8_m8 FF Domain:DomainML Problem:problemStackHL_b46_lp8_r1_pr4_lay8_m8
         All
         AllAction
         NodeGraph {
@@ -3780,7 +3780,7 @@ BehaviorTree StackHL_b46_lp8_r1_pr4_lay8_m8Subtree {
 
 BehaviorTree PickUpHL_b45_fp60_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b45_fp60_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b45_fp60_r1 FF Domain:DomainML Problem:problemPickUpHL_b45_fp60_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b45_fp60_r1 FF Domain:DomainML Problem:problemPickUpHL_b45_fp60_r1
         All
         AllAction
         NodeGraph {
@@ -3794,7 +3794,7 @@ BehaviorTree PickUpHL_b45_fp60_r1Subtree {
 
 BehaviorTree StackHL_b45_lp8_r1_pr4_lay8_m8Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b45_lp8_r1_pr4_lay8_m8 {
-        ServicePlanning subtreeSrv_StackHL_b45_lp8_r1_pr4_lay8_m8 FF Domain:DomainML Problem:problemStackHL_b45_lp8_r1_pr4_lay8_m8.pddl
+        ServicePlanning subtreeSrv_StackHL_b45_lp8_r1_pr4_lay8_m8 FF Domain:DomainML Problem:problemStackHL_b45_lp8_r1_pr4_lay8_m8
         All
         AllAction
         NodeGraph {
@@ -3808,7 +3808,7 @@ BehaviorTree StackHL_b45_lp8_r1_pr4_lay8_m8Subtree {
 
 BehaviorTree PickUpHL_b47_fp63_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b47_fp63_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b47_fp63_r1 FF Domain:DomainML Problem:problemPickUpHL_b47_fp63_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b47_fp63_r1 FF Domain:DomainML Problem:problemPickUpHL_b47_fp63_r1
         All
         AllAction
         NodeGraph {
@@ -3822,7 +3822,7 @@ BehaviorTree PickUpHL_b47_fp63_r1Subtree {
 
 BehaviorTree StackHL_b47_lp8_r1_pr4_lay8_m8Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b47_lp8_r1_pr4_lay8_m8 {
-        ServicePlanning subtreeSrv_StackHL_b47_lp8_r1_pr4_lay8_m8 FF Domain:DomainML Problem:problemStackHL_b47_lp8_r1_pr4_lay8_m8.pddl
+        ServicePlanning subtreeSrv_StackHL_b47_lp8_r1_pr4_lay8_m8 FF Domain:DomainML Problem:problemStackHL_b47_lp8_r1_pr4_lay8_m8
         All
         AllAction
         NodeGraph {
@@ -3836,7 +3836,7 @@ BehaviorTree StackHL_b47_lp8_r1_pr4_lay8_m8Subtree {
 
 BehaviorTree NailingBeamHL_b26_r1_m5_lay5Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingBeamHL_b26_r1_m5_lay5 {
-        ServicePlanning subtreeSrv_NailingBeamHL_b26_r1_m5_lay5 FF Domain:DomainML Problem:problemNailingBeamHL_b26_r1_m5_lay5.pddl
+        ServicePlanning subtreeSrv_NailingBeamHL_b26_r1_m5_lay5 FF Domain:DomainML Problem:problemNailingBeamHL_b26_r1_m5_lay5
         All
         AllAction
         NodeGraph {
@@ -3868,7 +3868,7 @@ BehaviorTree NailingBeamHL_b26_r1_m5_lay5Subtree {
 
 BehaviorTree NailingBeamHL_b28_r1_m5_lay5Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingBeamHL_b28_r1_m5_lay5 {
-        ServicePlanning subtreeSrv_NailingBeamHL_b28_r1_m5_lay5 FF Domain:DomainML Problem:problemNailingBeamHL_b28_r1_m5_lay5.pddl
+        ServicePlanning subtreeSrv_NailingBeamHL_b28_r1_m5_lay5 FF Domain:DomainML Problem:problemNailingBeamHL_b28_r1_m5_lay5
         All
         AllAction
         NodeGraph {
@@ -3879,7 +3879,7 @@ BehaviorTree NailingBeamHL_b28_r1_m5_lay5Subtree {
 
 BehaviorTree NailingBeamHL_b27_r1_m5_lay5Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingBeamHL_b27_r1_m5_lay5 {
-        ServicePlanning subtreeSrv_NailingBeamHL_b27_r1_m5_lay5 FF Domain:DomainML Problem:problemNailingBeamHL_b27_r1_m5_lay5.pddl
+        ServicePlanning subtreeSrv_NailingBeamHL_b27_r1_m5_lay5 FF Domain:DomainML Problem:problemNailingBeamHL_b27_r1_m5_lay5
         All
         AllAction
         NodeGraph {
@@ -3890,7 +3890,7 @@ BehaviorTree NailingBeamHL_b27_r1_m5_lay5Subtree {
 
 BehaviorTree NailingBeamHL_b29_r1_m5_lay5Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingBeamHL_b29_r1_m5_lay5 {
-        ServicePlanning subtreeSrv_NailingBeamHL_b29_r1_m5_lay5 FF Domain:DomainML Problem:problemNailingBeamHL_b29_r1_m5_lay5.pddl
+        ServicePlanning subtreeSrv_NailingBeamHL_b29_r1_m5_lay5 FF Domain:DomainML Problem:problemNailingBeamHL_b29_r1_m5_lay5
         All
         AllAction
         NodeGraph {
@@ -3901,7 +3901,7 @@ BehaviorTree NailingBeamHL_b29_r1_m5_lay5Subtree {
 
 BehaviorTree NailingBeamHL_b25_r1_m5_lay5Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingBeamHL_b25_r1_m5_lay5 {
-        ServicePlanning subtreeSrv_NailingBeamHL_b25_r1_m5_lay5 FF Domain:DomainML Problem:problemNailingBeamHL_b25_r1_m5_lay5.pddl
+        ServicePlanning subtreeSrv_NailingBeamHL_b25_r1_m5_lay5 FF Domain:DomainML Problem:problemNailingBeamHL_b25_r1_m5_lay5
         All
         AllAction
         NodeGraph {
@@ -3912,7 +3912,7 @@ BehaviorTree NailingBeamHL_b25_r1_m5_lay5Subtree {
 
 BehaviorTree NailingBeamHL_b30_r1_m5_lay5Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingBeamHL_b30_r1_m5_lay5 {
-        ServicePlanning subtreeSrv_NailingBeamHL_b30_r1_m5_lay5 FF Domain:DomainML Problem:problemNailingBeamHL_b30_r1_m5_lay5.pddl
+        ServicePlanning subtreeSrv_NailingBeamHL_b30_r1_m5_lay5 FF Domain:DomainML Problem:problemNailingBeamHL_b30_r1_m5_lay5
         All
         AllAction
         NodeGraph {
@@ -3923,7 +3923,7 @@ BehaviorTree NailingBeamHL_b30_r1_m5_lay5Subtree {
 
 BehaviorTree NailingBeamHL_b32_r1_m6_lay6Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingBeamHL_b32_r1_m6_lay6 {
-        ServicePlanning subtreeSrv_NailingBeamHL_b32_r1_m6_lay6 FF Domain:DomainML Problem:problemNailingBeamHL_b32_r1_m6_lay6.pddl
+        ServicePlanning subtreeSrv_NailingBeamHL_b32_r1_m6_lay6 FF Domain:DomainML Problem:problemNailingBeamHL_b32_r1_m6_lay6
         All
         AllAction
         NodeGraph {
@@ -3937,7 +3937,7 @@ BehaviorTree NailingBeamHL_b32_r1_m6_lay6Subtree {
 
 BehaviorTree NailingBeamHL_b34_r1_m6_lay6Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingBeamHL_b34_r1_m6_lay6 {
-        ServicePlanning subtreeSrv_NailingBeamHL_b34_r1_m6_lay6 FF Domain:DomainML Problem:problemNailingBeamHL_b34_r1_m6_lay6.pddl
+        ServicePlanning subtreeSrv_NailingBeamHL_b34_r1_m6_lay6 FF Domain:DomainML Problem:problemNailingBeamHL_b34_r1_m6_lay6
         All
         AllAction
         NodeGraph {
@@ -3948,7 +3948,7 @@ BehaviorTree NailingBeamHL_b34_r1_m6_lay6Subtree {
 
 BehaviorTree NailingBeamHL_b33_r1_m6_lay6Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingBeamHL_b33_r1_m6_lay6 {
-        ServicePlanning subtreeSrv_NailingBeamHL_b33_r1_m6_lay6 FF Domain:DomainML Problem:problemNailingBeamHL_b33_r1_m6_lay6.pddl
+        ServicePlanning subtreeSrv_NailingBeamHL_b33_r1_m6_lay6 FF Domain:DomainML Problem:problemNailingBeamHL_b33_r1_m6_lay6
         All
         AllAction
         NodeGraph {
@@ -3959,7 +3959,7 @@ BehaviorTree NailingBeamHL_b33_r1_m6_lay6Subtree {
 
 BehaviorTree NailingBeamHL_b35_r1_m6_lay6Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingBeamHL_b35_r1_m6_lay6 {
-        ServicePlanning subtreeSrv_NailingBeamHL_b35_r1_m6_lay6 FF Domain:DomainML Problem:problemNailingBeamHL_b35_r1_m6_lay6.pddl
+        ServicePlanning subtreeSrv_NailingBeamHL_b35_r1_m6_lay6 FF Domain:DomainML Problem:problemNailingBeamHL_b35_r1_m6_lay6
         All
         AllAction
         NodeGraph {
@@ -3970,7 +3970,7 @@ BehaviorTree NailingBeamHL_b35_r1_m6_lay6Subtree {
 
 BehaviorTree NailingBeamHL_b31_r1_m6_lay6Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingBeamHL_b31_r1_m6_lay6 {
-        ServicePlanning subtreeSrv_NailingBeamHL_b31_r1_m6_lay6 FF Domain:DomainML Problem:problemNailingBeamHL_b31_r1_m6_lay6.pddl
+        ServicePlanning subtreeSrv_NailingBeamHL_b31_r1_m6_lay6 FF Domain:DomainML Problem:problemNailingBeamHL_b31_r1_m6_lay6
         All
         AllAction
         NodeGraph {
@@ -3981,7 +3981,7 @@ BehaviorTree NailingBeamHL_b31_r1_m6_lay6Subtree {
 
 BehaviorTree NailingBeamHL_b36_r1_m6_lay6Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingBeamHL_b36_r1_m6_lay6 {
-        ServicePlanning subtreeSrv_NailingBeamHL_b36_r1_m6_lay6 FF Domain:DomainML Problem:problemNailingBeamHL_b36_r1_m6_lay6.pddl
+        ServicePlanning subtreeSrv_NailingBeamHL_b36_r1_m6_lay6 FF Domain:DomainML Problem:problemNailingBeamHL_b36_r1_m6_lay6
         All
         AllAction
         NodeGraph {
@@ -3992,7 +3992,7 @@ BehaviorTree NailingBeamHL_b36_r1_m6_lay6Subtree {
 
 BehaviorTree NailingBeamHL_b38_r1_m7_lay7Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingBeamHL_b38_r1_m7_lay7 {
-        ServicePlanning subtreeSrv_NailingBeamHL_b38_r1_m7_lay7 FF Domain:DomainML Problem:problemNailingBeamHL_b38_r1_m7_lay7.pddl
+        ServicePlanning subtreeSrv_NailingBeamHL_b38_r1_m7_lay7 FF Domain:DomainML Problem:problemNailingBeamHL_b38_r1_m7_lay7
         All
         AllAction
         NodeGraph {
@@ -4006,7 +4006,7 @@ BehaviorTree NailingBeamHL_b38_r1_m7_lay7Subtree {
 
 BehaviorTree NailingBeamHL_b40_r1_m7_lay7Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingBeamHL_b40_r1_m7_lay7 {
-        ServicePlanning subtreeSrv_NailingBeamHL_b40_r1_m7_lay7 FF Domain:DomainML Problem:problemNailingBeamHL_b40_r1_m7_lay7.pddl
+        ServicePlanning subtreeSrv_NailingBeamHL_b40_r1_m7_lay7 FF Domain:DomainML Problem:problemNailingBeamHL_b40_r1_m7_lay7
         All
         AllAction
         NodeGraph {
@@ -4017,7 +4017,7 @@ BehaviorTree NailingBeamHL_b40_r1_m7_lay7Subtree {
 
 BehaviorTree NailingBeamHL_b39_r1_m7_lay7Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingBeamHL_b39_r1_m7_lay7 {
-        ServicePlanning subtreeSrv_NailingBeamHL_b39_r1_m7_lay7 FF Domain:DomainML Problem:problemNailingBeamHL_b39_r1_m7_lay7.pddl
+        ServicePlanning subtreeSrv_NailingBeamHL_b39_r1_m7_lay7 FF Domain:DomainML Problem:problemNailingBeamHL_b39_r1_m7_lay7
         All
         AllAction
         NodeGraph {
@@ -4028,7 +4028,7 @@ BehaviorTree NailingBeamHL_b39_r1_m7_lay7Subtree {
 
 BehaviorTree NailingBeamHL_b41_r1_m7_lay7Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingBeamHL_b41_r1_m7_lay7 {
-        ServicePlanning subtreeSrv_NailingBeamHL_b41_r1_m7_lay7 FF Domain:DomainML Problem:problemNailingBeamHL_b41_r1_m7_lay7.pddl
+        ServicePlanning subtreeSrv_NailingBeamHL_b41_r1_m7_lay7 FF Domain:DomainML Problem:problemNailingBeamHL_b41_r1_m7_lay7
         All
         AllAction
         NodeGraph {
@@ -4039,7 +4039,7 @@ BehaviorTree NailingBeamHL_b41_r1_m7_lay7Subtree {
 
 BehaviorTree NailingBeamHL_b37_r1_m7_lay7Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingBeamHL_b37_r1_m7_lay7 {
-        ServicePlanning subtreeSrv_NailingBeamHL_b37_r1_m7_lay7 FF Domain:DomainML Problem:problemNailingBeamHL_b37_r1_m7_lay7.pddl
+        ServicePlanning subtreeSrv_NailingBeamHL_b37_r1_m7_lay7 FF Domain:DomainML Problem:problemNailingBeamHL_b37_r1_m7_lay7
         All
         AllAction
         NodeGraph {
@@ -4050,7 +4050,7 @@ BehaviorTree NailingBeamHL_b37_r1_m7_lay7Subtree {
 
 BehaviorTree NailingBeamHL_b42_r1_m7_lay7Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingBeamHL_b42_r1_m7_lay7 {
-        ServicePlanning subtreeSrv_NailingBeamHL_b42_r1_m7_lay7 FF Domain:DomainML Problem:problemNailingBeamHL_b42_r1_m7_lay7.pddl
+        ServicePlanning subtreeSrv_NailingBeamHL_b42_r1_m7_lay7 FF Domain:DomainML Problem:problemNailingBeamHL_b42_r1_m7_lay7
         All
         AllAction
         NodeGraph {
@@ -4061,7 +4061,7 @@ BehaviorTree NailingBeamHL_b42_r1_m7_lay7Subtree {
 
 BehaviorTree NailingBeamHL_b44_r1_m8_lay8Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingBeamHL_b44_r1_m8_lay8 {
-        ServicePlanning subtreeSrv_NailingBeamHL_b44_r1_m8_lay8 FF Domain:DomainML Problem:problemNailingBeamHL_b44_r1_m8_lay8.pddl
+        ServicePlanning subtreeSrv_NailingBeamHL_b44_r1_m8_lay8 FF Domain:DomainML Problem:problemNailingBeamHL_b44_r1_m8_lay8
         All
         AllAction
         NodeGraph {
@@ -4075,7 +4075,7 @@ BehaviorTree NailingBeamHL_b44_r1_m8_lay8Subtree {
 
 BehaviorTree NailingBeamHL_b46_r1_m8_lay8Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingBeamHL_b46_r1_m8_lay8 {
-        ServicePlanning subtreeSrv_NailingBeamHL_b46_r1_m8_lay8 FF Domain:DomainML Problem:problemNailingBeamHL_b46_r1_m8_lay8.pddl
+        ServicePlanning subtreeSrv_NailingBeamHL_b46_r1_m8_lay8 FF Domain:DomainML Problem:problemNailingBeamHL_b46_r1_m8_lay8
         All
         AllAction
         NodeGraph {
@@ -4086,7 +4086,7 @@ BehaviorTree NailingBeamHL_b46_r1_m8_lay8Subtree {
 
 BehaviorTree NailingBeamHL_b45_r1_m8_lay8Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingBeamHL_b45_r1_m8_lay8 {
-        ServicePlanning subtreeSrv_NailingBeamHL_b45_r1_m8_lay8 FF Domain:DomainML Problem:problemNailingBeamHL_b45_r1_m8_lay8.pddl
+        ServicePlanning subtreeSrv_NailingBeamHL_b45_r1_m8_lay8 FF Domain:DomainML Problem:problemNailingBeamHL_b45_r1_m8_lay8
         All
         AllAction
         NodeGraph {
@@ -4097,7 +4097,7 @@ BehaviorTree NailingBeamHL_b45_r1_m8_lay8Subtree {
 
 BehaviorTree NailingBeamHL_b47_r1_m8_lay8Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingBeamHL_b47_r1_m8_lay8 {
-        ServicePlanning subtreeSrv_NailingBeamHL_b47_r1_m8_lay8 FF Domain:DomainML Problem:problemNailingBeamHL_b47_r1_m8_lay8.pddl
+        ServicePlanning subtreeSrv_NailingBeamHL_b47_r1_m8_lay8 FF Domain:DomainML Problem:problemNailingBeamHL_b47_r1_m8_lay8
         All
         AllAction
         NodeGraph {
@@ -4108,7 +4108,7 @@ BehaviorTree NailingBeamHL_b47_r1_m8_lay8Subtree {
 
 BehaviorTree NailingBeamHL_b43_r1_m8_lay8Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingBeamHL_b43_r1_m8_lay8 {
-        ServicePlanning subtreeSrv_NailingBeamHL_b43_r1_m8_lay8 FF Domain:DomainML Problem:problemNailingBeamHL_b43_r1_m8_lay8.pddl
+        ServicePlanning subtreeSrv_NailingBeamHL_b43_r1_m8_lay8 FF Domain:DomainML Problem:problemNailingBeamHL_b43_r1_m8_lay8
         All
         AllAction
         NodeGraph {
@@ -4119,7 +4119,7 @@ BehaviorTree NailingBeamHL_b43_r1_m8_lay8Subtree {
 
 BehaviorTree NailingBeamHL_b48_r1_m8_lay8Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingBeamHL_b48_r1_m8_lay8 {
-        ServicePlanning subtreeSrv_NailingBeamHL_b48_r1_m8_lay8 FF Domain:DomainML Problem:problemNailingBeamHL_b48_r1_m8_lay8.pddl
+        ServicePlanning subtreeSrv_NailingBeamHL_b48_r1_m8_lay8 FF Domain:DomainML Problem:problemNailingBeamHL_b48_r1_m8_lay8
         All
         AllAction
         NodeGraph {
@@ -4130,7 +4130,7 @@ BehaviorTree NailingBeamHL_b48_r1_m8_lay8Subtree {
 
 BehaviorTree GluingBeamHL_b25_r1_m5_lay5Subtree {
     Root FlowNode FF_Default_DynamicFlow_GluingBeamHL_b25_r1_m5_lay5 {
-        ServicePlanning subtreeSrv_GluingBeamHL_b25_r1_m5_lay5 FF Domain:DomainML Problem:problemGluingBeamHL_b25_r1_m5_lay5.pddl
+        ServicePlanning subtreeSrv_GluingBeamHL_b25_r1_m5_lay5 FF Domain:DomainML Problem:problemGluingBeamHL_b25_r1_m5_lay5
         All
         AllAction
         NodeGraph {
@@ -4162,7 +4162,7 @@ BehaviorTree GluingBeamHL_b25_r1_m5_lay5Subtree {
 
 BehaviorTree GluingBeamHL_b26_r1_m5_lay5Subtree {
     Root FlowNode FF_Default_DynamicFlow_GluingBeamHL_b26_r1_m5_lay5 {
-        ServicePlanning subtreeSrv_GluingBeamHL_b26_r1_m5_lay5 FF Domain:DomainML Problem:problemGluingBeamHL_b26_r1_m5_lay5.pddl
+        ServicePlanning subtreeSrv_GluingBeamHL_b26_r1_m5_lay5 FF Domain:DomainML Problem:problemGluingBeamHL_b26_r1_m5_lay5
         All
         AllAction
         NodeGraph {
@@ -4173,7 +4173,7 @@ BehaviorTree GluingBeamHL_b26_r1_m5_lay5Subtree {
 
 BehaviorTree GluingBeamHL_b29_r1_m5_lay5Subtree {
     Root FlowNode FF_Default_DynamicFlow_GluingBeamHL_b29_r1_m5_lay5 {
-        ServicePlanning subtreeSrv_GluingBeamHL_b29_r1_m5_lay5 FF Domain:DomainML Problem:problemGluingBeamHL_b29_r1_m5_lay5.pddl
+        ServicePlanning subtreeSrv_GluingBeamHL_b29_r1_m5_lay5 FF Domain:DomainML Problem:problemGluingBeamHL_b29_r1_m5_lay5
         All
         AllAction
         NodeGraph {
@@ -4184,7 +4184,7 @@ BehaviorTree GluingBeamHL_b29_r1_m5_lay5Subtree {
 
 BehaviorTree GluingBeamHL_b30_r1_m5_lay5Subtree {
     Root FlowNode FF_Default_DynamicFlow_GluingBeamHL_b30_r1_m5_lay5 {
-        ServicePlanning subtreeSrv_GluingBeamHL_b30_r1_m5_lay5 FF Domain:DomainML Problem:problemGluingBeamHL_b30_r1_m5_lay5.pddl
+        ServicePlanning subtreeSrv_GluingBeamHL_b30_r1_m5_lay5 FF Domain:DomainML Problem:problemGluingBeamHL_b30_r1_m5_lay5
         All
         AllAction
         NodeGraph {
@@ -4195,7 +4195,7 @@ BehaviorTree GluingBeamHL_b30_r1_m5_lay5Subtree {
 
 BehaviorTree GluingBeamHL_b28_r1_m5_lay5Subtree {
     Root FlowNode FF_Default_DynamicFlow_GluingBeamHL_b28_r1_m5_lay5 {
-        ServicePlanning subtreeSrv_GluingBeamHL_b28_r1_m5_lay5 FF Domain:DomainML Problem:problemGluingBeamHL_b28_r1_m5_lay5.pddl
+        ServicePlanning subtreeSrv_GluingBeamHL_b28_r1_m5_lay5 FF Domain:DomainML Problem:problemGluingBeamHL_b28_r1_m5_lay5
         All
         AllAction
         NodeGraph {
@@ -4206,7 +4206,7 @@ BehaviorTree GluingBeamHL_b28_r1_m5_lay5Subtree {
 
 BehaviorTree GluingBeamHL_b27_r1_m5_lay5Subtree {
     Root FlowNode FF_Default_DynamicFlow_GluingBeamHL_b27_r1_m5_lay5 {
-        ServicePlanning subtreeSrv_GluingBeamHL_b27_r1_m5_lay5 FF Domain:DomainML Problem:problemGluingBeamHL_b27_r1_m5_lay5.pddl
+        ServicePlanning subtreeSrv_GluingBeamHL_b27_r1_m5_lay5 FF Domain:DomainML Problem:problemGluingBeamHL_b27_r1_m5_lay5
         All
         AllAction
         NodeGraph {
@@ -4217,7 +4217,7 @@ BehaviorTree GluingBeamHL_b27_r1_m5_lay5Subtree {
 
 BehaviorTree GluingBeamHL_b31_r1_m6_lay6Subtree {
     Root FlowNode FF_Default_DynamicFlow_GluingBeamHL_b31_r1_m6_lay6 {
-        ServicePlanning subtreeSrv_GluingBeamHL_b31_r1_m6_lay6 FF Domain:DomainML Problem:problemGluingBeamHL_b31_r1_m6_lay6.pddl
+        ServicePlanning subtreeSrv_GluingBeamHL_b31_r1_m6_lay6 FF Domain:DomainML Problem:problemGluingBeamHL_b31_r1_m6_lay6
         All
         AllAction
         NodeGraph {
@@ -4231,7 +4231,7 @@ BehaviorTree GluingBeamHL_b31_r1_m6_lay6Subtree {
 
 BehaviorTree GluingBeamHL_b32_r1_m6_lay6Subtree {
     Root FlowNode FF_Default_DynamicFlow_GluingBeamHL_b32_r1_m6_lay6 {
-        ServicePlanning subtreeSrv_GluingBeamHL_b32_r1_m6_lay6 FF Domain:DomainML Problem:problemGluingBeamHL_b32_r1_m6_lay6.pddl
+        ServicePlanning subtreeSrv_GluingBeamHL_b32_r1_m6_lay6 FF Domain:DomainML Problem:problemGluingBeamHL_b32_r1_m6_lay6
         All
         AllAction
         NodeGraph {
@@ -4242,7 +4242,7 @@ BehaviorTree GluingBeamHL_b32_r1_m6_lay6Subtree {
 
 BehaviorTree GluingBeamHL_b35_r1_m6_lay6Subtree {
     Root FlowNode FF_Default_DynamicFlow_GluingBeamHL_b35_r1_m6_lay6 {
-        ServicePlanning subtreeSrv_GluingBeamHL_b35_r1_m6_lay6 FF Domain:DomainML Problem:problemGluingBeamHL_b35_r1_m6_lay6.pddl
+        ServicePlanning subtreeSrv_GluingBeamHL_b35_r1_m6_lay6 FF Domain:DomainML Problem:problemGluingBeamHL_b35_r1_m6_lay6
         All
         AllAction
         NodeGraph {
@@ -4253,7 +4253,7 @@ BehaviorTree GluingBeamHL_b35_r1_m6_lay6Subtree {
 
 BehaviorTree GluingBeamHL_b36_r1_m6_lay6Subtree {
     Root FlowNode FF_Default_DynamicFlow_GluingBeamHL_b36_r1_m6_lay6 {
-        ServicePlanning subtreeSrv_GluingBeamHL_b36_r1_m6_lay6 FF Domain:DomainML Problem:problemGluingBeamHL_b36_r1_m6_lay6.pddl
+        ServicePlanning subtreeSrv_GluingBeamHL_b36_r1_m6_lay6 FF Domain:DomainML Problem:problemGluingBeamHL_b36_r1_m6_lay6
         All
         AllAction
         NodeGraph {
@@ -4264,7 +4264,7 @@ BehaviorTree GluingBeamHL_b36_r1_m6_lay6Subtree {
 
 BehaviorTree GluingBeamHL_b34_r1_m6_lay6Subtree {
     Root FlowNode FF_Default_DynamicFlow_GluingBeamHL_b34_r1_m6_lay6 {
-        ServicePlanning subtreeSrv_GluingBeamHL_b34_r1_m6_lay6 FF Domain:DomainML Problem:problemGluingBeamHL_b34_r1_m6_lay6.pddl
+        ServicePlanning subtreeSrv_GluingBeamHL_b34_r1_m6_lay6 FF Domain:DomainML Problem:problemGluingBeamHL_b34_r1_m6_lay6
         All
         AllAction
         NodeGraph {
@@ -4275,7 +4275,7 @@ BehaviorTree GluingBeamHL_b34_r1_m6_lay6Subtree {
 
 BehaviorTree GluingBeamHL_b33_r1_m6_lay6Subtree {
     Root FlowNode FF_Default_DynamicFlow_GluingBeamHL_b33_r1_m6_lay6 {
-        ServicePlanning subtreeSrv_GluingBeamHL_b33_r1_m6_lay6 FF Domain:DomainML Problem:problemGluingBeamHL_b33_r1_m6_lay6.pddl
+        ServicePlanning subtreeSrv_GluingBeamHL_b33_r1_m6_lay6 FF Domain:DomainML Problem:problemGluingBeamHL_b33_r1_m6_lay6
         All
         AllAction
         NodeGraph {
@@ -4286,7 +4286,7 @@ BehaviorTree GluingBeamHL_b33_r1_m6_lay6Subtree {
 
 BehaviorTree GluingBeamHL_b37_r1_m7_lay7Subtree {
     Root FlowNode FF_Default_DynamicFlow_GluingBeamHL_b37_r1_m7_lay7 {
-        ServicePlanning subtreeSrv_GluingBeamHL_b37_r1_m7_lay7 FF Domain:DomainML Problem:problemGluingBeamHL_b37_r1_m7_lay7.pddl
+        ServicePlanning subtreeSrv_GluingBeamHL_b37_r1_m7_lay7 FF Domain:DomainML Problem:problemGluingBeamHL_b37_r1_m7_lay7
         All
         AllAction
         NodeGraph {
@@ -4300,7 +4300,7 @@ BehaviorTree GluingBeamHL_b37_r1_m7_lay7Subtree {
 
 BehaviorTree GluingBeamHL_b38_r1_m7_lay7Subtree {
     Root FlowNode FF_Default_DynamicFlow_GluingBeamHL_b38_r1_m7_lay7 {
-        ServicePlanning subtreeSrv_GluingBeamHL_b38_r1_m7_lay7 FF Domain:DomainML Problem:problemGluingBeamHL_b38_r1_m7_lay7.pddl
+        ServicePlanning subtreeSrv_GluingBeamHL_b38_r1_m7_lay7 FF Domain:DomainML Problem:problemGluingBeamHL_b38_r1_m7_lay7
         All
         AllAction
         NodeGraph {
@@ -4311,7 +4311,7 @@ BehaviorTree GluingBeamHL_b38_r1_m7_lay7Subtree {
 
 BehaviorTree GluingBeamHL_b41_r1_m7_lay7Subtree {
     Root FlowNode FF_Default_DynamicFlow_GluingBeamHL_b41_r1_m7_lay7 {
-        ServicePlanning subtreeSrv_GluingBeamHL_b41_r1_m7_lay7 FF Domain:DomainML Problem:problemGluingBeamHL_b41_r1_m7_lay7.pddl
+        ServicePlanning subtreeSrv_GluingBeamHL_b41_r1_m7_lay7 FF Domain:DomainML Problem:problemGluingBeamHL_b41_r1_m7_lay7
         All
         AllAction
         NodeGraph {
@@ -4322,7 +4322,7 @@ BehaviorTree GluingBeamHL_b41_r1_m7_lay7Subtree {
 
 BehaviorTree GluingBeamHL_b42_r1_m7_lay7Subtree {
     Root FlowNode FF_Default_DynamicFlow_GluingBeamHL_b42_r1_m7_lay7 {
-        ServicePlanning subtreeSrv_GluingBeamHL_b42_r1_m7_lay7 FF Domain:DomainML Problem:problemGluingBeamHL_b42_r1_m7_lay7.pddl
+        ServicePlanning subtreeSrv_GluingBeamHL_b42_r1_m7_lay7 FF Domain:DomainML Problem:problemGluingBeamHL_b42_r1_m7_lay7
         All
         AllAction
         NodeGraph {
@@ -4333,7 +4333,7 @@ BehaviorTree GluingBeamHL_b42_r1_m7_lay7Subtree {
 
 BehaviorTree GluingBeamHL_b40_r1_m7_lay7Subtree {
     Root FlowNode FF_Default_DynamicFlow_GluingBeamHL_b40_r1_m7_lay7 {
-        ServicePlanning subtreeSrv_GluingBeamHL_b40_r1_m7_lay7 FF Domain:DomainML Problem:problemGluingBeamHL_b40_r1_m7_lay7.pddl
+        ServicePlanning subtreeSrv_GluingBeamHL_b40_r1_m7_lay7 FF Domain:DomainML Problem:problemGluingBeamHL_b40_r1_m7_lay7
         All
         AllAction
         NodeGraph {
@@ -4344,7 +4344,7 @@ BehaviorTree GluingBeamHL_b40_r1_m7_lay7Subtree {
 
 BehaviorTree GluingBeamHL_b39_r1_m7_lay7Subtree {
     Root FlowNode FF_Default_DynamicFlow_GluingBeamHL_b39_r1_m7_lay7 {
-        ServicePlanning subtreeSrv_GluingBeamHL_b39_r1_m7_lay7 FF Domain:DomainML Problem:problemGluingBeamHL_b39_r1_m7_lay7.pddl
+        ServicePlanning subtreeSrv_GluingBeamHL_b39_r1_m7_lay7 FF Domain:DomainML Problem:problemGluingBeamHL_b39_r1_m7_lay7
         All
         AllAction
         NodeGraph {
@@ -4355,7 +4355,7 @@ BehaviorTree GluingBeamHL_b39_r1_m7_lay7Subtree {
 
 BehaviorTree GluingBeamHL_b43_r1_m8_lay8Subtree {
     Root FlowNode FF_Default_DynamicFlow_GluingBeamHL_b43_r1_m8_lay8 {
-        ServicePlanning subtreeSrv_GluingBeamHL_b43_r1_m8_lay8 FF Domain:DomainML Problem:problemGluingBeamHL_b43_r1_m8_lay8.pddl
+        ServicePlanning subtreeSrv_GluingBeamHL_b43_r1_m8_lay8 FF Domain:DomainML Problem:problemGluingBeamHL_b43_r1_m8_lay8
         All
         AllAction
         NodeGraph {
@@ -4369,7 +4369,7 @@ BehaviorTree GluingBeamHL_b43_r1_m8_lay8Subtree {
 
 BehaviorTree GluingBeamHL_b44_r1_m8_lay8Subtree {
     Root FlowNode FF_Default_DynamicFlow_GluingBeamHL_b44_r1_m8_lay8 {
-        ServicePlanning subtreeSrv_GluingBeamHL_b44_r1_m8_lay8 FF Domain:DomainML Problem:problemGluingBeamHL_b44_r1_m8_lay8.pddl
+        ServicePlanning subtreeSrv_GluingBeamHL_b44_r1_m8_lay8 FF Domain:DomainML Problem:problemGluingBeamHL_b44_r1_m8_lay8
         All
         AllAction
         NodeGraph {
@@ -4380,7 +4380,7 @@ BehaviorTree GluingBeamHL_b44_r1_m8_lay8Subtree {
 
 BehaviorTree GluingBeamHL_b47_r1_m8_lay8Subtree {
     Root FlowNode FF_Default_DynamicFlow_GluingBeamHL_b47_r1_m8_lay8 {
-        ServicePlanning subtreeSrv_GluingBeamHL_b47_r1_m8_lay8 FF Domain:DomainML Problem:problemGluingBeamHL_b47_r1_m8_lay8.pddl
+        ServicePlanning subtreeSrv_GluingBeamHL_b47_r1_m8_lay8 FF Domain:DomainML Problem:problemGluingBeamHL_b47_r1_m8_lay8
         All
         AllAction
         NodeGraph {
@@ -4391,7 +4391,7 @@ BehaviorTree GluingBeamHL_b47_r1_m8_lay8Subtree {
 
 BehaviorTree GluingBeamHL_b48_r1_m8_lay8Subtree {
     Root FlowNode FF_Default_DynamicFlow_GluingBeamHL_b48_r1_m8_lay8 {
-        ServicePlanning subtreeSrv_GluingBeamHL_b48_r1_m8_lay8 FF Domain:DomainML Problem:problemGluingBeamHL_b48_r1_m8_lay8.pddl
+        ServicePlanning subtreeSrv_GluingBeamHL_b48_r1_m8_lay8 FF Domain:DomainML Problem:problemGluingBeamHL_b48_r1_m8_lay8
         All
         AllAction
         NodeGraph {
@@ -4402,7 +4402,7 @@ BehaviorTree GluingBeamHL_b48_r1_m8_lay8Subtree {
 
 BehaviorTree GluingBeamHL_b46_r1_m8_lay8Subtree {
     Root FlowNode FF_Default_DynamicFlow_GluingBeamHL_b46_r1_m8_lay8 {
-        ServicePlanning subtreeSrv_GluingBeamHL_b46_r1_m8_lay8 FF Domain:DomainML Problem:problemGluingBeamHL_b46_r1_m8_lay8.pddl
+        ServicePlanning subtreeSrv_GluingBeamHL_b46_r1_m8_lay8 FF Domain:DomainML Problem:problemGluingBeamHL_b46_r1_m8_lay8
         All
         AllAction
         NodeGraph {
@@ -4413,7 +4413,7 @@ BehaviorTree GluingBeamHL_b46_r1_m8_lay8Subtree {
 
 BehaviorTree GluingBeamHL_b45_r1_m8_lay8Subtree {
     Root FlowNode FF_Default_DynamicFlow_GluingBeamHL_b45_r1_m8_lay8 {
-        ServicePlanning subtreeSrv_GluingBeamHL_b45_r1_m8_lay8 FF Domain:DomainML Problem:problemGluingBeamHL_b45_r1_m8_lay8.pddl
+        ServicePlanning subtreeSrv_GluingBeamHL_b45_r1_m8_lay8 FF Domain:DomainML Problem:problemGluingBeamHL_b45_r1_m8_lay8
         All
         AllAction
         NodeGraph {
@@ -4424,7 +4424,7 @@ BehaviorTree GluingBeamHL_b45_r1_m8_lay8Subtree {
 
 BehaviorTree PickUpHL_tp5_fp37_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_tp5_fp37_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_tp5_fp37_r1 FF Domain:DomainML Problem:problemPickUpHL_tp5_fp37_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_tp5_fp37_r1 FF Domain:DomainML Problem:problemPickUpHL_tp5_fp37_r1
         All
         AllAction
         NodeGraph {
@@ -4438,7 +4438,7 @@ BehaviorTree PickUpHL_tp5_fp37_r1Subtree {
 
 BehaviorTree StackOnMultipleHL_tp5_r1_pr1_m5_lay5Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackOnMultipleHL_tp5_r1_pr1_m5_lay5 {
-        ServicePlanning subtreeSrv_StackOnMultipleHL_tp5_r1_pr1_m5_lay5 FF Domain:DomainML Problem:problemStackOnMultipleHL_tp5_r1_pr1_m5_lay5.pddl
+        ServicePlanning subtreeSrv_StackOnMultipleHL_tp5_r1_pr1_m5_lay5 FF Domain:DomainML Problem:problemStackOnMultipleHL_tp5_r1_pr1_m5_lay5
         All
         AllAction
         NodeGraph {
@@ -4452,7 +4452,7 @@ BehaviorTree StackOnMultipleHL_tp5_r1_pr1_m5_lay5Subtree {
 
 BehaviorTree PickUpHL_tp6_fp45_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_tp6_fp45_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_tp6_fp45_r1 FF Domain:DomainML Problem:problemPickUpHL_tp6_fp45_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_tp6_fp45_r1 FF Domain:DomainML Problem:problemPickUpHL_tp6_fp45_r1
         All
         AllAction
         NodeGraph {
@@ -4466,7 +4466,7 @@ BehaviorTree PickUpHL_tp6_fp45_r1Subtree {
 
 BehaviorTree StackOnMultipleHL_tp6_r1_pr2_m6_lay6Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackOnMultipleHL_tp6_r1_pr2_m6_lay6 {
-        ServicePlanning subtreeSrv_StackOnMultipleHL_tp6_r1_pr2_m6_lay6 FF Domain:DomainML Problem:problemStackOnMultipleHL_tp6_r1_pr2_m6_lay6.pddl
+        ServicePlanning subtreeSrv_StackOnMultipleHL_tp6_r1_pr2_m6_lay6 FF Domain:DomainML Problem:problemStackOnMultipleHL_tp6_r1_pr2_m6_lay6
         All
         AllAction
         NodeGraph {
@@ -4480,7 +4480,7 @@ BehaviorTree StackOnMultipleHL_tp6_r1_pr2_m6_lay6Subtree {
 
 BehaviorTree PickUpHL_tp7_fp53_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_tp7_fp53_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_tp7_fp53_r1 FF Domain:DomainML Problem:problemPickUpHL_tp7_fp53_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_tp7_fp53_r1 FF Domain:DomainML Problem:problemPickUpHL_tp7_fp53_r1
         All
         AllAction
         NodeGraph {
@@ -4494,7 +4494,7 @@ BehaviorTree PickUpHL_tp7_fp53_r1Subtree {
 
 BehaviorTree StackOnMultipleHL_tp7_r1_pr3_m7_lay7Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackOnMultipleHL_tp7_r1_pr3_m7_lay7 {
-        ServicePlanning subtreeSrv_StackOnMultipleHL_tp7_r1_pr3_m7_lay7 FF Domain:DomainML Problem:problemStackOnMultipleHL_tp7_r1_pr3_m7_lay7.pddl
+        ServicePlanning subtreeSrv_StackOnMultipleHL_tp7_r1_pr3_m7_lay7 FF Domain:DomainML Problem:problemStackOnMultipleHL_tp7_r1_pr3_m7_lay7
         All
         AllAction
         NodeGraph {
@@ -4508,7 +4508,7 @@ BehaviorTree StackOnMultipleHL_tp7_r1_pr3_m7_lay7Subtree {
 
 BehaviorTree PickUpHL_tp8_fp61_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_tp8_fp61_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_tp8_fp61_r1 FF Domain:DomainML Problem:problemPickUpHL_tp8_fp61_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_tp8_fp61_r1 FF Domain:DomainML Problem:problemPickUpHL_tp8_fp61_r1
         All
         AllAction
         NodeGraph {
@@ -4540,7 +4540,7 @@ BehaviorTree PickUpHL_tp8_fp61_r1Subtree {
 
 BehaviorTree StackOnMultipleHL_tp8_r1_pr4_m8_lay8Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackOnMultipleHL_tp8_r1_pr4_m8_lay8 {
-        ServicePlanning subtreeSrv_StackOnMultipleHL_tp8_r1_pr4_m8_lay8 FF Domain:DomainML Problem:problemStackOnMultipleHL_tp8_r1_pr4_m8_lay8.pddl
+        ServicePlanning subtreeSrv_StackOnMultipleHL_tp8_r1_pr4_m8_lay8 FF Domain:DomainML Problem:problemStackOnMultipleHL_tp8_r1_pr4_m8_lay8
         All
         AllAction
         NodeGraph {
@@ -4554,7 +4554,7 @@ BehaviorTree StackOnMultipleHL_tp8_r1_pr4_m8_lay8Subtree {
 
 BehaviorTree NailingHL_tp5_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingHL_tp5_r1 {
-        ServicePlanning subtreeSrv_NailingHL_tp5_r1 FF Domain:DomainML Problem:problemNailingHL_tp5_r1.pddl
+        ServicePlanning subtreeSrv_NailingHL_tp5_r1 FF Domain:DomainML Problem:problemNailingHL_tp5_r1
         All
         AllAction
         NodeGraph {
@@ -4568,7 +4568,7 @@ BehaviorTree NailingHL_tp5_r1Subtree {
 
 BehaviorTree NailingHL_tp6_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingHL_tp6_r1 {
-        ServicePlanning subtreeSrv_NailingHL_tp6_r1 FF Domain:DomainML Problem:problemNailingHL_tp6_r1.pddl
+        ServicePlanning subtreeSrv_NailingHL_tp6_r1 FF Domain:DomainML Problem:problemNailingHL_tp6_r1
         All
         AllAction
         NodeGraph {
@@ -4582,7 +4582,7 @@ BehaviorTree NailingHL_tp6_r1Subtree {
 
 BehaviorTree NailingHL_tp7_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingHL_tp7_r1 {
-        ServicePlanning subtreeSrv_NailingHL_tp7_r1 FF Domain:DomainML Problem:problemNailingHL_tp7_r1.pddl
+        ServicePlanning subtreeSrv_NailingHL_tp7_r1 FF Domain:DomainML Problem:problemNailingHL_tp7_r1
         All
         AllAction
         NodeGraph {
@@ -4596,7 +4596,7 @@ BehaviorTree NailingHL_tp7_r1Subtree {
 
 BehaviorTree NailingHL_tp8_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingHL_tp8_r1 {
-        ServicePlanning subtreeSrv_NailingHL_tp8_r1 FF Domain:DomainML Problem:problemNailingHL_tp8_r1.pddl
+        ServicePlanning subtreeSrv_NailingHL_tp8_r1 FF Domain:DomainML Problem:problemNailingHL_tp8_r1
         All
         AllAction
         NodeGraph {
@@ -4628,7 +4628,7 @@ BehaviorTree NailingHL_tp8_r1Subtree {
 
 BehaviorTree MoveCassetteToStackHL_tp5_lp5_pr1_sp5_r1_m5_lay5Subtree {
     Root FlowNode FF_Default_DynamicFlow_MoveCassetteToStackHL_tp5_lp5_pr1_sp5_r1_m5_lay5 {
-        ServicePlanning subtreeSrv_MoveCassetteToStackHL_tp5_lp5_pr1_sp5_r1_m5_lay5 FF Domain:DomainML Problem:problemMoveCassetteToStackHL_tp5_lp5_pr1_sp5_r1_m5_lay5.pddl
+        ServicePlanning subtreeSrv_MoveCassetteToStackHL_tp5_lp5_pr1_sp5_r1_m5_lay5 FF Domain:DomainML Problem:problemMoveCassetteToStackHL_tp5_lp5_pr1_sp5_r1_m5_lay5
         All
         AllAction
         NodeGraph {
@@ -4648,7 +4648,7 @@ BehaviorTree MoveCassetteToStackHL_tp5_lp5_pr1_sp5_r1_m5_lay5Subtree {
 
 BehaviorTree MoveCassetteToStackHL_tp6_lp6_pr2_sp6_r1_m6_lay6Subtree {
     Root FlowNode FF_Default_DynamicFlow_MoveCassetteToStackHL_tp6_lp6_pr2_sp6_r1_m6_lay6 {
-        ServicePlanning subtreeSrv_MoveCassetteToStackHL_tp6_lp6_pr2_sp6_r1_m6_lay6 FF Domain:DomainML Problem:problemMoveCassetteToStackHL_tp6_lp6_pr2_sp6_r1_m6_lay6.pddl
+        ServicePlanning subtreeSrv_MoveCassetteToStackHL_tp6_lp6_pr2_sp6_r1_m6_lay6 FF Domain:DomainML Problem:problemMoveCassetteToStackHL_tp6_lp6_pr2_sp6_r1_m6_lay6
         All
         AllAction
         NodeGraph {
@@ -4668,7 +4668,7 @@ BehaviorTree MoveCassetteToStackHL_tp6_lp6_pr2_sp6_r1_m6_lay6Subtree {
 
 BehaviorTree MoveCassetteToStackHL_tp7_lp7_pr3_sp7_r1_m7_lay7Subtree {
     Root FlowNode FF_Default_DynamicFlow_MoveCassetteToStackHL_tp7_lp7_pr3_sp7_r1_m7_lay7 {
-        ServicePlanning subtreeSrv_MoveCassetteToStackHL_tp7_lp7_pr3_sp7_r1_m7_lay7 FF Domain:DomainML Problem:problemMoveCassetteToStackHL_tp7_lp7_pr3_sp7_r1_m7_lay7.pddl
+        ServicePlanning subtreeSrv_MoveCassetteToStackHL_tp7_lp7_pr3_sp7_r1_m7_lay7 FF Domain:DomainML Problem:problemMoveCassetteToStackHL_tp7_lp7_pr3_sp7_r1_m7_lay7
         All
         AllAction
         NodeGraph {
@@ -4688,7 +4688,7 @@ BehaviorTree MoveCassetteToStackHL_tp7_lp7_pr3_sp7_r1_m7_lay7Subtree {
 
 BehaviorTree MoveCassetteToStackHL_tp8_lp8_pr4_sp8_r1_m8_lay8Subtree {
     Root FlowNode FF_Default_DynamicFlow_MoveCassetteToStackHL_tp8_lp8_pr4_sp8_r1_m8_lay8 {
-        ServicePlanning subtreeSrv_MoveCassetteToStackHL_tp8_lp8_pr4_sp8_r1_m8_lay8 FF Domain:DomainML Problem:problemMoveCassetteToStackHL_tp8_lp8_pr4_sp8_r1_m8_lay8.pddl
+        ServicePlanning subtreeSrv_MoveCassetteToStackHL_tp8_lp8_pr4_sp8_r1_m8_lay8 FF Domain:DomainML Problem:problemMoveCassetteToStackHL_tp8_lp8_pr4_sp8_r1_m8_lay8
         All
         AllAction
         NodeGraph {
@@ -4726,7 +4726,7 @@ BehaviorTree MoveCassetteToStackHL_tp8_lp8_pr4_sp8_r1_m8_lay8Subtree {
 
 BehaviorTree PickUpHL_lp9_fp65_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_lp9_fp65_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_lp9_fp65_r1 FF Domain:DomainML Problem:problemPickUpHL_lp9_fp65_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_lp9_fp65_r1 FF Domain:DomainML Problem:problemPickUpHL_lp9_fp65_r1
         All
         AllAction
         NodeGraph {
@@ -4740,7 +4740,7 @@ BehaviorTree PickUpHL_lp9_fp65_r1Subtree {
 
 BehaviorTree PlaceHL_lp9_pr1_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PlaceHL_lp9_pr1_r1 {
-        ServicePlanning subtreeSrv_PlaceHL_lp9_pr1_r1 FF Domain:DomainML Problem:problemPlaceHL_lp9_pr1_r1.pddl
+        ServicePlanning subtreeSrv_PlaceHL_lp9_pr1_r1 FF Domain:DomainML Problem:problemPlaceHL_lp9_pr1_r1
         All
         AllAction
         NodeGraph {
@@ -4754,7 +4754,7 @@ BehaviorTree PlaceHL_lp9_pr1_r1Subtree {
 
 BehaviorTree PickUpHL_lp10_fp73_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_lp10_fp73_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_lp10_fp73_r1 FF Domain:DomainML Problem:problemPickUpHL_lp10_fp73_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_lp10_fp73_r1 FF Domain:DomainML Problem:problemPickUpHL_lp10_fp73_r1
         All
         AllAction
         NodeGraph {
@@ -4768,7 +4768,7 @@ BehaviorTree PickUpHL_lp10_fp73_r1Subtree {
 
 BehaviorTree PlaceHL_lp10_pr2_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PlaceHL_lp10_pr2_r1 {
-        ServicePlanning subtreeSrv_PlaceHL_lp10_pr2_r1 FF Domain:DomainML Problem:problemPlaceHL_lp10_pr2_r1.pddl
+        ServicePlanning subtreeSrv_PlaceHL_lp10_pr2_r1 FF Domain:DomainML Problem:problemPlaceHL_lp10_pr2_r1
         All
         AllAction
         NodeGraph {
@@ -4782,7 +4782,7 @@ BehaviorTree PlaceHL_lp10_pr2_r1Subtree {
 
 BehaviorTree PickUpHL_lp11_fp81_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_lp11_fp81_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_lp11_fp81_r1 FF Domain:DomainML Problem:problemPickUpHL_lp11_fp81_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_lp11_fp81_r1 FF Domain:DomainML Problem:problemPickUpHL_lp11_fp81_r1
         All
         AllAction
         NodeGraph {
@@ -4796,7 +4796,7 @@ BehaviorTree PickUpHL_lp11_fp81_r1Subtree {
 
 BehaviorTree PlaceHL_lp11_pr3_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PlaceHL_lp11_pr3_r1 {
-        ServicePlanning subtreeSrv_PlaceHL_lp11_pr3_r1 FF Domain:DomainML Problem:problemPlaceHL_lp11_pr3_r1.pddl
+        ServicePlanning subtreeSrv_PlaceHL_lp11_pr3_r1 FF Domain:DomainML Problem:problemPlaceHL_lp11_pr3_r1
         All
         AllAction
         NodeGraph {
@@ -4810,7 +4810,7 @@ BehaviorTree PlaceHL_lp11_pr3_r1Subtree {
 
 BehaviorTree PickUpHL_lp12_fp89_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_lp12_fp89_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_lp12_fp89_r1 FF Domain:DomainML Problem:problemPickUpHL_lp12_fp89_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_lp12_fp89_r1 FF Domain:DomainML Problem:problemPickUpHL_lp12_fp89_r1
         All
         AllAction
         NodeGraph {
@@ -4824,7 +4824,7 @@ BehaviorTree PickUpHL_lp12_fp89_r1Subtree {
 
 BehaviorTree PlaceHL_lp12_pr4_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PlaceHL_lp12_pr4_r1 {
-        ServicePlanning subtreeSrv_PlaceHL_lp12_pr4_r1 FF Domain:DomainML Problem:problemPlaceHL_lp12_pr4_r1.pddl
+        ServicePlanning subtreeSrv_PlaceHL_lp12_pr4_r1 FF Domain:DomainML Problem:problemPlaceHL_lp12_pr4_r1
         All
         AllAction
         NodeGraph {
@@ -4838,7 +4838,7 @@ BehaviorTree PlaceHL_lp12_pr4_r1Subtree {
 
 BehaviorTree GluingPlateHL_lp9_pr1_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_GluingPlateHL_lp9_pr1_r1 {
-        ServicePlanning subtreeSrv_GluingPlateHL_lp9_pr1_r1 FF Domain:DomainML Problem:problemGluingPlateHL_lp9_pr1_r1.pddl
+        ServicePlanning subtreeSrv_GluingPlateHL_lp9_pr1_r1 FF Domain:DomainML Problem:problemGluingPlateHL_lp9_pr1_r1
         All
         AllAction
         NodeGraph {
@@ -4870,7 +4870,7 @@ BehaviorTree GluingPlateHL_lp9_pr1_r1Subtree {
 
 BehaviorTree GluingPlateHL_lp10_pr2_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_GluingPlateHL_lp10_pr2_r1 {
-        ServicePlanning subtreeSrv_GluingPlateHL_lp10_pr2_r1 FF Domain:DomainML Problem:problemGluingPlateHL_lp10_pr2_r1.pddl
+        ServicePlanning subtreeSrv_GluingPlateHL_lp10_pr2_r1 FF Domain:DomainML Problem:problemGluingPlateHL_lp10_pr2_r1
         All
         AllAction
         NodeGraph {
@@ -4884,7 +4884,7 @@ BehaviorTree GluingPlateHL_lp10_pr2_r1Subtree {
 
 BehaviorTree GluingPlateHL_lp11_pr3_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_GluingPlateHL_lp11_pr3_r1 {
-        ServicePlanning subtreeSrv_GluingPlateHL_lp11_pr3_r1 FF Domain:DomainML Problem:problemGluingPlateHL_lp11_pr3_r1.pddl
+        ServicePlanning subtreeSrv_GluingPlateHL_lp11_pr3_r1 FF Domain:DomainML Problem:problemGluingPlateHL_lp11_pr3_r1
         All
         AllAction
         NodeGraph {
@@ -4898,7 +4898,7 @@ BehaviorTree GluingPlateHL_lp11_pr3_r1Subtree {
 
 BehaviorTree GluingPlateHL_lp12_pr4_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_GluingPlateHL_lp12_pr4_r1 {
-        ServicePlanning subtreeSrv_GluingPlateHL_lp12_pr4_r1 FF Domain:DomainML Problem:problemGluingPlateHL_lp12_pr4_r1.pddl
+        ServicePlanning subtreeSrv_GluingPlateHL_lp12_pr4_r1 FF Domain:DomainML Problem:problemGluingPlateHL_lp12_pr4_r1
         All
         AllAction
         NodeGraph {
@@ -4912,7 +4912,7 @@ BehaviorTree GluingPlateHL_lp12_pr4_r1Subtree {
 
 BehaviorTree PickUpHL_b49_fp66_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b49_fp66_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b49_fp66_r1 FF Domain:DomainML Problem:problemPickUpHL_b49_fp66_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b49_fp66_r1 FF Domain:DomainML Problem:problemPickUpHL_b49_fp66_r1
         All
         AllAction
         NodeGraph {
@@ -4947,7 +4947,7 @@ BehaviorTree PickUpHL_b49_fp66_r1Subtree {
 
 BehaviorTree StackHL_b49_lp9_r1_pr1_lay9_m9Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b49_lp9_r1_pr1_lay9_m9 {
-        ServicePlanning subtreeSrv_StackHL_b49_lp9_r1_pr1_lay9_m9 FF Domain:DomainML Problem:problemStackHL_b49_lp9_r1_pr1_lay9_m9.pddl
+        ServicePlanning subtreeSrv_StackHL_b49_lp9_r1_pr1_lay9_m9 FF Domain:DomainML Problem:problemStackHL_b49_lp9_r1_pr1_lay9_m9
         All
         AllAction
         NodeGraph {
@@ -4961,7 +4961,7 @@ BehaviorTree StackHL_b49_lp9_r1_pr1_lay9_m9Subtree {
 
 BehaviorTree PickUpHL_b50_fp67_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b50_fp67_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b50_fp67_r1 FF Domain:DomainML Problem:problemPickUpHL_b50_fp67_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b50_fp67_r1 FF Domain:DomainML Problem:problemPickUpHL_b50_fp67_r1
         All
         AllAction
         NodeGraph {
@@ -4975,7 +4975,7 @@ BehaviorTree PickUpHL_b50_fp67_r1Subtree {
 
 BehaviorTree StackHL_b50_lp9_r1_pr1_lay9_m9Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b50_lp9_r1_pr1_lay9_m9 {
-        ServicePlanning subtreeSrv_StackHL_b50_lp9_r1_pr1_lay9_m9 FF Domain:DomainML Problem:problemStackHL_b50_lp9_r1_pr1_lay9_m9.pddl
+        ServicePlanning subtreeSrv_StackHL_b50_lp9_r1_pr1_lay9_m9 FF Domain:DomainML Problem:problemStackHL_b50_lp9_r1_pr1_lay9_m9
         All
         AllAction
         NodeGraph {
@@ -4989,7 +4989,7 @@ BehaviorTree StackHL_b50_lp9_r1_pr1_lay9_m9Subtree {
 
 BehaviorTree PickUpHL_b54_fp72_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b54_fp72_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b54_fp72_r1 FF Domain:DomainML Problem:problemPickUpHL_b54_fp72_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b54_fp72_r1 FF Domain:DomainML Problem:problemPickUpHL_b54_fp72_r1
         All
         AllAction
         NodeGraph {
@@ -5003,7 +5003,7 @@ BehaviorTree PickUpHL_b54_fp72_r1Subtree {
 
 BehaviorTree StackHL_b54_lp9_r1_pr1_lay9_m9Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b54_lp9_r1_pr1_lay9_m9 {
-        ServicePlanning subtreeSrv_StackHL_b54_lp9_r1_pr1_lay9_m9 FF Domain:DomainML Problem:problemStackHL_b54_lp9_r1_pr1_lay9_m9.pddl
+        ServicePlanning subtreeSrv_StackHL_b54_lp9_r1_pr1_lay9_m9 FF Domain:DomainML Problem:problemStackHL_b54_lp9_r1_pr1_lay9_m9
         All
         AllAction
         NodeGraph {
@@ -5017,7 +5017,7 @@ BehaviorTree StackHL_b54_lp9_r1_pr1_lay9_m9Subtree {
 
 BehaviorTree PickUpHL_b52_fp70_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b52_fp70_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b52_fp70_r1 FF Domain:DomainML Problem:problemPickUpHL_b52_fp70_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b52_fp70_r1 FF Domain:DomainML Problem:problemPickUpHL_b52_fp70_r1
         All
         AllAction
         NodeGraph {
@@ -5031,7 +5031,7 @@ BehaviorTree PickUpHL_b52_fp70_r1Subtree {
 
 BehaviorTree StackHL_b52_lp9_r1_pr1_lay9_m9Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b52_lp9_r1_pr1_lay9_m9 {
-        ServicePlanning subtreeSrv_StackHL_b52_lp9_r1_pr1_lay9_m9 FF Domain:DomainML Problem:problemStackHL_b52_lp9_r1_pr1_lay9_m9.pddl
+        ServicePlanning subtreeSrv_StackHL_b52_lp9_r1_pr1_lay9_m9 FF Domain:DomainML Problem:problemStackHL_b52_lp9_r1_pr1_lay9_m9
         All
         AllAction
         NodeGraph {
@@ -5045,7 +5045,7 @@ BehaviorTree StackHL_b52_lp9_r1_pr1_lay9_m9Subtree {
 
 BehaviorTree PickUpHL_b51_fp68_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b51_fp68_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b51_fp68_r1 FF Domain:DomainML Problem:problemPickUpHL_b51_fp68_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b51_fp68_r1 FF Domain:DomainML Problem:problemPickUpHL_b51_fp68_r1
         All
         AllAction
         NodeGraph {
@@ -5059,7 +5059,7 @@ BehaviorTree PickUpHL_b51_fp68_r1Subtree {
 
 BehaviorTree StackHL_b51_lp9_r1_pr1_lay9_m9Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b51_lp9_r1_pr1_lay9_m9 {
-        ServicePlanning subtreeSrv_StackHL_b51_lp9_r1_pr1_lay9_m9 FF Domain:DomainML Problem:problemStackHL_b51_lp9_r1_pr1_lay9_m9.pddl
+        ServicePlanning subtreeSrv_StackHL_b51_lp9_r1_pr1_lay9_m9 FF Domain:DomainML Problem:problemStackHL_b51_lp9_r1_pr1_lay9_m9
         All
         AllAction
         NodeGraph {
@@ -5073,7 +5073,7 @@ BehaviorTree StackHL_b51_lp9_r1_pr1_lay9_m9Subtree {
 
 BehaviorTree PickUpHL_b53_fp71_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b53_fp71_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b53_fp71_r1 FF Domain:DomainML Problem:problemPickUpHL_b53_fp71_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b53_fp71_r1 FF Domain:DomainML Problem:problemPickUpHL_b53_fp71_r1
         All
         AllAction
         NodeGraph {
@@ -5087,7 +5087,7 @@ BehaviorTree PickUpHL_b53_fp71_r1Subtree {
 
 BehaviorTree StackHL_b53_lp9_r1_pr1_lay9_m9Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b53_lp9_r1_pr1_lay9_m9 {
-        ServicePlanning subtreeSrv_StackHL_b53_lp9_r1_pr1_lay9_m9 FF Domain:DomainML Problem:problemStackHL_b53_lp9_r1_pr1_lay9_m9.pddl
+        ServicePlanning subtreeSrv_StackHL_b53_lp9_r1_pr1_lay9_m9 FF Domain:DomainML Problem:problemStackHL_b53_lp9_r1_pr1_lay9_m9
         All
         AllAction
         NodeGraph {
@@ -5101,7 +5101,7 @@ BehaviorTree StackHL_b53_lp9_r1_pr1_lay9_m9Subtree {
 
 BehaviorTree PickUpHL_b55_fp74_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b55_fp74_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b55_fp74_r1 FF Domain:DomainML Problem:problemPickUpHL_b55_fp74_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b55_fp74_r1 FF Domain:DomainML Problem:problemPickUpHL_b55_fp74_r1
         All
         AllAction
         NodeGraph {
@@ -5115,7 +5115,7 @@ BehaviorTree PickUpHL_b55_fp74_r1Subtree {
 
 BehaviorTree StackHL_b55_lp10_r1_pr2_lay10_m10Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b55_lp10_r1_pr2_lay10_m10 {
-        ServicePlanning subtreeSrv_StackHL_b55_lp10_r1_pr2_lay10_m10 FF Domain:DomainML Problem:problemStackHL_b55_lp10_r1_pr2_lay10_m10.pddl
+        ServicePlanning subtreeSrv_StackHL_b55_lp10_r1_pr2_lay10_m10 FF Domain:DomainML Problem:problemStackHL_b55_lp10_r1_pr2_lay10_m10
         All
         AllAction
         NodeGraph {
@@ -5129,7 +5129,7 @@ BehaviorTree StackHL_b55_lp10_r1_pr2_lay10_m10Subtree {
 
 BehaviorTree PickUpHL_b56_fp75_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b56_fp75_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b56_fp75_r1 FF Domain:DomainML Problem:problemPickUpHL_b56_fp75_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b56_fp75_r1 FF Domain:DomainML Problem:problemPickUpHL_b56_fp75_r1
         All
         AllAction
         NodeGraph {
@@ -5143,7 +5143,7 @@ BehaviorTree PickUpHL_b56_fp75_r1Subtree {
 
 BehaviorTree StackHL_b56_lp10_r1_pr2_lay10_m10Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b56_lp10_r1_pr2_lay10_m10 {
-        ServicePlanning subtreeSrv_StackHL_b56_lp10_r1_pr2_lay10_m10 FF Domain:DomainML Problem:problemStackHL_b56_lp10_r1_pr2_lay10_m10.pddl
+        ServicePlanning subtreeSrv_StackHL_b56_lp10_r1_pr2_lay10_m10 FF Domain:DomainML Problem:problemStackHL_b56_lp10_r1_pr2_lay10_m10
         All
         AllAction
         NodeGraph {
@@ -5157,7 +5157,7 @@ BehaviorTree StackHL_b56_lp10_r1_pr2_lay10_m10Subtree {
 
 BehaviorTree PickUpHL_b60_fp80_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b60_fp80_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b60_fp80_r1 FF Domain:DomainML Problem:problemPickUpHL_b60_fp80_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b60_fp80_r1 FF Domain:DomainML Problem:problemPickUpHL_b60_fp80_r1
         All
         AllAction
         NodeGraph {
@@ -5171,7 +5171,7 @@ BehaviorTree PickUpHL_b60_fp80_r1Subtree {
 
 BehaviorTree StackHL_b60_lp10_r1_pr2_lay10_m10Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b60_lp10_r1_pr2_lay10_m10 {
-        ServicePlanning subtreeSrv_StackHL_b60_lp10_r1_pr2_lay10_m10 FF Domain:DomainML Problem:problemStackHL_b60_lp10_r1_pr2_lay10_m10.pddl
+        ServicePlanning subtreeSrv_StackHL_b60_lp10_r1_pr2_lay10_m10 FF Domain:DomainML Problem:problemStackHL_b60_lp10_r1_pr2_lay10_m10
         All
         AllAction
         NodeGraph {
@@ -5185,7 +5185,7 @@ BehaviorTree StackHL_b60_lp10_r1_pr2_lay10_m10Subtree {
 
 BehaviorTree PickUpHL_b58_fp78_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b58_fp78_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b58_fp78_r1 FF Domain:DomainML Problem:problemPickUpHL_b58_fp78_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b58_fp78_r1 FF Domain:DomainML Problem:problemPickUpHL_b58_fp78_r1
         All
         AllAction
         NodeGraph {
@@ -5199,7 +5199,7 @@ BehaviorTree PickUpHL_b58_fp78_r1Subtree {
 
 BehaviorTree StackHL_b58_lp10_r1_pr2_lay10_m10Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b58_lp10_r1_pr2_lay10_m10 {
-        ServicePlanning subtreeSrv_StackHL_b58_lp10_r1_pr2_lay10_m10 FF Domain:DomainML Problem:problemStackHL_b58_lp10_r1_pr2_lay10_m10.pddl
+        ServicePlanning subtreeSrv_StackHL_b58_lp10_r1_pr2_lay10_m10 FF Domain:DomainML Problem:problemStackHL_b58_lp10_r1_pr2_lay10_m10
         All
         AllAction
         NodeGraph {
@@ -5213,7 +5213,7 @@ BehaviorTree StackHL_b58_lp10_r1_pr2_lay10_m10Subtree {
 
 BehaviorTree PickUpHL_b57_fp76_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b57_fp76_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b57_fp76_r1 FF Domain:DomainML Problem:problemPickUpHL_b57_fp76_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b57_fp76_r1 FF Domain:DomainML Problem:problemPickUpHL_b57_fp76_r1
         All
         AllAction
         NodeGraph {
@@ -5227,7 +5227,7 @@ BehaviorTree PickUpHL_b57_fp76_r1Subtree {
 
 BehaviorTree StackHL_b57_lp10_r1_pr2_lay10_m10Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b57_lp10_r1_pr2_lay10_m10 {
-        ServicePlanning subtreeSrv_StackHL_b57_lp10_r1_pr2_lay10_m10 FF Domain:DomainML Problem:problemStackHL_b57_lp10_r1_pr2_lay10_m10.pddl
+        ServicePlanning subtreeSrv_StackHL_b57_lp10_r1_pr2_lay10_m10 FF Domain:DomainML Problem:problemStackHL_b57_lp10_r1_pr2_lay10_m10
         All
         AllAction
         NodeGraph {
@@ -5241,7 +5241,7 @@ BehaviorTree StackHL_b57_lp10_r1_pr2_lay10_m10Subtree {
 
 BehaviorTree PickUpHL_b59_fp79_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b59_fp79_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b59_fp79_r1 FF Domain:DomainML Problem:problemPickUpHL_b59_fp79_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b59_fp79_r1 FF Domain:DomainML Problem:problemPickUpHL_b59_fp79_r1
         All
         AllAction
         NodeGraph {
@@ -5255,7 +5255,7 @@ BehaviorTree PickUpHL_b59_fp79_r1Subtree {
 
 BehaviorTree StackHL_b59_lp10_r1_pr2_lay10_m10Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b59_lp10_r1_pr2_lay10_m10 {
-        ServicePlanning subtreeSrv_StackHL_b59_lp10_r1_pr2_lay10_m10 FF Domain:DomainML Problem:problemStackHL_b59_lp10_r1_pr2_lay10_m10.pddl
+        ServicePlanning subtreeSrv_StackHL_b59_lp10_r1_pr2_lay10_m10 FF Domain:DomainML Problem:problemStackHL_b59_lp10_r1_pr2_lay10_m10
         All
         AllAction
         NodeGraph {
@@ -5269,7 +5269,7 @@ BehaviorTree StackHL_b59_lp10_r1_pr2_lay10_m10Subtree {
 
 BehaviorTree PickUpHL_b61_fp82_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b61_fp82_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b61_fp82_r1 FF Domain:DomainML Problem:problemPickUpHL_b61_fp82_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b61_fp82_r1 FF Domain:DomainML Problem:problemPickUpHL_b61_fp82_r1
         All
         AllAction
         NodeGraph {
@@ -5283,7 +5283,7 @@ BehaviorTree PickUpHL_b61_fp82_r1Subtree {
 
 BehaviorTree StackHL_b61_lp11_r1_pr3_lay11_m11Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b61_lp11_r1_pr3_lay11_m11 {
-        ServicePlanning subtreeSrv_StackHL_b61_lp11_r1_pr3_lay11_m11 FF Domain:DomainML Problem:problemStackHL_b61_lp11_r1_pr3_lay11_m11.pddl
+        ServicePlanning subtreeSrv_StackHL_b61_lp11_r1_pr3_lay11_m11 FF Domain:DomainML Problem:problemStackHL_b61_lp11_r1_pr3_lay11_m11
         All
         AllAction
         NodeGraph {
@@ -5297,7 +5297,7 @@ BehaviorTree StackHL_b61_lp11_r1_pr3_lay11_m11Subtree {
 
 BehaviorTree PickUpHL_b62_fp83_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b62_fp83_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b62_fp83_r1 FF Domain:DomainML Problem:problemPickUpHL_b62_fp83_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b62_fp83_r1 FF Domain:DomainML Problem:problemPickUpHL_b62_fp83_r1
         All
         AllAction
         NodeGraph {
@@ -5311,7 +5311,7 @@ BehaviorTree PickUpHL_b62_fp83_r1Subtree {
 
 BehaviorTree StackHL_b62_lp11_r1_pr3_lay11_m11Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b62_lp11_r1_pr3_lay11_m11 {
-        ServicePlanning subtreeSrv_StackHL_b62_lp11_r1_pr3_lay11_m11 FF Domain:DomainML Problem:problemStackHL_b62_lp11_r1_pr3_lay11_m11.pddl
+        ServicePlanning subtreeSrv_StackHL_b62_lp11_r1_pr3_lay11_m11 FF Domain:DomainML Problem:problemStackHL_b62_lp11_r1_pr3_lay11_m11
         All
         AllAction
         NodeGraph {
@@ -5325,7 +5325,7 @@ BehaviorTree StackHL_b62_lp11_r1_pr3_lay11_m11Subtree {
 
 BehaviorTree PickUpHL_b66_fp88_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b66_fp88_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b66_fp88_r1 FF Domain:DomainML Problem:problemPickUpHL_b66_fp88_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b66_fp88_r1 FF Domain:DomainML Problem:problemPickUpHL_b66_fp88_r1
         All
         AllAction
         NodeGraph {
@@ -5339,7 +5339,7 @@ BehaviorTree PickUpHL_b66_fp88_r1Subtree {
 
 BehaviorTree StackHL_b66_lp11_r1_pr3_lay11_m11Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b66_lp11_r1_pr3_lay11_m11 {
-        ServicePlanning subtreeSrv_StackHL_b66_lp11_r1_pr3_lay11_m11 FF Domain:DomainML Problem:problemStackHL_b66_lp11_r1_pr3_lay11_m11.pddl
+        ServicePlanning subtreeSrv_StackHL_b66_lp11_r1_pr3_lay11_m11 FF Domain:DomainML Problem:problemStackHL_b66_lp11_r1_pr3_lay11_m11
         All
         AllAction
         NodeGraph {
@@ -5353,7 +5353,7 @@ BehaviorTree StackHL_b66_lp11_r1_pr3_lay11_m11Subtree {
 
 BehaviorTree PickUpHL_b64_fp86_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b64_fp86_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b64_fp86_r1 FF Domain:DomainML Problem:problemPickUpHL_b64_fp86_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b64_fp86_r1 FF Domain:DomainML Problem:problemPickUpHL_b64_fp86_r1
         All
         AllAction
         NodeGraph {
@@ -5367,7 +5367,7 @@ BehaviorTree PickUpHL_b64_fp86_r1Subtree {
 
 BehaviorTree StackHL_b64_lp11_r1_pr3_lay11_m11Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b64_lp11_r1_pr3_lay11_m11 {
-        ServicePlanning subtreeSrv_StackHL_b64_lp11_r1_pr3_lay11_m11 FF Domain:DomainML Problem:problemStackHL_b64_lp11_r1_pr3_lay11_m11.pddl
+        ServicePlanning subtreeSrv_StackHL_b64_lp11_r1_pr3_lay11_m11 FF Domain:DomainML Problem:problemStackHL_b64_lp11_r1_pr3_lay11_m11
         All
         AllAction
         NodeGraph {
@@ -5381,7 +5381,7 @@ BehaviorTree StackHL_b64_lp11_r1_pr3_lay11_m11Subtree {
 
 BehaviorTree PickUpHL_b63_fp84_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b63_fp84_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b63_fp84_r1 FF Domain:DomainML Problem:problemPickUpHL_b63_fp84_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b63_fp84_r1 FF Domain:DomainML Problem:problemPickUpHL_b63_fp84_r1
         All
         AllAction
         NodeGraph {
@@ -5395,7 +5395,7 @@ BehaviorTree PickUpHL_b63_fp84_r1Subtree {
 
 BehaviorTree StackHL_b63_lp11_r1_pr3_lay11_m11Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b63_lp11_r1_pr3_lay11_m11 {
-        ServicePlanning subtreeSrv_StackHL_b63_lp11_r1_pr3_lay11_m11 FF Domain:DomainML Problem:problemStackHL_b63_lp11_r1_pr3_lay11_m11.pddl
+        ServicePlanning subtreeSrv_StackHL_b63_lp11_r1_pr3_lay11_m11 FF Domain:DomainML Problem:problemStackHL_b63_lp11_r1_pr3_lay11_m11
         All
         AllAction
         NodeGraph {
@@ -5409,7 +5409,7 @@ BehaviorTree StackHL_b63_lp11_r1_pr3_lay11_m11Subtree {
 
 BehaviorTree PickUpHL_b65_fp87_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b65_fp87_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b65_fp87_r1 FF Domain:DomainML Problem:problemPickUpHL_b65_fp87_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b65_fp87_r1 FF Domain:DomainML Problem:problemPickUpHL_b65_fp87_r1
         All
         AllAction
         NodeGraph {
@@ -5423,7 +5423,7 @@ BehaviorTree PickUpHL_b65_fp87_r1Subtree {
 
 BehaviorTree StackHL_b65_lp11_r1_pr3_lay11_m11Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b65_lp11_r1_pr3_lay11_m11 {
-        ServicePlanning subtreeSrv_StackHL_b65_lp11_r1_pr3_lay11_m11 FF Domain:DomainML Problem:problemStackHL_b65_lp11_r1_pr3_lay11_m11.pddl
+        ServicePlanning subtreeSrv_StackHL_b65_lp11_r1_pr3_lay11_m11 FF Domain:DomainML Problem:problemStackHL_b65_lp11_r1_pr3_lay11_m11
         All
         AllAction
         NodeGraph {
@@ -5437,7 +5437,7 @@ BehaviorTree StackHL_b65_lp11_r1_pr3_lay11_m11Subtree {
 
 BehaviorTree PickUpHL_b67_fp90_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b67_fp90_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b67_fp90_r1 FF Domain:DomainML Problem:problemPickUpHL_b67_fp90_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b67_fp90_r1 FF Domain:DomainML Problem:problemPickUpHL_b67_fp90_r1
         All
         AllAction
         NodeGraph {
@@ -5451,7 +5451,7 @@ BehaviorTree PickUpHL_b67_fp90_r1Subtree {
 
 BehaviorTree StackHL_b67_lp12_r1_pr4_lay12_m12Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b67_lp12_r1_pr4_lay12_m12 {
-        ServicePlanning subtreeSrv_StackHL_b67_lp12_r1_pr4_lay12_m12 FF Domain:DomainML Problem:problemStackHL_b67_lp12_r1_pr4_lay12_m12.pddl
+        ServicePlanning subtreeSrv_StackHL_b67_lp12_r1_pr4_lay12_m12 FF Domain:DomainML Problem:problemStackHL_b67_lp12_r1_pr4_lay12_m12
         All
         AllAction
         NodeGraph {
@@ -5465,7 +5465,7 @@ BehaviorTree StackHL_b67_lp12_r1_pr4_lay12_m12Subtree {
 
 BehaviorTree PickUpHL_b68_fp91_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b68_fp91_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b68_fp91_r1 FF Domain:DomainML Problem:problemPickUpHL_b68_fp91_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b68_fp91_r1 FF Domain:DomainML Problem:problemPickUpHL_b68_fp91_r1
         All
         AllAction
         NodeGraph {
@@ -5479,7 +5479,7 @@ BehaviorTree PickUpHL_b68_fp91_r1Subtree {
 
 BehaviorTree StackHL_b68_lp12_r1_pr4_lay12_m12Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b68_lp12_r1_pr4_lay12_m12 {
-        ServicePlanning subtreeSrv_StackHL_b68_lp12_r1_pr4_lay12_m12 FF Domain:DomainML Problem:problemStackHL_b68_lp12_r1_pr4_lay12_m12.pddl
+        ServicePlanning subtreeSrv_StackHL_b68_lp12_r1_pr4_lay12_m12 FF Domain:DomainML Problem:problemStackHL_b68_lp12_r1_pr4_lay12_m12
         All
         AllAction
         NodeGraph {
@@ -5493,7 +5493,7 @@ BehaviorTree StackHL_b68_lp12_r1_pr4_lay12_m12Subtree {
 
 BehaviorTree PickUpHL_b72_fp96_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b72_fp96_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b72_fp96_r1 FF Domain:DomainML Problem:problemPickUpHL_b72_fp96_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b72_fp96_r1 FF Domain:DomainML Problem:problemPickUpHL_b72_fp96_r1
         All
         AllAction
         NodeGraph {
@@ -5507,7 +5507,7 @@ BehaviorTree PickUpHL_b72_fp96_r1Subtree {
 
 BehaviorTree StackHL_b72_lp12_r1_pr4_lay12_m12Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b72_lp12_r1_pr4_lay12_m12 {
-        ServicePlanning subtreeSrv_StackHL_b72_lp12_r1_pr4_lay12_m12 FF Domain:DomainML Problem:problemStackHL_b72_lp12_r1_pr4_lay12_m12.pddl
+        ServicePlanning subtreeSrv_StackHL_b72_lp12_r1_pr4_lay12_m12 FF Domain:DomainML Problem:problemStackHL_b72_lp12_r1_pr4_lay12_m12
         All
         AllAction
         NodeGraph {
@@ -5521,7 +5521,7 @@ BehaviorTree StackHL_b72_lp12_r1_pr4_lay12_m12Subtree {
 
 BehaviorTree PickUpHL_b70_fp94_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b70_fp94_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b70_fp94_r1 FF Domain:DomainML Problem:problemPickUpHL_b70_fp94_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b70_fp94_r1 FF Domain:DomainML Problem:problemPickUpHL_b70_fp94_r1
         All
         AllAction
         NodeGraph {
@@ -5535,7 +5535,7 @@ BehaviorTree PickUpHL_b70_fp94_r1Subtree {
 
 BehaviorTree StackHL_b70_lp12_r1_pr4_lay12_m12Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b70_lp12_r1_pr4_lay12_m12 {
-        ServicePlanning subtreeSrv_StackHL_b70_lp12_r1_pr4_lay12_m12 FF Domain:DomainML Problem:problemStackHL_b70_lp12_r1_pr4_lay12_m12.pddl
+        ServicePlanning subtreeSrv_StackHL_b70_lp12_r1_pr4_lay12_m12 FF Domain:DomainML Problem:problemStackHL_b70_lp12_r1_pr4_lay12_m12
         All
         AllAction
         NodeGraph {
@@ -5549,7 +5549,7 @@ BehaviorTree StackHL_b70_lp12_r1_pr4_lay12_m12Subtree {
 
 BehaviorTree PickUpHL_b69_fp92_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b69_fp92_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b69_fp92_r1 FF Domain:DomainML Problem:problemPickUpHL_b69_fp92_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b69_fp92_r1 FF Domain:DomainML Problem:problemPickUpHL_b69_fp92_r1
         All
         AllAction
         NodeGraph {
@@ -5563,7 +5563,7 @@ BehaviorTree PickUpHL_b69_fp92_r1Subtree {
 
 BehaviorTree StackHL_b69_lp12_r1_pr4_lay12_m12Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b69_lp12_r1_pr4_lay12_m12 {
-        ServicePlanning subtreeSrv_StackHL_b69_lp12_r1_pr4_lay12_m12 FF Domain:DomainML Problem:problemStackHL_b69_lp12_r1_pr4_lay12_m12.pddl
+        ServicePlanning subtreeSrv_StackHL_b69_lp12_r1_pr4_lay12_m12 FF Domain:DomainML Problem:problemStackHL_b69_lp12_r1_pr4_lay12_m12
         All
         AllAction
         NodeGraph {
@@ -5577,7 +5577,7 @@ BehaviorTree StackHL_b69_lp12_r1_pr4_lay12_m12Subtree {
 
 BehaviorTree PickUpHL_b71_fp95_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b71_fp95_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b71_fp95_r1 FF Domain:DomainML Problem:problemPickUpHL_b71_fp95_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b71_fp95_r1 FF Domain:DomainML Problem:problemPickUpHL_b71_fp95_r1
         All
         AllAction
         NodeGraph {
@@ -5591,7 +5591,7 @@ BehaviorTree PickUpHL_b71_fp95_r1Subtree {
 
 BehaviorTree StackHL_b71_lp12_r1_pr4_lay12_m12Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b71_lp12_r1_pr4_lay12_m12 {
-        ServicePlanning subtreeSrv_StackHL_b71_lp12_r1_pr4_lay12_m12 FF Domain:DomainML Problem:problemStackHL_b71_lp12_r1_pr4_lay12_m12.pddl
+        ServicePlanning subtreeSrv_StackHL_b71_lp12_r1_pr4_lay12_m12 FF Domain:DomainML Problem:problemStackHL_b71_lp12_r1_pr4_lay12_m12
         All
         AllAction
         NodeGraph {
@@ -5605,7 +5605,7 @@ BehaviorTree StackHL_b71_lp12_r1_pr4_lay12_m12Subtree {
 
 BehaviorTree NailingBeamHL_b50_r1_m9_lay9Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingBeamHL_b50_r1_m9_lay9 {
-        ServicePlanning subtreeSrv_NailingBeamHL_b50_r1_m9_lay9 FF Domain:DomainML Problem:problemNailingBeamHL_b50_r1_m9_lay9.pddl
+        ServicePlanning subtreeSrv_NailingBeamHL_b50_r1_m9_lay9 FF Domain:DomainML Problem:problemNailingBeamHL_b50_r1_m9_lay9
         All
         AllAction
         NodeGraph {
@@ -5637,7 +5637,7 @@ BehaviorTree NailingBeamHL_b50_r1_m9_lay9Subtree {
 
 BehaviorTree NailingBeamHL_b52_r1_m9_lay9Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingBeamHL_b52_r1_m9_lay9 {
-        ServicePlanning subtreeSrv_NailingBeamHL_b52_r1_m9_lay9 FF Domain:DomainML Problem:problemNailingBeamHL_b52_r1_m9_lay9.pddl
+        ServicePlanning subtreeSrv_NailingBeamHL_b52_r1_m9_lay9 FF Domain:DomainML Problem:problemNailingBeamHL_b52_r1_m9_lay9
         All
         AllAction
         NodeGraph {
@@ -5648,7 +5648,7 @@ BehaviorTree NailingBeamHL_b52_r1_m9_lay9Subtree {
 
 BehaviorTree NailingBeamHL_b51_r1_m9_lay9Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingBeamHL_b51_r1_m9_lay9 {
-        ServicePlanning subtreeSrv_NailingBeamHL_b51_r1_m9_lay9 FF Domain:DomainML Problem:problemNailingBeamHL_b51_r1_m9_lay9.pddl
+        ServicePlanning subtreeSrv_NailingBeamHL_b51_r1_m9_lay9 FF Domain:DomainML Problem:problemNailingBeamHL_b51_r1_m9_lay9
         All
         AllAction
         NodeGraph {
@@ -5659,7 +5659,7 @@ BehaviorTree NailingBeamHL_b51_r1_m9_lay9Subtree {
 
 BehaviorTree NailingBeamHL_b53_r1_m9_lay9Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingBeamHL_b53_r1_m9_lay9 {
-        ServicePlanning subtreeSrv_NailingBeamHL_b53_r1_m9_lay9 FF Domain:DomainML Problem:problemNailingBeamHL_b53_r1_m9_lay9.pddl
+        ServicePlanning subtreeSrv_NailingBeamHL_b53_r1_m9_lay9 FF Domain:DomainML Problem:problemNailingBeamHL_b53_r1_m9_lay9
         All
         AllAction
         NodeGraph {
@@ -5670,7 +5670,7 @@ BehaviorTree NailingBeamHL_b53_r1_m9_lay9Subtree {
 
 BehaviorTree NailingBeamHL_b49_r1_m9_lay9Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingBeamHL_b49_r1_m9_lay9 {
-        ServicePlanning subtreeSrv_NailingBeamHL_b49_r1_m9_lay9 FF Domain:DomainML Problem:problemNailingBeamHL_b49_r1_m9_lay9.pddl
+        ServicePlanning subtreeSrv_NailingBeamHL_b49_r1_m9_lay9 FF Domain:DomainML Problem:problemNailingBeamHL_b49_r1_m9_lay9
         All
         AllAction
         NodeGraph {
@@ -5681,7 +5681,7 @@ BehaviorTree NailingBeamHL_b49_r1_m9_lay9Subtree {
 
 BehaviorTree NailingBeamHL_b54_r1_m9_lay9Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingBeamHL_b54_r1_m9_lay9 {
-        ServicePlanning subtreeSrv_NailingBeamHL_b54_r1_m9_lay9 FF Domain:DomainML Problem:problemNailingBeamHL_b54_r1_m9_lay9.pddl
+        ServicePlanning subtreeSrv_NailingBeamHL_b54_r1_m9_lay9 FF Domain:DomainML Problem:problemNailingBeamHL_b54_r1_m9_lay9
         All
         AllAction
         NodeGraph {
@@ -5692,7 +5692,7 @@ BehaviorTree NailingBeamHL_b54_r1_m9_lay9Subtree {
 
 BehaviorTree NailingBeamHL_b56_r1_m10_lay10Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingBeamHL_b56_r1_m10_lay10 {
-        ServicePlanning subtreeSrv_NailingBeamHL_b56_r1_m10_lay10 FF Domain:DomainML Problem:problemNailingBeamHL_b56_r1_m10_lay10.pddl
+        ServicePlanning subtreeSrv_NailingBeamHL_b56_r1_m10_lay10 FF Domain:DomainML Problem:problemNailingBeamHL_b56_r1_m10_lay10
         All
         AllAction
         NodeGraph {
@@ -5761,7 +5761,7 @@ BehaviorTree NailingBeamHL_b60_r1_m10_lay10Subtree {
 
 BehaviorTree NailingBeamHL_b62_r1_m11_lay11Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingBeamHL_b62_r1_m11_lay11 {
-        ServicePlanning subtreeSrv_NailingBeamHL_b62_r1_m11_lay11 FF Domain:DomainML Problem:problemNailingBeamHL_b62_r1_m11_lay11.pddl
+        ServicePlanning subtreeSrv_NailingBeamHL_b62_r1_m11_lay11 FF Domain:DomainML Problem:problemNailingBeamHL_b62_r1_m11_lay11
         All
         AllAction
         NodeGraph {
@@ -5830,7 +5830,7 @@ BehaviorTree NailingBeamHL_b66_r1_m11_lay11Subtree {
 
 BehaviorTree NailingBeamHL_b68_r1_m12_lay12Subtree {
     Root FlowNode FF_Default_DynamicFlow_NailingBeamHL_b68_r1_m12_lay12 {
-        ServicePlanning subtreeSrv_NailingBeamHL_b68_r1_m12_lay12 FF Domain:DomainML Problem:problemNailingBeamHL_b68_r1_m12_lay12.pddl
+        ServicePlanning subtreeSrv_NailingBeamHL_b68_r1_m12_lay12 FF Domain:DomainML Problem:problemNailingBeamHL_b68_r1_m12_lay12
         All
         AllAction
         NodeGraph {
@@ -6484,7 +6484,7 @@ BehaviorTree MoveCassetteToStackHL_tp12_lp12_pr4_sp12_r1_m12_lay12Subtree {
 
 BehaviorTree StackHL_b7_lp2_r1_pr2_lay2_m2Subtree {
     Root FlowNode FF_Default_DynamicFlow_StackHL_b7_lp2_r1_pr2_lay2_m2 {
-        ServicePlanning subtreeSrv_StackHL_b7_lp2_r1_pr2_lay2_m2 FF Domain:DomainML Problem:problemStackHL_b7_lp2_r1_pr2_lay2_m2.pddl
+        ServicePlanning subtreeSrv_StackHL_b7_lp2_r1_pr2_lay2_m2 FF Domain:DomainML Problem:problemStackHL_b7_lp2_r1_pr2_lay2_m2
         All
         AllAction
         NodeGraph {
@@ -6498,7 +6498,7 @@ BehaviorTree StackHL_b7_lp2_r1_pr2_lay2_m2Subtree {
 
 BehaviorTree PickUpHL_b9_fp12_r1Subtree {
     Root FlowNode FF_Default_DynamicFlow_PickUpHL_b9_fp12_r1 {
-        ServicePlanning subtreeSrv_PickUpHL_b9_fp12_r1 FF Domain:DomainML Problem:problemPickUpHL_b9_fp12_r1.pddl
+        ServicePlanning subtreeSrv_PickUpHL_b9_fp12_r1 FF Domain:DomainML Problem:problemPickUpHL_b9_fp12_r1
         All
         AllAction
         NodeGraph {

@@ -253,7 +253,7 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
         /// the actual problem used for planning.
         /// </summary>
         /// <param name="plannerServiceName">The service instance name, e.g. "subtreeSrv_PickUpHL_lp1_fp1_r1".</param>
-        /// <param name="problemFileName">Just the filename, e.g. "problem_PickUpHL_lp1_fp1_r1.pddl".</param>
+        /// <param name="problemFileName">The generated problem filename, optionally ending in ".pddl".</param>
         /// <param name="btFilePath">Optional override for the .bt file path.</param>
         public static void UpdateServicePlanningProblem(string plannerServiceName, string problemFileName, string btFilePath = null)
         {
@@ -271,6 +271,9 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
             try
             {
                 var content = File.ReadAllText(filePath);
+                var problemName = problemFileName.EndsWith(".pddl", StringComparison.OrdinalIgnoreCase)
+                    ? problemFileName[..^".pddl".Length]
+                    : problemFileName;
 
                 // Match the ServicePlanning line for this service, capturing everything up to (but not including)
                 // an existing Problem: token, so we can replace or append cleanly.
@@ -284,11 +287,11 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
                     return;
                 }
 
-                var replacement = match.Groups[1].Value + $" Problem:{problemFileName}";
+                var replacement = match.Groups[1].Value + $" Problem:{problemName}";
                 content = content.Substring(0, match.Index) + replacement + content.Substring(match.Index + match.Length);
 
                 File.WriteAllText(filePath, content);
-                LoggingService.LogSuccess($"✅ APTreeModelWriter: Updated Problem for '{plannerServiceName}' → Problem:{problemFileName}");
+                LoggingService.LogSuccess($"✅ APTreeModelWriter: Updated Problem for '{plannerServiceName}' → Problem:{problemName}");
             }
             catch (Exception ex)
             {
