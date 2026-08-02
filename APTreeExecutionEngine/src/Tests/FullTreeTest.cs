@@ -21,8 +21,9 @@ namespace BehaviorTreeMainProject
         private DateTime testEndTime;
         private IBTNode rootNode; // Store root node for monitoring
         private readonly bool useModelLoader;
+        private int tickIntervalMilliseconds = 100;
 
-        public FullTreeTest(bool useModelLoader = false)
+        public FullTreeTest(bool useModelLoader = true)
         {
             this.useModelLoader = useModelLoader;
         }
@@ -56,10 +57,14 @@ namespace BehaviorTreeMainProject
                 LoggingService.LogSection("REGISTERING ALL TYPES");
                 blackboardWriter.RegisterAllTypes();
 
-                // Register all instances from files
-                LoggingService.LogSection("REGISTERING ALL INSTANCES FROM FILES");
-                string actionInstancesFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "src", "InputInstances", "ActionInstances.txt");
-                blackboardWriter.RegisterAllInstances(actionInstancesFile);
+                // Register the generated scene objects and initial state.
+                LoggingService.LogSection("REGISTERING GENERATED MODEL STATE");
+                string modelLoaderDirectory = Path.Combine(
+                    AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "src", "ModelLoader");
+                blackboardWriter.RegisterParameterInstances(
+                    Path.Combine(modelLoaderDirectory, "LiveMatSetupObjects.json"));
+                blackboardWriter.RegisterPredicateInstances(
+                    Path.Combine(modelLoaderDirectory, "InitialStatePredicates.json"));
 
                 // Capture blackboard state before ticking starts
                 LoggingService.LogSection("CAPTURING BLACKBOARD STATE BEFORE TICKING");
@@ -143,6 +148,10 @@ namespace BehaviorTreeMainProject
                 AppDomain.CurrentDomain.BaseDirectory,
                 "..", "..", "..", "src", "ModelLoader", "LiveMatExecutionConfig.json");
             var loaded = BehaviorTreeModelLoader.Load(configPath, blackboard);
+            if (loaded.Config.TickIntervalMilliseconds <= 0)
+                throw new InvalidOperationException("tickIntervalMilliseconds must be greater than zero.");
+
+            tickIntervalMilliseconds = loaded.Config.TickIntervalMilliseconds;
 
             rootNode = loaded.Tree.root;
             allPlanners.AddRange(loaded.Planners);
@@ -562,7 +571,7 @@ namespace BehaviorTreeMainProject
                 var memoryAfterPlanner = GC.GetTotalMemory(false);
 
                 // Test individual cassette nodes
-                var rootNode = behaviorTree.root as BTFlowNodeComposite;
+                var rootNode = behaviorTree.root as FlowNode;
                 if (rootNode != null)
                 {
                     var children = rootNode.GetChildren();
@@ -583,7 +592,7 @@ namespace BehaviorTreeMainProject
                 }
                 else
                 {
-                    LoggingService.LogError($" Root node is not a BTFlowNodeComposite. Actual type: {behaviorTree.root?.GetType().Name ?? "null"}");
+                    LoggingService.LogError($" Root node is not a FlowNode. Actual type: {behaviorTree.root?.GetType().Name ?? "null"}");
                 }
 
                 LoggingService.LogSuccess(" Behavior tree structure test completed!");
@@ -602,7 +611,7 @@ namespace BehaviorTreeMainProject
                 LoggingService.LogSubsection(" NODEGRAPH STATUS REPORT");
                 LoggingService.LogInfo("=".PadRight(50, '='));
 
-                var rootNode = behaviorTree.root as BTFlowNodeComposite;
+                var rootNode = behaviorTree.root as FlowNode;
                 if (rootNode != null)
                 {
                     var children = rootNode.GetChildren();
@@ -718,13 +727,13 @@ namespace BehaviorTreeMainProject
                     LoggingService.LogInfo($" Progress: {completedCount}/{allPlanners.Count} completed, {executingCount} executing, {pendingCount} pending");
                     
                                          // Planning phase monitoring
-                     if (rootNode is BTFlowNodeComposite compositeNode)
+                     if (rootNode is FlowNode flowNode)
                      {
-                         var planningComplete = compositeNode.AreAllPlanningServicesComplete();
+                         var planningComplete = allPlanners.All(planner => planner.HasGeneratedNodeGraph());
                          LoggingService.LogInfo($"\n PLANNING PHASE STATUS:");
                          LoggingService.LogInfo($"   Planning Complete: {planningComplete}");
                          
-                         var children = compositeNode.GetChildren();
+                         var children = flowNode.GetChildren();
                          LoggingService.LogInfo(" SUBTREE STATUSES:");
                          for (int i = 0; i < children.Count; i++)
                          {
@@ -877,10 +886,10 @@ namespace BehaviorTreeMainProject
             
                          try
              {
-                 var rootNode = behaviorTree.root as BTFlowNodeComposite;
+                 var rootNode = behaviorTree.root as FlowNode;
                  if (rootNode == null)
                  {
-                     LoggingService.LogError(" Root node is not a BTFlowNodeComposite");
+                     LoggingService.LogError(" Root node is not a FlowNode");
                      return;
                  }
 
@@ -1034,7 +1043,7 @@ namespace BehaviorTreeMainProject
                     
                     // Execute one tick
                     BlackboardSummaryLogger.StartTreeTicking();
-                    var result = behaviorTree.Tick(0.1f); // 0.1 second delta time
+                    var result = behaviorTree.Tick(tickIntervalMilliseconds / 1000f);
                     BlackboardSummaryLogger.EndTreeTicking();
                     
                     // Log comprehensive tick information
@@ -1049,7 +1058,7 @@ namespace BehaviorTreeMainProject
                     }
                     
                     // Small delay between ticks
-                    await Task.Delay(100);
+                    await Task.Delay(tickIntervalMilliseconds);
                 }
                 
                 if (tickCount >= maxTicks)
@@ -1100,7 +1109,7 @@ namespace BehaviorTreeMainProject
         {
             try
             {
-                var rootNode = behaviorTree.root as BTFlowNodeComposite;
+                var rootNode = behaviorTree.root as FlowNode;
                 if (rootNode == null) return;
 
                 var children = rootNode.GetChildren();
@@ -1237,7 +1246,7 @@ namespace BehaviorTreeMainProject
         {
             try
             {
-                var rootNode = behaviorTree.root as BTFlowNodeComposite;
+                var rootNode = behaviorTree.root as FlowNode;
                 if (rootNode == null) return;
 
                 var children = rootNode.GetChildren();
@@ -1362,7 +1371,7 @@ namespace BehaviorTreeMainProject
         {
             try
             {
-                var rootNode = behaviorTree.root as BTFlowNodeComposite;
+                var rootNode = behaviorTree.root as FlowNode;
                 if (rootNode == null) return;
 
                 var children = rootNode.GetChildren();
@@ -1474,9 +1483,9 @@ namespace BehaviorTreeMainProject
                 actionNodes.Add(actionNode);
             }
             
-            if (node is BTFlowNodeComposite compositeNode)
+            if (node is FlowNode flowNode)
             {
-                foreach (var child in compositeNode.GetChildren())
+                foreach (var child in flowNode.GetChildren())
                 {
                     actionNodes.AddRange(GetAllActionNodes(child));
                 }
@@ -1486,7 +1495,7 @@ namespace BehaviorTreeMainProject
         }
 
         // Public method to run the test from Program.cs
-        public static async Task RunTest(bool useModelLoader = false)
+        public static async Task RunTest(bool useModelLoader = true)
         {
             var test = new FullTreeTest(useModelLoader);
             await test.RunFullTreeTest();

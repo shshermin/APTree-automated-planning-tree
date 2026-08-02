@@ -7,6 +7,8 @@ namespace BehaviorTreeMainProject
 {
     public class StackML : PActionNode
     {
+        public override ActionLevel Level => ActionLevel.MidLevel;
+
         // Parameter: obj1 of type element
         public Element obj1 { get; private set; }
 

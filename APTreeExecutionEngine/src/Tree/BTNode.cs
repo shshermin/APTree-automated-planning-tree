@@ -447,15 +447,15 @@ public abstract class BTNode : IBTNode
                 BehaviorTreeComponentLogger.TrackFlowNodeSuccess(this.GetType().Name);
             }
             // Track action success if this is an action
-            else if (this is PActionNode)
+            else if (this is PActionNode actionNode)
             {
                 BehaviorTreeComponentLogger.TrackActionSuccess("GenericBTAction");
 
                 // Log ML action result to the compact ML-only log
                 var className = this.GetType().Name;
-                if (className.EndsWith("ML"))
+                if (actionNode.Level == ActionLevel.MidLevel)
                 {
-                    MLActionResultLogger.Instance.LogSuccess(className, ((PActionNode)this).InstanceName.ToString());
+                    MLActionResultLogger.Instance.LogSuccess(className, actionNode.InstanceName.ToString());
                 }
             }
             // Simplified tracking - detailed node success tracking removed
@@ -469,15 +469,15 @@ public abstract class BTNode : IBTNode
                 BehaviorTreeComponentLogger.TrackFlowNodeFailure(this.GetType().Name);
             }
             // Track action failure if this is an action
-            else if (this is PActionNode)
+            else if (this is PActionNode actionNode)
             {
                 BehaviorTreeComponentLogger.TrackActionFailure("GenericBTAction");
 
                 // Log ML action result to the compact ML-only log
                 var className = this.GetType().Name;
-                if (className.EndsWith("ML"))
+                if (actionNode.Level == ActionLevel.MidLevel)
                 {
-                    MLActionResultLogger.Instance.LogFailure(className, ((PActionNode)this).InstanceName.ToString());
+                    MLActionResultLogger.Instance.LogFailure(className, actionNode.InstanceName.ToString());
                 }
             }
             // Simplified tracking - detailed node failure tracking removed

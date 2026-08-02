@@ -67,43 +67,42 @@ public class ServicePlanningPhaseManager : Service
     
     private bool AreAllPlanningServicesComplete()
     {
-        // Since this service is attached to a composite node, we can directly access it
-        if (AttachedNode is BTFlowNodeComposite compositeNode)
+        if (AttachedNode is not FlowNode flowNode)
+            return true;
+
+        return AreAllPlanningServicesComplete(flowNode);
+    }
+
+    private bool AreAllPlanningServicesComplete(FlowNode flowNode)
+    {
+        foreach (var child in flowNode.GetChildren())
         {
-            var children = compositeNode.GetChildren();
-            
-            foreach (var child in children)
+            if (child is not FlowNode childFlowNode)
+                continue;
+
+            if (childFlowNode.ServicePlanning is ServicePlanning plannerService)
             {
-                if (child is DynamicFlowNode dynamicNode)
+                if (!plannerService.HasGeneratedNodeGraph())
                 {
-                    // Check if this dynamic node has a planning service
-                    if (dynamicNode.ServicePlanning is ServicePlanning plannerService)
-                    {
-                        // Check if planning has generated a NodeGraph
-                        if (!plannerService.HasGeneratedNodeGraph())
-                        {
-                            LoggingService.LogInfo($"⏳ Planning still in progress for {dynamicNode.GetNodeName()}");
-                            return false; // Still planning
-                        }
-                    }
-                    else
-                    {
-                        LoggingService.LogWarning($"⚠️ Dynamic node {dynamicNode.GetNodeName()} has no planning service");
-                        return false; // No planning service means not ready
-                    }
+                    LoggingService.LogInfo($"⏳ Planning still in progress for {childFlowNode.GetNodeName()}");
+                    return false;
                 }
-                else if (child is BTFlowNodeComposite childCompositeNode)
-                {
-                    // Recursively check composite nodes
-                    if (!childCompositeNode.AreAllPlanningServicesComplete())
-                    {
-                        return false; // Child composite still planning
-                    }
-                }
+
+                continue;
+            }
+
+            if (childFlowNode.GetChildren().Count > 0 &&
+                !AreAllPlanningServicesComplete(childFlowNode))
+                return false;
+
+            if (childFlowNode.GetChildren().Count == 0)
+            {
+                LoggingService.LogWarning($"⚠️ Flow node {childFlowNode.GetNodeName()} has no planning service");
+                return false;
             }
         }
-        
-        return true; // All planning complete
+
+        return true;
     }
     
 

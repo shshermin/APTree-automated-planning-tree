@@ -7,6 +7,8 @@ namespace BehaviorTreeMainProject
 {
     public class PickUpHL : PActionNode
     {
+        public override ActionLevel Level => ActionLevel.HighLevel;
+
         // Parameter: obj of type element
         public Element obj { get; private set; }
 

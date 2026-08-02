@@ -21,6 +21,27 @@ public class DynamicFlowNode : FlowNode
     private const int MAX_TICKS_BEFORE_FAILURE = 10;
     private bool hasCompletedFirstRound = false;
 
+    private readonly FlowNodeGraph flowGraph = new();
+
+    public bool IsAllFlow => flowGraph.Count > 0;
+
+    public void AddFlowRelation(string fromName, string toName, TemporalType temporalType = TemporalType.MEETS)
+    {
+        var from = flowGraph.GetAllNodes().FirstOrDefault(node =>
+            string.Equals(node.InstanceName.ToString(), fromName, StringComparison.OrdinalIgnoreCase));
+        var to = flowGraph.GetAllNodes().FirstOrDefault(node =>
+            string.Equals(node.InstanceName.ToString(), toName, StringComparison.OrdinalIgnoreCase));
+
+        if (from != null && to != null)
+            flowGraph.AddRelation(from, to, temporalType);
+    }
+
+    public void AddPlanningPhaseService()
+    {
+        AddService(new ServicePlanningPhaseManager(OwningTree, this), false);
+        LoggingService.LogInfo($"🔧 DynamicFlowNode: Added PlanningPhaseManager service to {DebugDisplayName}");
+    }
+
     public override string DebugDisplayName { get; protected set; } = "DynamicFlowNode";
 
     public DynamicFlowNode(
@@ -28,7 +49,7 @@ public class DynamicFlowNode : FlowNode
         IBehaviorTree owningTree,
         SuccessCriteria successCriteria = SuccessCriteria.ALL,
         float threshold = 1.0f,
-        bool addLowestCostDecorator = false)  // New parameter to control decorator addition
+        bool addLeafDecorators = true)
         : base(nodeName, successCriteria, threshold)
     {
         this.OwningTree = owningTree;
@@ -40,15 +61,37 @@ public class DynamicFlowNode : FlowNode
         // Track flow node initialization (unified as "FlowNode")
         BehaviorTreeComponentLogger.TrackFlowNodeInitialization("FlowNode");
 
-        // Automatically add PlanningComplete decorator to dynamic flow nodes
-        AddDecorator(new DecoratorPlanningComplete());
-        LoggingService.LogInfo($"🔧 DynamicFlowNode: Added PlanningComplete decorator to {nodeName.ToString()}");
+        if (addLeafDecorators)
+        {
+            // Automatically add PlanningComplete decorator to dynamic flow nodes
+            AddDecorator(new DecoratorPlanningComplete());
+            LoggingService.LogInfo($"🔧 DynamicFlowNode: Added PlanningComplete decorator to {nodeName.ToString()}");
 
-        // Add RetryOnFailure decorator: when all children finish but success criteria not met,
-        // this post-processing decorator resets failed children and converts Failure → InProgress
-        AddDecorator(new DecoratorRetryOnFailure(this));
-        LoggingService.LogInfo($"🔧 DynamicFlowNode: Added RetryOnFailure decorator to {nodeName.ToString()}");
+            // Add RetryOnFailure decorator: when all children finish but success criteria not met,
+            // this post-processing decorator resets failed children and converts Failure → InProgress
+            AddDecorator(new DecoratorRetryOnFailure(this));
+            LoggingService.LogInfo($"🔧 DynamicFlowNode: Added RetryOnFailure decorator to {nodeName.ToString()}");
+        }
         
+    }
+
+    public override IBTNode AddChild(IBTNode childNode)
+    {
+        base.AddChild(childNode);
+
+        if (childNode is FlowNode flowNode)
+            flowGraph.AddNode(flowNode);
+        else if (childNode is PActionNode actionNode)
+            actionGraph.AddNode(actionNode);
+
+        return childNode;
+    }
+
+    public override List<IBTNode> GetChildren()
+    {
+        return IsAllFlow
+            ? flowGraph.GetAllNodes().Cast<IBTNode>().ToList()
+            : base.GetChildren();
     }
 
     /// <summary>
@@ -57,14 +100,47 @@ public class DynamicFlowNode : FlowNode
     /// <returns></returns>
     public override IEnumerator<IBTNode> GetEnumerator()
     {
-        // Console.WriteLine($"   🔍 FlowNode: GetEnumerator called - Current actionGraph has {actionGraph.GetAllActionNodes().Count} nodes");
-
-        // Return the current actionGraph nodes
-        return actionGraph.GetAllActionNodes().Cast<IBTNode>().GetEnumerator();
+        return GetChildren().GetEnumerator();
     }
 
     protected override bool OnTick_NodeLogic(float inDeltaTime)
     {
+        if (IsAllFlow)
+        {
+            var children = flowGraph.GetAllNodes();
+            int successCount = children.Count(child => child.status == BTNodeResult.Success);
+            int failedCount = children.Count(child => child.status == BTNodeResult.Failure);
+            bool anyInProgress = children.Any(child => !child.HasFinished);
+
+            bool criteriaMet = successCriteria switch
+            {
+                SuccessCriteria.ALL => successCount == children.Count,
+                SuccessCriteria.ANY => successCount > 0,
+                SuccessCriteria.COUNT => successCount >= (int)successThreshold,
+                SuccessCriteria.PERCENTAGE => successCount >= children.Count * successThreshold,
+                _ => false
+            };
+
+            if (criteriaMet)
+            {
+                status = BTNodeResult.Success;
+                return true;
+            }
+
+            if (anyInProgress)
+            {
+                status = BTNodeResult.InProgress;
+                return true;
+            }
+
+            foreach (var failedChild in children.Where(child => child.status == BTNodeResult.Failure))
+                failedChild.Reset();
+
+            LoggingService.LogInfo($"DynamicFlowNode[AllFlow]: Retrying {failedCount} failed children because criteria were not met");
+            status = BTNodeResult.InProgress;
+            return true;
+        }
+
         LoggingService.LogInfo($"🚨 DEBUG: DynamicFlowNode.OnTick_NodeLogic called for {DebugDisplayName}");
         LoggingService.LogInfo($"🔍 FlowNode: Current LastStatus: {status}");
         LoggingService.LogInfo($"🔍 FlowNode: HasChildren: {HasChildren}");
@@ -228,6 +304,9 @@ public class DynamicFlowNode : FlowNode
 
     protected override bool OnTick_Children(float inDeltaTime)
     {
+        if (IsAllFlow)
+            return OnTickFlowChildren(inDeltaTime);
+
         // Increment tick counter
         tickCount++;
         LoggingService.LogInfo($"🚨 DEBUG: DynamicFlowNode.OnTick_Children called for {DebugDisplayName} - Tick #{tickCount}");
@@ -289,6 +368,48 @@ public class DynamicFlowNode : FlowNode
         LoggingService.LogInfo($"   🔍 DEBUG: Finished executing {executableNodes.Count} executable nodes");
 
         // Continue ticking - OnTick_NodeLogic will evaluate success criteria
+        return true;
+    }
+
+    public List<FlowNode> GetExecutableFlowNodes()
+    {
+        return flowGraph.GetExecutableNodes();
+    }
+
+    private bool OnTickFlowChildren(float inDeltaTime)
+    {
+        tickCount++;
+        var allChildren = flowGraph.GetAllNodes();
+        if (allChildren.Count == 0)
+            return false;
+
+        var executableNodes = flowGraph.GetExecutableNodes();
+        if (executableNodes.Count == 0)
+            return true;
+
+        int deprioritizedIndex = LinkedBlackboard.DeprioritizedBranchIndex;
+        var orderedNodes = executableNodes
+            .Where(node => allChildren.IndexOf(node) != deprioritizedIndex)
+            .ToList();
+
+        if (deprioritizedIndex >= 0 && deprioritizedIndex < allChildren.Count)
+        {
+            var deprioritizedNode = allChildren[deprioritizedIndex];
+            if (executableNodes.Contains(deprioritizedNode))
+                orderedNodes.Add(deprioritizedNode);
+        }
+
+        foreach (var child in orderedNodes)
+        {
+            if (child.status == BTNodeResult.ReadyToTick)
+                flowGraph.MarkNodeStarted(child);
+
+            child.Tick(inDeltaTime);
+
+            if (child.status == BTNodeResult.Success)
+                flowGraph.MarkNodeCompleted(child);
+        }
+
         return true;
     }
     

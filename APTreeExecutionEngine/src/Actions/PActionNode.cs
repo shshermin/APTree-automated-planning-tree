@@ -10,6 +10,7 @@ using BehaviorTreeMainProject.Log.Services;
 public abstract class PActionNode : ActionNode
 {
     public override string TypeName => "GenericBTAction";
+    public abstract ActionLevel Level { get; }
     public readonly FastName actionType;
     private readonly Blackboard<FastName> blackboard;
     public int cost;

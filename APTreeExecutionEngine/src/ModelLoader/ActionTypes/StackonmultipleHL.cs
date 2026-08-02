@@ -7,6 +7,8 @@ namespace BehaviorTreeMainProject
 {
     public class StackOnMultipleHL : PActionNode
     {
+        public override ActionLevel Level => ActionLevel.HighLevel;
+
         // Parameter: plate of type element
         public Element plate { get; private set; }
 

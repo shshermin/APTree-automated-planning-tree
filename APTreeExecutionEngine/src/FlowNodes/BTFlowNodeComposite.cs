@@ -94,7 +94,7 @@ public class BTFlowNodeComposite : FlowNode
     /// <summary>
     /// Get all child nodes (both action nodes and flow nodes)
     /// </summary>
-    public List<IBTNode> GetChildren()
+    public override List<IBTNode> GetChildren()
     {
         var allChildren = new List<IBTNode>();
         

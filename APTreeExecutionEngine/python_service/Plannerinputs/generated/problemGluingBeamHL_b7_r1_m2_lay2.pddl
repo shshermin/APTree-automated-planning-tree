@@ -324,6 +324,11 @@ sp4 - stackposition
 (nailed b19)
 (nailed b24)
 (glued b1)
+(glued b2)
+(glued b5)
+(glued b6)
+(glued b4)
+(glued b3)
   )
   (:goal 
     (and

@@ -24,12 +24,8 @@ namespace BehaviorTreeMainProject.Tests
                 LoggingService.LogSection("REGISTERING ALL TYPES");
                 blackboardWriter.RegisterAllTypes();
 
-                // 2) Read and register all instances (parameters, predicates, actions) from input files
-                LoggingService.LogSection("REGISTERING ALL INSTANCES FROM FILES");
-                string actionInstancesFile = Path.Combine(
-                    AppDomain.CurrentDomain.BaseDirectory,
-                    "..", "..", "..",
-                    "src", "InputInstances", "ActionInstances.txt");
+                // 2) Read and register the parameters and predicates mirrored by this test
+                LoggingService.LogSection("REGISTERING PREDICATE GRAPH INPUTS");
                 string predicateInstancesFile = Path.Combine(
                 AppDomain.CurrentDomain.BaseDirectory,
                 "..", "..", "..",
@@ -39,7 +35,8 @@ namespace BehaviorTreeMainProject.Tests
                 "..", "..", "..",
                 "src", "InputInstances", "ParameterInstances.txt");
 
-                blackboardWriter.RegisterAllInstances(parameterInstancesFile, predicateInstancesFile, actionInstancesFile);
+                blackboardWriter.RegisterParameterInstances(parameterInstancesFile);
+                blackboardWriter.RegisterPredicateInstances(predicateInstancesFile);
 
                 // 3) Mirror all predicates currently on the blackboard into Neo4j
                 LoggingService.LogSection("MIRRORING PREDICATES TO NEO4J");

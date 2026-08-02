@@ -6,22 +6,5 @@
   "plannerName": "ENHSP",
   "timeoutSeconds": 120,
   "plannerExecutionMode": "Parallel",
-  "cassetteCount": 12,
-  "batches": [
-    {
-      "nodeName": "Batch1_C1toC4",
-      "cassetteIndices": [0, 1, 2, 3],
-      "objectsFile": "python_service/Plannerinputs/static/ParameterInstances_PDDL.txt"
-    },
-    {
-      "nodeName": "Batch2_C5toC8",
-      "cassetteIndices": [4, 5, 6, 7],
-      "objectsFile": "python_service/Plannerinputs/static/ParameterInstances_PDDL2.txt"
-    },
-    {
-      "nodeName": "Batch3_C9toC12",
-      "cassetteIndices": [8, 9, 10, 11],
-      "objectsFile": "python_service/Plannerinputs/static/ParameterInstances_PDDL3.txt"
-    }
-  ]
+  "tickIntervalMilliseconds": 100
 }

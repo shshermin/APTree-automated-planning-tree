@@ -4,8 +4,8 @@ using System.Text.Json;
 using System.Text.RegularExpressions;
 using BehaviorTreeMainProject;
 
-// Run the hardcoded tree by default, or the generated model through the model loader.
-await FullTreeTest.RunTest(useModelLoader: args.Contains("--model-test"));
+// Always build the execution tree from the configured behavior-tree model.
+await FullTreeTest.RunTest();
 
 // Toggle: set to false to skip starting the editor/frontend backend after the test.
 const bool runEditorBackend = false;

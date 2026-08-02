@@ -37,6 +37,8 @@ public class ServiceBatchManager : Service
         if (!_initialized)
             Initialize();
 
+        MaintainCassetteCompletionFlags();
+
         if (_done) return true;
 
         if (linkedBlackboard != null)
@@ -66,11 +68,35 @@ public class ServiceBatchManager : Service
         return true;
     }
 
+    private void MaintainCassetteCompletionFlags()
+    {
+        var flags = linkedBlackboard?.CassetteSubtreeCompleted;
+        if (flags == null)
+            return;
+
+        for (int i = 0; i < flags.Length; i++)
+        {
+            if (!_ownedCassetteIndices.Contains(i))
+                flags[i] = true;
+        }
+
+        foreach (var index in _ownedCassetteIndices)
+        {
+            if (index < 0 || index >= flags.Length)
+                continue;
+
+            var cassetteNode = linkedBlackboard.GetFlowNode(
+                new FastName($"cassette{index + 1}")) as DynamicFlowNode;
+            if (cassetteNode?.status == BTNodeResult.Success)
+                flags[index] = true;
+        }
+    }
+
     private void Initialize()
     {
         _initialized = true;
 
-        var batchNode = AttachedNode as BTFlowNodeComposite;
+        var batchNode = AttachedNode as FlowNode;
         if (batchNode == null) return;
 
         // Count this batch's cassette children
@@ -82,14 +108,14 @@ public class ServiceBatchManager : Service
         int globalOffset = 0;
         int totalCassettes = 0;
 
-        var parent = AttachedNode.ParentNode as BTFlowNodeComposite;
+        var parent = AttachedNode.ParentNode as FlowNode;
         if (parent != null)
         {
             bool foundSelf = false;
             foreach (var sibling in parent.GetChildren())
             {
-                int siblingChildCount = sibling is BTFlowNodeComposite siblingComposite
-                    ? siblingComposite.GetChildren().Count
+                int siblingChildCount = sibling is FlowNode siblingFlowNode
+                    ? siblingFlowNode.GetChildren().Count
                     : 0;
                 totalCassettes += siblingChildCount;
 

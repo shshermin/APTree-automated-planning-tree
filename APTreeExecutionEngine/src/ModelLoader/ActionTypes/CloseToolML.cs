@@ -7,6 +7,8 @@ namespace BehaviorTreeMainProject
 {
     public class CloseToolML : PActionNode
     {
+        public override ActionLevel Level => ActionLevel.MidLevel;
+
         // Parameter: client of type robot
         public Robot client { get; private set; }
 

@@ -7,6 +7,8 @@ namespace BehaviorTreeMainProject
 {
     public class GluingBeamHL : PActionNode
     {
+        public override ActionLevel Level => ActionLevel.HighLevel;
+
         // Parameter: obj of type beam
         public Beam obj { get; private set; }
 

@@ -8,6 +8,7 @@ public sealed class LoadedBehaviorTree
 {
     public required BehaviorTree Tree { get; init; }
     public required IReadOnlyList<ServicePlanning> Planners { get; init; }
+    public required BehaviorTreeExecutionConfig Config { get; init; }
 }
 
 public static class BehaviorTreeModelLoader
@@ -41,10 +42,9 @@ public static class BehaviorTreeModelLoader
         root.SetTreeForAllServices(behaviorTree);
 
         blackboard.PlanningPhase = true;
-        blackboard.CassetteSubtreeCompleted = new bool[config.CassetteCount];
         blackboard.SetNodeGraph(new FastName("MainBehaviorTree"), new NodeGraph());
 
-        return new LoadedBehaviorTree { Tree = behaviorTree, Planners = planners };
+        return new LoadedBehaviorTree { Tree = behaviorTree, Planners = planners, Config = config };
     }
 
     private static FlowNode BuildFlowNode(
@@ -67,24 +67,34 @@ public static class BehaviorTreeModelLoader
 
         if (isComposite)
         {
-            var composite = new BTFlowNodeComposite(new FastName(name), behaviorTree, criteria);
-            composite.RunChildrenSequentially = node.TryGetProperty("nodeGraph", out var graph) &&
-                graph.TryGetProperty("relations", out var rels) &&
-                rels.EnumerateArray().Any();
-
             foreach (var child in children.Where(IsFlowNode))
-                composite.AddChild(BuildFlowNode(child, behaviorTree, config, planners));
+                dynamicNode.AddChild(BuildFlowNode(child, behaviorTree, config, planners));
+
+            if (node.TryGetProperty("nodeGraph", out var graph) &&
+                graph.TryGetProperty("relations", out var relations))
+            {
+                foreach (var relation in relations.EnumerateArray())
+                {
+                    var fromName = relation.TryGetProperty("from", out var from) ? from.GetString() : null;
+                    var toName = relation.TryGetProperty("to", out var to) ? to.GetString() : null;
+                    if (!string.IsNullOrWhiteSpace(fromName) && !string.IsNullOrWhiteSpace(toName))
+                    {
+                        dynamicNode.AddFlowRelation(
+                            NormalizeRuntimeNodeName(fromName),
+                            NormalizeRuntimeNodeName(toName));
+                    }
+                }
+            }
 
             // Attach runtime services/decorators declared in the BT model by name
             if (HasNamedService(node, "planningPhase"))
-                composite.AddPlanningPhaseService();
+                dynamicNode.AddPlanningPhaseService();
             if (HasNamedService(node, "batchManager"))
-                composite.AddService(new ServiceBatchEntry(behaviorTree, composite,
-                    GetBatchIndices(config, name, composite), GetBatchObjectsFile(config, name)), false);
+                dynamicNode.AddService(new ServiceBatchManager(behaviorTree, dynamicNode), false);
             if (HasNamedDecorator(node, "lowestCostExecution"))
-                composite.AddDecorator(new DecoratorLowestCostExecution(composite));
+                dynamicNode.AddDecorator(new DecoratorLowestCostExecution(dynamicNode));
 
-            return composite;
+            return dynamicNode;
         }
 
         AttachPlanningService(node, dynamicNode, behaviorTree, config, planners);
@@ -212,29 +222,6 @@ public static class BehaviorTreeModelLoader
         return value ?? throw new InvalidOperationException($"Could not deserialize '{path}'.");
     }
 
-    private static int[] GetBatchIndices(
-        BehaviorTreeExecutionConfig config,
-        string nodeName,
-        BTFlowNodeComposite composite)
-    {
-        var batch = config.Batches.FirstOrDefault(candidate =>
-            string.Equals(candidate.NodeName, nodeName, StringComparison.OrdinalIgnoreCase));
-        if (batch?.CassetteIndices.Length > 0)
-            return batch.CassetteIndices;
-
-        int childCount = composite.GetChildren().Count;
-        var indices = new int[childCount];
-        for (int i = 0; i < childCount; i++)
-            indices[i] = i;
-        return indices;
-    }
-
-    private static string GetBatchObjectsFile(BehaviorTreeExecutionConfig config, string nodeName)
-    {
-        var batch = config.Batches.FirstOrDefault(b =>
-            string.Equals(b.NodeName, nodeName, StringComparison.OrdinalIgnoreCase));
-        return batch?.ObjectsFile;
-    }
 }
 
 public sealed class BehaviorTreeExecutionConfig
@@ -246,13 +233,5 @@ public sealed class BehaviorTreeExecutionConfig
     public string PlannerName { get; set; } = "ENHSP";
     public int TimeoutSeconds { get; set; } = 120;
     public string PlannerExecutionMode { get; set; } = "Parallel";
-    public int CassetteCount { get; set; } = 12;
-    public List<BehaviorTreeBatchConfig> Batches { get; set; } = new();
-}
-
-public sealed class BehaviorTreeBatchConfig
-{
-    public string NodeName { get; set; } = "";
-    public int[] CassetteIndices { get; set; } = Array.Empty<int>();
-    public string? ObjectsFile { get; set; }
+    public int TickIntervalMilliseconds { get; set; } = 100;
 }

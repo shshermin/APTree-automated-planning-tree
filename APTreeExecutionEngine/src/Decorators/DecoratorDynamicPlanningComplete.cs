@@ -157,39 +157,14 @@ public class DecoratorDynamicPlanningComplete : Decorator
             }
         }
 
-        // If this node has children, recursively check them
-        if (node.HasChildren)
+        // Recursively traverse both action-backed and flow-backed FlowNodes.
+        if (node is FlowNode parentFlowNode)
         {
-            if (node is BTFlowNodeComposite compositeNode)
+            foreach (var child in parentFlowNode.GetChildren())
             {
-                var children = compositeNode.GetChildren();
-                foreach (var child in children)
-                {
-                    var result = TraverseTreeForAction(child, targetAction);
-                    if (result >= 0) return result;
-                }
-            }
-            else if (node is DynamicFlowNode dynamicNode)
-            {
-                var actionGraph = dynamicNode.GetActionGraph();
-                if (actionGraph != null)
-                {
-                    var actionNodes = actionGraph.GetAllActionNodes();
-                    foreach (var actionNode in actionNodes)
-                    {
-                        if (actionNode == targetAction)
-                        {
-                            var dynName = dynamicNode.GetNodeName().ToLower();
-                            if (dynName.StartsWith("cassette"))
-                            {
-                                if (int.TryParse(dynName.Substring("cassette".Length), out int cassetteNumber))
-                                {
-                                    return cassetteNumber - 1;
-                                }
-                            }
-                        }
-                    }
-                }
+                var result = TraverseTreeForAction(child, targetAction);
+                if (result >= 0)
+                    return result;
             }
         }
 

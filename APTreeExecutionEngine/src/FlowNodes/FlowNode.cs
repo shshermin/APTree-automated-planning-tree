@@ -7,6 +7,11 @@ public abstract class FlowNode : BTNode, IEnumerable
 {
     // is this node allowed to have children?
     public override bool HasChildren => true;
+
+    public virtual List<IBTNode> GetChildren()
+    {
+        return actionGraph?.GetAllActionNodes().Cast<IBTNode>().ToList() ?? new List<IBTNode>();
+    }
   
     // public override string DebugDisplayName { get; protected set; } = "FlowNode";
     public SuccessCriteria successCriteria { get; protected set; }
@@ -303,7 +308,7 @@ public abstract class FlowNode : BTNode, IEnumerable
             // Capture total BT node count BEFORE any removal (for accurate PRR)
             int totalFlowNodes = LinkedBlackboard?.GetAllFlowNodes().Count ?? 0;
             int totalActionNodes = LinkedBlackboard?.GetAllActions().Count ?? 0;
-            int totalMLActions = LinkedBlackboard?.GetAllActions().Count(a => a.actionType.ToString().EndsWith("ML")) ?? 0;
+            int totalMLActions = LinkedBlackboard?.GetAllActions().Count(action => action.Level == ActionLevel.MidLevel) ?? 0;
             int totalBTNodes = totalFlowNodes + totalActionNodes;
 
             // Before destroying, remove non-finished actions from blackboard tracking

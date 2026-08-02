@@ -128,13 +128,11 @@ namespace BehaviorTreeMainProject
             {
                 var actionType = pendingAction.actionType.ToString();
                 LogMessage($"🔍 ServiceSubtreeInject: Processing queued action: {actionType}");
-                LogMessage($"🔍 ServiceSubtreeInject: Action type ends with 'HL': {actionType.EndsWith("HL")}");
+                LogMessage($"🔍 ServiceSubtreeInject: Action level: {pendingAction.Level}");
                 
-                // 1. Check if the action is HL by checking the name of the action
-                if (!actionType.EndsWith("HL"))
+                if (pendingAction.Level != ActionLevel.HighLevel)
                 {
-                    LogMessage($"🔍 ServiceSubtreeInject: Action {actionType} is not a high-level action (no 'HL' suffix)");
-                    // 2. If it is not HL return true
+                    LogMessage($"🔍 ServiceSubtreeInject: Action {actionType} is not a high-level action");
                     return true;
                 }
                 
