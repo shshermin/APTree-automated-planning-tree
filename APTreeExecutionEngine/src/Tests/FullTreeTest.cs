@@ -20,6 +20,7 @@ namespace BehaviorTreeMainProject
         private DateTime testStartTime;
         private DateTime testEndTime;
         private IBTNode rootNode; // Store root node for monitoring
+        private int tickIntervalMilliseconds = 100;
 
         // Flatten the tree to a list of all DynamicFlowNode (cassette) descendants.
         // Used by logging helpers so they keep working when cassettes are nested inside batch composites.
@@ -165,6 +166,10 @@ namespace BehaviorTreeMainProject
             }
 
             var loaded = BehaviorTreeModelLoader.Load(configPath, blackboard);
+            if (loaded.Config.TickIntervalMilliseconds <= 0)
+                throw new InvalidOperationException("tickIntervalMilliseconds must be greater than zero.");
+
+            tickIntervalMilliseconds = loaded.Config.TickIntervalMilliseconds;
             var behaviorTree = loaded.Tree;
             allPlanners.AddRange(loaded.Planners);
             rootNode = behaviorTree.root;
@@ -1057,7 +1062,7 @@ namespace BehaviorTreeMainProject
                     
                     // Execute one tick
                     BlackboardSummaryLogger.StartTreeTicking();
-                    var result = behaviorTree.Tick(0.1f); // 0.1 second delta time
+                    var result = behaviorTree.Tick(tickIntervalMilliseconds / 1000f);
                     BlackboardSummaryLogger.EndTreeTicking();
                     
                     // Log comprehensive tick information
@@ -1072,7 +1077,7 @@ namespace BehaviorTreeMainProject
                     }
                     
                     // Small delay between ticks
-                    await Task.Delay(100);
+                    await Task.Delay(tickIntervalMilliseconds);
                 }
                 
                 if (tickCount >= maxTicks)

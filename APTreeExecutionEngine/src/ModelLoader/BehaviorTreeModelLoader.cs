@@ -8,6 +8,7 @@ public sealed class LoadedBehaviorTree
 {
     public required BehaviorTree Tree { get; init; }
     public required IReadOnlyList<ServicePlanning> Planners { get; init; }
+    public required BehaviorTreeExecutionConfig Config { get; init; }
 }
 
 public static class BehaviorTreeModelLoader
@@ -47,7 +48,7 @@ public static class BehaviorTreeModelLoader
         blackboard.PlanningPhase = true;
         blackboard.SetNodeGraph(new FastName("MainBehaviorTree"), new NodeGraph());
 
-        return new LoadedBehaviorTree { Tree = behaviorTree, Planners = planners };
+        return new LoadedBehaviorTree { Tree = behaviorTree, Planners = planners, Config = config };
     }
 
     private static FlowNode BuildFlowNode(
@@ -221,4 +222,5 @@ public sealed class BehaviorTreeExecutionConfig
     public string PlannerPath { get; set; } = "/home/ubuntu/jpddlplus-master/jpddlplus.jar";
     public string PlannerName { get; set; } = "ENHSP";
     public int TimeoutSeconds { get; set; } = 120;
+    public int TickIntervalMilliseconds { get; set; } = 100;
 }

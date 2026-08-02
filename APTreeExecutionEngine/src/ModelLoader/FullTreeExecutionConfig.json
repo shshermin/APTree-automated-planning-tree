@@ -3,5 +3,6 @@
   "pddlBasePath": "Plannerinputs/static",
   "plannerPath": "/home/ubuntu/jpddlplus-master/jpddlplus.jar",
   "plannerName": "ENHSP",
-  "timeoutSeconds": 120
+  "timeoutSeconds": 120,
+  "tickIntervalMilliseconds": 100
 }
