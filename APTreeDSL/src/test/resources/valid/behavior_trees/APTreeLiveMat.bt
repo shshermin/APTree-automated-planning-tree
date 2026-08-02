@@ -7,7 +7,6 @@ BehaviorTree LiveMat {
         NodeGraph {
             FlowNode Batch1_C1toC4 {
                 Service planningPhase
-                Service batchManager
                 Decorator fairProgress
                 All
                 AllFlow
@@ -42,7 +41,6 @@ BehaviorTree LiveMat {
             }
             FlowNode Batch2_C5toC8 {
                 Service planningPhase
-                Service batchManager
                 Decorator fairProgress
                 All
                 AllFlow
@@ -77,7 +75,6 @@ BehaviorTree LiveMat {
             }
             FlowNode Batch3_C9toC12 {
                 Service planningPhase
-                Service batchManager
                 Decorator fairProgress
                 All
                 AllFlow

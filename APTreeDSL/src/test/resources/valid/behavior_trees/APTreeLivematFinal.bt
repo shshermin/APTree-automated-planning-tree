@@ -20,43 +20,43 @@ BehaviorTree LiveMat {
                             Action PlaceHL PlaceHL_lp1_pr1_r1 (lp1 pr1 r1) @PlaceHL_lp1_pr1_r1Subtree {
                                 --[Meets]--> GluingPlateHL_lp1_pr1_r1;
                             }
-                            Action GluingPlateHL GluingPlateHL_lp1_pr1_r1 (lp1 pr1 r1) @GluingPlateHL_lp1_pr1_r1Subtree {
+                            Action GluingPlateHL GluingPlateHL_lp1_pr1_r1 (lp1 pr1 r1) {
                                 --[Meets]--> PickUpHL_b1_fp2_r1;
                             }
-                            Action PickUpHL PickUpHL_b1_fp2_r1 (b1 fp2 r1) @PickUpHL_b1_fp2_r1Subtree {
+                            Action PickUpHL PickUpHL_b1_fp2_r1 (b1 fp2 r1) {
                                 --[Meets]--> StackHL_b1_lp1_r1_pr1_lay1_m1;
                             }
-                            Action StackHL StackHL_b1_lp1_r1_pr1_lay1_m1 (b1 lp1 r1 pr1 lay1 m1) @StackHL_b1_lp1_r1_pr1_lay1_m1Subtree {
+                            Action StackHL StackHL_b1_lp1_r1_pr1_lay1_m1 (b1 lp1 r1 pr1 lay1 m1) {
                                 --[Meets]--> PickUpHL_b2_fp3_r1;
                             }
-                            Action PickUpHL PickUpHL_b2_fp3_r1 (b2 fp3 r1) @PickUpHL_b2_fp3_r1Subtree {
+                            Action PickUpHL PickUpHL_b2_fp3_r1 (b2 fp3 r1) {
                                 --[Meets]--> StackHL_b2_lp1_r1_pr1_lay1_m1;
                             }
-                            Action StackHL StackHL_b2_lp1_r1_pr1_lay1_m1 (b2 lp1 r1 pr1 lay1 m1) @StackHL_b2_lp1_r1_pr1_lay1_m1Subtree {
+                            Action StackHL StackHL_b2_lp1_r1_pr1_lay1_m1 (b2 lp1 r1 pr1 lay1 m1) {
                                 --[Meets]--> PickUpHL_b6_fp8_r1;
                             }
-                            Action PickUpHL PickUpHL_b6_fp8_r1 (b6 fp8 r1) @PickUpHL_b6_fp8_r1Subtree {
+                            Action PickUpHL PickUpHL_b6_fp8_r1 (b6 fp8 r1) {
                                 --[Meets]--> StackHL_b6_lp1_r1_pr1_lay1_m1;
                             }
-                            Action StackHL StackHL_b6_lp1_r1_pr1_lay1_m1 (b6 lp1 r1 pr1 lay1 m1) @StackHL_b6_lp1_r1_pr1_lay1_m1Subtree {
+                            Action StackHL StackHL_b6_lp1_r1_pr1_lay1_m1 (b6 lp1 r1 pr1 lay1 m1) {
                                 --[Meets]--> PickUpHL_b4_fp6_r1;
                             }
-                            Action PickUpHL PickUpHL_b4_fp6_r1 (b4 fp6 r1) @PickUpHL_b4_fp6_r1Subtree {
+                            Action PickUpHL PickUpHL_b4_fp6_r1 (b4 fp6 r1) {
                                 --[Meets]--> StackHL_b4_lp1_r1_pr1_lay1_m1;
                             }
-                            Action StackHL StackHL_b4_lp1_r1_pr1_lay1_m1 (b4 lp1 r1 pr1 lay1 m1) @StackHL_b4_lp1_r1_pr1_lay1_m1Subtree {
+                            Action StackHL StackHL_b4_lp1_r1_pr1_lay1_m1 (b4 lp1 r1 pr1 lay1 m1) {
                                 --[Meets]--> PickUpHL_b3_fp4_r1;
                             }
-                            Action PickUpHL PickUpHL_b3_fp4_r1 (b3 fp4 r1) @PickUpHL_b3_fp4_r1Subtree {
+                            Action PickUpHL PickUpHL_b3_fp4_r1 (b3 fp4 r1) {
                                 --[Meets]--> StackHL_b3_lp1_r1_pr1_lay1_m1;
                             }
-                            Action StackHL StackHL_b3_lp1_r1_pr1_lay1_m1 (b3 lp1 r1 pr1 lay1 m1) @StackHL_b3_lp1_r1_pr1_lay1_m1Subtree {
+                            Action StackHL StackHL_b3_lp1_r1_pr1_lay1_m1 (b3 lp1 r1 pr1 lay1 m1) {
                                 --[Meets]--> PickUpHL_b5_fp7_r1;
                             }
-                            Action PickUpHL PickUpHL_b5_fp7_r1 (b5 fp7 r1) @PickUpHL_b5_fp7_r1Subtree {
+                            Action PickUpHL PickUpHL_b5_fp7_r1 (b5 fp7 r1) {
                                 --[Meets]--> StackHL_b5_lp1_r1_pr1_lay1_m1;
                             }
-                            Action StackHL StackHL_b5_lp1_r1_pr1_lay1_m1 (b5 lp1 r1 pr1 lay1 m1) @StackHL_b5_lp1_r1_pr1_lay1_m1Subtree {
+                            Action StackHL StackHL_b5_lp1_r1_pr1_lay1_m1 (b5 lp1 r1 pr1 lay1 m1) {
                                 --[Meets]--> NailingBeamHL_b2_r1_m1_lay1;
                             }
                             Action NailingBeamHL NailingBeamHL_b2_r1_m1_lay1 (b2 r1 m1 lay1) @NailingBeamHL_b2_r1_m1_lay1Subtree {
@@ -118,22 +118,22 @@ BehaviorTree LiveMat {
                             Action PlaceHL PlaceHL_lp2_pr2_r1 (lp2 pr2 r1) @PlaceHL_lp2_pr2_r1Subtree {
                                 --[Meets]--> GluingPlateHL_lp2_pr2_r1;
                             }
-                            Action GluingPlateHL GluingPlateHL_lp2_pr2_r1 (lp2 pr2 r1) @GluingPlateHL_lp2_pr2_r1Subtree {
+                            Action GluingPlateHL GluingPlateHL_lp2_pr2_r1 (lp2 pr2 r1) {
                                 --[Meets]--> PickUpHL_b7_fp10_r1;
                             }
-                            Action PickUpHL PickUpHL_b7_fp10_r1 (b7 fp10 r1) @PickUpHL_b7_fp10_r1Subtree {
+                            Action PickUpHL PickUpHL_b7_fp10_r1 (b7 fp10 r1) {
                                 --[Meets]--> StackHL_b7_lp2_r1_pr2_lay2_m2;
                             }
-                            Action StackHL StackHL_b7_lp2_r1_pr2_lay2_m2 (b7 lp2 r1 pr2 lay2 m2) @StackHL_b7_lp2_r1_pr2_lay2_m2Subtree {
+                            Action StackHL StackHL_b7_lp2_r1_pr2_lay2_m2 (b7 lp2 r1 pr2 lay2 m2) {
                                 --[Meets]--> PickUpHL_b8_fp11_r1;
                             }
-                            Action PickUpHL PickUpHL_b8_fp11_r1 (b8 fp11 r1) @PickUpHL_b8_fp11_r1Subtree {
+                            Action PickUpHL PickUpHL_b8_fp11_r1 (b8 fp11 r1) {
                                 --[Meets]--> StackHL_b8_lp2_r1_pr2_lay2_m2;
                             }
-                            Action StackHL StackHL_b8_lp2_r1_pr2_lay2_m2 (b8 lp2 r1 pr2 lay2 m2) @StackHL_b8_lp2_r1_pr2_lay2_m2Subtree {
+                            Action StackHL StackHL_b8_lp2_r1_pr2_lay2_m2 (b8 lp2 r1 pr2 lay2 m2) {
                                 --[Meets]--> PickUpHL_b12_fp16_r1;
                             }
-                            Action PickUpHL PickUpHL_b12_fp16_r1 (b12 fp16 r1) @PickUpHL_b12_fp16_r1Subtree {
+                            Action PickUpHL PickUpHL_b12_fp16_r1 (b12 fp16 r1) {
                                 --[Meets]--> StackHL_b12_lp2_r1_pr2_lay2_m2;
                             }
                             Action StackHL StackHL_b12_lp2_r1_pr2_lay2_m2 (b12 lp2 r1 pr2 lay2 m2) @StackHL_b12_lp2_r1_pr2_lay2_m2Subtree {
@@ -216,7 +216,7 @@ BehaviorTree LiveMat {
                             Action PlaceHL PlaceHL_lp3_pr3_r1 (lp3 pr3 r1) @PlaceHL_lp3_pr3_r1Subtree {
                                 --[Meets]--> GluingPlateHL_lp3_pr3_r1;
                             }
-                            Action GluingPlateHL GluingPlateHL_lp3_pr3_r1 (lp3 pr3 r1) @GluingPlateHL_lp3_pr3_r1Subtree {
+                            Action GluingPlateHL GluingPlateHL_lp3_pr3_r1 (lp3 pr3 r1) {
                                 --[Meets]--> PickUpHL_b13_fp18_r1;
                             }
                             Action PickUpHL PickUpHL_b13_fp18_r1 (b13 fp18 r1) @PickUpHL_b13_fp18_r1Subtree {
@@ -308,13 +308,13 @@ BehaviorTree LiveMat {
                         All
                         AllAction
                         NodeGraph {
-                            Action PickUpHL PickUpHL_lp4_fp25_r1 (lp4 fp25 r1) @PickUpHL_lp4_fp25_r1Subtree {
+                            Action PickUpHL PickUpHL_lp4_fp25_r1 (lp4 fp25 r1) {
                                 --[Meets]--> PlaceHL_lp4_pr4_r1;
                             }
-                            Action PlaceHL PlaceHL_lp4_pr4_r1 (lp4 pr4 r1) @PlaceHL_lp4_pr4_r1Subtree {
+                            Action PlaceHL PlaceHL_lp4_pr4_r1 (lp4 pr4 r1) {
                                 --[Meets]--> GluingPlateHL_lp4_pr4_r1;
                             }
-                            Action GluingPlateHL GluingPlateHL_lp4_pr4_r1 (lp4 pr4 r1) @GluingPlateHL_lp4_pr4_r1Subtree {
+                            Action GluingPlateHL GluingPlateHL_lp4_pr4_r1 (lp4 pr4 r1) {
                                 --[Meets]--> PickUpHL_b19_fp26_r1;
                             }
                             Action PickUpHL PickUpHL_b19_fp26_r1 (b19 fp26 r1) @PickUpHL_b19_fp26_r1Subtree {
