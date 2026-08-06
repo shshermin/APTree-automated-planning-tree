@@ -1,0 +1,4 @@
+# Local-only directories not part of the release
+vcpkg/
+InputGenerator/
+BehaviorTreeMainProject/

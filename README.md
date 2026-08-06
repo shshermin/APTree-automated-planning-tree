@@ -26,7 +26,7 @@ The PDDL planning service requires a Linux environment (or Docker) because the `
 ```
 APTreeDSL/               MontiCore-based DSL for behavior tree definitions
 APTreeExecutionEngine/   C# execution engine + Python planning service
-APTreeEditor/            (Optional) Vue.js visual editor frontend
+APTreeEditor/            (Optional) React-based visual editor frontend
 Lean/                    Lean 4 formalization of the correctness results
 docker/                  Docker entrypoint scripts
 Dockerfile              Full-stack container image

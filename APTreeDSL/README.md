@@ -46,7 +46,7 @@ target/               # Build output
 - See `build.gradle` for complete dependencies and all available tasks
 - Generated code: `target/generated-sources/monticore/sourcecode/`
 - Test reports: `target/reports/allTests/`
-- MontiCore Handbook: `MontiCore-Handbook (2).pdf`
+- [MontiCore Handbook](https://monticore.github.io/monticore/) – reference for the underlying language workbench
 
 ---
 

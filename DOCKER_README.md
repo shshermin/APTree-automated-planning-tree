@@ -6,8 +6,9 @@ This image runs:
 
 ## Build
 
+From the repository root:
+
 ```bash
-cd /home/ubuntu/APTree-automated-planning-tree
 cd APTreeDSL && gradle shadowJar && cd ..
 docker build -t aptree:latest .
 ```

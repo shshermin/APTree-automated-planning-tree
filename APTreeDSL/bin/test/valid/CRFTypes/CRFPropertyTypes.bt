@@ -1,5 +1,0 @@
-Element Beam {loc: Location}
-Element Plate {loc: Location}
-Location FirstPos
-Agent Robot {loc: Location mType: String}
-Tool VacGripper {loc: Location isActive: Boolean}

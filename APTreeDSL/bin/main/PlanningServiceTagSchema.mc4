@@ -1,9 +1,0 @@
-grammar PlanningServiceTagSchema extends de.monticore.tagging.TagSchema ,DomainTypesConTagSchema {
-   PWorldSchemaIdentifier implements ScopeIdentifier  = "PWorld" ;
-   ServicePDDLPlanningSchemaIdentifier implements ScopeIdentifier  = "ServicePDDLPlanning" ;
-   PlannerENHSPSchemaIdentifier implements ScopeIdentifier  = "PlannerENHSP" ;
-   PlannerFFSchemaIdentifier implements ScopeIdentifier  = "PlannerFF" ;
-   DomainSchemaIdentifier implements ScopeIdentifier  = "Domain" ;
-   ProblemSchemaIdentifier implements ScopeIdentifier  = "Problem" ;
-  start TagSchema;
-}

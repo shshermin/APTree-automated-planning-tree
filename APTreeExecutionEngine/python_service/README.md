@@ -33,7 +33,7 @@ pip install -r requirements.txt
 Place the ENHSP JAR at the path configured in `pddl_planning_service.py`:
 
 ```python
-DEFAULT_ENHSP_PATH = "/home/ubuntu/ENHSP-Public/enhsp.jar"
+DEFAULT_ENHSP_PATH = "/home/ubuntu/jpddlplus-master/jpddlplus.jar"
 ```
 
 Or pass the path via the API request body (`plannerPath` field).
@@ -91,9 +91,9 @@ docker run -d --name planutils --privileged aiplanning/planutils:latest tail -f 
 docker start planutils
 ```
 
-## 9) Copy domain/problem files into the Planutils container
+### Copy domain/problem files into the planutils container
 
-On the VM (not inside the container):
+On the host (not inside the container):
 
 ```bash
 container=planutils
@@ -116,23 +116,10 @@ java -jar /root/enhsp.jar -o /root/domain.pddl -f /root/problemC1.pddl -planner 
 
 Note: Some planners (like FF and LAMA-FIRST) do not support `:functions` or numeric preconditions (e.g., `>=`). If your PDDL uses those, ENHSP is the recommended planner.
 
+To enter the container interactively:
 
-
-terminal 1:
-ssh -L 5000:localhost:5000 -i C:\Users\sherk\.ssh\id_ed25519 ubuntu@193.196.52.17
-docker start planutils
-
-Terminal 2: 
-ssh -i C:\Users\sherk\.ssh\id_ed25519 ubuntu@193.196.52.17
-cd APTree-automated-planning-tree/APTreeExecutionEngine/python_service
-source pddl_env/bin/activate
-python pddl_planning_service.py
-
-
-
-
- Enter the container
+```bash
 sudo docker exec -it planutils bash
-
 # Inside the container:
 planutils activate
+```
