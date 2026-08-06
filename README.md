@@ -27,6 +27,7 @@ The PDDL planning service requires a Linux environment (or Docker) because the `
 APTreeDSL/               MontiCore-based DSL for behavior tree definitions
 APTreeExecutionEngine/   C# execution engine + Python planning service
 APTreeEditor/            (Optional) Vue.js visual editor frontend
+Lean/                    Lean 4 formalization of the correctness results
 docker/                  Docker entrypoint scripts
 Dockerfile              Full-stack container image
 docker-compose.yml      Compose configuration
@@ -148,5 +149,6 @@ Test reports are generated at `APTreeDSL/target/reports/allTests/`.
 ## Documentation
 
 - [APTreeDSL README](APTreeDSL/README.md) – DSL grammar, build tasks, code generation
+- [Lean formalization](Lean/README.md) – machine-checked proofs and reproduction steps
 - [Docker README](DOCKER_README.md) – Full-stack container deployment
 - [Planning Service README](APTreeExecutionEngine/python_service/README.md) – PDDL planner configuration

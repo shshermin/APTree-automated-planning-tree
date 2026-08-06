@@ -1,0 +1,5 @@
+name = "aptree"
+defaultTargets = ["APTree"]
+
+[[lean_lib]]
+name = "APTree"
