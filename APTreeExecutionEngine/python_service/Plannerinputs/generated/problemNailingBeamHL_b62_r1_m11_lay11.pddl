@@ -102,7 +102,7 @@ sp12 - stackposition
   (:init  
     (attool vg1 ep1)
 (attool gg1 ep2)
-(atagent r1 pr1)
+(atagent r1 pr2)
 (vgempty r1)
 (atplace tp9 fp69)
 (atplace tp10 fp77)
@@ -313,6 +313,13 @@ sp12 - stackposition
 (nailed b51)
 (nailed b53)
 (nailed b49)
+(nailed b54)
+(nailed b56)
+(nailed b58)
+(nailed b57)
+(nailed b59)
+(nailed b55)
+(nailed b60)
   )
   (:goal 
     (and

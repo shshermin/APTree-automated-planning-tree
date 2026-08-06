@@ -102,7 +102,7 @@ sp12 - stackposition
   (:init  
     (attool gg1 ep2)
 (attool ng1 ep3)
-(atagent r1 sp3)
+(atagent r1 sp4)
 (vgempty r1)
 (positionfree pr1)
 (positionfree pr2)

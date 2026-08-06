@@ -313,6 +313,7 @@ sp12 - stackposition
 (nailed b51)
 (nailed b53)
 (nailed b49)
+(nailed b54)
   )
   (:goal 
     (and

@@ -91,7 +91,8 @@ sp3 - stackposition
 sp4 - stackposition
   )
   (:init  
-    (clear tp1)
+    (atplace tp4 fp29)
+(clear tp1)
 (clear b2)
 (clear b3)
 (clear b4)
@@ -110,6 +111,7 @@ sp4 - stackposition
 (clear b17)
 (clear b18)
 (clear tp4)
+(clear b19)
 (clear b20)
 (clear b21)
 (clear b22)
@@ -338,10 +340,6 @@ sp4 - stackposition
 (glued b24)
 (glued b22)
 (glued b21)
-(positionfree fp29)
-(ontop tp4 b19)
-(atplace tp4 pr4)
-(stacked tp4)
 (positionfree fp5)
 (ontop tp1 b1)
 (atplace tp1 pr1)

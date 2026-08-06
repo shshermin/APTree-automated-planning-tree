@@ -1017,16 +1017,15 @@ namespace BehaviorTreeMainProject
             
             try
             {
-                int maxTicks = 1300; // Maximum number of ticks to prevent infinite loops
                 int tickCount = 0;
                 
                 // Dictionary to track action status changes
                 var actionStatusHistory = new Dictionary<string, BTNodeResult>();
                 
-                LoggingService.LogInfo($" Starting tree execution (max {maxTicks} ticks)...");
+                LoggingService.LogInfo($" Starting tree execution (unlimited ticks)...");
                 LoggingService.LogInfo("Press any key to stop execution...");
                 
-                while (tickCount < maxTicks)
+                while (true)
                 {
                     // Check if any key is pressed (non-blocking)
                     if (Console.KeyAvailable)
@@ -1059,11 +1058,6 @@ namespace BehaviorTreeMainProject
                     
                     // Small delay between ticks
                     await Task.Delay(tickIntervalMilliseconds);
-                }
-                
-                if (tickCount >= maxTicks)
-                {
-                    LoggingService.LogWarning($"\n Tree execution stopped after {maxTicks} ticks (max reached)");
                 }
                 
                 // Print final status summary

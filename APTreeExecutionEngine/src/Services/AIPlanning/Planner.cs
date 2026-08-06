@@ -95,7 +95,51 @@ public abstract class Planner
         if (actions.Count == 0)
             return string.Empty;
 
+        actions = CollapseConsecutiveTravels(actions);
+
         return ConvertToAPTreePlanString(actions);
+    }
+
+    /// <summary>
+    /// Merges back-to-back travel actions of the same robot into a single travel:
+    /// (travelml r a b)(travelml r b c) → (travelml r a c); if a == c the pair
+    /// cancels out and is dropped. Removes planner detours like
+    /// "travel to beam, backtrack to equip point" before node graph generation.
+    /// </summary>
+    protected static List<(string Name, string[] Parameters)> CollapseConsecutiveTravels(List<(string Name, string[] Parameters)> actions)
+    {
+        var result = new List<(string Name, string[] Parameters)>();
+
+        foreach (var action in actions)
+        {
+            bool isTravel = action.Name.Equals("travelml", StringComparison.OrdinalIgnoreCase)
+                            && action.Parameters.Length == 3;
+
+            if (isTravel && result.Count > 0)
+            {
+                var prev = result[result.Count - 1];
+                bool chainsWithPrev = prev.Name.Equals(action.Name, StringComparison.OrdinalIgnoreCase)
+                                      && prev.Parameters.Length == 3
+                                      && prev.Parameters[0].Equals(action.Parameters[0], StringComparison.OrdinalIgnoreCase)  // same robot
+                                      && prev.Parameters[2].Equals(action.Parameters[1], StringComparison.OrdinalIgnoreCase); // prev.to == this.from
+
+                if (chainsWithPrev)
+                {
+                    if (prev.Parameters[1].Equals(action.Parameters[2], StringComparison.OrdinalIgnoreCase))
+                        result.RemoveAt(result.Count - 1); // a→b, b→a cancels out
+                    else
+                        result[result.Count - 1] = (prev.Name, new[] { prev.Parameters[0], prev.Parameters[1], action.Parameters[2] });
+                    continue;
+                }
+            }
+
+            result.Add(action);
+        }
+
+        if (result.Count < actions.Count)
+            Console.WriteLine($"🧹 Planner: CollapseConsecutiveTravels merged {actions.Count - result.Count} redundant travel action(s) ({actions.Count} → {result.Count})");
+
+        return result;
     }
 
     /// <summary>
