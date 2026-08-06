@@ -65,26 +65,15 @@ Axiom footprint: the positive theorems use only `propext`; the countermodels add
 
 ## Results proved
 
-**Positive.**
+**Positive.** Goal persistence (`Models.run`), sequential composition (`composition_sound`), lazy ML planning (`lazyPlanned_achieves`, `lazyPlanned_applicable`), refinement soundness (`theorem1_refinement_sound`, `hl_goal_achieved`), local replanning and its locality clause (`theorem2_replan_sound`, `theorem2_replan_idempotent`, `replan_preserves_sibling`), partial-order execution (`respects_of_precedenceGuarded`, `theorem3_reduces_to_theorem1`, `theorem3_safety`), and the justification for action-node quiescence (`quiescent_excludes_replan_trigger`).
 
-- `Models.run` — goal persistence: a satisfied goal survives any plan that clobbers none of its literals.
-- `composition_sound` — sequential composition: if every block reaches its own goal and no later block clobbers an earlier goal, the final state satisfies the conjunction of all goals. The order of the blocks does not appear in the proof.
-- `lazyPlanned_achieves`, `lazyPlanned_applicable` — planner soundness plus lazy ML planning gives both goal achievement and applicability for every block.
-- `theorem1_refinement_sound` — Theorem (Refinement soundness): the schedule is applicable and the final state satisfies every inherited goal `eff(aᵢ)`.
-- `hl_goal_achieved` — the bridge to the overall high-level goal: a subgoal literal established by some high-level action lies in an inherited goal and holds finally; one that holds initially and is clobbered by no ML subtree persists.
-- `theorem2_replan_sound`, `theorem2_replan_idempotent` — Theorem (Local replanning) and its iteration over sequences of replanning events.
-- `replan_preserves_sibling` — the locality clause: with ML non-interference, a sibling's achieved goal survives the replanned subtree.
-- `respects_of_precedenceGuarded` — the linearization step: predecessor completion (the behavior of `canExecute`) yields a schedule respecting `≺`.
-- `theorem3_reduces_to_theorem1`, `theorem3_safety` — Theorem (Partial-order execution), safety form.
-- `quiescent_excludes_replan_trigger` — quiescence over *all* nodes would be incompatible with the replan trigger; this is why quiescence is defined over action nodes (`actionQuiescent_allows_replan_trigger`).
+**Hypothesis necessity** (finite countermodels, all `decide`-checked):
 
-**Hypothesis necessity (finite countermodels, all `decide`-checked).**
-
-1. `negative_clause_necessary` — the plan/goal interference clause must cover negative goal literals: a plan can destroy a goal literal `¬p` while deleting nothing.
-2. `initial_noninterference_insufficient` — initial (HL) non-interference, goal inheritance and planner soundness all hold, every ML subtree reaches its inherited goal, and the composite execution still misses `g₁ ∧ g₂`; `mlNonInterference_sufficient` shows the same schedule succeeds once ML non-interference holds.
-3. `interleaving_breaks_applicability` — atomic execution of two branches works, action-level interleaving is not even applicable: ML non-preemption cannot be dropped.
-4. `precondGuarded_not_respects` — a precondition-guarded schedule that violates `≺`: the linearization step rests on predecessor completion, not on precondition-guardedness.
-5. `successCriteria_breaks_goal_achievement` — under `Any`, `Count 1` or `Percentage 50` a DFN reports `Success` while its goal fails: the restriction to the `All` criterion cannot be dropped.
+1. `negative_clause_necessary` — plan/goal interference must cover negative goal literals.
+2. `initial_noninterference_insufficient` — initial non-interference alone does not give refinement soundness; `mlNonInterference_sufficient` shows ML non-interference does.
+3. `interleaving_breaks_applicability` — ML non-preemption cannot be dropped.
+4. `precondGuarded_not_respects` — the linearization step rests on predecessor completion, not precondition-guardedness.
+5. `successCriteria_breaks_goal_achievement` — the restriction to the `All` criterion cannot be dropped.
 
 ## Scope of the model
 
