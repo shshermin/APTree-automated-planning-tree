@@ -20,6 +20,14 @@
     <Content Remove="python_service/**" />
   </ItemGroup>
 
+  <!-- Exclude the xUnit test project's own folder — otherwise the main project's
+       default glob picks up its [Fact]-attributed classes with no xunit reference. -->
+  <ItemGroup>
+    <Compile Remove="tests/**" />
+    <EmbeddedResource Remove="tests/**" />
+    <Content Remove="tests/**" />
+  </ItemGroup>
+
   <!-- The src/Tests folder contains ad-hoc runner code (not a separate test project).
        Exclude it from compilation so the web backend can build/run reliably. -->
   <!-- TEMPORARILY ENABLED TO RUN FULLTREETEST
