@@ -1,0 +1,64 @@
+BehaviorTree TemporalRelations {
+    Root FlowNode Main {
+        All
+        AllFlow
+        NodeGraph {
+            FlowNode a1 {
+                All
+                AllAction
+                NodeGraph { }
+            }
+            {
+                --[Meets]--> a2;
+            }
+            FlowNode a2 {
+                All
+                AllAction
+                NodeGraph { }
+            }
+            {
+                --[Precedes]--> a3;
+            }
+            FlowNode a3 {
+                All
+                AllAction
+                NodeGraph { }
+            }
+            {
+                --[Overlaps]--> a4;
+            }
+            FlowNode a4 {
+                All
+                AllAction
+                NodeGraph { }
+            }
+            {
+                --[Starts]--> a5;
+            }
+            FlowNode a5 {
+                All
+                AllAction
+                NodeGraph { }
+            }
+            {
+                --[Finishes]--> a6;
+            }
+            FlowNode a6 {
+                All
+                AllAction
+                NodeGraph { }
+            }
+            {
+                --[Contains]--> a7;
+            }
+            FlowNode a7 {
+                All
+                AllAction
+                NodeGraph { }
+            }
+            {
+                --[Equals]--> a1;
+            }
+        }
+    }
+}

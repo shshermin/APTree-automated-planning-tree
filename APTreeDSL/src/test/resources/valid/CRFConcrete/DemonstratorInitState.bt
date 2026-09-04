@@ -1,4 +1,4 @@
-﻿// layer assignment 
+// layer assignment 
 
 BelongsToLayer(table1 layer0)
 BelongsToLayer(stick1 layer1)

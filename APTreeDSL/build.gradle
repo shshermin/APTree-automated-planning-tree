@@ -54,6 +54,7 @@ dependencies {
   // And dependencies for the test source set
   testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_version"
   testImplementation "org.junit.jupiter:junit-jupiter-engine:$junit_version"
+  testImplementation "org.junit.jupiter:junit-jupiter-params:$junit_version"
   // Provide MontiCore-specific tests, such as de.monticore.cocos.helper.Assert
   testImplementation("de.monticore:monticore-runtime:$mc_version") {
     capabilities {
@@ -143,9 +144,12 @@ spotless {
 
 
 // Custom task to run C# parameter type generator
+// NB: mainClass was 'CSharpParameterTypeGenerator', which does not exist as a
+// class anywhere in this project - the task failed unconditionally. The actual
+// parameter-type generator class is CSharopCodeGenerator (sic).
 task generateCSharpParameterTypes(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    mainClass = 'CSharpParameterTypeGenerator'
+    mainClass = 'CSharopCodeGenerator'
     workingDir = projectDir
 }
 
