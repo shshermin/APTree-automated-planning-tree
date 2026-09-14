@@ -614,10 +614,20 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
                 return new NodeGraph();
             }
         }
-        
 
-        
-        private NodeGraph CreateNodeGraphWithExecutionMode(List<PActionNode> actions)
+        // NOT CURRENTLY CALLED from anywhere in this codebase (verified by
+        // grep across src/) - the real path is GenerateNodeGraphFromResult ->
+        // ParsePlanStringToNodeGraph -> ParsePlannerOutput -> ParseNodeGraph,
+        // which builds relations from what the transformed plan string
+        // already contains and never references ExecutionMode. So setting
+        // ExecutionMode to Sequential/Parallel/Hybrid currently has NO effect
+        // on real behavior, despite GenerateNodeGraphFromResult logging
+        // "Execution Mode applied: {ExecutionMode}" right after generating
+        // the graph - that log line is misleading, not just unused.
+        // Left `internal` (not private) so PDDLPlanningExecutionModeTests can
+        // cover the intended per-mode relation-building logic directly,
+        // pending a decision on whether/how to wire this back in.
+        internal NodeGraph CreateNodeGraphWithExecutionMode(List<PActionNode> actions)
         {
             var nodeGraph = new NodeGraph();
             
@@ -647,7 +657,7 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
             }
         }
         
-        private NodeGraph CreateSequentialNodeGraph(List<PActionNode> actions, NodeGraph nodeGraph)
+        internal NodeGraph CreateSequentialNodeGraph(List<PActionNode> actions, NodeGraph nodeGraph)
         {
             LoggingService.LogInfo($"🔧 ServicePDDLPlanning: Creating sequential execution pattern");
             
@@ -662,7 +672,7 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
             return nodeGraph;
         }
         
-        private NodeGraph CreateParallelNodeGraph(List<PActionNode> actions, NodeGraph nodeGraph)
+        internal NodeGraph CreateParallelNodeGraph(List<PActionNode> actions, NodeGraph nodeGraph)
         {
             LoggingService.LogInfo($"🔧 ServicePDDLPlanning: Creating parallel execution pattern");
             
@@ -683,7 +693,7 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
             return nodeGraph;
         }
         
-        private NodeGraph CreateHybridNodeGraph(List<PActionNode> actions, NodeGraph nodeGraph)
+        internal NodeGraph CreateHybridNodeGraph(List<PActionNode> actions, NodeGraph nodeGraph)
         {
             LoggingService.LogInfo($"🔧 ServicePDDLPlanning: Creating hybrid execution pattern");
             
