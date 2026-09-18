@@ -82,6 +82,24 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
         }
 
         /// <summary>
+        /// Test-only seam: the public constructor always hardcodes a
+        /// RestPlannerCommunicator pointed at localhost:5000, with no way to
+        /// substitute a fake for unit tests. This overload lets tests inject
+        /// any IPlannerCommunicator instead. Internal (not private) so it's
+        /// invisible outside the assembly via normal usage; visible to the
+        /// test project via the existing InternalsVisibleTo in AssemblyInfo.cs.
+        /// No behavior change to the public constructor above.
+        /// </summary>
+        internal ServicePDDLPlanning(BehaviorTree InOwningTree, PDDLPlanningRequest InPlanningRequest, IPlannerCommunicator communicator)
+            : base(InOwningTree, communicator, InPlanningRequest)
+        {
+            this.blackboard = InOwningTree.linkedBlackboard;
+            this.actionFactory = FactoryAction.Instance;
+            this.PlanningRequest = InPlanningRequest;
+            this._originalProblemFile = InPlanningRequest?.ProblemFile;
+        }
+
+        /// <summary>
         /// When the owning flow node becomes known, auto-attach the default
         /// replan-decorator pipeline (unless one of those types is already
         /// present or <see cref="AutoAttachDefaultReplanDecorators"/> was
