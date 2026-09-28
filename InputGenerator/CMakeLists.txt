@@ -29,8 +29,17 @@ if(BUILD_TESTS)
 
   add_executable(InputGeneratorTests
     tests/spatial_predicates_test.cpp
+    tests/geometry_test.cpp
+    tests/obj_loader_test.cpp
+    tests/predicate_generator_test.cpp
     spatial_predicates.cpp
+    PredicateGenerator.cpp
+    PDDLPredicateGenerator.cpp
   )
+  # Tests read shipped fixtures (test meshes.obj, DemonstratorProperties.bt).
+  target_compile_definitions(InputGeneratorTests PRIVATE
+    INPUTGENERATOR_DIR="${CMAKE_CURRENT_SOURCE_DIR}"
+    REPO_ROOT_DIR="${CMAKE_CURRENT_SOURCE_DIR}/..")
   target_link_libraries(InputGeneratorTests PRIVATE CGAL::CGAL GTest::gtest_main)
   target_include_directories(InputGeneratorTests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
