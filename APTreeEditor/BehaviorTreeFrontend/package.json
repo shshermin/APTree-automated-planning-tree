@@ -9,6 +9,7 @@
     "lint": "eslint .",
     "format": "eslint . --fix",
     "gen:api": "openapi-typescript http://localhost:5254/swagger/v1/swagger.json --output src/generated/api-types.ts",
+    "check:api-types-fresh": "node scripts/check-api-types-fresh.mjs",
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
