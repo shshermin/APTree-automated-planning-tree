@@ -40,12 +40,8 @@ public class Neo4jOptionalityTests
     }
 
     /// <summary>
-    /// Returns false cleanly, but only after ~31s: the Neo4j driver keeps
-    /// retrying the refused connection for its default 30s transaction-retry
-    /// window, and EnvironmentGraph gives no way to shorten that (the
-    /// constructor takes no driver config). So an unreachable Neo4j stalls
-    /// whatever awaits TestConnection() for half a minute. Opt-in because of
-    /// the runtime.
+    /// Returns false, but only after the driver's ~30s retry window, which
+    /// EnvironmentGraph doesn't expose a way to shorten. Opt-in because of the runtime.
     /// </summary>
     [SlowFact("~31s: Neo4j driver retries a refused connection for 30s")]
     public async Task EnvironmentGraph_TestConnection_ReturnsFalse_WhenNothingIsListening()

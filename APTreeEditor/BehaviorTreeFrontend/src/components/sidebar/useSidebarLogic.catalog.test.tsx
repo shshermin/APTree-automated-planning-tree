@@ -7,9 +7,7 @@ import {
   FALLBACK_FLOW_NODE_OPTIONS,
 } from "./utils/constants";
 
-// The sidebar's node catalogs populate from the
-// backend endpoints, and fall back to the built-in defaults when the
-// backend is unavailable - without ever leaving a category empty.
+// Node catalogs load from the backend and fall back to built-in defaults when it's unavailable.
 
 function jsonResponse(body: unknown, ok = true, status = 200) {
   return { ok, status, json: () => Promise.resolve(body) } as Response;
@@ -135,8 +133,7 @@ describe("useSidebarManager catalog loading", () => {
   });
 
   it("every fallback option surfaces with a stable, non-empty id (used as its React key)", () => {
-    // Not backend-dependent: a regression guard on the static fallback data
-    // itself, since useSidebarManager trusts these ids are unique.
+    // useSidebarManager relies on these ids being unique.
     for (const list of [FALLBACK_DECORATOR_NODE_OPTIONS, FALLBACK_SERVICE_NODE_OPTIONS, FALLBACK_FLOW_NODE_OPTIONS]) {
       const ids = list.map((o) => o.id);
       expect(new Set(ids).size).toBe(ids.length);

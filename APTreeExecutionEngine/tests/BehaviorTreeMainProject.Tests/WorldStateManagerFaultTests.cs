@@ -7,10 +7,7 @@ using Xunit;
 
 namespace BehaviorTreeMainProject.Tests;
 
-/// <summary>Test the DropAfterClose fault - the only fault type
-/// with a full ApplyX implementation reachable without a live DynamicFlowNode
-/// planning hierarchy; mlFlow is passed null here, which ApplyDrop explicitly
-/// supports - see its `if (mlFlow != null)` guards).</summary>
+/// <summary>DropAfterClose fault handling; ApplyDrop supports a null mlFlow.</summary>
 public class WorldStateManagerFaultTests
 {
     private static (Blackboard<FastName> bb, Beam dropped, Robot robot, FirstPos initLoc) SetUpSceneWithDroppedObjectAtInitLoc()
@@ -75,33 +72,18 @@ public class WorldStateManagerFaultTests
         var atOldLoc = atAgents.FirstOrDefault(p => p.agentLoc.NameKey.ToString() == "initloc");
         var atNewLoc = atAgents.FirstOrDefault(p => p.agentLoc.NameKey.ToString() == "temploc1");
 
-        Assert.NotNull(atOldLoc);
-        Assert.True(atOldLoc.not, "robot should no longer be at its old location");
+        // SetPredicateSync's atagent cleanup removes the stale entry outright
+        // (closed world: absent == false), so "negated" and "gone" both count.
+        Assert.True(atOldLoc == null || atOldLoc.not, "robot should no longer be at its old location");
         Assert.NotNull(atNewLoc);
         Assert.False(atNewLoc.not, "robot should now be at the temp location");
+        Assert.Single(atAgents, p => !p.not);
     }
 
     /// <summary>
-    /// A hypothesis worth recording even though it turned out false, since
-    /// it clarifies the scope of the Phase 2 NameKey-shadowing finding:
-    /// ApplyDrop constructs the temp Location via `new InitialLocation(name,
-    /// position, orientation)` - one of the "(string name, ...)" constructors
-    /// that PredicateStoreTestFixtures documented as leaving NameKey unset
-    /// due to Location's own NameKey hiding CustomProperty.NameKey.
-    /// Reasonable to expect the same failure here. It does NOT happen:
-    /// verified directly (isolated repro, no Blackboard involved) that
-    /// `new InitialLocation("x", ...).NameKey` is indeed null - but ApplyDrop
-    /// immediately calls `bb.SetLocation(key, tempLoc)`, and
-    /// Blackboard.SetLocation explicitly does `value.NameKey = key` right
-    /// after storing (Blackboard.cs ~line 256, same for SetAgent/SetElement).
-    /// That assignment's parameter is typed `Location value`, the same
-    /// hiding level predicates later read through - so it correctly patches
-    /// the exact slot the constructor missed. The constructor bug is real,
-    /// but every real construction path found so far runs through one of
-    /// these Set* calls, which neutralizes it. The risk is latent, not
-    /// active: any future code that constructs one of these property types
-    /// and uses it WITHOUT registering it on the blackboard first would hit
-    /// the real bug.
+    /// InitialLocation's (string name, ...) constructor leaves NameKey unset
+    /// (Location hides CustomProperty.NameKey), but Blackboard.SetLocation
+    /// assigns NameKey, so registered locations end up with the right name.
     /// </summary>
     [Fact]
     public void ApplyDrop_TheNewAtPlace_CorrectlyReferencesTheTempLocation_ThanksToSetLocationsNameKeyPatch()
@@ -111,9 +93,7 @@ public class WorldStateManagerFaultTests
 
         manager.ApplyDrop(DropEffects(), mlFlow: null);
 
-        // The original atplace(stick4, initloc) gets negated by the first
-        // test above; the freshly-added one (this fault's whole point) is
-        // the only non-negated stick4 atplace left.
+        // The original atplace(stick4, initloc) is negated, so this is the only true one.
         var newAtPlace = bb.GetAllPredicates().OfType<AtPlace>()
             .First(p => p.obj.NameKey.ToString() == "stick4" && !p.not);
 

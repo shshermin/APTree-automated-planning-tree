@@ -30,18 +30,11 @@ class APTreeModelParserTest {
             "BehaviorTree.bt",
             // Stray duplicate file (space + "copy" in the name) — not an intentional fixture.
             "FullDemonstratorFinal copy.bt",
-            // KNOWN BROKEN (root cause confirmed via TemporalRelationTest below):
-            // every CRFTypesCon Action production (PickUpHL, PlaceHL, ...) already
-            // defines its own optional trailing group —
-            //   ("{" (Decorator | Service)* "}")? ("@" subtreeAnnotation:Name)?
-            // — which shadows the outer GraphNode's own optional
-            // `("{" (successors:Relation)+ "}")?`. So a `{ --[Meets]--> X; }` or
-            // `@Name { ... }` block written directly after an Action's `)` can
-            // never parse — "missing Name at ')'" — regardless of which of the
-            // two forms is used. Relations only work when attached to a
-            // FlowNode-typed graph node instead (see TemporalRelations.bt).
-            // `gradle runAPTreeTool` (the documented default) hits this on
-            // APTreeLivematFinal.bt today.
+            // KNOWN BROKEN: CRFTypesCon Action productions define their own optional
+            // `{ (Decorator|Service)* }` block, which shadows GraphNode's relation
+            // block, so `{ --[Meets]--> X; }` after an Action never parses
+            // ("missing Name at ')'"). Relations only work on FlowNode graph nodes.
+            // This also breaks `gradle runAPTreeTool` on APTreeLivematFinal.bt.
             "APTreeLivematFinal.bt",
             "APTree.bt",
             "APTree2.bt",

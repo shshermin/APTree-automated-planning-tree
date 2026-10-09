@@ -1,8 +1,4 @@
-"""
-Phase 0 smoke test: proves the pytest harness is wired up correctly
-(imports the Flask app, runs under `pytest`, hits a real endpoint).
-Real coverage per test-plan section 6 lands in later phases.
-"""
+"""Checks the pytest harness can import the Flask app and hit an endpoint."""
 import pytest
 
 from pddl_planning_service import app

@@ -10,9 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
- * Phase 0 smoke test: proves the JUnit 5 harness is wired up correctly
- * (resolves generated MontiCore parser classes, runs under `gradle test`).
- * Real DSL coverage per test-plan section 1 lands in later phases.
+ * Checks the JUnit 5 harness resolves the generated MontiCore parsers.
  */
 public class InfrastructureSmokeTest {
 

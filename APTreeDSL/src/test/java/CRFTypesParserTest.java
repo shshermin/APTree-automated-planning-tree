@@ -31,8 +31,7 @@ class CRFTypesParserTest {
             "LiveMatPredicaetTypes.bt",
             // KNOWN BROKEN: "extraneous input 'moveType' expecting ':'" on lines
             // using `cont moveType: String` — the `cont` keyword usage doesn't
-            // match the current ActionTypeDefinition grammar. Needs grammar or
-            // fixture attention.
+            // match the current ActionTypeDefinition grammar.
             "DemonstratorActionTypes.bt"
     );
 

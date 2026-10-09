@@ -3,9 +3,7 @@
 #include <cmath>
 #include "spatial_predicates.h"
 
-// C++ side): bounding-box overlap and the "stacked / on top" 
-// contact logic in spatial_predicates.cpp.
-//
+// Bounding-box overlap and "stacked / on top" contact logic in spatial_predicates.cpp.
 // Boxes are built with makeBox(name, xmin,ymin,zmin, xmax,ymax,zmax).
 
 namespace {
@@ -131,11 +129,8 @@ TEST(IsObjectClear, ObjectsSharingANameAreInvisibleToEachOther) {
 }
 
 TEST(IsObjectClear, AnEmptyMeshObjectNeverBlocksAnything) {
-    // Checked rather than assumed: an object with no mesh has CGAL's default
-    // Bbox_3, which is inverted-infinite (min=+inf, max=-inf), NOT a point at
-    // the origin as spatial_predicates.cpp's `bbox = CGAL::Bbox_3()` suggests
-    // at a glance. Its footprint therefore overlaps nothing, so a mesh that
-    // failed to load is silently ignored instead of blocking a real object.
+    // A default CGAL::Bbox_3 is inverted-infinite, not a point at the origin, so
+    // an object whose mesh failed to load overlaps nothing and is silently ignored.
     auto spanningOrigin = makeBox("real", -5, -5, -10, 5, 5, 0);
     SpatialObject ghost;
     ghost.name = "ghost";
@@ -182,11 +177,9 @@ TEST(IsStackedOn, OverlapBelowTheBottomsTopFaceWithinToleranceAlsoCounts) {
 }
 
 TEST(IsStackedOn, ToleranceIsAnAbsolute1_0InSceneUnitsNotAFractionOfObjectSize) {
-    // Finding: EPSILON is a hard-coded 1.0 (spatial_predicates.cpp), while
-    // IsObjectClear uses 1e-6 and the Grasshopper StackDetector.cs uses 0.001
-    // ("+-1 mm", i.e. metres). If the scene is in metres, two 5 cm cubes with a
-    // 90 cm gap are reported as stacked; only a scene in millimetres makes 1.0
-    // mean "1 mm". The unit is never stated or checked.
+    // Known issue: EPSILON is a hard-coded 1.0 with no stated unit (IsObjectClear
+    // uses 1e-6, the Grasshopper StackDetector 0.001 m). In a metre-scale scene,
+    // boxes with a 90 cm gap count as stacked.
     auto bottom = makeBox("bottom", 0, 0, 0, 0.05, 0.05, 0.05);
     auto ninetyCmAbove = makeBox("top", 0, 0, 0.95, 0.05, 0.05, 1.0);
 

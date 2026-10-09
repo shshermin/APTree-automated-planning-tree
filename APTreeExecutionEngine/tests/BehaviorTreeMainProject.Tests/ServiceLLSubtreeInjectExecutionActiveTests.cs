@@ -8,9 +8,7 @@ public class ServiceLLSubtreeInjectExecutionActiveTests
 
     public ServiceLLSubtreeInjectExecutionActiveTests()
     {
-        // RegisterTemplate writes into a static dictionary shared across all
-        // tests in the process - always (re-)register before each test so
-        // this test class doesn't depend on run order.
+        // RegisterTemplate writes to a process-wide static; re-register so tests don't depend on order.
         var template = new ServiceLLSubtreeInject.LLSubtreeTemplate(ActionTypeName);
         template.Steps.Add(new ServiceLLSubtreeInject.LLStep("OpenGripperLL"));
         ServiceLLSubtreeInject.RegisterTemplate(ActionTypeName, template);
@@ -57,13 +55,8 @@ public class ServiceLLSubtreeInjectExecutionActiveTests
     }
 
     /// <summary>
-    /// Not in the original test-plan wording, but a real edge case found
-    /// while writing the two tests above: OnEvaluate's ExecutionActive read
-    /// is wrapped in try/catch, and the catch treats "flag not set at all"
-    /// the same as "flag set to false" (skip injection) - so a tree that
-    /// never sets ExecutionActive at all silently stays in planning-only
-    /// mode forever, with only a log line ("ExecutionActive not found on
-    /// blackboard") as a trace, no error surfaced to the caller.
+    /// A missing ExecutionActive flag is treated like false: injection is
+    /// skipped with only a log line, no error.
     /// </summary>
     [Fact]
     public void ExecutionActiveNeverSet_AlsoSkipsInjection_SameAsExplicitFalse()

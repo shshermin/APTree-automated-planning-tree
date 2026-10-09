@@ -1,8 +1,6 @@
 """
-Moveit_bridge_service.py and move_to_task.py import rclpy (ROS 2) 
-at module level, so they can only be imported on a machine with a 
-ROS 2 install. Without it they are skipped here rather than mocked 
-wholesale - a mocked rclpy would test the mock.
+moveit_bridge_service.py and move_to_task.py import rclpy (ROS 2) at module
+level, so these tests are skipped without a ROS 2 install rather than mocking it.
 """
 import importlib
 

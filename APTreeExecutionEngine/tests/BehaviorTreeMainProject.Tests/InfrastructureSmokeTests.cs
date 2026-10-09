@@ -2,9 +2,7 @@ using Xunit;
 
 namespace BehaviorTreeMainProject.Tests;
 
-// Phase 0 smoke tests: prove the xUnit project is wired up correctly
-// (references the main project, resolves its types, runs under `dotnet test`).
-// Real coverage per test-plan section lands in later phases.
+// Checks the test project references the main project and runs under `dotnet test`.
 public class InfrastructureSmokeTests
 {
     [Fact]

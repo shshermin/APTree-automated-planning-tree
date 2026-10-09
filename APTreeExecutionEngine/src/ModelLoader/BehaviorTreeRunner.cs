@@ -387,11 +387,17 @@ namespace BehaviorTreeMainProject
                 LoggingService.LogInfo("Starting tree execution (unlimited ticks — runs until tree finishes or user stops)...");
             else
                 LoggingService.LogInfo($"Starting tree execution (max {maxTicks} ticks)...");
-            LoggingService.LogInfo("Controls: P = pause/resume, Q or Ctrl+C = quit");
+
+            // Console.KeyAvailable throws without an interactive console (CI, services, plugin hosts).
+            bool keyboardControls = !Console.IsInputRedirected;
+            if (keyboardControls)
+                LoggingService.LogInfo("Controls: P = pause/resume, Q or Ctrl+C = quit");
+            else
+                LoggingService.LogInfo("No interactive console - keyboard controls disabled (Ctrl+C still stops).");
 
             while (!stopRequested && (unlimited || tickCount < maxTicks))
             {
-                if (Console.KeyAvailable)
+                if (keyboardControls && KeyAvailableSafe(ref keyboardControls))
                 {
                     var key = Console.ReadKey(true);
                     if (key.Key == ConsoleKey.Q)
@@ -469,6 +475,21 @@ namespace BehaviorTreeMainProject
             else if (stopRequested)
             {
                 LoggingService.LogWarning($"Tree execution stopped by user after {tickCount} ticks");
+            }
+        }
+
+        // Some hosts have no usable console even though stdin isn't redirected.
+        private static bool KeyAvailableSafe(ref bool keyboardControls)
+        {
+            try
+            {
+                return Console.KeyAvailable;
+            }
+            catch (InvalidOperationException)
+            {
+                keyboardControls = false;
+                LoggingService.LogInfo("No usable console - keyboard controls disabled (Ctrl+C still stops).");
+                return false;
             }
         }
 

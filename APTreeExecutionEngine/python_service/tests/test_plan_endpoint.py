@@ -125,14 +125,9 @@ def test_enhsp_timeout_is_reported_as_a_failed_plan_not_a_server_error(client, p
 
 def test_planner_timeout_text_is_not_treated_as_a_communication_error_by_the_engine(client, pddl_files, fake_run):
     """
-    Contract check against ServicePlanning.IsCommunicationError (C#): it only
-    retries errors containing "Failed to communicate with planning service",
-    "Planning request timed out" or "An error occurred while sending the
-    request". This service's own timeout text is "ENHSP planning timed out"
-    (wrapped as "ENHSP failed to find a plan: ENHSP planning timed out"), which
-    matches none of them - so a planner-side timeout is a permanent failure in
-    the engine, not a retry. Pinned here so a wording change on either side is
-    noticed.
+    The engine's ServicePlanning.IsCommunicationError only retries specific
+    messages; this service's own timeout text must not match them, so a
+    planner timeout stays a permanent failure.
     """
     fake_run.raises = subprocess.TimeoutExpired(cmd="java", timeout=1)
     error = client.post("/plan", json=pddl_files).get_json()["error"]
@@ -156,10 +151,9 @@ def test_missing_input_files_give_a_500_with_a_structured_error(client, pddl_fil
 
 def test_error_shape_differs_between_failure_kinds(client, pddl_files, fake_run, tmp_path):
     """
-    Finding, pinned: `error` is a plain string when ENHSP fails (HTTP 200) but
-    an object {code, message, details} for validation failures (HTTP 4xx/5xx).
-    The C# side copes only because it treats every non-2xx body as opaque text
-    (RestPlannerCommunicator); a client that parsed `error` uniformly would break.
+    Known issue: `error` is a string for ENHSP failures (HTTP 200) but an object
+    for validation failures (4xx/5xx). The C# client only copes because it
+    treats non-2xx bodies as opaque text.
     """
     fake_run.result = subprocess.CompletedProcess([], 1, stdout="", stderr="boom")
     planner_failure = client.post("/plan", json=pddl_files).get_json()
@@ -208,17 +202,13 @@ def test_non_json_body_is_answered_with_a_json_error(client):
     assert response.get_json()["success"] is False
 
 
-# ── Security findings, pinned rather than fixed ──────────────────────────────
+# ── Known security issues ────────────────────────────────────────────────────
 
-def test_finding_inline_content_can_be_written_to_any_absolute_path(client, fake_run, tmp_path):
+def test_inline_content_can_be_written_to_any_absolute_path(client, fake_run, tmp_path):
     """
-    /plan writes `domainFileContent` / `problemFileContent` to whatever
-    `domainFile` / `problemFile` says. Only paths starting with "Plannerinputs/"
-    are anchored to the service directory; any other path - including an
-    absolute one anywhere on disk - is used as-is, and parent directories are
-    created. So any client that can reach the service can create or overwrite
-    arbitrary files the service user can write to (content fully controlled),
-    e.g. ~/.bashrc or an authorized_keys file. Demonstrated here inside tmp_path only.
+    /plan writes the inline file contents to whatever domainFile/problemFile
+    path it is given; only "Plannerinputs/..." paths are anchored. Any client
+    can therefore write arbitrary files as the service user.
     """
     target = tmp_path / "some" / "other" / "place" / "evil.txt"
     jar = tmp_path / "enhsp.jar"
@@ -234,15 +224,11 @@ def test_finding_inline_content_can_be_written_to_any_absolute_path(client, fake
     assert target.read_text() == "attacker-controlled content"
 
 
-def test_finding_service_is_started_on_all_interfaces_with_the_debugger_enabled():
+def test_service_is_started_on_all_interfaces_with_the_debugger_enabled():
     """
-    The __main__ block runs `app.run(host='0.0.0.0', port=5000, debug=True)`:
-    reachable from the whole network, no authentication, with Flask's
-    interactive Werkzeug debugger on (which allows remote code execution on
-    the host, PIN-protected but PIN-guessable in some setups). Together with
-    the file-write above this should not be exposed beyond localhost / an SSH
-    tunnel as it is documented in the README. Pinned as a source check because
-    the block only runs when the file is executed directly.
+    The service runs with host='0.0.0.0' and debug=True: unauthenticated and
+    network-reachable, with the Werkzeug debugger (remote code execution) on.
+    Checked in the source because __main__ only runs when executed directly.
     """
     import re
     from pathlib import Path

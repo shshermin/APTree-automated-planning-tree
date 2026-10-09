@@ -1,10 +1,8 @@
 namespace BehaviorTreeMainProject.Tests;
 
 /// <summary>
-/// Minimal ML-level PActionNode test double. The class name must end in
-/// "ML" - PActionNode's constructor only wires up ServiceLLSubtreeInject for
-/// action types ending in "ML" (see PActionNode.cs), and
-/// ServiceLLSubtreeInject.OnEvaluate itself re-checks actionType.EndsWith("ML").
+/// Minimal ML-level PActionNode. The name must end in "ML": that's how
+/// PActionNode decides to attach ServiceLLSubtreeInject.
 /// </summary>
 public class TestActionML : PActionNode
 {

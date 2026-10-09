@@ -1,9 +1,7 @@
 #include <gtest/gtest.h>
 #include "spatial_predicates.h"
 
-// Phase 0 smoke test: proves the GoogleTest harness is wired up correctly
-// (links against spatial_predicates.cpp + CGAL, runs under `ctest`).
-// Real coverage per test-plan section 7 (#64-65) lands in later phases.
+// Checks the GoogleTest harness links against spatial_predicates.cpp and CGAL.
 
 TEST(InfrastructureSmokeTest, StackedBoxIsDetected) {
     SpatialObject bottom = makeBox("bottom", 0, 0, 0, 10, 10, 10);

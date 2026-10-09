@@ -8,7 +8,10 @@
 //   --run       : Run BT from JSON model + optional config file
 //   --faults    : Optional fault-injection config file
 
-var mode = args.FirstOrDefault(a => a.StartsWith("--") && a != "--faults") ?? "--server";
+// Only these tokens select a mode; every other argument (e.g. "--urls" from
+// docker/start.sh) must reach WebApplication.CreateBuilder unchanged.
+var knownModes = new[] { "--test", "--loadtest", "--parity", "--run" };
+var mode = args.FirstOrDefault(a => knownModes.Contains(a)) ?? "--server";
 
 // Extract --faults <path> if present
 string faultsPath = null;
@@ -17,7 +20,7 @@ if (faultsIdx >= 0 && faultsIdx + 1 < args.Length)
     faultsPath = args[faultsIdx + 1];
 
 var remainingArgs = args
-    .Where((a, i) => !a.StartsWith("--") && !(faultsIdx >= 0 && (i == faultsIdx || i == faultsIdx + 1)))
+    .Where((a, i) => a != mode && !(faultsIdx >= 0 && (i == faultsIdx || i == faultsIdx + 1)))
     .ToArray();
 
 switch (mode)

@@ -15,15 +15,7 @@ import {
   SERVICE_NODES_KEY,
 } from "../components/sidebar/utils/constants";
 
-// The literal wording ("a tree created in the editor
-// exports JSON matching the schema the execution engine expects") describes a
-// feature that does not exist: grepping App.tsx's handleExportCanvasGraph
-// shows the editor's only "Export Graph (JSON)" action produces an internal
-// ExportedCanvasGraphV2 round-trip format, never fed to the execution engine
-// or validated against the DSL/BehaviorTreeModel.json schema. The only real
-// schema-crossing logic runs in the opposite direction: the backend's
-// /api/aptree/validate response (an AptreeGraph) being converted into the
-// editor's CanvasGraph. These tests cover that conversion instead.
+// Conversion of the backend's /api/aptree/validate graph into the editor's CanvasGraph.
 
 describe("normalizeAptreeValidateResponse", () => {
   it("reports an error and does not throw for a non-object payload", () => {
@@ -84,9 +76,7 @@ describe("normalizeAptreeValidateResponse", () => {
   });
 
   it("coerces missing/non-string node and edge fields to safe defaults instead of 'undefined' strings", () => {
-    // Finding-relevant: normalizeGraph uses String(node.id ?? "") not
-    // String(node.id), so a missing id becomes "" rather than the literal
-    // string "undefined" that a naive String(x) coercion would produce.
+    // Missing ids must become "", not the string "undefined".
     const result = normalizeAptreeValidateResponse({
       graph: {
         rootId: null,
@@ -123,15 +113,8 @@ describe("aptreeGraphToCanvasGraph — root resolution", () => {
     expect(rootCanvasNode?.sourceId ?? rootCanvasNode?.id).toContain("n2");
   });
 
-  // Finding: aptreeGraphToCanvasGraph internally computes a fallback root
-  // (first flow-kind node, else the first node) for LAYOUT purposes only
-  // (positioning, the rootIsFlow branch, etc.) - see the `rootId` local at
-  // the top of the function. But the `rootNodeId` actually returned to the
-  // caller (used at line ~1345) is derived straight from `graph.rootId` and
-  // ignores that fallback entirely. So whenever the backend sends a
-  // missing/invalid rootId, the editor still lays the tree out sensibly but
-  // reports no root node at all - e.g. anything that treats rootNodeId as
-  // "the entry point to run/highlight" silently has nothing to point at.
+  // Known issue: a fallback root is computed for layout only; the returned
+  // rootNodeId ignores it, so a missing/invalid rootId yields no root at all.
   it("BUG: does not surface the internal fallback root - returns null rootNodeId when rootId is missing, even though a flow node exists", () => {
     const graph: AptreeGraph = {
       rootId: null,
@@ -254,9 +237,6 @@ describe("aptreeGraphToCanvasGraph — node kind mapping", () => {
   });
 
   it("returns no canvas node at all for an unrecognized node kind, instead of a placeholder or a crash", () => {
-    // Finding: any node kind outside action/service/decorator/flow/btNode is
-    // silently dropped from the canvas (canvasNode stays null and is never
-    // pushed) - it neither renders nor produces an error.
     const graph: AptreeGraph = {
       rootId: null,
       nodes: [{ id: "mystery1", kind: "somethingNew", label: "???" }],
@@ -317,9 +297,7 @@ describe("aptreeGraphsToCanvasGraph — multi-graph .bt files", () => {
   });
 
   it("silently drops a subtree graph that has no name, instead of storing it under a generated key", () => {
-    // Finding: rawSubtreeGraphs.set() is only called `if (subtreeGraph.name)`,
-    // so an unnamed subtree graph in the .bt file is neither placed on the
-    // canvas nor made reachable via the subtree panel - it disappears.
+    // Known issue: unnamed subtree graphs are dropped silently.
     const main: AptreeGraph = { rootId: "a", nodes: [flow("a")], edges: [] };
     const unnamedSubtree: AptreeGraph = { rootId: "s1", nodes: [flow("s1")], edges: [] };
 
@@ -329,9 +307,7 @@ describe("aptreeGraphsToCanvasGraph — multi-graph .bt files", () => {
   });
 
   it("only surfaces discoveredActionTypes/-Instances from the main graph, not from unlaid-out subtrees", () => {
-    // Finding: subtree action types/instances are only discovered once
-    // computeSubtreeLayout() runs for that subtree (e.g. when the user opens
-    // it), so the result of aptreeGraphsToCanvasGraph never includes them.
+    // Subtree action types are only discovered lazily via computeSubtreeLayout.
     const main: AptreeGraph = {
       rootId: "act1",
       nodes: [{ id: "act1", kind: "action", label: "MainAction" }],

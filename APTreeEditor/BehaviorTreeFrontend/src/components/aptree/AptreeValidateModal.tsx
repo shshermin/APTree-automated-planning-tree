@@ -3,7 +3,7 @@ import "./AptreeValidateModal.css";
 
 import type { components } from "../../generated/api-types";
 
-type AptreeValidateRequest = components["schemas"]["AptreeValidateRequest"];
+type AptreeValidateRequest = components["schemas"]["APTreeValidateRequest"];
 
 type AptreeValidateResult = {
   ok?: boolean;

@@ -549,7 +549,8 @@ public List<PActionNode> GetAllActionInstances()
         LoggingService.LogInfo("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
         
         // NEW: Clean up conflicting atAgent predicates when updating location
-        if (predicate.GetPredicateType() == "atAgent" && !predicate.not)
+        // Generated AtAgent predicates use the lowercase type name "atagent".
+        if (string.Equals(predicate.GetPredicateType(), "atagent", StringComparison.OrdinalIgnoreCase) && !predicate.not)
         {
             var pddlParams = predicate.GetPDDLParameterValues();
             if (pddlParams.Count >= 1)

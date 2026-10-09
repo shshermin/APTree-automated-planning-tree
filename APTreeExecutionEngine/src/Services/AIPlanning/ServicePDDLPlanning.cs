@@ -81,15 +81,7 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
             this._originalProblemFile = InPlanningRequest?.ProblemFile;
         }
 
-        /// <summary>
-        /// Test-only seam: the public constructor always hardcodes a
-        /// RestPlannerCommunicator pointed at localhost:5000, with no way to
-        /// substitute a fake for unit tests. This overload lets tests inject
-        /// any IPlannerCommunicator instead. Internal (not private) so it's
-        /// invisible outside the assembly via normal usage; visible to the
-        /// test project via the existing InternalsVisibleTo in AssemblyInfo.cs.
-        /// No behavior change to the public constructor above.
-        /// </summary>
+        /// <summary>Lets tests inject a fake IPlannerCommunicator.</summary>
         internal ServicePDDLPlanning(BehaviorTree InOwningTree, PDDLPlanningRequest InPlanningRequest, IPlannerCommunicator communicator)
             : base(InOwningTree, communicator, InPlanningRequest)
         {
@@ -633,18 +625,9 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
             }
         }
 
-        // NOT CURRENTLY CALLED from anywhere in this codebase (verified by
-        // grep across src/) - the real path is GenerateNodeGraphFromResult ->
-        // ParsePlanStringToNodeGraph -> ParsePlannerOutput -> ParseNodeGraph,
-        // which builds relations from what the transformed plan string
-        // already contains and never references ExecutionMode. So setting
-        // ExecutionMode to Sequential/Parallel/Hybrid currently has NO effect
-        // on real behavior, despite GenerateNodeGraphFromResult logging
-        // "Execution Mode applied: {ExecutionMode}" right after generating
-        // the graph - that log line is misleading, not just unused.
-        // Left `internal` (not private) so PDDLPlanningExecutionModeTests can
-        // cover the intended per-mode relation-building logic directly,
-        // pending a decision on whether/how to wire this back in.
+        // Not called anywhere: the real path builds relations from the plan
+        // string, so ExecutionMode currently has no effect despite being logged
+        // as "applied". Internal so PDDLPlanningExecutionModeTests can cover it.
         internal NodeGraph CreateNodeGraphWithExecutionMode(List<PActionNode> actions)
         {
             var nodeGraph = new NodeGraph();

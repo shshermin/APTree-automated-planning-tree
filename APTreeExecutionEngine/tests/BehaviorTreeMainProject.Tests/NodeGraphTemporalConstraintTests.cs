@@ -3,23 +3,10 @@ using Xunit;
 namespace BehaviorTreeMainProject.Tests;
 
 /// <summary>
-/// Test each TemporalType, checked against
-/// NodeGraph.IsTemporalConstraintSatisfied's actual coded semantics.
-///
-/// Finding: STARTS, FINISHES and EQUALS all compile to the exact same
-/// expression - `from.IsExecuting || from.IsCompleted` (NodeGraph.cs
-/// ~lines 390-416) - so despite being distinct Allen's-interval-algebra
-/// relations in the DSL grammar, they are behaviorally IDENTICAL at
-/// schedule time: predecessor started is both necessary and sufficient for
-/// all three. Only MEETS (requires predecessor fully completed, successor
-/// not yet started/completed), PRECEDES (requires completed + successor
-/// not executing) and CONTAINS (requires predecessor still executing, not
-/// yet completed) have distinguishable behavior. Documented via the
-/// three parameterized-by-hand tests below rather than fixed - collapsing
-/// three DSL-level relations onto one scheduling behavior may be
-/// intentional simplification, not obviously a bug, but worth a second
-/// pair of eyes before publishing since the DSL grammar promises more
-/// than the scheduler delivers.
+/// Checks each TemporalType against NodeGraph.IsTemporalConstraintSatisfied.
+/// Note: STARTS, FINISHES and EQUALS all evaluate to
+/// `from.IsExecuting || from.IsCompleted`, so the scheduler treats these three
+/// DSL relations identically.
 /// </summary>
 public class NodeGraphTemporalConstraintTests
 {

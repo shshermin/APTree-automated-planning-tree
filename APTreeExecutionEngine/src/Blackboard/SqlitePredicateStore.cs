@@ -42,8 +42,11 @@ public sealed class SqlitePredicateStore : IPredicateStore
     private readonly SqliteConnection _db;
     private bool _disposed;
 
+    // Neither SqliteConnection nor the hot-index Dictionary is thread-safe.
+    private readonly object _lock = new();
+
     public string StoreType => "Sqlite";
-    public int Count => _hot.Count;
+    public int Count { get { lock (_lock) return _hot.Count; } }
 
     /// <param name="dbPath">
     ///   SQLite connection string path.  Use ":memory:" (default) for an
@@ -85,63 +88,84 @@ public sealed class SqlitePredicateStore : IPredicateStore
 
     public void Upsert(FastName key, Predicate p)
     {
-        _hot[key] = p;
+        lock (_lock)
+        {
+            _hot[key] = p;
 
-        var pv = p.GetPDDLParameterValues();
-        using var cmd = _db.CreateCommand();
-        cmd.CommandText = @"
-            INSERT INTO predicates
-                (key, predicate_type, negated, formatted_str, param0, param1)
-            VALUES
-                (@key, @type, @neg, @fmt, @p0, @p1)
-            ON CONFLICT(key) DO UPDATE SET
-                predicate_type = excluded.predicate_type,
-                negated        = excluded.negated,
-                formatted_str  = excluded.formatted_str,
-                param0         = excluded.param0,
-                param1         = excluded.param1";
-        cmd.Parameters.AddWithValue("@key",  key.ToString());
-        cmd.Parameters.AddWithValue("@type", p.PredicateTypeName);
-        cmd.Parameters.AddWithValue("@neg",  p.not ? 1 : 0);
-        cmd.Parameters.AddWithValue("@fmt",  BlackboardExtensions.FormatPredicate(p));
-        cmd.Parameters.AddWithValue("@p0",   pv.Count > 0 ? pv[0] : "");
-        cmd.Parameters.AddWithValue("@p1",   pv.Count > 1 ? pv[1] : "");
-        cmd.ExecuteNonQuery();
+            var pv = p.GetPDDLParameterValues();
+            using var cmd = _db.CreateCommand();
+            cmd.CommandText = @"
+                INSERT INTO predicates
+                    (key, predicate_type, negated, formatted_str, param0, param1)
+                VALUES
+                    (@key, @type, @neg, @fmt, @p0, @p1)
+                ON CONFLICT(key) DO UPDATE SET
+                    predicate_type = excluded.predicate_type,
+                    negated        = excluded.negated,
+                    formatted_str  = excluded.formatted_str,
+                    param0         = excluded.param0,
+                    param1         = excluded.param1";
+            cmd.Parameters.AddWithValue("@key",  key.ToString());
+            cmd.Parameters.AddWithValue("@type", p.PredicateTypeName);
+            cmd.Parameters.AddWithValue("@neg",  p.not ? 1 : 0);
+            cmd.Parameters.AddWithValue("@fmt",  BlackboardExtensions.FormatPredicate(p));
+            cmd.Parameters.AddWithValue("@p0",   pv.Count > 0 ? pv[0] : "");
+            cmd.Parameters.AddWithValue("@p1",   pv.Count > 1 ? pv[1] : "");
+            cmd.ExecuteNonQuery();
+        }
     }
 
     public void UpdateNegation(FastName key, bool negated)
     {
-        if (_hot.TryGetValue(key, out var p)) p.not = negated;
+        lock (_lock)
+        {
+            if (_hot.TryGetValue(key, out var p)) p.not = negated;
 
-        using var cmd = _db.CreateCommand();
-        cmd.CommandText = "UPDATE predicates SET negated = @neg WHERE key = @key";
-        cmd.Parameters.AddWithValue("@neg", negated ? 1 : 0);
-        cmd.Parameters.AddWithValue("@key", key.ToString());
-        cmd.ExecuteNonQuery();
+            using var cmd = _db.CreateCommand();
+            cmd.CommandText = "UPDATE predicates SET negated = @neg WHERE key = @key";
+            cmd.Parameters.AddWithValue("@neg", negated ? 1 : 0);
+            cmd.Parameters.AddWithValue("@key", key.ToString());
+            cmd.ExecuteNonQuery();
+        }
     }
 
     public bool RemoveKey(FastName key)
     {
-        if (!_hot.Remove(key)) return false;
+        lock (_lock)
+        {
+            if (!_hot.Remove(key)) return false;
 
-        using var cmd = _db.CreateCommand();
-        cmd.CommandText = "DELETE FROM predicates WHERE key = @key";
-        cmd.Parameters.AddWithValue("@key", key.ToString());
-        cmd.ExecuteNonQuery();
-        return true;
+            using var cmd = _db.CreateCommand();
+            cmd.CommandText = "DELETE FROM predicates WHERE key = @key";
+            cmd.Parameters.AddWithValue("@key", key.ToString());
+            cmd.ExecuteNonQuery();
+            return true;
+        }
     }
 
     // ── IPredicateStore — Point reads (hot-index) ─────────────────────────────
 
-    public bool TryGet(FastName key, out Predicate? p) => _hot.TryGetValue(key, out p);
-    public bool ContainsKey(FastName key) => _hot.ContainsKey(key);
+    public bool TryGet(FastName key, out Predicate? p)
+    {
+        lock (_lock) return _hot.TryGetValue(key, out p);
+    }
+
+    public bool ContainsKey(FastName key)
+    {
+        lock (_lock) return _hot.ContainsKey(key);
+    }
 
     // ── IPredicateStore — Scans (hot-index, simple filter) ────────────────────
 
-    public IReadOnlyList<Predicate> All() => _hot.Values.ToList();
+    public IReadOnlyList<Predicate> All()
+    {
+        lock (_lock) return _hot.Values.ToList();
+    }
 
-    public IReadOnlyList<Predicate> AllTrue() =>
-        _hot.Values.Where(p => !p.not).ToList();
+    public IReadOnlyList<Predicate> AllTrue()
+    {
+        lock (_lock) return _hot.Values.Where(p => !p.not).ToList();
+    }
 
     // ── IPredicateStore — Pattern queries (indexed SQLite) ────────────────────
 
@@ -151,18 +175,21 @@ public sealed class SqlitePredicateStore : IPredicateStore
     /// </summary>
     public bool HasSimilar(Predicate p)
     {
-        var pv = p.GetPDDLParameterValues();
-        using var cmd = _db.CreateCommand();
-        cmd.CommandText = @"
-            SELECT 1 FROM predicates
-            WHERE predicate_type = @type
-              AND param0 = @p0
-              AND param1 = @p1
-            LIMIT 1";
-        cmd.Parameters.AddWithValue("@type", p.PredicateTypeName);
-        cmd.Parameters.AddWithValue("@p0",   pv.Count > 0 ? pv[0] : "");
-        cmd.Parameters.AddWithValue("@p1",   pv.Count > 1 ? pv[1] : "");
-        return cmd.ExecuteScalar() != null;
+        lock (_lock)
+        {
+            var pv = p.GetPDDLParameterValues();
+            using var cmd = _db.CreateCommand();
+            cmd.CommandText = @"
+                SELECT 1 FROM predicates
+                WHERE predicate_type = @type
+                  AND param0 = @p0
+                  AND param1 = @p1
+                LIMIT 1";
+            cmd.Parameters.AddWithValue("@type", p.PredicateTypeName);
+            cmd.Parameters.AddWithValue("@p0",   pv.Count > 0 ? pv[0] : "");
+            cmd.Parameters.AddWithValue("@p1",   pv.Count > 1 ? pv[1] : "");
+            return cmd.ExecuteScalar() != null;
+        }
     }
 
     /// <summary>
@@ -171,11 +198,14 @@ public sealed class SqlitePredicateStore : IPredicateStore
     /// </summary>
     public bool HasFormattedDuplicate(string formattedStr)
     {
-        using var cmd = _db.CreateCommand();
-        cmd.CommandText =
-            "SELECT 1 FROM predicates WHERE formatted_str = @fmt LIMIT 1";
-        cmd.Parameters.AddWithValue("@fmt", formattedStr);
-        return cmd.ExecuteScalar() != null;
+        lock (_lock)
+        {
+            using var cmd = _db.CreateCommand();
+            cmd.CommandText =
+                "SELECT 1 FROM predicates WHERE formatted_str = @fmt LIMIT 1";
+            cmd.Parameters.AddWithValue("@fmt", formattedStr);
+            return cmd.ExecuteScalar() != null;
+        }
     }
 
     /// <summary>
@@ -184,28 +214,31 @@ public sealed class SqlitePredicateStore : IPredicateStore
     /// </summary>
     public void CleanupAtAgentPredicates(string robotName)
     {
-        var keysToRemove = new List<string>();
-        using (var sel = _db.CreateCommand())
+        lock (_lock)
         {
-            sel.CommandText =
-                "SELECT key FROM predicates WHERE predicate_type = 'atagent' AND param0 = @robot";
-            sel.Parameters.AddWithValue("@robot", robotName);
-            using var reader = sel.ExecuteReader();
-            while (reader.Read()) keysToRemove.Add(reader.GetString(0));
+            var keysToRemove = new List<string>();
+            using (var sel = _db.CreateCommand())
+            {
+                sel.CommandText =
+                    "SELECT key FROM predicates WHERE predicate_type = 'atagent' AND param0 = @robot";
+                sel.Parameters.AddWithValue("@robot", robotName);
+                using var reader = sel.ExecuteReader();
+                while (reader.Read()) keysToRemove.Add(reader.GetString(0));
+            }
+
+            foreach (var ks in keysToRemove)
+                _hot.Remove(new FastName(ks));
+
+            if (keysToRemove.Count == 0) return;
+            using var del = _db.CreateCommand();
+            del.CommandText =
+                "DELETE FROM predicates WHERE predicate_type = 'atagent' AND param0 = @robot";
+            del.Parameters.AddWithValue("@robot", robotName);
+            del.ExecuteNonQuery();
+
+            LoggingService.LogInfo(
+                $"[SqlitePredicateStore] CleanupAtAgent: removed {keysToRemove.Count} predicates for {robotName}");
         }
-
-        foreach (var ks in keysToRemove)
-            _hot.Remove(new FastName(ks));
-
-        if (keysToRemove.Count == 0) return;
-        using var del = _db.CreateCommand();
-        del.CommandText =
-            "DELETE FROM predicates WHERE predicate_type = 'atagent' AND param0 = @robot";
-        del.Parameters.AddWithValue("@robot", robotName);
-        del.ExecuteNonQuery();
-
-        LoggingService.LogInfo(
-            $"[SqlitePredicateStore] CleanupAtAgent: removed {keysToRemove.Count} predicates for {robotName}");
     }
 
     // ── Isaac Sim bridge hook ─────────────────────────────────────────────────
@@ -242,9 +275,12 @@ public sealed class SqlitePredicateStore : IPredicateStore
 
     public void Dispose()
     {
-        if (_disposed) return;
-        _disposed = true;
-        _db.Close();
-        _db.Dispose();
+        lock (_lock)
+        {
+            if (_disposed) return;
+            _disposed = true;
+            _db.Close();
+            _db.Dispose();
+        }
     }
 }

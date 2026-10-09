@@ -9,10 +9,8 @@ using Xunit;
 namespace BehaviorTreeMainProject.Tests;
 
 /// <summary>
-/// BehaviorTreeRunner.Run() starts with a private Validate() 
-/// (pre-flight file checks) and then LoadJsonModel; both
-/// run before any logging/blackboard setup, so failures can be observed
-/// through the public Run() without side effects.
+/// Validate() and model loading run before any logging or blackboard setup,
+/// so their failures are observable through Run() without side effects.
 /// </summary>
 public class BehaviorTreeRunnerPreflightTests : IDisposable
 {
@@ -85,11 +83,8 @@ public class BehaviorTreeRunnerPreflightTests : IDisposable
     }
 
     /// <summary>
-    /// Valid JSON that just isn't a behavior-tree model (no "behaviorTrees"
-    /// array) is not caught by Validate() - it gets as far as
-    /// `modelJson.GetProperty("behaviorTrees")`, which throws a bare
-    /// KeyNotFoundException whose message ("The given property was not
-    /// found...") never mentions the model file or what was expected.
+    /// Known issue: valid JSON without "behaviorTrees" passes Validate() and then
+    /// fails with a bare KeyNotFoundException that names neither file nor key.
     /// </summary>
     [Fact]
     public async Task Run_ModelJsonWithoutBehaviorTrees_FailsWithAnUnhelpfulKeyNotFound()
@@ -113,7 +108,7 @@ public class BehaviorTreeRunnerPreflightTests : IDisposable
         Assert.DoesNotContain("behaviorTrees", ex.Message);
     }
 
-    /// <summary>#53: the checked-in model has the structure Run() dereferences.</summary>
+    /// <summary>The checked-in model has the structure Run() dereferences.</summary>
     [Fact]
     public void ShippedBehaviorTreeModelJson_HasTheStructureTheRunnerReads()
     {

@@ -5,21 +5,8 @@ using Xunit;
 namespace BehaviorTreeMainProject.Tests;
 
 /// <summary>
-/// Found while writing the predicate-store parity tests, not part of the
-/// original test-plan list, but too significant to leave undocumented:
-/// Blackboard.SetPredicateSync (Blackboard.cs ~line 552) has:
-///
-///   if (predicate.GetPredicateType() == "atAgent" && !predicate.not)
-///
-/// Every generated AtAgent predicate sets PredicateType = new FastName
-/// ("atagent") - lowercase - matching every other reference to it in the
-/// codebase (WorldStateManager.cs, ServicePDDLPlanning.cs). This one
-/// comparison uses "atAgent" (capital A), so it can never match and the
-/// "clean up conflicting atAgent predicates when updating location" branch
-/// is dead code. Net effect: moving a robot from one location to another
-/// via SetPredicateSync leaves the stale atAgent predicate at the old
-/// location in place alongside the new one - the world state ends up
-/// claiming the robot is in two places at once.
+/// Regression: the atagent cleanup in SetPredicateSync compared types
+/// case-sensitively and never ran, leaving a moved robot at two locations.
 /// </summary>
 public class BlackboardSetPredicateSyncTests
 {

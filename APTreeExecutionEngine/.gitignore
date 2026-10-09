@@ -1,7 +1,7 @@
 # Python virtual environment
 python_service/pddl_env/
-python_service/__pycache__/
-python_service/*.pyc
+**/__pycache__/
+*.pyc
 
 # C# build outputs
 bin/

@@ -4,17 +4,11 @@ import EditorCanvas from "./EditorCanvas";
 import type { CanvasNode, NodeConnection } from "./types";
 import { FLOW_NODES_KEY, DECORATOR_NODES_KEY } from "../sidebar/utils/constants";
 
-// Nodes and edges the editor is given actually
-// reach the DOM through the real EditorCanvas -> react-flow render path
-// (not a shallow mock of react-flow).
-//
-// react-flow measures nodes via ResizeObserver, which jsdom doesn't
-// implement; a minimal stub is enough for it to lay nodes out.
+// Renders through the real react-flow, not a mock. jsdom has no layout, so
+// react-flow's measuring APIs are stubbed below.
 beforeAll(() => {
-  // jsdom has no layout engine, so every element reports a 0x0 bounding box.
-  // react-flow only renders an edge once both its endpoint nodes have been
-  // "measured" via ResizeObserver, so the stub must actually invoke the
-  // callback (with a plausible non-zero size) rather than sit idle.
+  // Edges only render once both endpoint nodes have been measured, so the
+  // stub has to actually fire the callback with a non-zero size.
   class ResizeObserverStub {
     #callback: ResizeObserverCallback;
     constructor(callback: ResizeObserverCallback) {
@@ -33,11 +27,8 @@ beforeAll(() => {
     unobserve() {}
     disconnect() {}
   }
-  // @ts-expect-error jsdom has no ResizeObserver
-  global.ResizeObserver = ResizeObserverStub;
+  global.ResizeObserver = ResizeObserverStub as unknown as typeof ResizeObserver;
 
-  // jsdom also has no DOMMatrixReadOnly, which react-flow's node-measuring
-  // path constructs unconditionally once ResizeObserver fires.
   class DOMMatrixReadOnlyStub {
     m22 = 1;
     constructor(transform?: string) {
@@ -48,14 +39,9 @@ beforeAll(() => {
   // @ts-expect-error jsdom has no DOMMatrixReadOnly
   global.DOMMatrixReadOnly = DOMMatrixReadOnlyStub;
 
-  // jsdom has no layout engine: getBoundingClientRect() and offsetWidth/
-  // offsetHeight are always 0. react-flow's node-dimension update
-  // (updateNodeDimensions in @reactflow/core) reads offsetWidth/offsetHeight
-  // via getDimensions() and only computes handle bounds - which an edge
-  // needs to have any path at all - `if (dimensions.width && dimensions.
-  // height)`. Handle bounds themselves come from each handle's
-  // getBoundingClientRect() (getHandleBounds). Without both stubs no edge
-  // is ever drawn, regardless of how "connected" the data model is.
+  // react-flow only computes handle bounds (needed for any edge path) when
+  // offsetWidth/offsetHeight are non-zero, and reads the bounds themselves
+  // from getBoundingClientRect(); both are always 0 in jsdom.
   Element.prototype.getBoundingClientRect = () => ({
     x: 0, y: 0, width: 20, height: 20, top: 0, left: 0, right: 20, bottom: 20,
     toJSON() { return this; },
@@ -103,8 +89,7 @@ describe("EditorCanvas", () => {
       <EditorCanvas nodes={nodes} connections={connections} onDropNode={vi.fn()} />
     );
 
-    // react-flow only draws an edge once both endpoint nodes report their
-    // measured size (via the ResizeObserver stub above), which happens async.
+    // Measurement happens asynchronously.
     await waitFor(() => expect(container.querySelectorAll(".react-flow__edge")).toHaveLength(1));
   });
 
@@ -117,9 +102,6 @@ describe("EditorCanvas", () => {
   });
 
   it("skips a connection that references a node id not present in nodes, instead of crashing", async () => {
-    // Finding: dangling connections (e.g. after a node was deleted but the
-    // connection list wasn't pruned) don't throw - react-flow silently
-    // drops any edge whose source/target id has no matching node.
     const nodes: CanvasNode[] = [flowNode({ id: "a", name: "A" })];
     const connections: NodeConnection[] = [{ id: "c1", sourceNodeId: "a", targetNodeId: "does-not-exist" }];
 
@@ -128,8 +110,7 @@ describe("EditorCanvas", () => {
     );
 
     expect(screen.getByText("A")).toBeInTheDocument();
-    // Give react-flow's async measurement a chance to run before asserting
-    // absence, so this isn't just passing because nothing settled yet.
+    // Let async measurement settle so the absence check is meaningful.
     await new Promise((resolve) => setTimeout(resolve, 50));
     expect(container.querySelectorAll(".react-flow__edge")).toHaveLength(0);
   });

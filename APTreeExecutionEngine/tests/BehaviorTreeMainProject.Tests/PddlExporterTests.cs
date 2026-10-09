@@ -6,7 +6,6 @@ using Xunit;
 
 namespace BehaviorTreeMainProject.Tests;
 
-/// <summary>Test-plan section 2, #30-31.</summary>
 public class PddlExporterTests
 {
     [Fact]
@@ -29,10 +28,7 @@ public class PddlExporterTests
     public void GenerateProblem_RoundTripsKnownObjectsAndPredicates()
     {
         using var blackboard = new Blackboard<FastName>(new DictionaryPredicateStore());
-        // Object-initializer construction, not the "(string name, ...)" ctor
-        // overloads - see PredicateStoreTestFixtures for why those silently
-        // leave NameKey null (Agent/Element/Location each shadow their own
-        // NameKey, hiding CustomProperty's).
+        // Object initializers, not the "(string name, ...)" constructors - see PredicateStoreTestFixtures.
         var fp1 = new FirstPos { NameKey = new FastName("fp1") };
         var beam1 = new Beam { NameKey = new FastName("beam1"), Loc = fp1 };
         var robot1 = new Robot { NameKey = new FastName("robot1") };
@@ -74,11 +70,7 @@ public class PddlExporterTests
         blackboard.SetLocation(fp1.NameKey, fp1);
         blackboard.SetElement(beam1.NameKey, beam1);
 
-        // GetTruePredicates() only returns non-negated predicates (see
-        // Blackboard.GetTruePredicates -> _initStore.AllTrue()), so a negated
-        // predicate written directly via Upsert (bypassing SetPredicateSync's
-        // negation-update path) should not appear in :init at all - only
-        // GenerateGoalBlock's goal-predicate rendering actually emits `(not ...)`.
+        // :init is built from true predicates only; `(not ...)` only appears in goals.
         var negatedGoal = new AtPlace(beam1, fp1, isNegated: true);
         blackboard.SetGoalStatePredicate(negatedGoal.PredicateName, negatedGoal);
 

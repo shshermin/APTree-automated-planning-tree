@@ -7,15 +7,9 @@ using Xunit;
 namespace BehaviorTreeMainProject.Tests;
 
 /// <summary>
-/// IMPORTANT: this covers the intended per-mode logic in
-/// CreateSequentialNodeGraph/CreateParallelNodeGraph/CreateHybridNodeGraph,
-/// which is currently DEAD CODE - see the comment on
-/// ServicePDDLPlanning.CreateNodeGraphWithExecutionMode. These tests protect
-/// that logic from further bit-rot and document the intended behavior; they
-/// do not prove the real execution path respects ExecutionMode, because it
-/// doesn't. Making these three methods `internal` (from `private`) plus one
-/// new AssemblyInfo.cs InternalsVisibleTo entry is the only production
-/// change made to enable this - no runtime behavior changed.
+/// Covers the per-mode graph builders, which the real planning path never
+/// calls: relations come from the plan string, so ExecutionMode currently has
+/// no effect (see ServicePDDLPlanning.CreateNodeGraphWithExecutionMode).
 /// </summary>
 public class PDDLPlanningExecutionModeTests
 {

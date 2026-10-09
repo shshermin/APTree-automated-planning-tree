@@ -8,22 +8,8 @@ using Xunit;
 namespace BehaviorTreeMainProject.Tests;
 
 /// <summary>
-/// Parallel writers to the same store must not
-/// corrupt state. Neither DictionaryPredicateStore (a plain, unguarded
-/// Dictionary&lt;FastName, Predicate&gt;) nor SqlitePredicateStore (a plain
-/// Dictionary hot-index plus one shared, unsynchronized SqliteConnection)
-/// take any lock anywhere in Blackboard/*.cs (grep confirms the only lock
-/// usage in that folder is in Singleton.cs / NameManager.cs, unrelated to
-/// predicate storage) - so this is expected to demonstrate real corruption
-/// or exceptions, not just assert a foregone conclusion.
-///
-/// NOTE: this is a genuine data race, so it is inherently flaky - it does
-/// not fail on every run (a race that always loses would arguably be a
-/// worse race). Observed losing 1-4 of 200 concurrent writes on
-/// DictionaryPredicateStore across repeated runs on this machine. A run
-/// that passes does not mean the bug is gone; a run that fails proves it
-/// is real. Do not "fix" this test by adding retries or increasing
-/// tolerance - that would hide the underlying missing-synchronization bug.
+/// Concurrent writes must not be lost. A race shows up only intermittently,
+/// so treat any failure here as real - don't add retries or tolerance.
 /// </summary>
 public class PredicateStoreConcurrencyTests
 {

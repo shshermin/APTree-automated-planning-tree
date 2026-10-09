@@ -13,20 +13,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * The three C# generators produce output that
- * matches a checked-in golden snapshot for a fixed, known-good input.
+ * The three C# generators match checked-in golden output for a known-good input.
  *
- * Each generator's default input/output in its own DEFAULT_INPUT_PATH /
- * DEFAULT_OUTPUT_DIR fields points at the real APTreeExecutionEngine source
- * tree (../APTreeExecutionEngine/src/ModelLoader/...) - always pass an
- * explicit @TempDir as the output arg here, never rely on the default, or
- * this will silently overwrite real checked-in generated C# files (it did,
- * once, while this test was being written - see git history if curious).
- *
- * Also note: the DEFAULT_INPUT_PATH for CSharpPredicateGenerator is
- * LiveMatPredicaetTypes.bt, which is one of the fixtures documented as
- * KNOWN BROKEN in CRFTypesParserTest - so this test deliberately uses
- * CRFPredicateTypes.bt (a known-good fixture) instead.
+ * The generators' default output paths point into the real
+ * APTreeExecutionEngine source tree, so always pass a @TempDir as output.
+ * CRFPredicateTypes.bt is used instead of the generator's default input
+ * LiveMatPredicaetTypes.bt, which doesn't parse (see CRFTypesParserTest).
  */
 class CodegenGoldenTest {
 

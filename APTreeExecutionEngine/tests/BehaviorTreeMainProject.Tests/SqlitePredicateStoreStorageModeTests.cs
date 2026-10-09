@@ -30,23 +30,15 @@ public class SqlitePredicateStoreStorageModeTests
                 writer.Upsert(predicate.PredicateName, predicate);
             }
 
-            // A fresh SqlitePredicateStore only exposes the SQLite-backed pattern
-            // queries (HasSimilar / HasFormattedDuplicate), not the hot-index -
-            // InitSchema() populates the table but the new instance's in-memory
-            // hot index starts empty, so TryGet/ContainsKey on it should be
-            // false while the underlying file-backed data is still there.
             using var reopened = new SqlitePredicateStore(dbPath);
 
             Assert.True(reopened.HasFormattedDuplicate(BlackboardExtensions.FormatPredicate(predicate)),
                 "the underlying SQLite file should still contain the row written before reopening");
 
-            // Documents a real gotcha: the constructor only calls InitSchema(),
-            // it never hydrates _hot from the file. So the hot-index-backed
-            // reads (TryGet/ContainsKey/All/AllTrue) do NOT see previously
-            // persisted data after a reopen, even though the SQL-backed
-            // queries (HasFormattedDuplicate/HasSimilar/CleanupAtAgent) do.
+            // Known issue: reopening never reloads the in-memory hot index, so
+            // TryGet/ContainsKey/All miss persisted data that the SQL queries still see.
             Assert.False(reopened.TryGet(predicate.PredicateName, out _),
-                "hot index is not rehydrated from the SQLite file on reopen - if this now passes, update this comment, it's no longer accurate");
+                "hot index is not rehydrated from the SQLite file on reopen");
         }
         finally
         {

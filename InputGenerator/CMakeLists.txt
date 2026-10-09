@@ -10,9 +10,7 @@ add_executable(InputGenerator main.cpp spatial_predicates.cpp PDDLPredicateGener
 target_link_libraries(InputGenerator PRIVATE CGAL::CGAL)
 
 # ---- Tests ----
-# spatial_predicates.{h,cpp} pulls in CGAL directly, so the test binary needs
-# the same CGAL dependency as the main executable (no way to isolate the pure
-# math from CGAL types without a header refactor — out of scope for Phase 0).
+# spatial_predicates.{h,cpp} uses CGAL types directly, so the tests link CGAL too.
 option(BUILD_TESTS "Build the InputGenerator test suite" ON)
 
 if(BUILD_TESTS)

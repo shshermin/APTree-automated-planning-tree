@@ -13,6 +13,13 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
 
+  <!-- The Web SDK only publishes *.json data files implicitly; plain .txt
+       inputs like ActionInstances.txt (read via ActionInstancesFile /
+       BlackboardWriter.RegisterAllInstances) have to be listed explicitly. -->
+  <ItemGroup>
+    <Content Include="src/InputInstances/**" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+
   <!-- Exclude python_service folder from build -->
   <ItemGroup>
     <Compile Remove="python_service/**" />

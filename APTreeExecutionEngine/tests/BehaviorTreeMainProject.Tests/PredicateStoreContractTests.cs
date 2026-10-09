@@ -4,11 +4,8 @@ using Xunit;
 namespace BehaviorTreeMainProject.Tests;
 
 /// <summary>
-/// The same behavioral contract, run against
-/// every IPredicateStore implementation via the concrete subclasses below
-/// (DictionaryPredicateStoreTests, SqlitePredicateStoreTests). Parity by
-/// construction - a divergence between implementations shows up as one
-/// subclass failing a test the other passes.
+/// Behavioral contract shared by every IPredicateStore implementation; each
+/// store runs it through a subclass, so divergences show up as one-sided failures.
 /// </summary>
 public abstract class PredicateStoreContractTests
 {
@@ -175,18 +172,7 @@ public abstract class PredicateStoreContractTests
     }
 
     /// <summary>
-    /// Per the IPredicateStore.CleanupAtAgentPredicates doc comment: "Remove
-    /// all 'atAgent' predicates whose first parameter MATCHES robotName" -
-    /// an exact match, not a substring. Robot names "r1" and "r10" are
-    /// deliberately chosen: "r1" is a string-prefix of "r10", so a
-    /// substring-based implementation over-deletes.
-    ///
-    /// As of this writing DictionaryPredicateStore does exactly that (see
-    /// its EXCLUDED-free, unguarded ks.Contains(robotName) check) while
-    /// SqlitePredicateStore does an exact match on param0 - so this test is
-    /// expected to FAIL for DictionaryPredicateStoreTests until that's
-    /// fixed. Left failing rather than routed around, since it is real
-    /// production-code behavior, not a test-fixture/grammar issue.
+    /// Must match the robot name exactly: "r1" is a prefix of "r10".
     /// </summary>
     [Fact]
     public void CleanupAtAgentPredicates_MatchesTheRobotNameExactly_NotAsASubstring()

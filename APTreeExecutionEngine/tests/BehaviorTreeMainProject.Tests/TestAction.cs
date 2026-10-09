@@ -1,10 +1,8 @@
 namespace BehaviorTreeMainProject.Tests;
 
 /// <summary>
-/// Minimal PActionNode test double for NodeGraph scheduling tests: no
-/// preconditions/effects, no HL/ML/LL suffix (so PActionNode's constructor
-/// skips wiring up ServiceSubtreeInject/ServiceLLSubtreeInject - this is
-/// purely about graph scheduling, not planning/injection).
+/// Minimal PActionNode for scheduling tests. No HL/ML/LL suffix, so no
+/// subtree-injection services get attached.
 /// </summary>
 public class TestAction : PActionNode
 {

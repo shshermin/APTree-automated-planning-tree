@@ -10,10 +10,7 @@ import {
 import type { BehaviorNodeOption } from "../sidebar/utils/types";
 import { FLOW_SUCCESS_TYPES } from "../sidebar/utils/types";
 
-// createBehaviorNode is the single place that turns a 
-// sidebar catalog entry into the CanvasNode data
-// EditorCanvas renders - see editorCanvas.render.test.tsx 
-// for the render half.
+// createBehaviorNode turns a sidebar catalog entry into the CanvasNode that EditorCanvas renders.
 
 function option(overrides: Partial<BehaviorNodeOption> = {}): BehaviorNodeOption {
   return { id: "src-1", label: "PickUpHL", kind: "flow", typeLabel: "Flow", ...overrides } as BehaviorNodeOption;

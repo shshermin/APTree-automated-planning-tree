@@ -513,15 +513,7 @@ namespace BehaviorTreeMainProject
         /// Creates a subtree for any planner type. The planner name comes from config.PlannerName,
         /// so adding a new planner requires no changes here — just add a new Planner subclass.
         /// </summary>
-        /// <remarks>
-        /// `internal` (was `private`) purely so
-        /// ServiceSubtreeInjectSubtreeConfigTests can verify config.PlannerParameters
-        /// ["executionMode"] is actually threaded onto the created planner's
-        /// ExecutionMode property - no behavior change. Note that property is
-        /// itself dead weight downstream (see PDDLPlanningExecutionModeTests /
-        /// ServicePDDLPlanning.CreateNodeGraphWithExecutionMode), so this only
-        /// confirms the value is plumbed through, not that it does anything.
-        /// </remarks>
+        /// <remarks>Internal for ServiceSubtreeInjectSubtreeConfigTests.</remarks>
         internal DynamicFlowNode CreatePlannerSubtree(SubtreeConfiguration config, string instanceName, Dictionary<string, object> customParameters)
         {
             var subtreeTree = new BehaviorTree();

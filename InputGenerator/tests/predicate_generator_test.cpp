@@ -114,12 +114,9 @@ TEST(PredicateGenerator, GenerateAllWritesEveryInitSectionToTheOutputFile) {
 // ---- The shipped DemonstratorProperties.bt ---------------------------------------
 
 TEST(PredicateGeneratorOnTheShippedProperties, ElementLinesNoLongerMatchSoNoElementPredicatesAreGenerated) {
-    // Finding: DemonstratorProperties.bt now declares elements as `Stick stick1 ()`
-    // with their locations on separate InitialLocation / FinalLocation lines, but
-    // the element regex still expects `Stick name (initLoc finalLoc)`. Of the 104
-    // Stick/Cube lines, none match - so pointing the generator at the file it was
-    // written for silently yields no AtPlace / ObjectFinalPosition / AtFinalPosition
-    // / Fixed predicates and no error.
+    // Known issue: the element regex expects `Stick name (initLoc finalLoc)`, but
+    // the shipped file declares `Stick stick1 ()` with locations on separate lines,
+    // so none of its elements produce placement predicates - and no error is raised.
     PredicateGenerator gen(kShippedProperties);
 
     gen.addAtPlacePredicates();
@@ -200,10 +197,8 @@ TEST(PredicateGeneratorWriteToFile, ReplacesOnlyTheBlockAndKeepsTextAfterIt) {
 }
 
 TEST(PredicateGeneratorWriteToFile, AStartMarkerWithoutAnEndMarkerGrowsAnotherBlockEveryRun) {
-    // Finding: if the end marker is missing (e.g. someone deleted it by hand),
-    // the file is treated as having no block at all: existing content - stale
-    // block included - is kept and a fresh block appended. Every further run
-    // appends yet another block and the old ones are never cleaned up.
+    // Known issue: without the end marker the old block is kept and a new one
+    // appended on every run.
     TempDir dir;
     PredicateGenerator gen(dir.write("p.bt", kProperties));
     gen.addGripperEmptyPredicates();

@@ -8,12 +8,9 @@ using Xunit;
 namespace BehaviorTreeMainProject.Tests;
 
 /// <summary>
-/// Starts the real FrontendServer once per test run on a free localhost port.
-/// FrontendServer.Run builds and runs the whole WebApplication inside one
-/// static method (no WebApplicationFactory seam, top-level-statement Program),
-/// and offers no shutdown hook, so the server simply lives until the test
-/// process exits. Static state inside FrontendServer (subscriber list, tick
-/// log) is therefore shared across all tests using this fixture.
+/// Starts the real FrontendServer once per test run on a free port. It has no
+/// shutdown hook, so it lives until the test process exits and its static
+/// state is shared across tests.
 /// </summary>
 public sealed class FrontendServerFixture : IAsyncLifetime
 {

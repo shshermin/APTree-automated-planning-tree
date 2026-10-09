@@ -20,8 +20,7 @@ class PlannerParserTest {
     // and it currently fails with "mismatched keyword 'PickUpHL', expecting
     // Name" on `Domain PickAndPlaceHL ... {PickUpHL, PlaceHL}` — the action
     // names in that set look like they collide with reserved keywords in the
-    // current grammar. Needs grammar or fixture attention; disabled (not
-    // deleted) so this doesn't silently lose coverage once fixed.
+    // current grammar.
     @Disabled("PDDLPlanner.bt fails to parse against the current grammar - see comment above")
     @Test
     void parsesValidPlannerDefinition() throws IOException {

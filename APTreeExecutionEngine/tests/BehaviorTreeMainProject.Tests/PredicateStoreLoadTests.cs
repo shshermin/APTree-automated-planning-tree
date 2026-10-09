@@ -7,26 +7,9 @@ using Xunit;
 namespace BehaviorTreeMainProject.Tests;
 
 /// <summary>
-/// Load test for predicate stores.
-///
-/// SqlitePredicateStore exists specifically to
-/// replace DictionaryPredicateStore's "O(n) reflection scans identical to the
-/// old Blackboard.HasSimilarPredicate" with indexed queries for HasSimilar /
-/// CleanupAtAgent. PredicateStoreContractTests already proves both stores
-/// return the same answers; it never proves the O(n) vs indexed distinction
-/// the migration was actually for, because its fixtures are only a handful
-/// of predicates. These tests populate each store with a much larger,
-/// realistic-scale predicate set and time HasSimilar under that load -
-/// this is the "load test" test-plan item, i.e. does the system hold up
-/// (not crash, not fall over performance-wise) when the blackboard is much
-/// bigger than any hand-written unit test uses.
-///
-/// Opt-in ([SlowFact]) since wall-clock assertions on a shared CI runner are
-/// inherently less deterministic than pure logic tests - the same tradeoff
-/// PredicateStoreConcurrencyTests documents for its own timing-sensitive race.
-/// The absolute bounds below are intentionally generous (order-of-magnitude
-/// regression guards against a reintroduced O(n^2) or an infinite loop, not
-/// a tight performance benchmark).
+/// Load tests for the predicate stores at realistic blackboard sizes. Opt-in
+/// because they assert on wall-clock time; the bounds are deliberately loose
+/// and only catch order-of-magnitude regressions.
 /// </summary>
 public class PredicateStoreLoadTests
 {
@@ -69,8 +52,7 @@ public class PredicateStoreLoadTests
         Assert.True(insertWatch.Elapsed.TotalSeconds < maxSeconds,
             $"Inserting {count} predicates into {store.StoreType} took {insertWatch.Elapsed.TotalSeconds:F2}s (budget {maxSeconds}s)");
 
-        // Worst case for HasSimilar: none of these are present, so a naive
-        // scan implementation must walk the entire store for every call.
+        // Misses are the worst case: a linear scan has to visit every entry.
         var missingPredicates = Enumerable.Range(count, 300)
             .Select(i =>
             {
@@ -91,13 +73,8 @@ public class PredicateStoreLoadTests
     }
 
     /// <summary>
-    /// Finding-oriented test: compares how HasSimilar's cost scales as the
-    /// store grows, which is the actual property the Phase 2 migration set
-    /// out to fix (O(n) scan -> indexed lookup). Uses a generous margin
-    /// (Dictionary must be at least 3x slower per-call at 10x the predicate
-    /// count; Sqlite must not also blow up by that much) rather than a tight
-    /// ratio, precisely because this runs on a shared, unpredictable CI
-    /// machine - see the class-level comment.
+    /// SqlitePredicateStore's indexed HasSimilar should scale better than
+    /// DictionaryPredicateStore's linear scan; margins are generous for noisy CI.
     /// </summary>
     [SlowFact("compares HasSimilar scaling between predicate counts")]
     public void DictionaryPredicateStore_HasSimilarCost_GrowsWithStoreSize_UnlikeSqlite()
@@ -114,8 +91,7 @@ public class PredicateStoreLoadTests
 
         Assert.True(dictionaryRatio > 3.0,
             $"Expected DictionaryPredicateStore.HasSimilar to visibly slow down at 40x the predicate count " +
-            $"(O(n) scan) - got {smallAvgMs:F4}ms -> {largeAvgMs:F4}ms (ratio {dictionaryRatio:F1}x). " +
-            "If this now fails, DictionaryPredicateStore's scan behavior may have changed - re-verify before assuming the test is wrong.");
+            $"(O(n) scan) - got {smallAvgMs:F4}ms -> {largeAvgMs:F4}ms (ratio {dictionaryRatio:F1}x).");
 
         Assert.True(sqliteRatio < dictionaryRatio,
             $"Expected SqlitePredicateStore's indexed HasSimilar to scale better than DictionaryPredicateStore's " +

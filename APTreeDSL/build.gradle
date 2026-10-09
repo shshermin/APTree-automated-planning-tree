@@ -144,9 +144,7 @@ spotless {
 
 
 // Custom task to run C# parameter type generator
-// NB: mainClass was 'CSharpParameterTypeGenerator', which does not exist as a
-// class anywhere in this project - the task failed unconditionally. The actual
-// parameter-type generator class is CSharopCodeGenerator (sic).
+// The generator class really is spelled CSharopCodeGenerator.
 task generateCSharpParameterTypes(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'CSharopCodeGenerator'

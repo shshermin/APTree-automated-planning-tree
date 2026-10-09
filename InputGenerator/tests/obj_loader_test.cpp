@@ -89,11 +89,8 @@ TEST(LoadMultiObjectOBJ, AnObjectWithNoFacesHasAnEmptyMeshAndAnInvertedBbox) {
 }
 
 TEST(LoadMultiObjectOBJ, ObjectNamesAreTruncatedAtTheFirstSpace) {
-    // Finding: `iss >> name` reads a single token, so "Cube 1" and "Cube 2"
-    // both load as "Cube". Since every predicate matches objects by name, two
-    // such objects become invisible to each other (see geometry_test:
-    // ObjectsSharingANameAreInvisibleToEachOther) and the generated PDDL would
-    // contain duplicate object names.
+    // Known issue: object names are truncated at the first space, so "Cube 1"
+    // and "Cube 2" collide - predicates match by name and the PDDL gets duplicates.
     TempDir dir;
     auto scene = loadMultiObjectOBJ(dir.write("spaces.obj",
         "o Cube 1\nv 0 0 0\nv 1 0 0\nv 0 1 0\nf 1 2 3\n"

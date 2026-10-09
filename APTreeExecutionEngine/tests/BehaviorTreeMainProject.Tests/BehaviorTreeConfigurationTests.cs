@@ -8,10 +8,8 @@ using Xunit;
 namespace BehaviorTreeMainProject.Tests;
 
 /// <summary>
-/// BehaviorTreeConfiguration has no validation step at all - 
-/// it is a plain deserialized DTO - so several of the plan's
-/// "should be rejected" items describe behavior that does not exist. These
-/// tests pin down what actually happens instead of asserting rejections.
+/// BehaviorTreeConfiguration is a plain DTO with no validation; these tests
+/// pin down how it handles bad input.
 /// </summary>
 public class BehaviorTreeConfigurationTests : IDisposable
 {
@@ -35,8 +33,7 @@ public class BehaviorTreeConfigurationTests : IDisposable
         Assert.Equal(30, config.TimeoutSeconds);
         Assert.Equal("Sequential", config.ExecutionMode);
         Assert.Equal("Sqlite", config.PredicateStoreType);
-        // Fields with no default (needed for a real run) just come back null -
-        // nothing complains until BehaviorTreeRunner.Run's own Validate().
+        // Required fields without defaults stay null until BehaviorTreeRunner's Validate() complains.
         Assert.Null(config.SetupObjectsFile);
         Assert.Null(config.InitialStateFile);
         Assert.Null(config.ActionInstancesFile);
@@ -62,8 +59,7 @@ public class BehaviorTreeConfigurationTests : IDisposable
     {
         var config = new BehaviorTreeConfiguration { ExecutionMode = text! };
 
-        // Not rejected: a typo such as "Paralel" quietly runs as Sequential.
-        // (ExecutionMode is also inert downstream - see PDDLPlanningExecutionModeTests.)
+        // Unknown values silently fall back to Sequential.
         Assert.Equal(ServicePDDLPlanning.ParallelExecutionMode.Sequential, config.GetExecutionMode());
     }
 
@@ -83,9 +79,7 @@ public class BehaviorTreeConfigurationTests : IDisposable
     [Fact]
     public void LoadFromFile_JsonNullLiteral_ReturnsNull_ForCallersToTripOver()
     {
-        // A file containing just `null` deserializes to null rather than
-        // throwing; the method's return type gives no hint, so a caller doing
-        // config.X afterwards gets a NullReferenceException far from the cause.
+        // A literal `null` file returns null instead of throwing.
         Assert.Null(BehaviorTreeConfiguration.LoadFromFile(Write("null")));
     }
 

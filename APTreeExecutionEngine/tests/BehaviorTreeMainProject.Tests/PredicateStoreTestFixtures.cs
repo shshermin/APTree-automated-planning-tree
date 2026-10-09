@@ -4,24 +4,10 @@ using ModelLoader.PredicateTypes;
 namespace BehaviorTreeMainProject.Tests;
 
 /// <summary>
-/// Small, reusable object graph for predicate-store tests: two locations,
-/// two elements, and two robots (names chosen so one is a string-prefix of
-/// the other - "r1" / "r10" - which is exactly the case that exposes the
-/// CleanupAtAgentPredicates divergence documented in PredicateStoreContractTests).
-///
-/// IMPORTANT: every object below is built with the parameterless constructor
-/// plus an object initializer for NameKey, never the "(string name, ...)"
-/// constructor overloads. Agent/Element/Location each redeclare their own
-/// NameKey property, which HIDES (not overrides) CustomProperty.NameKey -
-/// see the "hides inherited member" build warnings. Any "(string name, ...)"
-/// constructor sets CustomProperty's NameKey slot via the base-class chain,
-/// which is invisible through the derived type's own shadowing property, so
-/// e.g. `new Robot("r1", ...)` silently produces a Robot whose NameKey is
-/// null. Confirmed by direct reproduction while writing these tests - see
-/// the write-up in PredicateStoreContractTests for the full explanation.
-/// This is a real bug in the generated property-type classes, not a test
-/// mistake; it's flagged here rather than fixed, since it touches the whole
-/// generated Properties/ParameterTypes hierarchy.
+/// Shared objects for predicate-store tests. "r1"/"r10" are chosen so one robot
+/// name is a prefix of the other. Objects use object initializers for NameKey:
+/// the "(string name, ...)" constructors leave it null, because Agent/Element/
+/// Location hide CustomProperty.NameKey instead of overriding it.
 /// </summary>
 internal static class PredicateStoreTestFixtures
 {

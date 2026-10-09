@@ -1,80 +1,140 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 using Xunit;
 
 namespace BehaviorTreeMainProject.Tests;
 
 /// <summary>
-///
-/// FrontendServer.FindMontiCoreDir / the /api/aptree/validate endpoint both
-/// need APTreeDSL/target/libs/automaton-*-tool.jar to exist - it is the
-/// compiled MontiCore grammar tool that parses .bt model text. The Dockerfile
-/// copies the APTreeDSL *source* folder into the image
-/// (`COPY APTreeDSL /app/APTreeDSL`) but never builds it - there is no
-/// `gradle shadowJar` (or any gradle invocation at all) anywhere in the
-/// Dockerfile, and the runtime stage only installs a JRE (openjdk-17-jre,
-/// not a JDK + Gradle). APTreeDSL/.gitignore excludes `target/` entirely, so
-/// the jar is also not checked into git as a fallback.
-///
-/// Net effect, confirmed by reading both files rather than assumed: a Docker
-/// image built from this repo's Dockerfile today has an APTreeDSL folder
-/// with no `target/libs/*.jar` in it at all. /api/aptree/validate - the
-/// endpoint behind the live editor's tree validation - would fail every
-/// call with "MontiCore tool jar not found" (see FrontendServer.cs's
-/// FindMontiCoreDir/jarPath handling), and the WebSocket model
-/// auto-refresh (BroadcastModelUpdatedAsync) would silently fall back to
-/// its plain "modelUpdated" notification instead of embedding the parsed
-/// graph, same root cause.
-///
-/// This was not built end-to-end in a real `docker build` here (would need
-/// to pull the base images and have no faster, more direct way to prove the
-/// same gap - the Dockerfile's own content plus the gitignore rule already
-/// establish it conclusively). Left undocumented in the Dockerfile and
-/// unfixed here, per the project's policy of documenting findings rather
-/// than silently patching them - the fix is a `RUN cd APTreeDSL && gradle
-/// shadowJar` build stage (with a JDK, not just a JRE) before the runtime
-/// stage copies APTreeDSL in.
+/// /api/aptree/validate needs APTreeDSL/target/libs/automaton-*-tool.jar, which
+/// is gitignored, so the image has to build it in its javabuild stage.
 /// </summary>
+[Collection("NetworkIntegrationTests")]
 public class DockerImageBuildTests
 {
     private static string RepoRoot => Path.GetFullPath(
         Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "..", ".."));
 
     [Fact]
-    public void Dockerfile_NeverBuildsTheMontiCoreJar_SoApiAptreeValidateCannotWorkAsShipped()
+    public void Dockerfile_HasADedicatedJavaBuildStage_ThatRunsGradleShadowJar()
     {
         string dockerfilePath = Path.Combine(RepoRoot, "Dockerfile");
         Assert.True(File.Exists(dockerfilePath), $"Dockerfile not found at {dockerfilePath}");
         string dockerfile = File.ReadAllText(dockerfilePath);
 
-        // If this assertion starts failing, someone added a gradle build
-        // step for APTreeDSL - good news, but then this test (and the
-        // gitignore-based fallback check below) need re-verifying and this
-        // class-level writeup needs updating, not just deleting.
-        Assert.DoesNotContain("gradle", dockerfile, StringComparison.OrdinalIgnoreCase);
-
-        string gitignorePath = Path.Combine(RepoRoot, "APTreeDSL", ".gitignore");
-        Assert.True(File.Exists(gitignorePath), $".gitignore not found at {gitignorePath}");
-        string gitignore = File.ReadAllText(gitignorePath);
-
-        // Confirms there is also no committed fallback jar a `COPY` could pick up.
-        Assert.Contains("target/", gitignore);
+        Assert.Contains("AS javabuild", dockerfile);
+        Assert.Contains("gradle shadowJar", dockerfile);
+        // Must copy the built APTreeDSL (with target/libs), not the raw source.
+        Assert.Contains("COPY --from=javabuild /src/APTreeDSL /app/APTreeDSL", dockerfile);
     }
 
     [Fact]
-    public void Dockerfile_InstallsOnlyAJre_NotAJdk_SoItCouldNotRunGradleEvenIfAskedTo()
+    public void Dockerfile_JavaBuildStage_UsesAJdkMatchingTheProjectsPinnedToolchainVersion()
     {
         string dockerfilePath = Path.Combine(RepoRoot, "Dockerfile");
         string dockerfile = File.ReadAllText(dockerfilePath);
 
-        Assert.Contains("openjdk-17-jre", dockerfile);
-        // A JRE (runtime only) cannot run Gradle/javac - confirms that even
-        // adding a build step to the wrong (runtime) stage wouldn't help;
-        // the fix needs to happen in the `build` stage, which already has a
-        // full .NET SDK but no JDK at all. Checking for the "-jdk" package
-        // suffix specifically, not the substring "jdk" - "openjdk-17-jre"
-        // itself contains "jdk" as a substring, which would make a naive
-        // DoesNotContain("jdk") check fail on a correct assertion.
-        Assert.DoesNotContain("-jdk", dockerfile, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("eclipse-temurin:11-jdk", dockerfile);
+
+        string buildGradlePath = Path.Combine(RepoRoot, "APTreeDSL", "build.gradle");
+        Assert.True(File.Exists(buildGradlePath), $"build.gradle not found at {buildGradlePath}");
+        string buildGradle = File.ReadAllText(buildGradlePath);
+
+        // No toolchain download repository is configured, so the javabuild
+        // base image's JDK has to match the pinned toolchain version.
+        Assert.Contains("JavaLanguageVersion.of(11)", buildGradle);
+    }
+
+    [SlowFact("runs a real `docker build` of the full image - pulls several base images and runs a real Gradle build, can take a few minutes")]
+    public void DockerBuild_ProducesAWorkingMontiCoreJar_UsableByApiAptreeValidate()
+    {
+        Assert.True(IsDockerAvailable(), "docker is not available in this environment - cannot verify the real image build.");
+
+        const string imageTag = "aptree-test-publishcompleteness";
+        string containerName = "aptree-run-" + Guid.NewGuid().ToString("N");
+
+        try
+        {
+            RunOrThrow("docker", $"build -t {imageTag} -f Dockerfile .", RepoRoot, timeoutMs: 10 * 60_000);
+
+            var find = RunOrThrow("docker",
+                $"run --rm --entrypoint sh {imageTag} -c \"find /app/APTreeDSL/target/libs -name '*.jar'\"",
+                RepoRoot, timeoutMs: 60_000);
+            Assert.Contains("automaton", find.StdOut);
+            Assert.Contains(".jar", find.StdOut);
+
+            RunOrThrow("docker", $"run -d --name {containerName} -p 0:5254 {imageTag}", RepoRoot, timeoutMs: 30_000);
+            System.Threading.Thread.Sleep(6000);
+
+            string portOutput = RunOrThrow("docker", $"port {containerName} 5254/tcp", RepoRoot, timeoutMs: 10_000).StdOut.Trim();
+            string hostPort = portOutput.Split(':')[^1];
+
+            using var http = new System.Net.Http.HttpClient { Timeout = TimeSpan.FromSeconds(15) };
+            var response = http.PostAsync(
+                $"http://localhost:{hostPort}/api/aptree/validate",
+                new System.Net.Http.StringContent(
+                    "{\"modelText\": \"garbage not valid bt syntax\"}",
+                    System.Text.Encoding.UTF8, "application/json")).Result;
+            string body = response.Content.ReadAsStringAsync().Result;
+
+            Assert.True(response.IsSuccessStatusCode, $"unexpected status {response.StatusCode}: {body}");
+            Assert.DoesNotContain("MontiCore tool jar not found", body);
+            Assert.DoesNotContain("APTreeDSL directory not found", body);
+            // A parse failure for the garbage model proves the jar actually ran.
+            Assert.Contains("\"ok\":false", body);
+        }
+        finally
+        {
+            RunBestEffort("docker", $"rm -f {containerName}", RepoRoot);
+            RunBestEffort("docker", $"rmi {imageTag}", RepoRoot);
+        }
+    }
+
+    private static bool IsDockerAvailable()
+    {
+        try
+        {
+            var result = RunOrThrow("docker", "version --format \"{{.Server.Version}}\"", RepoRoot, timeoutMs: 10_000);
+            return !string.IsNullOrWhiteSpace(result.StdOut);
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    private static (string StdOut, string StdErr) RunOrThrow(string fileName, string arguments, string workingDirectory, int timeoutMs)
+    {
+        var psi = new ProcessStartInfo(fileName, arguments)
+        {
+            WorkingDirectory = workingDirectory,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            UseShellExecute = false,
+        };
+        using var process = Process.Start(psi)!;
+        // Drain both pipes concurrently; docker build writes heavily to stderr
+        // and a full pipe buffer deadlocks it.
+        var stdoutTask = process.StandardOutput.ReadToEndAsync();
+        var stderrTask = process.StandardError.ReadToEndAsync();
+        bool exited = process.WaitForExit(timeoutMs);
+
+        if (!exited)
+        {
+            try { process.Kill(entireProcessTree: true); } catch { /* best effort */ }
+            throw new TimeoutException($"`{fileName} {arguments}` did not finish within {timeoutMs}ms");
+        }
+        string stdout = stdoutTask.Result;
+        string stderr = stderrTask.Result;
+        if (process.ExitCode != 0)
+            throw new InvalidOperationException($"`{fileName} {arguments}` failed (exit {process.ExitCode}):\n{stdout}\n{stderr}");
+
+        return (stdout, stderr);
+    }
+
+    private static void RunBestEffort(string fileName, string arguments, string workingDirectory)
+    {
+        try { RunOrThrow(fileName, arguments, workingDirectory, timeoutMs: 30_000); }
+        catch { /* cleanup is best-effort */ }
     }
 }

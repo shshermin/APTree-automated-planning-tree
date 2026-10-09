@@ -1,19 +1,11 @@
 #!/usr/bin/env node
-// This script checks whether the checked-in
-// src/generated/api-types.ts (openapi-typescript output) hasn't gone stale
-// relative to the backend's actual Swagger spec.
-//
-// `npm run gen:api` (package.json) requires a live backend at
-// http://localhost:5254 and is run manually, so nothing currently stops the
-// backend's routes drifting from the committed types without anyone noticing.
-// This script builds and boots the real backend, regenerates the types from
-// its live /swagger/v1/swagger.json, and diffs the result against the
-// committed file. Run it from APTreeEditor/BehaviorTreeFrontend:
+// Checks that the committed src/generated/api-types.ts matches the backend's
+// live Swagger spec: builds and boots the backend, regenerates the types and
+// diffs them. Run from APTreeEditor/BehaviorTreeFrontend:
 //
 //   node scripts/check-api-types-fresh.mjs
 //
-// Exits 0 if fresh, 1 (with a diff-like summary) if stale, 2 on infra failure
-// (backend failed to build/start) so CI can tell "stale" apart from "broken".
+// Exit codes: 0 fresh, 1 stale (prints a diff), 2 backend failed to build/start.
 
 import { spawn, execFileSync } from "node:child_process";
 import { readFileSync, writeFileSync, mkdtempSync, rmSync } from "node:fs";
