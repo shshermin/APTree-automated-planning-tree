@@ -1343,8 +1343,8 @@ export function aptreeGraphToCanvasGraph(
   }
 
   const rootNodeId =
-    graph.rootId && canvasNodeIdByGraphId.has(graph.rootId)
-      ? (canvasNodeIdByGraphId.get(graph.rootId) as string)
+    rootId && canvasNodeIdByGraphId.has(rootId)
+      ? (canvasNodeIdByGraphId.get(rootId) as string)
       : null;
 
   return {

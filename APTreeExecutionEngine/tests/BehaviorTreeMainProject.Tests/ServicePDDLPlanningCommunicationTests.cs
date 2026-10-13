@@ -26,13 +26,24 @@ public class ServicePDDLPlanningCommunicationTests
         return (service, blackboard, comm);
     }
 
+    private static void RegisterPlanEntities(Blackboard<FastName> blackboard)
+    {
+        var p1 = new FirstPos { NameKey = new FastName("p1") };
+        var e1 = new Beam { NameKey = new FastName("e1"), Loc = p1 };
+        var r1 = new Robot { NameKey = new FastName("r1") };
+        var g1 = new Gripper { NameKey = new FastName("g1") };
+        blackboard.SetLocation(p1.NameKey, p1);
+        blackboard.SetElement(e1.NameKey, e1);
+        blackboard.SetAgent(r1.NameKey, r1);
+        blackboard.SetTool(g1.NameKey, g1);
+    }
+
     /// <summary>
-    /// Known issue: without an owning flow node, OnEvaluate dereferences
-    /// OwningFlowNode.ParentNode unguarded. The surrounding catch turns the
-    /// NullReferenceException into a planning failure with an unhelpful message.
+    /// Regression: a missing owning flow node used to throw a NullReferenceException
+    /// that the catch-all turned into a misleading planning failure.
     /// </summary>
     [Fact]
-    public void MissingOwningFlowNode_SilentlyFailsWithAnUnhelpfulNullReferenceMessage()
+    public void MissingOwningFlowNode_StillCompletesThePlan()
     {
         var blackboard = new Blackboard<FastName>(new DictionaryPredicateStore());
         var tree = new BehaviorTree();
@@ -45,14 +56,32 @@ public class ServicePDDLPlanningCommunicationTests
             PlannerUsed = "Enhsp"
         });
         var service = new ServicePDDLPlanning(tree, request, comm);
+        RegisterPlanEntities(blackboard);
         // Deliberately NOT calling service.SetOwningFlowNode(...).
 
-        var exception = Record.Exception(() => service.OnEvaluate(0.1f));
+        service.OnEvaluate(0.1f);
 
-        Assert.Null(exception); // caught internally, not rethrown
+        Assert.True(service.HasCompleted);
+        Assert.True(service.WasSuccessful, service.LastError);
+        Assert.Single(service.GeneratedNodeGraph.GetAllActionNodes());
+    }
+
+    [Fact]
+    public void PlanReferencingUnregisteredEntities_FailsInsteadOfDroppingActions()
+    {
+        var (service, blackboard, _) = NewService(new PlanningResult
+        {
+            Success = true,
+            Plan = "0.0: (pickuphl e1 p1 r1 g1)\n1.0: (placehl e1 p2 r1)",
+            PlannerUsed = "Enhsp"
+        });
+        RegisterPlanEntities(blackboard); // p2 is missing, so PlaceHL can't be created
+
+        service.OnEvaluate(0.1f);
+
         Assert.True(service.HasCompleted);
         Assert.False(service.WasSuccessful);
-        Assert.Contains("Object reference not set", service.LastError);
+        Assert.False(service.HasPlanGenerated);
     }
 
     [Fact]
@@ -65,16 +94,7 @@ public class ServicePDDLPlanningCommunicationTests
             PlannerUsed = "Enhsp"
         });
 
-        // Action creation resolves e1/p1/r1/g1 against the blackboard and silently
-        // skips actions whose entities aren't registered.
-        var p1 = new FirstPos { NameKey = new FastName("p1") };
-        var e1 = new Beam { NameKey = new FastName("e1"), Loc = p1 };
-        var r1 = new Robot { NameKey = new FastName("r1") };
-        var g1 = new Gripper { NameKey = new FastName("g1") };
-        blackboard.SetLocation(p1.NameKey, p1);
-        blackboard.SetElement(e1.NameKey, e1);
-        blackboard.SetAgent(r1.NameKey, r1);
-        blackboard.SetTool(g1.NameKey, g1);
+        RegisterPlanEntities(blackboard);
 
         service.OnEvaluate(0.1f);
 
@@ -156,9 +176,9 @@ public class ServicePDDLPlanningCommunicationTests
     }
 
     /// <summary>
-    /// Known issue: unparseable plan content (and plans referencing unregistered
-    /// entities) produce an empty NodeGraph that is reported as a successful plan,
-    /// because GenerateNodeGraphFromResult only fails on an empty Plan string.
+    /// Known issue: output without recognizable actions yields an empty NodeGraph
+    /// reported as success. It can't simply be failed: the service returns raw
+    /// planner stdout, so a legitimate zero-step plan looks the same.
     /// </summary>
     [Fact]
     public void GarbagePlanContent_IsSilentlyReportedAsSuccessWithAnEmptyNodeGraph()

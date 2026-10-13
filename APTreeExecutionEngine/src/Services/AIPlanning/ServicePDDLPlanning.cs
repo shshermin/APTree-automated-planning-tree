@@ -520,7 +520,20 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
 
                     // Step 2: Parse the DSL plan string and create NodeGraph
                     nodeGraph = ParsePlanStringToNodeGraph(dslPlanString);
-                    
+
+                    // Actions whose parameters can't be resolved are skipped during
+                    // parsing; executing the remaining graph would silently drop plan steps.
+                    int expectedActions = string.IsNullOrEmpty(dslPlanString)
+                        ? 0
+                        : ParsePlannerOutput(dslPlanString).ActionInstances.Count;
+                    int createdActions = nodeGraph?.GetAllActionNodes().Count ?? 0;
+                    if (nodeGraph != null && createdActions < expectedActions)
+                    {
+                        LoggingService.LogError(
+                            $"❌ ServicePDDLPlanning: Only {createdActions} of {expectedActions} planned actions could be created - treating the plan as failed");
+                        nodeGraph = null;
+                    }
+
                     if (nodeGraph != null)
                     {
                         actionsGenerated = nodeGraph.GetAllActionNodes().Count;

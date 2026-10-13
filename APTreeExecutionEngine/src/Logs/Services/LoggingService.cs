@@ -12,6 +12,8 @@ namespace BehaviorTreeMainProject.Log.Services
         
         // Node tracking statistics
         private Dictionary<string, NodeExecutionInfo> nodeExecutionStats = new Dictionary<string, NodeExecutionInfo>();
+        // Nodes are created and completed from planner background tasks too.
+        private readonly object statsLock = new object();
         private int totalNodes = 0;
         private int flowNodeCount = 0;
         private int actionNodeCount = 0;
@@ -92,18 +94,21 @@ namespace BehaviorTreeMainProject.Log.Services
 
         private void TrackNodeStartInternal(string nodeName, string nodeType, DateTime startTime)
         {
-            if (!nodeExecutionStats.ContainsKey(nodeName))
+            lock (statsLock)
             {
-                nodeExecutionStats[nodeName] = new NodeExecutionInfo(nodeName, nodeType, startTime);
+                if (!nodeExecutionStats.ContainsKey(nodeName))
+                {
+                    nodeExecutionStats[nodeName] = new NodeExecutionInfo(nodeName, nodeType, startTime);
 
-                totalNodes++;
-                if (nodeType.Contains("FlowNode"))
-                {
-                    flowNodeCount++;
-                }
-                else if (nodeType.Contains("GenericBTAction"))
-                {
-                    actionNodeCount++;
+                    totalNodes++;
+                    if (nodeType.Contains("FlowNode"))
+                    {
+                        flowNodeCount++;
+                    }
+                    else if (nodeType.Contains("GenericBTAction"))
+                    {
+                        actionNodeCount++;
+                    }
                 }
             }
         }
@@ -115,10 +120,13 @@ namespace BehaviorTreeMainProject.Log.Services
 
         private void TrackNodeCompletionInternal(string nodeName, DateTime endTime, bool success)
         {
-            if (nodeExecutionStats.ContainsKey(nodeName))
+            lock (statsLock)
             {
-                var nodeInfo = nodeExecutionStats[nodeName];
-                nodeInfo.Complete(endTime, success);
+                if (nodeExecutionStats.ContainsKey(nodeName))
+                {
+                    var nodeInfo = nodeExecutionStats[nodeName];
+                    nodeInfo.Complete(endTime, success);
+                }
             }
         }
 
@@ -129,47 +137,50 @@ namespace BehaviorTreeMainProject.Log.Services
 
         private void GenerateSummaryTableInternal()
         {
-            WriteSectionHeader("📊 EXECUTION SUMMARY REPORT");
-            
-            // Node Statistics
-            WriteSubsectionHeader("NODE STATISTICS");
-            WriteLog($"Total Nodes: {totalNodes}");
-            WriteLog($"Flow Nodes: {flowNodeCount}");
-            WriteLog($"Action Nodes: {actionNodeCount}");
-            WriteLog("");
-
-            // Node Execution Details
-            WriteSubsectionHeader("NODE EXECUTION DETAILS");
-            WriteTableHeader("Node Name", "Type", "Duration", "Status");
-            WriteTableSeparator(4);
-            
-            foreach (var nodeInfo in nodeExecutionStats.Values)
+            lock (statsLock)
             {
-                string duration = nodeInfo.Completed ? 
-                    LogFormatter.FormatDuration(nodeInfo.CompletionTime) : "N/A";
-                string status = nodeInfo.Completed ? 
-                    (nodeInfo.Success ? "✅ Success" : "❌ Failed") : "⏳ Running";
-                
-                WriteTableRow(nodeInfo.NodeName, nodeInfo.NodeType, duration, status);
-            }
-            WriteLog("");
+                WriteSectionHeader("📊 EXECUTION SUMMARY REPORT");
+            
+                // Node Statistics
+                WriteSubsectionHeader("NODE STATISTICS");
+                WriteLog($"Total Nodes: {totalNodes}");
+                WriteLog($"Flow Nodes: {flowNodeCount}");
+                WriteLog($"Action Nodes: {actionNodeCount}");
+                WriteLog("");
 
-            // Summary Statistics
-            WriteSubsectionHeader("SUMMARY STATISTICS");
+                // Node Execution Details
+                WriteSubsectionHeader("NODE EXECUTION DETAILS");
+                WriteTableHeader("Node Name", "Type", "Duration", "Status");
+                WriteTableSeparator(4);
             
-            int completedNodes = nodeExecutionStats.Values.Count(n => n.Completed);
-            int successfulNodes = nodeExecutionStats.Values.Count(n => n.Completed && n.Success);
-            int failedNodes = nodeExecutionStats.Values.Count(n => n.Completed && !n.Success);
+                foreach (var nodeInfo in nodeExecutionStats.Values)
+                {
+                    string duration = nodeInfo.Completed ? 
+                        LogFormatter.FormatDuration(nodeInfo.CompletionTime) : "N/A";
+                    string status = nodeInfo.Completed ? 
+                        (nodeInfo.Success ? "✅ Success" : "❌ Failed") : "⏳ Running";
+                
+                    WriteTableRow(nodeInfo.NodeName, nodeInfo.NodeType, duration, status);
+                }
+                WriteLog("");
+
+                // Summary Statistics
+                WriteSubsectionHeader("SUMMARY STATISTICS");
             
-            var totalExecutionTime = nodeExecutionStats.Values
-                .Where(n => n.Completed)
-                .Sum(n => n.CompletionTime.TotalMilliseconds);
+                int completedNodes = nodeExecutionStats.Values.Count(n => n.Completed);
+                int successfulNodes = nodeExecutionStats.Values.Count(n => n.Completed && n.Success);
+                int failedNodes = nodeExecutionStats.Values.Count(n => n.Completed && !n.Success);
             
-            WriteLog($"Node Completion Rate: {LogFormatter.FormatCounter(completedNodes, totalNodes)}");
-            WriteLog($"Node Success Rate: {LogFormatter.FormatCounter(successfulNodes, completedNodes)}");
-            WriteLog($"Total Execution Time: {LogFormatter.FormatDuration(TimeSpan.FromMilliseconds(totalExecutionTime))}");
+                var totalExecutionTime = nodeExecutionStats.Values
+                    .Where(n => n.Completed)
+                    .Sum(n => n.CompletionTime.TotalMilliseconds);
             
-            WriteSectionHeader("END OF SUMMARY REPORT");
+                WriteLog($"Node Completion Rate: {LogFormatter.FormatCounter(completedNodes, totalNodes)}");
+                WriteLog($"Node Success Rate: {LogFormatter.FormatCounter(successfulNodes, completedNodes)}");
+                WriteLog($"Total Execution Time: {LogFormatter.FormatDuration(TimeSpan.FromMilliseconds(totalExecutionTime))}");
+            
+                WriteSectionHeader("END OF SUMMARY REPORT");
+            }
         }
 
         public new static void Close()

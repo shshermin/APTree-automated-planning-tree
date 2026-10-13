@@ -113,33 +113,34 @@ describe("aptreeGraphToCanvasGraph — root resolution", () => {
     expect(rootCanvasNode?.sourceId ?? rootCanvasNode?.id).toContain("n2");
   });
 
-  // Known issue: a fallback root is computed for layout only; the returned
-  // rootNodeId ignores it, so a missing/invalid rootId yields no root at all.
-  it("BUG: does not surface the internal fallback root - returns null rootNodeId when rootId is missing, even though a flow node exists", () => {
+  it("falls back to the first flow node when rootId is missing", () => {
     const graph: AptreeGraph = {
       rootId: null,
       nodes: [{ id: "a", kind: "action", label: "Act" }, flowNode("b")],
       edges: [],
     };
     const result = aptreeGraphToCanvasGraph(graph, []);
-    expect(result.graph.rootNodeId).toBeNull();
-    // The node itself is still rendered and positioned by the fallback path.
-    expect(result.graph.nodes.some((n) => n.id === "bt-import-b")).toBe(true);
+    expect(result.graph.rootNodeId).toBe("bt-import-b");
   });
 
-  it("BUG: returns null rootNodeId when rootId is missing and no flow node exists either", () => {
+  it("falls back to the first node when rootId is missing and there is no flow node", () => {
     const graph: AptreeGraph = {
       rootId: null,
       nodes: [{ id: "a", kind: "action", label: "Act" }, { id: "b", kind: "action", label: "Act2" }],
       edges: [],
     };
     const result = aptreeGraphToCanvasGraph(graph, []);
-    expect(result.graph.rootNodeId).toBeNull();
+    expect(result.graph.rootNodeId).toBe("bt-import-a");
   });
 
-  it("BUG: returns null rootNodeId when rootId references a node id that doesn't exist, instead of falling back", () => {
+  it("falls back when rootId references a node that doesn't exist", () => {
     const graph: AptreeGraph = { rootId: "does-not-exist", nodes: [flowNode("b")], edges: [] };
     const result = aptreeGraphToCanvasGraph(graph, []);
+    expect(result.graph.rootNodeId).toBe("bt-import-b");
+  });
+
+  it("returns no root for an empty graph", () => {
+    const result = aptreeGraphToCanvasGraph({ rootId: null, nodes: [], edges: [] }, []);
     expect(result.graph.rootNodeId).toBeNull();
   });
 });

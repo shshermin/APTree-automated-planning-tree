@@ -128,8 +128,21 @@ namespace BehaviorTreeMainProject
             string jsonText = File.ReadAllText(fullPath);
             using var doc = JsonDocument.Parse(jsonText);
 
+            var root = doc.RootElement;
+            if (root.ValueKind != JsonValueKind.Object
+                || !root.TryGetProperty("behaviorTrees", out var trees)
+                || trees.ValueKind != JsonValueKind.Array
+                || trees.GetArrayLength() == 0)
+                throw new InvalidDataException($"BT model JSON has no non-empty \"behaviorTrees\" array: {fullPath}");
+
+            var tree = trees[0];
+            if (tree.ValueKind != JsonValueKind.Object
+                || !tree.TryGetProperty("name", out var name) || name.ValueKind != JsonValueKind.String
+                || !tree.TryGetProperty("root", out var treeRoot) || treeRoot.ValueKind != JsonValueKind.Object)
+                throw new InvalidDataException($"First entry of \"behaviorTrees\" needs a string \"name\" and an object \"root\": {fullPath}");
+
             // Return a clone so the JsonDocument can be disposed
-            return JsonSerializer.Deserialize<JsonElement>(doc.RootElement.GetRawText());
+            return JsonSerializer.Deserialize<JsonElement>(root.GetRawText());
         }
 
         // ── Blackboard setup ──
@@ -304,12 +317,8 @@ namespace BehaviorTreeMainProject
                 : (config.PlannerPath ?? "");
             subtreeConfig.PlannerParameters["timeoutSeconds"] = config.SubtreeTimeoutSeconds;
             subtreeConfig.PlannerParameters["maxPlanLength"] = config.SubtreeMaxPlanLength;
-            subtreeConfig.PlannerParameters["executionMode"] = config.SubtreeExecutionMode switch
-            {
-                "Parallel" => ServicePDDLPlanning.ParallelExecutionMode.Parallel,
-                "Hybrid" => ServicePDDLPlanning.ParallelExecutionMode.Hybrid,
-                _ => ServicePDDLPlanning.ParallelExecutionMode.Sequential
-            };
+            subtreeConfig.PlannerParameters["executionMode"] =
+                BehaviorTreeConfiguration.ParseExecutionMode(config.SubtreeExecutionMode, nameof(config.SubtreeExecutionMode));
             subtreeConfig.PlannerParameters["enhspConfig"] = config.SubtreeEnhspConfig;
 
             ServiceSubtreeInject.RegisterGlobalConfiguration(config.SubtreeConfigName, subtreeConfig);
@@ -596,6 +605,9 @@ namespace BehaviorTreeMainProject
         /// </summary>
         private void Validate()
         {
+            config.GetExecutionMode();
+            BehaviorTreeConfiguration.ParseExecutionMode(config.SubtreeExecutionMode, nameof(config.SubtreeExecutionMode));
+
             var missing = new List<string>();
 
             // Model JSON

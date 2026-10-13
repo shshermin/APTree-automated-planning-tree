@@ -119,12 +119,24 @@ namespace BehaviorTreeMainProject.ModelLoader
         /// Parses the ExecutionMode string to the ServicePDDLPlanning enum.
         /// </summary>
         public Services.AIPlanning.ServicePDDLPlanning.ParallelExecutionMode GetExecutionMode()
+            => ParseExecutionMode(ExecutionMode, nameof(ExecutionMode));
+
+        /// <summary>
+        /// Parses an execution mode name (case-insensitive). Null or empty means
+        /// Sequential; anything else unknown is rejected rather than silently defaulted.
+        /// </summary>
+        public static Services.AIPlanning.ServicePDDLPlanning.ParallelExecutionMode ParseExecutionMode(string value, string settingName)
         {
-            return ExecutionMode?.ToLowerInvariant() switch
+            if (string.IsNullOrWhiteSpace(value))
+                return Services.AIPlanning.ServicePDDLPlanning.ParallelExecutionMode.Sequential;
+
+            return value.Trim().ToLowerInvariant() switch
             {
+                "sequential" => Services.AIPlanning.ServicePDDLPlanning.ParallelExecutionMode.Sequential,
                 "parallel" => Services.AIPlanning.ServicePDDLPlanning.ParallelExecutionMode.Parallel,
                 "hybrid" => Services.AIPlanning.ServicePDDLPlanning.ParallelExecutionMode.Hybrid,
-                _ => Services.AIPlanning.ServicePDDLPlanning.ParallelExecutionMode.Sequential
+                _ => throw new ArgumentException(
+                    $"Invalid {settingName} '{value}'. Expected Sequential, Parallel or Hybrid.", settingName)
             };
         }
 
@@ -143,9 +155,12 @@ namespace BehaviorTreeMainProject.ModelLoader
             {
                 PropertyNameCaseInsensitive = true,
                 ReadCommentHandling = JsonCommentHandling.Skip,
-                AllowTrailingCommas = true
+                AllowTrailingCommas = true,
+                // A mistyped key would otherwise be ignored and its default used silently.
+                UnmappedMemberHandling = System.Text.Json.Serialization.JsonUnmappedMemberHandling.Disallow
             };
-            return JsonSerializer.Deserialize<BehaviorTreeConfiguration>(json, options);
+            return JsonSerializer.Deserialize<BehaviorTreeConfiguration>(json, options)
+                ?? throw new InvalidDataException($"Configuration file contains no configuration object: {filePath}");
         }
 
         /// <summary>

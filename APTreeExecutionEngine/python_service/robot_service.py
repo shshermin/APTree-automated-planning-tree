@@ -1068,4 +1068,6 @@ if __name__ == '__main__':
     print("Starting Robot Execution Service...")
     print(f"Robot IP: {DEFAULT_ROBOT_IP}")
     print(f"Supported move types: {', '.join(SUPPORTED_MOVE_TYPES)}")
-    app.run(host='127.0.0.1', port=5001, debug=True, use_reloader=False)
+    # The Werkzeug debugger allows code execution, so it is opt-in only.
+    debug = os.environ.get('ROBOT_SERVICE_DEBUG', '').lower() in ('1', 'true', 'yes')
+    app.run(host='127.0.0.1', port=5001, debug=debug, use_reloader=False)

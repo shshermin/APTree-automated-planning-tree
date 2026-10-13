@@ -7,10 +7,7 @@ using Xunit;
 
 namespace BehaviorTreeMainProject.Tests;
 
-/// <summary>
-/// BehaviorTreeConfiguration is a plain DTO with no validation; these tests
-/// pin down how it handles bad input.
-/// </summary>
+/// <summary>How BehaviorTreeConfiguration loads and validates its input.</summary>
 public class BehaviorTreeConfigurationTests : IDisposable
 {
     private readonly string _dir = Path.Combine(Path.GetTempPath(), "aptree-cfg-" + Guid.NewGuid().ToString("N"));
@@ -51,16 +48,24 @@ public class BehaviorTreeConfigurationTests : IDisposable
     }
 
     [Theory]
-    [InlineData("Paralel")]      // typo
     [InlineData("")]
-    [InlineData("garbage")]
     [InlineData(null)]
-    public void GetExecutionMode_SilentlyFallsBackToSequential_ForInvalidValues(string? text)
+    public void GetExecutionMode_DefaultsToSequential_WhenUnset(string? text)
     {
         var config = new BehaviorTreeConfiguration { ExecutionMode = text! };
 
-        // Unknown values silently fall back to Sequential.
         Assert.Equal(ServicePDDLPlanning.ParallelExecutionMode.Sequential, config.GetExecutionMode());
+    }
+
+    [Theory]
+    [InlineData("Paralel")]
+    [InlineData("garbage")]
+    public void GetExecutionMode_RejectsUnknownValues(string text)
+    {
+        var config = new BehaviorTreeConfiguration { ExecutionMode = text };
+
+        var ex = Assert.Throws<ArgumentException>(() => config.GetExecutionMode());
+        Assert.Contains(text, ex.Message);
     }
 
     [Fact]
@@ -77,19 +82,35 @@ public class BehaviorTreeConfigurationTests : IDisposable
     }
 
     [Fact]
-    public void LoadFromFile_JsonNullLiteral_ReturnsNull_ForCallersToTripOver()
+    public void LoadFromFile_JsonNullLiteral_Throws()
     {
-        // A literal `null` file returns null instead of throwing.
-        Assert.Null(BehaviorTreeConfiguration.LoadFromFile(Write("null")));
+        Assert.Throws<InvalidDataException>(() => BehaviorTreeConfiguration.LoadFromFile(Write("null")));
     }
 
     [Fact]
-    public void LoadFromFile_IgnoresUnknownKeys_SoTyposInFieldNamesAreSilent()
+    public void LoadFromFile_RejectsUnknownKeys()
     {
-        var config = BehaviorTreeConfiguration.LoadFromFile(Write("{ \"timeoutSecondz\": 999, \"maxTicks\": 5 }"));
+        var ex = Assert.ThrowsAny<JsonException>(() =>
+            BehaviorTreeConfiguration.LoadFromFile(Write("{ \"timeoutSecondz\": 999, \"maxTicks\": 5 }")));
+        Assert.Contains("timeoutSecondz", ex.Message);
+    }
 
-        Assert.Equal(30, config.TimeoutSeconds); // typo'd key ignored, default kept
-        Assert.Equal(5, config.MaxTicks);         // correct key (case-insensitive) honored
+    [Fact]
+    public void LoadFromFile_KeysAreCaseInsensitive()
+    {
+        var config = BehaviorTreeConfiguration.LoadFromFile(Write("{ \"MaxTicks\": 5 }"));
+
+        Assert.Equal(5, config.MaxTicks);
+    }
+
+    [Fact]
+    public void ShippedDemonstratorConfig_LoadsWithoutUnknownKeys()
+    {
+        string path = Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "..", "src", "ModelLoader", "DemonstratorConfig.json");
+
+        var config = BehaviorTreeConfiguration.LoadFromFile(path);
+
+        Assert.Equal(ServicePDDLPlanning.ParallelExecutionMode.Sequential, config.GetExecutionMode());
     }
 
     [Fact]

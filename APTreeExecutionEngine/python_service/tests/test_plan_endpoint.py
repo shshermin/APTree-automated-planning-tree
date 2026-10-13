@@ -188,7 +188,8 @@ def test_unsupported_planning_type_is_a_400(client, pddl_files, fake_run):
     assert response.get_json()["error"]["code"] == "UNSUPPORTED_PLANNING_TYPE"
 
 
-def test_inline_file_content_overrides_the_file_on_disk(client, pddl_files, fake_run, tmp_path):
+def test_inline_file_content_overrides_the_file_on_disk(client, pddl_files, fake_run, tmp_path, monkeypatch):
+    monkeypatch.setattr(svc, "PLANNER_INPUTS_DIR", str(tmp_path))
     response = client.post("/plan", json={**pddl_files, "problemFileContent": "(define (problem from-request))"})
 
     assert response.status_code == 200
@@ -202,40 +203,37 @@ def test_non_json_body_is_answered_with_a_json_error(client):
     assert response.get_json()["success"] is False
 
 
-# ── Known security issues ────────────────────────────────────────────────────
+# ── Hardening ────────────────────────────────────────────────────────────────
 
-def test_inline_content_can_be_written_to_any_absolute_path(client, fake_run, tmp_path):
-    """
-    /plan writes the inline file contents to whatever domainFile/problemFile
-    path it is given; only "Plannerinputs/..." paths are anchored. Any client
-    can therefore write arbitrary files as the service user.
-    """
-    target = tmp_path / "some" / "other" / "place" / "evil.txt"
+@pytest.mark.parametrize("bad_path", ["outside", "traversal"])
+def test_inline_content_is_rejected_outside_plannerinputs(client, fake_run, tmp_path, monkeypatch, bad_path):
+    inputs = tmp_path / "Plannerinputs"
+    inputs.mkdir()
+    monkeypatch.setattr(svc, "PLANNER_INPUTS_DIR", str(inputs))
+    target = tmp_path / "evil.txt" if bad_path == "outside" else inputs / ".." / "evil.txt"
     jar = tmp_path / "enhsp.jar"
     jar.write_text("x")
 
-    client.post("/plan", json={
+    response = client.post("/plan", json={
         "domainFile": str(target),
         "domainFileContent": "attacker-controlled content",
         "problemFile": str(target),
         "plannerPath": str(jar),
     })
 
-    assert target.read_text() == "attacker-controlled content"
+    assert response.status_code == 400
+    assert response.get_json()["error"]["code"] == "INVALID_FILE_PATH"
+    assert not (tmp_path / "evil.txt").exists()
+    assert fake_run.calls == []
 
 
-def test_service_is_started_on_all_interfaces_with_the_debugger_enabled():
-    """
-    The service runs with host='0.0.0.0' and debug=True: unauthenticated and
-    network-reachable, with the Werkzeug debugger (remote code execution) on.
-    Checked in the source because __main__ only runs when executed directly.
-    """
+def test_service_defaults_to_localhost_with_the_debugger_off():
+    """Checked in the source because __main__ only runs when executed directly."""
     import re
     from pathlib import Path
 
-    source = (Path(svc.__file__)).read_text()
-    match = re.search(r"app\.run\((?P<args>[^)]*)\)", source)
+    source = Path(svc.__file__).read_text()
 
-    assert match, "app.run(...) call not found"
-    assert "host='0.0.0.0'" in match.group("args")
-    assert "debug=True" in match.group("args")
+    assert re.search(r"PLANNER_HOST',\s*'127\.0\.0\.1'", source)
+    assert re.search(r"app\.run\(host=host, port=5000, debug=debug\)", source)
+    assert "debug=True" not in source

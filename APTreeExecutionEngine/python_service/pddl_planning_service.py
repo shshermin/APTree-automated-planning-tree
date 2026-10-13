@@ -30,6 +30,14 @@ DOCKER_CONTAINER_NAME = "planutils"
 # Supported planners
 SUPPORTED_PLANNERS = ["ENHSP", "FF", "LAMA-FIRST"]
 
+PLANNER_INPUTS_DIR = os.path.join(SCRIPT_DIR, "Plannerinputs")
+
+
+def _is_inside_planner_inputs(path):
+    real = os.path.realpath(path)
+    root = os.path.realpath(PLANNER_INPUTS_DIR)
+    return os.path.commonpath([real, root]) == root
+
 @app.route('/health', methods=['GET'])
 def health_check():
     """Health check endpoint"""
@@ -92,6 +100,20 @@ def create_plan():
             domain_file_path = os.path.join(SCRIPT_DIR, domain_file_path)
         if problem_file_path.startswith("Plannerinputs/"):
             problem_file_path = os.path.join(SCRIPT_DIR, problem_file_path)
+
+        # Inline content is only ever written inside Plannerinputs/, otherwise
+        # any client could write arbitrary files as the service user.
+        for label, path, content_key in (("domainFile", domain_file_path, 'domainFileContent'),
+                                         ("problemFile", problem_file_path, 'problemFileContent')):
+            if data.get(content_key) and not _is_inside_planner_inputs(path):
+                return jsonify({
+                    'success': False,
+                    'error': {
+                        'code': 'INVALID_FILE_PATH',
+                        'message': f'{label} must be inside Plannerinputs/ when {content_key} is sent',
+                        'details': path
+                    }
+                }), 400
 
         # If the C# side sent file content inline, save it locally so the
         # planner can read it (needed when the service runs on a remote VM).
@@ -418,4 +440,8 @@ if __name__ == '__main__':
     print(f"Default problem file path: {DEFAULT_PROBLEM_FILE_PATH}")
     print(f"Default problem file available: {os.path.exists(DEFAULT_PROBLEM_FILE_PATH)}")
     
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    # Defaults to localhost (reached via SSH tunnel); the Werkzeug debugger allows
+    # remote code execution, so it is opt-in only.
+    host = os.environ.get('PLANNER_HOST', '127.0.0.1')
+    debug = os.environ.get('PLANNER_DEBUG', '').lower() in ('1', 'true', 'yes')
+    app.run(host=host, port=5000, debug=debug)

@@ -82,30 +82,30 @@ public class BehaviorTreeRunnerPreflightTests : IDisposable
         await Assert.ThrowsAnyAsync<JsonException>(() => runner.Run());
     }
 
-    /// <summary>
-    /// Known issue: valid JSON without "behaviorTrees" passes Validate() and then
-    /// fails with a bare KeyNotFoundException that names neither file nor key.
-    /// </summary>
-    [Fact]
-    public async Task Run_ModelJsonWithoutBehaviorTrees_FailsWithAnUnhelpfulKeyNotFound()
+    [Theory]
+    [InlineData("{ \"foo\": 1 }")]
+    [InlineData("{ \"behaviorTrees\": [] }")]
+    [InlineData("{ \"behaviorTrees\": {} }")]
+    [InlineData("[]")]
+    public async Task Run_ModelJsonWithoutTrees_FailsNamingTheFileAndTheMissingArray(string json)
     {
-        var runner = new BehaviorTreeRunner(Touch("model.json", "{ \"foo\": 1 }"), ConfigWithExistingSupportFiles());
+        var runner = new BehaviorTreeRunner(Touch("model.json", json), ConfigWithExistingSupportFiles());
 
-        var ex = await Assert.ThrowsAsync<KeyNotFoundException>(() => runner.Run());
+        var ex = await Assert.ThrowsAsync<InvalidDataException>(() => runner.Run());
 
-        Assert.DoesNotContain("model.json", ex.Message);
-        Assert.DoesNotContain("behaviorTrees", ex.Message);
+        Assert.Contains("model.json", ex.Message);
+        Assert.Contains("behaviorTrees", ex.Message);
     }
 
     [Fact]
-    public async Task Run_ModelJsonWithEmptyBehaviorTreesArray_FailsWithAnUnhelpfulIndexError()
+    public async Task Run_TreeWithoutNameOrRoot_FailsNamingTheFile()
     {
-        var runner = new BehaviorTreeRunner(Touch("model.json", "{ \"behaviorTrees\": [] }"), ConfigWithExistingSupportFiles());
+        var runner = new BehaviorTreeRunner(Touch("model.json", "{ \"behaviorTrees\": [ { \"name\": \"T\" } ] }"), ConfigWithExistingSupportFiles());
 
-        var ex = await Assert.ThrowsAnyAsync<Exception>(() => runner.Run());
+        var ex = await Assert.ThrowsAsync<InvalidDataException>(() => runner.Run());
 
-        Assert.IsNotType<FileNotFoundException>(ex);
-        Assert.DoesNotContain("behaviorTrees", ex.Message);
+        Assert.Contains("model.json", ex.Message);
+        Assert.Contains("root", ex.Message);
     }
 
     /// <summary>The checked-in model has the structure Run() dereferences.</summary>

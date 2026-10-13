@@ -196,7 +196,9 @@ public abstract class Planner
                 {
                     if (_plannerRegistry == null)
                     {
-                        _plannerRegistry = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
+                        // Fill a local first: publishing the field before it's populated lets
+                        // another thread skip the lock and see an empty registry.
+                        var registry = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
                         var assembly = typeof(Planner).Assembly;
                         foreach (var type in assembly.GetTypes()
                             .Where(t => t.IsSubclassOf(typeof(Planner)) && !t.IsAbstract))
@@ -204,9 +206,10 @@ public abstract class Planner
                             var instance = (Planner)Activator.CreateInstance(type);
                             foreach (var name in instance.PlannerNames)
                             {
-                                _plannerRegistry[name] = type;
+                                registry[name] = type;
                             }
                         }
+                        _plannerRegistry = registry;
                     }
                 }
             }
