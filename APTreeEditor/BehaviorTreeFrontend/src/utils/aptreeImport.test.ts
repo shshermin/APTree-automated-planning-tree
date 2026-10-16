@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   aptreeGraphToCanvasGraph,
   aptreeGraphsToCanvasGraph,
@@ -16,6 +16,10 @@ import {
 } from "../components/sidebar/utils/constants";
 
 // Conversion of the backend's /api/aptree/validate graph into the editor's CanvasGraph.
+
+afterEach(() => {
+  vi.restoreAllMocks();
+});
 
 describe("normalizeAptreeValidateResponse", () => {
   it("reports an error and does not throw for a non-object payload", () => {
@@ -237,7 +241,8 @@ describe("aptreeGraphToCanvasGraph — node kind mapping", () => {
     });
   });
 
-  it("returns no canvas node at all for an unrecognized node kind, instead of a placeholder or a crash", () => {
+  it("skips an unrecognized node kind with a warning", () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
     const graph: AptreeGraph = {
       rootId: null,
       nodes: [{ id: "mystery1", kind: "somethingNew", label: "???" }],
@@ -245,7 +250,26 @@ describe("aptreeGraphToCanvasGraph — node kind mapping", () => {
     };
 
     const result = aptreeGraphToCanvasGraph(graph, []);
+
     expect(result.graph.nodes).toHaveLength(0);
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining("somethingNew"));
+  });
+
+  it("does not warn about structural node kinds that are intentionally not rendered", () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    const graph: AptreeGraph = {
+      rootId: null,
+      nodes: [
+        { id: "g", kind: "nodeGraph", label: "" },
+        { id: "gn", kind: "graphNode", label: "" },
+        { id: "x", kind: "ast", label: "" },
+      ],
+      edges: [],
+    };
+
+    aptreeGraphToCanvasGraph(graph, []);
+
+    expect(warn).not.toHaveBeenCalled();
   });
 
   it("computes hasOutgoing from real outgoing edges but ignores 'member' edges", () => {
@@ -297,14 +321,15 @@ describe("aptreeGraphsToCanvasGraph — multi-graph .bt files", () => {
     expect(result.rawSubtreeGraphs.get("PickAndPlace")?.index).toBe(1);
   });
 
-  it("silently drops a subtree graph that has no name, instead of storing it under a generated key", () => {
-    // Known issue: unnamed subtree graphs are dropped silently.
+  it("skips a subtree graph that has no name with a warning", () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
     const main: AptreeGraph = { rootId: "a", nodes: [flow("a")], edges: [] };
     const unnamedSubtree: AptreeGraph = { rootId: "s1", nodes: [flow("s1")], edges: [] };
 
     const result = aptreeGraphsToCanvasGraph([main, unnamedSubtree], []);
 
     expect(result.rawSubtreeGraphs.size).toBe(0);
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining("no name"));
   });
 
   it("only surfaces discoveredActionTypes/-Instances from the main graph, not from unlaid-out subtrees", () => {

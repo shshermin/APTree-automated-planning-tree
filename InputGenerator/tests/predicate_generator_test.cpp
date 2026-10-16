@@ -196,9 +196,7 @@ TEST(PredicateGeneratorWriteToFile, ReplacesOnlyTheBlockAndKeepsTextAfterIt) {
     EXPECT_GT(text.find("after"), text.find(kEnd));
 }
 
-TEST(PredicateGeneratorWriteToFile, AStartMarkerWithoutAnEndMarkerGrowsAnotherBlockEveryRun) {
-    // Known issue: without the end marker the old block is kept and a new one
-    // appended on every run.
+TEST(PredicateGeneratorWriteToFile, AStartMarkerWithoutAnEndMarkerIsTreatedAsAnOpenBlockAndReplaced) {
     TempDir dir;
     PredicateGenerator gen(dir.write("p.bt", kProperties));
     gen.addGripperEmptyPredicates();
@@ -208,8 +206,9 @@ TEST(PredicateGeneratorWriteToFile, AStartMarkerWithoutAnEndMarkerGrowsAnotherBl
     gen.writeToFile(out);
 
     std::string text = TempDir::read(out);
-    EXPECT_NE(text.find("STALE(x)"), std::string::npos);
-    EXPECT_GE(countOccurrences(text, kStart), 2);
+    EXPECT_EQ(text.find("STALE(x)"), std::string::npos);
+    EXPECT_EQ(countOccurrences(text, kStart), 1);
+    EXPECT_EQ(countOccurrences(text, kEnd), 1);
 }
 
 TEST(PredicateGeneratorWriteToFile, OverwriteReplacesTheWholeFile) {

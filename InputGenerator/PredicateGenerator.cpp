@@ -225,19 +225,22 @@ void PredicateGenerator::writeToFile(const std::string& outputPath) const {
         }
     }
 
-    // Find existing marker positions
+    // Find the first start marker and the first end marker after it. Without an
+    // end marker, everything from the start marker on is treated as the old block,
+    // so a hand-deleted marker doesn't make every run append another block.
     int startIdx = -1, endIdx = -1;
     for (int i = 0; i < (int)existingLines.size(); i++) {
-        if (existingLines[i].find(START_MARKER) != std::string::npos) startIdx = i;
-        if (existingLines[i].find(END_MARKER) != std::string::npos) endIdx = i;
+        if (startIdx < 0 && existingLines[i].find(START_MARKER) != std::string::npos) startIdx = i;
+        else if (startIdx >= 0 && existingLines[i].find(END_MARKER) != std::string::npos) { endIdx = i; break; }
     }
+    if (startIdx >= 0 && endIdx < 0) endIdx = (int)existingLines.size() - 1;
 
     std::ofstream out(outputPath);
     if (!out.is_open()) {
         throw std::runtime_error("Cannot open output file for writing: " + outputPath);
     }
 
-    if (startIdx >= 0 && endIdx > startIdx) {
+    if (startIdx >= 0) {
         // Replace the section between markers
         for (int i = 0; i < startIdx; i++) {
             out << existingLines[i] << "\n";
@@ -258,7 +261,7 @@ void PredicateGenerator::writeToFile(const std::string& outputPath) const {
     out << END_MARKER << "\n";
 
     // If markers existed, write everything after the old end marker
-    if (startIdx >= 0 && endIdx > startIdx) {
+    if (startIdx >= 0) {
         for (int i = endIdx + 1; i < (int)existingLines.size(); i++) {
             out << existingLines[i] << "\n";
         }

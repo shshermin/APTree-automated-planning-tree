@@ -119,8 +119,7 @@ TEST(IsObjectClear, TheWrongUpAxisGivesTheWrongAnswer) {
 
 TEST(IsObjectClear, ObjectsSharingANameAreInvisibleToEachOther) {
     // The scene is matched by name, not identity: a same-named object above the
-    // target is skipped. (OBJ names with spaces are truncated at the first space
-    // by the loader, so "Cube 1" and "Cube 2" both become "Cube" - see obj_loader_test.)
+    // target is skipped, so object names in a scene must be unique.
     auto bottom = makeBox("cube", 0, 0, 0, 10, 10, 10);
     auto top = makeBox("cube", 0, 0, 10, 10, 10, 20);
 

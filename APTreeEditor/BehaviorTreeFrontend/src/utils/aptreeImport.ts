@@ -151,6 +151,9 @@ type CanvasGraph = {
 
 type PortName = "top" | "bottom" | "left" | "right";
 
+// Kinds the backend (APTreeJsonCli.classifyKind) emits that intentionally get no canvas node.
+const NON_RENDERED_NODE_KINDS = new Set(["nodeGraph", "graphNode", "ast"]);
+
 /** A layout-ready graph that can be rendered independently (e.g. in SubtreeViewer). */
 export type SubtreeLayout = {
   nodes: CanvasNode[];
@@ -230,6 +233,8 @@ export function aptreeGraphsToCanvasGraph(
     const subtreeGraph = graphs[i]!;
     if (subtreeGraph.name) {
       rawSubtreeGraphs.set(subtreeGraph.name, { graph: subtreeGraph, index: i });
+    } else {
+      console.warn(`APTree import: subtree graph #${i} has no name and can't be referenced; skipped.`);
     }
   }
 
@@ -508,6 +513,8 @@ export function aptreeGraphToCanvasGraph(
       canvasNodes.push(canvasNode);
       canvasNodeIdByGraphId.set(n.id, canvasNode.id);
       canvasNodeById.set(canvasNode.id, canvasNode);
+    } else if (!NON_RENDERED_NODE_KINDS.has(n.kind)) {
+      console.warn(`APTree import: unknown node kind "${n.kind}" (node ${n.id}) is not rendered.`);
     }
   }
 

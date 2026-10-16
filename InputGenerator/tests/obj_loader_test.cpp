@@ -88,17 +88,15 @@ TEST(LoadMultiObjectOBJ, AnObjectWithNoFacesHasAnEmptyMeshAndAnInvertedBbox) {
     EXPECT_EQ(scene[0].mesh.number_of_vertices(), 0u);
 }
 
-TEST(LoadMultiObjectOBJ, ObjectNamesAreTruncatedAtTheFirstSpace) {
-    // Known issue: object names are truncated at the first space, so "Cube 1"
-    // and "Cube 2" collide - predicates match by name and the PDDL gets duplicates.
+TEST(LoadMultiObjectOBJ, ObjectNamesWithSpacesAreKeptAndJoinedWithUnderscores) {
     TempDir dir;
     auto scene = loadMultiObjectOBJ(dir.write("spaces.obj",
         "o Cube 1\nv 0 0 0\nv 1 0 0\nv 0 1 0\nf 1 2 3\n"
         "o Cube 2\nv 0 0 5\nv 1 0 5\nv 0 1 5\nf 4 5 6\n"));
 
     ASSERT_EQ(scene.size(), 2u);
-    EXPECT_EQ(scene[0].name, "Cube");
-    EXPECT_EQ(scene[1].name, "Cube");
+    EXPECT_EQ(scene[0].name, "Cube_1");
+    EXPECT_EQ(scene[1].name, "Cube_2");
 }
 
 TEST(LoadMultiObjectOBJ, DuplicateObjectNamesAreNotDeduplicated) {

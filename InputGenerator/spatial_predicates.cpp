@@ -58,7 +58,13 @@ std::vector<SpatialObject> loadMultiObjectOBJ(const std::string& filepath) {
             // New object
             objects.push_back(ObjData());
             current = &objects.back();
-            iss >> current->name;
+            // Keep the whole name ("Cube 1"), not just the first token, and join
+            // the words with '_' so the result is still a valid PDDL object name.
+            std::string word;
+            while (iss >> word) {
+                if (!current->name.empty()) current->name += '_';
+                current->name += word;
+            }
         }
         else if (token == "v") {
             double x, y, z;
