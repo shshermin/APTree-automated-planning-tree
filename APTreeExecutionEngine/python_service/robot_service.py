@@ -35,6 +35,7 @@ MOVEIT_BRIDGE_URL = "http://127.0.0.1:5002"
 EXTERNAL_CONTROL_NAILGUN = "external_control_n.urp"
 EXTERNAL_CONTROL_GRIPPER = "external_control_g.urp"
 SUPPORTED_MOVE_TYPES = ['movej', 'movel', 'movep', 'movec', 'planned', 'plannedj', 'plannedl']
+STACK_RELEASE_MOVE_TYPES = ['movej', 'planned', 'plannedj', 'plannedl']
 
 # ── Speed governor for MoveIt/Pilz planned moves ────────────────────────────
 # Pilz interprets these as max_velocity_scaling_factor / max_acceleration_scaling_factor
@@ -989,6 +990,10 @@ def robot_stack_release():
         inline_joints = data.get('joints')
         inline_pose = data.get('pose')
         move_type = (data.get('moveType') or 'movej').lower()
+        # Only these are executed as requested; anything else (e.g. "movel" or a typo)
+        # used to run silently as a straight movej.
+        if move_type not in STACK_RELEASE_MOVE_TYPES:
+            return jsonify({'success': False, 'error': f"Unsupported moveType '{move_type}' for stack_release. Supported: {STACK_RELEASE_MOVE_TYPES}"}), 400
 
         if (not inline_joints or len(inline_joints) < 6) and (not inline_pose or len(inline_pose) < 6):
             return jsonify({'success': False, 'error': 'joints [j1..j6] or pose [x,y,z,rx,ry,rz] required'}), 400

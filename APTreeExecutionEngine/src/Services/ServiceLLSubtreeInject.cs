@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -26,8 +27,10 @@ namespace BehaviorTreeMainProject
     /// </summary>
     public class ServiceLLSubtreeInject : Service
     {
-        private static readonly Dictionary<string, LLSubtreeTemplate> _templates = new Dictionary<string, LLSubtreeTemplate>(StringComparer.OrdinalIgnoreCase);
-        private static bool _templatesInitialized = false;
+        // ML actions (and so this service) are created from planner background tasks too.
+        private static readonly ConcurrentDictionary<string, LLSubtreeTemplate> _templates = new(StringComparer.OrdinalIgnoreCase);
+        private static volatile bool _templatesInitialized = false;
+        private static readonly object _templatesInitLock = new object();
 
         // The ML-level action this service is attached to
         private PActionNode _mlAction;
@@ -79,6 +82,12 @@ namespace BehaviorTreeMainProject
             public Dictionary<string, string> Parameters { get; set; } = new Dictionary<string, string>();
             public MoveType? MoveType { get; set; }
 
+            /// <summary>
+            /// Set when the template's moveType isn't recognized. Injection then fails
+            /// instead of silently falling back to an unplanned movej.
+            /// </summary>
+            public string InvalidMoveType { get; set; }
+
             public LLStep(string actionName, MoveType? moveType = null)
             {
                 ActionName = actionName;
@@ -110,6 +119,7 @@ namespace BehaviorTreeMainProject
         /// </summary>
         public static void RegisterTemplate(string mlActionType, LLSubtreeTemplate template)
         {
+            InitializeDefaultTemplates();
             _templates[mlActionType] = template;
         }
 
@@ -129,78 +139,99 @@ namespace BehaviorTreeMainProject
         private static void InitializeDefaultTemplates()
         {
             if (_templatesInitialized) return;
-            _templatesInitialized = true;
-
-            // Convention: look for DemonstratorLLSubtrees.json next to the executable,
-            // then fall back to the ModelLoader source path (dev mode).
-            string jsonPath = FindLLSubtreeJson();
-            if (jsonPath == null)
+            lock (_templatesInitLock)
             {
-                LogMessageStatic("⚠️ ServiceLLSubtreeInject: No LLSubtrees.json found — no LL templates loaded");
-                return;
-            }
+                if (_templatesInitialized) return;
 
-            try
-            {
-                string json = File.ReadAllText(jsonPath);
-                var doc = JsonDocument.Parse(json);
-                var root = doc.RootElement;
-
-                if (!root.TryGetProperty("llSubtrees", out var subtreesArr))
+                // Convention: look for DemonstratorLLSubtrees.json next to the executable,
+                // then fall back to the ModelLoader source path (dev mode).
+                string jsonPath = FindLLSubtreeJson();
+                if (jsonPath == null)
                 {
-                    LogMessageStatic("⚠️ ServiceLLSubtreeInject: JSON missing 'llSubtrees' array");
-                    return;
+                    LogMessageStatic("⚠️ ServiceLLSubtreeInject: No LLSubtrees.json found — no LL templates loaded");
+                }
+                else
+                {
+                    try
+                    {
+                        int count = LoadTemplatesFromJson(File.ReadAllText(jsonPath));
+                        LogMessageStatic($"✅ ServiceLLSubtreeInject: Loaded {count} LL subtree templates from {jsonPath}");
+                    }
+                    catch (Exception ex)
+                    {
+                        LogMessageStatic($"❌ ServiceLLSubtreeInject: Failed to load LLSubtrees.json: {ex.Message}");
+                    }
                 }
 
-                int count = 0;
-                foreach (var subtreeEl in subtreesArr.EnumerateArray())
+                // Set last, so no other thread skips the lock before templates are registered.
+                _templatesInitialized = true;
+            }
+        }
+
+        /// <summary>
+        /// Registers every template in an LL subtrees JSON document; returns how many were loaded.
+        /// </summary>
+        internal static int LoadTemplatesFromJson(string json)
+        {
+            using var doc = JsonDocument.Parse(json);
+            var root = doc.RootElement;
+
+            if (!root.TryGetProperty("llSubtrees", out var subtreesArr))
+            {
+                LogMessageStatic("⚠️ ServiceLLSubtreeInject: JSON missing 'llSubtrees' array");
+                return 0;
+            }
+
+            int count = 0;
+            foreach (var subtreeEl in subtreesArr.EnumerateArray())
+            {
+                string mlAction = subtreeEl.GetProperty("mlAction").GetString();
+                var template = new LLSubtreeTemplate(mlAction);
+
+                foreach (var stepEl in subtreeEl.GetProperty("steps").EnumerateArray())
                 {
-                    string mlAction = subtreeEl.GetProperty("mlAction").GetString();
-                    var template = new LLSubtreeTemplate(mlAction);
+                    string actionType = stepEl.GetProperty("actionType").GetString();
 
-                    foreach (var stepEl in subtreeEl.GetProperty("steps").EnumerateArray())
+                    // Parse MoveType from contParams if present
+                    MoveType? moveType = null;
+                    string invalidMoveType = null;
+                    if (stepEl.TryGetProperty("contParams", out var contParams) &&
+                        contParams.TryGetProperty("moveType", out var moveTypeEl))
                     {
-                        string actionType = stepEl.GetProperty("actionType").GetString();
-
-                        // Parse MoveType from contParams if present
-                        MoveType? moveType = null;
-                        if (stepEl.TryGetProperty("contParams", out var contParams) &&
-                            contParams.TryGetProperty("moveType", out var moveTypeEl))
+                        string raw = moveTypeEl.GetString();
+                        moveType = ParseMoveType(raw);
+                        if (moveType == null && !string.IsNullOrWhiteSpace(raw))
                         {
-                            moveType = ParseMoveType(moveTypeEl.GetString());
+                            invalidMoveType = raw;
+                            LogMessageStatic($"❌ ServiceLLSubtreeInject: Unknown moveType '{raw}' in LL template '{mlAction}' ({actionType}) - this ML action will fail instead of executing");
                         }
-
-                        var step = new LLStep(actionType, moveType);
-
-                        // Optional per-step instanceName (used to disambiguate runtime
-                        // LL node names and to let fault triggers target specific steps).
-                        if (stepEl.TryGetProperty("instanceName", out var instNameEl))
-                        {
-                            step.InstanceName = instNameEl.GetString();
-                        }
-
-                        // Load paramBindings → Parameters dict (already in {placeholder} format)
-                        if (stepEl.TryGetProperty("paramBindings", out var bindings))
-                        {
-                            foreach (var binding in bindings.EnumerateObject())
-                            {
-                                step.Parameters[binding.Name] = binding.Value.GetString();
-                            }
-                        }
-
-                        template.Steps.Add(step);
                     }
 
-                    _templates[mlAction] = template;
-                    count++;
+                    var step = new LLStep(actionType, moveType) { InvalidMoveType = invalidMoveType };
+
+                    // Optional per-step instanceName (used to disambiguate runtime
+                    // LL node names and to let fault triggers target specific steps).
+                    if (stepEl.TryGetProperty("instanceName", out var instNameEl))
+                    {
+                        step.InstanceName = instNameEl.GetString();
+                    }
+
+                    // Load paramBindings → Parameters dict (already in {placeholder} format)
+                    if (stepEl.TryGetProperty("paramBindings", out var bindings))
+                    {
+                        foreach (var binding in bindings.EnumerateObject())
+                        {
+                            step.Parameters[binding.Name] = binding.Value.GetString();
+                        }
+                    }
+
+                    template.Steps.Add(step);
                 }
 
-                LogMessageStatic($"✅ ServiceLLSubtreeInject: Loaded {count} LL subtree templates from {jsonPath}");
+                _templates[mlAction] = template;
+                count++;
             }
-            catch (Exception ex)
-            {
-                LogMessageStatic($"❌ ServiceLLSubtreeInject: Failed to load LLSubtrees.json: {ex.Message}");
-            }
+            return count;
         }
 
         /// <summary>
@@ -319,6 +350,13 @@ namespace BehaviorTreeMainProject
         /// </summary>
         private void InjectLLSubtree(PActionNode mlAction, LLSubtreeTemplate template)
         {
+            // Validate before building anything: an unrecognized moveType must never
+            // degrade to the default (unplanned) movej.
+            var invalid = template.Steps.FirstOrDefault(st => st.InvalidMoveType != null);
+            if (invalid != null)
+                throw new InvalidOperationException(
+                    $"LL template for '{template.MLActionType}' has an unknown moveType '{invalid.InvalidMoveType}' on step {invalid.ActionName}");
+
             // Collect parameter values from the ML action via reflection
             var mlParamStrings = ExtractMLActionParameters(mlAction);
             var mlParamObjects = ExtractMLActionParameterObjects(mlAction);

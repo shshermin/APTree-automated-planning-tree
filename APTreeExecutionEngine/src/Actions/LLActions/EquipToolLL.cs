@@ -35,6 +35,14 @@ public class EquipToolLL : ExeAction, ILLInputBindable
 
     protected override RobotCommandRequest BuildCommandRequest()
     {
+        // Only tools with a known equip program; anything else would get the gripper's
+        // payload and TCP set while a different (possibly much heavier) tool is mounted.
+        if (EquippedTool is not (Gripper or NailGripper or StaplerGun))
+        {
+            LoggingService.LogError($"❌ EquipToolLL: No equip program for tool '{EquippedTool?.GetType().Name ?? "none"}' on '{InstanceName}' - not sending a command");
+            return null;
+        }
+
         bool isNailTool = EquippedTool is NailGripper or StaplerGun;
         var programName = isNailTool ? "equipdemonailgun.urp" : "equipdemo.urp";
         LoggingService.LogInfo($"🔧 EquipToolLL: Resolved program '{programName}' for '{InstanceName}'");

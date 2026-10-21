@@ -12,9 +12,11 @@ using RobotCommand;
 /// Concrete subclasses (MoveToLL, CloseGripperLL, etc.) supply their specific command request.
 ///
 /// Execution flow per tick:
-///   OnEnter → operator confirmation MessageBox (blocking)
-///   OnTick_NodeLogic → resolve position from blackboard, send REST command to robot
-///   OnExit → operator verification MessageBox (blocking)
+///   OnEnter → build the command request (subclasses return null if inputs are missing)
+///   OnTick_NodeLogic → send the REST command to the robot, once
+///   OnExit → log only
+/// Note: there is no operator confirmation before motion; the MessageBox
+/// import below is currently unused.
 /// </summary>
 public abstract class ExeAction : PActionNode
 {

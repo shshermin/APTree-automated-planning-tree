@@ -35,6 +35,12 @@ public class DeequipToolLL : ExeAction, ILLInputBindable
 
     protected override RobotCommandRequest BuildCommandRequest()
     {
+        if (EquippedTool is not (Gripper or NailGripper or StaplerGun))
+        {
+            LoggingService.LogError($"❌ DeequipToolLL: No deequip program for tool '{EquippedTool?.GetType().Name ?? "none"}' on '{InstanceName}' - not sending a command");
+            return null;
+        }
+
         bool isNailTool = EquippedTool is NailGripper or StaplerGun;
         var programName = isNailTool ? "deequipnaildemo.urp" : "deequipdemo.urp";
         LoggingService.LogInfo($"🔧 DeequipToolLL: Resolved program '{programName}' for '{InstanceName}'");

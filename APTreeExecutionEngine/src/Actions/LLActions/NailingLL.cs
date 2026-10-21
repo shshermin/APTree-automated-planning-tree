@@ -38,6 +38,8 @@ public class NailingLL : ExeAction, ILLInputBindable
     protected override RobotCommandRequest BuildCommandRequest()
     {
         double[] pose = ResolveNailPose();
+        if (pose == null)
+            return null;
         LoggingService.LogInfo($"🔨 NailingLL: Nail pose=[{string.Join(", ", pose)}] for '{InstanceName}'");
 
         return new RobotCommandRequest
@@ -78,8 +80,9 @@ public class NailingLL : ExeAction, ILLInputBindable
             };
         }
 
-        LoggingService.LogWarning($"⚠️ NailingLL: Could not resolve nail position for '{InstanceName}', using zero pose");
-        return new[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
+        // Never fall back to a default pose: [0,0,0,...] is the robot base origin.
+        LoggingService.LogError($"❌ NailingLL: Could not resolve nail position for '{InstanceName}' - not sending a command");
+        return null;
     }
 
     private NailLocation ResolveNailLocationFromGoalState()

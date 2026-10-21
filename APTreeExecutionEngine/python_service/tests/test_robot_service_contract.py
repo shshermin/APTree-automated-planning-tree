@@ -164,3 +164,14 @@ def test_gripper_falls_back_to_the_default_robot_ip_for_null_and_empty(client, r
     client.post("/gripper", json={"commandType": "open_gripper", "robotIp": ""})
 
     assert [args[0] for args, _ in calls] == [rs.DEFAULT_ROBOT_IP, rs.DEFAULT_ROBOT_IP]
+
+
+@pytest.mark.parametrize("move_type", ["movel", "planed_l", "linear"])
+def test_stack_release_rejects_move_types_it_would_not_execute_as_requested(client, move_type):
+    response = client.post("/stack_release", json=csharp_style_request(
+        endpoint="/stack_release", commandType="stack_release", moveType=move_type,
+        pose=[0.4, 0.5, 0.2, 0.0, 3.14, 0.0]))
+
+    assert response.status_code == 400
+    assert move_type in response.get_json()["error"]
+

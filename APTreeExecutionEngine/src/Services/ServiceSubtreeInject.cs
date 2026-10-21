@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -14,9 +15,12 @@ namespace BehaviorTreeMainProject
   
     public class ServiceSubtreeInject : Service
     {
-        private static readonly Dictionary<string, SubtreeConfiguration> subtreeConfigurations = new Dictionary<string, SubtreeConfiguration>();
-        private static readonly Dictionary<string, DynamicFlowNode> cachedSubtrees = new Dictionary<string, DynamicFlowNode>();
-        private static bool _defaultConfigsInitialized = false;
+        // Instances are created per HL/ML action, including from planner background
+        // tasks, so the shared registries must be thread-safe.
+        private static readonly ConcurrentDictionary<string, SubtreeConfiguration> subtreeConfigurations = new();
+        private static readonly ConcurrentDictionary<string, DynamicFlowNode> cachedSubtrees = new();
+        private static volatile bool _defaultConfigsInitialized = false;
+        private static readonly object _defaultConfigsLock = new object();
 
         /// <summary>
         /// The config name used by ProcessSubtreeInjection for ML-level subtrees.
@@ -250,43 +254,49 @@ namespace BehaviorTreeMainProject
         private void InitializeDefaultConfigurations()
         {
             if (_defaultConfigsInitialized) return;
-            _defaultConfigsInitialized = true;
-
-            var assembly = typeof(Planner).Assembly;
-            foreach (var type in assembly.GetTypes()
-                .Where(t => t.IsSubclassOf(typeof(Planner)) && !t.IsAbstract))
+            lock (_defaultConfigsLock)
             {
-                var planner = (Planner)Activator.CreateInstance(type);
-                var configName = $"{planner.DefaultPlannerName}_Default";
+                if (_defaultConfigsInitialized) return;
 
-                var config = new SubtreeConfiguration(configName, planner.DefaultPlannerName, SuccessCriteria.ALL_FINISHED);
-                config.PlannerParameters["domainFile"] = planner.DefaultDomainFile;
-                config.PlannerParameters["problemFile"] = planner.DefaultProblemFile;
-                config.PlannerParameters["plannerPath"] = planner.DefaultPlannerPath;
-                config.PlannerParameters["timeoutSeconds"] = planner.DefaultTimeoutSeconds;
-                config.PlannerParameters["maxPlanLength"] = planner.DefaultMaxPlanLength;
-                config.PlannerParameters["executionMode"] = ServicePDDLPlanning.ParallelExecutionMode.Sequential;
-                if (planner.HasEnhspConfig)
-                    config.PlannerParameters["enhspConfig"] = planner.DefaultEnhspConfig;
+                var assembly = typeof(Planner).Assembly;
+                foreach (var type in assembly.GetTypes()
+                    .Where(t => t.IsSubclassOf(typeof(Planner)) && !t.IsAbstract))
+                {
+                    var planner = (Planner)Activator.CreateInstance(type);
+                    var configName = $"{planner.DefaultPlannerName}_Default";
 
-                subtreeConfigurations[configName] = config;
-                LogMessage($"✅ ServiceSubtreeInject: Auto-registered config '{configName}' from {type.Name}");
+                    var config = new SubtreeConfiguration(configName, planner.DefaultPlannerName, SuccessCriteria.ALL_FINISHED);
+                    config.PlannerParameters["domainFile"] = planner.DefaultDomainFile;
+                    config.PlannerParameters["problemFile"] = planner.DefaultProblemFile;
+                    config.PlannerParameters["plannerPath"] = planner.DefaultPlannerPath;
+                    config.PlannerParameters["timeoutSeconds"] = planner.DefaultTimeoutSeconds;
+                    config.PlannerParameters["maxPlanLength"] = planner.DefaultMaxPlanLength;
+                    config.PlannerParameters["executionMode"] = ServicePDDLPlanning.ParallelExecutionMode.Sequential;
+                    if (planner.HasEnhspConfig)
+                        config.PlannerParameters["enhspConfig"] = planner.DefaultEnhspConfig;
+
+                    subtreeConfigurations[configName] = config;
+                    LogMessage($"✅ ServiceSubtreeInject: Auto-registered config '{configName}' from {type.Name}");
+                }
+
+                // Register a dedicated ML-level ENHSP config that uses DomainML.pddl and opt-hmax.
+                // This is separate from ENHSP_Default (which uses DomainHL.pddl for HL cassette planning).
+                if (subtreeConfigurations.TryGetValue("ENHSP_Default", out var enhspDefault))
+                {
+                    var mlConfig = new SubtreeConfiguration("ENHSP_ML_Default", "Enhsp", SuccessCriteria.ALL_FINISHED);
+                    foreach (var kv in enhspDefault.PlannerParameters)
+                        mlConfig.PlannerParameters[kv.Key] = kv.Value;
+                    mlConfig.PlannerParameters["domainFile"] = "Plannerinputs/static/DomainML.pddl";
+                    mlConfig.PlannerParameters["enhspConfig"] = "sat-hmrph";
+                    subtreeConfigurations["ENHSP_ML_Default"] = mlConfig;
+                    LogMessage("✅ ServiceSubtreeInject: Registered ENHSP_ML_Default (DomainML.pddl, sat-hmrph)");
+                }
+
+                LogMessage("✅ ServiceSubtreeInject: Initialized default configurations");
+                // Only mark as done once every default is registered, so other threads
+                // never skip the lock and look up a config that isn't there yet.
+                _defaultConfigsInitialized = true;
             }
-
-            // Register a dedicated ML-level ENHSP config that uses DomainML.pddl and opt-hmax.
-            // This is separate from ENHSP_Default (which uses DomainHL.pddl for HL cassette planning).
-            if (subtreeConfigurations.TryGetValue("ENHSP_Default", out var enhspDefault))
-            {
-                var mlConfig = new SubtreeConfiguration("ENHSP_ML_Default", "Enhsp", SuccessCriteria.ALL_FINISHED);
-                foreach (var kv in enhspDefault.PlannerParameters)
-                    mlConfig.PlannerParameters[kv.Key] = kv.Value;
-                mlConfig.PlannerParameters["domainFile"] = "Plannerinputs/static/DomainML.pddl";
-                mlConfig.PlannerParameters["enhspConfig"] = "sat-hmrph";
-                subtreeConfigurations["ENHSP_ML_Default"] = mlConfig;
-                LogMessage("✅ ServiceSubtreeInject: Registered ENHSP_ML_Default (DomainML.pddl, sat-hmrph)");
-            }
-
-            LogMessage("✅ ServiceSubtreeInject: Initialized default configurations");
         }
 
         /// <summary>
