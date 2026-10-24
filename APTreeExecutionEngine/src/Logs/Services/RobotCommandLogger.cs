@@ -60,8 +60,8 @@ namespace BehaviorTreeMainProject.Log.Services
             double[]? pose,
             double[]? joints,
             string? endEffectorType,
-            double velocity,
-            double acceleration,
+            double? velocity,
+            double? acceleration,
             string? parentMLAction = null)
         {
             return Instance.LogCommandStartInternal(
@@ -124,7 +124,7 @@ namespace BehaviorTreeMainProject.Log.Services
         private int LogCommandStartInternal(
             string llActionType, string instanceName, string commandType,
             string targetPosition, double[]? pose, double[]? joints,
-            string? endEffectorType, double velocity, double acceleration,
+            string? endEffectorType, double? velocity, double? acceleration,
             string? parentMLAction)
         {
             lock (lockObject)
@@ -153,7 +153,7 @@ namespace BehaviorTreeMainProject.Log.Services
                 WriteLog($"[CMD #{commandCounter}] START | {llActionType} '{instanceName}' | {commandType} → {targetPosition}");
                 WriteLog($"  Pose: {poseStr}");
                 WriteLog($"  Joints: {jointsStr}");
-                WriteLog($"  EndEffector: {endEffectorType ?? "default"} | Vel: {velocity:F2} | Accel: {acceleration:F2}");
+                WriteLog($"  EndEffector: {endEffectorType ?? "default"} | Vel: {velocity?.ToString("F2") ?? "service default"} | Accel: {acceleration?.ToString("F2") ?? "service default"}");
                 if (!string.IsNullOrEmpty(parentMLAction))
                     WriteLog($"  Parent ML Action: {parentMLAction}");
 
@@ -425,8 +425,8 @@ namespace BehaviorTreeMainProject.Log.Services
             public double[]? Pose { get; set; }
             public double[]? Joints { get; set; }
             public string EndEffectorType { get; set; } = "";
-            public double Velocity { get; set; }
-            public double Acceleration { get; set; }
+            public double? Velocity { get; set; }
+            public double? Acceleration { get; set; }
             public string ParentMLAction { get; set; } = "";
             public bool Success { get; set; }
             public double ExecutionTimeSeconds { get; set; }

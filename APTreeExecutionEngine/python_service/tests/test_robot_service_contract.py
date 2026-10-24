@@ -175,3 +175,49 @@ def test_stack_release_rejects_move_types_it_would_not_execute_as_requested(clie
     assert response.status_code == 400
     assert move_type in response.get_json()["error"]
 
+
+
+@pytest.fixture
+def lift_calls(monkeypatch):
+    """/lift imports lift_z from ur10_control.ur10_commands at call time; record it there."""
+    import ur10_control.ur10_commands as ur10_control_commands
+    calls = []
+    def _fake(robot_ip, height=0.1, velocity=None, acceleration=None):
+        calls.append(height)
+        return "lifted"
+    monkeypatch.setattr(ur10_control_commands, "lift_z", _fake)
+    return calls
+
+
+@pytest.mark.parametrize("height, expected", [
+    (0, 0),            # used to become 0.1 through `or 0.1`
+    (0.0, 0.0),
+    (-0.002, -0.002),  # PushDownLL presses 2 mm down
+    (0.05, 0.05),
+    (None, 0.1),       # LiftLL sends height: null
+])
+def test_lift_uses_the_requested_height_and_defaults_only_when_missing(client, lift_calls, height, expected):
+    response = client.post("/lift", json=csharp_style_request(endpoint="/lift", commandType="lift", height=height))
+
+    assert response.status_code == 200
+    assert lift_calls == [expected]
+
+
+def test_lift_without_a_height_field_defaults_to_10_cm(client, lift_calls):
+    client.post("/lift", json={"commandType": "lift"})
+
+    assert lift_calls == [0.1]
+
+
+def test_movel_without_a_speed_uses_the_service_default(client, recorder):
+    # The engine now leaves velocity/acceleration out unless a template sets them.
+    calls = recorder("move_to_pose_l", return_value="moved")
+    body = csharp_style_request(commandType="movel", pose=[0.4, 0.5, 0.2, 0.0, 3.14, 0.0])
+    del body["velocity"], body["acceleration"]
+
+    response = client.post("/move", json=body)
+
+    assert response.status_code == 200
+    (_, kwargs), = calls
+    assert kwargs["velocity"] == 0.5
+    assert kwargs["acceleration"] == 0.8

@@ -16,8 +16,8 @@ using RobotCommand;
 public class StackReleaseLL : ExeAction, ILLInputBindable
 {
     public MoveType MoveType { get; }
-    public double Velocity { get; }
-    public double Acceleration { get; }
+    public double? Velocity { get; }
+    public double? Acceleration { get; }
 
     // Resolved from ML action inputs by DecoratorLLInputResolver
     public RobotPosition TargetPosition { get; set; }
@@ -27,8 +27,8 @@ public class StackReleaseLL : ExeAction, ILLInputBindable
         string instanceName,
         Blackboard<FastName> blackboard,
         MoveType moveType = MoveType.MoveJ,
-        double velocity = 1.0,
-        double acceleration = 1.0,
+        double? velocity = null,
+        double? acceleration = null,
         string flaskBaseUrl = null,
         string robotIp = null,
         IRobotCommandCommunicator communicator = null

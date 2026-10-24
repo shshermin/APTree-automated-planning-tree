@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace RobotCommand
 {
     public class RobotCommandRequest
@@ -7,8 +9,14 @@ namespace RobotCommand
         public string InitialPosition { get; set; }
         public string FinalPosition { get; set; }
         public string RobotIp { get; set; }
-        public double Velocity { get; set; } = 0.5;
-        public double Acceleration { get; set; } = 1.0;
+
+        /// <summary>Null leaves the field out of the request, so robot_service uses its per-move-type default.</summary>
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public double? Velocity { get; set; }
+
+        /// <summary>Null leaves the field out of the request, so robot_service uses its per-move-type default.</summary>
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public double? Acceleration { get; set; }
 
         /// <summary>Joint angles array — populated by ExeAction.ResolveInputs() from the blackboard.</summary>
         public double[] Joints { get; set; }

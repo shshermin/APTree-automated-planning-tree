@@ -14,8 +14,8 @@ public class MoveToLL : ExeAction, ILLInputBindable
 {
     public string InitialPosition { get; }
     public string FinalPosition { get; }
-    public double Velocity { get; }
-    public double Acceleration { get; }
+    public double? Velocity { get; }
+    public double? Acceleration { get; }
     public MoveType MoveType { get; }
 
     // Typed properties resolved by DecoratorLLInputResolver
@@ -30,8 +30,8 @@ public class MoveToLL : ExeAction, ILLInputBindable
         MoveType moveType = MoveType.MoveJ,
         string flaskBaseUrl = null,
         string robotIp = null,
-        double velocity = 1.0,
-        double acceleration = 1.0,
+        double? velocity = null,
+        double? acceleration = null,
         IRobotCommandCommunicator communicator = null
     ) : base("MoveToLL", instanceName, blackboard, flaskBaseUrl, robotIp, communicator)
     {

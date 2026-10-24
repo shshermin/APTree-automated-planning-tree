@@ -196,6 +196,67 @@ public class ExeActionCommandTests
         Assert.Single(comm.Requests);
     }
 
+    private static string SerializeLikeTheRestCommunicator(RobotCommandRequest request) =>
+        System.Text.Json.JsonSerializer.Serialize(request, new System.Text.Json.JsonSerializerOptions
+        {
+            PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase
+        });
+
+    /// <summary>
+    /// Regression: a move without an explicit speed used to send velocity 1.0, which
+    /// robot_service runs unchanged for direct moves (1 m/s for a movel instead of its
+    /// own default). Now the fields are left out and the service default applies.
+    /// </summary>
+    [Fact]
+    public void AMoveWithoutASpeed_LeavesVelocityAndAccelerationOutOfTheRequest()
+    {
+        var (bb, tree) = NewTree();
+        var comm = new FakeRobotCommunicator();
+        var move = new MoveToLL("move", "", "target", bb, MoveType.MoveL, communicator: comm);
+        move.SetOwiningTree(tree);
+        move.BindInput(new InitialLocation { Position = new Coordinate(1, 2, 3) });
+
+        Assert.Equal(BTNodeResult.Success, move.Tick(0.1f));
+
+        var request = Assert.Single(comm.Requests);
+        Assert.Null(request.Velocity);
+        Assert.Null(request.Acceleration);
+        string json = SerializeLikeTheRestCommunicator(request);
+        Assert.DoesNotContain("\"velocity\"", json);
+        Assert.DoesNotContain("\"acceleration\"", json);
+    }
+
+    [Fact]
+    public void AnExplicitSpeed_IsStillSerialized()
+    {
+        var (bb, tree) = NewTree();
+        var comm = new FakeRobotCommunicator();
+        var move = NewMove(tree, bb, comm);
+        move.BindInput(new InitialLocation { Position = new Coordinate(1, 2, 3) });
+
+        move.Tick(0.1f);
+
+        string json = SerializeLikeTheRestCommunicator(Assert.Single(comm.Requests));
+        Assert.Contains("\"velocity\":0.2", json);
+        Assert.Contains("\"acceleration\":0.3", json);
+    }
+
+    [Fact]
+    public void AStackReleaseWithoutASpeed_LeavesVelocityOutOfTheRequest()
+    {
+        var (bb, tree) = NewTree();
+        var comm = new FakeRobotCommunicator();
+        var release = new StackReleaseLL("release", bb, MoveType.PlannedJ, communicator: comm);
+        release.SetOwiningTree(tree);
+        release.BindInput(new InitialLocation { Position = new Coordinate(1, 2, 3) });
+
+        Assert.Equal(BTNodeResult.Success, release.Tick(0.1f));
+
+        var request = Assert.Single(comm.Requests);
+        Assert.Null(request.Velocity);
+        Assert.Null(request.Acceleration);
+    }
+
     [Fact]
     public void AFailedRobotCommand_FailsTheNode()
     {

@@ -273,7 +273,10 @@ def robot_lift():
         print(f"Received lift request: {json.dumps(data, indent=2)}")
 
         robot_ip = data.get('robotIp') or DEFAULT_ROBOT_IP
-        height = data.get('height') or 0.1
+        # `or 0.1` used to turn an explicit 0 into a 10 cm lift.
+        height = data.get('height')
+        if height is None:
+            height = 0.1
 
         from ur10_control.ur10_commands import lift_z
         start_time = time.time()

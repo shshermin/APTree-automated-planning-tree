@@ -432,9 +432,9 @@ namespace BehaviorTreeMainProject
                 case "MoveToLL":
                     var target = resolvedParams.GetValueOrDefault("target", "unknown");
                     var moveType = step.MoveType ?? MoveType.MoveJ;
-                    double vel = step.Parameters.TryGetValue("velocity", out var vStr) && double.TryParse(vStr, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var vParsed) ? vParsed : 1.0;
-                    double acc = step.Parameters.TryGetValue("acceleration", out var aStr) && double.TryParse(aStr, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var aParsed) ? aParsed : 1.0;
-                    exeNode = new MoveToLL(stepName, "", target, blackboard, moveType, velocity: vel, acceleration: acc, communicator: communicator);
+                    exeNode = new MoveToLL(stepName, "", target, blackboard, moveType,
+                        velocity: GetOptionalDouble(step, "velocity"), acceleration: GetOptionalDouble(step, "acceleration"),
+                        communicator: communicator);
                     break;
 
                 case "CloseGripperLL":
@@ -451,9 +451,9 @@ namespace BehaviorTreeMainProject
 
                 case "StackReleaseLL":
                     var srMoveType = step.MoveType ?? MoveType.MoveJ;
-                    double srVel = step.Parameters.TryGetValue("velocity", out var srVStr) && double.TryParse(srVStr, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var srVParsed) ? srVParsed : 1.0;
-                    double srAcc = step.Parameters.TryGetValue("acceleration", out var srAStr) && double.TryParse(srAStr, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var srAParsed) ? srAParsed : 1.0;
-                    exeNode = new StackReleaseLL(stepName, blackboard, srMoveType, srVel, srAcc, communicator: communicator);
+                    exeNode = new StackReleaseLL(stepName, blackboard, srMoveType,
+                        GetOptionalDouble(step, "velocity"), GetOptionalDouble(step, "acceleration"),
+                        communicator: communicator);
                     break;
 
                 case "EquipToolLL":
@@ -490,6 +490,18 @@ namespace BehaviorTreeMainProject
             // Attach the decorator that resolves ML inputs → typed properties before first tick
             exeNode.AddDecorator(new DecoratorLLInputResolver(exeNode, resolvedObjects));
             return exeNode;
+        }
+
+        /// <summary>
+        /// Reads a numeric template parameter. Returns null when it is missing, so the
+        /// request leaves it out and robot_service applies its own default for the move
+        /// type (it used to be 1.0, i.e. 1 m/s for a movel).
+        /// </summary>
+        private static double? GetOptionalDouble(LLStep step, string name)
+        {
+            return step.Parameters.TryGetValue(name, out var str)
+                && double.TryParse(str, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var value)
+                ? value : null;
         }
 
         /// <summary>
