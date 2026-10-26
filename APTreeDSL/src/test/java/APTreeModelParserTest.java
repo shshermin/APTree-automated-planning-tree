@@ -28,8 +28,6 @@ class APTreeModelParserTest {
             // Base-grammar-only fixture (Sequence/Parallel, no FlowNode/NodeGraph);
             // covered separately by BehaviorTreeParserTest against the base grammar.
             "BehaviorTree.bt",
-            // Stray duplicate file (space + "copy" in the name) — not an intentional fixture.
-            "FullDemonstratorFinal copy.bt",
             // KNOWN BROKEN: CRFTypesCon Action productions define their own optional
             // `{ (Decorator|Service)* }` block, which shadows GraphNode's relation
             // block, so `{ --[Meets]--> X; }` after an Action never parses

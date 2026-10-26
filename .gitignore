@@ -1,1 +1,14 @@
 .claude/
+
+# Build output
+InputGenerator/build/
+cmake-build-*/
+*.exe
+*.dll
+*.pdb
+
+# Backups and editor leftovers
+*.bak
+*.objbak
+*.orig
+*~

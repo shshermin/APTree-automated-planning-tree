@@ -7,12 +7,11 @@ This image runs:
 ## Build
 
 ```bash
-cd /home/ubuntu/APTree-automated-planning-tree
+# from the repository root
 docker build -t aptree:latest .
 ```
 
 The MontiCore tool jar for `/api/aptree/validate` is built inside the image; no local Gradle step is needed.
-```
 
 ## Run
 

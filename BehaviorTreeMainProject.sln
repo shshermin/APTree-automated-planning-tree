@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BehaviorTreeMainProject", "BehaviorTreeMainProject\BehaviorTreeMainProject.csproj", "{B640534F-8E30-27E1-A625-F31BA06DFBFF}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "APTreeExecutionEngine", "APTreeExecutionEngine", "{5AAC6934-A3B6-0989-73ED-ABF8AEB365FE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{EF8A22CC-EF8D-6DD8-8968-2F6D2B74E9B6}"
@@ -23,14 +21,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{B640534F-8E30-27E1-A625-F31BA06DFBFF}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{B640534F-8E30-27E1-A625-F31BA06DFBFF}.Debug|x64.Build.0 = Debug|Any CPU
-		{B640534F-8E30-27E1-A625-F31BA06DFBFF}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{B640534F-8E30-27E1-A625-F31BA06DFBFF}.Debug|x86.Build.0 = Debug|Any CPU
-		{B640534F-8E30-27E1-A625-F31BA06DFBFF}.Release|x64.ActiveCfg = Release|Any CPU
-		{B640534F-8E30-27E1-A625-F31BA06DFBFF}.Release|x64.Build.0 = Release|Any CPU
-		{B640534F-8E30-27E1-A625-F31BA06DFBFF}.Release|x86.ActiveCfg = Release|Any CPU
-		{B640534F-8E30-27E1-A625-F31BA06DFBFF}.Release|x86.Build.0 = Release|Any CPU
 		{4EDF7A37-FE15-4C9D-92DF-47F9C42E26B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4EDF7A37-FE15-4C9D-92DF-47F9C42E26B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4EDF7A37-FE15-4C9D-92DF-47F9C42E26B9}.Debug|x64.ActiveCfg = Debug|Any CPU
