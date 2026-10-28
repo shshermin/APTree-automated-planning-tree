@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import EditModal from "./modals/EditModal";
 import { ActionInstanceModal } from "./modals/InstanceModal";
 import TypeDefinitionModal from "./modals/TypeDefinitionModal";
@@ -43,8 +43,14 @@ function NodeColorSwatch({
   onChange: (key: string, color: string) => void;
   onSave: (key: string, color: string) => void;
 }) {
-  const [local, setLocal] = useState(value ?? defaultColor);
-  useEffect(() => { setLocal(value ?? defaultColor); }, [value, defaultColor]);
+  // Follow outside changes of the color without an extra effect-triggered render.
+  const incoming = value ?? defaultColor;
+  const [local, setLocal] = useState(incoming);
+  const [synced, setSynced] = useState(incoming);
+  if (incoming !== synced) {
+    setSynced(incoming);
+    setLocal(incoming);
+  }
 
   return (
     <div className="node-color-row">

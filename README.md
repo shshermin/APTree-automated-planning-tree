@@ -47,4 +47,5 @@ See individual project READMEs for detailed setup and usage instructions:
 - [APTreeDSL README](APTreeDSL/README.md)
 - [APTreeExecutionEngine README](APTreeExecutionEngine/README.md)
 - [APTreeEditor README](APTreeEditor/BehaviorTreeFrontend/README.md)
+- [InputGenerator README](InputGenerator/README.md)
 - [Docker README](DOCKER_README.md)

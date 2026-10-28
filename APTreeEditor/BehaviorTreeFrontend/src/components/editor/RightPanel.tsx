@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useRef, useCallback } from "react";
+import { useState, useMemo } from "react";
 import EditorCanvas from "./EditorCanvas";
 import type { CanvasNode, NodeConnection } from "./types";
 import type { ActionInstance, ActionType } from "../sidebar/utils/types";
@@ -17,6 +17,21 @@ function diagLog(...args: unknown[]) {
 }
 
 const ACTIVE_STATUSES = new Set(["Running", "InProgress"]);
+
+// ── Layout cache ──────────────────────────────────────────────────────────
+// Layouts are computed on demand and cached per imported subtree entry. A
+// re-import creates new entries and changed action types miss the cache, so an
+// old layout is never reused (a ref cleared in an effect used to show the
+// previous import's layout for same-named subtrees until the next render).
+const layoutCache = new WeakMap<RawSubtreeEntry, { actionTypes?: ActionType[]; layout: SubtreeLayout }>();
+
+function layoutFor(entry: RawSubtreeEntry, actionTypes: ActionType[] | undefined): SubtreeLayout {
+  const cached = layoutCache.get(entry);
+  if (cached && cached.actionTypes === actionTypes) return cached.layout;
+  const layout = computeSubtreeLayout(entry, actionTypes ?? []);
+  layoutCache.set(entry, { actionTypes, layout });
+  return layout;
+}
 
 // ── Live-execution types & helpers (ported from SubtreePanel) ─────────────
 interface SubtreeResult {
@@ -162,18 +177,10 @@ export default function RightPanel({
   const [activeTab, setActiveTab] = useState<Tab>("subtrees");
   const [collapsed, setCollapsed] = useState(false);
 
-  // ── Layout cache: computed on demand, cleared when import changes ──
-  const layoutCache = useRef<Map<string, SubtreeLayout>>(new Map());
-  useEffect(() => { layoutCache.current.clear(); }, [rawSubtreeGraphs]);
-
-  const getLayout = useCallback((name: string): SubtreeLayout | undefined => {
-    if (layoutCache.current.has(name)) return layoutCache.current.get(name);
+  const getLayout = (name: string): SubtreeLayout | undefined => {
     const entry = rawSubtreeGraphs.get(name);
-    if (!entry) return undefined;
-    const layout = computeSubtreeLayout(entry, actionTypes ?? []);
-    layoutCache.current.set(name, layout);
-    return layout;
-  }, [rawSubtreeGraphs, actionTypes]);
+    return entry ? layoutFor(entry, actionTypes) : undefined;
+  };
 
   // ── Subtrees tab state ──
   const [search, setSearch] = useState("");
@@ -232,19 +239,21 @@ export default function RightPanel({
 
   const hasLiveContent = liveSubtrees.length > 0 || liveLayoutNames.length > 0;
 
-  // Auto-switch to Live tab when execution starts
-  const prevHasActive = useRef(false);
-  useEffect(() => {
-    if (hasActiveTicks && !prevHasActive.current) setActiveTab("live");
-    prevHasActive.current = hasActiveTicks;
-  }, [hasActiveTicks]);
+  // Auto-switch to Live tab when execution starts (adjusted during render, not in an effect)
+  const [prevHasActive, setPrevHasActive] = useState(false);
+  if (hasActiveTicks !== prevHasActive) {
+    setPrevHasActive(hasActiveTicks);
+    if (hasActiveTicks) setActiveTab("live");
+  }
 
   const showSubtreesTab = rawSubtreeGraphs.size > 0;
 
-  // If there are no subtrees, default initial tab to "live"
-  useEffect(() => {
+  // If there are no subtrees, switch to "live" (also on the first render)
+  const [prevShowSubtreesTab, setPrevShowSubtreesTab] = useState<boolean | null>(null);
+  if (showSubtreesTab !== prevShowSubtreesTab) {
+    setPrevShowSubtreesTab(showSubtreesTab);
     if (!showSubtreesTab) setActiveTab("live");
-  }, [showSubtreesTab]);
+  }
 
   return (
     <div className={`right-panel ${collapsed ? "right-panel--collapsed" : ""}`}>

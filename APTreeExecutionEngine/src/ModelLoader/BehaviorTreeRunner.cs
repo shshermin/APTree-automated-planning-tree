@@ -372,7 +372,8 @@ namespace BehaviorTreeMainProject
 
         // ── Tree execution ──
 
-        private async Task ExecuteTree(BehaviorTree behaviorTree)
+        /// <summary>Ticks the tree until it finishes, MaxTicks is reached or the user stops it. Returns the ticks run.</summary>
+        internal async Task<int> ExecuteTree(BehaviorTree behaviorTree)
         {
             int maxTicks = config.MaxTicks;
             int tickCount = 0;
@@ -425,7 +426,7 @@ namespace BehaviorTreeMainProject
                             isPaused = false;
                             EndToEndSummaryLogger.LogPauseEnd();
                             if (cmdResult == CommandResult.Quit)
-                                return;
+                                return tickCount;
                             continue;
                         }
                         else
@@ -485,6 +486,7 @@ namespace BehaviorTreeMainProject
             {
                 LoggingService.LogWarning($"Tree execution stopped by user after {tickCount} ticks");
             }
+            return tickCount;
         }
 
         // Some hosts have no usable console even though stdin isn't redirected.
