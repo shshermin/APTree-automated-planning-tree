@@ -200,6 +200,11 @@ namespace BehaviorTreeMainProject
             app.UseWebSockets();
             app.UseCors("frontend-dev");
 
+            // Serves the built editor from wwwroot (the Docker image puts it there).
+            // In development there is no wwwroot; the Vite dev server serves the editor.
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
+
             app.UseSwagger();
             app.UseSwaggerUI();
 

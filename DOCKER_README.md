@@ -2,7 +2,8 @@
 
 This image runs:
 - Python planner service on `:5000`
-- ASP.NET backend on `:5254`
+- ASP.NET backend on `:5254`, which also serves the editor (APTreeEditor) at
+  http://localhost:5254
 
 ## Build
 

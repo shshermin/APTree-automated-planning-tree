@@ -7,3 +7,5 @@
 **/kept logs/
 **/*.log
 **/*.csv
+**/node_modules/
+**/dist/

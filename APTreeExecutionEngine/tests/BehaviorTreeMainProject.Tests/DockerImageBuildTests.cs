@@ -46,7 +46,7 @@ public class DockerImageBuildTests
     }
 
     [SlowFact("runs a real `docker build` of the full image - pulls several base images and runs a real Gradle build, can take a few minutes")]
-    public void DockerBuild_ProducesAWorkingMontiCoreJar_UsableByApiAptreeValidate()
+    public void DockerBuild_ProducesAWorkingMontiCoreJar_AndServesTheEditor()
     {
         Assert.True(IsDockerAvailable(), "docker is not available in this environment - cannot verify the real image build.");
 
@@ -82,6 +82,15 @@ public class DockerImageBuildTests
             Assert.DoesNotContain("APTreeDSL directory not found", body);
             // A parse failure for the garbage model proves the jar actually ran.
             Assert.Contains("\"ok\":false", body);
+
+            // The editor is built into the image and served by the backend.
+            var page = http.GetAsync($"http://localhost:{hostPort}/").Result;
+            string html = page.Content.ReadAsStringAsync().Result;
+            Assert.True(page.IsSuccessStatusCode, $"editor not served: {page.StatusCode}");
+            Assert.Contains("<div id=\"root\">", html);
+            string script = System.Text.RegularExpressions.Regex.Match(html, "src=\"(/assets/[^\"]+\\.js)\"").Groups[1].Value;
+            Assert.False(string.IsNullOrEmpty(script), "index.html references no bundled script");
+            Assert.True(http.GetAsync($"http://localhost:{hostPort}{script}").Result.IsSuccessStatusCode, $"{script} not served");
         }
         finally
         {

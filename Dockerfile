@@ -28,6 +28,16 @@ WORKDIR /src/APTreeDSL
 RUN gradle shadowJar --console=plain --no-daemon
 
 
+# Builds the editor; the backend serves it from wwwroot, so the image needs no Node at runtime.
+FROM node:22-slim AS frontendbuild
+
+WORKDIR /src
+COPY APTreeEditor/BehaviorTreeFrontend/package.json APTreeEditor/BehaviorTreeFrontend/package-lock.json ./
+RUN npm ci
+COPY APTreeEditor/BehaviorTreeFrontend ./
+RUN npm run build
+
+
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 
 RUN apt-get update \
@@ -36,6 +46,9 @@ RUN apt-get update \
 
 WORKDIR /app
 COPY --from=build /app/publish /app
+
+# Editor (APTreeEditor/BehaviorTreeFrontend), served by the backend on :5254
+COPY --from=frontendbuild /src/dist /app/wwwroot
 
 # MontiCore tool + DSL (required for /api/aptree/validate), including the built jar
 COPY --from=javabuild /src/APTreeDSL /app/APTreeDSL
