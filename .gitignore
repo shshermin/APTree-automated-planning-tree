@@ -12,3 +12,10 @@ cmake-build-*/
 *.objbak
 *.orig
 *~
+
+# Personal editor settings
+.vscode/
+
+# Problem files written by the planner at runtime
+APTreeExecutionEngine/python_service/Plannerinputs/generated/*
+!APTreeExecutionEngine/python_service/Plannerinputs/generated/.gitkeep

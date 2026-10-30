@@ -11,7 +11,7 @@ and action-server discovery on every call.
 Usage (inside WSL):
     cd /home/shermin/ws_moveit
     source install/setup.bash
-    python3 /mnt/c/Users/sherk/Documents/BehaviorTreeMainProject/APTreeExecutionEngine/python_service/moveit_bridge_service.py
+    python3 <repo>/APTreeExecutionEngine/python_service/moveit_bridge_service.py
 
 Starts on http://127.0.0.1:5002
 """

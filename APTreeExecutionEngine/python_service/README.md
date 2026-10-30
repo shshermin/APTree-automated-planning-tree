@@ -5,9 +5,10 @@ First, you need an SSH key to access the VM.
 ## 1) Connect to the VM
 
 ```bash
-ssh -i ~/.ssh/id_ed25519 ubuntu@193.196.52.17
+ssh -i ~/.ssh/id_ed25519 ubuntu@<vm-ip>
+# Windows:
+ssh -i C:\Users\<you>\.ssh\id_ed25519 ubuntu@<vm-ip>
 ```
-ssh -i C:\Users\sherk\.ssh\id_ed25519 ubuntu@193.196.52.17
 
 ## 1b) SSH Tunnel (for C# execution engine)
 
@@ -15,9 +16,9 @@ The C# execution engine connects to `http://localhost:5000`. To forward that
 port from your local machine to the VM, open a separate terminal and run:
 
 ```bash
-
+ssh -L 5000:localhost:5000 -i ~/.ssh/id_ed25519 ubuntu@<vm-ip>
 ```
-ssh -L 5000:localhost:5000 -i C:\Users\sherk\.ssh\id_ed25519 ubuntu@193.196.52.17
+
 Keep this terminal open while running the execution engine.
 
 ## 2) Project directory on the VM
@@ -71,7 +72,7 @@ The JAR must be present. We use:
 If you have it locally, copy it to the VM:
 
 ```bash
-scp -i ~/.ssh/id_ed25519 /path/to/enhsp.jar ubuntu@193.196.52.17:/home/ubuntu/ENHSP-Public/enhsp.jar
+scp -i ~/.ssh/id_ed25519 /path/to/enhsp.jar ubuntu@<vm-ip>:/home/ubuntu/ENHSP-Public/enhsp.jar
 ```
 
 ## 6) Default ENHSP path in the service

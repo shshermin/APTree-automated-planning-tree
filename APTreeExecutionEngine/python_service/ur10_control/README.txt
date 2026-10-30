@@ -3,7 +3,7 @@ ROBOT_IP = "192.168.1.100"
 
 
 loading and running a program on the pendant (powershell):
-cd c:\Users\sherk\Documents\BehaviorTreeMainProject\APTreeExecutionEngine\python_service
+cd <repo>\APTreeExecutionEngine\python_service
 python -c "from ur10_control.ur10_commands import play_program; print(play_program('192.168.1.100', 'testdemo.urp', speed=30))"
 
 
@@ -11,7 +11,7 @@ python -c "from ur10_control.ur10_commands import play_program; print(play_progr
 python -c "from ur10_control.ur10_commands import save_position; pos = save_position('192.168.1.100', 'home'); print(pos)"
 
 // getting robot coordinates
-cd c:\Users\sherk\Documents\BehaviorTreeMainProject\APTreeExecutionEngine\python_service
+cd <repo>\APTreeExecutionEngine\python_service
 python -c "from ur10_control.ur10_commands import get_current_pose; print(get_current_pose('192.168.1.100'))"
 
 
@@ -28,10 +28,10 @@ Invoke-RestMethod -Method Post -Uri "http://localhost:5001/move" -ContentType "a
 Setting up all services:
 
 terminal 1:
-ssh -L 5000:localhost:5000 -i C:\Users\sherk\.ssh\id_ed25519 ubuntu@193.196.52.17
+ssh -L 5000:localhost:5000 -i C:\Users\<you>\.ssh\id_ed25519 ubuntu@<vm-ip>
 
 Terminal 2: 
-ssh -i C:\Users\sherk\.ssh\id_ed25519 ubuntu@193.196.52.17
+ssh -i C:\Users\<you>\.ssh\id_ed25519 ubuntu@<vm-ip>
 cd APTree-automated-planning-tree/APTreeExecutionEngine/python_service
 source pddl_env/bin/activate
 python pddl_planning_service.py
@@ -41,13 +41,13 @@ if already taken, kill process with:
 fuser -k 5000/tcp
 
 terminal 3:
-cd c:\Users\sherk\Documents\BehaviorTreeMainProject\APTreeExecutionEngine\python_service
+cd <repo>\APTreeExecutionEngine\python_service
 python robot_service.py
 
 
 
 step #1: deequip gripper
-cd c:\Users\sherk\Documents\BehaviorTreeMainProject\APTreeExecutionEngine\python_service
+cd <repo>\APTreeExecutionEngine\python_service
 python -c "from ur10_control.ur10_commands import play_program; print(play_program('192.168.1.100', 'deequipdemo.urp', speed=10))"
 
 step #2: equip gripper

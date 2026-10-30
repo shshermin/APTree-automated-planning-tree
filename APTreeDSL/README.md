@@ -217,7 +217,7 @@ gradle generateCSharpPredicates       # predicate types
 gradle generateCSharpActionTypes      # action types
 ```
 
-Generated files are written to `generated_csharp/`.
+Generated files are written straight into `../APTreeExecutionEngine/src/ModelLoader/` (`ParameterTypes/`, `PredicateTypes/`, `ActionTypes/`).
 
 ---
 
@@ -236,7 +236,6 @@ src/test/resources/valid/    # Example / reference model files
 target/                      # Build output
   generated-sources/         #   MontiCore-generated Java sources
   reports/allTests/          #   Test reports
-generated_csharp/            # Generated C# output files
 ```
 
 ---
