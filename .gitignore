@@ -19,3 +19,6 @@ cmake-build-*/
 # Problem files written by the planner at runtime
 APTreeExecutionEngine/python_service/Plannerinputs/generated/*
 !APTreeExecutionEngine/python_service/Plannerinputs/generated/.gitkeep
+
+# Measurement logs from demonstrator runs (kept locally, not part of the release)
+APTreeExecutionEngine/kept logs/

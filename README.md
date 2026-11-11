@@ -49,3 +49,7 @@ See individual project READMEs for detailed setup and usage instructions:
 - [APTreeEditor README](APTreeEditor/BehaviorTreeFrontend/README.md)
 - [InputGenerator README](InputGenerator/README.md)
 - [Docker README](DOCKER_README.md)
+
+## License
+
+APTree is licensed under the [Apache License 2.0](LICENSE). The bundled ENHSP planner (`enhsp.jar`) is GPL-3.0-or-later; see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
