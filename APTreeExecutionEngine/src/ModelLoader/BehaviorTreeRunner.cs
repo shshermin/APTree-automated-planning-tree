@@ -293,10 +293,7 @@ namespace BehaviorTreeMainProject
                 EnhspConfig = enhspConfig
             };
 
-            var planner = new ServicePDDLPlanning(behaviorTree, request);
-            planner.ExecutionMode = config.GetExecutionMode();
-
-            return planner;
+            return new ServicePDDLPlanning(behaviorTree, request);
         }
 
         // ── ML subtree registration ──
@@ -317,8 +314,6 @@ namespace BehaviorTreeMainProject
                 : (config.PlannerPath ?? "");
             subtreeConfig.PlannerParameters["timeoutSeconds"] = config.SubtreeTimeoutSeconds;
             subtreeConfig.PlannerParameters["maxPlanLength"] = config.SubtreeMaxPlanLength;
-            subtreeConfig.PlannerParameters["executionMode"] =
-                BehaviorTreeConfiguration.ParseExecutionMode(config.SubtreeExecutionMode, nameof(config.SubtreeExecutionMode));
             subtreeConfig.PlannerParameters["enhspConfig"] = config.SubtreeEnhspConfig;
 
             ServiceSubtreeInject.RegisterGlobalConfiguration(config.SubtreeConfigName, subtreeConfig);
@@ -607,9 +602,6 @@ namespace BehaviorTreeMainProject
         /// </summary>
         private void Validate()
         {
-            config.GetExecutionMode();
-            BehaviorTreeConfiguration.ParseExecutionMode(config.SubtreeExecutionMode, nameof(config.SubtreeExecutionMode));
-
             var missing = new List<string>();
 
             // Model JSON

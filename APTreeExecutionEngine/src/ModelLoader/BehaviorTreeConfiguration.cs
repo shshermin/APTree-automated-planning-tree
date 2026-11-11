@@ -23,9 +23,6 @@ namespace BehaviorTreeMainProject.ModelLoader
         /// <summary>Default max plan length.</summary>
         public int MaxPlanLength { get; set; } = 20;
 
-        /// <summary>Default execution mode: Sequential, Parallel, or Hybrid.</summary>
-        public string ExecutionMode { get; set; } = "Sequential";
-
         /// <summary>Explicit planner path sent to the Flask service.
         /// Leave empty/null to let Flask fall back to its own DEFAULT_ENHSP_PATH.
         /// Example on the Ubuntu VM: "/home/ubuntu/ENHSP-Public/enhsp.jar".</summary>
@@ -59,9 +56,6 @@ namespace BehaviorTreeMainProject.ModelLoader
         /// <summary>Max plan length for ML subtree planners.</summary>
         public int SubtreeMaxPlanLength { get; set; } = 20;
 
-        /// <summary>Execution mode for ML subtree planners.</summary>
-        public string SubtreeExecutionMode { get; set; } = "Sequential";
-
         // ── Blackboard input files ──
 
         /// <summary>Path to setup objects JSON file (parameter instances).</summary>
@@ -82,8 +76,9 @@ namespace BehaviorTreeMainProject.ModelLoader
         /// When true, ServiceLLSubtreeInject expands ML actions into LL subtrees and
         /// sends robot commands via the Flask service.
         /// When false, LL injection is skipped — only HL→ML PDDL planning runs (planning-only mode).
+        /// Defaults to false so a config without the key never moves a robot.
         /// </summary>
-        public bool ExecutionActive { get; set; } = true;
+        public bool ExecutionActive { get; set; } = false;
 
         // ── Predicate store ──
 
@@ -112,33 +107,6 @@ namespace BehaviorTreeMainProject.ModelLoader
 
         /// <summary>Delay in milliseconds between ticks.</summary>
         public int TickDelayMs { get; set; } = 10;
-
-        // ── Execution mode parsing ──
-
-        /// <summary>
-        /// Parses the ExecutionMode string to the ServicePDDLPlanning enum.
-        /// </summary>
-        public Services.AIPlanning.ServicePDDLPlanning.ParallelExecutionMode GetExecutionMode()
-            => ParseExecutionMode(ExecutionMode, nameof(ExecutionMode));
-
-        /// <summary>
-        /// Parses an execution mode name (case-insensitive). Null or empty means
-        /// Sequential; anything else unknown is rejected rather than silently defaulted.
-        /// </summary>
-        public static Services.AIPlanning.ServicePDDLPlanning.ParallelExecutionMode ParseExecutionMode(string value, string settingName)
-        {
-            if (string.IsNullOrWhiteSpace(value))
-                return Services.AIPlanning.ServicePDDLPlanning.ParallelExecutionMode.Sequential;
-
-            return value.Trim().ToLowerInvariant() switch
-            {
-                "sequential" => Services.AIPlanning.ServicePDDLPlanning.ParallelExecutionMode.Sequential,
-                "parallel" => Services.AIPlanning.ServicePDDLPlanning.ParallelExecutionMode.Parallel,
-                "hybrid" => Services.AIPlanning.ServicePDDLPlanning.ParallelExecutionMode.Hybrid,
-                _ => throw new ArgumentException(
-                    $"Invalid {settingName} '{value}'. Expected Sequential, Parallel or Hybrid.", settingName)
-            };
-        }
 
         // ── Serialization ──
 
@@ -189,7 +157,6 @@ namespace BehaviorTreeMainProject.ModelLoader
             return new BehaviorTreeConfiguration
             {
                 TimeoutSeconds = 30,
-                ExecutionMode = "Sequential",
 
                 SubtreeConfigName = "ENHSP_Demonstrator",
                 SubtreePlannerName = "Enhsp",
@@ -197,7 +164,6 @@ namespace BehaviorTreeMainProject.ModelLoader
                 SubtreeProblemFile = "./Plannerinputs/static/Demonstrator/ProblemL1L2.pddl",
                 SubtreeEnhspConfig = "opt-hmax",
                 SubtreeTimeoutSeconds = 30,
-                SubtreeExecutionMode = "Sequential",
 
                 MaxTicks = 0,
                 TickDelayMs = 10

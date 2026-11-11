@@ -28,7 +28,8 @@ public class BehaviorTreeConfigurationTests : IDisposable
         var config = BehaviorTreeConfiguration.LoadFromFile(Write("{}"));
 
         Assert.Equal(30, config.TimeoutSeconds);
-        Assert.Equal("Sequential", config.ExecutionMode);
+        // A config without the key must never drive a robot.
+        Assert.False(config.ExecutionActive);
         Assert.Equal("Sqlite", config.PredicateStoreType);
         // Required fields without defaults stay null until BehaviorTreeRunner's Validate() complains.
         Assert.Null(config.SetupObjectsFile);
@@ -37,35 +38,22 @@ public class BehaviorTreeConfigurationTests : IDisposable
     }
 
     [Theory]
-    [InlineData("Parallel", ServicePDDLPlanning.ParallelExecutionMode.Parallel)]
-    [InlineData("HYBRID", ServicePDDLPlanning.ParallelExecutionMode.Hybrid)]
-    [InlineData("Sequential", ServicePDDLPlanning.ParallelExecutionMode.Sequential)]
-    public void GetExecutionMode_ParsesKnownValues_CaseInsensitively(string text, ServicePDDLPlanning.ParallelExecutionMode expected)
+    [InlineData("executionMode")]
+    [InlineData("subtreeExecutionMode")]
+    public void LoadFromFile_RejectsTheRemovedExecutionModeKeys(string key)
     {
-        var config = new BehaviorTreeConfiguration { ExecutionMode = text };
+        var ex = Assert.ThrowsAny<JsonException>(() =>
+            BehaviorTreeConfiguration.LoadFromFile(Write($"{{ \"{key}\": \"Sequential\" }}")));
 
-        Assert.Equal(expected, config.GetExecutionMode());
+        Assert.Contains(key, ex.Message);
     }
 
-    [Theory]
-    [InlineData("")]
-    [InlineData(null)]
-    public void GetExecutionMode_DefaultsToSequential_WhenUnset(string? text)
+    [Fact]
+    public void LoadFromFile_ExecutionActiveTrue_IsKept()
     {
-        var config = new BehaviorTreeConfiguration { ExecutionMode = text! };
+        var config = BehaviorTreeConfiguration.LoadFromFile(Write("{ \"executionActive\": true }"));
 
-        Assert.Equal(ServicePDDLPlanning.ParallelExecutionMode.Sequential, config.GetExecutionMode());
-    }
-
-    [Theory]
-    [InlineData("Paralel")]
-    [InlineData("garbage")]
-    public void GetExecutionMode_RejectsUnknownValues(string text)
-    {
-        var config = new BehaviorTreeConfiguration { ExecutionMode = text };
-
-        var ex = Assert.Throws<ArgumentException>(() => config.GetExecutionMode());
-        Assert.Contains(text, ex.Message);
+        Assert.True(config.ExecutionActive);
     }
 
     [Fact]
@@ -110,7 +98,8 @@ public class BehaviorTreeConfigurationTests : IDisposable
 
         var config = BehaviorTreeConfiguration.LoadFromFile(path);
 
-        Assert.Equal(ServicePDDLPlanning.ParallelExecutionMode.Sequential, config.GetExecutionMode());
+        // The demonstrator drives the real robot, so it opts in explicitly.
+        Assert.True(config.ExecutionActive);
     }
 
     [Fact]

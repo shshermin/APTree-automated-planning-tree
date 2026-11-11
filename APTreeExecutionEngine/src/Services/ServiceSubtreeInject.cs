@@ -271,7 +271,6 @@ namespace BehaviorTreeMainProject
                     config.PlannerParameters["plannerPath"] = planner.DefaultPlannerPath;
                     config.PlannerParameters["timeoutSeconds"] = planner.DefaultTimeoutSeconds;
                     config.PlannerParameters["maxPlanLength"] = planner.DefaultMaxPlanLength;
-                    config.PlannerParameters["executionMode"] = ServicePDDLPlanning.ParallelExecutionMode.Sequential;
                     if (planner.HasEnhspConfig)
                         config.PlannerParameters["enhspConfig"] = planner.DefaultEnhspConfig;
 
@@ -556,7 +555,6 @@ namespace BehaviorTreeMainProject
                 pddlRequest.EnhspConfig = enhspCfg.ToString();
 
             var planner = new ServicePDDLPlanning(subtreeTree, pddlRequest);
-            planner.ExecutionMode = (ServicePDDLPlanning.ParallelExecutionMode)parameters["executionMode"];
             planner.CurrentPlanner = Planner.FromName(config.PlannerName);
 
             dynamicFlowNode.SetPlanningService(planner);

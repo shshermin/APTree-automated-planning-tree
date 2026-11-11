@@ -7,8 +7,7 @@ namespace BehaviorTreeMainProject.Tests;
 
 /// <summary>
 /// Runs the same HL planning pipeline against both predicate stores and checks
-/// they produce the same NodeGraph. ExecutionMode isn't part of the matrix
-/// because the real path ignores it (see PDDLPlanningExecutionModeTests).
+/// they produce the same NodeGraph.
 /// </summary>
 public class ConfigDrivenPredicateStoreMatrixTests
 {

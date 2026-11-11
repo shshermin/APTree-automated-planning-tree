@@ -110,7 +110,6 @@ namespace BehaviorTreeMainProject
                 demoMLConfig.PlannerParameters["plannerPath"] = "/home/ubuntu/ENHSP-Public/enhsp.jar";
                 demoMLConfig.PlannerParameters["timeoutSeconds"] = 30;
                 demoMLConfig.PlannerParameters["maxPlanLength"] = 20;
-                demoMLConfig.PlannerParameters["executionMode"] = ServicePDDLPlanning.ParallelExecutionMode.Sequential;
                 demoMLConfig.PlannerParameters["enhspConfig"] = "opt-hmax";
                 ServiceSubtreeInject.RegisterGlobalConfiguration("ENHSP_Demonstrator", demoMLConfig);
                 ServiceSubtreeInject.DefaultSubtreeConfigName = "ENHSP_Demonstrator";
@@ -331,9 +330,7 @@ namespace BehaviorTreeMainProject
                 for (int i = 0; i < 12; i++)
                 {
                     allPlanners.Add(pddlPlanners[i]);
-                    pddlPlanners[i].ExecutionMode = ServicePDDLPlanning.ParallelExecutionMode.Sequential;
                 }
-                LoggingService.LogInfo("All planners set to Sequential execution mode (MEETS constraints)");
 
                 // ── 9. Assign planners to flow nodes ──
                 LoggingService.LogSection("ASSIGNING PLANNERS TO FLOW NODES");

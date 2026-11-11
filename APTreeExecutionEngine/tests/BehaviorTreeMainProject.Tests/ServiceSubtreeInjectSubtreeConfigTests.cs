@@ -6,12 +6,8 @@ namespace BehaviorTreeMainProject.Tests;
 
 public class ServiceSubtreeInjectSubtreeConfigTests
 {
-    [Theory]
-    [InlineData(ServicePDDLPlanning.ParallelExecutionMode.Sequential)]
-    [InlineData(ServicePDDLPlanning.ParallelExecutionMode.Parallel)]
-    [InlineData(ServicePDDLPlanning.ParallelExecutionMode.Hybrid)]
-    public void CreatePlannerSubtree_ThreadsTheConfiguredExecutionModeOntoTheNewPlanner(
-        ServicePDDLPlanning.ParallelExecutionMode configuredMode)
+    [Fact]
+    public void CreatePlannerSubtree_ThreadsTheConfiguredPlannerSettingsOntoTheNewPlanner()
     {
         var blackboard = new Blackboard<FastName>(new DictionaryPredicateStore());
         var tree = new BehaviorTree();
@@ -27,11 +23,12 @@ public class ServiceSubtreeInjectSubtreeConfigTests
         config.PlannerParameters["plannerPath"] = "enhsp.jar";
         config.PlannerParameters["timeoutSeconds"] = 30;
         config.PlannerParameters["maxPlanLength"] = 20;
-        config.PlannerParameters["executionMode"] = configuredMode;
 
         var subtree = service.CreatePlannerSubtree(config, "instance1", new Dictionary<string, object>());
 
         var planner = Assert.IsType<ServicePDDLPlanning>(subtree.ServicePlanning);
-        Assert.Equal(configuredMode, planner.ExecutionMode);
+        Assert.Equal("domain.pddl", planner.PlanningRequest.DomainFile);
+        Assert.Equal("problem.pddl", planner.PlanningRequest.ProblemFile);
+        Assert.Equal(30, planner.PlanningRequest.TimeoutSeconds);
     }
 }

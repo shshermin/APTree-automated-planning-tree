@@ -41,16 +41,6 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
             "activetool"
         };
 
-        // Parallel execution configuration
-        public enum ParallelExecutionMode
-        {
-            Sequential,      // All actions run sequentially (MEETS)
-            Parallel,        // Actions run in parallel (OVERLAPS)
-            Hybrid           // Mix of sequential and parallel
-        }
-        
-        public ParallelExecutionMode ExecutionMode { get; set; } = ParallelExecutionMode.Sequential;
-
         // Track generated problem files for debugging (static since generation happens before instance creation)
         private static readonly List<string> s_generatedProblemFiles = new List<string>();
 
@@ -497,7 +487,6 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
             NodeGraph nodeGraph = null;
 
             LoggingService.LogInfo($"🔧 ServicePDDLPlanning: Converting PDDL result to NodeGraph...");
-            LoggingService.LogInfo($"📋 ServicePDDLPlanning: Execution Mode: {ExecutionMode}");
             LoggingService.LogInfo($"📋 ServicePDDLPlanning: Problem File: {PlanningRequest.ProblemFile}");
             
             try
@@ -540,7 +529,6 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
                         var planDuration = endTime - planningStartTime;
                         var tResumePlanning = endTime;
                         LoggingService.LogSuccess($"✅ ServicePDDLPlanning: Generated NodeGraph with {actionsGenerated} actions");
-                        LoggingService.LogSuccess($"✅ ServicePDDLPlanning: Execution Mode applied: {ExecutionMode}");
                         LoggingService.LogSuccess($"⏱️ ServicePDDLPlanning: Planning completed in {planDuration.TotalMilliseconds:F0}ms ({planDuration.TotalSeconds:F1}s)");
 
                         // If a Safety (BlockerOnTop) fault timestamp was recorded for this flow node,
@@ -636,113 +624,6 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
                 LoggingService.LogError($"❌ ServicePDDLPlanning: Stack trace: {ex.StackTrace}");
                 return new NodeGraph();
             }
-        }
-
-        // Not called anywhere: the real path builds relations from the plan
-        // string, so ExecutionMode currently has no effect despite being logged
-        // as "applied". Internal so PDDLPlanningExecutionModeTests can cover it.
-        internal NodeGraph CreateNodeGraphWithExecutionMode(List<PActionNode> actions)
-        {
-            var nodeGraph = new NodeGraph();
-            
-            // Add all actions to the NodeGraph
-            foreach (var action in actions)
-            {
-                nodeGraph.AddNode(action);
-            }
-            
-            if (actions.Count == 0) return nodeGraph;
-            
-            LoggingService.LogInfo($"🔧 ServicePDDLPlanning: Creating NodeGraph with {ExecutionMode} execution mode for {actions.Count} actions");
-            
-            switch (ExecutionMode)
-            {
-                case ParallelExecutionMode.Sequential:
-                    return CreateSequentialNodeGraph(actions, nodeGraph);
-                    
-                case ParallelExecutionMode.Parallel:
-                    return CreateParallelNodeGraph(actions, nodeGraph);
-                    
-                case ParallelExecutionMode.Hybrid:
-                    return CreateHybridNodeGraph(actions, nodeGraph);
-                    
-                default:
-                    return CreateParallelNodeGraph(actions, nodeGraph);
-            }
-        }
-        
-        internal NodeGraph CreateSequentialNodeGraph(List<PActionNode> actions, NodeGraph nodeGraph)
-        {
-            LoggingService.LogInfo($"🔧 ServicePDDLPlanning: Creating sequential execution pattern");
-            
-            // Add sequential relations (MEETS constraints) between consecutive actions
-            for (int i = 0; i < actions.Count - 1; i++)
-            {
-                nodeGraph.AddOrderRelation(actions[i], actions[i + 1]);
-                nodeGraph.AddTemporalConstraint(actions[i], actions[i + 1], TemporalType.MEETS);
-                LoggingService.LogInfo($"🔧 ServicePDDLPlanning: Added sequential relation: {actions[i].InstanceName} → {actions[i + 1].InstanceName}");
-            }
-            
-            return nodeGraph;
-        }
-        
-        internal NodeGraph CreateParallelNodeGraph(List<PActionNode> actions, NodeGraph nodeGraph)
-        {
-            LoggingService.LogInfo($"🔧 ServicePDDLPlanning: Creating parallel execution pattern");
-            
-            if (actions.Count == 1)
-            {
-                LoggingService.LogInfo($"🔧 ServicePDDLPlanning: Single action execution");
-                return nodeGraph;
-            }
-            
-            // First action starts, then all others run in parallel
-            for (int i = 1; i < actions.Count; i++)
-            {
-                nodeGraph.AddOrderRelation(actions[0], actions[i]);
-                nodeGraph.AddTemporalConstraint(actions[0], actions[i], TemporalType.OVERLAPS);
-                LoggingService.LogInfo($"🔧 ServicePDDLPlanning: Added parallel relation: {actions[0].InstanceName} || {actions[i].InstanceName}");
-            }
-            
-            return nodeGraph;
-        }
-        
-        internal NodeGraph CreateHybridNodeGraph(List<PActionNode> actions, NodeGraph nodeGraph)
-        {
-            LoggingService.LogInfo($"🔧 ServicePDDLPlanning: Creating hybrid execution pattern");
-            
-            if (actions.Count <= 2)
-            {
-                return CreateParallelNodeGraph(actions, nodeGraph);
-            }
-            
-            // Hybrid pattern: First action sequential, then parallel groups
-            // Group 1: First action
-            // Group 2: Actions 2-3 run in parallel
-            // Group 3: Actions 4+ run in parallel after group 2
-            
-            // First action to second action (sequential)
-            nodeGraph.AddOrderRelation(actions[0], actions[1]);
-            nodeGraph.AddTemporalConstraint(actions[0], actions[1], TemporalType.MEETS);
-            LoggingService.LogInfo($"🔧 ServicePDDLPlanning: Added sequential relation: {actions[0].InstanceName} → {actions[1].InstanceName}");
-            
-            // Second action to third action (parallel)
-            if (actions.Count > 2)
-            {
-                nodeGraph.AddOrderRelation(actions[1], actions[2]);
-                nodeGraph.AddTemporalConstraint(actions[1], actions[2], TemporalType.OVERLAPS);
-                LoggingService.LogInfo($"🔧 ServicePDDLPlanning: Added parallel relation: {actions[1].InstanceName} || {actions[2].InstanceName}");
-            }
-            
-            // Remaining actions in parallel
-            for (int i = 3; i < actions.Count; i++)
-            {
-                nodeGraph.AddOrderRelation(actions[1], actions[i]);
-                nodeGraph.AddTemporalConstraint(actions[1], actions[i], TemporalType.OVERLAPS);
-                LoggingService.LogInfo($"🔧 ServicePDDLPlanning: Added parallel relation: {actions[1].InstanceName} || {actions[i].InstanceName}");
-            }
-            
-            return nodeGraph;
         }
 
         // ── PDDL Problem File Generation ──

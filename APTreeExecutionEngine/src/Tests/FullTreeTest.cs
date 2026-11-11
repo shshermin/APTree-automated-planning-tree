@@ -461,18 +461,8 @@ namespace BehaviorTreeMainProject
                 allPlanners.Add(pddlPlanner3);
                 allPlanners.Add(pddlPlanner4);
                 
-                // Configure execution modes for the cassettes
-                pddlPlanner1.ExecutionMode = ServicePDDLPlanning.ParallelExecutionMode.Parallel;    // Parallel execution
-                pddlPlanner2.ExecutionMode = ServicePDDLPlanning.ParallelExecutionMode.Parallel;    // Parallel execution
-                pddlPlanner3.ExecutionMode = ServicePDDLPlanning.ParallelExecutionMode.Parallel;    // Parallel execution
-                pddlPlanner4.ExecutionMode = ServicePDDLPlanning.ParallelExecutionMode.Parallel;    // Parallel execution
 
                 LoggingService.LogInfo("ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ Created PDDL planners for all four cassettes");
-                LoggingService.LogInfo($"ÃƒÂ°Ã…Â¸Ã¢â‚¬ÂÃ‚Â§ Execution Modes:");
-                LoggingService.LogInfo($"   - Cassette 1: {pddlPlanner1.ExecutionMode} (Planner: {pddlRequest1.PlannerName})");
-                LoggingService.LogInfo($"   - Cassette 2: {pddlPlanner2.ExecutionMode} (Planner: {pddlRequest2.PlannerName})");
-                LoggingService.LogInfo($"   - Cassette 3: {pddlPlanner3.ExecutionMode} (Planner: {pddlRequest3.PlannerName})");
-                LoggingService.LogInfo($"   - Cassette 4: {pddlPlanner4.ExecutionMode} (Planner: {pddlRequest4.PlannerName})");
 
                 // Set the planning services on all flow nodes
                 cassette1Node.SetPlanningService(pddlPlanner1);

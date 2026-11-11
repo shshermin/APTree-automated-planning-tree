@@ -184,7 +184,6 @@ namespace BehaviorTreeMainProject
                 pddlRequest.EnhspConfig = "sat-hmrph";
 
                 var pddlPlanner = new ServicePDDLPlanning(behaviorTree, pddlRequest);
-                pddlPlanner.ExecutionMode = ServicePDDLPlanning.ParallelExecutionMode.Sequential;
 
                 flowNode.SetPlanningService(pddlPlanner);
 

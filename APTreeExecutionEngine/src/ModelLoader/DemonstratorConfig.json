@@ -1,6 +1,5 @@
 {
   "timeoutSeconds": 30,
-  "executionMode": "Sequential",
   "executionActive": true,
   "plannerPath": "/home/ubuntu/ENHSP-Public/enhsp.jar",
 
@@ -11,7 +10,6 @@
   "subtreeEnhspConfig": "sat-hmrph",
   "subtreePlannerPath": "/home/ubuntu/ENHSP-Public/enhsp.jar",
   "subtreeTimeoutSeconds": 30,
-  "subtreeExecutionMode": "Sequential",
 
   "maxTicks": 3500,
   "tickDelayMs": 10
