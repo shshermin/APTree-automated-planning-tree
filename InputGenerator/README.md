@@ -28,8 +28,13 @@ Pass `-DBUILD_TESTS=OFF` to skip the test suite.
 Run from this directory, the default paths are relative to it:
 
 ```bash
-./build/InputGenerator [scene.obj] [properties.bt] [init-state.bt] [goal-state.bt]
+./build/InputGenerator [scene.obj] [properties.bt] [init-state.bt] [goal-state.bt] [--unit mm|cm|m] [--up x|y|z]
 ```
+
+| Option | Default | Meaning |
+|---|---|---|
+| `--unit` | `mm` | Unit the OBJ coordinates are in. Faces closer than 1 mm count as touching, converted to this unit. |
+| `--up` | `y` | Axis that points up in the OBJ. Rhino's OBJ export uses Y-up; `StackDetector.cs` works in Rhino's Z-up. |
 
 | Argument | Default |
 |---|---|
@@ -45,7 +50,7 @@ Outputs:
   overwrite the demonstrator fixtures in `APTreeDSL`, so pass your own paths
   unless that is what you want.
 
-The geometry is evaluated with Y as the up axis (OBJ convention).
+Coordinates in the outputs (e.g. the contact centroids) stay in the OBJ's unit.
 
 ## Tests
 

@@ -14,6 +14,21 @@ typedef CGAL::Surface_mesh<Point_3> Mesh;
 // Which axis points "up" (used for on-top checks)
 enum class UpAxis { X, Y, Z };
 
+// Unit the scene coordinates are in (the unit the OBJ was exported in).
+enum class LengthUnit { Millimeter, Centimeter, Meter };
+
+// Length of one millimetre in the given unit.
+double oneMillimeter(LengthUnit unit);
+
+// Parses "mm", "cm" or "m". Returns false and leaves 'unit' unchanged otherwise.
+bool parseLengthUnit(const std::string& text, LengthUnit& unit);
+
+// Parses "x", "y" or "z" (any case). Returns false and leaves 'axis' unchanged otherwise.
+bool parseUpAxis(const std::string& text, UpAxis& axis);
+
+// Faces closer than this along the up axis count as touching.
+constexpr double TOUCH_TOLERANCE_MM = 1.0;
+
 // Represents a named 3D mesh object in the scene.
 struct SpatialObject {
     std::string name;
@@ -56,15 +71,18 @@ bool IsObjectClear(const SpatialObject& target,
 //   1) top sits immediately above bottom (top's lower face touches bottom's upper face)
 //   2) Their footprints overlap in the plane perpendicular to upAxis
 //   3) No other object sits between them along the up axis
+//   (faces within TOUCH_TOLERANCE_MM, converted to the scene's unit, count as touching)
 bool IsStackedOn(const SpatialObject& top,
                  const SpatialObject& bottom,
                  const std::vector<SpatialObject>& scene,
-                 UpAxis upAxis = UpAxis::Y);
+                 UpAxis upAxis = UpAxis::Y,
+                 LengthUnit unit = LengthUnit::Millimeter);
 
 // Returns all (top, bottom) pairs where top is directly stacked on bottom.
 std::vector<std::pair<std::string, std::string>> FindAllStacked(
     const std::vector<SpatialObject>& scene,
-    UpAxis upAxis = UpAxis::Y);
+    UpAxis upAxis = UpAxis::Y,
+    LengthUnit unit = LengthUnit::Millimeter);
 
 // Info about the contact surface between two stacked objects.
 struct StackContactInfo {
@@ -82,11 +100,13 @@ bool ComputeStackContactCentroid(const SpatialObject& top,
                                  const SpatialObject& bottom,
                                  const std::vector<SpatialObject>& scene,
                                  StackContactInfo& info,
-                                 UpAxis upAxis = UpAxis::Y);
+                                 UpAxis upAxis = UpAxis::Y,
+                                 LengthUnit unit = LengthUnit::Millimeter);
 
 // Returns contact info for every stacked pair in the scene.
 std::vector<StackContactInfo> FindAllStackedWithContact(
     const std::vector<SpatialObject>& scene,
-    UpAxis upAxis = UpAxis::Y);
+    UpAxis upAxis = UpAxis::Y,
+    LengthUnit unit = LengthUnit::Millimeter);
 
 #endif // SPATIAL_PREDICATES_H

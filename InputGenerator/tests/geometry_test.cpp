@@ -175,14 +175,49 @@ TEST(IsStackedOn, OverlapBelowTheBottomsTopFaceWithinToleranceAlsoCounts) {
     EXPECT_TRUE(IsStackedOn(sunkIn, bottom, sceneOf({bottom, sunkIn}), UpAxis::Z));
 }
 
-TEST(IsStackedOn, ToleranceIsAnAbsolute1_0InSceneUnitsNotAFractionOfObjectSize) {
-    // Known issue: EPSILON is a hard-coded 1.0 with no stated unit (IsObjectClear
-    // uses 1e-6, the Grasshopper StackDetector 0.001 m). In a metre-scale scene,
-    // boxes with a 90 cm gap count as stacked.
+// Regression: the tolerance used to be a hard-coded 1.0 in whatever unit the scene
+// was in, so in a metre-scale scene boxes with a 90 cm gap counted as stacked.
+TEST(IsStackedOn, TheToleranceIs1mmInTheScenesUnit) {
     auto bottom = makeBox("bottom", 0, 0, 0, 0.05, 0.05, 0.05);
-    auto ninetyCmAbove = makeBox("top", 0, 0, 0.95, 0.05, 0.05, 1.0);
+    auto ninetyCmAbove = makeBox("far", 0, 0, 0.95, 0.05, 0.05, 1.0);
+    auto halfMmAbove = makeBox("near", 0, 0, 0.0505, 0.05, 0.05, 0.1);
 
-    EXPECT_TRUE(IsStackedOn(ninetyCmAbove, bottom, sceneOf({bottom, ninetyCmAbove}), UpAxis::Z));
+    EXPECT_FALSE(IsStackedOn(ninetyCmAbove, bottom, sceneOf({bottom, ninetyCmAbove}), UpAxis::Z, LengthUnit::Meter));
+    EXPECT_TRUE(IsStackedOn(halfMmAbove, bottom, sceneOf({bottom, halfMmAbove}), UpAxis::Z, LengthUnit::Meter));
+}
+
+TEST(IsStackedOn, MillimetresAreTheDefaultUnit) {
+    auto bottom = makeBox("bottom", 0, 0, 0, 50, 50, 50);
+    auto halfMmAbove = makeBox("near", 0, 0, 50.5, 50, 50, 100);
+    auto twoMmAbove = makeBox("far", 0, 0, 52, 50, 50, 100);
+
+    EXPECT_TRUE(IsStackedOn(halfMmAbove, bottom, sceneOf({bottom, halfMmAbove}), UpAxis::Z));
+    EXPECT_FALSE(IsStackedOn(twoMmAbove, bottom, sceneOf({bottom, twoMmAbove}), UpAxis::Z));
+}
+
+TEST(IsStackedOn, CentimetresScaleTheToleranceToo) {
+    auto bottom = makeBox("bottom", 0, 0, 0, 5, 5, 5);
+    auto halfMmAbove = makeBox("near", 0, 0, 5.05, 5, 5, 10);
+    auto fiveMmAbove = makeBox("far", 0, 0, 5.5, 5, 5, 10);
+
+    EXPECT_TRUE(IsStackedOn(halfMmAbove, bottom, sceneOf({bottom, halfMmAbove}), UpAxis::Z, LengthUnit::Centimeter));
+    EXPECT_FALSE(IsStackedOn(fiveMmAbove, bottom, sceneOf({bottom, fiveMmAbove}), UpAxis::Z, LengthUnit::Centimeter));
+}
+
+TEST(CommandLineOptions, UnitsAndAxesAreParsed) {
+    LengthUnit unit = LengthUnit::Millimeter;
+    EXPECT_TRUE(parseLengthUnit("m", unit));
+    EXPECT_EQ(unit, LengthUnit::Meter);
+    EXPECT_TRUE(parseLengthUnit("cm", unit));
+    EXPECT_EQ(unit, LengthUnit::Centimeter);
+    EXPECT_FALSE(parseLengthUnit("inch", unit));
+    EXPECT_EQ(unit, LengthUnit::Centimeter);
+
+    UpAxis axis = UpAxis::Y;
+    EXPECT_TRUE(parseUpAxis("Z", axis));
+    EXPECT_EQ(axis, UpAxis::Z);
+    EXPECT_FALSE(parseUpAxis("w", axis));
+    EXPECT_EQ(axis, UpAxis::Z);
 }
 
 TEST(IsStackedOn, ItselfAndEmptyMeshesAreNeverStacked) {

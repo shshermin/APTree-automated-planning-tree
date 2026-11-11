@@ -224,14 +224,38 @@ bool IsObjectClear(const SpatialObject& target,
     return true;
 }
 
+double oneMillimeter(LengthUnit unit) {
+    switch (unit) {
+        case LengthUnit::Centimeter: return 0.1;
+        case LengthUnit::Meter: return 0.001;
+        default: return 1.0;
+    }
+}
+
+bool parseLengthUnit(const std::string& text, LengthUnit& unit) {
+    if (text == "mm") { unit = LengthUnit::Millimeter; return true; }
+    if (text == "cm") { unit = LengthUnit::Centimeter; return true; }
+    if (text == "m")  { unit = LengthUnit::Meter; return true; }
+    return false;
+}
+
+bool parseUpAxis(const std::string& text, UpAxis& axis) {
+    if (text == "x" || text == "X") { axis = UpAxis::X; return true; }
+    if (text == "y" || text == "Y") { axis = UpAxis::Y; return true; }
+    if (text == "z" || text == "Z") { axis = UpAxis::Z; return true; }
+    return false;
+}
+
 bool IsStackedOn(const SpatialObject& top,
                  const SpatialObject& bottom,
                  const std::vector<SpatialObject>& scene,
-                 UpAxis upAxis) {
+                 UpAxis upAxis,
+                 LengthUnit unit) {
     if (top.name == bottom.name) return false;
     if (top.mesh.number_of_vertices() == 0 || bottom.mesh.number_of_vertices() == 0) return false;
 
-    const double EPSILON = 1.0; // tolerance for touching faces
+    // Tolerance for touching faces, in scene units
+    const double EPSILON = TOUCH_TOLERANCE_MM * oneMillimeter(unit);
 
     double topMin = getUpMin(top.bbox, upAxis);
     double bottomMax = getUpMax(bottom.bbox, upAxis);
@@ -263,11 +287,12 @@ bool IsStackedOn(const SpatialObject& top,
 
 std::vector<std::pair<std::string, std::string>> FindAllStacked(
     const std::vector<SpatialObject>& scene,
-    UpAxis upAxis) {
+    UpAxis upAxis,
+    LengthUnit unit) {
     std::vector<std::pair<std::string, std::string>> result;
     for (const auto& top : scene) {
         for (const auto& bottom : scene) {
-            if (IsStackedOn(top, bottom, scene, upAxis)) {
+            if (IsStackedOn(top, bottom, scene, upAxis, unit)) {
                 result.push_back({top.name, bottom.name});
             }
         }
@@ -279,8 +304,9 @@ bool ComputeStackContactCentroid(const SpatialObject& top,
                                  const SpatialObject& bottom,
                                  const std::vector<SpatialObject>& scene,
                                  StackContactInfo& info,
-                                 UpAxis upAxis) {
-    if (!IsStackedOn(top, bottom, scene, upAxis)) return false;
+                                 UpAxis upAxis,
+                                 LengthUnit unit) {
+    if (!IsStackedOn(top, bottom, scene, upAxis, unit)) return false;
 
     const auto& a = top.bbox;
     const auto& b = bottom.bbox;
@@ -331,12 +357,13 @@ bool ComputeStackContactCentroid(const SpatialObject& top,
 
 std::vector<StackContactInfo> FindAllStackedWithContact(
     const std::vector<SpatialObject>& scene,
-    UpAxis upAxis) {
+    UpAxis upAxis,
+    LengthUnit unit) {
     std::vector<StackContactInfo> result;
     for (const auto& top : scene) {
         for (const auto& bottom : scene) {
             StackContactInfo info;
-            if (ComputeStackContactCentroid(top, bottom, scene, info, upAxis)) {
+            if (ComputeStackContactCentroid(top, bottom, scene, info, upAxis, unit)) {
                 result.push_back(info);
             }
         }
