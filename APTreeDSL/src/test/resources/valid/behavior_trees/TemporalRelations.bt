@@ -57,7 +57,12 @@ BehaviorTree TemporalRelations {
                 NodeGraph { }
             }
             {
-                --[Equals]--> a1;
+                --[Equals]--> a8;
+            }
+            FlowNode a8 {
+                All
+                AllAction
+                NodeGraph { }
             }
         }
     }

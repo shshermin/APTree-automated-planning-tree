@@ -54,7 +54,7 @@ class TemporalRelationTest {
         assertEdge(nodes, "a4", ASTTemporalType.STARTS, "a5");
         assertEdge(nodes, "a5", ASTTemporalType.FINISHES, "a6");
         assertEdge(nodes, "a6", ASTTemporalType.CONTAINS, "a7");
-        assertEdge(nodes, "a7", ASTTemporalType.EQUALS, "a1");
+        assertEdge(nodes, "a7", ASTTemporalType.EQUALS, "a8");
     }
 
     private static void assertEdge(Map<String, ASTGraphNode> nodes, String sourceName,

@@ -1,0 +1,16 @@
+BehaviorTree SelfRelation {
+    Root FlowNode Main {
+        All
+        AllFlow
+        NodeGraph {
+            FlowNode a {
+                All
+                AllAction
+                NodeGraph { }
+            }
+            {
+                --[Equals]--> a;
+            }
+        }
+    }
+}

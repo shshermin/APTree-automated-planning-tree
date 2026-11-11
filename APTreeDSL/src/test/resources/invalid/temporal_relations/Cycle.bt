@@ -1,0 +1,32 @@
+BehaviorTree Cycle {
+    Root FlowNode Main {
+        All
+        AllFlow
+        NodeGraph {
+            FlowNode a {
+                All
+                AllAction
+                NodeGraph { }
+            }
+            {
+                --[Meets]--> b;
+            }
+            FlowNode b {
+                All
+                AllAction
+                NodeGraph { }
+            }
+            {
+                --[Starts]--> c;
+            }
+            FlowNode c {
+                All
+                AllAction
+                NodeGraph { }
+            }
+            {
+                --[Equals]--> a;
+            }
+        }
+    }
+}

@@ -20,6 +20,7 @@ A [MontiCore](https://www.se-rwth.de/research/MontiCore/)-based Domain Specific 
    - [Project structure](#project-structure)
    - [All Gradle tasks](#all-gradle-tasks)
    - [DSL grammar overview](#dsl-grammar-overview)
+4. [Open TODOs](#4-open-todos)
 
 ---
 
@@ -193,8 +194,11 @@ Run the APTree tool against your model file to parse it, check all CoCos (contex
 gradle runAPTreeTool
 ```
 
-By default this targets `src/test/resources/valid/behavior_trees/APTreeLivematFinal.bt`.  
-To point it at your own model, edit the `args` line in the `runAPTreeTool` task in `build.gradle`.
+By default this targets `src/test/resources/valid/behavior_trees/APTreeLivematFinal.bt`, loads the concrete instances from `src/test/resources/valid/CRFConcrete/LiveMatSetupObjects.bt` and writes the property instances to `../APTreeExecutionEngine/src/ModelLoader/PropertyInstances.json`. Each of these can be overridden:
+
+```bash
+gradle runAPTreeTool -PinputModel=path/to/model.bt -Pinstances=path/to/instances.bt -PpropertyInstancesOut=path/to/PropertyInstances.json
+```
 
 You can also run individual parsers to verify specific sub-models in isolation:
 
@@ -280,6 +284,30 @@ BehaviorTree          — base tree nodes (Sequence, Parallel, Action, Decorator
 ```
 
 Temporal relation types available in `NodeGraph`: `Meets`, `Precedes`, `Overlaps`, `Starts`, `Finishes`, `Contains`, `Equals`.
+
+The relations inside one `NodeGraph` must not form a cycle, and a node must not be related to itself. The CoCo `NodeGraphRelationsAcyclic` (errors `0xDF010` / `0xDF011`) checks this in `APTreeTool` and in the editor's validate call (`APTreeJsonCli`).
+
+---
+
+## 4. Open TODOs
+
+Known grammar and tool issues, collected while writing the test suite. The tests that document them name the file and the parser error.
+
+**Grammar**
+- [ ] Relations after an `Action` graph node don't parse: the CRFTypesCon action productions have their own optional `{ (Decorator|Service)* }` block, which shadows the GraphNode relation block (`{ --[Meets]--> X; }`). Affects `APTreeLivematFinal.bt`, `APTree.bt`, `APTree2.bt` (see `APTreeModelParserTest`).
+- [ ] `DemonstratorLLSubtrees.bt`: quoted move types (`"movel"`) where the grammar expects a Name, and `LiftLL`/`RetractLL` missing a parameter.
+- [ ] `SubTrees.bt`: named `NodeGraph temp1graph { }`, the grammar only accepts an anonymous `NodeGraph { }`.
+- [ ] `PDDLPlanner.bt`: action names in `Domain ... {PickUpHL, PlaceHL}` collide with keywords (`PlannerParserTest` is disabled).
+- [ ] `CRFConcreteInstances.bt`, `LiveMatSetupObjects.bt`: `Robot r1 (rp1 ur10)` passes a model name where the Robot type expects a boolean; `LiveMatSetupObjects.bt` also has `Stack lay1 (1 m1)`.
+- [ ] `CRFInitialState.bt`: lowercase `atPlace(...)`, the keyword is `AtPlace`.
+- [ ] `LiveMatPredicaetTypes.bt`: stray `@` in `client: Name@Agent`; `DemonstratorActionTypes.bt`: `cont moveType: String` doesn't match the action type grammar (see `CRFTypesParserTest`).
+
+**APTreeTool**
+- [ ] The default model and instances file (`APTreeLivematFinal.bt`, `LiveMatSetupObjects.bt`) don't parse, so `gradle runAPTreeTool` without arguments fails.
+- [ ] The instance loader only knows the LiveMat types (Beam, Plate, Robot, FirstPos): with the Demonstrator files it exports 0 property instances and logs `0xA7003` errors (see `EndToEndAPTreeToolTest`).
+- [ ] `MustHavePlanningService`, `PlanningServiceActionsCoverageCoCo` and `SharedResourceConflictCoCo` are created but not registered.
+- [ ] The editor's validate call (`APTreeJsonCli`) skips the element pre-validation and the other CoCos; only `NodeGraphRelationsAcyclic` runs there.
+- [ ] `src/temp/URMotionPlanner.mc4` and `src/main/java/URMotionPlannerTest.txt` are unfinished.
 
 ---
 

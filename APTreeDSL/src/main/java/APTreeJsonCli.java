@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import CoCos.DynamicBTFlowNode.NodeGraphRelationsAcyclic;
 import crftypescon.CRFTypesConMill;
 import crftypescon._ast.ASTPickUpHL;
 import crftypescon._ast.ASTPlaceHL;
@@ -15,6 +16,7 @@ import de.se_rwth.commons.logging.Log;
 import dynamicbtflownode.DynamicBTFlowNodeMill;
 import dynamicbtflownode._ast.ASTAPTree;
 import dynamicbtflownode._ast.ASTFinalWorld;
+import dynamicbtflownode._cocos.DynamicBTFlowNodeCoCoChecker;
 import dynamicbtflownode._symboltable.IDynamicBTFlowNodeArtifactScope;
 import dynamicbtflownode._symboltable.IDynamicBTFlowNodeGlobalScope;
 
@@ -125,6 +127,12 @@ public class APTreeJsonCli {
       // checker.addCoCo((crftypescon._cocos.CRFTypesConASTPickUpHLCoCo) elementCheck);
       // checker.addCoCo((crftypescon._cocos.CRFTypesConASTPlaceHLCoCo) elementCheck);
       // checker.checkAll((ASTDynamicBTFlowNodeNode) ast);
+
+      // Cyclic temporal relations would deadlock the engine, so they fail validation
+      // here already, for every tree in the file.
+      DynamicBTFlowNodeCoCoChecker relationsChecker = new DynamicBTFlowNodeCoCoChecker();
+      relationsChecker.addCoCo(new NodeGraphRelationsAcyclic());
+      relationsChecker.checkAll(world);
 
       List<String> findings = collectFindings();
       boolean ok = findings.isEmpty();

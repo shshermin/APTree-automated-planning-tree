@@ -293,12 +293,18 @@ task runCRFConPredicateParser(type: JavaExec) {
 }
 
 
+// gradle runAPTreeTool [-PinputModel=<file.bt>] [-Pinstances=<file.bt>] [-PpropertyInstancesOut=<file.json>]
 task runAPTreeTool(type: JavaExec) {
     description = 'Parses and analyzes the APTree behavior tree model'
     dependsOn 'compileJava'
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'APTreeTool'
     workingDir = projectDir
+    def toolArgs = []
+    if (project.hasProperty('inputModel')) toolArgs += [project.property('inputModel')]
+    if (project.hasProperty('instances')) toolArgs += ['--instances', project.property('instances')]
+    if (project.hasProperty('propertyInstancesOut')) toolArgs += ['--property-instances-out', project.property('propertyInstancesOut')]
+    args = toolArgs
 }
 
 task runConcreteBTInstanceParser(type: JavaExec) {

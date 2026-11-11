@@ -12,6 +12,7 @@ import CoCos.CRFTypesCon.ElementExistsCoCo;
 import CoCos.DynamicBTFlowNode.ActionNodesCannotHavePlanningService;
 import CoCos.DynamicBTFlowNode.CausalLinkValidator;
 import CoCos.DynamicBTFlowNode.MustHavePlanningService;
+import CoCos.DynamicBTFlowNode.NodeGraphRelationsAcyclic;
 import CoCos.DynamicBTFlowNode.PlanningServiceActionsCoverageCoCo;
 import CoCos.DynamicBTFlowNode.SharedResourceConflictCoCo;
 import CoCos.DynamicBTFlowNode.UniquenessOfNames;
@@ -61,32 +62,58 @@ public class APTreeTool {
     }
   }
 
+  // Defaults, relative to the APTreeDSL directory (gradle runs the tool from there).
+  static final String DEFAULT_MODEL = "src/test/resources/valid/behavior_trees/APTreeLivematFinal.bt";
+  static final String DEFAULT_INSTANCES = "src/test/resources/valid/CRFConcrete/LiveMatSetupObjects.bt";
+  static final String DEFAULT_PROPERTY_INSTANCES_OUT = "../APTreeExecutionEngine/src/ModelLoader/PropertyInstances.json";
+
+  /**
+   * Usage: APTreeTool [model.bt] [--instances <file.bt>] [--property-instances-out <file.json>]
+   * Every argument is optional; the defaults above are used for the missing ones.
+   */
   public static void main(String[] args) {
     // Standard MontiCore logging setup
     Log.init();
     // Configure MontiCore logging to not fail-fast on errors
     // This allows our CoCos to run and provide better error messages
     Log.enableFailQuick(false);
-    
-    APTreeTool tool = new APTreeTool();
-    // If an argument is given, use it as a file; otherwise, default to valid/behavior_trees
-    String filePath = args.length > 0 ? args[0] : "src/test/resources/valid/behavior_trees/APTreeLivematFinal.bt";
-    tool.run(filePath);
+
+    String modelFile = DEFAULT_MODEL;
+    String instancesFile = DEFAULT_INSTANCES;
+    String propertyInstancesOut = DEFAULT_PROPERTY_INSTANCES_OUT;
+    for (int i = 0; i < args.length; i++) {
+      if ("--instances".equals(args[i]) && i + 1 < args.length) {
+        instancesFile = args[++i];
+      } else if ("--property-instances-out".equals(args[i]) && i + 1 < args.length) {
+        propertyInstancesOut = args[++i];
+      } else if (!args[i].startsWith("--")) {
+        modelFile = args[i];
+      } else {
+        System.err.println("Unknown option: " + args[i]);
+        System.err.println("Usage: APTreeTool [model.bt] [--instances <file.bt>] [--property-instances-out <file.json>]");
+        return;
+      }
+    }
+
+    new APTreeTool().run(modelFile, instancesFile, propertyInstancesOut);
   }
 
   public void run(String modelFile) {
+    run(modelFile, DEFAULT_INSTANCES, DEFAULT_PROPERTY_INSTANCES_OUT);
+  }
+
+  public void run(String modelFile, String instancesFile, String propertyInstancesOut) {
     System.out.println("Running APTreeTool on: " + modelFile);
+    loadedInstances.clear();
 
     // 1. Initialize the Mill
     DynamicBTFlowNodeMill.init();
     
     // 2. Load concrete instances into symbol table FIRST
-    String instancesFile = "src/test/resources/valid/CRFConcrete/LiveMatSetupObjects.bt";
     loadConcreteInstancesIntoGlobalScope(instancesFile);
     
     // 2.5. Export property instances to JSON right after loading symbols
-    String outputJsonPath = "../APTreeExecutionEngine/src/ModelLoader/PropertyInstances.json";
-    exportPropertyInstancesToJSON(outputJsonPath);
+    exportPropertyInstancesToJSON(propertyInstancesOut);
     
     // 3. Configure Global Scope with symbol path
     DynamicBTFlowNodeMill.globalScope().setSymbolPath(
@@ -142,6 +169,8 @@ public class APTreeTool {
         // New: Validate causal links between connected actions
         CausalLinkValidator causalValidator = new CausalLinkValidator();
         checker.addCoCo((DynamicBTFlowNodeASTGraphNodeCoCo) causalValidator);
+        // Temporal relations must not form a cycle (the engine would deadlock)
+        checker.addCoCo(new NodeGraphRelationsAcyclic());
         
         // New: Check that all actions in behavior tree are defined in planning service domain
         PlanningServiceActionsCoverageCoCo actionsCoverageCheck = new PlanningServiceActionsCoverageCoCo();
