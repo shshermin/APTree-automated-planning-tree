@@ -94,8 +94,8 @@ namespace BehaviorTreeMainProject.ModelLoader
         /// <summary>
         /// File path for the SQLite predicate store.
         /// ":memory:" (default) keeps the database entirely in RAM.
-        /// Set to an absolute path to persist it across runs or inspect it
-        /// with an external tool (e.g. DB Browser for SQLite).
+        /// Set to a file path to inspect it with an external tool (e.g. DB Browser
+        /// for SQLite). The file is cleared at every start, so runs never carry over state.
         /// Ignored when PredicateStoreType != "Sqlite".
         /// </summary>
         public string SqlitePredicateStorePath { get; set; } = ":memory:";

@@ -18,7 +18,8 @@ using BehaviorTreeMainProject.Log.Services;
 /// Writes go to both tiers synchronously.  The SQLite file path defaults to
 /// ":memory:" (in-process, no disk I/O) but can be set to a real path for
 /// external inspection or the optional Bolt mirror via the Cypher export in
-/// PddlExporter.
+/// PddlExporter. A file is cleared when the store opens: every run starts
+/// from its initial state, and the hot index and the table always agree.
 ///
 /// PDDL projection compatibility
 /// ──────────────────────────────
@@ -50,13 +51,15 @@ public sealed class SqlitePredicateStore : IPredicateStore
 
     /// <param name="dbPath">
     ///   SQLite connection string path.  Use ":memory:" (default) for an
-    ///   ephemeral in-process store, or an absolute path for persistence.
+    ///   in-process store, or a file path to inspect the store from outside.
+    ///   Rows left in the file by an earlier run are deleted.
     /// </param>
     public SqlitePredicateStore(string dbPath = ":memory:")
     {
         _db = new SqliteConnection($"Data Source={dbPath}");
         _db.Open();
         InitSchema();
+        Execute("DELETE FROM predicates;");
         LoggingService.LogInfo($"[SqlitePredicateStore] opened — path={dbPath}");
     }
 

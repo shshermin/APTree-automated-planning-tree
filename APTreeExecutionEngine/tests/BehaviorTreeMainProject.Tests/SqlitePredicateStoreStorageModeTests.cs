@@ -18,7 +18,32 @@ public class SqlitePredicateStoreStorageModeTests
     }
 
     [Fact]
-    public void FileBackedStore_PersistsAcrossReopen()
+    public void FileBackedStore_ShowsTheRowsWhileOpen()
+    {
+        string dbPath = Path.Combine(Path.GetTempPath(), $"aptree-test-{Guid.NewGuid():N}.db");
+        try
+        {
+            var predicate = PredicateStoreTestFixtures.AtPlace();
+            using var store = new SqlitePredicateStore(dbPath);
+
+            store.Upsert(predicate.PredicateName, predicate);
+
+            Assert.True(store.HasFormattedDuplicate(BlackboardExtensions.FormatPredicate(predicate)));
+            Assert.True(store.TryGet(predicate.PredicateName, out _));
+        }
+        finally
+        {
+            Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
+            if (File.Exists(dbPath)) File.Delete(dbPath);
+        }
+    }
+
+    /// <summary>
+    /// Regression: reopening used to keep the old rows in SQLite but not in the hot
+    /// index, so SQL queries and TryGet disagreed. Every run now starts empty.
+    /// </summary>
+    [Fact]
+    public void FileBackedStore_IsClearedWhenReopened()
     {
         string dbPath = Path.Combine(Path.GetTempPath(), $"aptree-test-{Guid.NewGuid():N}.db");
         try
@@ -32,16 +57,13 @@ public class SqlitePredicateStoreStorageModeTests
 
             using var reopened = new SqlitePredicateStore(dbPath);
 
-            Assert.True(reopened.HasFormattedDuplicate(BlackboardExtensions.FormatPredicate(predicate)),
-                "the underlying SQLite file should still contain the row written before reopening");
-
-            // Known issue: reopening never reloads the in-memory hot index, so
-            // TryGet/ContainsKey/All miss persisted data that the SQL queries still see.
-            Assert.False(reopened.TryGet(predicate.PredicateName, out _),
-                "hot index is not rehydrated from the SQLite file on reopen");
+            Assert.Equal(0, reopened.Count);
+            Assert.False(reopened.TryGet(predicate.PredicateName, out _));
+            Assert.False(reopened.HasFormattedDuplicate(BlackboardExtensions.FormatPredicate(predicate)));
         }
         finally
         {
+            Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
             if (File.Exists(dbPath)) File.Delete(dbPath);
         }
     }
