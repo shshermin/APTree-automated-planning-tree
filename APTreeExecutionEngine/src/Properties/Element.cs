@@ -3,7 +3,6 @@ using System.Collections.Generic;
 
 public abstract class Element : CustomProperty
 {
-    public FastName NameKey { get; set; }
     public DateTime LastModified { get; set; }
     public string ID { get; set; }
     public FastName TypeName { get; set; }

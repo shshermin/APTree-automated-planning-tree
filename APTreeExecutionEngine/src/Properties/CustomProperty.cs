@@ -3,6 +3,10 @@ using System.Collections.Generic;
 
 public abstract class CustomProperty 
 {
+   /// <summary>
+   /// Instance name (PDDL object name). Declared only here: the base types used to
+   /// redeclare it, which gave every object two NameKeys that could disagree.
+   /// </summary>
    public FastName NameKey { get;  set; }
    public DateTime LastModified { get;  set; }
    public string ID { get; set; }

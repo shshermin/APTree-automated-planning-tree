@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 
 public abstract class Location : CustomProperty  {
-    public FastName NameKey { get; set; }
     public DateTime LastModified { get; set; }
     public string ID { get; set; }
     public FastName TypeName { get; set; }
