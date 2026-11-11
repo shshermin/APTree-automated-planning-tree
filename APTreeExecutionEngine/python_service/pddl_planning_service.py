@@ -211,32 +211,71 @@ def create_plan():
             }), 400
         
         planning_time = time.time() - start_time
-        
-        if plan_result['success']:
+        status = plan_result.get('status') or classify_planner_output(
+            planner_name, plan_result.get('raw_output', ''), plan_result.get('error', ''))
+
+        if status == PLAN_SOLVED:
             # Return raw planner stdout — the C# execution engine
             # handles the transformation via Planner.TransformToAPTreeModel
-            raw_output = plan_result.get('raw_output', '')
-
             return jsonify({
                 'success': True,
-                'plan': raw_output,
+                'status': PLAN_SOLVED,
+                'plan': plan_result.get('raw_output', ''),
                 'planningTimeSeconds': planning_time,
                 'plannerUsed': planner_name
             })
+
+        if status == PLAN_UNSOLVABLE:
+            error = f'{planner_name} reports the problem as unsolvable'
+        elif plan_result['success']:
+            error = f'{planner_name} finished without a plan in its output'
         else:
-            return jsonify({
-                'success': False,
-                'error': f'{planner_name} failed to find a plan: {plan_result["error"]}',
-                'planningTimeSeconds': planning_time,
-                'plannerUsed': planner_name
-            })
-            
+            error = f'{planner_name} failed to find a plan: {plan_result["error"]}'
+        return jsonify({
+            'success': False,
+            'status': status,
+            'error': error,
+            'plan': plan_result.get('raw_output', ''),
+            'planningTimeSeconds': planning_time,
+            'plannerUsed': planner_name
+        })
+
     except Exception as e:
         print(f"Error in planning request: {str(e)}")
         return jsonify({
             'success': False,
+            'status': PLAN_ERROR,
             'error': f'Unexpected error during planning: {str(e)}'
         }), 500
+
+
+# Outcome of a planner run, sent as `status` (C#: AIPlanning.PlanStatus).
+PLAN_SOLVED = 'solved'
+PLAN_UNSOLVABLE = 'unsolvable'
+PLAN_ERROR = 'error'
+
+# Lowercase markers in planner output. ENHSP exits with 0 for an unsolvable
+# problem too, so the exit code alone can't tell a plan from no plan.
+_SOLVED_MARKERS = {
+    'ENHSP': ('problem solved', 'found plan'),
+    'FF': ('found legal plan',),
+    'LAMA-FIRST': ('solution found',),
+}
+_UNSOLVABLE_MARKERS = {
+    'ENHSP': ('unsolvable',),
+    'FF': ('unsolvable', 'goal can be simplified to false'),
+    'LAMA-FIRST': ('search stopped without finding a solution', 'no solution'),
+}
+
+
+def classify_planner_output(planner_name, stdout, stderr):
+    """Map a planner run to PLAN_SOLVED, PLAN_UNSOLVABLE or PLAN_ERROR from its output."""
+    out = f'{stdout or ""}\n{stderr or ""}'.lower()
+    if any(m in out for m in _UNSOLVABLE_MARKERS.get(planner_name, ())):
+        return PLAN_UNSOLVABLE
+    if any(m in out for m in _SOLVED_MARKERS.get(planner_name, ())):
+        return PLAN_SOLVED
+    return PLAN_ERROR
 
 
 def call_enhsp(domain_file, problem_file, planner_path, timeout_seconds, enhsp_config=None):

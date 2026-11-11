@@ -24,6 +24,14 @@ namespace AIPlanning
             _baseUrl = baseUrl ?? throw new ArgumentNullException(nameof(baseUrl));
         }
         
+        /// <summary>Reads the service's JSON answer; `status` comes as "solved" / "unsolvable" / "error".</summary>
+        internal static PlanningResult ParseResult(string responseJson)
+            => JsonSerializer.Deserialize<PlanningResult>(responseJson, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                Converters = { new System.Text.Json.Serialization.JsonStringEnumConverter() }
+            });
+
         public async Task<PlanningResult> SendPlanningRequestAsync(IPlanningRequest request)
         {
             try
@@ -61,14 +69,11 @@ namespace AIPlanning
                 if (response.IsSuccessStatusCode)
                 {
                     // Deserialize successful response
-                    var result = JsonSerializer.Deserialize<PlanningResult>(responseJson, new JsonSerializerOptions
-                    {
-                        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-                    });
+                    var result = ParseResult(responseJson);
                     
                     // DEBUG: Show what's in the PlanningResult
                     LoggingService.LogInfo($"🔍 RestPlannerCommunicator: PLANNING RESULT CONTENTS:");
-                    LoggingService.LogInfo($"📋 Success: {result.Success}");
+                    LoggingService.LogInfo($"📋 Success: {result.Success}, status: {result.EffectiveStatus}");
                     LoggingService.LogInfo($"📋 Plan length: {result.Plan?.Length ?? 0} characters");
                     LoggingService.LogInfo($"📋 Plan preview: {result.Plan?.Substring(0, Math.Min(300, result.Plan.Length))}");
                     LoggingService.LogInfo($"📋 Error: {result.Error ?? "None"}");

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using ModelLoader.ParameterTypes;
 using ModelLoader.PredicateTypes;
 using BehaviorTreeMainProject.Log.Services;
@@ -74,13 +75,28 @@ namespace BehaviorTreeMainProject
         {
             base.applyEffects();
 
-            if (obj == null || blackboard == null) return;
+            if (blackboard == null) return;
+            RevealWhatWasUnderneath(blackboard.GetAllPredicates(), log: true);
+        }
+
+        /// <summary>The same conditional effect, applied to a plan simulation.</summary>
+        internal override void SimulateEffects(AIPlanning.PlanSimulationState state)
+        {
+            base.SimulateEffects(state);
+            RevealWhatWasUnderneath(state.All, log: false);
+        }
+
+        private void RevealWhatWasUnderneath(IEnumerable<Predicate> current, bool log)
+        {
+            if (obj == null) return;
             string pickedName = obj.NameKey?.ToString();
             if (string.IsNullOrEmpty(pickedName)) return;
 
+            var predicates = current.ToList();
+
             // Find stacked(pickedName, ?x) predicates that are currently true
             var stackedToClear = new List<Stacked>();
-            foreach (var p in blackboard.GetAllPredicates())
+            foreach (var p in predicates)
             {
                 if (p is Stacked s
                     && !s.not
@@ -95,11 +111,11 @@ namespace BehaviorTreeMainProject
                 string belowName = s.obj2?.NameKey?.ToString() ?? "";
                 // Flip stacked(picked, below) → false
                 s.not = true;
-                LoggingService.LogSuccess(
+                if (log) LoggingService.LogSuccess(
                     $"🔧 PickUpML: Cleared stacked({pickedName}, {belowName}) — picked object revealed what was underneath");
 
                 // Set clear(below) = true and accessible(below) = true
-                foreach (var p in blackboard.GetAllPredicates())
+                foreach (var p in predicates)
                 {
                     if (p is Clear c
                         && c.obj?.NameKey?.ToString()?.Equals(belowName, StringComparison.OrdinalIgnoreCase) == true)
@@ -112,11 +128,9 @@ namespace BehaviorTreeMainProject
                         a.not = false;
                     }
                 }
-                LoggingService.LogSuccess(
+                if (log) LoggingService.LogSuccess(
                     $"🔧 PickUpML: Set clear({belowName}) = true and accessible({belowName}) = true");
             }
-
-
         }
     }
 }

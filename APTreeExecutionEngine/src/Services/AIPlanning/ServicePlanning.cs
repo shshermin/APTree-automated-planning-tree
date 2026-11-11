@@ -85,12 +85,25 @@ public abstract class ServicePlanning : Service
 
 
 
-    protected ServicePlanning(IBehaviorTree InOwningTree, IPlannerCommunicator communicator, IPlanningRequest InPlanningRequest)
+    protected ServicePlanning(IBehaviorTree InOwningTree, IPlannerCommunicator communicator, IPlanningRequest InPlanningRequest, PlanValidator validator)
         : base(InOwningTree)
     {
         generatedNodeGraph = null;
         plannerCommunicator = communicator ?? throw new ArgumentNullException(nameof(communicator));
         planningRequest = InPlanningRequest ?? throw new ArgumentNullException(nameof(InPlanningRequest));
+        Validator = validator;
+    }
+
+    private PlanValidator validator;
+
+    /// <summary>
+    /// Checks every plan right after the planner returns it, before it is attached to
+    /// the tree. Required: a planning service never runs without one.
+    /// </summary>
+    public PlanValidator Validator
+    {
+        get => validator;
+        set => validator = value ?? throw new ArgumentNullException(nameof(value), "A planning service needs a PlanValidator");
     }
     
     // Reference to the flow node that owns this planning service
@@ -197,6 +210,11 @@ public abstract class ServicePlanning : Service
                 return false;
             }
 
+            // Step 2b: The validator checks the planner's answer before anything is built from it
+            var resultCheck = Validator.ValidateResult(result);
+            if (!resultCheck.IsValid)
+                return RejectPlan(resultCheck.Reason, plannerCallId, result.PlanningTimeSeconds);
+
             // Step 3: Generate NodeGraph from planner result (implemented by each planner type)
             generatedNodeGraph = GenerateNodeGraphFromResult(result);
 
@@ -217,6 +235,14 @@ public abstract class ServicePlanning : Service
                 if (_hlTraceId > 0)
                     HierarchicalTraceLogger.LogHLCompleted(_hlTraceId, false);
                 return false;
+            }
+
+            // Step 3b: ...and plays the plan forward before it is attached to the tree
+            var planCheck = Validator.ValidatePlan(generatedNodeGraph, linkedBlackboard);
+            if (!planCheck.IsValid)
+            {
+                generatedNodeGraph = null;
+                return RejectPlan(planCheck.Reason, plannerCallId, result.PlanningTimeSeconds);
             }
 
             // Step 4: Directly assign NodeGraph to owning flow node (if available)
@@ -324,6 +350,22 @@ public abstract class ServicePlanning : Service
 
 
     
+    /// <summary>Fails planning for good because the validator rejected the plan.</summary>
+    private bool RejectPlan(string reason, int plannerCallId, double planningTimeSeconds)
+    {
+        EndTime = DateTime.Now;
+        IsExecuting = false;
+        HasCompleted = true;
+        WasSuccessful = false;
+        HasPlanGenerated = false;
+        LastError = $"Plan rejected by {Validator.GetType().Name}: {reason}";
+        LoggingService.LogError($"❌ {GetType().Name}: {LastError}");
+        PlannerCallLogger.LogCallFailed(plannerCallId, planningTimeSeconds, LastError);
+        if (_hlTraceId > 0)
+            HierarchicalTraceLogger.LogHLCompleted(_hlTraceId, false);
+        return false;
+    }
+
     /// <summary>
     /// Generate NodeGraph from planner result (to be implemented by each planner type)
     /// </summary>

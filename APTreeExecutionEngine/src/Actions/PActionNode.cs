@@ -120,6 +120,26 @@ public abstract class PActionNode : ActionNode
         return Effects;
     }
 
+    /// <summary>Declared preconditions, for plan validation.</summary>
+    internal State GetPreconditions() => Preconditions;
+
+    /// <summary>
+    /// Whether one precondition holds, given the predicate currently stored under its key
+    /// (null if none). CheckPreconditions and the plan validator both use this rule.
+    /// </summary>
+    internal static bool PreconditionHolds(Predicate precondition, Predicate current)
+        => precondition.not ? current == null || current.not : current != null && !current.not;
+
+    /// <summary>
+    /// Applies this action's effects to a plan simulation the way applyEffects() applies
+    /// them to the blackboard. Override together with applyEffects().
+    /// </summary>
+    internal virtual void SimulateEffects(AIPlanning.PlanSimulationState state)
+    {
+        foreach (var effect in GetActionEffects())
+            state.Set(effect);
+    }
+
     public virtual void applyEffects()
     {
         LoggingService.LogInfo($"🔧 APPLY_EFFECTS: Starting applyEffects() for action: {InstanceName.ToString()}");
@@ -281,32 +301,16 @@ public abstract class PActionNode : ActionNode
 
             // Find matching predicate in blackboard by PredicateName
             var matchingPredicate = blackboardPredicates.FirstOrDefault(p => p.PredicateName == precondition.PredicateName);
+            string kind = precondition.not ? "Negated" : "Positive";
 
-            if (precondition.not)
+            if (!PreconditionHolds(precondition, matchingPredicate))
             {
-                // Negated precondition: satisfied if blackboard doesn't have it, or has it as negated
-                if (matchingPredicate != null && !matchingPredicate.not)
-                {
-                    LoggingService.LogWarning($"❌ PRECONDITIONS: Negated precondition FAILED - {precondition.PredicateName} exists as positive in blackboard");
-                    return false;
-                }
-                LoggingService.LogInfo($"✅ PRECONDITIONS: Negated precondition passed - {precondition.PredicateName}");
+                string why = precondition.not ? "exists as positive in blackboard"
+                    : matchingPredicate == null ? "not found in blackboard" : "is negated in blackboard";
+                LoggingService.LogWarning($"❌ PRECONDITIONS: {kind} precondition FAILED - {precondition.PredicateName} {why}");
+                return false;
             }
-            else
-            {
-                // Positive precondition: satisfied if blackboard has it and it's not negated
-                if (matchingPredicate == null)
-                {
-                    LoggingService.LogWarning($"❌ PRECONDITIONS: Positive precondition FAILED - {precondition.PredicateName} not found in blackboard");
-                    return false;
-                }
-                if (matchingPredicate.not)
-                {
-                    LoggingService.LogWarning($"❌ PRECONDITIONS: Positive precondition FAILED - {precondition.PredicateName} is negated in blackboard");
-                    return false;
-                }
-                LoggingService.LogInfo($"✅ PRECONDITIONS: Positive precondition passed - {precondition.PredicateName}");
-            }
+            LoggingService.LogInfo($"✅ PRECONDITIONS: {kind} precondition passed - {precondition.PredicateName}");
         }
 
         return true;

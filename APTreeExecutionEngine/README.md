@@ -207,6 +207,14 @@ docs/
 
 ---
 
+### Plan validation
+
+Every planning service has a `PlanValidator` (`src/Services/AIPlanning/Validation/`) that checks a plan right after the planner returns it, before it is attached to the tree. A rejected plan fails planning like a planner failure.
+
+- The planner service reports `status`: `solved`, `unsolvable` or `error`. Only `solved` passes.
+- `SymbolicPlanValidator` (used for PDDL planners) plays the plan forward from the current blackboard with the runtime rules: ML preconditions must hold step by step, and every action's effects are applied as `applyEffects()` would apply them. HL preconditions are not checked, as at runtime.
+- `PlanValidator` is abstract so plans from other sources (e.g. an LLM) can get their own checks; implement `ValidatePlan` and set `ServicePlanning.Validator`.
+
 ### Configuration file reference
 
 | Field | Type | Description |

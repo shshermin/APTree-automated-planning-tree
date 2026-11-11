@@ -12,6 +12,11 @@ import pddl_planning_service as svc
 from pddl_planning_service import app
 
 
+# Shapes of real ENHSP output (checked against the shipped enhsp.jar).
+ENHSP_SOLVED = "Problem Solved\n\nFound Plan:\n0.0: (pickuphl e1 p1 r1 g1)\n\nPlan-Length:1\n"
+ENHSP_UNSOLVABLE = "Domain parsed\nProblem parsed\nGrounding..\nAibr Preprocessing\nProblem Detected as Unsolvable\n"
+
+
 @pytest.fixture
 def client():
     app.config["TESTING"] = True
@@ -35,7 +40,7 @@ def fake_run(monkeypatch):
     """Replace subprocess.run; tests set .result / .raises and read .calls."""
     class Stub:
         calls = []
-        result = subprocess.CompletedProcess([], 0, stdout="0.0: (pickuphl e1 p1 r1 g1)\n", stderr="")
+        result = subprocess.CompletedProcess([], 0, stdout=ENHSP_SOLVED, stderr="")
         raises = None
 
         def __call__(self, cmd, **kwargs):
@@ -66,7 +71,8 @@ def test_valid_domain_and_problem_return_the_raw_planner_output(client, pddl_fil
     assert response.status_code == 200
     body = response.get_json()
     assert body["success"] is True
-    assert body["plan"] == "0.0: (pickuphl e1 p1 r1 g1)\n"
+    assert body["status"] == "solved"
+    assert body["plan"] == ENHSP_SOLVED
     assert body["plannerUsed"] == "ENHSP"
     assert body["planningTimeSeconds"] >= 0
 
@@ -98,7 +104,8 @@ def test_planner_rejection_is_a_200_with_success_false_and_the_planner_stderr(cl
     assert response.status_code == 200
     body = response.get_json()
     assert body["success"] is False
-    assert "Problem unsolvable" in body["error"]
+    assert body["status"] == "unsolvable"
+    assert "unsolvable" in body["error"]
     assert isinstance(body["error"], str)  # C# PlanningResult.Error is a string
 
 
@@ -237,3 +244,42 @@ def test_service_defaults_to_localhost_with_the_debugger_off():
     assert re.search(r"PLANNER_HOST',\s*'127\.0\.0\.1'", source)
     assert re.search(r"app\.run\(host=host, port=5000, debug=debug\)", source)
     assert "debug=True" not in source
+
+
+def test_enhsp_unsolvable_with_exit_code_0_is_not_reported_as_a_plan(client, pddl_files, fake_run):
+    """Regression: ENHSP exits with 0 for an unsolvable problem; that used to come back as success."""
+    fake_run.result = subprocess.CompletedProcess([], 0, stdout=ENHSP_UNSOLVABLE, stderr="")
+
+    body = client.post("/plan", json=pddl_files).get_json()
+
+    assert body["success"] is False
+    assert body["status"] == "unsolvable"
+
+
+def test_output_without_a_plan_or_verdict_is_an_error(client, pddl_files, fake_run):
+    fake_run.result = subprocess.CompletedProcess([], 0, stdout="Domain parsed\nProblem parsed\n", stderr="")
+
+    body = client.post("/plan", json=pddl_files).get_json()
+
+    assert body["success"] is False
+    assert body["status"] == "error"
+
+
+def test_a_timeout_has_status_error(client, pddl_files, fake_run):
+    fake_run.raises = subprocess.TimeoutExpired(cmd="java", timeout=1)
+
+    assert client.post("/plan", json=pddl_files).get_json()["status"] == "error"
+
+
+@pytest.mark.parametrize("planner, stdout, expected", [
+    ("ENHSP", ENHSP_SOLVED, "solved"),
+    ("ENHSP", ENHSP_UNSOLVABLE, "unsolvable"),
+    ("FF", "ff: found legal plan as follows\nstep 0: GO", "solved"),
+    ("FF", "ff: goal can be simplified to FALSE. No plan will solve it", "unsolvable"),
+    ("LAMA-FIRST", "Solution found.\nPlan length: 1 step(s).", "solved"),
+    ("LAMA-FIRST", "Completely explored state space -- no solution!\nSearch stopped without finding a solution.", "unsolvable"),
+    ("FF", "", "error"),
+])
+def test_planner_output_is_classified_per_planner(planner, stdout, expected):
+    assert svc.classify_planner_output(planner, stdout, "") == expected
+

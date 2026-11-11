@@ -63,7 +63,7 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
         private bool _defaultsAttached = false;
 
         public ServicePDDLPlanning(BehaviorTree InOwningTree, PDDLPlanningRequest InPlanningRequest)
-            : base(InOwningTree, new RestPlannerCommunicator("http://localhost:5000"), InPlanningRequest)
+            : base(InOwningTree, new RestPlannerCommunicator("http://localhost:5000"), InPlanningRequest, new SymbolicPlanValidator())
         {
             this.blackboard = InOwningTree.linkedBlackboard;
             this.actionFactory = FactoryAction.Instance;
@@ -73,7 +73,7 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
 
         /// <summary>Lets tests inject a fake IPlannerCommunicator.</summary>
         internal ServicePDDLPlanning(BehaviorTree InOwningTree, PDDLPlanningRequest InPlanningRequest, IPlannerCommunicator communicator)
-            : base(InOwningTree, communicator, InPlanningRequest)
+            : base(InOwningTree, communicator, InPlanningRequest, new SymbolicPlanValidator())
         {
             this.blackboard = InOwningTree.linkedBlackboard;
             this.actionFactory = FactoryAction.Instance;
