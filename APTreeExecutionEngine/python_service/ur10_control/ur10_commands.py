@@ -83,8 +83,8 @@ TCP_OFFSETS = {
 # movec / lift_z). Units differ by move type — keep them separate:
 #   movej : v in rad/s (joint speed),  a in rad/s²
 #   movel : v in m/s   (tool speed),    a in m/s²
-# Planned (MoveIt/Pilz) moves live in robot_service.py and are governed by
-# PLANNED_VEL_CAP there, not by these constants.
+# Planned (MoveIt/Pilz) moves live in robot_service.py and use MOVE_VEL_CAP /
+# MOVE_ACC_CAP below as their scaling-factor caps.
 MOVEJ_DEFAULT_VEL = 1.0    # rad/s
 MOVEJ_DEFAULT_ACC = 1.0    # rad/s²
 MOVEL_DEFAULT_VEL = 0.25   # m/s
@@ -92,6 +92,20 @@ MOVEL_DEFAULT_ACC = 1.2    # m/s²
 MOVEP_BLEND_RADIUS = 0.05  # m
 LIFT_Z_DEFAULT_VEL = 0.1   # m/s
 LIFT_Z_DEFAULT_ACC = 0.3   # m/s²
+
+# One cap for every kind of move: movej/movel/movep/movec/lift here, and the
+# planned moves in robot_service.py. Velocity and acceleration above these are
+# clamped, whatever the caller sends. Units follow the move (rad/s for movej,
+# m/s for the Cartesian moves, a scaling factor for planned moves).
+MOVE_VEL_CAP = 0.36
+MOVE_ACC_CAP = 0.36
+
+
+def _capped(velocity, acceleration, default_vel, default_acc):
+    """Fill in the defaults, then clamp to MOVE_VEL_CAP / MOVE_ACC_CAP."""
+    v = default_vel if velocity is None else velocity
+    a = default_acc if acceleration is None else acceleration
+    return min(v, MOVE_VEL_CAP), min(a, MOVE_ACC_CAP)
 
 # Note: The Dashboard Server is a simple TCP server that accepts text commands and returns responses.
 def dashboard_command(robot_ip: str, command: str) -> str:
@@ -513,8 +527,7 @@ def move_to_pose(robot_ip: str, name: str, position: dict = None, velocity: floa
     """Move the robot to a pose using movej (joint-space interpolation)."""
     if position is None:
         position = get_position(name)
-    v = MOVEJ_DEFAULT_VEL if velocity is None else velocity
-    a = MOVEJ_DEFAULT_ACC if acceleration is None else acceleration
+    v, a = _capped(velocity, acceleration, MOVEJ_DEFAULT_VEL, MOVEJ_DEFAULT_ACC)
     if "joints" in position:
         joints = position["joints"]
         cmd = _wrap_with_tcp(f"movej({joints}, a={a}, v={v})\n", tcp, payload, payload_cog)
@@ -533,8 +546,7 @@ def move_to_pose_l(robot_ip: str, name: str, position: dict = None, velocity: fl
     """Move the robot to a pose using movel (linear TCP interpolation)."""
     if position is None:
         position = get_position(name)
-    v = MOVEL_DEFAULT_VEL if velocity is None else velocity
-    a = MOVEL_DEFAULT_ACC if acceleration is None else acceleration
+    v, a = _capped(velocity, acceleration, MOVEL_DEFAULT_VEL, MOVEL_DEFAULT_ACC)
     pose = position["pose"]
     cmd = _wrap_with_tcp(f"movel(p{pose}, a={a}, v={v})\n", tcp, payload, payload_cog)
     _run_urscript_with_done(robot_ip, cmd)
@@ -545,8 +557,7 @@ def move_to_pose_p(robot_ip: str, name: str, position: dict = None, velocity: fl
     """Move the robot to a pose using movep (process / blend move)."""
     if position is None:
         position = get_position(name)
-    v = MOVEL_DEFAULT_VEL if velocity is None else velocity
-    a = MOVEL_DEFAULT_ACC if acceleration is None else acceleration
+    v, a = _capped(velocity, acceleration, MOVEL_DEFAULT_VEL, MOVEL_DEFAULT_ACC)
     r = MOVEP_BLEND_RADIUS if blend_radius is None else blend_radius
     pose = position["pose"]
     cmd = _wrap_with_tcp(f"movep(p{pose}, a={a}, v={v}, r={r})\n", tcp, payload, payload_cog)
@@ -560,8 +571,7 @@ def move_to_pose_c(robot_ip: str, via_name: str, end_name: str, via_position: di
         via_position = get_position(via_name)
     if end_position is None:
         end_position = get_position(end_name)
-    v = MOVEL_DEFAULT_VEL if velocity is None else velocity
-    a = MOVEL_DEFAULT_ACC if acceleration is None else acceleration
+    v, a = _capped(velocity, acceleration, MOVEL_DEFAULT_VEL, MOVEL_DEFAULT_ACC)
     via_pose = via_position["pose"]
     end_pose = end_position["pose"]
     cmd = _wrap_with_tcp(f"movec(p{via_pose}, p{end_pose}, a={a}, v={v})\n", tcp, payload, payload_cog)
@@ -602,8 +612,7 @@ def lift_z(robot_ip: str, height: float = 0.1, velocity: float = None, accelerat
     LIFT_Z_DEFAULT_ACC at the top of this file.
     """
     height = float(height) if height is not None else 0.1
-    velocity = LIFT_Z_DEFAULT_VEL if velocity is None else velocity
-    acceleration = LIFT_Z_DEFAULT_ACC if acceleration is None else acceleration
+    velocity, acceleration = _capped(velocity, acceleration, LIFT_Z_DEFAULT_VEL, LIFT_Z_DEFAULT_ACC)
     cmd = (
         "def lift_up():\n"
         "  local curr = get_actual_tcp_pose()\n"

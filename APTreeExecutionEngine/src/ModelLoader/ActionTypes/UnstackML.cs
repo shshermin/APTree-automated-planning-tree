@@ -1,4 +1,3 @@
-using System.Runtime.InteropServices;
 using ModelLoader.ParameterTypes;
 using ModelLoader.PredicateTypes;
 using BehaviorTreeMainProject.Log.Services;
@@ -7,13 +6,6 @@ namespace BehaviorTreeMainProject
 {
     public class UnstackML : PActionNode
     {
-        [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-        private static extern int MessageBoxW(IntPtr hWnd, string text, string caption, uint type);
-        private const uint MB_OKCANCEL    = 0x00000001;
-        private const uint MB_ICONWARNING = 0x00000030;
-        private const uint MB_TOPMOST     = 0x00040000;
-        private const int  IDOK           = 1;
-
         public Element       stackingobject { get; private set; }
         public Element       existingobject { get; private set; }
         public Robot         client         { get; private set; }
@@ -66,43 +58,6 @@ namespace BehaviorTreeMainProject
             effects.AddPredicate(new FastName("unstackML_eff_6"), new Accessible(existingobject, false));
             effects.AddPredicate(new FastName("unstackML_eff_7"), new Clear(existingobject, false));
             effects.AddPredicate(new FastName("unstackML_eff_8"), new Stacked(stackingobject, existingobject, true)); // NOT stacked
-        }
-
-        protected override void OnEnter()
-        {
-            base.OnEnter();
-
-            if (status == BTNodeResult.Failure)
-                return;
-
-            bool executionActive = false;
-            try { executionActive = blackboard.GetBool(new FastName("ExecutionActive")); } catch { }
-
-            if (!executionActive)
-                return;
-
-            var message = $"About to execute UnstackML:\n\n" +
-                          $"  Instance:        {InstanceName}\n" +
-                          $"  Stacking object: {stackingobject?.ID}\n" +
-                          $"  Existing object: {existingobject?.ID}\n" +
-                          $"  Location:        {objposition?.ID}\n" +
-                          $"  Robot:           {client?.ID}\n\n" +
-                          $"Press OK to proceed, Cancel to abort.";
-
-            LoggingService.LogInfo($"⏸️ UnstackML: Waiting for operator confirmation for '{InstanceName}'");
-
-            int result = MessageBoxW(IntPtr.Zero, message, "Confirm: UnstackML",
-                                     MB_OKCANCEL | MB_ICONWARNING | MB_TOPMOST);
-
-            if (result != IDOK)
-            {
-                LoggingService.LogWarning($"🛑 UnstackML: Operator CANCELLED '{InstanceName}'");
-                status = BTNodeResult.Failure;
-            }
-            else
-            {
-                LoggingService.LogSuccess($"▶️ UnstackML: Operator confirmed '{InstanceName}' — proceeding");
-            }
         }
 
         protected override State Preconditions => preconditions;

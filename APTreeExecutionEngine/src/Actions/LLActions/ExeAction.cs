@@ -1,5 +1,4 @@
 using System;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using ModelLoader.ParameterTypes;
 using BehaviorTreeMainProject.Log.Services;
@@ -15,8 +14,6 @@ using RobotCommand;
 ///   OnEnter → build the command request (subclasses return null if inputs are missing)
 ///   OnTick_NodeLogic → send the REST command to the robot, once
 ///   OnExit → log only
-/// Note: there is no operator confirmation before motion; the MessageBox
-/// import below is currently unused.
 /// </summary>
 public abstract class ExeAction : PActionNode
 {
@@ -29,15 +26,6 @@ public abstract class ExeAction : PActionNode
 
     /// <summary>The communicator used to send robot commands. Injected or shared default.</summary>
     protected readonly IRobotCommandCommunicator _communicator;
-
-    // Win32 MessageBox via P/Invoke
-    [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-    private static extern int MessageBoxW(IntPtr hWnd, string text, string caption, uint type);
-
-    private const uint MB_OKCANCEL = 0x00000001;
-    private const uint MB_ICONWARNING = 0x00000030;
-    private const uint MB_TOPMOST = 0x00040000;
-    private const int IDOK = 1;
 
     public string RobotIp { get; }
     public string FlaskBaseUrl { get; }
@@ -97,7 +85,7 @@ public abstract class ExeAction : PActionNode
 
     /// <summary>
     /// Resolves position data from blackboard and sends the robot command via REST.
-    /// Called after OnEnter (operator has already confirmed).
+    /// Called after OnEnter.
     /// </summary>
     protected override bool OnTick_NodeLogic(float InDeltaTime)
     {

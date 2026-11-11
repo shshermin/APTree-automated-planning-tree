@@ -27,6 +27,7 @@ from ur10_commands import play_program, dashboard_command, set_payload, set_tcp,
 from ur10_commands import _send_urscript
 from ur10_commands import _run_urscript_with_done
 from ur10_commands import PYTHON_HOST_IP, CALLBACK_PORT
+from ur10_commands import MOVE_VEL_CAP, MOVE_ACC_CAP
 from ur10_commands import execute_trajectory as _execute_trajectory
 from ur10_commands import get_current_pose as _get_current_pose
 
@@ -42,9 +43,10 @@ STACK_RELEASE_MOVE_TYPES = ['movej', 'planned', 'plannedj', 'plannedl']
 # (fraction of UR10 joint max). 1.0 = full UR10 speed, which is unsafe for this
 # cell. All planned-move code paths (/move plannedj/plannedl and the internal
 # _planned_lift helper used by stack_release/nail_and_retract) clamp through
-# these two constants — change here to change global planned speed.
-PLANNED_VEL_CAP = 0.36
-PLANNED_ACC_CAP = 0.36
+# these two constants. They are the same cap the direct moves use
+# (ur10_commands.MOVE_VEL_CAP / MOVE_ACC_CAP) — change it there.
+PLANNED_VEL_CAP = MOVE_VEL_CAP
+PLANNED_ACC_CAP = MOVE_ACC_CAP
 PLANNED_DEFAULT_VEL = 0.36
 PLANNED_DEFAULT_ACC = 0.36
 

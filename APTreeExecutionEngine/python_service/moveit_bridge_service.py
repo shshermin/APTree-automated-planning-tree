@@ -36,6 +36,7 @@ from ur_msgs.srv import SetIO
 from controller_manager_msgs.srv import ListControllers
 
 from move_to_task import MoveToTask
+from ur10_control.ur10_commands import MOVE_VEL_CAP, MOVE_ACC_CAP  # one cap for every kind of move
 from dynamic_scene_example import DynamicSceneManager
 
 app = Flask(__name__)
@@ -188,8 +189,8 @@ def plan_only():
     try:
         data = request.json or {}
         end_effector_type = data.get('end_effector_type', 'gripper')
-        velocity = float(data.get('velocity', 0.15))
-        acceleration = float(data.get('acceleration', 0.15))
+        velocity = min(float(data.get('velocity', 0.15)), MOVE_VEL_CAP)
+        acceleration = min(float(data.get('acceleration', 0.15)), MOVE_ACC_CAP)
         planning_time = float(data.get('planning_time', 5.0))
         both_loaded = data.get('both_loaded', False)
         no_object = data.get('no_object', True)
@@ -739,8 +740,8 @@ def move_lin():
             return jsonify({'success': False, 'error': 'pose [x,y,z,rx,ry,rz] required'}), 400
 
         end_effector_type = data.get('end_effector_type', 'gripper')
-        vel = float(data.get('velocity', 0.15))
-        acc = float(data.get('acceleration', 0.15))
+        vel = min(float(data.get('velocity', 0.15)), MOVE_VEL_CAP)
+        acc = min(float(data.get('acceleration', 0.15)), MOVE_ACC_CAP)
 
         move_to_task.end_effector_link = EE_LINK_MAP.get(end_effector_type, 'tool0')
 
@@ -841,8 +842,8 @@ def move_joints():
             return jsonify({'success': False, 'error': 'joints [j1..j6] required'}), 400
 
         end_effector_type = data.get('end_effector_type', 'gripper')
-        vel = float(data.get('velocity', 0.3))
-        acc = float(data.get('acceleration', 0.3))
+        vel = min(float(data.get('velocity', 0.3)), MOVE_VEL_CAP)
+        acc = min(float(data.get('acceleration', 0.3)), MOVE_ACC_CAP)
 
         move_to_task.end_effector_link = EE_LINK_MAP.get(end_effector_type, 'tool0')
 
