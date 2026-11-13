@@ -715,6 +715,7 @@ namespace BehaviorTreeMainProject
             private readonly State _emptyEff;
             protected override State Preconditions => _emptyPre;
             protected override State Effects => _emptyEff;
+            public override bool IsFlowNodeWrapper => true;
 
             public DynamicFlowNodeWrapper(DynamicFlowNode childFlow, Blackboard<FastName> blackboard)
                 : base("FlowNodeWrapper", childFlow.DebugDisplayName, blackboard)

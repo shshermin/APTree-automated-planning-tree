@@ -118,7 +118,13 @@ public abstract class PActionNode : ActionNode
     public State GetEffects()
     {
         return Effects;
-    }
+    
+    /// <summary>
+    /// True for nodes that only embed a flow node in a parent graph and are no action of
+    /// their own (BehaviorTreeRunner's DynamicFlowNodeWrapper). A flow node below such a
+    /// node is not the subtree of an HL action.
+    /// </summary>
+    public virtual bool IsFlowNodeWrapper => false;
 
     /// <summary>Declared preconditions, for plan validation.</summary>
     internal State GetPreconditions() => Preconditions;

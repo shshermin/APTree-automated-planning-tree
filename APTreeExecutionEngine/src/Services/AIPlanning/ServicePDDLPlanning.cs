@@ -236,7 +236,7 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
             {
                 Service = this,
                 FlowNode = OwningFlowNode as DynamicFlowNode,
-                ParentAction = (OwningFlowNode as DynamicFlowNode)?.GetParentAction(),
+                ParentAction = ParentHLAction(OwningFlowNode as DynamicFlowNode),
                 Blackboard = blackboard,
                 PlanningRequest = PlanningRequest,
                 OriginalProblemFile = _originalProblemFile,
@@ -293,6 +293,18 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
             }
 
             return base.OnEvaluate(InDeltaTime);
+        }
+
+        /// <summary>
+        /// The HL action whose ML subtree this flow node is, or null when the flow node
+        /// plans at HL level. A wrapper that only embeds an HL layer in the root graph
+        /// (JSON runner) is not such an action: treating it as one made the replan
+        /// decorators build an ML problem for an HL layer.
+        /// </summary>
+        internal static PActionNode ParentHLAction(DynamicFlowNode flowNode)
+        {
+            var parent = flowNode?.GetParentAction();
+            return parent is { IsFlowNodeWrapper: true } ? null : parent;
         }
 
         /// <summary>

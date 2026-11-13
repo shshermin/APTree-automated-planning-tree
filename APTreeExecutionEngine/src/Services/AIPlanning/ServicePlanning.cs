@@ -275,8 +275,11 @@ public abstract class ServicePlanning : Service
             // Step 5: Store in blackboard (for backward compatibility and monitoring)
             StoreNodeGraphInBlackboard();
 
-            // NEW: Add the subtree to the blackboard's injected subtrees after successful planning
-            if (OwningFlowNode?.ParentNode is PActionNode parentAction && parentAction.IsHighLevelAction)
+            // NEW: Add the subtree to the blackboard's injected subtrees after successful planning.
+            // A wrapper that only embeds an HL layer is no HL action: registering the layer would
+            // let the reset after the next HL success clear the running layer's graph.
+            if (OwningFlowNode?.ParentNode is PActionNode parentAction && parentAction.IsHighLevelAction
+                && !parentAction.IsFlowNodeWrapper)
             {
                 AddSubtreeToBlackboardAfterSuccessfulPlanning();
             }
