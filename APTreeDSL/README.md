@@ -27,8 +27,8 @@ A [MontiCore](https://www.se-rwth.de/research/MontiCore/)-based Domain Specific 
 ## 1. Requirements & Build
 
 **Requirements**
-- **Java 11+** (configured automatically via Gradle toolchains — no manual setup needed)
-- **Gradle wrapper** included (no separate Gradle installation needed)
+- **JDK 11**: `build.gradle` pins a Java 11 toolchain and configures no toolchain download, so a JDK 11 must be installed locally
+- **Gradle 8.x** installed on the PATH: the repository has no Gradle wrapper (the Docker image uses Gradle 8.14.4)
 
 **Build**
 

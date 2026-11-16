@@ -195,12 +195,24 @@ def test_unsupported_planning_type_is_a_400(client, pddl_files, fake_run):
     assert response.get_json()["error"]["code"] == "UNSUPPORTED_PLANNING_TYPE"
 
 
-def test_inline_file_content_overrides_the_file_on_disk(client, pddl_files, fake_run, tmp_path, monkeypatch):
+def test_inline_file_content_is_planned_without_overwriting_the_file_on_disk(client, pddl_files, tmp_path, monkeypatch):
     monkeypatch.setattr(svc, "PLANNER_INPUTS_DIR", str(tmp_path))
+    seen = {}
+
+    def fake_run(cmd, **kwargs):
+        problem = cmd[cmd.index("-f") + 1]
+        seen["name"] = problem.rsplit("/", 1)[-1]
+        with open(problem, encoding="utf-8") as f:
+            seen["content"] = f.read()
+        return subprocess.CompletedProcess(cmd, 0, stdout=ENHSP_SOLVED, stderr="")
+
+    monkeypatch.setattr(svc.subprocess, "run", fake_run)
     response = client.post("/plan", json={**pddl_files, "problemFileContent": "(define (problem from-request))"})
 
     assert response.status_code == 200
-    assert (tmp_path / "problem.pddl").read_text() == "(define (problem from-request))"
+    assert seen == {"name": "problem.pddl", "content": "(define (problem from-request))"}
+    assert (tmp_path / "problem.pddl").read_text() == "(define (problem p) (:domain d))"
+    assert list((tmp_path / "generated").iterdir()) == []
 
 
 def test_non_json_body_is_answered_with_a_json_error(client):

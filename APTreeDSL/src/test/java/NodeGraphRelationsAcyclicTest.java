@@ -47,7 +47,6 @@ class NodeGraphRelationsAcyclicTest {
         File[] models = new File("src/test/resources/valid/behavior_trees").listFiles((d, n) -> n.endsWith(".bt"));
         assertNotNull(models);
         List<File> all = new java.util.ArrayList<>(List.of(models));
-        all.add(new File("../DemonstratorFinal.bt"));
 
         int checked = 0;
         for (File model : all) {

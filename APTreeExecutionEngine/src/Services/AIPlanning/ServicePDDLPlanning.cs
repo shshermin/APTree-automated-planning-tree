@@ -568,7 +568,7 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
                             catch { }
                         }
 
-                        // Write the generated DSL plan back into APTreeLivematFinal.bt
+                        // Write the generated DSL plan into the working copy of the .bt model
                         var flowNodeName = OwningFlowNode?.GetNodeName();
                         if (!string.IsNullOrEmpty(flowNodeName))
                         {

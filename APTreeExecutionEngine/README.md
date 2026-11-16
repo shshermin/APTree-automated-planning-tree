@@ -22,7 +22,7 @@ A .NET 8 execution engine for running APTree behavior trees with PDDL-based AI p
 ## 1. Requirements
 
 - **.NET 8 SDK**
-- **Java 11+** (only needed to build/update the APTreeDSL tool jar — see Step 1)
+- **JDK 11** and **Gradle 8.x** (only needed to build/update the APTreeDSL tool jar — see Step 1)
 - **Python 3.10+** with `flask` and `requests` (for the PDDL planning service)
 - **ENHSP JAR** (`enhsp.jar`) accessible on the machine running the planning service
 
@@ -60,7 +60,7 @@ Create or edit a `*Config.json` file (see `src/ModelLoader/DemonstratorConfig.js
 
 ```json
 {
-  "executionActive": true,
+  "executionActive": false,
   "timeoutSeconds": 30,
   "plannerPath": "/home/ubuntu/ENHSP-Public/enhsp.jar",
   "subtreeConfigName": "ENHSP_Demonstrator",
@@ -148,7 +148,7 @@ Pass a mode flag to `dotnet run`:
 | *(none / `--server`)* | Start the frontend API + WebSocket server (default) |
 | `--run <model.json> [config.json]` | Run a BT directly from a JSON model file |
 | `--run <model.json> [config.json] --faults <faults.json>` | Run with fault injection enabled |
-| `--test` | Run the built-in `DemonstratorTreeTest` |
+| `--test` | Run the built-in `DemonstratorTreeTest`. It switches LL execution on and **sends commands to the robot service** |
 | `--loadtest` | Run `JsonBTLoadTest` |
 
 Examples:
@@ -161,7 +161,7 @@ dotnet run --project BehaviorTreeMainProject.csproj
 dotnet run --project BehaviorTreeMainProject.csproj -- --run src/ModelLoader/BehaviorTreeModel.json src/ModelLoader/DemonstratorConfig.json
 
 # Run with fault injection
-dotnet run --project BehaviorTreeMainProject.csproj -- --run src/ModelLoader/BehaviorTreeModel.json src/ModelLoader/DemonstratorConfig.json --faults DemonstratorFaults.json
+dotnet run --project BehaviorTreeMainProject.csproj -- --run src/ModelLoader/BehaviorTreeModel.json src/ModelLoader/DemonstratorConfig.json --faults src/ModelLoader/DemonstratorFaults.json
 ```
 
 ---
@@ -198,7 +198,7 @@ src/
   Logs/                       # Logging infrastructure
 python_service/
   pddl_planning_service.py    # Flask wrapper around ENHSP
-  enhsp.jar                   # ENHSP planner JAR (not committed — provide separately)
+  enhsp.jar                   # ENHSP planner JAR (bundled, GPL-3.0, see THIRD_PARTY_NOTICES.md)
   Plannerinputs/              # PDDL domain and problem files
 docs/
   architecture-class-diagram.puml
@@ -215,12 +215,23 @@ Every planning service has a `PlanValidator` (`src/Services/AIPlanning/Validatio
 - `SymbolicPlanValidator` (used for PDDL planners) plays the plan forward from the current blackboard with the runtime rules: ML preconditions must hold step by step, and every action's effects are applied as `applyEffects()` would apply them. HL preconditions are not checked, as at runtime.
 - `PlanValidator` is abstract so plans from other sources (e.g. an LLM) can get their own checks; implement `ValidatePlan` and set `ServicePlanning.Validator`.
 
+### Live model (.bt working copy)
+
+While a tree runs, every generated plan is written back into a `.bt` model as a `NodeGraph`, and the editor shows that model live (`/api/tree/model`, WebSocket `modelUpdated`). The planner writes into a **working copy**, never into the authored model:
+
+| | Default | Override |
+|---|---|---|
+| Template (authored model, only read) | `APTreeDSL/src/test/resources/valid/behavior_trees/DemonstratorFinal.bt`, found in the first `APTreeDSL/` above the app folder | `APTREE_MODEL_TEMPLATE` |
+| Working copy (written by the planner) | `<system temp>/aptree/live-model.bt` | `APTREE_LIVE_MODEL` |
+
+`--run` and `--test` reset the working copy from the template at start; the server only creates it when it is missing. A server and a runner on the same machine share the default path, so the editor follows a run started in another terminal.
+
 ### Configuration file reference
 
 | Field | Type | Description |
 |---|---|---|
 | `timeoutSeconds` | int | Planner timeout for high-level planning calls |
-| `executionActive` | bool | **Robot execution toggle.** `true`: `ServiceLLSubtreeInject` expands ML actions into LL subtrees and sends robot commands. `false` (default): LL injection is skipped — only HL→ML PDDL planning runs (planning-only mode). Set it explicitly to drive a robot. |
+| `executionActive` | bool | **Robot execution toggle.** `true`: `ServiceLLSubtreeInject` expands ML actions into LL subtrees and sends robot commands. `false` (default): LL injection is skipped — only HL→ML PDDL planning runs (planning-only mode). Set it explicitly to drive a robot. Note: `--run` does not wire LL injection yet, so it plans only; robot commands currently come from `--test`. |
 | `plannerPath` | string | Absolute path to `enhsp.jar` on the planning machine |
 | `subtreeConfigName` | string | Name tag for the ML subtree planner config |
 | `subtreePlannerName` | string | Planner type for ML subtrees (e.g. `Enhsp`) |

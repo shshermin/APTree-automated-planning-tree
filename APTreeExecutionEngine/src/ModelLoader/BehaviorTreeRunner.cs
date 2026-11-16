@@ -66,6 +66,9 @@ namespace BehaviorTreeMainProject
             LoggingService.LogSuccess($"Started at: {testStartTime:yyyy-MM-dd HH:mm:ss.fff}");
             EndToEndSummaryLogger.LogTaskStart(treeName);
 
+            // Every run starts from the authored .bt model, like the predicate store does.
+            APTreeModelWriter.ResetWorkingCopy();
+
             try
             {
                 // 2. Create and populate blackboard (store chosen by config)

@@ -146,6 +146,8 @@ namespace BehaviorTreeMainProject
 
             // Watch the .bt file on disk so that changes from external processes
             // (e.g. dotnet run --test) also trigger live frontend updates.
+            // The watcher needs the file to exist; a runner started later resets it in place.
+            BehaviorTreeMainProject.Services.AIPlanning.APTreeModelWriter.EnsureWorkingCopy();
             var btFilePath = BehaviorTreeMainProject.Services.AIPlanning.APTreeModelWriter.ActiveBtFilePath;
             FileSystemWatcher? btFileWatcher = null;
             if (File.Exists(btFilePath))

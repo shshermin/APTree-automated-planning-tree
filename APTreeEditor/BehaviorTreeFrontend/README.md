@@ -46,7 +46,7 @@ Troubleshooting
 - Should the dev server fail to start, ensure no other process is using port 5173 or set a custom port via `npm run dev -- --port 3000`.
 - If **APTree import/validate** suddenly fails (e.g. `Parsing failed`) after changing APTree/grammar files, rebuild the MontiCore tool jar (the backend executes the jar). This repo uses system Gradle (no `./gradlew`):
 	```bash
-	cd MontiCoreTool
+	cd APTreeDSL
 	gradle shadowJar
 	```
 

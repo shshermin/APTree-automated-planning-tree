@@ -1,28 +1,117 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using BehaviorTreeMainProject.Log.Services;
 
 namespace BehaviorTreeMainProject.Services.AIPlanning
 {
     /// <summary>
-    /// Writes generated planner NodeGraph DSL strings back into the APTreeLivematFinal.bt file,
-    /// replacing the empty "NodeGraph { }" placeholder for the matching cassette FlowNode.
+    /// Writes generated planner NodeGraph DSL strings into a working copy of the .bt model,
+    /// replacing the NodeGraph block of the matching cassette FlowNode.
+    /// The authored model (the template) is only read, never written: the working copy is
+    /// created from it on first use and reset to it at the start of every tree run.
     /// </summary>
     public static class APTreeModelWriter
     {
-        /// <summary>
-        /// Default path to the .bt file.
-        /// </summary>
-        private static readonly string DefaultBtFilePath = Path.GetFullPath(
-            Path.Combine(AppDomain.CurrentDomain.BaseDirectory,
-            "..", "..", "..", "..", "APTreeDSL", "src", "test", "resources",
-            "valid", "behavior_trees", "DemonstratorFinal.bt"));
+        /// <summary>Env var that overrides the template model path.</summary>
+        public const string TemplatePathEnvVar = "APTREE_MODEL_TEMPLATE";
+
+        /// <summary>Env var that overrides the working copy path.</summary>
+        public const string WorkingCopyPathEnvVar = "APTREE_LIVE_MODEL";
+
+        private static readonly string[] TemplateRelativePath =
+            { "APTreeDSL", "src", "test", "resources", "valid", "behavior_trees", "DemonstratorFinal.bt" };
+
+        private static readonly object CopyLock = new();
 
         /// <summary>
-        /// Publicly readable resolved path to the active .bt model file.
+        /// The authored .bt model the working copy starts from. Taken from APTREE_MODEL_TEMPLATE,
+        /// otherwise searched in the APTreeDSL folder above the app's base directory (works for
+        /// dotnet run, the test host and the Docker image, where APTreeDSL sits next to the app).
         /// </summary>
-        public static string ActiveBtFilePath => DefaultBtFilePath;
+        public static string TemplateBtFilePath
+        {
+            get
+            {
+                var fromEnv = Environment.GetEnvironmentVariable(TemplatePathEnvVar);
+                if (!string.IsNullOrWhiteSpace(fromEnv))
+                    return Path.GetFullPath(fromEnv);
+
+                for (var dir = new DirectoryInfo(AppContext.BaseDirectory); dir != null; dir = dir.Parent)
+                {
+                    var candidate = Path.Combine(new[] { dir.FullName }.Concat(TemplateRelativePath).ToArray());
+                    if (File.Exists(candidate))
+                        return candidate;
+                }
+                return Path.Combine(new[] { AppContext.BaseDirectory }.Concat(TemplateRelativePath).ToArray());
+            }
+        }
+
+        /// <summary>
+        /// The .bt file the planner writes to and the editor shows. Taken from APTREE_LIVE_MODEL,
+        /// otherwise a file in the system temp folder, so a runner process and the server
+        /// process on the same machine use the same file.
+        /// </summary>
+        public static string ActiveBtFilePath
+        {
+            get
+            {
+                var fromEnv = Environment.GetEnvironmentVariable(WorkingCopyPathEnvVar);
+                return !string.IsNullOrWhiteSpace(fromEnv)
+                    ? Path.GetFullPath(fromEnv)
+                    : Path.Combine(Path.GetTempPath(), "aptree", "live-model.bt");
+            }
+        }
+
+        /// <summary>
+        /// Creates the working copy from the template if it does not exist yet.
+        /// Returns false (and logs a warning) when neither file is available.
+        /// </summary>
+        public static bool EnsureWorkingCopy() => CopyTemplate(overwrite: false);
+
+        /// <summary>
+        /// Overwrites the working copy with the template, so a new run starts from the authored model.
+        /// </summary>
+        public static bool ResetWorkingCopy() => CopyTemplate(overwrite: true);
+
+        private static bool CopyTemplate(bool overwrite)
+        {
+            var target = ActiveBtFilePath;
+            lock (CopyLock)
+            {
+                if (!overwrite && File.Exists(target))
+                    return true;
+
+                var template = TemplateBtFilePath;
+                if (!File.Exists(template))
+                {
+                    LoggingService.LogWarning($"⚠️ APTreeModelWriter: template model not found at {template} (set {TemplatePathEnvVar})");
+                    return File.Exists(target);
+                }
+
+                try
+                {
+                    Directory.CreateDirectory(Path.GetDirectoryName(target)!);
+                    File.Copy(template, target, overwrite: true);
+                    LoggingService.LogInfo($"ℹ️ APTreeModelWriter: working copy {target} created from {template}");
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    LoggingService.LogError($"❌ APTreeModelWriter: could not create working copy {target}: {ex.Message}");
+                    return File.Exists(target);
+                }
+            }
+        }
+
+        private static string ResolveTarget(string btFilePath)
+        {
+            if (btFilePath != null)
+                return btFilePath;
+            EnsureWorkingCopy();
+            return ActiveBtFilePath;
+        }
 
         /// <summary>
         /// Fired whenever the .bt model file is written (structure or NodeGraph update).
@@ -43,11 +132,11 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
         /// e.g. "NodeGraph {\n    Action TravelML ...\n}".
         /// </param>
         /// <param name="btFilePath">
-        /// Optional override for the .bt file path. Uses DefaultBtFilePath when null.
+        /// Optional override for the .bt file path. Uses the working copy (<see cref="ActiveBtFilePath"/>) when null.
         /// </param>
         public static void UpdateCassetteNodeGraph(string cassetteName, string nodeGraphDsl, string btFilePath = null)
         {
-            var filePath = btFilePath ?? DefaultBtFilePath;
+            var filePath = ResolveTarget(btFilePath);
 
             if (!File.Exists(filePath))
             {
@@ -151,7 +240,7 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
             string problemFileName = null,
             string btFilePath = null)
         {
-            var filePath = btFilePath ?? DefaultBtFilePath;
+            var filePath = ResolveTarget(btFilePath);
 
             if (!File.Exists(filePath))
             {
@@ -234,7 +323,7 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
             string subtreeBTName,
             string btFilePath = null)
         {
-            var filePath = btFilePath ?? DefaultBtFilePath;
+            var filePath = ResolveTarget(btFilePath);
 
             if (!File.Exists(filePath))
             {
@@ -291,7 +380,7 @@ namespace BehaviorTreeMainProject.Services.AIPlanning
         /// <param name="btFilePath">Optional override for the .bt file path.</param>
         public static void UpdateServicePlanningProblem(string plannerServiceName, string problemFileName, string btFilePath = null)
         {
-            var filePath = btFilePath ?? DefaultBtFilePath;
+            var filePath = ResolveTarget(btFilePath);
 
             if (!File.Exists(filePath))
             {

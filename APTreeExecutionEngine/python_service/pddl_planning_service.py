@@ -4,8 +4,10 @@ PDDL Planning Service
 REST API service that calls multiple PDDL planners (ENHSP, FF)
 """
 
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, after_this_request
+import shutil
 import subprocess
+import tempfile
 import os
 import json
 import time
@@ -37,6 +39,28 @@ def _is_inside_planner_inputs(path):
     real = os.path.realpath(path)
     root = os.path.realpath(PLANNER_INPUTS_DIR)
     return os.path.commonpath([real, root]) == root
+
+
+def _make_request_dir():
+    """Create a scratch folder under Plannerinputs/generated/ that is removed once the request is answered."""
+    generated = os.path.join(PLANNER_INPUTS_DIR, "generated")
+    os.makedirs(generated, exist_ok=True)
+    request_dir = tempfile.mkdtemp(prefix="request_", dir=generated)
+
+    @after_this_request
+    def _remove_request_dir(response):
+        shutil.rmtree(request_dir, ignore_errors=True)
+        return response
+
+    return request_dir
+
+
+def _write_scratch_file(request_dir, original_path, content):
+    """Write inline content to request_dir under the original file name (FF uses the name) and return the new path."""
+    path = os.path.join(request_dir, os.path.basename(original_path) or "input.pddl")
+    with open(path, 'w', encoding='utf-8') as f:
+        f.write(content)
+    return path
 
 @app.route('/health', methods=['GET'])
 def health_check():
@@ -115,22 +139,18 @@ def create_plan():
                     }
                 }), 400
 
-        # If the C# side sent file content inline, save it locally so the
-        # planner can read it (needed when the service runs on a remote VM).
-        # This overrides whatever is already on disk.
+        # If the C# side sent file content inline (needed when the service runs
+        # on a remote VM), the planner reads it from a scratch copy. The file at
+        # the given path is never overwritten, so the shipped inputs under
+        # Plannerinputs/static/ stay unchanged across runs.
         domain_file_content = data.get('domainFileContent')
-        if domain_file_content:
-            os.makedirs(os.path.dirname(domain_file_path), exist_ok=True)
-            with open(domain_file_path, 'w', encoding='utf-8') as f:
-                f.write(domain_file_content)
-            print(f"✅ Saved inline domain file content to: {domain_file_path}")
-
         problem_file_content = data.get('problemFileContent')
-        if problem_file_content:
-            os.makedirs(os.path.dirname(problem_file_path), exist_ok=True)
-            with open(problem_file_path, 'w', encoding='utf-8') as f:
-                f.write(problem_file_content)
-            print(f"✅ Saved inline problem file content to: {problem_file_path}")
+        if domain_file_content or problem_file_content:
+            request_dir = _make_request_dir()
+            if domain_file_content:
+                domain_file_path = _write_scratch_file(request_dir, domain_file_path, domain_file_content)
+            if problem_file_content:
+                problem_file_path = _write_scratch_file(request_dir, problem_file_path, problem_file_content)
         
         if planning_type != 'PDDL':
             return jsonify({

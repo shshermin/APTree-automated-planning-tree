@@ -46,6 +46,9 @@ namespace BehaviorTreeMainProject
             LoggingService.LogSuccess($"Started at: {testStartTime:yyyy-MM-dd HH:mm:ss.fff}");
             EndToEndSummaryLogger.LogTaskStart("Demonstrator");
 
+            // Every run starts from the authored .bt model.
+            BehaviorTreeMainProject.Services.AIPlanning.APTreeModelWriter.ResetWorkingCopy();
+
             try
             {
                 // ── 1. Create blackboard ──

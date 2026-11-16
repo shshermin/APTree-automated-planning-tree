@@ -66,7 +66,7 @@ Invoke-RestMethod -Method Post -Uri "http://localhost:5001/move" -ContentType "a
 
 
 Run:
-dotnet run --project BehaviorTreeMainProject.csproj -- --run src/ModelLoader/BehaviorTreeModel.json --faults ../DemonstratorFaults.json
+dotnet run --project BehaviorTreeMainProject.csproj -- --run src/ModelLoader/BehaviorTreeModel.json --faults src/ModelLoader/DemonstratorFaults.json
 
 
 Run without faults:
