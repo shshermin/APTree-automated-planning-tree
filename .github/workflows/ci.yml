@@ -1,0 +1,80 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  execution-engine:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - run: dotnet test BehaviorTreeMainProject.sln
+
+  dsl:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: APTreeDSL
+    steps:
+      - uses: actions/checkout@v4
+      # build.gradle pins a Java 11 toolchain without a download repository
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "11"
+      # no Gradle wrapper in the repo; same version as the Dockerfile
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: 8.14.4
+      - run: gradle test --no-daemon
+
+  python-service:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: APTreeExecutionEngine/python_service
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements-test.txt
+      - run: python -m pytest
+
+  editor:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: APTreeEditor/BehaviorTreeFrontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: APTreeEditor/BehaviorTreeFrontend/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build
+
+  input-generator:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: InputGenerator
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y libcgal-dev
+      - run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+      - run: cmake --build build -j
+      - run: ctest --test-dir build --output-on-failure
