@@ -429,7 +429,7 @@ function App() {
         const validateRes = await fetch("/api/aptree/validate", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ modelText, instancesText: null, jarPath: null }),
+          body: JSON.stringify({ modelText, instancesText: null }),
           signal: controller.signal,
         });
         if (!validateRes.ok) return;
@@ -1100,7 +1100,7 @@ function App() {
         const response = await fetch("/api/aptree/validate", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ modelText, instancesText: null, jarPath: null }),
+          body: JSON.stringify({ modelText, instancesText: null }),
         });
 
         const responseText = await response.text();

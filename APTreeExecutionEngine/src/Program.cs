@@ -1,6 +1,6 @@
 ﻿﻿using BehaviorTreeMainProject;
 
-// Usage: dotnet run [--server | --test | --loadtest | --parityt | --run <model.json> [config.json] [--faults <faults.json>]]
+// Usage: dotnet run [--server | --test | --loadtest | --parity | --run <model.json> [config.json] [--faults <faults.json>]]
 //   --server    : frontend API server only  (default)
 //   --test      : DemonstratorTreeTest only
 //   --loadtest  : JsonBTLoadTest only

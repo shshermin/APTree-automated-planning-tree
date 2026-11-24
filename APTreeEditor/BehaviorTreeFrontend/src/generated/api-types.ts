@@ -156,7 +156,6 @@ export interface components {
         APTreeValidateRequest: {
             modelText?: string | null;
             instancesText?: string | null;
-            jarPath?: string | null;
         };
         TickMessage: {
             nodeName?: string | null;

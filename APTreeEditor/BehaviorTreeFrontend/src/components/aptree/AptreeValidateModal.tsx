@@ -63,7 +63,6 @@ export default function AptreeValidateModal({
     const body: AptreeValidateRequest = {
       modelText,
       instancesText: instancesText.trim() ? instancesText : null,
-      jarPath: null,
     };
 
     try {

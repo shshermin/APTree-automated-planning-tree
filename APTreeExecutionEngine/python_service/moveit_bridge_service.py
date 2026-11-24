@@ -9,7 +9,7 @@ and reused across all HTTP requests, avoiding the overhead of rclpy.init()
 and action-server discovery on every call.
 
 Usage (inside WSL):
-    cd /home/shermin/ws_moveit
+    cd ~/ws_moveit            # or set MOVEIT_SCRIPTS_DIR to your hello_moveit/scripts folder
     source install/setup.bash
     python3 <repo>/APTreeExecutionEngine/python_service/moveit_bridge_service.py
 
@@ -19,12 +19,13 @@ Starts on http://127.0.0.1:5002
 from flask import Flask, request, jsonify
 import json
 import math
+import os
 import sys
 import time
 import threading
 
 # Ensure the scripts directory is importable
-sys.path.insert(0, '/home/shermin/ws_moveit/src/hello_moveit/scripts')
+sys.path.insert(0, os.environ.get('MOVEIT_SCRIPTS_DIR', os.path.expanduser('~/ws_moveit/src/hello_moveit/scripts')))
 
 import rclpy
 import rclpy.time

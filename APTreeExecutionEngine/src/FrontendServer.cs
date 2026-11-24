@@ -337,18 +337,16 @@ namespace BehaviorTreeMainProject
                         title: "APTreeDSL directory not found",
                         detail: $"Searched from ContentRootPath: {env.ContentRootPath}. Expected a folder named APTreeDSL next to the solution or within the backend folder.");
                 }
-                var jarPath = request.JarPath;
-                if (string.IsNullOrWhiteSpace(jarPath))
+                // The jar is never taken from the request: the endpoint is unauthenticated
+                // and would otherwise start any jar on the host.
+                var libsDir = Path.Combine(montiCoreDir, "target", "libs");
+                var jarPath = Path.Combine(libsDir, "automaton-tool.jar");
+                if (!File.Exists(jarPath) && Directory.Exists(libsDir))
                 {
-                    var libsDir = Path.Combine(montiCoreDir, "target", "libs");
-                    jarPath = Path.Combine(libsDir, "automaton-tool.jar");
-                    if (!File.Exists(jarPath) && Directory.Exists(libsDir))
-                    {
-                        jarPath = Directory
-                            .GetFiles(libsDir, "*-tool.jar")
-                            .OrderByDescending(File.GetLastWriteTimeUtc)
-                            .FirstOrDefault() ?? jarPath;
-                    }
+                    jarPath = Directory
+                        .GetFiles(libsDir, "*-tool.jar")
+                        .OrderByDescending(File.GetLastWriteTimeUtc)
+                        .FirstOrDefault() ?? jarPath;
                 }
 
                 if (!File.Exists(jarPath))
@@ -648,8 +646,7 @@ namespace BehaviorTreeMainProject
 
         private record APTreeValidateRequest(
             string ModelText,
-            string? InstancesText,
-            string? JarPath
+            string? InstancesText
         );
 
         private record ProcessResult(int ExitCode, string StdOut, string StdErr);
